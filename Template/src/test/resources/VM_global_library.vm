@@ -1,0 +1,1 @@
+#macro(firstUpperCase $field)$field.toUpperCase().substring(0,1)$field.substring(1)#end

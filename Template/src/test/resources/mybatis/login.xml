@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="login">
+
+    <select id="getLoginPo" parameterType="dbInfo" resultType="LoginPo">
+        select `openid`,`uid`,`token` from ${dbName}.login where openid=#{openid};
+    </select>
+
+    <update id="updateLoginPo" parameterType="dbInfo" >
+	    update ${dbName}.login set `uid` = #{uid} ,`token` = #{token}  where `openid` = #{openid};
+    </update>
+
+    <insert id="insertLoginPo" parameterType="dbInfo" >
+	    insert into ${dbName}.login (`openid`,`uid`,`token`) values (#{openid} ,#{uid} ,#{token} );
+    </insert>
+	
+    <delete id="deleteLoginPo" parameterType="dbInfo" >
+	    delete from ${dbName}.login where `openid` = #{openid};
+    </delete>
+</mapper>

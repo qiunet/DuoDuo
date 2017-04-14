@@ -1,0 +1,23 @@
+#set($entityObj = ${entity.subVmElement(${data.poref})})
+#set($entityType = ${entityObj.type})
+#set($entityInfoType = ${entityType.InfoType})
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${data.NameSpace}">
+
+    <select id="${data.SelectStatment}" parameterType="dbInfo" resultType="${data.poref}">
+        ${data.SelectSql}
+    </select>
+
+    <update id="${data.UpdateStatment}" parameterType="dbInfo" >
+	    ${data.UpdateSql}
+    </update>
+
+    <insert id="${data.InsertStatment}" parameterType="dbInfo" >
+	    ${data.InsertSql}
+    </insert>
+	
+    <delete id="${data.DeleteStatment}" parameterType="dbInfo" >
+	    ${data.DeleteSql}
+    </delete>
+</mapper>

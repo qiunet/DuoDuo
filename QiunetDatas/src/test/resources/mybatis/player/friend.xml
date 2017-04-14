@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="friend">
+
+    <select id="getFriendPo" parameterType="dbInfo" resultType="friendPo">
+        select * from ${dbName}.friend where uid = #{uid};
+    </select>
+
+    <update id="updateFriendPo" parameterType="dbInfo" >
+        update ${dbName}.friend SET 
+          friend_descs = #{friend_descs} 
+        where uid = #{uid};
+    </update>
+   
+    <insert id="insertFriendPo" parameterType="dbInfo" >
+        insert INTO ${dbName}.friend
+         (uid , friend_descs)
+         VALUES (
+         #{uid},
+         #{friend_descs}
+         )
+    </insert>
+    <insert id="deleteFriendPo" parameterType="dbInfo" >
+        DELETE FROM  ${dbName}.friend  WHERE uid = #{uid};
+    </insert>
+</mapper>

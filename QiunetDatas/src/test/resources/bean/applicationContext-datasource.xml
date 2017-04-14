@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:jdbc.properties</value>
+        </property>
+    </bean>
+
+    <!-- 数据源公共配置 -->
+    <bean id="parent_datasource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <!-- 同一时间可以从池分配的最多连接数量 设置为0时表示无限制-->
+        <property name="maxTotal" value="8" />
+        <!-- 超时等待时间以毫秒为单位  -->
+        <property name="maxWaitMillis" value="1500" />
+        <!-- 池里不会被释放的最多空闲连接数量 设置为0时表示无限制-->
+        <property name="maxIdle" value="2" />
+        <!-- 池里不会被释放的最少空闲连接数量-->
+        <property name="minIdle" value="1" />
+        <property name="initialSize" value="2" />
+        <!-- 设置自动回收超时连接 -->
+        <property name="removeAbandonedOnMaintenance" value="true" />
+        <!-- 自动回收超时时间(以秒数为单位) -->
+        <property name="removeAbandonedTimeout" value="60" />
+        <!-- 输出回收的日志 -->
+        <property name="logAbandoned" value="true"/>
+        <!-- 向调用者输出“链接”资源时，是否检测是有有效，如果无效则从连接池中移除，并尝试获取继续获取。默认为false。建议保持默认值 -->
+        <property name= "testOnBorrow" value="false" />
+        <!-- 打开检查,用异步线程evict进行检查 -->
+        <property name= "testWhileIdle" value="true" />
+        <!-- 检查连接使用语句 -->
+        <property name= "validationQuery" value="select 1" />
+        <!-- 设置的Evict线程的时间，单位ms，大于0才会开启evict检查线程,两次扫描之间要sleep的毫秒数 -->
+        <property name= "timeBetweenEvictionRunsMillis" value="30000" />
+        <!-- 代表每次检查链接的数量，建议设置和maxActive一样大，这样每次可以有效检查所有的链接 -->
+        <property name= "numTestsPerEvictionRun" value="10" />
+        <!-- 校验连接池中闲置时间超过minEvictableIdleTimeMillis的连接对象 -->
+        <property name="minEvictableIdleTimeMillis" value="60000" />
+    </bean>
+
+    <!-- 玩家数据相关配置 -->
+    <bean id="datasource_test0" parent="parent_datasource">
+        <property name="driverClassName" value="${database.driver_0}" />
+        <property name="url" value="${database.url_0}" />
+        <property name="username" value="${database.username_0}" />
+        <property name="password" value="${database.password_0}" />
+    </bean>
+
+    <!-- 玩家数据相关配置 -->
+    <bean id="datasource_test_global" parent="parent_datasource">
+        <property name="driverClassName" value="${database.driver_global}" />
+        <property name="url" value="${database.url_global}" />
+        <property name="username" value="${database.username_global}" />
+        <property name="password" value="${database.password_global}" />
+    </bean>
+    
+    <bean id="dynamicDataSource" class="org.qiunet.data.db.datasource.DynamicDataSource">
+        <property name="targetDataSources">
+            <map>
+                <entry key="datasource_player0" value-ref="datasource_test0" />
+                <entry key="datasource_global" value-ref="datasource_test_global" />
+                
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="datasource_test_global" />
+    </bean>
+    
+    <bean id="databaseSupport" class="org.qiunet.data.db.core.DatabaseSupport">
+        <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    </bean>
+    
+    <!-- 配置mybatis 和 spring的嵌入口 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation">
+            <value>classpath:mybatis/mybatis-config.xml</value>
+        </property>
+        <property name="dataSource">
+            <ref bean="dynamicDataSource" />
+        </property>
+    </bean>
+</beans>

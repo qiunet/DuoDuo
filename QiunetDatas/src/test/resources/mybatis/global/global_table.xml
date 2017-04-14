@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="global_table">
+
+    <select id="getGlobalTablePo" parameterType="dbInfo" resultType="GlobalTablePo">
+        select * from ${dbName}.global_table where id = #{id};
+    </select>
+
+    <update id="updateGlobalTablePo" parameterType="dbInfo" >
+        update ${dbName}.global_table SET
+        `name` = #{name}
+        where id = #{id};
+    </update>
+
+    <insert id="insertGlobalTablePo" parameterType="dbInfo" >
+        insert INTO ${dbName}.global_table
+          (`id` , `name`)
+        VALUES (
+          #{id},#{name}
+        );
+        <selectKey resultType="int" keyProperty="id">
+            SELECT @@IDENTITY AS id;
+        </selectKey>
+    </insert>
+    <insert id="deleteGlobalTablePo" parameterType="dbInfo" >
+        DELETE FROM  ${dbName}.global_table  WHERE id = #{id};
+    </insert>
+</mapper>
