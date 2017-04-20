@@ -147,7 +147,6 @@ public abstract class AbstractRedisUtil {
 				}
 				map.put(PLACEHOLDER, "");
 				
-				jedis = jedisPool.getResource();
 				jedis.hmset(key, map);
 				jedis.expire(key, seconds);
 				return null;
