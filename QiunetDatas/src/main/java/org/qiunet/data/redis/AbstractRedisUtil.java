@@ -91,7 +91,6 @@ public abstract class AbstractRedisUtil {
 		return new RedisCommand<T>(jedisPool, key) {
 			@Override
 			protected T expression(Jedis jedis, String key)  throws Exception{
-				jedis = jedisPool.getResource();
 				Map<String, String> map=jedis.hgetAll(key);
 				T obj = clazz.newInstance();
 				if(! map.isEmpty()){
