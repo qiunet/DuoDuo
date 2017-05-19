@@ -69,6 +69,9 @@ public class VmElement<T extends SubVmElement> {
 	 * @return
 	 */
 	public T subVmElement(String name){
+		if (! subVmElementMap.containsKey(name)) {
+			throw new NullPointerException("name ["+name+"] is not in Map");
+		}
 		return subVmElementMap.get(name);
 	}
 	/***
