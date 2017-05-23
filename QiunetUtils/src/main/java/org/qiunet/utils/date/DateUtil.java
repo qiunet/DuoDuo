@@ -148,7 +148,6 @@ public final class DateUtil {
 	}
 	/**
 	 * 时间的格式验证
-	 * @param quartzStr
 	 * @param dt
 	 * @return
 	 */
@@ -326,5 +325,15 @@ public final class DateUtil {
 	 */
 	public static Date getSecondAfter(Date date,int second){
 		return getDate(date, TYPE_SECOND, ACTION_AFTER, second);
+	}
+
+	/***
+	 * 是否是同一天
+	 * @param d1
+	 * @param d2
+	 * @return
+	 */
+	public static boolean isSameDay(Date d1, Date d2) {
+		return dateToString(d1, DEFAULT_DATE_FORMAT).equals(DateUtil.dateToString(d2, DEFAULT_DATE_FORMAT));
 	}
 }

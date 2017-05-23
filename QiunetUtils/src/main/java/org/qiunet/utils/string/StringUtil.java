@@ -1,5 +1,7 @@
 package org.qiunet.utils.string;
 
+import org.qiunet.utils.math.MathUtil;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -83,7 +85,6 @@ public class StringUtil {
 	/***
 	 * 字符串数组 转 基础数据类型数组
 	 * @param <T>
-	 * @param <K>
 	 * @param k
 	 * @param t
 	 * @return
@@ -199,6 +200,21 @@ public class StringUtil {
 			j = s.indexOf(t);
 		}
 		return s;
+	}
+
+	private static final String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	/**
+	 * 生成一定长度的随机字符串
+	 * @param count
+	 * @return
+	 */
+	public static String randomString (int count) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0 ; i < count; i++) {
+			sb.append(chars.charAt(MathUtil.random(chars.length())));
+		}
+		return sb.toString();
 	}
 
 	public static String getIntHexVal(int val){
