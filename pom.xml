@@ -13,7 +13,9 @@
         <module>Template</module>
         <module>RequestHandler</module>
         <module>GameTest</module>
+		<module>ExcelToStream</module>
 	</modules>
+
     <packaging>pom</packaging>
 
     <inceptionYear>2017</inceptionYear>
@@ -29,6 +31,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.version>4.3.5.RELEASE</spring.version>
     </properties>
+
+	<repositories>
+		<repository>
+			<id>public</id>
+			<url>http://qiunet.com.cn/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
     <build>
         <plugins>
             <plugin>
