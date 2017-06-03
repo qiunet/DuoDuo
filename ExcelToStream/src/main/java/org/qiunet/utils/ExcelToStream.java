@@ -17,7 +17,7 @@ import java.util.zip.GZIPOutputStream;
 public class ExcelToStream {
 	private static final Set<String> typeSet = new HashSet<String>(Arrays.asList(new String[]{"string" , "double" , "int"}));
 	/**定义数据的行数-行号*/
-	private static final int DATA_DEFINE_ROW = 2;
+	private static final int DATA_DEFINE_ROW = 4;
 
 	/***
 	 * 得到最后一行的数据
@@ -115,12 +115,12 @@ public class ExcelToStream {
 				}
 			}
 		}catch (NumberFormatException e) {
-			throw new ExchangeException(rowNum+1, columnNum+1);
+			throw new ExchangeException(outFile.getName(), rowNum+1, columnNum+1);
 		} finally {
 			try {
-				dos.close();
-				gos.close();
-				outStream.close();
+				if(dos != null) dos.close();
+				if(gos != null) gos.close();
+				if (outStream != null) outStream.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

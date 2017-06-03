@@ -1,6 +1,5 @@
 package org.qiunet.frame.view;
 
-import org.qiunet.exception.ExchangeException;
 import org.qiunet.frame.base.BaseJFrame;
 import org.qiunet.frame.base.JframeManager;
 import org.qiunet.utils.ExcelToStream;
@@ -22,7 +21,7 @@ import java.util.*;
 
 public class MainFrame extends BaseJFrame {
 	/**
-	 * 
+	 *
 	 */
 	private JScrollPane scrollPane;
 
@@ -31,7 +30,7 @@ public class MainFrame extends BaseJFrame {
 	private JPopupMenu popupMenu;
 
 	private static final long serialVersionUID = -4680070900448216352L;
-	
+
 	private static final String loadWorkHomeName = ".xd.project";
 	private void jframeInit(){
 		this.setSize(200, 600);
@@ -52,7 +51,7 @@ public class MainFrame extends BaseJFrame {
 		subMenu.addActionListener(new MenuAction());
 		menu.add(subMenu);
 		menuBar.add(menu);
-		
+
 		this.setJMenuBar(menuBar);
 		this.loadFileTree();
 	}
@@ -88,7 +87,7 @@ public class MainFrame extends BaseJFrame {
 					String msg = excelToStream.excelToStream(fileNode.file);
 					if (msg != null)
 						JOptionPane.showMessageDialog(scrollPane, "错误:["+msg+"]");
-					
+
 					JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 				}
 			}
