@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 
 public class MainFrame extends BaseJFrame {
+	public MainFrame() {
+	}
 	/**
 	 *
 	 */
@@ -28,6 +30,8 @@ public class MainFrame extends BaseJFrame {
 	private JTree jTree;
 
 	private JPopupMenu popupMenu;
+
+	private JPopupMenu dirPopupMenu;
 
 	private static final long serialVersionUID = -4680070900448216352L;
 
@@ -52,6 +56,12 @@ public class MainFrame extends BaseJFrame {
 		menu.add(subMenu);
 		menuBar.add(menu);
 
+		JMenu refresh = new JMenu("刷新");
+		JMenuItem subRefreshMenu = new JMenuItem("刷新文件");
+		subRefreshMenu.addActionListener(new RefreshMenuAction());
+		refresh.add(subRefreshMenu);
+		menuBar.add(refresh);
+
 		this.setJMenuBar(menuBar);
 		this.loadFileTree();
 	}
@@ -63,6 +73,7 @@ public class MainFrame extends BaseJFrame {
 			MainFrame frame = JframeManager.getInstance().getJframe(MainFrame.class);
 			frame.jframeInit();
 			frame.popMenuInit();
+			frame.popDirMenuInit();
 			frame.dataInit();
 			frame.setVisible(true);
 		} catch (Exception e) {
@@ -96,15 +107,63 @@ public class MainFrame extends BaseJFrame {
 	}
 
 	/***
+	 * 右键点击分类导航树的菜单
+	 */
+	private void popDirMenuInit() {
+		dirPopupMenu = new JPopupMenu();
+		JMenuItem exchange = new JMenuItem("转换文件夹内所有");
+		exchange.addActionListener(new ActionListener() {
+			private ExcelToStream excelToStream = new ExcelToStream();
+			private void exchangeAll(File dir, Set<String> errorFiles){
+				for (File file : dir.listFiles()) {
+					if (! filePostfixCheck(file) || file.getName().endsWith(".xd")) continue;
+
+					System.out.println(file.getName());
+
+					if (file.isFile()) {
+						String msg = excelToStream.excelToStream(file);
+						if (msg != null) {
+							errorFiles.add(file.getName());
+							JOptionPane.showMessageDialog(scrollPane, "错误:["+msg+"]");
+							return;
+						}
+
+						JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
+					}else {
+						exchangeAll(file, errorFiles);
+					}
+				}
+
+			}
+			public void actionPerformed(ActionEvent e) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTree.getLastSelectedPathComponent();
+				if (!((FileNode)node.getUserObject()).getFile().isDirectory()) return;
+
+				FileNode fileNode = (FileNode) node.getUserObject();
+				Set<String> errorFiles = new HashSet<>();
+				this.exchangeAll(fileNode.file, errorFiles);
+				if (errorFiles.isEmpty()) {
+					// 重新加载树
+					JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
+
+					JOptionPane.showMessageDialog(scrollPane, "SUCCESS");
+				}
+			}
+		});
+		dirPopupMenu.add(exchange);
+	}
+
+	/***
 	 * 加载文件树
 	 */
 	private void loadFileTree () {
 		String workPath = FileUtil.returnPathFromProjectFile(getFileName());
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("ROOT");
-		if (workPath != null && workPath.trim().length() != 0) {
-			File workPathFile = new File(workPath);
-			this.loadTree(root, workPathFile);
-		}
+		if (workPath == null || workPath.length() == 0) return;
+
+		File workPathFile = new File(workPath);
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileNode(workPathFile));
+		this.loadTree(root, workPathFile);
+
 		if (jTree != null) {
 			this.recordExpandNode(new TreePath(jTree.getModel().getRoot()));
 		}
@@ -118,7 +177,7 @@ public class MainFrame extends BaseJFrame {
 			jTree.addMouseListener(new TreePopMenuListener());
 			jTree.setExpandsSelectedPaths(true);
 			jTree.setScrollsOnExpand(true);
-			this.scrollPane.getViewport().add(jTree);
+			this.scrollPane.setViewportView(jTree);
 		}
 		this.revertExpandNode(new TreePath(jTree.getModel().getRoot()));
 	}
@@ -165,6 +224,25 @@ public class MainFrame extends BaseJFrame {
 	private Set<String> expandFileName = new HashSet<String>();
 
 	private static final Set<String> postfixs = new HashSet<String>(Arrays.asList(new String[]{"xlsx","xls","xd"}));
+
+	/**
+	 * 校验文件的后缀名
+	 * @param file 校验的文件
+	 * @return true 符合
+	 */
+	public static final boolean filePostfixCheck(File file) {
+		String fileName = file.getName();
+
+		if (fileName.startsWith("~") || fileName.startsWith(".")) return false;
+
+		if (file.isFile()) {
+			if (file.getName().contains(".")) {
+				String postfix = file.getName().substring(file.getName().indexOf(".")+1, file.getName().length());
+				if (! postfixs.contains(postfix)) return false;
+			}
+		}
+		return true;
+	}
 	/***
 	 * 递归加载树
 	 * @param dirRoot
@@ -172,14 +250,9 @@ public class MainFrame extends BaseJFrame {
 	 */
 	private void loadTree(DefaultMutableTreeNode dirRoot, File dirFile) {
 		for (File file : dirFile.listFiles()){
-			if (file.getName().startsWith("~") || file.getName().startsWith(".")) continue;
+			if (! filePostfixCheck(file)) continue;
 
 			if (file.isFile()) {
-				if (file.getName().contains(".")) {
-					String postfix = file.getName().substring(file.getName().indexOf(".")+1, file.getName().length());
-					if (! postfixs.contains(postfix)) continue;
-				}
-
 				dirRoot.add(new DefaultMutableTreeNode(new FileNode(file), false));
 			}else if (file.isDirectory()) {
 				DefaultMutableTreeNode dir = new DefaultMutableTreeNode(new FileNode(file));
@@ -203,6 +276,12 @@ public class MainFrame extends BaseJFrame {
 				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile().getAbsolutePath(), getFileName());
 				JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 			}
+		}
+	}
+
+	public static final class RefreshMenuAction implements ActionListener {
+		public void actionPerformed(ActionEvent e) {
+			JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 		}
 	}
 
@@ -230,18 +309,21 @@ public class MainFrame extends BaseJFrame {
 		public void mouseClicked(MouseEvent e) {
 		}
 		public void mousePressed(MouseEvent e) {
-			if (e.getButton() != MouseEvent.BUTTON3) return;
-
 			TreePath path = jTree.getPathForLocation(e.getX(), e.getY());
 			if (path == null) return;
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
-			if (((FileNode)node.getUserObject()).getFile().isDirectory()) return;
-
 			FileNode fileNode = (FileNode) node.getUserObject();
-			if (fileNode.getFile().getName().endsWith(".xlsx") || fileNode.getFile().getName().endsWith(".xls")) {
-				jTree.setSelectionPath(path);
-				popupMenu.show(jTree, e.getX(), e.getY());
+			if (! fileNode.getFile().isDirectory()) {
+				if (fileNode.getFile().getName().endsWith(".xlsx") || fileNode.getFile().getName().endsWith(".xls")) {
+					jTree.setSelectionPath(path);
+					popupMenu.show(jTree, e.getX(), e.getY());
+				}
+			}else {
+				if (e.getButton() == MouseEvent.BUTTON3){
+					jTree.setSelectionPath(path);
+					dirPopupMenu.show(jTree, e.getX(), e.getY());
+				}
 			}
 		}
 		public void mouseReleased(MouseEvent e) {
