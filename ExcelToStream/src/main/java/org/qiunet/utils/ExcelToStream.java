@@ -137,8 +137,10 @@ public class ExcelToStream {
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
 				if ("end".equals(sheet.getSheetName())) break;
-
-				String newFileName = fileNamePrefix + "_" + sheet.getSheetName() + ".xd";
+				
+				String sheetName = sheet.getSheetName();
+				if (sheetName.startsWith("_")) sheetName = sheetName.substring(1, sheetName.length());
+				String newFileName = fileNamePrefix + "_" + sheetName + ".xd";
 				File outFile = new File(sourceFile.getParent(), newFileName);
 				try {
 					this.SheetToStream(sheet, outFile);
