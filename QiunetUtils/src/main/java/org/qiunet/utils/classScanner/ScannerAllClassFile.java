@@ -35,8 +35,10 @@ public class ScannerAllClassFile {
 	 */
 	public ScannerAllClassFile(ClassLoader loader){
 		this.basePath = getClass().getResource("/").getPath();
-		this.basePath = basePath.replace("\\\\", "/");
-		this.split = basePath.substring(5);
+		this.basePath = basePath.replace("\\", "/");
+
+		split = basePath.substring(5);
+
 		this.listAllFiles(basePath);
 
 		this.loader = loader;
@@ -46,10 +48,11 @@ public class ScannerAllClassFile {
 	 * @param path
 	 */
 	private void listAllFiles(String path){
-		path = path.replace("\\\\", "/");
+		path = path.replace("\\", "/");
 		File file = new File(path);
 		if(file.isFile() && file.getName().endsWith(".class")){
-			String filePath = StringUtil.split(path, split)[1];
+			String filePath = file.getPath().replace("\\", "/");
+			filePath = StringUtil.split(filePath, split)[1];
 			int endIndex = filePath.lastIndexOf(".class");
 			allclass.add(filePath.substring(0, endIndex).replace("/", "."));
 		}else if(file.isDirectory()){
