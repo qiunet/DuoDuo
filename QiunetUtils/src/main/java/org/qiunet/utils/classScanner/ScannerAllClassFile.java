@@ -12,7 +12,6 @@ import java.util.List;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile {
-	private String split;
 	/**默认路径*/
 	private String basePath;
 
@@ -26,35 +25,31 @@ public class ScannerAllClassFile {
 	 * 使用默认加载器
 	 */
 	public ScannerAllClassFile(){
-		this(Thread.currentThread().getContextClassLoader());
+		this.scannerFilePath(ScannerAllClassFile.class.getResource("/").getPath());
 	}
-
 	/***
-	 * 指定类加载器的
-	 * @param loader
+	 * 添加路径的文件
+	 * @param basePath
 	 */
-	public ScannerAllClassFile(ClassLoader loader){
-		this.basePath = getClass().getResource("/").getPath();
-		this.basePath = basePath.replace("\\", "/");
-
-		split = basePath.substring(5);
-
-		this.listAllFiles(basePath);
-
-		this.loader = loader;
+	public void scannerFilePath(String basePath) {
+		this.basePath = basePath;
+		if (";".equals(File.pathSeparator) && basePath.startsWith("/")) {
+			this.basePath = basePath.substring(1, basePath.length());
+		}
+		this.listAllFiles(this.basePath);
+		this.loader = Thread.currentThread().getContextClassLoader();
 	}
+
 	/**
 	 * 找到当前basePath的所有的class
 	 * @param path
 	 */
 	private void listAllFiles(String path){
-		path = path.replace("\\", "/");
 		File file = new File(path);
 		if(file.isFile() && file.getName().endsWith(".class")){
-			String filePath = file.getPath().replace("\\", "/");
-			filePath = StringUtil.split(filePath, split)[1];
+			String filePath = file.getPath();
 			int endIndex = filePath.lastIndexOf(".class");
-			allclass.add(filePath.substring(0, endIndex).replace("/", "."));
+			allclass.add(filePath.substring(basePath.length(), endIndex).replace(File.separator, "."));
 		}else if(file.isDirectory()){
 			File[] files = file.listFiles();
 			for (File f : files) {
