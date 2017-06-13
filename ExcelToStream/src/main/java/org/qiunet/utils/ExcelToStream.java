@@ -25,26 +25,20 @@ public class ExcelToStream {
 	 * @return
 	 */
 	private int getSheetLastRow(Sheet sheet) {
-		int lastRow = DATA_DEFINE_ROW;
-		for (int i = DATA_DEFINE_ROW; i <= sheet.getLastRowNum(); i++) {
+		int lastRow = DATA_DEFINE_ROW - 1;
+		for (int i = lastRow; i <= sheet.getLastRowNum(); lastRow = i,i++) {
 			Row row = sheet.getRow(i);
-			Cell cell = row.getCell(0);
-			if(cell == null){
-				lastRow = i;
+			if(row == null || row.getCell(0) == null){
 				break;
 			}
+			Cell cell = row.getCell(0);
 			cell.setCellType(CellType.STRING);
 			String var = cell.getStringCellValue();
 			if(var == null || var.trim().length() == 0){
-				lastRow = i;
 				break;
 			}
-				/*结尾*/
-			if(i == sheet.getLastRowNum()){
-				lastRow = i+1;
-			}
 		}
-		return lastRow;
+		return lastRow+1;
 	}
 
 	/***
@@ -72,6 +66,7 @@ public class ExcelToStream {
 	}
 
 	private void SheetToStream(Sheet sheet , File outFile) throws Exception {
+		System.out.print("["+outFile.getName()+"]---------LASTROW:");
 			/*设定excel 行数据的规则
 			 * 第一行：版本(兼容付总的)			实际对应的row 为 0
 			 * 第二行：参数   				实际对应的row 为 1
@@ -80,7 +75,7 @@ public class ExcelToStream {
 			 */
 		int rowNum = 0,columnNum = 0;
 		int lastRow = getSheetLastRow(sheet);
-		System.out.println("---------LASTROW:"+lastRow + "  数据行数:"+(lastRow-DATA_DEFINE_ROW));
+		System.out.println(lastRow + "  数据行数:"+(lastRow-DATA_DEFINE_ROW));
 			/*写二进制文件规则：参数-数据行数-数据   写流的时候 d要压缩*/
 
 		FileOutputStream outStream = null;
@@ -137,7 +132,7 @@ public class ExcelToStream {
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
 				if ("end".equals(sheet.getSheetName())) break;
-				
+
 				String sheetName = sheet.getSheetName();
 				if (sheetName.startsWith("_")) sheetName = sheetName.substring(1, sheetName.length());
 				String newFileName = fileNamePrefix + "_" + sheetName + ".xd";
