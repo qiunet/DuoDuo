@@ -3,6 +3,7 @@ package org.qiunet.utils.classScanner;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,11 +33,12 @@ public class ScannerAllClassFile {
 	 * @param basePath
 	 */
 	public void scannerFilePath(String basePath) {
-		this.basePath = basePath;
-		if (";".equals(File.pathSeparator) && basePath.startsWith("/")) {
-			this.basePath = basePath.substring(1, basePath.length());
+		try {
+			this.basePath = new File(basePath).toURI().toURL().getPath();
+			this.listAllFiles(this.basePath);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		}
-		this.listAllFiles(this.basePath);
 		this.loader = Thread.currentThread().getContextClassLoader();
 	}
 
@@ -44,12 +46,12 @@ public class ScannerAllClassFile {
 	 * 找到当前basePath的所有的class
 	 * @param path
 	 */
-	private void listAllFiles(String path){
+	private void listAllFiles(String path) throws MalformedURLException {
 		File file = new File(path);
 		if(file.isFile() && file.getName().endsWith(".class")){
-			String filePath = file.getPath();
+			String filePath = file.toURI().toURL().getPath();
 			int endIndex = filePath.lastIndexOf(".class");
-			allclass.add(filePath.substring(basePath.length(), endIndex).replace(File.separator, "."));
+			allclass.add(filePath.substring(basePath.length(), endIndex).replace("/", "."));
 		}else if(file.isDirectory()){
 			File[] files = file.listFiles();
 			for (File f : files) {
