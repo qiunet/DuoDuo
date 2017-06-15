@@ -2,10 +2,7 @@ package org.qiunet.data.async;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 异步更新的公用类
@@ -16,11 +13,11 @@ public class AsyncJobSupport {
 	private ExecutorService executor = new ThreadPoolExecutor(10, 50, 10, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(30));
 
 	private volatile static AsyncJobSupport instance;
-
+	
 	private AsyncJobSupport() {
 		instance = this;
 	}
-
+	
 	public static AsyncJobSupport getInstance() {
 		if (instance == null) {
 			synchronized (AsyncJobSupport.class) {
@@ -32,9 +29,9 @@ public class AsyncJobSupport {
 		}
 		return instance;
 	}
-
-	private List<AsyncNode> nodes = new ArrayList<>();
-
+	
+	private List<AsyncNode> nodes = new ArrayList<AsyncNode>();
+	
 	public void addNode(AsyncNode node) {
 		this.nodes.add(node);
 	}

@@ -1,5 +1,6 @@
 package org.qiunet.data.redis.base;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.qiunet.utils.data.StringData;
 import org.qiunet.utils.string.StringUtil;
@@ -44,6 +45,8 @@ public abstract class RedisCommand<T> {
 	protected Object[] params(){
 		return null;
 	}
+
+	protected Level getLogLevel() {return Level.INFO; }
 	/**
 	 * 返回结果
 	 * @return 通用返回结果
@@ -55,13 +58,13 @@ public abstract class RedisCommand<T> {
 			long startDt = System.currentTimeMillis();
 			T ret = expression(jedis, key);
 			long endDt = System.currentTimeMillis();
-			if (logger.isInfoEnabled()){
+			if (logger.isEnabledFor(getLogLevel())){
 				Object params [] = params();
 				StringBuilder sb = new StringBuilder();
 				sb.append("RedisCommand [").append(String.format("%-18s", cmdName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(key).append("] ");
 				if (params != null) sb.append("\t PARAMS ").append(Arrays.toString(params)).append("  ");
 				if (ret != null) sb.append("\t RESULT [").append(StringData.parseString(ret)).append("]");
-				logger.info(sb.toString());
+				logger.log(getLogLevel(), sb.toString());
 			}
 			return ret;
 		} catch (Exception e) {

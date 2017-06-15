@@ -13,9 +13,7 @@ public class UidEntityListDbInfo extends UidEntityDbInfo implements IEntityListD
 	public UidEntityListDbInfo(Object uid, int subId) {
 		super(uid);
 		this.subId = subId;
-				
-		int tmp = (getUid()/(DbProperties.getInstance().getDbMaxCount()));
-		this.tbIndex = tmp % DbProperties.getInstance().getPalyerDataTbDistributeCnt();
+		this.tbIndex = DbProperties.getInstance().getTbIndexByUid(getUid());
 	}
 	
 	@Override

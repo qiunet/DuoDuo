@@ -29,7 +29,7 @@ public class DbProperties extends LoaderProperties {
 		filePath = DbProperties.class.getResource("/").getPath() + "db.properties";
 	}
 
-	
+
 	private DbProperties() {
 		super(filePath);
 		instance = this;
@@ -39,14 +39,14 @@ public class DbProperties extends LoaderProperties {
 		if (instance == null)  new DbProperties();
 		return instance;
 	}
-	
+
 	@Override
 	protected void onReloadOver() {
 		this.db_max_count = getInt(KEY_DB_MAX_COUNT);
 		this.db_name_prefix = getString(KEY_DB_NAME_PREFIX);
 		this.db_size_per_instance = getInt(KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE);
 	}
-	
+
 	/**
 	 * 得到dbMaxCount
 	 * @return 最大db数
@@ -69,7 +69,7 @@ public class DbProperties extends LoaderProperties {
 		return db_size_per_instance;
 	}
 	/**
-	 * 得到玩家库的分表述 
+	 * 得到玩家库的分表述
 	 * @return 分几个表
 	 */
 	public int getPalyerDataTbDistributeCnt(){
@@ -98,10 +98,29 @@ public class DbProperties extends LoaderProperties {
 	 */
 	public List<Integer> getDbIndexList(){
 		if (dbIndexs == null ) {
-			List<Integer> dbIndexsTemp = new ArrayList<>(db_max_count);
+			List<Integer> dbIndexsTemp = new ArrayList<Integer>(db_max_count);
 			for (int i = 0  ; i < db_max_count; i++) dbIndexsTemp.add(i);
 			dbIndexs = Collections.unmodifiableList(dbIndexsTemp);
 		}
 		return dbIndexs;
+	}
+
+	/***
+	 * 得到dbIndex
+	 *
+	 * @param uid
+	 * @return
+	 */
+	public int getDbIndexByUid(int uid ){
+		return (uid % DbProperties.getInstance().getDbMaxCount());
+	}
+
+	/***
+	 * 得到tbIndex
+	 * @param uid
+	 * @return
+	 */
+	public int getTbIndexByUid(int uid ){
+		return (uid / DbProperties.getInstance().getDbMaxCount()) % PALYER_DATA_TB_DISTRIBUTE_CNT;
 	}
 }

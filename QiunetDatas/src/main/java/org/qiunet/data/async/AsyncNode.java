@@ -9,5 +9,5 @@ public interface AsyncNode {
 	/***
 	 * 更新到db
 	 */
-	public void updateRedisDataToDatabase();
+	public void updateRedisDataToDatabase ();
 }

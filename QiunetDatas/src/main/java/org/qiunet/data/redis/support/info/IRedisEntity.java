@@ -30,5 +30,5 @@ public interface IRedisEntity extends IEntityDbInfo{
 	 * 设置一个对象. 作为db操作时候的算法.
 	 * @param entityDbInfo 分库方法
 	 */
-	void setEntityDbInfo(IEntityDbInfo entityDbInfo);
+	void setEntityDbInfo(IEntityDbInfo entityDbInfo );
 }

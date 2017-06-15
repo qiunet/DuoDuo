@@ -19,9 +19,8 @@ public class RedisDataUtil extends AbstractRedisUtil {
 	public static RedisDataUtil getInstance() {
 		if (instance == null) {
 			JedisPoolConfig poolConfig = new JedisPoolConfig();
-			poolConfig.setMaxWaitMillis(1000);
-			poolConfig.setMaxTotal(50);
-			poolConfig.setMinIdle(10);
+			poolConfig.setMaxTotal(30);
+			poolConfig.setMinIdle(5);
 			JedisPool pool = new JedisPool(poolConfig,"127.0.0.1", 6389);
 			new RedisDataUtil(pool);
 		}

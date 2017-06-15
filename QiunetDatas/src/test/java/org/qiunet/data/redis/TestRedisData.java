@@ -22,6 +22,13 @@ public class TestRedisData {
 		RedisDataUtil.getInstance();
 	}
 	@Test
+	public void testTtl(){
+		RedisDataUtil.getInstance().setString("qiunet", "123", 40);
+		long ttl = RedisDataUtil.getInstance().ttl("qiunet");
+		Assert.assertTrue(ttl == 40);
+	}
+
+	@Test
 	public void testSetGetUidObject(){
 		String key = "pP#1000#a";
 		PlayerPo playerPo = new PlayerPo();
@@ -33,7 +40,7 @@ public class TestRedisData {
 		
 		PlayerPo playerPo1 = RedisDataUtil.getInstance().getObjectFromHash(key, PlayerPo.class);
 		Assert.assertTrue(playerPo1.getExp() == playerPo.getExp());
-
+		
 		PlayerCopyPo playerCopyPo = RedisDataUtil.getInstance().getObjectFromHash(key, PlayerCopyPo.class);
 		Assert.assertNull(playerCopyPo);
 		
@@ -41,7 +48,7 @@ public class TestRedisData {
 	@Test
 	public void testSetGetUidList(){
 		String key = "el#1000#a";
-		List<EquipPo> equipList = new ArrayList<>();
+		List<EquipPo> equipList = new ArrayList<EquipPo>();
 		for (int i = 0 ; i < 2; i++) {
 			EquipPo equipPo = new EquipPo();
 			equipPo.setExp(10 + i);
@@ -77,7 +84,7 @@ public class TestRedisData {
 		Assert.assertEquals("qiunet,1;qiunet1,0", friendPo1.getFriend_descs());
 		
 		friendPo.setFriend_descs("qiunet3");
-		Map<String, Object> updateMap = new HashMap<>();
+		Map<String, Object> updateMap = new HashMap<String, Object>();
 		updateMap.put(FriendPo.FIELD_FRIEND_DESCS, friendPo.getFriend_descs());
 		
 		RedisDataUtil.getInstance().setObjectToHash(key, friendPo);

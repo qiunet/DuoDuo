@@ -40,7 +40,7 @@ public class TestData {
 	@Test
 	public void testEntityData(){
 		FriendEntityInfo entityInfo = new FriendEntityInfo();
-		EntityDataSupport<FriendPo , FriendVo> dataSupport = new EntityDataSupport<>(entityInfo);
+		EntityDataSupport<FriendPo , FriendVo> dataSupport = new EntityDataSupport<FriendPo , FriendVo>(entityInfo);
 		
 		int uid = 10000;
 		FriendPo friendPo = new FriendPo();
@@ -70,7 +70,7 @@ public class TestData {
 	@Test
 	public void testPlatformEntityData(){
 		PlayerEntityInfo entityInfo = new PlayerEntityInfo();
-		PlatformEntityDataSupport<PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport<>(entityInfo);
+		PlatformEntityDataSupport<PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport<PlayerPo, PlayerVo>(entityInfo);
 		
 		int uid = 1101;
 		PlatformType platform = PlatformType.IOS;
@@ -197,7 +197,7 @@ public class TestData {
 	public void testLogin(){
 		String openid = "qiunet12345";
 		LoginEntityInfo entityInfo = new LoginEntityInfo();
-		EntityDataSupport<LoginPo, LoginPo> dataSupport = new EntityDataSupport<>(entityInfo);
+		EntityDataSupport<LoginPo, LoginPo> dataSupport = new EntityDataSupport<LoginPo, LoginPo>(entityInfo);
 		
 		LoginPo loginPo = new LoginPo();
 		loginPo.setOpenid(openid);
@@ -252,7 +252,7 @@ public class TestData {
 	@Test
 	public void testGlobalTable(){
 		GlobalTableEntityInfo entityInfo = new GlobalTableEntityInfo();
-		EntityDataSupport<GlobalTablePo, GlobalTablePo> dataSupport = new EntityDataSupport<>(entityInfo);
+		EntityDataSupport<GlobalTablePo, GlobalTablePo> dataSupport = new EntityDataSupport<GlobalTablePo, GlobalTablePo>(entityInfo);
 		
 		GlobalTablePo globalTablePo = new GlobalTablePo();
 		globalTablePo.setName("qiunet");

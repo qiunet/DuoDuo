@@ -18,11 +18,8 @@ public class UidPlatformEntityListDbInfo extends UidPlatformEntityDbInfo impleme
 	
 	public UidPlatformEntityListDbInfo(Object uid, PlatformType platformType, int subId) {
 		super(uid, platformType);
-		
 		this.subId = subId;
-		
-		int tmp = (getUid()/(DbProperties.getInstance().getDbMaxCount()));
-		this.tbIndex = tmp % DbProperties.getInstance().getPalyerDataTbDistributeCnt();
+		this.tbIndex = DbProperties.getInstance().getTbIndexByUid(getUid());
 	}
 	@Override
 	public int getTbIndex() {

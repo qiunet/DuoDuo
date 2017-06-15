@@ -37,7 +37,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		List<PO> poList = new ArrayList<>(1);
+		List<PO> poList = new ArrayList<PO>(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().setListToHash(key, poList);
 		
@@ -68,7 +68,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		}
 
 		if (insertRedis) {
-			List<PO> poList = new ArrayList<>(1);
+			List<PO> poList = new ArrayList<PO>(1);
 			poList.add(po);
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
@@ -95,7 +95,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		if (voMap != null) {
 			voMap.remove(po.getSubId());
 		}
-		List<PO> poList = new ArrayList<>(1);
+		List<PO> poList = new ArrayList<PO>(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().deleteList(key, poList);
 		
@@ -113,7 +113,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 		
-		voMap = new HashMap<>();
+		voMap = new HashMap<Integer, VO>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null) {
 			poList = ((IDbList)dbSupport).selectList(selectStatment, (IEntityListDbInfo) entityInfo.getEntityDbInfo(dbInfoKey, platform, 0));
