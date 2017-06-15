@@ -1,9 +1,8 @@
 package org.qiunet.utils.json;
 
-import com.alibaba.fastjson.JSON;
-
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 /**
  * json 工具类
  * @author qiunet

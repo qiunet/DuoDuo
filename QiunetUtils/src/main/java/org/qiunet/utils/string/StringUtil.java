@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 /**
  * 字符处理相关的工具类
  *
@@ -85,6 +84,7 @@ public class StringUtil {
 	/***
 	 * 字符串数组 转 基础数据类型数组
 	 * @param <T>
+	 * @param <K>
 	 * @param k
 	 * @param t
 	 * @return
@@ -202,6 +202,18 @@ public class StringUtil {
 		return s;
 	}
 
+	public static String getIntHexVal(int val){
+		return String.format("%08x", val).toUpperCase();
+	}
+
+	public static String getByteHexVal(byte val){
+		return String.format("%02x", val).toUpperCase();
+	}
+
+	public static String getShortHexVal(short val){
+		return String.format("%04x", val).toUpperCase();
+	}
+
 	private static final String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/**
@@ -215,17 +227,5 @@ public class StringUtil {
 			sb.append(chars.charAt(MathUtil.random(chars.length())));
 		}
 		return sb.toString();
-	}
-
-	public static String getIntHexVal(int val){
-		return String.format("%08x", val).toUpperCase();
-	}
-
-	public static String getByteHexVal(byte val){
-		return String.format("%02x", val).toUpperCase();
-	}
-
-	public static String getShortHexVal(short val){
-		return String.format("%04x", val).toUpperCase();
 	}
 }

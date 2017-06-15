@@ -1,7 +1,6 @@
 package org.qiunet.utils.enums;
 
 import java.nio.charset.Charset;
-
 /**
  * 字符编码集 一般utf-8 就行了
  * @author qiunet

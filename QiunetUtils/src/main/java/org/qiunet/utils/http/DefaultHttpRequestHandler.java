@@ -1,5 +1,13 @@
 package org.qiunet.utils.http;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -9,14 +17,6 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.qiunet.utils.enums.CharsetEnum;
 import org.qiunet.utils.json.JsonUtil;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	private static final Logger logger = Logger.getLogger(DefaultHttpRequestHandler.class);

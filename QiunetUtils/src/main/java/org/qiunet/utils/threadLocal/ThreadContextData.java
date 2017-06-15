@@ -2,7 +2,7 @@ package org.qiunet.utils.threadLocal;
 
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.concurrent.atomic.AtomicLong;
 /***
  * 利用线程变量存储些东西
  * @author qiunet

@@ -1,5 +1,7 @@
 package org.qiunet.utils.classScanner;
 
+import java.lang.annotation.Annotation;
+
 /**
  * @author qiunet
  *         Created on 17/1/23 18:37.

@@ -1,11 +1,11 @@
 package org.qiunet.utils.http;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.qiunet.utils.enums.CharsetEnum;
-
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 /**
  * 对数据的处理

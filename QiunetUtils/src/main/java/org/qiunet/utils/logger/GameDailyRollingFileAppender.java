@@ -2,6 +2,7 @@ package org.qiunet.utils.logger;
 
 import org.apache.log4j.DailyRollingFileAppender;
 import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 import org.qiunet.utils.logger.base.GameFileOutPutStream;

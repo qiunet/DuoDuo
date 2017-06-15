@@ -1,7 +1,10 @@
 package org.qiunet.utils.data;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * 实现的一个Properties map 的封装类

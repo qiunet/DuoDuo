@@ -1,8 +1,5 @@
 package org.qiunet.utils.data;
 
-import org.apache.log4j.Logger;
-import org.qiunet.utils.date.DateUtil;
-
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,6 +7,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.log4j.Logger;
+import org.qiunet.utils.date.DateUtil;
 
 /**
  * 把一个类的所有字段拼串. {} 为对象.  [] 数组

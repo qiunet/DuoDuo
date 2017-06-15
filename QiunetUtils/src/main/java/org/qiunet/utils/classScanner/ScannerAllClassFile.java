@@ -15,13 +15,13 @@ import java.util.List;
 public class ScannerAllClassFile {
 	/**默认路径*/
 	private String basePath;
-
+	
 	private List<String> allclass = new LinkedList<>();
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();
-
+	
 	private ClassLoader loader;
-
+	
 	/***
 	 * 使用默认加载器
 	 */
@@ -59,7 +59,7 @@ public class ScannerAllClassFile {
 			}
 		}
 	}
-
+	
 	/**
 	 * 添加扫描处理
 	 * @param handler
@@ -72,7 +72,7 @@ public class ScannerAllClassFile {
 	 */
 	public void scanner() throws ClassNotFoundException {
 		if (scannerHanderList.isEmpty()) return;
-
+		
 		for (String clazz : allclass) {
 			Class c = loader.loadClass(clazz);
 			for (IScannerHandler handler : scannerHanderList) {

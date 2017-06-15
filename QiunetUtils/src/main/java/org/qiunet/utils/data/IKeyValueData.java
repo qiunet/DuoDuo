@@ -23,7 +23,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal 如果没有返回的默认值
 	 * @return
 	 */
-	public String getString(K key, String defaultVal);
+	public String getString(K key,String defaultVal);
 
 	/**
 	 * 返回key的值
@@ -38,7 +38,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public short getShort(K key, int defaultVal);
+	public short getShort(K key,int defaultVal);
 
 	/**
 	 * 返回short
@@ -52,7 +52,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public int getInt(K key, int defaultVal);
+	public int getInt(K key,int defaultVal);
 	/**
 	 * 获得int数据配置
 	 * @param key
@@ -65,7 +65,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public byte getByte(K key, int defaultVal);
+	public byte getByte(K key,int defaultVal);
 	/**
 	 * 获得byte数据配置
 	 * @param key
@@ -78,7 +78,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public float getFloat(K key, float defaultVal);
+	public float getFloat(K key,float defaultVal);
 	/**
 	 * 获得float数据配置
 	 * @param key
@@ -91,7 +91,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public long getLong(K key, long defaultVal);
+	public long getLong(K key,long defaultVal);
 	/**
 	 * 获得long数据配置
 	 * @param key
@@ -104,7 +104,7 @@ public interface IKeyValueData<K, V> {
 	 * @param defaultVal
 	 * @return
 	 */
-	public double getDouble(K key, double defaultVal);
+	public double getDouble(K key,double defaultVal);
 	/**
 	 * 获得double数据配置
 	 * @param key

@@ -1,9 +1,9 @@
 package org.qiunet.utils.nonSyncQuene.mutiThread;
 
-import org.apache.log4j.Logger;
-
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
+
+import org.apache.log4j.Logger;
 
 public class DefaultExecutorRejectHandler implements RejectedExecutionHandler {
 	private Logger logger = Logger.getLogger(DefaultExecutorRejectHandler.class);

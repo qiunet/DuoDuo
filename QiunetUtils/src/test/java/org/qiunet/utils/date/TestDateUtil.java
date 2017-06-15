@@ -57,13 +57,4 @@ public class TestDateUtil  extends BaseTest{
 			e.printStackTrace();
 		}
 	}
-	@Test
-	public void testSameDay() throws ParseException {
-		Date d1 = DateUtil.stringToDate("2017-05-24 07:22:22");
-		Date d2 = DateUtil.stringToDate("2017-05-23 23:59:22");
-		Date d3 = DateUtil.stringToDate("2017-05-24 12:22:22");
-
-		Assert.assertTrue(! DateUtil.isSameDay(d1, d2));
-		Assert.assertTrue(DateUtil.isSameDay(d1, d3));
-	}
 }

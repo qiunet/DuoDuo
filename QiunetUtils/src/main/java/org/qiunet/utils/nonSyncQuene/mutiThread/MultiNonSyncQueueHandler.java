@@ -1,12 +1,12 @@
 package org.qiunet.utils.nonSyncQuene.mutiThread;
 
-import org.apache.log4j.Logger;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 
 /**
  * 多线程异步执行队列

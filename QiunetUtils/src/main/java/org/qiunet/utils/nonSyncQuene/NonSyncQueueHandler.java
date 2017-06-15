@@ -1,9 +1,9 @@
 package org.qiunet.utils.nonSyncQuene;
 
+import java.util.concurrent.LinkedTransferQueue;
+
 import org.apache.log4j.Logger;
 import org.qiunet.utils.math.MathUtil;
-
-import java.util.concurrent.LinkedTransferQueue;
 
 /**
  * 异步队列处理

@@ -7,7 +7,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 其它可以通用逻辑的工具类
@@ -113,21 +112,19 @@ public class CommonUtil {
 		Class<?> clazz = object.getClass();
 		Class originClass = clazz;
 		if (!fieldsCache.containsKey(originClass)) {
-			synchronized (clazz){
-				Field[] rt=null;
-				for(;clazz!=Object.class;clazz=clazz.getSuperclass()){
-					Field[] tmp = clazz.getDeclaredFields();
-					rt = combine(rt, tmp);
-				}
-				Map<String, Field> fieldMap = new HashMap<>();
-				for (Field f : rt)  {
-					if (Modifier.isFinal(f.getModifiers()) ) continue;
-
-					fieldMap.put(f.getName(), f);
-				}
-
-				fieldsCache.put(originClass, fieldMap);
+			Field[] rt=null;
+			for(;clazz!=Object.class;clazz=clazz.getSuperclass()){
+				Field[] tmp = clazz.getDeclaredFields();
+				rt = combine(rt, tmp);
 			}
+			Map<String, Field> fieldMap = new HashMap<>();
+			for (Field f : rt)  {
+				if (Modifier.isFinal(f.getModifiers()) ) continue;
+				
+				fieldMap.put(f.getName(), f);
+			}
+			
+			fieldsCache.put(originClass, fieldMap);
 		}
 		return fieldsCache.get(originClass).get(fieldName);
 	}
@@ -149,7 +146,9 @@ public class CommonUtil {
 	 */
 	private static String getFieldsValueStr(Object obj,Field field) throws IllegalAccessException {
 		Object o = field.get(obj);
-		
+
+		if (o == null && field.getType() == String.class) o = "";
+
 		if(o == null) throw new NullPointerException(field.getName() +" mapping fields is null~");
 		
 		if(o instanceof Date) return DateUtil.dateToString((Date)o);

@@ -29,7 +29,7 @@ public class MathUtil {
 		}else if(end-start==0){
 			return start;
 		}
-		if(randomType== RandomType.B){
+		if(randomType==RandomType.B){
 			end++;
 		}
 		int rt = start+random.nextInt(end-start);

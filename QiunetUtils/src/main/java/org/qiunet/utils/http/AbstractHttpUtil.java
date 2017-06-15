@@ -1,5 +1,7 @@
 package org.qiunet.utils.http;
 
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -12,8 +14,6 @@ import org.qiunet.utils.enums.HttpMethodEnums;
 import org.qiunet.utils.exceptions.HttpMethodNotSupportException;
 import org.qiunet.utils.exceptions.UrlEmptyException;
 import org.qiunet.utils.string.StringUtil;
-
-import java.util.Map;
 
 /**
  * 需要子类指定 httpClient pool的配置信息等

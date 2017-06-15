@@ -1,14 +1,14 @@
 package org.qiunet.utils.date;
 
-import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.string.StringUtil;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.qiunet.utils.common.CommonUtil;
+import org.qiunet.utils.string.StringUtil;
 
 /**
  * 时间date相关的工具类
@@ -148,6 +148,7 @@ public final class DateUtil {
 	}
 	/**
 	 * 时间的格式验证
+	 * @param quartzs
 	 * @param dt
 	 * @return
 	 */
@@ -325,6 +326,19 @@ public final class DateUtil {
 	 */
 	public static Date getSecondAfter(Date date,int second){
 		return getDate(date, TYPE_SECOND, ACTION_AFTER, second);
+	}
+
+	/**
+	 *获取两个日期相差的秒数
+	 * @return
+     */
+	public static Long getDiffSecond(Date endDate){
+		Date current = new Date();
+		return getDiffSecond(current, endDate);
+	}
+
+	public static Long getDiffSecond(Date beginDate, Date endDate){
+		return (endDate.getTime() - beginDate.getTime())/1000;
 	}
 
 	/***
