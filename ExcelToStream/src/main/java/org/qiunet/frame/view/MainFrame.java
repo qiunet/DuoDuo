@@ -158,7 +158,7 @@ public class MainFrame extends BaseJFrame {
 	 */
 	private void loadFileTree () {
 		String workPath = FileUtil.returnPathFromProjectFile(getFileName());
-		if (workPath == null || workPath.length() == 0) return;
+		if (workPath == null || workPath.length() == 0 || !new File(workPath).exists()) return;
 
 		File workPathFile = new File(workPath);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileNode(workPathFile));
