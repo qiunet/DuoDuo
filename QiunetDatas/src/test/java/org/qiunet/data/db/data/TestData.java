@@ -7,6 +7,7 @@ import org.qiunet.data.core.support.EntityDataSupport;
 import org.qiunet.data.core.support.EntityListDataSupport;
 import org.qiunet.data.core.support.PlatformEntityDataSupport;
 import org.qiunet.data.core.support.PlatformEntityListDataSupport;
+import org.qiunet.data.core.support.update.UpdateFields;
 import org.qiunet.data.db.data.equip.EquipEntityInfo;
 import org.qiunet.data.db.data.equip.EquipVo;
 import org.qiunet.data.db.data.friend.FriendEntityInfo;
@@ -36,12 +37,12 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:bean/applicationContext*"})
 public class TestData {
-	
+
 	@Test
 	public void testEntityData(){
 		FriendEntityInfo entityInfo = new FriendEntityInfo();
 		EntityDataSupport<FriendPo , FriendVo> dataSupport = new EntityDataSupport<FriendPo , FriendVo>(entityInfo);
-		
+
 		int uid = 10000;
 		FriendPo friendPo = new FriendPo();
 		friendPo.setFriend_descs("qiuyang");
@@ -49,29 +50,29 @@ public class TestData {
 		int ret = dataSupport.insertPo(friendPo);
 		Assert.assertTrue(ret == 1);
 		ThreadContextData.removeAll();
-		
+
 		FriendVo friendVo = dataSupport.getVo(uid);
 		Assert.assertTrue(friendVo != null && friendVo.getFriendPo().getFriend_descs().equals("qiuyang"));
-		
+
 		friendVo.getFriendPo().setFriend_descs("desc");
 		dataSupport.updatePo(friendVo.getFriendPo());
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
-		
+
 		friendVo = dataSupport.getVo(uid);
 		Assert.assertTrue(friendVo != null && friendVo.getFriendPo().getFriend_descs().equals("desc"));
-		
+
 		dataSupport.deletePo(friendPo);
-		
+
 		friendVo = dataSupport.getVo(uid);
 		Assert.assertNull(friendVo);
 	}
-	
+
 	@Test
 	public void testPlatformEntityData(){
 		PlayerEntityInfo entityInfo = new PlayerEntityInfo();
 		PlatformEntityDataSupport<PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport<PlayerPo, PlayerVo>(entityInfo);
-		
+
 		int uid = 1101;
 		PlatformType platform = PlatformType.IOS;
 		PlayerPo playerPo = new PlayerPo();
@@ -82,7 +83,7 @@ public class TestData {
 		int ret = dataSupport.insertPo(playerPo);
 		Assert.assertTrue(ret == 1);
 		ThreadContextData.removeAll();
-		
+
 		PlayerVo playerVo = dataSupport.getVo(uid, platform);
 		playerPo = playerVo.getPlayerPo();
 		Assert.assertTrue(playerVo != null && playerVo.getPlayerPo().getExp() == 100);
@@ -90,20 +91,20 @@ public class TestData {
 		dataSupport.updatePo(playerPo);
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
-		
+
 		playerVo = dataSupport.getVo(uid, platform);
 		Assert.assertTrue(playerVo != null && playerVo.getPlayerPo().getExp() == 1000);
-		
+
 		dataSupport.deletePo(playerVo.getPlayerPo());
 		playerVo = dataSupport.getVo(uid, platform);
 		Assert.assertNull(playerVo);
 	}
-	
+
 	@Test
 	public void testEntityListData(){
 		SysmsgEntityInfo entityListInfo = new SysmsgEntityInfo();
 		EntityListDataSupport dataSupport = new EntityListDataSupport(entityListInfo);
-		
+
 		int uid = 2000;
 		SysmsgPo sysMsgPo1 = new SysmsgPo();
 		sysMsgPo1.setUid(uid);
@@ -111,44 +112,44 @@ public class TestData {
 		sysMsgPo1.setParam("param1");
 		int ret = dataSupport.insertPo(sysMsgPo1);
 		Assert.assertTrue(ret == 1);
-		
+
 		SysmsgPo sysMsgPo2 = new SysmsgPo();
 		sysMsgPo2.setUid(uid);
 		sysMsgPo2.setMsg("msg2");
 		sysMsgPo2.setParam("param2");
 		ret = dataSupport.insertPo(sysMsgPo2);
 		Assert.assertTrue(ret == 1);
-		
+
 		Map<Integer, SysmsgVo> map = dataSupport.getVoMap(uid);
 		Assert.assertTrue(map != null && map.size() == 2);
-		
+
 		for (SysmsgVo vo : map.values()) {
 			vo.getSysMsgPo().setParam("param");
 			dataSupport.updatePo(vo.getSysMsgPo());
 		}
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
-		
+
 		map = dataSupport.getVoMap(uid);
 		Iterator<Map.Entry<Integer,SysmsgVo>> it = map.entrySet().iterator();
 		while(it.hasNext()){
 			SysmsgVo vo = it.next().getValue();
 			Assert.assertEquals("param", vo.getSysMsgPo().getParam());
 			it.remove();
-			
-			dataSupport.deletePo(vo.getSysMsgPo());	
+
+			dataSupport.deletePo(vo.getSysMsgPo());
 		}
-		
+
 		ThreadContextData.removeAll();
 		map = dataSupport.getVoMap(uid);
 		Assert.assertTrue(map == null || map.isEmpty());
 	}
-	
+
 	@Test
 	public void testPlatformEntityListData(){
 		int uid = 10001;
 		PlatformType platformType = PlatformType.ANDROID;
-		
+
 		EquipEntityInfo equipEntityInfo = new EquipEntityInfo();
 		PlatformEntityListDataSupport<EquipPo, EquipVo> dataSupport = new PlatformEntityListDataSupport(equipEntityInfo);
 		EquipPo equipPo1 = new EquipPo();
@@ -158,7 +159,7 @@ public class TestData {
 		equipPo1.setExp(100);
 		equipPo1.setLevel(10);
 		int ret1 = dataSupport.insertPo(equipPo1);
-		
+
 		ThreadContextData.removeAll();
 		EquipPo equipPo2 = new EquipPo();
 		equipPo2.setPlatform(platformType);
@@ -168,27 +169,27 @@ public class TestData {
 		equipPo2.setLevel(20);
 		int ret2 = dataSupport.insertPo(equipPo2);
 		Assert.assertTrue(ret2 == 1);
-		
+
 		Map<Integer, EquipVo> map = dataSupport.getVoMap(uid, platformType);
 		Assert.assertTrue(map != null && map.size() == 2);
-		
+
 		for (EquipVo vo : map.values()) {
 			vo.getEquipPo().setExp(vo.getEquipPo().getExp() + 1);
 			dataSupport.updatePo(vo.getEquipPo());
 		}
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
-		
+
 		map = dataSupport.getVoMap(uid, platformType);
 		Iterator<Map.Entry<Integer,EquipVo>> it = map.entrySet().iterator();
 		while(it.hasNext()){
 			EquipVo vo = it.next().getValue();
 			Assert.assertTrue(vo.getEquipPo().getExp() == 101 || vo.getEquipPo().getExp() == 201);
 			it.remove();
-			
+
 			dataSupport.deletePo(vo.getEquipPo());
 		}
-		
+
 		ThreadContextData.removeAll();
 		map = dataSupport.getVoMap(uid, platformType);
 		Assert.assertTrue(map == null || map.isEmpty());
@@ -198,25 +199,25 @@ public class TestData {
 		String openid = "qiunet12345";
 		LoginEntityInfo entityInfo = new LoginEntityInfo();
 		EntityDataSupport<LoginPo, LoginPo> dataSupport = new EntityDataSupport<LoginPo, LoginPo>(entityInfo);
-		
+
 		LoginPo loginPo = new LoginPo();
 		loginPo.setOpenid(openid);
 		loginPo.setUid(1000);
 		loginPo.setToken("qiuyang");
 		dataSupport.insertPo(loginPo);
-		
+
 		LoginPo loginPo1 = dataSupport.getVo(openid);
 		Assert.assertNotNull(loginPo1);
 		Assert.assertTrue(loginPo1.getUid() == 1000 && "qiuyang".equals(loginPo1.getToken()));
-		
+
 		loginPo1.setToken("qiuyang1");
 		dataSupport.updatePo(loginPo1);
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
-		
+
 		LoginPo loginPo2 = dataSupport.getVo(openid);
 		Assert.assertTrue(loginPo2.getUid() == 1000 && "qiuyang1".equals(loginPo2.getToken()));
-		
+
 		dataSupport.deletePo(loginPo2);
 		LoginPo loginPo3 = dataSupport.getVo(openid);
 		Assert.assertNull(loginPo3);
@@ -225,7 +226,7 @@ public class TestData {
 	public void testQunxiu(){
 		QunxiuEntityInfo entityInfo = new QunxiuEntityInfo();
 		EntityDataSupport<QunxiuPo, QunxiuPo> dataSupport = new EntityDataSupport(entityInfo);
-		
+
 		QunxiuPo qunxiuPo = new QunxiuPo();
 		qunxiuPo.setLevel(10);
 		qunxiuPo.setName("生死门");
@@ -241,11 +242,23 @@ public class TestData {
 		dataSupport.updatePo(qunxiuPo);
 		dataSupport.updateRedisDataToDatabase();
 		dataSupport.expireCache(qunxiuPo.getId());
-		
+
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 20 && qunxiuPo.getMaster() == 1200);
-		dataSupport.deletePo(qunxiuPo);
 
+		ThreadContextData.removeAll();
+
+		qunxiuPo.setName("temp");
+		qunxiuPo.setLevel(10);
+		dataSupport.updateWithFields(qunxiuPo, UpdateFields.newBuild().append(QunxiuPo.FIELD_LEVEL));
+
+		ThreadContextData.removeAll();
+
+		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
+		Assert.assertTrue(qunxiuPo.getLevel() == 10 && ! "temp".equals(qunxiuPo.getName()));
+		dataSupport.expireCache(qunxiuPo.getId());
+
+		dataSupport.deletePo(qunxiuPo);
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertNull(qunxiuPo);
 	}
@@ -253,15 +266,15 @@ public class TestData {
 	public void testGlobalTable(){
 		GlobalTableEntityInfo entityInfo = new GlobalTableEntityInfo();
 		EntityDataSupport<GlobalTablePo, GlobalTablePo> dataSupport = new EntityDataSupport<GlobalTablePo, GlobalTablePo>(entityInfo);
-		
+
 		GlobalTablePo globalTablePo = new GlobalTablePo();
 		globalTablePo.setName("qiunet");
 		int ret = dataSupport.insertPo(globalTablePo);
 		Assert.assertTrue(ret == 1);
 		int id = globalTablePo.getId();
-		
+
 		dataSupport.expireCache(globalTablePo.getId());
-		
+
 		globalTablePo = dataSupport.getVo(id);
 		Assert.assertEquals("qiunet", globalTablePo.getName());
 		globalTablePo.setName("qiuyang");

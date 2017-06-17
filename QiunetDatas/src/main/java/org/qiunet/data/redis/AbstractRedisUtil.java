@@ -70,6 +70,32 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 	/**
+	 * 将对象保存到hash中,并且设置生命周期
+	 * @param key redis的key
+	 * @param po redisEntity对象
+	 * @param fields 需要保存的字段
+	 */
+	public void setObjectToHash(String key, final IRedisEntity po, final String ...fields){
+		new RedisCommand<Object>(jedisPool, key) {
+			@Override
+			protected Object expression(Jedis jedis, String key) throws Exception {
+				Map<String, String> map = CommonUtil.getMap(po, fields);
+				jedis.hmset(key, map);
+				jedis.expire(key, NORMAL_LIFECYCLE);
+				return null;
+			}
+			@Override
+			protected String cmdName() {
+				return "setObjectToHash";
+			}
+
+			@Override
+			protected Object[] params() {
+				return fields;
+			}
+		}.execAndReturn();
+	}
+	/**
 	 * 通过反射从缓存里获取一个对象 缺省默认时间，默认的key是有uid这个字段拼接而成
 	 * @param key redis的key
 	 * @param clazz 泛型的对象的class
