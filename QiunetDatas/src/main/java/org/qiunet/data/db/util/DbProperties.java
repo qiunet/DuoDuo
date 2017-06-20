@@ -112,7 +112,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getDbIndexByUid(int uid ){
-		return (uid % DbProperties.getInstance().getDbMaxCount());
+		return getDbIndexById(uid);
 	}
 
 	/***
@@ -121,6 +121,25 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getTbIndexByUid(int uid ){
-		return (uid / DbProperties.getInstance().getDbMaxCount()) % PALYER_DATA_TB_DISTRIBUTE_CNT;
+		return getTbIndexById(uid);
+	}
+
+	/***
+	 * 得到dbIndex
+	 *
+	 * @param id
+	 * @return
+	 */
+	public int getDbIndexById(int id ){
+		return (id % DbProperties.getInstance().getDbMaxCount());
+	}
+
+	/***
+	 * 得到tbIndex
+	 * @param id
+	 * @return
+	 */
+	public int getTbIndexById(int id ){
+		return (id / DbProperties.getInstance().getDbMaxCount()) % PALYER_DATA_TB_DISTRIBUTE_CNT;
 	}
 }

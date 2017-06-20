@@ -14,7 +14,7 @@ public class UidEntityDbInfo implements IEntityDbInfo {
 	private int dbIndex;
 	public UidEntityDbInfo( Object uid) {
 		this.uid = (Integer)uid;
-		this.dbIndex = (this.uid % DbProperties.getInstance().getDbMaxCount());
+		this.dbIndex = DbProperties.getInstance().getDbIndexByUid(this.uid);
 	}
 	public int getUid(){
 		return uid;
