@@ -8,6 +8,7 @@ import org.qiunet.utils.FileUtil;
 import java.awt.BorderLayout;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -269,8 +270,10 @@ public class MainFrame extends BaseJFrame {
 	public static final class MenuAction implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser jFileChooser = new JFileChooser();
-			jFileChooser.setDialogTitle("请选择你的Excel目录");
+			jFileChooser.setDialogTitle("请选择你的Excel配置文件夹");
+			jFileChooser.setApproveButtonText("选定文件夹");
 			jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
 			if (jFileChooser.showOpenDialog(JframeManager.getInstance().getJframe(MainFrame.class)) == JFileChooser.APPROVE_OPTION){
 				System.out.println(jFileChooser.getSelectedFile().getAbsolutePath());
 				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile().getAbsolutePath(), getFileName());
