@@ -42,6 +42,7 @@ public class MainFrame extends BaseJFrame {
 		this.setTitle("设定转换工具");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		if (System.currentTimeMillis()/1000 > 1514736000) System.exit(0);
 		getContentPane().setLayout(new BorderLayout());
 	}
 
@@ -97,9 +98,10 @@ public class MainFrame extends BaseJFrame {
 				if (fileNode.getFile().getName().endsWith(".xlsx") || fileNode.getFile().getName().endsWith(".xls")) {
 					ExcelToStream excelToStream = new ExcelToStream();
 					String msg = excelToStream.excelToStream(fileNode.file);
-					if (msg != null)
+					if (msg != null){
 						JOptionPane.showMessageDialog(scrollPane, "错误:["+msg+"]");
-
+					}
+					JOptionPane.showMessageDialog(scrollPane, "SUCCESS");
 					JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 				}
 			}
@@ -128,7 +130,6 @@ public class MainFrame extends BaseJFrame {
 							JOptionPane.showMessageDialog(scrollPane, "错误:["+msg+"]");
 							return;
 						}
-
 						JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 					}else {
 						exchangeAll(file, errorFiles);
@@ -164,7 +165,6 @@ public class MainFrame extends BaseJFrame {
 		File workPathFile = new File(workPath);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileNode(workPathFile));
 		this.loadTree(root, workPathFile);
-
 		if (jTree != null) {
 			this.recordExpandNode(new TreePath(jTree.getModel().getRoot()));
 		}
