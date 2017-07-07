@@ -17,5 +17,11 @@ public @interface RequestHandler {
 	 * request Command Id
 	 * @return
 	 */
-	short ID();
+	int ID();
+
+	/***
+	 * 描述
+	 * @return
+	 */
+	String desc();
 }

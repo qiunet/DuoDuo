@@ -13,10 +13,10 @@ import org.qiunet.handler.response.IResponse;
  */
 public abstract class BaseTcpUdpHandler<RequestData extends AbstractRequestData> implements ITcpUdpHandler<RequestData> {
 	protected Logger logger = Logger.getLogger(getClass());
-	
-	private short requestId;
+
+	private int requestId;
 	@Override
-	public short getRequestID() {
+	public int getRequestID() {
 		return requestId;
 	}
 
@@ -64,5 +64,5 @@ public abstract class BaseTcpUdpHandler<RequestData extends AbstractRequestData>
 		public void response(AbstractResponseData responseData) {
 			this.response.response(responseData);
 		}
-	} 
+	}
 }

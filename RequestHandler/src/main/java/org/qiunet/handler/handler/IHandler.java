@@ -20,7 +20,7 @@ public interface IHandler<RequestData extends AbstractRequestData> {
 	 * 得到 RequestID
 	 * @return
 	 */
-	public short getRequestID();
+	public int getRequestID();
 	/**
 	 * 是否是正式action. 如果false的话. 不允许生产环境调用action
 	 * @return

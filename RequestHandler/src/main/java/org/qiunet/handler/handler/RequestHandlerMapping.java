@@ -17,7 +17,7 @@ import java.util.Objects;
 public class RequestHandlerMapping {
 	private volatile static RequestHandlerMapping instance;
 	/**所有的 handler*/
-	private Map<Short, IHandler> handlers = new HashMap<>();
+	private Map<Integer, IHandler> handlers = new HashMap<>();
 
 	private RequestHandlerMapping() {
 		synchronized (RequestHandlerMapping.class) {
@@ -27,7 +27,7 @@ public class RequestHandlerMapping {
 			instance = this;
 		}
 	}
-	
+
 	public static RequestHandlerMapping getInstance() {
 		if (instance == null) {
 			synchronized (RequestHandlerMapping.class) {
@@ -45,11 +45,11 @@ public class RequestHandlerMapping {
 	 * @param requestId
 	 * @param handler
 	 */
-	public void addHandler(short requestId, IHandler handler) {
+	public void addHandler(int requestId, IHandler handler) {
 		try {
 			Field field = getRequestIdField(handler);
 			field.setAccessible(true);
-			field.setShort(handler, requestId);
+			field.setInt(handler, requestId);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
@@ -58,7 +58,7 @@ public class RequestHandlerMapping {
 
 	/**
 	 * 找到 Handler 的requestId field
-	 * 
+	 *
 	 * @param handler
 	 * @return
 	 */
@@ -80,7 +80,7 @@ public class RequestHandlerMapping {
 	 * @param requestId
 	 * @return
 	 */
-	public IHandler getHandler(short requestId) {
+	public IHandler getHandler(int requestId) {
 		return handlers.get(requestId);
 	}
 }
