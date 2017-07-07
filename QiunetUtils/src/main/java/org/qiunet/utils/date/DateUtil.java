@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.string.StringUtil;
 
@@ -199,133 +200,63 @@ public final class DateUtil {
 		String quartzTimes [] = quartzStr.split(" +");
 		return anyCheckDate(quartzTimes, dt);
 	}
-	/** 之后*/
-	private static final int ACTION_AFTER=0;
-	/** 之前*/
-	private static final int ACTION_BEFORE=1;
-	/** 天*/
-	private static final int TYPE_DAY=0;
-	/** 小时*/
-	private static final int TYPE_HOUR=1;
-	/** 分钟*/
-	private static final int TYPE_MINUTE=2;
-	/** 秒*/
-	private static final int TYPE_SECOND=3;
+
 	/**
-	 * 获取 count(10) type(分钟 小时 天 秒) action(之后 之前) 的日期
-	 * @param date
-	 * @param type
-	 * @param action
-	 * @param count
+	 * 指定时间 加减 天数
+	 * @param dt 时间
+	 * @param days 天数
 	 * @return
 	 */
-	private static Date getDate(Date date,int type,int action,int count){
-		Calendar now = Calendar.getInstance();
-		now.setTime(date);
-		count=Math.abs(count);
-		switch(type){
-		case TYPE_DAY:
-			if(action==ACTION_AFTER){
-				now.set(Calendar.DATE, now.get(Calendar.DATE) + count);
-			}else if(action==ACTION_BEFORE){
-				now.set(Calendar.DATE, now.get(Calendar.DATE) - count);
-			}
-			break;
-		case TYPE_HOUR:
-			if(action==ACTION_AFTER){
-				now.set(Calendar.HOUR, now.get(Calendar.HOUR) + count);
-			}else if(action==ACTION_BEFORE){
-				now.set(Calendar.HOUR, now.get(Calendar.HOUR) - count);
-			}
-			break;
-		case TYPE_MINUTE:
-			if(action==ACTION_AFTER){
-				now.set(Calendar.MINUTE, now.get(Calendar.MINUTE) + count);
-			}else if(action==ACTION_BEFORE){
-				now.set(Calendar.MINUTE, now.get(Calendar.MINUTE) - count);
-			}
-			break;
-		case TYPE_SECOND:
-			if(action==ACTION_AFTER){
-				now.set(Calendar.SECOND, now.get(Calendar.SECOND) + count);
-			}else if(action==ACTION_BEFORE){
-				now.set(Calendar.SECOND, now.get(Calendar.SECOND) - count);
-			}
-			break;
-		}
-		return now.getTime();
+	public static Date addDays(Date dt, int days) {
+		return DateUtils.addDays(dt, days);
 	}
-	/**
-	 * 得到某天前几天日期
-	 * @param date
-	 * @param day
+
+	/***
+	 * 指定时间  加减 小时数
+	 * @param dt
+	 * @param hours
 	 * @return
 	 */
-	public static Date getDateBefore(Date date,int day){
-		return getDate(date, TYPE_DAY, ACTION_BEFORE, day);
+	public static Date addHours(Date dt, int hours) {
+		return DateUtils.addHours(dt, hours);
 	}
-	/**
-	 * 得到某天后几天日期
-	 * @param date
-	 * @param day
+
+	/***
+	 * 指定时间  加减 分钟数
+	 * @param dt
+	 * @param minutes
 	 * @return
 	 */
-	public static Date getDateAfter(Date date,int day){
-		return getDate(date, TYPE_DAY, ACTION_AFTER, day);
+	public static Date addMinutes(Date dt, int minutes) {
+		return DateUtils.addMinutes(dt, minutes);
 	}
-	/**
-	 * 得到某天多少小时前的日期
-	 * @param date
-	 * @param hour
+
+	/***
+	 * 指定时间  加减 月
+	 * @param dt
+	 * @param mouths
 	 * @return
 	 */
-	public static Date getHourBefore(Date date,int hour){
-		return getDate(date, TYPE_HOUR, ACTION_BEFORE, hour);
+	public static Date addMonths(Date dt, int mouths) {
+		return DateUtils.addMonths(dt, mouths);
 	}
-	/**
-	 * 得到某天多少小时后的日期
-	 * @param date
-	 * @param hour
+	/***
+	 * 指定时间  加减 秒
+	 * @param dt
+	 * @param seconds
 	 * @return
 	 */
-	public static Date getHourAfter(Date date,int hour){
-		return getDate(date, TYPE_HOUR, ACTION_AFTER, hour);
+	public static Date addSeconds(Date dt, int seconds) {
+		return DateUtils.addSeconds(dt, seconds);
 	}
-	/**
-	 * 得到某天多少分钟后的日期
-	 * @param date
-	 * @param minute
+	/***
+	 * 指定时间  加减 毫秒
+	 * @param dt
+	 * @param milliSeconds
 	 * @return
 	 */
-	public static Date getMinuteAfter(Date date,int minute){
-		return getDate(date, TYPE_MINUTE, ACTION_AFTER, minute);
-	}
-	/**
-	 * 得到某天多少分钟前的日期
-	 * @param date
-	 * @param minute
-	 * @return
-	 */
-	public static Date getMinuteBefore(Date date,int minute){
-		return getDate(date, TYPE_MINUTE, ACTION_BEFORE, minute);
-	}
-	/**
-	 * 得到某天多少秒钟前的日期
-	 * @param date
-	 * @param second
-	 * @return
-	 */
-	public static Date getSecondBefore(Date date,int second){
-		return getDate(date, TYPE_SECOND, ACTION_BEFORE, second);
-	}
-	/**
-	 * 得到某天多少秒钟前的日期
-	 * @param date
-	 * @param second
-	 * @return
-	 */
-	public static Date getSecondAfter(Date date,int second){
-		return getDate(date, TYPE_SECOND, ACTION_AFTER, second);
+	public static Date addMilliseconds(Date dt, int milliSeconds) {
+		return DateUtils.addMilliseconds(dt, milliSeconds);
 	}
 
 	/**
@@ -342,12 +273,12 @@ public final class DateUtil {
 	}
 
 	/***
-	 * 是否是同一天
+	 * 判断是否是同一天
 	 * @param d1
 	 * @param d2
 	 * @return
 	 */
 	public static boolean isSameDay(Date d1, Date d2) {
-		return dateToString(d1, DEFAULT_DATE_FORMAT).equals(DateUtil.dateToString(d2, DEFAULT_DATE_FORMAT));
+		return DateUtils.isSameDay(d1, d2);
 	}
 }

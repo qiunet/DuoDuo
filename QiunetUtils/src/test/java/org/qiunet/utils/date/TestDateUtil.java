@@ -23,8 +23,23 @@ public class TestDateUtil  extends BaseTest{
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+	}
+	@Test
+	public void testAddHour(){
+		int hours = 5;
+		Date now = new Date();
+		Assert.assertTrue((now.getTime() - (hours * 60 * 60 * 1000)) == DateUtil.addHours(now, -hours).getTime());
+		Assert.assertTrue((now.getTime() + (hours * 60 * 60 * 1000)) == DateUtil.addHours(now, hours).getTime());
+	}
 
+	@Test
+	public void testSameDay() throws ParseException {
+		Date date1 = DateUtil.stringToDate("2016-05-26 00:00:00");
+		Date date2 = DateUtil.stringToDate("2016-05-26 07:00:00");
+		Date date3 = DateUtil.stringToDate("2016-05-26 17:00:00");
 
+		Assert.assertTrue(DateUtil.isSameDay(date1, date2));
+		Assert.assertTrue(DateUtil.isSameDay(date1, date3));
 	}
 	@Test
 	public void testAnyCheckDate(){

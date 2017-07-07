@@ -32,18 +32,20 @@
 		<spring.version>4.3.5.RELEASE</spring.version>
 	</properties>
 
-	<repositories>
+	<distributionManagement>
 		<repository>
-			<id>public</id>
-			<url>http://qiunet.com.cn/nexus/content/groups/public/</url>
+			<id>releases</id>
+			<name>Proj Release Repository</name>
+			<url>http://192.168.1.102:8082/nexus/content/repositories/releases/</url>
 		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>public</id>
-			<url>http://qiunet.com.cn/nexus/content/groups/public/</url>
-		</pluginRepository>
-	</pluginRepositories>
+
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>Proj Snapshot Repository</name>
+			<url>http://192.168.1.102:8082/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -129,6 +131,11 @@
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis</artifactId>
 				<version>3.4.1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>3.4</version>
 			</dependency>
 			<dependency>
 				<groupId>log4j</groupId>

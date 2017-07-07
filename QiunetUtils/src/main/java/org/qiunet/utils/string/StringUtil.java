@@ -1,5 +1,7 @@
 package org.qiunet.utils.string;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
@@ -19,17 +21,13 @@ public class StringUtil {
 	
 	/**汉字的正则表达式*/
 	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5\uF900-\uFA2D]*)");
-	/**空字符串*/
-	public static final String EMPTY_STRING = "";
-	/**数字正则验证*/
-	public static final String NUM_REGEX = "[0-9]+";
-	/**
-	 * 判断是否是空串
-	 * @param string
+
+	/***
+	 * 判断是否是空字符串
 	 * @return
 	 */
-	public static boolean isEmpty(String string){
-		return (string == null || EMPTY_STRING.equals(string.trim()) || "null".equals(string));
+	public static boolean isEmpty(String str){
+		return StringUtils.isEmpty(str);
 	}
 	/***
 	 * 判断字符串是不是数字
@@ -37,11 +35,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static boolean isNum(String s){
-		boolean ret = false;
-		if(s != null && !"0".equals(s) && s.matches(NUM_REGEX)){
-			ret = true;
-		}
-		return ret;
+		return NumberUtils.isNumber(s);
 	}
 	/**
 	 * 分割字符串
@@ -84,7 +78,6 @@ public class StringUtil {
 	/***
 	 * 字符串数组 转 基础数据类型数组
 	 * @param <T>
-	 * @param <K>
 	 * @param k
 	 * @param t
 	 * @return

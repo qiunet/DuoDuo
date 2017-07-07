@@ -3,10 +3,16 @@ package org.qiunet.utils.classScanner;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @author qiunet
@@ -40,6 +46,27 @@ public class ScannerAllClassFile {
 			e.printStackTrace();
 		}
 		this.loader = Thread.currentThread().getContextClassLoader();
+	}
+	/***
+	 * 对jar文件操作
+	 * @param url
+	 */
+	public void scannerJarFile(URL url){
+		if (!"jar".equals(url.getProtocol())) return;
+		try {
+			JarURLConnection conn = (JarURLConnection) url.openConnection();
+			JarFile jarFile = conn.getJarFile();
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while (entries.hasMoreElements()){
+				JarEntry entry = entries.nextElement();
+				if (entry.getName().endsWith(".class")) {
+					int endIndex = entry.getName().lastIndexOf(".class");
+					allclass.add(entry.getName().substring(0, endIndex).replace("/", "."));
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -79,5 +106,6 @@ public class ScannerAllClassFile {
 				if (handler.matchClazz(c))		handler.handler(c);
 			}
 		}
+		this.allclass.clear();
 	}
 }
