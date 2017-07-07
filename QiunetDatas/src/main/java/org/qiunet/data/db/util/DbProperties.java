@@ -14,11 +14,13 @@ import java.util.List;
  *         Created on 17/1/5 15:07.
  */
 public class DbProperties extends LoaderProperties {
+	private static final String KEY_UID_DB_LENGTH = "uid_db_length";
 	private static final String KEY_DB_MAX_COUNT = "db_max_count";
 	private static final String KEY_DB_NAME_PREFIX="db_name_prefix";
 	private static final String KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE="db_size_per_instance";
 	private static final String filePath;
 	private static List<Integer> dbIndexs;
+	private int uid_db_factor;
 	private String db_name_prefix;
 	private int db_size_per_instance;
 	/**	 * 玩家数据需要拆表，拆分表的个数	 */
@@ -29,7 +31,7 @@ public class DbProperties extends LoaderProperties {
 		filePath = DbProperties.class.getResource("/").getPath() + "db.properties";
 	}
 
-
+	
 	private DbProperties() {
 		super(filePath);
 		instance = this;
@@ -39,14 +41,15 @@ public class DbProperties extends LoaderProperties {
 		if (instance == null)  new DbProperties();
 		return instance;
 	}
-
+	
 	@Override
 	protected void onReloadOver() {
 		this.db_max_count = getInt(KEY_DB_MAX_COUNT);
 		this.db_name_prefix = getString(KEY_DB_NAME_PREFIX);
 		this.db_size_per_instance = getInt(KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE);
+		this.uid_db_factor = (int) Math.pow(10, getInt(KEY_UID_DB_LENGTH));
 	}
-
+	
 	/**
 	 * 得到dbMaxCount
 	 * @return 最大db数
@@ -69,7 +72,7 @@ public class DbProperties extends LoaderProperties {
 		return db_size_per_instance;
 	}
 	/**
-	 * 得到玩家库的分表述
+	 * 得到玩家库的分表述 
 	 * @return 分几个表
 	 */
 	public int getPalyerDataTbDistributeCnt(){
@@ -106,6 +109,15 @@ public class DbProperties extends LoaderProperties {
 	}
 
 	/***
+	 * 通过库自增id , 得到一个组合有分库信息的id
+	 * @param incrId
+	 * @param dbIndex
+	 * @return
+	 */
+	public int buildDbInfoId(int incrId, int dbIndex) {
+		return incrId * uid_db_factor + dbIndex;
+	}
+	/***
 	 * 得到dbIndex
 	 *
 	 * @param uid
@@ -131,7 +143,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getDbIndexById(int id ){
-		return (id % DbProperties.getInstance().getDbMaxCount());
+		return (id % uid_db_factor);
 	}
 
 	/***
@@ -140,6 +152,6 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getTbIndexById(int id ){
-		return (id / DbProperties.getInstance().getDbMaxCount()) % PALYER_DATA_TB_DISTRIBUTE_CNT;
+		return (id / uid_db_factor) % PALYER_DATA_TB_DISTRIBUTE_CNT;
 	}
 }

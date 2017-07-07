@@ -1,7 +1,9 @@
 package org.qiunet.data.async;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -30,7 +32,7 @@ public class AsyncJobSupport {
 		return instance;
 	}
 	
-	private List<AsyncNode> nodes = new ArrayList<AsyncNode>();
+	private Set<AsyncNode> nodes = new HashSet<>();
 	
 	public void addNode(AsyncNode node) {
 		this.nodes.add(node);

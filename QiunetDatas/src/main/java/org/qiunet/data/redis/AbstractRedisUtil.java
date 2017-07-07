@@ -23,7 +23,7 @@ import java.util.*;
  */
 public abstract class AbstractRedisUtil {
 	//protected final Logger logger=Logger.getLogger(this.getClass());
-
+	
 	protected final String PLACEHOLDER = "PLACEHOLDER";
 	/***缓存一天*/
 	public  final int NORMAL_LIFECYCLE=86400;
@@ -62,7 +62,7 @@ public abstract class AbstractRedisUtil {
 			protected String cmdName() {
 				return "setObjectToHash";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{StringData.parseString(po), seconds};
@@ -99,7 +99,7 @@ public abstract class AbstractRedisUtil {
 	 * 通过反射从缓存里获取一个对象 缺省默认时间，默认的key是有uid这个字段拼接而成
 	 * @param key redis的key
 	 * @param clazz 泛型的对象的class
-	 * @param <T> 泛型对象
+	 * @param <T> 泛型对象                 
 	 * @return 返回jedis 返回的值 对象
 	 */
 	@SuppressWarnings("unchecked")
@@ -122,7 +122,7 @@ public abstract class AbstractRedisUtil {
 				T obj = clazz.newInstance();
 				if(! map.isEmpty()){
 					if(! (obj instanceof IRedisList) && map.size() != obj.getFieldCount()) {
-						logger.error("FieldError getObjectFromHash:"+ clazz.getName() +" hash list size error. map:"+JSON.toJSONString(map));
+						logger.error("FieldError getObjectFromHash:"+ clazz.getSimpleName() +" hash list size error. map:"+JSON.toJSONString(map));
 						jedis.expire(key, 0);
 						return null;
 					}
@@ -138,7 +138,7 @@ public abstract class AbstractRedisUtil {
 			protected String cmdName() {
 				return "getObjectFromHash";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{clazz.getSimpleName(), seconds};
@@ -169,28 +169,28 @@ public abstract class AbstractRedisUtil {
 				for(IRedisList po : list){
 					keyName=po.getSubKey();
 					keyMap=CommonUtil.getMap(po, keyName);
-
+					
 					map.put(String.valueOf(keyMap.get(keyName)), JsonUtil.toJsonString(po.getAllFeildsToHash()));
 				}
 				map.put(PLACEHOLDER, "");
-
+				
 				jedis.hmset(key, map);
 				jedis.expire(key, seconds);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "setListToHash";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{StringData.parseString(list) , seconds};
 			}
 		}.execAndReturn();
 	}
-
+	
 	/**
 	 * hlen  hash的长度
 	 * @param key redis的key
@@ -203,19 +203,19 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.hlen(key);
 				return ret == null ? -1 : ret.intValue();
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hlen";
 			}
 		}.execAndReturn();
 	}
-
+	
 	/**
 	 * 从缓存里还原一个列表对象
 	 * @param key redis的key
 	 * @param clazz 泛型的对象的class
-	 * @param <T> 泛型对象
+	 * @param <T> 泛型对象   
 	 * @return 返回jedis 返回的值
 	 */
 	public <T extends IRedisList> List<T> getListFromHash(String key,Class<T> clazz) {
@@ -226,7 +226,7 @@ public abstract class AbstractRedisUtil {
 	 * @param key redis的key
 	 * @param clazz 泛型的对象的class
 	 * @param seconds redis 对象的存活时间(秒) redis 对象的时间
-	 * @param <T> 泛型对象
+	 * @param <T> 泛型对象                  
 	 * @return 返回jedis 返回的值
 	 */
 	@SuppressWarnings("unchecked")
@@ -235,7 +235,7 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected List<T> expression(Jedis jedis, String key) throws Exception {
 				Map<String,String> map = jedis.hgetAll(key);
-
+				
 				if(map != null && ! map.isEmpty()){
 					map.remove(PLACEHOLDER);
 					List<T> rt=new ArrayList();
@@ -248,7 +248,7 @@ public abstract class AbstractRedisUtil {
 							jedis.expire(key, 0);
 							return null;
 						}
-
+						
 						mapFields.put(po.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);
 						mapFields.put(po.getSubKey() , fieldKey);
 						CommonUtil.getObjFromMap(mapFields, po);
@@ -259,7 +259,7 @@ public abstract class AbstractRedisUtil {
 				}
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "getListFromHash";
@@ -276,7 +276,7 @@ public abstract class AbstractRedisUtil {
 	 * @param key redis的key
 	 * @param clazz 泛型的对象的class
 	 * @param subKey subid
-	 * @param <T> 泛型对象
+	 * @param <T> 泛型对象                
 	 * @return 返回jedis 返回的值
 	 */
 	public <T extends IRedisList> T getRedisObjectFromRedisList(String key,final Class<T> clazz ,final String subKey){
@@ -295,19 +295,19 @@ public abstract class AbstractRedisUtil {
 				}
 				return po;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "getRedisObjectFromRedisList";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{clazz.getSimpleName(), subKey};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public String hget(String key,final String subKey){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
@@ -341,7 +341,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public void lpush(String key, final String val){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -349,7 +349,7 @@ public abstract class AbstractRedisUtil {
 				jedis.lpush(key, val);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "lpush";
@@ -360,14 +360,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public List<String> lrange(String key, final int start,final int end){
 		return new RedisCommand<List<String>>(jedisPool, key, Collections.<String>emptyList()) {
 			@Override
 			protected List<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.lrange(key, start, end);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "lrange";
@@ -378,7 +378,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public void lset(String key,final long index,final String val){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -386,19 +386,19 @@ public abstract class AbstractRedisUtil {
 				jedis.lset(key, index, val);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "lset";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{index, val};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public void ltrim(String key,final long start,final long end){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -406,38 +406,38 @@ public abstract class AbstractRedisUtil {
 				jedis.ltrim(key, start, end);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "ltrim";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{start, end};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long hdel(String key, final String subKey){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.hdel(key, subKey);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hdel";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{subKey};
 			}
 		}.execAndReturn();
 	}
-
+	
 	/**
 	 * 批量删除对象
 	 * @param key redis的key
@@ -457,12 +457,12 @@ public abstract class AbstractRedisUtil {
 				jedis.hdel(key, keys);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "deleteList";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{list};
@@ -477,7 +477,7 @@ public abstract class AbstractRedisUtil {
 		if(keys == null || keys.isEmpty()){
 			return Collections.emptyList();
 		}
-
+		
 		return new MoreKeyRedisCommand<List<String>>(jedisPool, Collections.<String>emptyList()) {
 			@Override
 			protected String cmdName() {
@@ -517,7 +517,7 @@ public abstract class AbstractRedisUtil {
 				jedis.setex(key.getBytes(), seconds, data);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "setByteArrays";
@@ -535,14 +535,14 @@ public abstract class AbstractRedisUtil {
 			protected byte[] expression(Jedis jedis, String key) throws Exception {
 				return jedis.get(key.getBytes());
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "getByteArray";
 			}
 		}.execAndReturn();
 	}
-
+	
 	/**
 	 * 向set中插入
 	 * @param key redis的key
@@ -556,12 +556,12 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.sadd(key,values);
 				return ret == null ? -1 : ret.longValue();
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "saddString";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return values;
@@ -572,7 +572,7 @@ public abstract class AbstractRedisUtil {
 	 * 向set中插入
 	 * @param key redis的key
 	 * @param value 值
-	 * @param second 存活时间(秒)
+	 * @param second 存活时间(秒)                
 	 * @return 返回jedis 返回的值
 	 */
 	public long saddByExpireSecond(String key,final String value,final int second){
@@ -583,12 +583,12 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, second);
 				return ret == null ? -1 : ret.longValue();
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "saddByExpireSecond";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{value, second};
@@ -606,14 +606,14 @@ public abstract class AbstractRedisUtil {
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.srandmember(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "srandmember";
 			}
 		}.execAndReturn();
 	}
-
+	
 	/**
 	 * 返回集合key的基数(集合中元素的数量)。
 	 * @param key redis的key
@@ -625,14 +625,14 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.scard(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "scardString";
 			}
 		}.execAndReturn();
 	}
-
+	
 	public String spopString(String key){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
@@ -645,7 +645,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long del(String key){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
@@ -659,7 +659,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Map<String,String> hmgetAllString(String key){
 		return new RedisCommand<Map<String, String>>(jedisPool, key) {
 			@Override
@@ -670,23 +670,28 @@ public abstract class AbstractRedisUtil {
 			protected String cmdName() {
 				return "hmgetAllString";
 			}
+
+			@Override
+			protected Level getLogLevel() {
+				return Level.DEBUG;
+			}
 		}.execAndReturn();
 	}
-
+	
 	public String hmsetAllString(String key, final Map<String,String> values){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.hmset(key, values);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hmsetAllString";
 			}
 		}.execAndReturn();
 	}
-
+	
 	public void hset(String key,final String field,final String value){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -694,12 +699,12 @@ public abstract class AbstractRedisUtil {
 				jedis.hset(key,field,value);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hset";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
@@ -707,26 +712,32 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 
-	public void hincr(String key,final String field,final long value){
-		new RedisCommand<Object>(jedisPool, key) {
+	/***
+	 * 对hash 的字段自增 减
+	 * @param key
+	 * @param field
+	 * @param value
+	 */
+	public Long hincr(String key,final String field,final long value){
+		return new RedisCommand<Long>(jedisPool, key) {
 			@Override
-			protected Object expression(Jedis jedis, String key) throws Exception {
-				jedis.hincrBy(key, field, value);
-				return null;
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				Long ret = jedis.hincrBy(key, field, value);
+				return ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hincr";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public void hsetString(String key,final String field,final String value){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -735,20 +746,20 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, NORMAL_LIFECYCLE);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "hsetString";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
 			}
 		}.execAndReturn();
 	}
-
-
+	
+	
 	public void setString(String key,final String value,final int seconds) {
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
@@ -759,12 +770,12 @@ public abstract class AbstractRedisUtil {
 				}
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "setString";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{value, seconds};
@@ -778,21 +789,21 @@ public abstract class AbstractRedisUtil {
 				jedis.persist(key);
 				return null;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "persist";
 			}
 		}.execAndReturn();
 	}
-
+	
 	public String getString(String key){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.get(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "getString";
@@ -809,12 +820,12 @@ public abstract class AbstractRedisUtil {
 				}
 				return rt;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "getString";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{lifecycle};
@@ -832,59 +843,59 @@ public abstract class AbstractRedisUtil {
 			protected String cmdName() {
 				return "expire";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{seconds};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<String> zRevRangeByScore(String key, final double max,final double min,final int offset,final int count){
 		return new RedisCommand<Set<String>>(jedisPool, key, Collections.<String>emptySet()) {
 			@Override
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeByScore(key, max, min, offset, count);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevRangeByScore";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{max, min, offset, count};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<Tuple> zRevRangeByScoreWithScores(String key, final double max,final double min,final int offset,final int count){
 		return new RedisCommand<Set<Tuple>>(jedisPool, key, Collections.<Tuple>emptySet()) {
 			@Override
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeByScoreWithScores(key, max, min, offset, count);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevRangeByScoreWithScores";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{max, min, offset, count};
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<Tuple> zRangeByScoreWithScores(String key, final double max,final double min,final int offset,final int count){
 		return new RedisCommand<Set<Tuple>>(jedisPool, key, Collections.<Tuple>emptySet()) {
 			@Override
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrangeByScoreWithScores(key, max, min, offset, count);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRangeByScoreWithScores";
@@ -895,14 +906,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<Tuple> zRangeByScoreWithScores(String key,final double max,final double min){
 		return new RedisCommand<Set<Tuple>>(jedisPool, key, Collections.<Tuple>emptySet()) {
 			@Override
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrangeByScoreWithScores(key, min, max);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRangeByScoreWithScores";
@@ -913,14 +924,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<Tuple> zRevRangeWithScores(String key,final long start,final long end){
 		return new RedisCommand<Set<Tuple>>(jedisPool, key, Collections.<Tuple>emptySet()) {
 			@Override
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeWithScores(key, start, end);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevRangeWithScores";
@@ -931,14 +942,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<String> zRevrange(String key,final long start,final long end){
 		return new RedisCommand<Set<String>>(jedisPool, key) {
 			@Override
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrange(key, start, end);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevrange";
@@ -949,14 +960,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<String> zRange(String key, final long start,final long end){
 		return new RedisCommand<Set<String>>(jedisPool, key) {
 			@Override
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrange(key, start, end);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRange";
@@ -967,7 +978,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zRevRank(String key,final String member){
 		return new RedisCommand<Long>(jedisPool, key, -1L) {
 			@Override
@@ -975,7 +986,7 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.zrevrank(key, member);
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevRank";
@@ -986,7 +997,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public double zscore(String key,final String member){
 		return new RedisCommand<Double>(jedisPool, key, -1d) {
 			@Override
@@ -994,7 +1005,7 @@ public abstract class AbstractRedisUtil {
 				Double ret = jedis.zscore(key, member);
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zscore";
@@ -1019,7 +1030,7 @@ public abstract class AbstractRedisUtil {
 				Double ret = jedis.zincrby(key, val, member);
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zincrby";
@@ -1030,7 +1041,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zAdd(String key, double score, String member){
 		return zAdd(key, score, member, -1);
 	}
@@ -1044,7 +1055,7 @@ public abstract class AbstractRedisUtil {
 				}
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zAdd";
@@ -1055,7 +1066,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zAdd(String key,final Map<String, Double> vals){
 		return new RedisCommand<Long>(jedisPool, key, -1L) {
 			@Override
@@ -1063,7 +1074,7 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.zadd(key, vals );
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zAdd";
@@ -1074,7 +1085,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zRem(String key,final String... members){
 		return new RedisCommand<Long>(jedisPool, key, -1L) {
 			@Override
@@ -1083,7 +1094,7 @@ public abstract class AbstractRedisUtil {
 				logger.info("jedis zRem key:" + key + " memebers:" + Arrays.toString(members) + " ret:" + ret);
 				return ret == null ? -1 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRem";
@@ -1094,7 +1105,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zCount(String key,final double min,final double max){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
@@ -1102,7 +1113,7 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.zcount(key, min, max);
 				return ret == null ? 0 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zCount";
@@ -1113,7 +1124,7 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long zCard(String key){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
@@ -1121,21 +1132,21 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.zcard(key);
 				return ret == null ? 0 : ret;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zCard";
 			}
 		}.execAndReturn();
 	}
-
+	
 	public Set<String> zRevrangeByScore(String key,final double max,final double min){
 		return new RedisCommand<Set<String>>(jedisPool, key, Collections.<String>emptySet()) {
 			@Override
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeByScore(key, max, min);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "zRevrangeByScore";
@@ -1146,14 +1157,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public boolean sismember(String key,final String member){
 		return new RedisCommand<Boolean>(jedisPool, key, false) {
 			@Override
 			protected Boolean expression(Jedis jedis, String key) throws Exception {
 				return jedis.sismember(key, member);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "sismember";
@@ -1164,14 +1175,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long srem(String key,final String member){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.srem(key, member);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "srem";
@@ -1182,28 +1193,28 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long incr(String key){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.incr(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "incr";
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long incrby(String key, final int val){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.incrBy(key, val);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "incrby";
@@ -1214,14 +1225,14 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public String lpop(String key){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.lpop(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "lpop";
@@ -1256,7 +1267,7 @@ public abstract class AbstractRedisUtil {
 				}
 				return rt;
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "rpush";
@@ -1267,33 +1278,33 @@ public abstract class AbstractRedisUtil {
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long rpush(String key,final String... values){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return rpush(key, values);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "rpush";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return values;
 			}
 		}.execAndReturn();
 	}
-
+	
 	public long llen(String key){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return  jedis.llen(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "llen";
@@ -1324,7 +1335,7 @@ public abstract class AbstractRedisUtil {
 	/**
 	 * 判断有没有key-value  若有返回true
 	 * @param key redis的key
-	 * @param value 值
+	 * @param value 值 
 	 * @return 返回jedis 返回的值
 	 */
 	public long setnx(String key,final String value){
@@ -1333,12 +1344,12 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return setnx(key, value);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "setnx";
 			}
-
+			
 			@Override
 			protected Object[] params() {
 				return new Object[]{value};
@@ -1356,7 +1367,7 @@ public abstract class AbstractRedisUtil {
 			protected Boolean expression(Jedis jedis, String key) throws Exception {
 				return jedis.exists(key);
 			}
-
+			
 			@Override
 			protected String cmdName() {
 				return "exists";

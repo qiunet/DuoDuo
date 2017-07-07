@@ -8,7 +8,7 @@ import org.qiunet.data.db.util.DbProperties;
  * @author qiunet
  *         Created on 17/2/24 18:22.
  */
-public class IdEntityDbInfo implements IEntityDbInfo {
+public class IdEntityDbInfo implements IEntityDbInfo{
 	private int id;
 	private int dbIndex;
 	public IdEntityDbInfo (Object id) {

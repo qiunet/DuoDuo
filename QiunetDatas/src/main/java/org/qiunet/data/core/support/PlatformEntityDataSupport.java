@@ -8,19 +8,18 @@ import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.support.info.IPlatFormRedisEntity;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
-
 /**
  * @author qiunet
  *         Created on 17/2/11 08:38.
  */
 public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> extends BaseDataSupport<PO> {
 	private IPlatformEntityInfo<PO, VO> entityInfo;
-
+	
 	public PlatformEntityDataSupport(IPlatformEntityInfo<PO, VO> entityInfo) {
 		super(new DbEntitySupport<PO>() , entityInfo);
-
+		
 		this.entityInfo = entityInfo;
-
+		
 		this.selectStatment = entityInfo.getNameSpace() + ".get"+entityInfo.getClazz().getSimpleName();
 	}
 	/**
@@ -31,7 +30,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		entityInfo.getRedisUtil().setObjectToHash(key, po);
-
+		
 		if (!entityInfo.needAsync() ) {
 			dbSupport.update(po, updateStatment);
 		}else {
@@ -66,13 +65,13 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		entityInfo.getRedisUtil().setObjectToHash(key, po);
 		ThreadContextData.put(key, entityInfo.getVo(po));
-
+		
 		return ret;
 	}
 	/**
 	 * 对缓存失效处理
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @param platform 平台
+	 * @param platform 平台   
 	 */
 	public void expireCache(Object dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
@@ -90,7 +89,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		ThreadContextData.removeKey(key);
 		entityInfo.getRedisUtil().expire(key, 0);
 	}
-
+	
 	/**
 	 * 得到vo
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
@@ -101,7 +100,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		VO vo = ThreadContextData.get(key);
 		if (vo != null) return vo;
-
+		
 		PO po = entityInfo.getRedisUtil().getObjectFromHash(key, entityInfo.getClazz());
 		if (po == null) {
 			po = (PO) ((IDbEntity)dbSupport).selectOne(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform));
