@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.data.redis.AbstractRedisUtil;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,9 +16,7 @@ public abstract class BaseAsyncNode implements AsyncNode {
 	protected static final Logger logger = Logger.getLogger(BaseAsyncNode.class);
 	@Override
 	public void updateRedisDataToDatabase() {
-		List<Integer> list = DbProperties.getInstance().getDbIndexList();
-		Collections.shuffle(list);
-		for (int dbIndex : list) {
+		for (int dbIndex : DbProperties.getInstance().getDbIndexList()) {
 			String asyncKey = getAsyncKey(dbIndex);
 			long size = getRedis().scardString(asyncKey);
 			for (int i = 0; i < size; i++) {
