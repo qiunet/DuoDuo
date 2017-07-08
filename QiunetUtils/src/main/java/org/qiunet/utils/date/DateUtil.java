@@ -31,9 +31,17 @@ public final class DateUtil {
 			put(Calendar.SUNDAY, (byte)7);
 		}
 	};
-	
+
+	/***
+	 * 当前的秒
+	 * @return
+	 */
+	public static long currSeconds(){
+		return System.currentTimeMillis()/1000;
+	}
+
 	private DateUtil(){}
-	
+
 	/**反查询周几是 calender的时间*/
 	public static final Map<Integer, Integer> REDAY_OF_WEEK = new HashMap<Integer, Integer>(){
 		private static final long serialVersionUID = -4941953324010074815L;
