@@ -1,7 +1,5 @@
 package org.qiunet.utils.classScanner;
 
-import org.qiunet.utils.string.StringUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -19,33 +17,32 @@ import java.util.jar.JarFile;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile {
-	/**默认路径*/
-	private String basePath;
-	
+
 	private List<String> allclass = new LinkedList<>();
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();
-	
+
 	private ClassLoader loader;
-	
+
 	/***
 	 * 使用默认加载器
 	 */
 	public ScannerAllClassFile(){
+		this.loader = Thread.currentThread().getContextClassLoader();
 		this.scannerFilePath(ScannerAllClassFile.class.getResource("/").getPath());
 	}
 	/***
 	 * 添加路径的文件
 	 * @param basePath
 	 */
+	private String basepath;
 	public void scannerFilePath(String basePath) {
 		try {
-			this.basePath = new File(basePath).toURI().toURL().getPath();
-			this.listAllFiles(this.basePath);
+			basepath = new File(basePath).toURI().toURL().getPath();
+			this.listAllFiles(basepath);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		this.loader = Thread.currentThread().getContextClassLoader();
 	}
 	/***
 	 * 对jar文件操作
@@ -78,7 +75,7 @@ public class ScannerAllClassFile {
 		if(file.isFile() && file.getName().endsWith(".class")){
 			String filePath = file.toURI().toURL().getPath();
 			int endIndex = filePath.lastIndexOf(".class");
-			allclass.add(filePath.substring(basePath.length(), endIndex).replace("/", "."));
+			allclass.add(filePath.substring(basepath.length(), endIndex).replace("/", "."));
 		}else if(file.isDirectory()){
 			File[] files = file.listFiles();
 			for (File f : files) {
@@ -86,7 +83,7 @@ public class ScannerAllClassFile {
 			}
 		}
 	}
-	
+
 	/**
 	 * 添加扫描处理
 	 * @param handler
@@ -99,7 +96,7 @@ public class ScannerAllClassFile {
 	 */
 	public void scanner() throws ClassNotFoundException {
 		if (scannerHanderList.isEmpty()) return;
-		
+
 		for (String clazz : allclass) {
 			Class c = loader.loadClass(clazz);
 			for (IScannerHandler handler : scannerHanderList) {
