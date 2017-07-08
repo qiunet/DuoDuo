@@ -17,9 +17,11 @@ public class TestDateUtil  extends BaseTest{
 		try {
 			Date date1 = DateUtil.stringToDate("2016-05-16 00:00:00");
 			Date date2 = DateUtil.stringToDate("2016-05-26 00:00:00");
-			Date dt = DateUtil.stringToDate("2016-05-20 00:00:00");
+			Date dt1 = DateUtil.stringToDate("2016-05-20 00:00:00");
+			Date dt2 = DateUtil.stringToDate("2016-05-26 00:00:01");
 
-			Assert.assertTrue(DateUtil.isBetweenDays(dt, date1, date2));
+			Assert.assertTrue(DateUtil.isBetweenDays(dt1, date1, date2));
+			Assert.assertFalse(DateUtil.isBetweenDays(dt2, date1, date2));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

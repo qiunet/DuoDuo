@@ -137,23 +137,16 @@ public final class DateUtil {
 	/**
 	 * 是否介于两个日期之间
 	 * @param date
-	 * @param date1
-	 * @param date2
+	 * @param dateBefore
+	 * @param dateLast
 	 * @return
 	 */
-	public static boolean isBetweenDays(Date date,Date date1,Date date2){
-		if(date==null||date1==null||date2==null){
-			return false;
-		}
-		if(date1.before(date2)
-				&& date.after(date1)
-					&& date.before(date2)){
-			return true;
-		}else if(date.before(date1)
-					&& date.after(date2)){
-			return true;
-		}
-		return false;
+	public static boolean isBetweenDays(Date date,Date dateBefore,Date dateLast){
+		long d = date.getTime();
+		long d1 = dateBefore.getTime();
+		long d2 = dateLast.getTime();
+
+		return d >= d1 && d < d2;
 	}
 	/**
 	 * 时间的格式验证
