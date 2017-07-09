@@ -28,13 +28,15 @@
 	<typeAliases>
 		<typeAlias alias="dbInfo" type="org.qiunet.data.db.support.info.IEntityDbInfo" />
 		#foreach(${entity} in ${entityList})
-			<package name="${entity.packagePath}" />
+	<package name="${entity.packagePath}" />
 		#end
 	</typeAliases>
 	<mappers>
-		<mapper resource="mybatis/uid_builder.xml" />
+		#foreach(${extraXml} in ${data.extraConfigs})
+		<mapper resource="${data.path}/${extraXml.name}" />
+		#end
 		#foreach(${entity} in ${entityList})
-			<mapper resource="mybatis/${entity.getConfigFileName(${entity.name})}.xml" />
+		<mapper resource="${data.path}/${entity.getConfigFileName(${entity.name})}.xml" />
 		#end
 	</mappers>
 </configuration>

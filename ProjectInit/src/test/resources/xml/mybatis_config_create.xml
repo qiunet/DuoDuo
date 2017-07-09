@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE base[
-		<!ELEMENT base (config) >
+		<!ELEMENT extraConfigs (extra+) >
+		<!ELEMENT extra EMPTY >
+		<!ATTLIST extra name CDATA #REQUIRED>
+
+		<!ELEMENT base (config, extraConfigs) >
 		<!ATTLIST base baseDir CDATA #REQUIRED>
 		<!ATTLIST base vmfilePath CDATA #REQUIRED>
 		<!ATTLIST base filePostfix CDATA #REQUIRED>
@@ -10,4 +14,8 @@
 		]>
 <base baseDir="src/main/resources" filePostfix="xml" vmfilePath="vm/mybatis_config_create.vm" >
 	<config name="mybatis-config" path="mybatis" />
+	<extraConfigs>
+		<extra name="uid_builder1.xml" />
+		<extra name="uid_builder2.xml" />
+	</extraConfigs>
 </base>

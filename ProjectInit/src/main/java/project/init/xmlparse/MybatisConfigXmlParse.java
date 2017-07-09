@@ -2,6 +2,7 @@ package project.init.xmlparse;
 
 import org.qiunet.template.creator.BaseXmlParse;
 import project.init.elements.mybatisConfig.ElementMybatisConfig;
+import project.init.elements.mybatisConfig.ExtraELementConfig;
 
 /**
  * @author qiunet
@@ -10,11 +11,12 @@ import project.init.elements.mybatisConfig.ElementMybatisConfig;
 public class MybatisConfigXmlParse extends BaseXmlParse {
 
 	public MybatisConfigXmlParse(String basePath, String xmlConfigPath) {
-		super(basePath, xmlConfigPath);
+		super(ConfigVmElement.class, basePath, xmlConfigPath);
 	}
 
 	@Override
 	public void parseXml() {
 		this.addObjectCreate("base/config", ElementMybatisConfig.class);
+		this.addObjectCreate("base/extraConfigs/extra", ExtraELementConfig.class, "addExtraConfig");
 	}
 }
