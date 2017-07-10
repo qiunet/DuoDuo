@@ -6,7 +6,7 @@ package ${entityObj.InfoPackagePath};
 
 import ${data.redis.clazz};
 import ${data.dbinfo.clazz};
-import com.dayou.game.xiuzhen.redis.key.RedisKey;
+import ${data.rediskey.clazz};
 import ${entityInfoType.Clazz.name};
 #if(${entityObj.name} != ${data.vo})
 import ${entityObj.packagePath}.${data.vo};

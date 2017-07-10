@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE base[
-		<!ELEMENT base (beans,infos) >
+		<!ELEMENT base (rediskey, beans,infos) >
 		<!ATTLIST base baseDir CDATA #REQUIRED>
 		<!ATTLIST base vmfilePath CDATA #REQUIRED>
 		<!ATTLIST base filePostfix CDATA #REQUIRED>
+
+		<!ELEMENT rediskey EMPTY>
+		<!ATTLIST rediskey clazz CDATA #REQUIRED>
+
 		<!ELEMENT infos (info+) >
 		<!ELEMENT info EMPTY >
 		<!ATTLIST info name ID #REQUIRED>
@@ -20,6 +24,8 @@
 		]>
 
 <base baseDir="src/main/java" vmfilePath="vm/entity_info_create.vm" filePostfix="java">
+	<rediskey clazz="project.test.RedisKey" />
+
 	<beans>
 		<bean id="defaultRedis" clazz="com.dayou.game.xiuzhen.redis.RedisDataUtil" />
 

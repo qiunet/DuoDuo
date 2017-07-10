@@ -2,6 +2,7 @@ package project.init.xmlparse;
 
 import org.qiunet.template.creator.BaseXmlParse;
 import project.init.elements.info.Bean;
+import project.init.elements.info.ElementRedisKey;
 import project.init.elements.info.EntityInfo;
 
 /**
@@ -23,6 +24,7 @@ public class EntityInfoXmlParse extends BaseXmlParse {
 	@Override
 	public void parseXml() {
 		addObjectCreate("base/beans/bean", Bean.class, "addBean");
+		addObjectCreate("base/rediskey", ElementRedisKey.class, "setRedisKey");
 		addObjectCreate("base/infos/info", EntityInfo.class);
 	}
 }

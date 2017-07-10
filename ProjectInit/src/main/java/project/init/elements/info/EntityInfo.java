@@ -18,6 +18,9 @@ public class EntityInfo extends SubVmElement {
 	private String redisRef;
 	private String dbInfoRef;
 
+	public ElementRedisKey getRediskey(){
+		return ((BeanVmElement) base).getRedisKey();
+	}
 	public Bean getRedis(){
 		return ((BeanVmElement)base).getBean(redisRef);
 	}

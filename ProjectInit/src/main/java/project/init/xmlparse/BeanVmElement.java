@@ -2,8 +2,10 @@ package project.init.xmlparse;
 
 import org.qiunet.template.parse.xml.VmElement;
 import project.init.elements.info.Bean;
+import project.init.elements.info.ElementRedisKey;
 import project.init.elements.info.EntityInfo;
 
+import java.lang.annotation.ElementType;
 import java.util.HashMap;
 
 /**
@@ -13,6 +15,16 @@ import java.util.HashMap;
 public class BeanVmElement extends VmElement<EntityInfo> {
 
 	private HashMap<String, Bean> beanMap = new HashMap<String, Bean>();
+
+	public ElementRedisKey redisKey;
+
+	public ElementRedisKey getRedisKey() {
+		return redisKey;
+	}
+
+	public void setRedisKey(ElementRedisKey redisKey) {
+		this.redisKey = redisKey;
+	}
 
 	public Bean getBean(String key){
 		return beanMap.get(key);
