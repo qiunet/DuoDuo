@@ -11,6 +11,6 @@ public class Creater {
 	@Test
 	public void testCreate(){
 		String basePath = System.getProperty("user.dir");
-		new ProjectInitCreator().create(basePath);
+		ProjectInitCreator.create(basePath);
 	}
 }
