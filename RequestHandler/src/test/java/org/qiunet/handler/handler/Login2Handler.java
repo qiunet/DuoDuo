@@ -8,7 +8,7 @@ import org.qiunet.handler.iodata.net.AbstractResponseData;
 /**
  * Created by qiunet on 3/20/17.
  */
-@RequestHandler(ID=101)
+@RequestHandler(ID=101, desc = "")
 public class Login2Handler extends BaseHttpHandler<LoginRequestData> {
 	@Override
 	public AbstractResponseData handler(LoginRequestData requestData) {

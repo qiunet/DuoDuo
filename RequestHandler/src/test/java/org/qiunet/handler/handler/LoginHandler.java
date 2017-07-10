@@ -10,7 +10,7 @@ import org.qiunet.handler.response.IResponse;
  * @author qiunet
  *         Created on 17/3/16 11:49.
  */
-@RequestHandler(ID=100)
+@RequestHandler(ID=100, desc = "")
 public class LoginHandler extends BaseTcpUdpHandler<LoginRequestData> {
 	@Override
 	public LoginRequestData getRequestDataObj() {
@@ -23,7 +23,7 @@ public class LoginHandler extends BaseTcpUdpHandler<LoginRequestData> {
 		LoginResponseData responseData = new LoginResponseData();
 		responseData.setUid(1000);
 		responseData.setSid("qiuyang");
-		
+
 		response.response(responseData);
 	}
 }
