@@ -19,7 +19,10 @@ public class Entity extends SubVmElement {
 	private String subKey;
 	private String packagePath;
 	private EntityType entityType;
-	private List<Field> fields = new ArrayList<Field>();
+	private List<Field> fields = new ArrayList<>();
+	private List<Constructor> constructors = new ArrayList<>();
+
+
 	public String getInfoPackagePath(){
 		return packagePath.substring(0, packagePath.lastIndexOf('.'))+".info";
 	}
@@ -32,6 +35,17 @@ public class Entity extends SubVmElement {
 	public void addField(Field field){
 		this.fields.add(field);
 	}
+	public void addConstructor (Constructor constructor) {
+		this.constructors.add(constructor);
+	}
+
+	public List<Constructor> getConstructors() {
+		for (Constructor constructor : constructors) {
+			constructor.refreshFields(fields);
+		}
+		return constructors;
+	}
+
 	public List<Field> getFields() {
 		return fields;
 	}

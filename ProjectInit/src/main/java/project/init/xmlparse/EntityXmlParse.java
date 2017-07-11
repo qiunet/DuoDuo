@@ -1,6 +1,7 @@
 package project.init.xmlparse;
 
 import org.qiunet.template.creator.BaseXmlParse;
+import project.init.elements.entity.Constructor;
 import project.init.elements.entity.Entity;
 import project.init.elements.entity.Field;
 
@@ -16,5 +17,6 @@ public class EntityXmlParse extends BaseXmlParse {
 	public void parseXml() {
 		this.addObjectCreate("base/entity", Entity.class);
 		this.addObjectCreate("base/entity/field", Field.class, "addField");
+		this.addObjectCreate("base/entity/constructor", Constructor.class, "addConstructor");
 	}
 }

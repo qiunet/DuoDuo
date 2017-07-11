@@ -26,6 +26,16 @@ FIELD_${field.name.toUpperCase()} #if(${velocityCount} < (${data.fields.size()})
 #foreach(${field} in ${data.fields})
 	private ${field.type} ${field.name};	${field.comment}
 #end
+	/**默认的构造函数**/
+	public ${data.name}(){}
+#foreach(${constructor} in ${data.constructors})
+	public ${data.name}(#foreach(${field} in ${constructor.fields})
+	${field.type} ${field.name}#if(${velocityCount} < (${constructor.fields.size()})),#end
+#end){
+	#foreach(${field} in ${constructor.fields})
+		this.${field.name} = ${field.name};
+	#end}
+#end
 #foreach(${field} in ${data.fields} )
 	public ${field.type} get#firstUpperCase(${field.name})() {
 		return ${field.name};

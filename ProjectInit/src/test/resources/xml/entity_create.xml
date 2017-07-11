@@ -4,12 +4,16 @@
 		<!ATTLIST base baseDir CDATA #REQUIRED>
 		<!ATTLIST base vmfilePath CDATA #REQUIRED>
 		<!ATTLIST base filePostfix CDATA #REQUIRED>
-		<!ELEMENT entity (field+) >
+		<!ELEMENT entity (constructor*,field+) >
 		<!ATTLIST entity name ID #REQUIRED>
 		<!ATTLIST entity dbInfoKey NMTOKEN #REQUIRED>
 		<!ATTLIST entity packagePath NMTOKEN #REQUIRED>
 		<!ATTLIST entity entityType (PlatformRedisList|RedisList|RedisEntity|PlatformRedisEntity) #REQUIRED>
 		<!ATTLIST entity subKey CDATA "">
+
+		<!ELEMENT constructor EMPTY>
+		<!ATTLIST constructor constructorFields CDATA #REQUIRED>
+
 		<!ELEMENT field EMPTY>
 		<!ATTLIST field name NMTOKEN #REQUIRED>
 		<!ATTLIST field type (int|String|Date|long|Boolean|boolean) #REQUIRED>
@@ -19,6 +23,8 @@
 <base baseDir="src/main/java" vmfilePath="vm/entity_create.vm" filePostfix="java">
 
 	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="RedisEntity">
+		<constructor constructorFields="uid,openid,token" />
+
 		<field name="uid" type="int" comment="uid " />
 		<field name="openid" type="String" comment="openId" />
 		<field name="token" type="String" comment="玩家的token" />
@@ -27,6 +33,7 @@
 		<field name="level" type="int" comment="等级" />
 		<field name="m1" type="long" comment="金币" />
 		<field name="m2" type="int" comment="元宝" />
+
 	</entity>
 
 	<entity name="LoginPo" dbInfoKey="openid" packagePath="project.init.test.login.entity" entityType="RedisEntity">
