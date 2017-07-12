@@ -15,6 +15,7 @@ public class ElementMapping extends SubVmElement {
 	private String uniqid;
 	private String selectKey;
 	private String tablePrefix;
+	private boolean splitTable = true;
 
 	public String getTablePrefix() {
 		return tablePrefix;
@@ -33,6 +34,15 @@ public class ElementMapping extends SubVmElement {
 	public boolean isUniqId(){
 		return uniqid != null && "true".equals(uniqid);
 	}
+
+	public boolean isSplitTable() {
+		return splitTable;
+	}
+
+	public void setSplitTable(boolean splitTable) {
+		this.splitTable = splitTable;
+	}
+
 	public String getUniqid() {
 		return uniqid;
 	}
@@ -57,7 +67,7 @@ public class ElementMapping extends SubVmElement {
 		if (entity.getType().isPlatformType()) {
 			sb.append("_${platformName}");
 		}
-		if(entity.getType().isListType()) {
+		if(entity.getType().isListType() && isSplitTable()) {
 			sb.append("_${tbIndex}");
 		}
 		return sb.toString();

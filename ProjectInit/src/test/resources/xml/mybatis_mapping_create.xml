@@ -10,13 +10,15 @@
 		<!ATTLIST mapping tablePrefix CDATA #IMPLIED>
 		<!ATTLIST mapping uniqid (true|false) #IMPLIED>
 		<!ATTLIST mapping selectKey CDATA #IMPLIED>
+		<!ATTLIST mapping splitTable (true|false) #IMPLIED>
 		]>
 <!-- uniqid 表示list的subkey 需要放前面. id是唯一的. 不需要uid等即可清除-->
 <!-- selectKey 是把自增id设置到 指定key中  -->
 <!-- tablePrefix 是自行指定数据库表的前缀.  而不是使用po的别名 有时候也有不一样的需求 -->
+<!-- splitTable 列表数据是否分表 true 分 false 不分 -->
 
 <base baseDir="src/main/resources/mybatis" filePostfix="xml" vmfilePath="vm/mybatis_mapping_create.vm" >
 	<mapping name="login"  poref="LoginPo" />
 	<mapping name="player"  poref="PlayerPo" />
-	<mapping name="item"  poref="ItemPo" />
+	<mapping name="item"  poref="ItemPo"/>
 </base>
