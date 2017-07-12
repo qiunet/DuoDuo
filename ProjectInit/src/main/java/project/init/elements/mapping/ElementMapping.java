@@ -12,7 +12,7 @@ import project.init.elements.entity.Field;
  */
 public class ElementMapping extends SubVmElement {
 	private String poref;
-	private String uniqid;
+	private boolean uniqid;
 	private String selectKey;
 	private String tablePrefix;
 	private boolean splitTable = true;
@@ -31,8 +31,12 @@ public class ElementMapping extends SubVmElement {
 		this.selectKey = selectKey;
 	}
 
-	public boolean isUniqId(){
-		return uniqid != null && "true".equals(uniqid);
+	public boolean isUniqid() {
+		return uniqid;
+	}
+
+	public void setUniqid(boolean uniqid) {
+		this.uniqid = uniqid;
 	}
 
 	public boolean isSplitTable() {
@@ -43,12 +47,6 @@ public class ElementMapping extends SubVmElement {
 		this.splitTable = splitTable;
 	}
 
-	public String getUniqid() {
-		return uniqid;
-	}
-	public void setUniqid(String uniqid) {
-		this.uniqid = uniqid;
-	}
 	public String getPoref() {
 		return poref;
 	}
@@ -105,7 +103,7 @@ public class ElementMapping extends SubVmElement {
 		}
 		sb.deleteCharAt(sb.length() - 1);
 		sb.append(" where ");
-		if (isUniqId() && entity.getType().isListType()) {
+		if (isUniqid() && entity.getType().isListType()) {
 			// 是list 类型. 并且需要提前
 			sb.append('`').append(entity.getSubKey()).append("` = #{subId}");
 		}else {
@@ -156,7 +154,7 @@ public class ElementMapping extends SubVmElement {
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		StringBuilder sb = new StringBuilder();
 		sb.append("delete from ").append(getTableName()).append(" where ");
-		if (isUniqId() && entity.getType().isListType()) {
+		if (isUniqid() && entity.getType().isListType()) {
 			// 是list 类型. 并且需要提前
 			sb.append('`').append(entity.getSubKey()).append("` = #{subId}");
 		}else {
