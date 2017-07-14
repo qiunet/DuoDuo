@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class DbProperties extends LoaderProperties {
 	private static final String KEY_UID_DB_LENGTH = "uid_db_length";
+	private static final String KEY_LOGIN_NEED_DB = "login_need_db";
 	private static final String KEY_DB_MAX_COUNT = "db_max_count";
 	private static final String KEY_DB_NAME_PREFIX="db_name_prefix";
 	private static final String KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE="db_size_per_instance";
@@ -25,8 +26,9 @@ public class DbProperties extends LoaderProperties {
 	private int db_size_per_instance;
 	/**	 * 玩家数据需要拆表，拆分表的个数	 */
 	private static final int PALYER_DATA_TB_DISTRIBUTE_CNT=10;
+	private int login_need_db = 10;
 	/**	 * 玩家库支持的最大个数	 */
-	private static int db_max_count=100;
+	private int db_max_count=100;
 	static {
 		filePath = DbProperties.class.getResource("/").getPath() + "db.properties";
 	}
@@ -45,6 +47,10 @@ public class DbProperties extends LoaderProperties {
 	@Override
 	protected void onReloadOver() {
 		this.db_max_count = getInt(KEY_DB_MAX_COUNT);
+		this.login_need_db = db_max_count;
+		if (getInt(KEY_LOGIN_NEED_DB) != 0) {
+			this.login_need_db = Math.min(db_max_count, getInt(KEY_LOGIN_NEED_DB));
+		}
 		this.db_name_prefix = getString(KEY_DB_NAME_PREFIX);
 		this.db_size_per_instance = getInt(KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE);
 		this.uid_db_factor = (int) Math.pow(10, getInt(KEY_UID_DB_LENGTH));
@@ -56,6 +62,14 @@ public class DbProperties extends LoaderProperties {
 	 */
 	public int getDbMaxCount(){
 		return db_max_count;
+	}
+
+	/***
+	 * 得到login的hash 用的的db数
+	 * @return
+	 */
+	public int getLoginNeedDb(){
+		return login_need_db;
 	}
 	/**
 	 * 返回db前缀
