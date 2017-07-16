@@ -12,17 +12,16 @@ import java.util.List;
  *         Created on 17/2/9 12:15.
  */
 public class GameSettingManagers {
-	private static GameSettingManagers instance;
+	private static GameSettingManagers instance = new GameSettingManagers();
 	private List<GameSettingContainer<IGameDataManager>> gameSettingList = new ArrayList<>();
 	private List<GameSettingContainer<LoaderProperties>> propertylist = new ArrayList<>();
-	
+
 	private GameSettingManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
-		instance = this;
 	}
-	
+
 	public static GameSettingManagers getInstance(){
 		if (instance == null) {
 			synchronized (GameSettingManagers.class){
@@ -31,7 +30,7 @@ public class GameSettingManagers {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * 初始化会比重新加载多一层排序
 	 */
@@ -47,7 +46,7 @@ public class GameSettingManagers {
 		this.loadPropertySetting();
 		this.loadDataSetting();
 	}
-	
+
 	/**
 	 * 添加 Manager
 	 * @param manager
@@ -80,8 +79,8 @@ public class GameSettingManagers {
 			container.t.load();
 		}
 	}
-	
-	
+
+
 	/***
 	 * IGameSetting  的包装类 包含排序
 	 * @param <T>
@@ -89,12 +88,12 @@ public class GameSettingManagers {
 	private static class GameSettingContainer<T> implements Comparable<GameSettingContainer<T>> {
 		private T t;
 		private int order ;
-		
+
 		public GameSettingContainer(T t , int order ){
 			this.order = order;
 			this.t = t;
 		}
-		
+
 		@Override
 		public int compareTo(GameSettingContainer<T> o) {
 			return o.order - order;

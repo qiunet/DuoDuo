@@ -1,0 +1,14 @@
+package org.qiunet.handler.gamedata;
+
+/**
+ * 简单的一层map的接口
+ * Created by qiunet.
+ * 17/6/3
+ */
+public interface ISimpleMapConfig<KEY> {
+	/**
+	 * 得到key
+	 * @return
+	 */
+	public KEY getKey();
+}

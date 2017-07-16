@@ -6,6 +6,7 @@ import org.qiunet.handler.annotation.GameDataSetting;
 import org.qiunet.utils.classScanner.IScannerHandler;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 /**
  * 启动时候.把manager 添加到GameSettingManagers
@@ -15,9 +16,10 @@ import java.lang.reflect.Constructor;
 public class GameDataScannerHandler implements IScannerHandler {
 	@Override
 	public boolean matchClazz(Class clazz) {
-		return clazz.getAnnotation(GameDataSetting.class) != null;
+		return ! Modifier.isAbstract(clazz.getModifiers())
+				&& IGameDataManager.class.isAssignableFrom(clazz);
 	}
-	
+
 	@Override
 	public void handler(Class<?> clazz) {
 		GameDataSetting setting = clazz.getAnnotation(GameDataSetting.class);
@@ -25,8 +27,8 @@ public class GameDataScannerHandler implements IScannerHandler {
 			Constructor<IGameDataManager> constructor = (Constructor<IGameDataManager>) clazz.getConstructor(null);
 			if (!constructor.isAccessible()) constructor.setAccessible(true);
 			IGameDataManager manager = constructor.newInstance();
-			
-			GameSettingManagers.getInstance().addDataSettingManager(manager , setting.order());
+
+			GameSettingManagers.getInstance().addDataSettingManager(manager , setting == null ? 0 : setting.order());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
