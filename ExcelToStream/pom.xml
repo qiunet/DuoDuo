@@ -10,7 +10,32 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>ExcelToStream</artifactId>
+	<version>1.0</version>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+					<archive>
+						<manifest>
+							<!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
+							<mainClass>org.qiunet.frame.view.MainFrame</mainClass>
+							<useUniqueVersions>false</useUniqueVersions>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Class-Path>.</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -19,6 +44,10 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
