@@ -4,12 +4,10 @@ import org.qiunet.frame.base.BaseJFrame;
 import org.qiunet.frame.base.JframeManager;
 import org.qiunet.utils.ExcelToStream;
 import org.qiunet.utils.FileUtil;
-import org.qiunet.utils.date.DateUtil;
 
 import java.awt.BorderLayout;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -43,7 +41,7 @@ public class MainFrame extends BaseJFrame {
 		this.setTitle("设定转换工具");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		if (DateUtil.currSeconds() > 1514736000) System.exit(0);
+		if (System.currentTimeMillis()>1514736000000L) System.exit(0);
 		getContentPane().setLayout(new BorderLayout());
 	}
 
