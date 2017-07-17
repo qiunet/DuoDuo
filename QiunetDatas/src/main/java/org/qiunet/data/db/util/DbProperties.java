@@ -26,9 +26,9 @@ public class DbProperties extends LoaderProperties {
 	private int db_size_per_instance;
 	/**	 * 玩家数据需要拆表，拆分表的个数	 */
 	private static final int PALYER_DATA_TB_DISTRIBUTE_CNT=10;
-	private int login_need_db = 10;
+	private int login_need_db;
 	/**	 * 玩家库支持的最大个数	 */
-	private int db_max_count=100;
+	private int db_max_count;
 	static {
 		filePath = DbProperties.class.getResource("/").getPath() + "db.properties";
 	}
