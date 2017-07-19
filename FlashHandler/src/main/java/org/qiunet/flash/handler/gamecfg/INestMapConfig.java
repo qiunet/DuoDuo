@@ -1,4 +1,4 @@
-package org.qiunet.handler.gamedata;
+package org.qiunet.flash.handler.gamecfg;
 
 /**
  * 嵌套map的接口

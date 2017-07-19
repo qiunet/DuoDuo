@@ -1,4 +1,4 @@
-package org.qiunet.handler.gamedata;
+package org.qiunet.flash.handler.gamecfg;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Map;
 /***
  * 读取一个key value的结构
  */
-public abstract class KeyValManager extends BaseGameDataManager {
+public abstract class KeyValManager extends BaseGameCfgManager {
 	private Map<Integer, String> map = new HashMap<>();
 
 	protected void loadVars(String filePath)throws Exception{

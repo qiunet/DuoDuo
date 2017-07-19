@@ -1,4 +1,4 @@
-package org.qiunet.handler.gamedata;
+package org.qiunet.flash.handler.gamecfg;
 
 /**
  * 简单的一层map的接口

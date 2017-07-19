@@ -1,4 +1,4 @@
-package org.qiunet.handler.gamedata;
+package org.qiunet.flash.handler.gamecfg;
 
 import org.qiunet.utils.properties.LoaderProperties;
 
@@ -11,21 +11,21 @@ import java.util.List;
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
-public class GameSettingManagers {
-	private static GameSettingManagers instance = new GameSettingManagers();
-	private List<GameSettingContainer<IGameDataManager>> gameSettingList = new ArrayList<>();
+public class GameCfgManagers {
+	private static GameCfgManagers instance = new GameCfgManagers();
+	private List<GameSettingContainer<IGameCfgManager>> gameSettingList = new ArrayList<>();
 	private List<GameSettingContainer<LoaderProperties>> propertylist = new ArrayList<>();
 
-	private GameSettingManagers(){
+	private GameCfgManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
 	}
 
-	public static GameSettingManagers getInstance(){
+	public static GameCfgManagers getInstance(){
 		if (instance == null) {
-			synchronized (GameSettingManagers.class){
-				new GameSettingManagers();
+			synchronized (GameCfgManagers.class){
+				new GameCfgManagers();
 			}
 		}
 		return instance;
@@ -52,7 +52,7 @@ public class GameSettingManagers {
 	 * @param manager
 	 * @param order
 	 */
-	public void addDataSettingManager(IGameDataManager manager, int order) {
+	public void addDataSettingManager(IGameCfgManager manager, int order) {
 		this.gameSettingList.add(new GameSettingContainer(manager, order));
 	}
 	/**
@@ -75,8 +75,8 @@ public class GameSettingManagers {
 	 * 加载数据设定
 	 */
 	protected void loadDataSetting() throws  Exception{
-		for (GameSettingContainer<IGameDataManager> container : gameSettingList) {
-			container.t.load();
+		for (GameSettingContainer<IGameCfgManager> container : gameSettingList) {
+			container.t.loadCfg();
 		}
 	}
 

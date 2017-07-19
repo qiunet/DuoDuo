@@ -1,8 +1,9 @@
-package org.qiunet.handler.gamedata;
+package org.qiunet.flash.handler.gamecfg;
 
 import org.apache.log4j.Logger;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -13,7 +14,7 @@ import java.util.zip.GZIPInputStream;
  * Created by qiunet.
  * 17/7/16
  */
-public abstract class BaseGameDataManager implements IGameDataManager {
+public abstract class BaseGameCfgManager implements IGameCfgManager {
 	protected final Logger logger = Logger.getLogger(getClass());
 	private String fileName;
 	protected DataInputStream dis;
@@ -40,7 +41,7 @@ public abstract class BaseGameDataManager implements IGameDataManager {
 	 * 初始化设定
 	 */
 	@Override
-	public boolean load()throws Exception{
+	public boolean loadCfg()throws Exception{
 		boolean ret = false;
 		try {
 			this.init();
@@ -54,6 +55,17 @@ public abstract class BaseGameDataManager implements IGameDataManager {
 	}
 
 	private void close() throws IOException {
+		if (dis != null) {
+			boolean readOver = false;
+			try {
+				dis.readByte();
+			}catch (EOFException e) {
+				readOver = true;
+			}
+			if (! readOver) {
+				throw new EOFException("读取配置文件"+fileName+"数据异常 有残留数据");
+			}
+		}
 		try {
 			if(dis != null)dis.close();
 			if (gin != null) gin.close();
