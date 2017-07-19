@@ -15,6 +15,7 @@
 		<module>GameTest</module>
 		<module>ExcelToStream</module>
 		<module>ProjectInit</module>
+		<module>FlashHandler</module>
 	</modules>
 
 	<packaging>pom</packaging>
