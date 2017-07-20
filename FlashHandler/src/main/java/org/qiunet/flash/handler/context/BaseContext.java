@@ -29,12 +29,6 @@ abstract class BaseContext<RequestData> implements IContext<RequestData> {
 	}
 
 	@Override
-	public boolean handler() {
-//		acceptor.handler(this);
-		return true;
-	}
-
-	@Override
 	public Object getAttribute(String key) {
 		return attributes.get(key);
 	}

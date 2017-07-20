@@ -40,4 +40,9 @@ public class HttpContext<RequestData, ResponseData> extends BaseContext<RequestD
 //			}
 //		}
 	}
+
+	@Override
+	public boolean handler() {
+		return false;
+	}
 }
