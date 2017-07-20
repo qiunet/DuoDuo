@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class ThreadContextData {
 	private ThreadContextData(){}
-	
+
 	/**servlet 请求 上下文*/
 	private static final ThreadLocal<Map<String,Object>> servletRequestContext;
 	static{
@@ -29,6 +29,14 @@ public class ThreadContextData {
 	}
 
 	/**
+	 * 很多时候联调使用.
+	 * 查看线程是否为null
+	 * @return
+	 */
+	public boolean isEmpty(){
+		return getThreadParamMap().isEmpty();
+	}
+	/**
 	 * 往线程变量存放一个对象.
 	 * @param key
 	 * @param val
@@ -47,7 +55,7 @@ public class ThreadContextData {
 		if("NULL".equals(val)) return null;
 		return (T) val;
 	}
-	
+
 	/**
 	 * 移除指定key
 	 * @param key
