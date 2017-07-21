@@ -10,9 +10,10 @@ import java.lang.reflect.Method;
  * 17/7/21
  */
 public abstract class BaseProtoHttpHandler<RequestData, ResponseData> extends BaseHttpHandler<RequestData, ResponseData> {
+	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		Method method = requestDataClass.getMethod("parseFrom", byte[].class);
+		if (method == null) method = requestDataClass.getMethod("parseFrom", byte[].class);
 		return (RequestData) method.invoke(null, bytes);
 	}
 }
