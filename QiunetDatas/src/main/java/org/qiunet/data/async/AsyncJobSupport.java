@@ -12,14 +12,21 @@ import java.util.concurrent.*;
  *         Created on 17/2/11 08:04.
  */
 public class AsyncJobSupport {
-	private ExecutorService executor = new ThreadPoolExecutor(10, 50, 10, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable>(30));
+	private ExecutorService executor = new ThreadPoolExecutor(
+			10,
+			50,
+			10,
+			TimeUnit.MINUTES,
+			new LinkedBlockingQueue<Runnable>(30),
+			new ExecutorFactory()
+	);
 
 	private volatile static AsyncJobSupport instance;
-	
+
 	private AsyncJobSupport() {
 		instance = this;
 	}
-	
+
 	public static AsyncJobSupport getInstance() {
 		if (instance == null) {
 			synchronized (AsyncJobSupport.class) {
@@ -31,9 +38,9 @@ public class AsyncJobSupport {
 		}
 		return instance;
 	}
-	
+
 	private Set<AsyncNode> nodes = new HashSet<>();
-	
+
 	public void addNode(AsyncNode node) {
 		this.nodes.add(node);
 	}
@@ -61,6 +68,16 @@ public class AsyncJobSupport {
 					}
 				}
 			});
+		}
+	}
+
+	public class ExecutorFactory implements ThreadFactory{
+		private int num = 0;
+		@Override
+		public Thread newThread(Runnable r) {
+			Thread thread = new Thread(r, "-AsyncJob-"+num++);
+			thread.setPriority(Thread.NORM_PRIORITY);
+			return thread;
 		}
 	}
 }
