@@ -5,7 +5,7 @@ import java.io.*;
 public class FileUtil {
 
 	/**
-	 * 
+	 *
 	 * @param path
 	 */
 	public static void writeToProjectFile(String path, String writeToFileName) {
@@ -13,12 +13,13 @@ public class FileUtil {
 		FileOutputStream fos = null;
 		PrintWriter print = null;
 		try {
-			fos  = new FileOutputStream(new File(writeToFileName));
-			print = new PrintWriter(fos);
+			print = new PrintWriter(new File(writeToFileName), "UTF-8");
 			print.println(path);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}finally {
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		} finally {
 				try {
 					if (print != null) print.close();
 					if (fos != null) fos.close();
@@ -35,8 +36,9 @@ public class FileUtil {
 		LineNumberReader reader = null;
 		FileReader fileReader = null;
 		try {
-			fileReader = new FileReader(file);
-			reader = new LineNumberReader(fileReader);
+			FileInputStream fis = new FileInputStream(new File(fileName));
+			InputStreamReader isr = new InputStreamReader(fis , "UTF-8");
+			reader = new LineNumberReader(isr);
 			return reader.readLine();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,5 +52,4 @@ public class FileUtil {
 		}
 		return null;
 	}
-
 }
