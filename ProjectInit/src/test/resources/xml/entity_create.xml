@@ -17,6 +17,7 @@
 		<!ELEMENT field EMPTY>
 		<!ATTLIST field name NMTOKEN #REQUIRED>
 		<!ATTLIST field type (int|String|Date|long|Boolean|boolean) #REQUIRED>
+		<!ATTLIST field defaultVal CDATA #IMPLIED >
 		<!ATTLIST field comment CDATA #REQUIRED>
 		]>
 
@@ -28,9 +29,9 @@
 		<field name="uid" type="int" comment="uid " />
 		<field name="openid" type="String" comment="openId" />
 		<field name="token" type="String" comment="玩家的token" />
-		<field name="nick" type="String" comment="昵称" />
+		<field name="nick" type="String" comment="昵称" defaultVal="无名"/>
 		<field name="exp" type="int" comment="经验" />
-		<field name="level" type="int" comment="等级" />
+		<field name="level" type="int" comment="等级" defaultVal="1"/>
 		<field name="m1" type="long" comment="金币" />
 		<field name="m2" type="int" comment="元宝" />
 

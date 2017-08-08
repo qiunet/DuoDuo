@@ -1,5 +1,9 @@
 package project.init.elements.entity;
 
+import org.qiunet.utils.date.DateUtil;
+
+import java.text.ParseException;
+
 /**
  * @author qiunet
  *         Created on 16/11/21 13:19.
@@ -7,6 +11,7 @@ package project.init.elements.entity;
 public class Field {
 	private String name;
 	private String type;
+	private String defaultVal;
 	private String comment;
 
 	public String getName() {
@@ -23,6 +28,26 @@ public class Field {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getDefaultVal() throws ParseException {
+		switch (type) {
+			case "String":
+				return null == defaultVal ? "\"\"" : "\""+defaultVal+"\"";
+			case "int":
+			case "long":
+				return null == defaultVal ? null : defaultVal;
+			case "Boolean":
+			case "boolean":
+				return null == defaultVal ? null : defaultVal;
+			case "Date":
+				return null == defaultVal ? "new Date(0)" : "new Date("+ DateUtil.stringToDate(defaultVal).getTime()+"L)";
+		}
+		return null;
+	}
+
+	public void setDefaultVal(String defaultVal) {
+		this.defaultVal = defaultVal;
 	}
 
 	public String getComment() {

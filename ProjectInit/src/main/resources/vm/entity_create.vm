@@ -24,7 +24,7 @@ FIELD_${field.name.toUpperCase()} #if(${velocityCount} < (${data.fields.size()})
 #end};
 ### get set方法
 #foreach(${field} in ${data.fields})
-	private ${field.type} ${field.name};	${field.comment}
+	private ${field.type} ${field.name}#if($field.defaultVal) = ${field.defaultVal}#end;	${field.comment}
 #end
 	/**默认的构造函数**/
 	public ${data.name}(){}
