@@ -26,7 +26,7 @@
 							<mainClass>org.qiunet.frame.view.MainFrame</mainClass>
 							<useUniqueVersions>false</useUniqueVersions>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>ExcelToStream_lib/</classpathPrefix>
+							<classpathPrefix>ExcelToData_lib/</classpathPrefix>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>
@@ -44,7 +44,7 @@
 						<phase>package</phase>
 						<goals><goal>copy-dependencies</goal></goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/ExcelToStream_lib</outputDirectory>
+							<outputDirectory>${project.build.directory}/ExcelToData_lib</outputDirectory>
 							<!-- excludeTransitive:是否不包含间接依赖包，比如我们依赖A，但是A又依赖了B，我们是否也要把B打进去 默认不打-->
 							<excludeTransitive>false</excludeTransitive>
 							<!-- 复制的jar文件去掉版本信息 -->
