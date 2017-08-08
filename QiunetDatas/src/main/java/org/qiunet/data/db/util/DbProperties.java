@@ -130,6 +130,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int buildDbInfoId(int incrId, int dbIndex) {
+		if (incrId == 0) throw new IllegalArgumentException("incrId can be zero!");
 		return incrId * uid_db_factor + dbIndex;
 	}
 	/***
@@ -151,6 +152,14 @@ public class DbProperties extends LoaderProperties {
 		return getTbIndexById(uid);
 	}
 
+	/***
+	 * 是否是有效的ID
+	 * @param id
+	 * @return
+	 */
+	public boolean isValidId(int id) {
+		return id / uid_db_factor != 0;
+	}
 	/***
 	 * 得到dbIndex
 	 *
