@@ -105,7 +105,7 @@ public class ExcelToStream {
 					}else if("string".equals(dateType)){
 						dos.writeUTF(c.getStringCellValue());
 					}else{
-						throw new IllegalArgumentException("dateType error : " +dateType);
+						throw new IllegalArgumentException("name["+outFile.getName()+"] rowNum["+(rowNum+1)+"], columnNum["+(columnNum+1)+"] dateType error : " +dateType);
 					}
 				}
 			}
