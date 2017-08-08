@@ -2,16 +2,19 @@ package project.init;
 
 import org.qiunet.template.creator.BaseXmlParse;
 import org.qiunet.template.creator.TemplateCreator;
+import org.qiunet.template.parse.template.VelocityFactory;
 import org.qiunet.template.parse.xml.SubVmElement;
 import org.qiunet.template.parse.xml.VmElement;
 import project.init.elements.entity.Entity;
 import project.init.elements.info.EntityInfo;
+import project.init.elements.info.EntityVo;
 import project.init.elements.mapping.ElementMapping;
 import project.init.xmlparse.EntityInfoXmlParse;
 import project.init.xmlparse.EntityXmlParse;
 import project.init.xmlparse.MybatisConfigXmlParse;
 import project.init.xmlparse.MybatisMappingXmlParse;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,6 +41,8 @@ public final class ProjectInitCreator {
 			VmElement<EntityInfo> entityInfoVmElements = new TemplateCreator(entityInfoParse, params).parseTemplate();
 			params.put("info", entityInfoVmElements);
 
+			handlerVo(basePath, entityVmElements, entityInfoVmElements);
+
 			VmElement<ElementMapping> mybatisMappingVmElement = new TemplateCreator(mybatisMappingParse, params).parseTemplate();
 			params.put("mapping", mybatisMappingVmElement);
 
@@ -45,6 +50,32 @@ public final class ProjectInitCreator {
 			params.put("config", mybatisConfigVmElements);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	/***
+	 * 生成vo
+	 * @param basePath
+	 * @param entityVmElements
+	 * @param entityInfoVmElements
+	 */
+	private static void handlerVo(String basePath,VmElement<Entity> entityVmElements , VmElement<EntityInfo> entityInfoVmElements) {
+		StringBuilder poBasePath = new StringBuilder(basePath);
+		if (! basePath.endsWith(File.separator)) poBasePath.append(File.separator);
+		poBasePath.append(entityVmElements.getBaseDir());
+		if (! entityVmElements.getBaseDir().endsWith(File.separator)) poBasePath.append(File.separator);
+
+		for (EntityInfo info : entityInfoVmElements.getSubVmElementList()) {
+			if (! info.getVo().equals(info.getPoref())) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(poBasePath).append(entityVmElements.subVmElement(info.getPoref()).getOutFilePath()).append(info.getVo()).append(".java");
+
+				File file = new File(sb.toString());
+				if (! file.exists()) {
+					EntityVo entityVo = new EntityVo(entityVmElements.subVmElement(info.getPoref()), info.getVo());
+					VelocityFactory.getInstance().parseOutFile("vm/entity_vo_create.vm", sb.toString(), entityVo);
+				}
+			}
 		}
 	}
 }

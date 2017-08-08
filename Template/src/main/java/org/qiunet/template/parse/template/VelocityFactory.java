@@ -24,9 +24,9 @@ public class VelocityFactory {
 	private static VelocityFactory instance;
 
 	private VelocityEngine velocity;
-	
+
 	private String dataObjName;
-	
+
 	private Map<String , Object> params;
 	/***是否已经初始化过了*/
 	private boolean init;
@@ -41,14 +41,14 @@ public class VelocityFactory {
 		// 设置从classpath下查找
 		properties.setProperty("file.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 		properties.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.SystemLogChute");
-		
+
 		this.initVelocityEngine(dataObjName, params, properties);
 	}
 
 	/***
 	 * 使用自定义的properties 初始化
 	 * @param dataObjName
-	 * @param params 
+	 * @param params
 	 * @param properties 自定义的properties velocity.properties 内容
 	 */
 	public void initVelocityEngine( String dataObjName, Map<String, Object> params, Properties properties){
@@ -59,7 +59,7 @@ public class VelocityFactory {
 		this.params = params;
 		this.dataObjName = dataObjName;
 	}
-	
+
 	private VelocityFactory() {
 		velocity = new VelocityEngine();
 	}
@@ -80,18 +80,18 @@ public class VelocityFactory {
 	 * @param vmFilePath vm文件的路径. 相对于basePath的
 	 * @param outputFileName 文件输出路径
 	 */
-	public void parseOutFile (String vmFilePath, String outputFileName, SubVmElement vmBaseElement) {
+	public void parseOutFile (String vmFilePath, String outputFileName, Object dataObj) {
 		Template t = velocity.getTemplate(vmFilePath ,Constants.CHAR_ENCODING);
 
 		VelocityContext context = new VelocityContext();
-		context.put(dataObjName, vmBaseElement);
-		
+		context.put(dataObjName, dataObj);
+
 		if (params != null) {
 			for (Map.Entry<String, Object > en : params.entrySet()) {
 				context.put(en.getKey(), en.getValue());
 			}
 		}
-		
+
 		StringWriter writer = new StringWriter();
 		t.merge(context, writer);
 		try {

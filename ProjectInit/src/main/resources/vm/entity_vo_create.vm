@@ -1,0 +1,11 @@
+package ${data.packagePath};
+
+public class ${data.voName} {
+	private ${data.poName} po;
+	public ${data.voName} (${data.poName} po) {
+		this.po = po;
+	}
+	public ${data.poName} get${data.poName}(){
+		return po;
+	}
+}
