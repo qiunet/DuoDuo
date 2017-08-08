@@ -26,7 +26,7 @@
 							<mainClass>org.qiunet.frame.view.MainFrame</mainClass>
 							<useUniqueVersions>false</useUniqueVersions>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
+							<classpathPrefix>ExcelToData_lib/</classpathPrefix>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>
