@@ -357,12 +357,11 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 
-	public void lpush(String key, final String val){
-		new RedisCommand<Object>(jedisPool, key) {
+	public Long lpush(String key, final String val){
+		return new RedisCommand<Long>(jedisPool, key) {
 			@Override
-			protected Object expression(Jedis jedis, String key) throws Exception {
-				jedis.lpush(key, val);
-				return null;
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				return jedis.lpush(key, val);
 			}
 
 			@Override
