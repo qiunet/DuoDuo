@@ -6,7 +6,7 @@ package org.qiunet.exception;
  */
 public class ExchangeException extends RuntimeException {
 
-	public ExchangeException (String outFileName, int rowNum,int columnNum) {
-		super("文件 ["+outFileName+"] 行数 ["+rowNum+"] 列数 ["+columnNum+"] 数据格式不匹配!");
+	public ExchangeException (String outFileName, int rowNum,int columnNum, String message) {
+		super("文件 ["+outFileName+"] 行数 ["+rowNum+"] 列数 ["+columnNum+"] 数据格式不匹配!" + message);
 	}
 }

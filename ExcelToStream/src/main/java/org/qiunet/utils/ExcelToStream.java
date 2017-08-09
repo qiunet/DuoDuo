@@ -110,7 +110,7 @@ public class ExcelToStream {
 				}
 			}
 		}catch (NumberFormatException e) {
-			throw new ExchangeException(outFile.getName(), rowNum+1, columnNum+1);
+			throw new ExchangeException(outFile.getName(), rowNum+1, columnNum+1, e.getMessage());
 		} finally {
 			try {
 				if(dos != null) dos.close();
