@@ -1356,7 +1356,7 @@ public abstract class AbstractRedisUtil {
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
-				return setnx(key, value);
+				return jedis.setnx(key, value);
 			}
 
 			@Override
