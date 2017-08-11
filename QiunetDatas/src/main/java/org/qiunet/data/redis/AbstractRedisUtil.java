@@ -23,8 +23,6 @@ import java.util.*;
  *         Created on 16/12/28 08:28.
  */
 public abstract class AbstractRedisUtil {
-	//protected final Logger logger=Logger.getLogger(this.getClass());
-
 	protected final String PLACEHOLDER = "PLACEHOLDER";
 	/***缓存一天*/
 	public  final int NORMAL_LIFECYCLE=86400;
@@ -462,7 +460,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Object expression(Jedis jedis, String key) throws Exception {
 				String keys[]=new String[list.size()];
-				String keyNames[]=null;
 				int index=0;
 				for(IRedisList po:list){
 					Map<String,String> keyMap=CommonUtil.getMap(po, po.getSubKey());
@@ -829,7 +826,7 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				String rt = jedis.get(key);
-				if(lifecycle>0){
+				if(lifecycle > 0){
 					jedis.expire(key, lifecycle);
 				}
 				return rt;
@@ -1064,7 +1061,7 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zadd(key, score, member);
-				if(expire>=0){
+				if(expire  >= 0){
 					jedis.expire(key, expire);
 				}
 				return ret == null ? -1 : ret;
@@ -1297,7 +1294,7 @@ public abstract class AbstractRedisUtil {
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
-				return rpush(key, values);
+				return jedis.rpush(key, values);
 			}
 
 			@Override
