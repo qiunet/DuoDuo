@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.tcp;
+package org.qiunet.flash.handler.netty.server.tcp;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -6,7 +6,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import org.qiunet.flash.handler.netty.tcp.init.NettyTcpServerInitializer;
+import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 
 import java.net.SocketAddress;
 

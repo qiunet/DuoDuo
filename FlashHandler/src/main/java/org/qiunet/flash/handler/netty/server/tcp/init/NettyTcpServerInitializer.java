@@ -1,11 +1,11 @@
-package org.qiunet.flash.handler.netty.tcp.init;
+package org.qiunet.flash.handler.netty.server.tcp.init;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.qiunet.flash.handler.netty.protocol.ProtoBufEncoder;
 import org.qiunet.flash.handler.netty.protocol.ProtobufDecoder;
-import org.qiunet.flash.handler.netty.tcp.handler.NettyTcpServerHandler;
+import org.qiunet.flash.handler.netty.server.tcp.handler.NettyTcpServerHandler;
 
 /**
  * Created by qiunet.
