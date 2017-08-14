@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.apache.log4j.Logger;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.iodata.constants.IoDataConstants;
 
 /**
  * Created by qiunet.
@@ -30,9 +29,9 @@ public class ProtoBufEncoder  extends MessageToByteEncoder<GeneratedMessageV3> {
 	 */
 	private ProtocolHeader fillProtocolHeader(int protocolId, byte [] bytes) {
 		int length = bytes.length;
-		int sequeue = 0;
+		int sequence = 0;
 		int chunkSize = 0;
 		long crc = 0;
-		return new ProtocolHeader(IoDataConstants.magic, length, sequeue, protocolId, chunkSize, crc);
+		return new ProtocolHeader(length, sequence, protocolId, chunkSize, crc);
 	}
 }
