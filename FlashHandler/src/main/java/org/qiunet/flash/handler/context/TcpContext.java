@@ -16,7 +16,7 @@ public class TcpContext<RequestData> extends BaseContext<RequestData> implements
 	}
 
 	@Override
-	public void response(Object o) {
+	public void response(int protocolId, Object o) {
 
 	}
 	@Override

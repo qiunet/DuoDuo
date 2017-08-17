@@ -17,10 +17,10 @@ public interface IHandler<RequestData> {
 	 */
 	public HandlerType getHandlerType();
 	/**
-	 * 得到 RequestID
+	 * 得到 ProtocolId
 	 * @return
 	 */
-	public int getRequestID();
+	public int getProtocolID();
 	/**
 	 * 必须要sid 才能进入action
 	 * @return

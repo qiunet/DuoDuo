@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
+import org.qiunet.flash.handler.context.TcpContext;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.RequestHandlerMapping;
@@ -36,8 +37,8 @@ public class ProtobufDecoder extends ByteToMessageDecoder {
 		IHandler<GeneratedMessageV3> handler = RequestHandlerMapping.getInstance().getHandler(header.getProtocolId());
 		try {
 			GeneratedMessageV3 msg = handler.parseRequestData(bytes);
+			out.add(new TcpContext<>(handler, msg, ctx.channel().id().asShortText()));
 			logger.info("[decode] :"+msg.toString());
-			out.add(msg);
 		}catch (Exception e) {
 			e.printStackTrace();
 			ctx.close();

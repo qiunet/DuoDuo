@@ -6,10 +6,10 @@ package org.qiunet.flash.handler.handler;
  */
 abstract class BaseHandler<RequestData> implements IHandler<RequestData> {
 	protected Class<RequestData> requestDataClass;
-	protected int requestId;
+	protected int protocolId;
 	@Override
-	public int getRequestID() {
-		return requestId;
+	public int getProtocolID() {
+		return protocolId;
 	}
 
 	@Override

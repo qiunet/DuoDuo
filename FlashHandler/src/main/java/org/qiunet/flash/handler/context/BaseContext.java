@@ -38,6 +38,6 @@ abstract class BaseContext<RequestData> implements IContext<RequestData> {
 	}
 	@Override
 	public String toStr() {
-		return "RequestID ["+handler.getRequestID()+"]:"+requestData.toString();
+		return "RequestID ["+handler.getProtocolID()+"]:"+requestData.toString();
 	}
 }

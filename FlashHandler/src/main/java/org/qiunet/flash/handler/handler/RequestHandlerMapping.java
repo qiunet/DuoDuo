@@ -41,14 +41,14 @@ public class RequestHandlerMapping {
 
 	/**
 	 * 存一个handler对应mapping
-	 * @param requestId
+	 * @param protocolId
 	 * @param handler
 	 */
-	public void addHandler(int requestId, IHandler handler) {
+	public void addHandler(int protocolId, IHandler handler) {
 		Class requestDataClass = (Class) ((ParameterizedType)handler.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		setHandlerField(handler, "requestDataClass", requestDataClass);
-		setHandlerField(handler, "requestId", requestId);
-		this.handlers.put(requestId, handler);
+		setHandlerField(handler, "protocolId", protocolId);
+		this.handlers.put(protocolId, handler);
 	}
 
 	/**

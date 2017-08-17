@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.netty.server.tcp.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.log4j.Logger;
+import org.qiunet.flash.handler.acceptor.Acceptor;
+import org.qiunet.flash.handler.context.IContext;
 
 
 /**
@@ -11,21 +13,11 @@ import org.apache.log4j.Logger;
  */
 public class NettyTcpServerHandler extends ChannelInboundHandlerAdapter {
 	private Logger logger = Logger.getLogger(getClass());
-
+	private Acceptor acceptor = Acceptor.create();
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("ID["+ctx.channel().id()+"] msg: "+msg);
-//            ByteBuf buf = ((ByteBuf) msg);
-//            try {
-//                 while (buf.isReadable()) {
-//                     System.out.print(((char) buf.readByte()));
-//                     System.out.flush();
-//                 }
-//           }finally {
-//               ReferenceCountUtil.release(msg);
-//           }
+		acceptor.process((IContext) msg);
 	}
-
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("Exception : ", cause);
