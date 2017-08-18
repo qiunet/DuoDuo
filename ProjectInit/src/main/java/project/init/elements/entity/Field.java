@@ -52,16 +52,23 @@ public class Field {
 	}
 
 	public String getComment() {
-		int commentStartIndex = 40;
-		StringBuilder sb = new StringBuilder();
-		for (int i = (name.length() + type.length() + 10); i < commentStartIndex; i++){
-			sb.append(" ");
-		}
-		sb.append("/** ").append(comment).append("  */");
-		return sb.toString();
+		return comment;
 	}
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getFieldDesc() throws ParseException {
+		StringBuilder sb = new StringBuilder();
+		sb.append(type).append(" ").append(name);
+		String defaultVal = getDefaultVal();
+		if (defaultVal != null) sb.append(" = ").append(defaultVal);
+		sb.append(";");
+		for (int i = sb.length(); i < 35; i++) sb.append(" ");
+		sb.append("/*** ").append(comment);
+		for (int i = sb.length(); i < 50; i++) sb.append(" ");
+		sb.append("**/");
+		return sb.toString();
 	}
 }
