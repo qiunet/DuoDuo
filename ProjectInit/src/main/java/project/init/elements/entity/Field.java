@@ -41,6 +41,7 @@ public class Field {
 			case "boolean":
 				return null == defaultVal ? null : defaultVal;
 			case "Date":
+				if ("now".equals(defaultVal)) return "new Date()";
 				return null == defaultVal ? "new Date(0)" : "new Date("+ DateUtil.stringToDate(defaultVal).getTime()+"L)";
 		}
 		return null;
