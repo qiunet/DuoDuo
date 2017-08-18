@@ -9,18 +9,20 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.PoolException;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  * 池的配置
  * 构造方法. propertyData 应该包含以下key
  * # simpleClassName.[maxIdel minIdel maxActiv]
  * # 代表 最大空闲  最小空闲  最大活跃
- * 
+ *
  * HttpClientPool.maxIdel=20
  * HttpClientPool.minIdel=10
  * HttpClientPool.maxActive=100
  * HttpClientPool.maxWaitTimeout=100
- * 
+ *
  * HttpsClientPool.maxIdel=20
  * HttpsClientPool.minIdel=10
  * HttpsClientPool.maxActive=100
@@ -28,10 +30,10 @@ import org.qiunet.utils.exceptions.PoolException;
  * @param <T>
  */
 public abstract class BasicPool<T> implements Pool<T>  {
-	protected Logger logger = Logger.getLogger(getClass());
+	protected Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
 	/**锁*/
 	private Lock lock;
-	
+
 	private String simpleClassName;
 	/**最大空闲 多余的对象.不再回收.*/
 	private int maxIdle=50;
@@ -49,9 +51,9 @@ public abstract class BasicPool<T> implements Pool<T>  {
 
 	public BasicPool (IKeyValueData keyValueData){
 		this.lock = new ReentrantLock();
-		
+
 		this.simpleClassName = getClass().getSimpleName();
-		
+
 		this.maxIdle = keyValueData.getInt(getKey("maxIdle"), 50);
 		this.minIdle = keyValueData.getInt(getKey("minIdle"), 10);
 		this.maxActive = keyValueData.getInt(getKey("maxActive"), 100);
@@ -82,7 +84,7 @@ public abstract class BasicPool<T> implements Pool<T>  {
 		if(idles.size() < minIdle && (idles.size() + activeCount.get()) < maxActive ){
 			t = this.create();
 		}
-		
+
 		if (t == null){
 			try {
 				t = idles.poll(maxWaitTimeout, TimeUnit.MILLISECONDS);
@@ -91,7 +93,7 @@ public abstract class BasicPool<T> implements Pool<T>  {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (t == null) {
 			throw new PoolException("ActiveCount ["+getActiveCount()+"] is already max ");
 		}else {

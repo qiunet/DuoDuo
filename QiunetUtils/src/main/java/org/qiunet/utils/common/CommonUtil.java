@@ -2,6 +2,8 @@ package org.qiunet.utils.common;
 
 import org.apache.log4j.Logger;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -14,7 +16,7 @@ import java.util.*;
  *
  */
 public class CommonUtil {
-	private static Logger logger = Logger.getLogger(CommonUtil.class);
+	private static Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
 	private CommonUtil() { }
 	/**
 	 * 检查一个元素是否在数组中
@@ -83,13 +85,13 @@ public class CommonUtil {
 		if (obj == null || fields == null || fields.length == 0) {
 			throw new NullPointerException("obj ["+ (obj == null ? null : obj.getClass().getName())+"] fields ["+(fields == null ? null : Arrays.toString(fields))+"] Error");
 		}
-		
+
 		Map<String,String> map = new HashMap<>();
 		for(String fieldName : fields){
 			try {
 				Field field = getDeclaredField(obj, fieldName);
 				if (field == null) continue;
-				
+
 				field.setAccessible(true);
 				map.put(field.getName(), getFieldsValueStr(obj,field));
 			}catch (Exception e) {
@@ -101,7 +103,7 @@ public class CommonUtil {
 		}
 		return map;
 	}
-	
+
 	/**
 	 * 取到object 的所有Fields
 	 * @param obj
@@ -120,10 +122,10 @@ public class CommonUtil {
 			Map<String, Field> fieldMap = new HashMap<>();
 			for (Field f : rt)  {
 				if (Modifier.isFinal(f.getModifiers()) ) continue;
-				
+
 				fieldMap.put(f.getName(), f);
 			}
-			
+
 			fieldsCache.put(originClass, fieldMap);
 		}
 		return fieldsCache.get(originClass).get(fieldName);
@@ -131,13 +133,13 @@ public class CommonUtil {
 	private static Field[] combine(Field[] a, Field[] b){
 		if(a==null) return b;
 		if(b==null) return a;
-		
+
 		Field[] rt = new Field[a.length+b.length];
 		System.arraycopy(a, 0, rt, 0, a.length);
 		System.arraycopy(b, 0, rt, a.length, b.length);
 		return rt;
 	}
-	
+
 	/**
 	 * 得到字段的值
 	 * @param obj
@@ -150,7 +152,7 @@ public class CommonUtil {
 		if (o == null && field.getType() == String.class) o = "";
 
 		if(o == null) throw new NullPointerException(field.getName() +" mapping fields is null~");
-		
+
 		if(o instanceof Date) return DateUtil.dateToString((Date)o);
 		return o.toString();
 	}
@@ -169,7 +171,7 @@ public class CommonUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 把map 的数据还原成对象
 	 * @param map
@@ -184,7 +186,7 @@ public class CommonUtil {
 				Field field = getDeclaredField(obj, key);
 				if (field == null) continue;
 				// 根据使用的习惯. int String Date是绝大多数情况的使用顺序
-				
+
 				Method method = getSetMethod(obj, key, field.getType());
 				if (field.getType() == int.class || field.getType() == Integer.class) {
 					method.invoke(obj, Integer.parseInt(map.get(key)));
@@ -216,7 +218,7 @@ public class CommonUtil {
 		char [] chars = ("set"+fieldName).toCharArray();
 		chars[3] -= 32;
 		String methodName = new String(chars);
-		
+
 		Class<?> clazz=object.getClass();
 		Method method = clazz.getMethod(methodName, fieldType);
 		return method;

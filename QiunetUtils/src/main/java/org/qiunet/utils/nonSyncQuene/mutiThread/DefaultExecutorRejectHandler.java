@@ -4,9 +4,11 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 
 public class DefaultExecutorRejectHandler implements RejectedExecutionHandler {
-	private Logger logger = Logger.getLogger(DefaultExecutorRejectHandler.class);
+	private Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
 	private String threadName;
 	public DefaultExecutorRejectHandler(String name){
 		this.threadName = name;

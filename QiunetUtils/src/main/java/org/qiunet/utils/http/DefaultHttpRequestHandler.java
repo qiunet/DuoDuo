@@ -17,9 +17,11 @@ import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.qiunet.utils.enums.CharsetEnum;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 
 public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
-	private static final Logger logger = Logger.getLogger(DefaultHttpRequestHandler.class);
+	private static final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
 	private String result;
 	@Override
 	public String getMethodHandler(String url, Map<String, Object> params) {

@@ -3,6 +3,8 @@ package org.qiunet.utils.nonSyncQuene;
 import java.util.concurrent.LinkedTransferQueue;
 
 import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 
 /**
@@ -11,7 +13,7 @@ import org.qiunet.utils.math.MathUtil;
  *
  */
 public class NonSyncQueueHandler<T extends QueueElement> {
-	private static final Logger logger = Logger.getLogger(NonSyncQueueHandler.class);
+	private static final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
 	private final Thread msgThread;
 	private boolean RUNNING = true;
 	/*队列*/
@@ -22,19 +24,19 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 		this.msgThread.setDaemon(daemon);
 		this.msgThread.start();
 	}
-	
+
 	private NonSyncQueueHandler(boolean daemon){
 		this(String.valueOf("Thread-"+MathUtil.random(10000)), daemon);
 	}
-	
+
 	public static <T extends QueueElement> NonSyncQueueHandler<T> create(String  threadName, boolean daemon) {
 		return new NonSyncQueueHandler<>(threadName , daemon);
 	}
-	
+
 	public static <T extends QueueElement> NonSyncQueueHandler<T> create(boolean daemon) {
 		return new NonSyncQueueHandler<>(daemon);
 	}
-	
+
 	public void shutdown() {
 		this.RUNNING = false;
 	}

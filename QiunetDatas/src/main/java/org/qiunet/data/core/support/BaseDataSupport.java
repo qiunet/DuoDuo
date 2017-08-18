@@ -7,24 +7,26 @@ import org.qiunet.data.core.support.entityInfo.IBaseEntityInfo;
 import org.qiunet.data.db.support.base.IDbBase;
 import org.qiunet.data.redis.AbstractRedisUtil;
 import org.qiunet.data.redis.support.info.IRedisEntity;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 
 /**
  * @author qiunet
  *         Created on 17/2/10 18:18.
- */ 
+ */
 abstract class BaseDataSupport<PO extends IRedisEntity>  extends BaseAsyncNode {
-	protected final Logger logger = Logger.getLogger(getClass());
-	
+	protected final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_DATAS);
+
 	/*** db的使用 */
 	protected IDbBase<PO> dbSupport;
-	
+
 	protected String insertStatment;
 	protected String updateStatment;
 	protected String deleteStatment;
 	protected String selectStatment;
-	
+
 	private IBaseEntityInfo entityInfo;
-	
+
 	protected BaseDataSupport(IDbBase<PO> dbSupport, IBaseEntityInfo entityInfo){
 		this.dbSupport = dbSupport;
 		this.entityInfo = entityInfo;
@@ -34,7 +36,7 @@ abstract class BaseDataSupport<PO extends IRedisEntity>  extends BaseAsyncNode {
 		if (entityInfo.needAsync()) {
 			AsyncJobSupport.getInstance().addNode(this);
 		}
-		
+
 		this.insertStatment = entityInfo.getNameSpace()+".insert"+entityInfo.getClazz().getSimpleName();
 		this.updateStatment = entityInfo.getNameSpace()+".update"+entityInfo.getClazz().getSimpleName();
 		this.deleteStatment = entityInfo.getNameSpace()+".delete"+entityInfo.getClazz().getSimpleName();

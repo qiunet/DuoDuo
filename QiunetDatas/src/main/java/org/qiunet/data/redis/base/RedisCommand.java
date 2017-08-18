@@ -3,6 +3,8 @@ package org.qiunet.data.redis.base;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.qiunet.utils.data.StringData;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -14,14 +16,14 @@ import java.util.Arrays;
  *         Created on 17/2/6 11:44.
  */
 public abstract class RedisCommand<T> {
-	protected Logger logger = Logger.getLogger(this.getClass());
+	protected Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_DATAS);
 	protected JedisPool pool;
 	protected T defaultResult;
 	private String key;
 	public RedisCommand(JedisPool pool, String key){
 		this(pool, key, null);
 	}
-	
+
 	/**
 	 * 有默认值的构造函数
 	 * @param pool jedispool
@@ -77,12 +79,12 @@ public abstract class RedisCommand<T> {
 	/***
 	 * 执行表达式
 	 * @param jedis jedis 对象
-	 * @param key redis key                
+	 * @param key redis key
 	 * @return 通用的返回结果
 	 * @throws Exception 可能抛出redis的异常
 	 */
 	protected abstract T expression(Jedis jedis, String key) throws Exception;
-	
+
 	/**
 	 * 释放连接
 	 * @param jedis jedis 对象

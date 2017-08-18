@@ -1,6 +1,8 @@
 package org.qiunet.data.redis.base;
 
 import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -12,11 +14,11 @@ import java.util.Arrays;
  *         Created on 17/2/6 14:34.
  */
 public abstract class MoreKeyRedisCommand<T> {
-	protected Logger logger = Logger.getLogger(this.getClass());
-	
+	protected Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_DATAS);
+
 	protected JedisPool pool;
 	protected T defaultResult;
-	
+
 	public MoreKeyRedisCommand(JedisPool pool){
 		this(pool, null);
 	}
