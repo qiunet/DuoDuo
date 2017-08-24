@@ -149,8 +149,6 @@ public class CommonUtil {
 	private static String getFieldsValueStr(Object obj,Field field) throws IllegalAccessException {
 		Object o = field.get(obj);
 
-		if (o == null && field.getType() == String.class) o = "";
-
 		if(o == null) throw new NullPointerException(field.getName() +" mapping fields is null~");
 
 		if(o instanceof Date) return DateUtil.dateToString((Date)o);
