@@ -14,7 +14,7 @@ import java.util.concurrent.*;
  */
 public class AsyncJobSupport {
 	private ExecutorService executor = new ThreadPoolExecutor(
-			100,
+			10,
 			512,
 			60,
 			TimeUnit.SECONDS,
@@ -69,6 +69,11 @@ public class AsyncJobSupport {
 					}
 				}
 			});
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
