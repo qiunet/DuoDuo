@@ -1,8 +1,9 @@
 package org.qiunet.data.async;
 
-import java.util.ArrayList;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.nonSyncQuene.mutiThread.DefaultExecutorRejectHandler;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
 
@@ -13,13 +14,13 @@ import java.util.concurrent.*;
  */
 public class AsyncJobSupport {
 	private ExecutorService executor = new ThreadPoolExecutor(
-			10,
-			50,
-			10,
-			TimeUnit.MINUTES,
-			new LinkedBlockingQueue<Runnable>(30),
-			new ExecutorFactory()
-	);
+			100,
+			512,
+			60,
+			TimeUnit.SECONDS,
+			new LinkedBlockingQueue<Runnable>(1024),
+			new DefaultThreadFactory("AsyncJobSupport"),
+			new DefaultExecutorRejectHandler("AsyncJobSupport"));
 
 	private volatile static AsyncJobSupport instance;
 
@@ -71,13 +72,4 @@ public class AsyncJobSupport {
 		}
 	}
 
-	public class ExecutorFactory implements ThreadFactory{
-		private int num = 0;
-		@Override
-		public Thread newThread(Runnable r) {
-			Thread thread = new Thread(r, "-AsyncJob-"+num++);
-			thread.setPriority(Thread.NORM_PRIORITY);
-			return thread;
-		}
-	}
 }
