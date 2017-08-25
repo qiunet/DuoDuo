@@ -129,8 +129,8 @@ public abstract class AbstractRedisUtil {
 						}else {
 							logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFieldCount:"+obj.getFieldCount());
 						}
-						jedis.expire(key, 0);
-						return null;
+//						jedis.expire(key, 0);
+//						return null;
 					}
 					map.put(obj.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);
 					jedis.expire(key, seconds);
@@ -258,8 +258,8 @@ public abstract class AbstractRedisUtil {
 							}else {
 								logger.error("ListFieldSizeError getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"]");
 							}
-							jedis.expire(key, 0);
-							return null;
+//							jedis.expire(key, 0);
+//							return null;
 						}
 
 						mapFields.put(po.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);

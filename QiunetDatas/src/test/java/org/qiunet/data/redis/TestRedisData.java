@@ -42,7 +42,7 @@ public class TestRedisData {
 		Assert.assertTrue(playerPo1.getExp() == playerPo.getExp());
 
 		PlayerCopyPo playerCopyPo = RedisDataUtil.getInstance().getObjectFromHash(key, PlayerCopyPo.class);
-		Assert.assertNull(playerCopyPo);
+		Assert.assertNotNull(playerCopyPo);
 
 	}
 	@Test
@@ -70,7 +70,7 @@ public class TestRedisData {
 		}
 
 		List<EquipCopyPo> equipList3 = RedisDataUtil.getInstance().getListFromHash(key, EquipCopyPo.class);
-		Assert.assertNull(equipList3);
+		Assert.assertNotNull(equipList3);
 	}
 	@Test
 	public void testGetSetFriendPo(){
