@@ -158,7 +158,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public boolean isValidId(int id) {
-		return id / uid_db_factor != 0;
+		return id / uid_db_factor != 0 && Math.abs(id % uid_db_factor) < db_max_count;
 	}
 	/***
 	 * 得到dbIndex
