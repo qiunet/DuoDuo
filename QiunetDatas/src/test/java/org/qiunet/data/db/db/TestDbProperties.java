@@ -12,13 +12,13 @@ public class TestDbProperties {
 
 	@Test
 	public void dbProperties () {
-		Assert.assertTrue(DbProperties.getInstance().getLoginNeedDb() == 100);
+		Assert.assertTrue(DbProperties.getInstance().getLoginNeedDb() == 1);
 	}
 	@Test
 	public void testUidIsValid(){
-		Assert.assertFalse(DbProperties.getInstance().isValidId(1020));
-		Assert.assertFalse(DbProperties.getInstance().isValidId(1010));
-		Assert.assertTrue(DbProperties.getInstance().isValidId(1009));
-		Assert.assertTrue(DbProperties.getInstance().isValidId(1000));
+		Assert.assertFalse(DbProperties.getInstance().isValidId(120));
+		Assert.assertFalse(DbProperties.getInstance().isValidId(110));
+		Assert.assertTrue(DbProperties.getInstance().isValidId(109));
+		Assert.assertTrue(DbProperties.getInstance().isValidId(100));
 	}
 }
