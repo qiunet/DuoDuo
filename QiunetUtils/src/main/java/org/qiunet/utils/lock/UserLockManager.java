@@ -11,17 +11,21 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class UserLockManager<UserID> implements Runnable {
 	// 最大等待锁的线程数
-	public static final int MAX_THREAD_COUNT_HOLD_LOCK = 3;
+	private int maxLockedCount;
 	// 检查userlock超时的间隔时间
-	private static final int CHECK_USER_LOCK_GAP_DT = 5 * 60 * 1000;
+	private int CHECK_USER_LOCK_GAP_DT = 5 * 60 * 1000;
 	// 用户的锁,如果多久不活跃, 就会剔除
-	private static final int USER_LOCK_TIMEOUT_DT = 2 * 60 * 60 * 1000;
+	private int USER_LOCK_TIMEOUT_DT = 2 * 60 * 60 * 1000;
 	// 用户的锁管理
 	private ConcurrentHashMap<UserID, UserLock> locks;
 
 	private Thread thread;
 
-	public UserLockManager() {
+	public UserLockManager(int maxLockedCount) {
+		if (maxLockedCount < 1) throw new IllegalArgumentException("maxLockedCount can not be "+maxLockedCount);
+
+		this.maxLockedCount = maxLockedCount;
+
 		locks = new ConcurrentHashMap<>();
 		thread = new Thread(this, "UserLockManager");
 		thread.setDaemon(true);
@@ -94,7 +98,7 @@ public class UserLockManager<UserID> implements Runnable {
 		 * @return
 		 */
 		private synchronized boolean tryLock(){
-			boolean canLock = lockedCount.get() < MAX_THREAD_COUNT_HOLD_LOCK;
+			boolean canLock = lockedCount.get() < maxLockedCount;
 			if (canLock) {
 				lockedCount.incrementAndGet();
 			}

@@ -13,7 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestUserLock {
 	@Test
 	public void testLock() throws InterruptedException {
-		final UserLockManager<String> manager = new UserLockManager<>();
+		int maxLockedCount = 0;
+		final UserLockManager<String> manager = new UserLockManager<>(maxLockedCount);
 		final AtomicInteger fastCount = new AtomicInteger();
 		final AtomicInteger handleCount = new AtomicInteger();
 		int threadCount = 100;
@@ -42,7 +43,8 @@ public class TestUserLock {
 		latch.await();
 
 		Assert.assertTrue(manager.getLockedCount("qiunet") == 0);
-		Assert.assertTrue(fastCount.get() == (threadCount - UserLockManager.MAX_THREAD_COUNT_HOLD_LOCK));
-		Assert.assertTrue(handleCount.get() == (UserLockManager.MAX_THREAD_COUNT_HOLD_LOCK));
+		Assert.assertTrue(fastCount.get() == (threadCount - maxLockedCount));
+		Assert.assertTrue(handleCount.get() == (maxLockedCount));
 	}
+
 }
