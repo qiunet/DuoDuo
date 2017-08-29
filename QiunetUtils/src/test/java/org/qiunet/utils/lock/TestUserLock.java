@@ -16,7 +16,7 @@ public class TestUserLock {
 		final UserLockManager<String> manager = new UserLockManager<>();
 		final AtomicInteger fastCount = new AtomicInteger();
 		final AtomicInteger handleCount = new AtomicInteger();
-		int threadCount = 10;
+		int threadCount = 100;
 		final CountDownLatch latch = new CountDownLatch(threadCount);
 		for (int i = 0; i < threadCount; i++) {
 			new Thread(new Runnable() {
@@ -41,6 +41,7 @@ public class TestUserLock {
 		}
 		latch.await();
 
+		Assert.assertTrue(manager.getLockedCount("qiunet") == 0);
 		Assert.assertTrue(fastCount.get() == (threadCount - UserLockManager.MAX_THREAD_COUNT_HOLD_LOCK));
 		Assert.assertTrue(handleCount.get() == (UserLockManager.MAX_THREAD_COUNT_HOLD_LOCK));
 	}

@@ -37,19 +37,10 @@ public class UserLockManager<UserID> implements Runnable {
 	public boolean lock(UserID id) {
 		UserLock lock = locks.get(id);
 		if (lock == null) {
-			locks.putIfAbsent(id, createUserLock(id));
+			locks.putIfAbsent(id, new UserLock(id));
 			lock = locks.get(id);
 		}
 		return lock.lock();
-	}
-
-	/***
-	 * 创建一个用户锁. 这里需要同步
-	 * @param id
-	 * @return
-	 */
-	private synchronized UserLock createUserLock(UserID id) {
-		return new UserLock(id);
 	}
 
 	/**
@@ -61,6 +52,16 @@ public class UserLockManager<UserID> implements Runnable {
 		if (lock != null) {
 			lock.releaseLock();
 		}
+	}
+
+	/***
+	 * 得到当前玩家锁住的线程数
+	 * @param id
+	 * @return
+	 */
+	public int getLockedCount(UserID id){
+		UserLock lock = locks.get(id);
+		return lock == null ? 0 : lock.lockedCount.get();
 	}
 
 	/****
@@ -88,6 +89,10 @@ public class UserLockManager<UserID> implements Runnable {
 			return false;
 		}
 
+		/**
+		 * 尝试去获取锁. 当已经使用的数量 > 指定数时候, 返回false.
+		 * @return
+		 */
 		private synchronized boolean tryLock(){
 			boolean canLock = lockedCount.get() < MAX_THREAD_COUNT_HOLD_LOCK;
 			if (canLock) {
@@ -96,6 +101,9 @@ public class UserLockManager<UserID> implements Runnable {
 			return canLock;
 		}
 
+		/***
+		 * 释放用户的锁, 并且减数
+		 */
 		public void releaseLock() {
 			if (lock.isHeldByCurrentThread()){
 				this.lock.unlock();
