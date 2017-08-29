@@ -17,7 +17,7 @@ public class TestUserLock {
 		final UserLockManager<String> manager = new UserLockManager<>(maxLockedCount);
 		final AtomicInteger fastCount = new AtomicInteger();
 		final AtomicInteger handleCount = new AtomicInteger();
-		int threadCount = 100;
+		int threadCount = 50;
 		final CountDownLatch latch = new CountDownLatch(threadCount);
 		for (int i = 0; i < threadCount; i++) {
 			new Thread(new Runnable() {
