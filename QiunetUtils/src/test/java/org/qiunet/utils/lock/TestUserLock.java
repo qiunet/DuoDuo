@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestUserLock {
 	@Test
 	public void testLock() throws InterruptedException {
-		int maxLockedCount = 0;
+		int maxLockedCount = 3;
 		final UserLockManager<String> manager = new UserLockManager<>(maxLockedCount);
 		final AtomicInteger fastCount = new AtomicInteger();
 		final AtomicInteger handleCount = new AtomicInteger();
