@@ -167,7 +167,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getDbIndexById(int id ){
-		return (id % uid_db_factor);
+		return (Math.abs(id) % uid_db_factor);
 	}
 
 	/***
@@ -176,6 +176,6 @@ public class DbProperties extends LoaderProperties {
 	 * @return
 	 */
 	public int getTbIndexById(int id ){
-		return (id / uid_db_factor) % PALYER_DATA_TB_DISTRIBUTE_CNT;
+		return (Math.abs(id) / uid_db_factor) % PALYER_DATA_TB_DISTRIBUTE_CNT;
 	}
 }
