@@ -1,5 +1,6 @@
 package org.qiunet.utils.nonSyncQuene;
 
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -22,7 +23,7 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 
 	private boolean RUNNING = true;
 	/*队列*/
-	private final LinkedTransferQueue<T> queue = new LinkedTransferQueue<>();
+	private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
 
 	private NonSyncQueueHandler(String threadName, boolean daemon){
 		this.msgThread = new Thread(new HandlerTHread(), threadName);
@@ -64,9 +65,10 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 		@Override
 		public void run() {
 			while(RUNNING){
-				T element = queue.poll();
 				boolean success = false;
+				T element = null;
 				try {
+					element = queue.take();
 					if(element != null ) success = element.handler();
 				}catch (Exception e){
 					// 出现异常, 不捕获. 会导致线程停止了
