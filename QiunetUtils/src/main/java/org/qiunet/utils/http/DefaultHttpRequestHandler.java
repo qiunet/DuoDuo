@@ -3,6 +3,7 @@ package org.qiunet.utils.http;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 			for(Entry<String, Object> en : params.entrySet()){
 				paramList.add(new BasicNameValuePair(en.getKey(), String.valueOf(en.getValue())));
 			}
-			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList);
+			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList, Charset.forName("UTF-8"));
 			return entity;
 		}
 		return null;
