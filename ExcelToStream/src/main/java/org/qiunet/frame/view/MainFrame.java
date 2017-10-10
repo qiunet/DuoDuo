@@ -41,7 +41,6 @@ public class MainFrame extends BaseJFrame {
 		this.setTitle("设定转换工具");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		if (System.currentTimeMillis()>1514736000000L) System.exit(0);
 		getContentPane().setLayout(new BorderLayout());
 	}
 
