@@ -56,13 +56,12 @@ abstract class BaseIoData<HEADER extends IoData, COMMON extends IoData>  impleme
 		byte [] bodyBytes = body.getBytes();
 		int split = MathUtil.random(bodyBytes.length/10, bodyBytes.length/3);
 		if (split > Short.MAX_VALUE) split = Short.MAX_VALUE - 1;
-		else if (split <= 0) split = 1;
 
 		CRC32 crc32 = new CRC32();
 		crc32.update(bodyBytes);
 
 
-		byte [] splitBytes = ProtocolUtil.encryptData(bodyBytes, split);
+		byte [] splitBytes = ProtocolUtil.encryptData(bodyBytes, (short) split);
 
 		leader.setCrc(crc32.getValue());
 		leader.setSplit((short) split);
