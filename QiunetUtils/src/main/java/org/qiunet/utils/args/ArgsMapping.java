@@ -28,6 +28,8 @@ public class ArgsMapping extends KeyValueData<String,String> {
 
 		if(args!=null&&args.length>0){
 			for(String s:args){
+				if (!s.startsWith("--") || s.indexOf("=") == -1) continue;
+
 				try {
 					String tt[] = StringUtil.split(s, "=");
 					temp.put(tt[0].substring(2).trim(), tt[1].trim());
