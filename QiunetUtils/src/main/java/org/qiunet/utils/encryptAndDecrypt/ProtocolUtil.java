@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.common.utils;
+package org.qiunet.utils.encryptAndDecrypt;
 /**
  * @author Zero
  * @mail baozilaji@126.com
@@ -12,10 +12,12 @@ public class ProtocolUtil {
 	 * @param chunkSize
 	 * @return
 	 */
-	public static byte[] encryptData(byte[] data, int chunkSize) {
+	public static byte[] encryptData(byte[] data, short chunkSize) {
 		if (data == null) {
 			return null;
 		}
+
+		if (chunkSize < 1) chunkSize = 1;
 
 		int len = data.length;
 		byte[] ret = new byte[len];
@@ -47,10 +49,12 @@ public class ProtocolUtil {
 	 * @param chunkSize
 	 * @return
 	 */
-	public static byte[] decryptData(byte[] data, int chunkSize) {
+	public static byte[] decryptData(byte[] data, short chunkSize) {
 		if (data == null) {
 			return null;
 		}
+
+		if (chunkSize < 1) chunkSize = 1;
 
 		int len = data.length;
 		byte[] ret = new byte[len];

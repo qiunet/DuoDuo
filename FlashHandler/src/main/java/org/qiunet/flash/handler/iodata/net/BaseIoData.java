@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.iodata.net;
 
 import org.qiunet.flash.handler.common.exception.CrcErrorException;
-import org.qiunet.flash.handler.common.utils.ProtocolUtil;
+import org.qiunet.utils.encryptAndDecrypt.ProtocolUtil;
 import org.qiunet.flash.handler.iodata.adapter.InputByteStreamBuilder;
 import org.qiunet.flash.handler.iodata.adapter.OutputByteStreamBuilder;
 import org.qiunet.flash.handler.iodata.base.InputByteStream;
