@@ -10,5 +10,7 @@ public enum LoggerType {
 	QIUNET_DATAS,
 
 	QIUNET_UTILS,
+
+	FLASH_HANDLER,
 	;
 }
