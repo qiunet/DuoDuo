@@ -1,11 +1,14 @@
 package org.qiunet.flash.handler.acceptor;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Intercepter;
 import org.qiunet.flash.handler.context.IContext;
 import org.qiunet.flash.handler.context.TcpContext;
 import org.qiunet.utils.nonSyncQuene.IndexNonSyncQueueHandler;
 
 /**
+ * 整个的游戏入口, 处理TCP 和 HTTP过来的请求
+ * 所有的请求封装成IContext. 然后各自分别处理
+ *
+ * Http是实时返回响应. TCP是使用多个异步队列处理请求. 根据session固定请求的处理队列.
  * Created by qiunet.
  * 17/7/21
  */
