@@ -1187,6 +1187,24 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 
+	public Set<String> smembers(String key){
+		return new RedisCommand<Set<String>>(jedisPool, key) {
+			@Override
+			protected Set<String> expression(Jedis jedis, String key) throws Exception {
+				return jedis.smembers(key);
+			}
+
+			@Override
+			protected String cmdName() {
+				return "smembers";
+			}
+			@Override
+			protected Object[] params() {
+				return new Object[]{};
+			}
+		}.execAndReturn();
+	}
+
 	public long srem(String key,final String member){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
