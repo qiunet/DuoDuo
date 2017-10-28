@@ -4,6 +4,7 @@ import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.nonSyncQuene.mutiThread.DefaultExecutorRejectHandler;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.*;
 
@@ -57,7 +58,9 @@ public class AsyncJobSupport {
 	 * 异步更新到db
 	 */
 	public void asyncToDb(){
-		for (final AsyncNode node : nodes) {
+		Iterator<AsyncNode> it = nodes.iterator();
+		while(it.hasNext()){
+			final AsyncNode node = it.next();
 			executor.execute(new Runnable() {
 				@Override
 				public void run() {
