@@ -36,11 +36,6 @@ public abstract class RedisCommand<T> {
 		this.key = key;
 	}
 	/**
-	 * 命令名称  错误日志使用
-	 * @return 命令名称
-	 */
-	protected abstract String cmdName();
-	/**
 	 * 返回需要打印的参数
 	 * @return 需要打印的参数
 	 */
@@ -63,7 +58,7 @@ public abstract class RedisCommand<T> {
 			if (logger.isEnabledFor(getLogLevel())){
 				Object params [] = params();
 				StringBuilder sb = new StringBuilder();
-				sb.append("RedisCommand [").append(String.format("%-18s", cmdName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(key).append("] ");
+				sb.append("RedisCommand [").append(String.format("%-18s", getCmdName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(key).append("] ");
 				if (params != null) sb.append("\t PARAMS ").append(Arrays.toString(params)).append("  ");
 				if (ret != null) sb.append("\t RESULT [").append(StringData.parseString(ret)).append("]");
 				logger.log(getLogLevel(), sb.toString());
@@ -76,6 +71,16 @@ public abstract class RedisCommand<T> {
 		}
 		return defaultResult;
 	}
+
+	/***
+	 * 得到方法名称.
+	 * @return
+	 */
+	private String getCmdName(){
+		StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+		return element.getMethodName();
+	}
+
 	/***
 	 * 执行表达式
 	 * @param jedis jedis 对象
@@ -96,7 +101,7 @@ public abstract class RedisCommand<T> {
 				// jedis 自己判断是否是broke的连接
 				jedis.close();
 			} catch (Exception e) {
-				logger.error(StringUtil.format("释放资源:{0}->{1}失败", cmdName(), Arrays.toString(params)), e);
+				logger.error(StringUtil.format("释放资源:{0}->{1}失败", getCmdName(), Arrays.toString(params)), e);
 			}
 		}
 	}

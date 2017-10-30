@@ -26,11 +26,6 @@ public abstract class MoreKeyRedisCommand<T> {
 		this.pool = pool;
 		this.defaultResult = defaultResult;
 	}
-	/**
-	 * 命令名称  错误日志使用
-	 * @return 命令名称
-	 */
-	protected abstract String cmdName();
 	/***
 	 * 执行表达式
 	 * @param jedis jedis 对象
@@ -54,7 +49,14 @@ public abstract class MoreKeyRedisCommand<T> {
 		}
 		return defaultResult;
 	}
-
+	/***
+	 * 得到方法名称.
+	 * @return
+	 */
+	private String getCmdName(){
+		StackTraceElement element = Thread.currentThread().getStackTrace()[3];
+		return element.getMethodName();
+	}
 	/**
 	 * 使用jedis
 	 * @param jedis jedis 对象
@@ -66,7 +68,7 @@ public abstract class MoreKeyRedisCommand<T> {
 				// jedis 自己判断是否是broke的连接
 				jedis.close();
 			} catch (Exception e) {
-				logger.error(StringUtil.format("释放资源:{0}->{1}失败", cmdName(), Arrays.toString(params)), e);
+				logger.error(StringUtil.format("释放资源:{0}->{1}失败", getCmdName(), Arrays.toString(params)), e);
 			}
 		}
 	}

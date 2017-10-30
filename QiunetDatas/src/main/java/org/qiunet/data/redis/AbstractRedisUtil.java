@@ -58,11 +58,6 @@ public abstract class AbstractRedisUtil {
 				return null;
 			}
 			@Override
-			protected String cmdName() {
-				return "setObjectToHash";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{StringData.parseString(po), seconds};
 			}
@@ -83,11 +78,6 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, NORMAL_LIFECYCLE);
 				return null;
 			}
-			@Override
-			protected String cmdName() {
-				return "setObjectToHash";
-			}
-
 			@Override
 			protected Object[] params() {
 				return fields;
@@ -141,11 +131,6 @@ public abstract class AbstractRedisUtil {
 				return null;
 			}
 			@Override
-			protected String cmdName() {
-				return "getObjectFromHash";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{clazz.getSimpleName(), seconds};
 			}
@@ -184,12 +169,6 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, seconds);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "setListToHash";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{StringData.parseString(list) , seconds};
@@ -208,11 +187,6 @@ public abstract class AbstractRedisUtil {
 			protected Integer expression(Jedis jedis, String key)  throws Exception{
 				Long ret = jedis.hlen(key);
 				return ret == null ? -1 : ret.intValue();
-			}
-
-			@Override
-			protected String cmdName() {
-				return "hlen";
 			}
 		}.execAndReturn();
 	}
@@ -272,12 +246,6 @@ public abstract class AbstractRedisUtil {
 				}
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "getListFromHash";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{clazz.getSimpleName() , seconds};
@@ -308,12 +276,6 @@ public abstract class AbstractRedisUtil {
 				}
 				return po;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "getRedisObjectFromRedisList";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{clazz.getSimpleName(), subKey};
@@ -326,10 +288,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected String expression(Jedis jedis, String key) {
 				return jedis.hget(key, subKey);
-			}
-			@Override
-			protected String cmdName() {
-				return "hget";
 			}
 			@Override
 			protected Object[] params() {
@@ -345,10 +303,6 @@ public abstract class AbstractRedisUtil {
 				return jedis.ttl(key);
 			}
 			@Override
-			protected String cmdName() {
-				return "hget";
-			}
-			@Override
 			protected Object[] params() {
 				return new Object[]{};
 			}
@@ -360,11 +314,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.lpush(key, val);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "lpush";
 			}
 			@Override
 			protected Object[] params() {
@@ -379,11 +328,6 @@ public abstract class AbstractRedisUtil {
 			protected List<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.lrange(key, start, end);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "lrange";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{start, end};
@@ -397,11 +341,6 @@ public abstract class AbstractRedisUtil {
 			protected Object expression(Jedis jedis, String key) throws Exception {
 				jedis.lset(key, index, val);
 				return null;
-			}
-
-			@Override
-			protected String cmdName() {
-				return "lset";
 			}
 
 			@Override
@@ -420,11 +359,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "ltrim";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{start, end};
 			}
@@ -437,12 +371,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.hdel(key, subKey);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "hdel";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{subKey};
@@ -468,12 +396,6 @@ public abstract class AbstractRedisUtil {
 				jedis.hdel(key, keys);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "deleteList";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{list};
@@ -490,10 +412,6 @@ public abstract class AbstractRedisUtil {
 		}
 
 		return new MoreKeyRedisCommand<List<String>>(jedisPool, Collections.<String>emptyList()) {
-			@Override
-			protected String cmdName() {
-				return "mget";
-			}
 			@Override
 			protected List<String> expression(Jedis jedis) throws Exception {
 				List<String> rt=new ArrayList<String>();
@@ -528,11 +446,6 @@ public abstract class AbstractRedisUtil {
 				jedis.setex(key.getBytes(), seconds, data);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "setByteArrays";
-			}
 		}.execAndReturn();
 	}
 	/**
@@ -545,11 +458,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected byte[] expression(Jedis jedis, String key) throws Exception {
 				return jedis.get(key.getBytes());
-			}
-
-			@Override
-			protected String cmdName() {
-				return "getByteArray";
 			}
 		}.execAndReturn();
 	}
@@ -567,12 +475,6 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.sadd(key,values);
 				return ret == null ? -1 : ret.longValue();
 			}
-
-			@Override
-			protected String cmdName() {
-				return "saddString";
-			}
-
 			@Override
 			protected Object[] params() {
 				return values;
@@ -596,11 +498,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "saddByExpireSecond";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{value, second};
 			}
@@ -617,11 +514,6 @@ public abstract class AbstractRedisUtil {
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.srandmember(key);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "srandmember";
-			}
 		}.execAndReturn();
 	}
 
@@ -636,11 +528,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.scard(key);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "scardString";
-			}
 		}.execAndReturn();
 	}
 
@@ -649,10 +536,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.spop(key);
-			}
-			@Override
-			protected String cmdName() {
-				return "spopString";
 			}
 		}.execAndReturn();
 	}
@@ -664,10 +547,6 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.del(key);
 				return ret == null ? 0 : ret.longValue();
 			}
-			@Override
-			protected String cmdName() {
-				return "del";
-			}
 		}.execAndReturn();
 	}
 
@@ -677,11 +556,6 @@ public abstract class AbstractRedisUtil {
 			protected Map<String, String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.hgetAll(key);
 			}
-			@Override
-			protected String cmdName() {
-				return "hmgetAllString";
-			}
-
 			@Override
 			protected Level getLogLevel() {
 				return Level.DEBUG;
@@ -695,11 +569,6 @@ public abstract class AbstractRedisUtil {
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.hmset(key, values);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "hmsetAllString";
-			}
 		}.execAndReturn();
 	}
 
@@ -710,12 +579,6 @@ public abstract class AbstractRedisUtil {
 				jedis.hset(key,field,value);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "hset";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
@@ -736,12 +599,6 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.hincrBy(key, field, value);
 				return ret;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "hincr";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
@@ -757,12 +614,6 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, NORMAL_LIFECYCLE);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "hsetString";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{field, value};
@@ -783,11 +634,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "setString";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{value, seconds};
 			}
@@ -800,11 +646,6 @@ public abstract class AbstractRedisUtil {
 				jedis.persist(key);
 				return null;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "persist";
-			}
 		}.execAndReturn();
 	}
 
@@ -813,11 +654,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.get(key);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "getString";
 			}
 		}.execAndReturn();
 	}
@@ -831,12 +667,6 @@ public abstract class AbstractRedisUtil {
 				}
 				return rt;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "getString";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{lifecycle};
@@ -850,11 +680,6 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, seconds);
 				return null;
 			}
-			@Override
-			protected String cmdName() {
-				return "expire";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{seconds};
@@ -870,11 +695,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zRevRangeByScore";
-			}
-
-			@Override
 			protected Object[] params() {
 				return new Object[]{max, min, offset, count};
 			}
@@ -887,12 +707,6 @@ public abstract class AbstractRedisUtil {
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeByScoreWithScores(key, max, min, offset, count);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "zRevRangeByScoreWithScores";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{max, min, offset, count};
@@ -906,11 +720,6 @@ public abstract class AbstractRedisUtil {
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrangeByScoreWithScores(key, max, min, offset, count);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "zRangeByScoreWithScores";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{max, min, offset, count};
@@ -923,11 +732,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Set<Tuple> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrangeByScoreWithScores(key, min, max);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "zRangeByScoreWithScores";
 			}
 			@Override
 			protected Object[] params() {
@@ -944,10 +748,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zRevRangeWithScores";
-			}
-			@Override
 			protected Object[] params() {
 				return new Object[]{start, end };
 			}
@@ -961,10 +761,6 @@ public abstract class AbstractRedisUtil {
 				return jedis.zrevrange(key, start, end);
 			}
 
-			@Override
-			protected String cmdName() {
-				return "zRevrange";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{start, end };
@@ -980,10 +776,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zRange";
-			}
-			@Override
 			protected Object[] params() {
 				return new Object[]{start, end };
 			}
@@ -996,11 +788,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zrevrank(key, member);
 				return ret == null ? -1 : ret;
-			}
-
-			@Override
-			protected String cmdName() {
-				return "zRevRank";
 			}
 			@Override
 			protected Object[] params() {
@@ -1015,11 +802,6 @@ public abstract class AbstractRedisUtil {
 			protected Double expression(Jedis jedis, String key) throws Exception {
 				Double ret = jedis.zscore(key, member);
 				return ret == null ? -1 : ret;
-			}
-
-			@Override
-			protected String cmdName() {
-				return "zscore";
 			}
 			@Override
 			protected Object[] params() {
@@ -1040,11 +822,6 @@ public abstract class AbstractRedisUtil {
 			protected Double expression(Jedis jedis, String key) throws Exception {
 				Double ret = jedis.zincrby(key, val, member);
 				return ret == null ? -1 : ret;
-			}
-
-			@Override
-			protected String cmdName() {
-				return "zincrby";
 			}
 			@Override
 			protected Object[] params() {
@@ -1068,10 +845,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zAdd";
-			}
-			@Override
 			protected Object[] params() {
 				return new Object[]{score , member };
 			}
@@ -1086,10 +859,6 @@ public abstract class AbstractRedisUtil {
 				return ret == null ? -1 : ret;
 			}
 
-			@Override
-			protected String cmdName() {
-				return "zAdd";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{JsonUtil.toJsonString(vals) };
@@ -1107,10 +876,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zRem";
-			}
-			@Override
 			protected Object[] params() {
 				return members;
 			}
@@ -1126,10 +891,6 @@ public abstract class AbstractRedisUtil {
 			}
 
 			@Override
-			protected String cmdName() {
-				return "zCount";
-			}
-			@Override
 			protected Object[] params() {
 				return new Object[]{min , max};
 			}
@@ -1143,11 +904,6 @@ public abstract class AbstractRedisUtil {
 				Long ret = jedis.zcard(key);
 				return ret == null ? 0 : ret;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "zCard";
-			}
 		}.execAndReturn();
 	}
 
@@ -1157,14 +913,28 @@ public abstract class AbstractRedisUtil {
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.zrevrangeByScore(key, max, min);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "zRevrangeByScore";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{ max ,min};
+			}
+		}.execAndReturn();
+	}
+
+	/***
+	 * 根据分数范围 删除zset里面的一批key
+	 * @param key
+	 * @param start
+	 * @param end
+	 */
+	public Long zRemRangeByScore(String key,final double start,final double end){
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
+			@Override
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				return jedis.zremrangeByScore(key, start, end);
+			}
+			@Override
+			protected Object[] params() {
+				return new Object[]{ start ,end};
 			}
 		}.execAndReturn();
 	}
@@ -1174,11 +944,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Boolean expression(Jedis jedis, String key) throws Exception {
 				return jedis.sismember(key, member);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "sismember";
 			}
 			@Override
 			protected Object[] params() {
@@ -1193,11 +958,6 @@ public abstract class AbstractRedisUtil {
 			protected Set<String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.smembers(key);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "smembers";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{};
@@ -1210,11 +970,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.srem(key, member);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "srem";
 			}
 			@Override
 			protected Object[] params() {
@@ -1229,11 +984,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.incr(key);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "incr";
-			}
 		}.execAndReturn();
 	}
 
@@ -1242,11 +992,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.incrBy(key, val);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "incrby";
 			}
 			@Override
 			protected Object[] params() {
@@ -1261,11 +1006,6 @@ public abstract class AbstractRedisUtil {
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.lpop(key);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "lpop";
-			}
 		}.execAndReturn();
 	}
 
@@ -1274,11 +1014,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected String expression(Jedis jedis, String key) throws Exception {
 				return jedis.rpop(key);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "rpop";
 			}
 		}.execAndReturn();
 	}
@@ -1296,11 +1031,6 @@ public abstract class AbstractRedisUtil {
 				}
 				return rt;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "rpush";
-			}
 			@Override
 			protected Object[] params() {
 				return new Object[]{ value , expire};
@@ -1314,12 +1044,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.rpush(key, values);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "rpush";
-			}
-
 			@Override
 			protected Object[] params() {
 				return values;
@@ -1332,11 +1056,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return  jedis.llen(key);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "llen";
 			}
 		}.execAndReturn();
 	}
@@ -1354,11 +1073,6 @@ public abstract class AbstractRedisUtil {
 				jedis.expire(key, 3);
 				return ret;
 			}
-
-			@Override
-			protected String cmdName() {
-				return "fastRequestControl";
-			}
 		}.execAndReturn();
 	}
 	/**
@@ -1373,12 +1087,6 @@ public abstract class AbstractRedisUtil {
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				return jedis.setnx(key, value);
 			}
-
-			@Override
-			protected String cmdName() {
-				return "setnx";
-			}
-
 			@Override
 			protected Object[] params() {
 				return new Object[]{value};
@@ -1395,11 +1103,6 @@ public abstract class AbstractRedisUtil {
 			@Override
 			protected Boolean expression(Jedis jedis, String key) throws Exception {
 				return jedis.exists(key);
-			}
-
-			@Override
-			protected String cmdName() {
-				return "exists";
 			}
 		}.execAndReturn();
 	}
