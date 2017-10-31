@@ -117,7 +117,7 @@ public class MainFrame extends BaseJFrame {
 			private ExcelToStream excelToStream = new ExcelToStream();
 			private void exchangeAll(File dir, Set<String> errorFiles){
 				for (File file : dir.listFiles()) {
-					if (! filePostfixCheck(file) || file.getName().endsWith(".xd")) continue;
+					if (! filePostfixCheck(file) || file.getName().endsWith(".xd") || file.getName().endsWith(".json")) continue;
 
 					System.out.println(file.getName());
 
