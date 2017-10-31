@@ -1,20 +1,13 @@
 package org.qiunet.utils;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.appender.AppenderAttachable;
 import org.qiunet.appender.CliJsonAppender;
 import org.qiunet.appender.XdAppender;
 import org.qiunet.exception.ExchangeException;
-import org.relaxng.datatype.Datatype;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Created by qiunet.
@@ -108,7 +101,10 @@ public class ExcelToStream {
 
 					Cell flag = cliFlagRow.getCell(columnNum);
 					flag.setCellType(CellType.STRING);
-
+					if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue())) {
+						// 没有填写 就默认为0
+						flag.setCellValue("0");
+					}
 					attachable.append(dateType, dataNameRow.getCell(columnNum).getStringCellValue(), c.getStringCellValue(), Integer.parseInt(flag.getStringCellValue()) > 0);
 
 				}
