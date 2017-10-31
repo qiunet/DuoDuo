@@ -35,7 +35,6 @@ public class MainFrame extends BaseJFrame {
 
 	private static final long serialVersionUID = -4680070900448216352L;
 
-	private static final String loadWorkHomeName = ".xd.project";
 	private void jframeInit(){
 		this.setSize(200, 600);
 		this.setTitle("设定转换工具");
@@ -157,7 +156,7 @@ public class MainFrame extends BaseJFrame {
 	 * 加载文件树
 	 */
 	private void loadFileTree () {
-		String workPath = FileUtil.returnPathFromProjectFile(getFileName());
+		String workPath = FileUtil.returnPathFromProjectFile();
 		if (workPath == null || workPath.length() == 0 || !new File(workPath).exists()) return;
 
 		File workPathFile = new File(workPath);
@@ -274,7 +273,7 @@ public class MainFrame extends BaseJFrame {
 
 			if (jFileChooser.showOpenDialog(JframeManager.getInstance().getJframe(MainFrame.class)) == JFileChooser.APPROVE_OPTION){
 				System.out.println(jFileChooser.getSelectedFile().getAbsolutePath());
-				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile().getAbsolutePath(), getFileName());
+				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile().getAbsolutePath());
 				JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 			}
 		}
@@ -302,9 +301,6 @@ public class MainFrame extends BaseJFrame {
 		}
 	}
 
-	private static String getFileName(){
-		return System.getProperty("user.dir") + File.separator + loadWorkHomeName;
-	}
 
 	class TreePopMenuListener implements MouseListener {
 		public void mouseClicked(MouseEvent e) {

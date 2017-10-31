@@ -3,12 +3,18 @@ package org.qiunet.utils;
 import java.io.*;
 
 public class FileUtil {
+	private static final String loadWorkHomeName = ".xd.project";
 
+	public static String getFileName(){
+		return System.getProperty("user.dir") + File.separator + loadWorkHomeName;
+	}
 	/**
 	 *
 	 * @param path
 	 */
-	public static void writeToProjectFile(String path, String writeToFileName) {
+	public static void writeToProjectFile(String path) {
+		String writeToFileName = getFileName();
+
 		System.out.println("WriteTo " + writeToFileName);
 		FileOutputStream fos = null;
 		PrintWriter print = null;
@@ -29,7 +35,8 @@ public class FileUtil {
 		}
 	}
 
-	public static String returnPathFromProjectFile( String fileName){
+	public static String returnPathFromProjectFile(){
+		String fileName = getFileName();
 		File file = new File(fileName);
 		if (! file.exists()) return null;
 

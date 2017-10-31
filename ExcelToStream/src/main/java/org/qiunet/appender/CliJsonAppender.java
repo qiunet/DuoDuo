@@ -77,7 +77,10 @@ public class CliJsonAppender implements Appender{
 
 	@Override
 	public void fileOver() {
-		File outFile = new File(outFileParent, filePrefix+".json");
+		File outFile = new File(outFileParent);
+		outFile.mkdirs();
+		outFile = new File(outFileParent, filePrefix+".json");
+
 		FileWriter fileWriter = null;
 		try {
 			fileWriter = new FileWriter(outFile);
