@@ -69,8 +69,9 @@ public class CliJsonAppender implements Appender{
 		// 客户端约定俗成的 _ 开始不记录
 		if (sheetName.startsWith("_")) {
 			System.out.println("CliJson continue sheet ["+sheetName+"]");
-			this.fileRecord.put(sheetName, this.rowRecordArray);
+			return;
 		}
+		this.fileRecord.put(sheetName, this.rowRecordArray);
 		this.rowRecordArray = null;
 	}
 
