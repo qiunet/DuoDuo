@@ -105,7 +105,7 @@ public class ExcelToStream {
 						// 没有填写 就默认为0
 						flag.setCellValue("0");
 					}
-					attachable.append(dateType, dataNameRow.getCell(columnNum).getStringCellValue(), c.getStringCellValue(), Integer.parseInt(flag.getStringCellValue()) > 0);
+					attachable.append(dateType, dataNameRow.getCell(columnNum).getStringCellValue().trim(), c.getStringCellValue().trim(), Integer.parseInt(flag.getStringCellValue()) > 0);
 
 				}
 				// 行结束
