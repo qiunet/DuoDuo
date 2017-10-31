@@ -1,7 +1,13 @@
 package org.qiunet.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.poi.ss.usermodel.*;
+import org.qiunet.appender.AppenderAttachable;
+import org.qiunet.appender.CliJsonAppender;
+import org.qiunet.appender.XdAppender;
 import org.qiunet.exception.ExchangeException;
+import org.relaxng.datatype.Datatype;
 
 import java.io.*;
 import java.util.Arrays;
@@ -15,7 +21,6 @@ import java.util.zip.GZIPOutputStream;
  * 17/5/25
  */
 public class ExcelToStream {
-	private static final Set<String> typeSet = new HashSet<String>(Arrays.asList(new String[]{"string" , "double" , "int"}));
 	/**定义数据的行数-行号*/
 	private static final int DATA_DEFINE_ROW = 4;
 
@@ -56,8 +61,8 @@ public class ExcelToStream {
 				break;
 			}
 			cell.setCellType(CellType.STRING);
-			String dataType = cell.getStringCellValue().toLowerCase();
-			if(! typeSet.contains(dataType)){
+			DataType dataType = DataType.parse(cell.getStringCellValue().toLowerCase());
+			if(dataType == null){
 				cellLength = i;
 				break;
 			}
@@ -65,12 +70,12 @@ public class ExcelToStream {
 		return cellLength;
 	}
 
-	private void SheetToStream(Sheet sheet , File outFile) throws Exception {
-		System.out.print("["+outFile.getName()+"]---------LASTROW:");
+	private void SheetToStream(Sheet sheet, AppenderAttachable attachable) throws Exception {
+		System.out.print("File:["+attachable.getFileName()+"] Sheet:["+sheet.getSheetName()+"]---------LASTROW:");
 			/*设定excel 行数据的规则
-			 * 第一行：版本(兼容付总的)			实际对应的row 为 0
-			 * 第二行：参数   				实际对应的row 为 1
-			 * 第三行：数据内容说明-不用管		实际对应的row 为 2
+			 * 第一行：说明	        		实际对应的row 为 0
+			 * 第二行：英文名称   				实际对应的row 为 1
+			 * 第三行：客户端是否需要记录		实际对应的row 为 2
 			 * 第四行：数据类型				实际对应的row 为 3
 			 */
 		int rowNum = 0,columnNum = 0;
@@ -78,47 +83,40 @@ public class ExcelToStream {
 		System.out.println(lastRow + "  数据行数:"+(lastRow-DATA_DEFINE_ROW));
 			/*写二进制文件规则：参数-数据行数-数据   写流的时候 d要压缩*/
 
-		FileOutputStream outStream = null;
-		GZIPOutputStream gos = null;
-		DataOutputStream dos = null;
 		try {
-			outStream = new FileOutputStream(outFile);
-			gos = new GZIPOutputStream(outStream);
-			dos = new DataOutputStream(gos);
-			dos.writeInt(lastRow-DATA_DEFINE_ROW );												//数据行数
+			// 记录总行数
+			attachable.recordNum(lastRow-DATA_DEFINE_ROW );												//数据行数
+
 			int cellLength = getCellLength(sheet);
 			Row dateTypeRow = sheet.getRow(DATA_DEFINE_ROW-1);									//数据类型行
+			Row cliFlagRow = sheet.getRow(DATA_DEFINE_ROW-2);									//cliFlag类型行
+			Row dataNameRow = sheet.getRow(DATA_DEFINE_ROW-3);									//数据名称行
+
 			for (rowNum = DATA_DEFINE_ROW; rowNum < lastRow; rowNum++) {
 				Row row = sheet.getRow(rowNum);
 				for (columnNum = 0; columnNum < cellLength; columnNum++) {
-					String dateType = dateTypeRow.getCell(columnNum).getStringCellValue().toLowerCase();
-					Cell c = row.getCell(columnNum);
+					DataType dateType = DataType.parse(dateTypeRow.getCell(columnNum).getStringCellValue());
 
+					if (dateType == null) {
+						throw new IllegalArgumentException("File:["+attachable.getFileName()+"] Sheet: ["+sheet.getSheetName()+"] rowNum["+(rowNum+1)+"], columnNum["+(columnNum+1)+"] dateType error : " +dateType);
+					}
+
+					Cell c = row.getCell(columnNum);
 					if(c == null) c = row.createCell(columnNum);
 
 					c.setCellType(CellType.STRING);
 
-					if ("int".equals(dateType)) {
-						dos.writeInt(Integer.parseInt(c.getStringCellValue()));
-					}else if ("double".equals(dateType)) {
-						dos.writeDouble(Double.parseDouble(c.getStringCellValue()));
-					}else if("string".equals(dateType)){
-						dos.writeUTF(c.getStringCellValue());
-					}else{
-						throw new IllegalArgumentException("name["+outFile.getName()+"] rowNum["+(rowNum+1)+"], columnNum["+(columnNum+1)+"] dateType error : " +dateType);
-					}
+					Cell flag = cliFlagRow.getCell(columnNum);
+					flag.setCellType(CellType.STRING);
+
+					attachable.append(dateType, dataNameRow.getCell(columnNum).getStringCellValue(), c.getStringCellValue(), Integer.parseInt(flag.getStringCellValue()) > 0);
+
 				}
+				// 行结束
+				attachable.rowRecordOver();
 			}
 		}catch (NumberFormatException e) {
-			throw new ExchangeException(outFile.getName(), rowNum+1, columnNum+1, e.getMessage());
-		} finally {
-			try {
-				if(dos != null) dos.close();
-				if(gos != null) gos.close();
-				if (outStream != null) outStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			throw new ExchangeException("File:["+attachable.getFileName()+"] Sheet: ["+sheet.getSheetName()+"]", rowNum+1, columnNum+1, e.getMessage());
 		}
 	}
 	/***
@@ -129,22 +127,28 @@ public class ExcelToStream {
 		try {
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(sourceFile));//能自动识别excel版本
 			String fileNamePrefix = sourceFile.getName().substring(0, sourceFile.getName().indexOf("."));
+			String parentPath = sourceFile.getParent();
+
+			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
+			appenderAttachable.addAppender(new XdAppender(parentPath, fileNamePrefix));
+			appenderAttachable.addAppender(new CliJsonAppender(parentPath, fileNamePrefix));
+
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
 				if ("end".equals(sheet.getSheetName())) break;
 
-				String sheetName = sheet.getSheetName();
-				if (sheetName.startsWith("_")) sheetName = sheetName.substring(1, sheetName.length());
-				String newFileName = fileNamePrefix + "_" + sheetName + ".xd";
-				File outFile = new File(sourceFile.getParent(), newFileName);
+
 				try {
-					this.SheetToStream(sheet, outFile);
+					this.SheetToStream(sheet, appenderAttachable);
 				}catch (Exception e) {
 					e.printStackTrace();
-					outFile.delete();
 					return e.getMessage();
 				}
+
+				appenderAttachable.sheetOver(sheet.getSheetName());
 			}
+
+			appenderAttachable.fileOver();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

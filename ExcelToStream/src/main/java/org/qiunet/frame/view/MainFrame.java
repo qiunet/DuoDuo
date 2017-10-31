@@ -86,7 +86,7 @@ public class MainFrame extends BaseJFrame {
 	 */
 	private void popMenuInit() {
 		popupMenu = new JPopupMenu();
-		JMenuItem exchange = new JMenuItem("转换xd");
+		JMenuItem exchange = new JMenuItem("转换");
 		exchange.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				DefaultMutableTreeNode node = (DefaultMutableTreeNode) jTree.getLastSelectedPathComponent();
@@ -222,7 +222,7 @@ public class MainFrame extends BaseJFrame {
 
 	private Set<String> expandFileName = new HashSet<String>();
 
-	private static final Set<String> postfixs = new HashSet<String>(Arrays.asList(new String[]{"xlsx","xls","xd"}));
+	private static final Set<String> postfixs = new HashSet<String>(Arrays.asList(new String[]{"xlsx","xls","xd","json"}));
 
 	/**
 	 * 校验文件的后缀名
