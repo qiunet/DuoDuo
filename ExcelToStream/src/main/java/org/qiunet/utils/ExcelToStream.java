@@ -96,16 +96,32 @@ public class ExcelToStream {
 
 					Cell c = row.getCell(columnNum);
 					if(c == null) c = row.createCell(columnNum);
-
 					c.setCellType(CellType.STRING);
 
-					Cell flag = cliFlagRow.getCell(columnNum);
-					flag.setCellType(CellType.STRING);
-					if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue())) {
-						// 没有填写 就默认为0
-						flag.setCellValue("0");
+
+					String dataName = ""; // 名称
+					boolean cliFlag = false;     // 客户端的flag
+					if (cliFlagRow != null ) {
+						Cell flag = cliFlagRow.getCell(columnNum);
+						if (flag != null) {
+							flag.setCellType(CellType.STRING);
+							if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue()))  flag.setCellValue("0");
+
+							cliFlag = Double.parseDouble(flag.getStringCellValue()) > 0;
+						}
 					}
-					attachable.append(dateType, dataNameRow.getCell(columnNum).getStringCellValue().trim(), c.getStringCellValue().trim(), Integer.parseInt(flag.getStringCellValue()) > 0);
+
+					if (dataNameRow != null) {
+						Cell name = dataNameRow.getCell(columnNum);
+						if (name != null) {
+							name.setCellType(CellType.STRING);
+							if (name.getStringCellValue() == null) name.setCellValue("");
+
+							dataName = name.getStringCellValue().trim();
+						}
+					}
+
+					attachable.append(dateType, dataName, c.getStringCellValue().trim(), cliFlag);
 
 				}
 				// 行结束

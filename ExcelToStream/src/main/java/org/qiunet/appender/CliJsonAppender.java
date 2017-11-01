@@ -4,9 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.qiunet.utils.DataType;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by qiunet.
@@ -81,19 +79,20 @@ public class CliJsonAppender implements Appender{
 		outFile.mkdirs();
 		outFile = new File(outFileParent, filePrefix+".json");
 
-		FileWriter fileWriter = null;
+		FileOutputStream fos = null;
+		OutputStreamWriter writer = null;
 		try {
-			fileWriter = new FileWriter(outFile);
-			fileWriter.write(fileRecord.toJSONString());
+			fos = new FileOutputStream(outFile);
+			writer = new OutputStreamWriter(fos, "UTF-8");
+			writer.write(fileRecord.toJSONString());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {
-			if (fileWriter != null) {
-				try {
-					fileWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				if (writer != null)	writer.close();
+				if (fos != null)	fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
