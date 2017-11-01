@@ -75,6 +75,8 @@ public class CliJsonAppender implements Appender{
 
 	@Override
 	public void fileOver() {
+		if (fileRecord.isEmpty()) return;
+
 		File outFile = new File(outFileParent);
 		outFile.mkdirs();
 		outFile = new File(outFileParent, filePrefix+".json");
