@@ -226,18 +226,18 @@ public class StringUtil {
 	 * 屏蔽两端大部分空白字符
 	 * @return
 	 */
-	private static final Character [] spaceChars = {' ', '\t', 'ㅤ', '　'};
+	private static final Character [] spaceChars = {'ㅤ', '　'};
 	public static String powerfulTrim(String str){
 		if (str == null || str.isEmpty()) return str;
 
 		int start = 0;
 		int length = str.length();
 
-		while (start < length && CommonUtil.existInList(str.charAt(start), spaceChars)) {
+		while (start < length && ((str.charAt(start) > (char)0 && str.charAt(start) <= (char)32) || CommonUtil.existInList(str.charAt(start), spaceChars))) {
 			start ++;
 		}
 
-		while (length > start && CommonUtil.existInList(str.charAt(length - 1), spaceChars)) {
+		while (length > start && ((str.charAt(length - 1) > (char)0 && str.charAt(length - 1) <= (char)32) || CommonUtil.existInList(str.charAt(length - 1), spaceChars))) {
 			length --;
 		}
 
