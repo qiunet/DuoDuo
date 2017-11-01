@@ -28,4 +28,18 @@ public class TestStringUtil extends BaseTest{
 		strs  = StringUtil.split(str, ",");
 		Assert.assertTrue(strs.length == 4);
 	}
+	@Test
+	public void testPowerfullTrim() {
+		String str = "s\ts ";
+		Assert.assertEquals("s\ts", StringUtil.powerfulTrim(str));
+
+		str = "\ts\ts\t";
+		Assert.assertEquals("s\ts", StringUtil.powerfulTrim(str));
+
+		str = "abc";
+		Assert.assertEquals(str, StringUtil.powerfulTrim(str));
+
+		str = "ㅤ";// 特殊字符
+		Assert.assertEquals("", StringUtil.powerfulTrim(str));
+	}
 }

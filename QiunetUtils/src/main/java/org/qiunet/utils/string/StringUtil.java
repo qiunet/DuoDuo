@@ -2,6 +2,7 @@ package org.qiunet.utils.string;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
 	private StringUtil(){}
-	
+
 	/**汉字的正则表达式*/
 	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5\uF900-\uFA2D]*)");
 
@@ -220,5 +221,29 @@ public class StringUtil {
 			sb.append(chars.charAt(MathUtil.random(chars.length())));
 		}
 		return sb.toString();
+	}
+	/**
+	 * 屏蔽两端大部分空白字符
+	 * @return
+	 */
+	private static final Character [] spaceChars = {' ', '\t', 'ㅤ', '　'};
+	public static String powerfulTrim(String str){
+		if (str == null || str.isEmpty()) return str;
+
+		int start = 0;
+		int length = str.length();
+
+		while (start < length && CommonUtil.existInList(str.charAt(start), spaceChars)) {
+			start ++;
+		}
+
+		while (length > start && CommonUtil.existInList(str.charAt(length - 1), spaceChars)) {
+			length --;
+		}
+
+		if (start > 0 || length < str.length()) {
+			return str.substring(start, length);
+		}
+		return str;
 	}
 }
