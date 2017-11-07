@@ -17,8 +17,11 @@ public class Acceptor {
 	private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 	/**线程的处理队列*/
 	private IndexNonSyncQueueHandler<IContext> contextProcessor;
-	private volatile static Acceptor instance;
 
+	/**
+	 * 创建当前cpu核数相当的线程作为 context的处理队列
+	 * @return
+	 */
 	private Acceptor(int threadCount) {
 		if (instance != null ) {
 			throw new RuntimeException("Duplicate called the Acceptor Instructor ");
@@ -29,25 +32,21 @@ public class Acceptor {
 		instance = this;
 	}
 
-	/**
-	 * 创建当前cpu核数相当的线程作为 context的处理队列
-	 * @return
-	 */
-	public static Acceptor create() {
-		return create(THREAD_COUNT);
-	}
+	private volatile static Acceptor instance;
 
-	public static Acceptor create(int threadCount) {
+
+	public static Acceptor getInstance() {
 		if (instance == null) {
 			synchronized (Acceptor.class) {
 				if (instance == null)
 				{
-					new Acceptor(threadCount);
+					new Acceptor(THREAD_COUNT);
 				}
 			}
 		}
 		return instance;
 	}
+
 	/**
 	 * 停止所有的线程
 	 */

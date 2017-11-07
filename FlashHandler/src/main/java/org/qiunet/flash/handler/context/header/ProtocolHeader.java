@@ -1,19 +1,16 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
-import org.qiunet.flash.handler.iodata.base.InputByteDataStream;
-import org.qiunet.flash.handler.iodata.base.InputByteStream;
-import org.qiunet.flash.handler.iodata.base.OutputByteStream;
-import org.qiunet.flash.handler.iodata.constants.IoDataConstants;
-import org.qiunet.flash.handler.iodata.log.ILogSwitch;
-import org.qiunet.flash.handler.iodata.net.IoData;
-
 /**
  * 请求的固定头
  * Created by qiunet.
  * 17/7/19
  */
-public class ProtocolHeader implements IoData {
+public class ProtocolHeader {
+	/**包头识别码*/
+	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
+
+
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 28;
 	/**辨别 请求使用*/
@@ -40,7 +37,7 @@ public class ProtocolHeader implements IoData {
 	 * @param crc crc 完整校验
 	 */
 	public ProtocolHeader(int length, int sequence, int protocolId, int chunkSize, long crc) {
-		this.magic = IoDataConstants.magic;
+		this.magic = MAGIC_CONTENTS;
 		this.crc = crc;
 		this.length = length;
 		this.sequence = sequence;
@@ -52,7 +49,7 @@ public class ProtocolHeader implements IoData {
 
 
 	public ProtocolHeader(ByteBuf in) {
-		this.magic = new byte[IoDataConstants.magic.length];
+		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
 		this.length = in.readInt();
 		this.sequence = in. readInt();
@@ -88,29 +85,5 @@ public class ProtocolHeader implements IoData {
 		out.writeInt(protocolId);
 		out.writeInt(chunkSize);
 		out.writeLong(crc);
-	}
-
-	@Override
-	public void dataReader(InputByteStream in) throws Exception {
-		((ILogSwitch)in).setPrintLog(false);
-		this.magic = in.readBytes(IoDataConstants.magic.length);
-		this.length = in.readInt("length");
-		this.sequence = in.readInt("sequence");
-		this.protocolId = in.readInt("protocolId");
-		this.chunkSize = in.readInt("chunkSize");
-		this.crc = in.readLong("crc");
-		((InputByteDataStream)in).setPrintLog(true);
-	}
-
-	@Override
-	public void dataWriter(OutputByteStream out) throws Exception {
-		((ILogSwitch)out).setPrintLog(false);
-		out.writeBytes(IoDataConstants.magic);
-		out.writeInt("length", length);
-		out.writeInt("sequence", sequence);
-		out.writeInt("protocolId", protocolId);
-		out.writeInt("chunkSize", chunkSize);
-		out.writeLong("crc", crc);
-		((ILogSwitch)out).setPrintLog(true);
 	}
 }

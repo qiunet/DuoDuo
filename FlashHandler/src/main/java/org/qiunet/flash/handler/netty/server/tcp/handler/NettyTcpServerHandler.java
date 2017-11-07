@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.context.IContext;
  */
 public class NettyTcpServerHandler extends ChannelInboundHandlerAdapter {
 	private Logger logger = Logger.getLogger(getClass());
-	private Acceptor acceptor = Acceptor.create();
+	private Acceptor acceptor = Acceptor.getInstance();
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		acceptor.process((IContext) msg);

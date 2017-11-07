@@ -15,6 +15,7 @@ import java.net.SocketAddress;
  * 17/8/13
  */
 public final class NettyTcpServer {
+
 	/***
 	 * 启动
 	 * @param localAddress  启动使用的端口等
@@ -25,9 +26,16 @@ public final class NettyTcpServer {
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap();
 			bootstrap.group(boss, worker);
+
 			bootstrap.channel(NioServerSocketChannel.class);
 			bootstrap.childHandler(new NettyTcpServerInitializer());
+
 			bootstrap.option(ChannelOption.SO_BACKLOG, 128);
+			bootstrap.option(ChannelOption.SO_RCVBUF, 1024);
+			bootstrap.option(ChannelOption.SO_SNDBUF, 10240);
+			bootstrap.option(ChannelOption.TCP_NODELAY, true);
+			bootstrap.option(ChannelOption.SO_LINGER, 0);
+			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			ChannelFuture f = bootstrap.bind(localAddress).sync();
 
