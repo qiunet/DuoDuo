@@ -556,10 +556,6 @@ public abstract class AbstractRedisUtil {
 			protected Map<String, String> expression(Jedis jedis, String key) throws Exception {
 				return jedis.hgetAll(key);
 			}
-			@Override
-			protected Level getLogLevel() {
-				return Level.DEBUG;
-			}
 		}.execAndReturn();
 	}
 

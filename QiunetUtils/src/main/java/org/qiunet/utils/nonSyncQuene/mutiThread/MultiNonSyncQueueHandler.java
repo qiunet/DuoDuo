@@ -6,6 +6,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 
 /**
@@ -18,7 +21,7 @@ public class MultiNonSyncQueueHandler implements Runnable{
 	private LinkedBlockingQueue<Runnable> queues = new LinkedBlockingQueue<Runnable>();
 	private ExecutorService execute;
 	private boolean running;
-	private Logger logger;
+	private QLogger logger;
 	/**
 	 * 建一个指定 corePoolSize (至少保留数) 等参数的多线程执行池. 一般使用静态变量持有即可
 	 * @param threadName (线程名称)
@@ -34,7 +37,7 @@ public class MultiNonSyncQueueHandler implements Runnable{
             long keepAliveTime,
             TimeUnit unit){
 		execute = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<Runnable>(2048),new DefaultThreadFactory(threadName+"Pool"), new DefaultExecutorRejectHandler(threadName+"Pool"));
-		this.logger = Logger.getLogger(threadName+"--ThreadPool");
+		this.logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 		Thread t = new Thread(this, threadName);
 		this.running = true;
 		t.setDaemon(true);

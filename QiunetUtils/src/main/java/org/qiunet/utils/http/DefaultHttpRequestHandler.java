@@ -15,14 +15,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.apache.log4j.Logger;
 import org.qiunet.utils.enums.CharsetEnum;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
-	private static final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
+	private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 	private String result;
 	@Override
 	public String getMethodHandler(String url, Map<String, Object> params) {

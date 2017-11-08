@@ -1,6 +1,8 @@
 package org.qiunet.utils.logger;
 
-import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.log.Log4j1Logger;
+import org.qiunet.utils.logger.log.Log4j2Logger;
+import org.qiunet.utils.logger.log.QLogger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,32 +12,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by qiunet.
  * 17/8/18
  */
-public class LoggerManager {
-	private Map<String, Logger> loggerMap = new ConcurrentHashMap<>();
-	private volatile static LoggerManager instance;
-
-	private LoggerManager() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		instance = this;
+public final class LoggerManager {
+	private static final Map<String, QLogger> loggerMap = new ConcurrentHashMap<>();
+	private static final boolean use_log4j2; //   是否使用log4j2 了
+	static {
+		use_log4j2 = LoggerManager.class.getResource("/log4j2.xml") != null;
 	}
-
-	public static LoggerManager getInstance() {
-		if (instance == null) {
-			synchronized (LoggerManager.class) {
-				if (instance == null)
-				{
-					new LoggerManager();
-				}
-			}
-		}
-		return instance;
-	}
+	private LoggerManager() {}
 	/***
 	 * 得到自己的日志
 	 * @param loggerType
 	 * @return
 	 */
-	public Logger getLogger(LoggerType loggerType) {
+	public static QLogger getLogger(LoggerType loggerType) {
 		return getLogger(loggerType.name());
 	}
 	/***
@@ -43,12 +32,16 @@ public class LoggerManager {
 	 * @param loggerName
 	 * @return
 	 */
-	public Logger getLogger(String loggerName) {
+	public static QLogger getLogger(String loggerName) {
 		if (! loggerMap.containsKey(loggerName)) {
-			Logger logger = Logger.getLogger(loggerName);
-			loggerMap.put(loggerName, logger);
+			if (!use_log4j2) {
+				org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
+				loggerMap.put(loggerName, new Log4j1Logger(logger));
+			} else {
+				org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(loggerName);
+				loggerMap.put(loggerName, new Log4j2Logger(logger));
+			}
 		}
 		return loggerMap.get(loggerName);
 	}
-
 }

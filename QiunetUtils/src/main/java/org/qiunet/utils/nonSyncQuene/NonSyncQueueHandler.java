@@ -1,13 +1,11 @@
 package org.qiunet.utils.nonSyncQuene;
 
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.LinkedTransferQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.log4j.Logger;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.math.MathUtil;
+import org.qiunet.utils.logger.log.QLogger;
 
 /**
  * 异步队列处理
@@ -15,7 +13,7 @@ import org.qiunet.utils.math.MathUtil;
  *
  */
 public class NonSyncQueueHandler<T extends QueueElement> {
-	private static final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
+	private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 	// 线程计数
 	private static final AtomicInteger threadNum = new AtomicInteger();
 

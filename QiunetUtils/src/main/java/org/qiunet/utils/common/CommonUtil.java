@@ -1,9 +1,9 @@
 package org.qiunet.utils.common;
 
-import org.apache.log4j.Logger;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ import java.util.*;
  *
  */
 public class CommonUtil {
-	private static Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
+	private static QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 	private CommonUtil() { }
 	/**
 	 * 检查一个元素是否在数组中

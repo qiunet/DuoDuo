@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 /**
  * 把一个类的所有字段拼串. {} 为对象.  [] 数组
@@ -20,7 +20,7 @@ import org.qiunet.utils.logger.LoggerType;
  *
  */
 public class StringData {
-	private static final Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
+	private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 	private StringBuilder sb;
 
 	private StringData(Object obj){

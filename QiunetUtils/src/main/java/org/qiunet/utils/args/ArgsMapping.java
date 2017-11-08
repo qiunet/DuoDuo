@@ -1,10 +1,10 @@
 package org.qiunet.utils.args;
 
-import org.apache.log4j.Logger;
 import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ArgsMapping extends KeyValueData<String,String> {
 
-	private Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_UTILS);
+	private QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 
 	public ArgsMapping(String [] args) {
 		super(new HashMap<String, String>());

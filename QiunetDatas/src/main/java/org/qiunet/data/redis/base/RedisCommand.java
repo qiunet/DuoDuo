@@ -1,10 +1,10 @@
 package org.qiunet.data.redis.base;
 
 import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.qiunet.utils.data.StringData;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -16,7 +16,7 @@ import java.util.Arrays;
  *         Created on 17/2/6 11:44.
  */
 public abstract class RedisCommand<T> {
-	protected Logger logger = LoggerManager.getInstance().getLogger(LoggerType.QIUNET_DATAS);
+	protected QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
 	protected JedisPool pool;
 	protected T defaultResult;
 	private String key;
@@ -42,8 +42,6 @@ public abstract class RedisCommand<T> {
 	protected Object[] params(){
 		return null;
 	}
-
-	protected Level getLogLevel() {return Level.INFO; }
 	/**
 	 * 返回结果
 	 * @return 通用返回结果
@@ -55,13 +53,13 @@ public abstract class RedisCommand<T> {
 			long startDt = System.currentTimeMillis();
 			T ret = expression(jedis, key);
 			long endDt = System.currentTimeMillis();
-			if (logger.isEnabledFor(getLogLevel())){
+			if (logger.isInfoEnabled()){
 				Object params [] = params();
 				StringBuilder sb = new StringBuilder();
 				sb.append("RedisCommand [").append(String.format("%-18s", getCmdName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(key).append("] ");
 				if (params != null) sb.append("\t PARAMS ").append(Arrays.toString(params)).append("  ");
 				if (ret != null) sb.append("\t RESULT [").append(StringData.parseString(ret)).append("]");
-				logger.log(getLogLevel(), sb.toString());
+				logger.info(sb.toString());
 			}
 			return ret;
 		} catch (Exception e) {
