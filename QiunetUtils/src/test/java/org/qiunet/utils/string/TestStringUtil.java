@@ -41,5 +41,8 @@ public class TestStringUtil extends BaseTest{
 
 		str = "ㅤ";// 特殊字符
 		Assert.assertEquals("", StringUtil.powerfulTrim(str));
+
+		str = "　尹漂亮　 　";
+		Assert.assertEquals("尹漂亮", StringUtil.powerfulTrim(str));
 	}
 }
