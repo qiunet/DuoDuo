@@ -53,7 +53,7 @@ public final class HttpBootstrapParams {
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	private static class Builder {
+	public static class Builder {
 		private Builder(){}
 		private boolean json;
 		private boolean string;
