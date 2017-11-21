@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.param;
+package org.qiunet.flash.handler.netty.param;
 
 import java.net.SocketAddress;
 

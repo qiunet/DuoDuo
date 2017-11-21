@@ -7,10 +7,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
-import org.qiunet.flash.handler.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
-
-import java.net.SocketAddress;
 
 /**
  * Created by qiunet.

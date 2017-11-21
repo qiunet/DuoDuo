@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.params;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

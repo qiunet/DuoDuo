@@ -9,7 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import org.qiunet.flash.handler.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 /**

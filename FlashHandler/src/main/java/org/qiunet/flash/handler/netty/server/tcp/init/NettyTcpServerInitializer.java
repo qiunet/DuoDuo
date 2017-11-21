@@ -6,7 +6,7 @@ import io.netty.channel.socket.SocketChannel;
 import org.qiunet.flash.handler.netty.protocol.Encoder;
 import org.qiunet.flash.handler.netty.protocol.Decoder;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
-import org.qiunet.flash.handler.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
 
 /**
  * Created by qiunet.

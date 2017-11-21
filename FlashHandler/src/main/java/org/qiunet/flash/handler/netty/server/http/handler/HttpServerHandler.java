@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.netty.server.http.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.acceptor.Acceptor;
-import org.qiunet.flash.handler.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 
 /**
  * Created by qiunet.
