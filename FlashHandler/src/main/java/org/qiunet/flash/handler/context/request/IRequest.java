@@ -1,5 +1,6 @@
-package org.qiunet.flash.handler.context;
+package org.qiunet.flash.handler.context.request;
 
+import org.qiunet.flash.handler.context.request.attribute.IAttributeData;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.nonSyncQuene.QueueElement;
 
@@ -9,28 +10,20 @@ import org.qiunet.utils.nonSyncQuene.QueueElement;
  * @author qiunet
  *         Created on 17/3/13 19:48.
  */
-public interface IContext<RequestData> extends QueueElement {
+public interface IRequest<RequestData> extends QueueElement, IAttributeData {
 	/**
 	 * 得到Ihandler
 	 * @return
 	 */
-	public IHandler<RequestData> getHandler();
+	public IHandler getHandler();
 	/**
 	 * 得到请求数据
 	 * @return
 	 */
 	public RequestData getRequestData();
 	/**
-	 * 得到对象
-	 * @param key
+	 * 得到请求序列
 	 * @return
 	 */
-	public Object getAttribute(String key);
-	/**
-	 * 得到对象
-	 * @param key
-	 * @return
-	 */
-	public void setAttribute(String key, Object val);
-
+	public int getSequence();
 }

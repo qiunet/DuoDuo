@@ -6,8 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 
-import java.util.Arrays;
-
 /**
  * Created by qiunet.
  * 17/11/20

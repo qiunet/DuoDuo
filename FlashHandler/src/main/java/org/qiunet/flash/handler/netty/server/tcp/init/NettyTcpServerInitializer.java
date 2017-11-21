@@ -3,9 +3,9 @@ package org.qiunet.flash.handler.netty.server.tcp.init;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import org.qiunet.flash.handler.netty.protocol.ProtoBufEncoder;
-import org.qiunet.flash.handler.netty.protocol.ProtobufDecoder;
-import org.qiunet.flash.handler.netty.server.tcp.handler.NettyTcpServerHandler;
+import org.qiunet.flash.handler.netty.protocol.Encoder;
+import org.qiunet.flash.handler.netty.protocol.Decoder;
+import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.flash.handler.param.TcpBootstrapParams;
 
 /**
@@ -20,8 +20,8 @@ public class NettyTcpServerInitializer extends ChannelInitializer<SocketChannel>
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast("Encoder", new ProtoBufEncoder());
-		pipeline.addLast("Decoder", new ProtobufDecoder());
-		pipeline.addLast("handler", new NettyTcpServerHandler(params));
+		pipeline.addLast("Encoder", new Encoder());
+		pipeline.addLast("Decoder", new Decoder());
+		pipeline.addLast("handler", new TcpServerHandler(params));
 	}
 }

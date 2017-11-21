@@ -1,14 +1,13 @@
 package org.qiunet.flash.handler.netty.protocol;
 
-import com.google.protobuf.GeneratedMessageV3;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-import org.apache.log4j.Logger;
-import org.qiunet.flash.handler.context.TcpContext;
+import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.RequestHandlerMapping;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 import java.util.List;
 
@@ -17,9 +16,8 @@ import java.util.List;
  * Created by qiunet.
  * 17/8/13
  */
-public class ProtobufDecoder extends ByteToMessageDecoder {
-
-	private Logger logger = Logger.getLogger(ProtoBufEncoder.class);
+public class Decoder extends ByteToMessageDecoder {
+	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		if (! in.isReadable(ProtocolHeader.REQUEST_HEADER_LENGTH)) return;
@@ -34,14 +32,7 @@ public class ProtobufDecoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		IHandler<GeneratedMessageV3> handler = RequestHandlerMapping.getInstance().getHandler(header.getProtocolId());
-		try {
-			GeneratedMessageV3 msg = handler.parseRequestData(bytes);
-			out.add(new TcpContext<>(handler, msg, ctx.channel().id().asShortText()));
-			logger.info("[decode] :"+msg.toString());
-		}catch (Exception e) {
-			e.printStackTrace();
-			ctx.close();
-		}
+		MessageContent context = new MessageContent(header.getProtocolId(), header.getSequence(), bytes);
+		out.add(context);
 	}
 }

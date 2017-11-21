@@ -5,7 +5,7 @@ package org.qiunet.flash.handler.netty.server.tcp.session;
  * Created by qiunet.
  * 17/10/23
  */
-public interface IPlayerSession extends ISession{
+public interface IPlayerSession<Key> extends ISession<Key> {
 	/***
 	 * 得到用户的uid
 	 * @return

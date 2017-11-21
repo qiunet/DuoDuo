@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.handler;
 
-import org.qiunet.flash.handler.context.IContext;
+import org.qiunet.flash.handler.context.request.IRequest;
 
 /**
  * @author qiunet
@@ -12,5 +12,5 @@ public interface ITcpHandler<RequestData> extends IHandler<RequestData> {
 	 * @param context
 	 * @return
 	 */
-	void handler(IContext<RequestData> context);
+	void handler(IRequest<RequestData> context);
 }

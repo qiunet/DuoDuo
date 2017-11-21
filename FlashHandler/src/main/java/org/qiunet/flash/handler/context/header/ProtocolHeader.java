@@ -12,7 +12,7 @@ public class ProtocolHeader {
 
 
 	/**请求头固定长度*/
-	public static final int REQUEST_HEADER_LENGTH = 28;
+	public static final int REQUEST_HEADER_LENGTH = 24;
 	/**辨别 请求使用*/
 	private byte [] magic;
 	// 长度
@@ -24,7 +24,7 @@ public class ProtocolHeader {
 	// byte 的加密块大小 (多个块互换)
 	private int chunkSize;
 	// crc code
-	private long crc;
+	private int crc;
 
 	/***
 	 * 构造函数
@@ -34,9 +34,9 @@ public class ProtocolHeader {
 	 * @param sequence 请求的序列码
 	 * @param protocolId 请求的id
 	 * @param chunkSize 加密块的大小
-	 * @param crc crc 完整校验
+	 * @param crc crc 完整校验 (最后强转int 校验使用. int足够)
 	 */
-	public ProtocolHeader(int length, int sequence, int protocolId, int chunkSize, long crc) {
+	public ProtocolHeader(int length, int sequence, int protocolId, int chunkSize, int crc) {
 		this.magic = MAGIC_CONTENTS;
 		this.crc = crc;
 		this.length = length;
@@ -45,9 +45,10 @@ public class ProtocolHeader {
 		this.protocolId = protocolId;
 	}
 
-	public ProtocolHeader(){}
-
-
+	/***
+	 * 直接使用bytebuf 读入一个header
+	 * @param in
+	 */
 	public ProtocolHeader(ByteBuf in) {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
@@ -55,35 +56,64 @@ public class ProtocolHeader {
 		this.sequence = in. readInt();
 		this.protocolId = in.readInt();
 		this.chunkSize = in.readInt();
-		this.crc = in.readLong();
+		this.crc = in.readInt();
 	}
 
 	public int getChunkSize() {
 		return chunkSize;
 	}
 
-	public long getCrc() {
-		return crc;
+	/***
+	 * crc是否有效
+	 * @param crc
+	 * @return
+	 */
+	public boolean crcIsValid(long crc) {
+		return (int)crc == this.crc;
 	}
 
+	/**
+	 * 得到魔数
+	 * @return
+	 */
+	public byte[] getMagic() {
+		return magic;
+	}
+
+	/***
+	 * 后面的长度
+	 * @return
+	 */
 	public int getLength() {
 		return length;
 	}
 
+	/***
+	 * 序列
+	 * @return
+	 */
 	public int getSequence() {
 		return sequence;
 	}
 
+	/***
+	 * protocol 协议id
+	 * @return
+	 */
 	public int getProtocolId() {
 		return protocolId;
 	}
 
+	/**
+	 * 将当前header 写入 bytebuf
+	 * @param out
+	 */
 	public  void writeToByteBuf(ByteBuf out) {
 		out.writeBytes(magic);
 		out.writeInt(length);
 		out.writeInt(sequence);
 		out.writeInt(protocolId);
 		out.writeInt(chunkSize);
-		out.writeLong(crc);
+		out.writeInt(crc);
 	}
 }

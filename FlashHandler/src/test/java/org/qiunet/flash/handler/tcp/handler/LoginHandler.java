@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.tcp.handler;
 
-import org.qiunet.flash.handler.context.IContext;
+import org.qiunet.flash.handler.context.request.IRequest;
 import org.qiunet.flash.handler.handler.proto.BaseProtoTcpHandler;
 
 /**
@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.handler.proto.BaseProtoTcpHandler;
  */
 public class LoginHandler extends BaseProtoTcpHandler {
 	@Override
-	public void handler(IContext context) {
+	public void handler(IRequest context) {
 
 	}
 }
