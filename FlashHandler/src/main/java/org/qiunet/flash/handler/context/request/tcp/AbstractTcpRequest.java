@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.context.request.tcp;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.request.BaseRequest;
 import org.qiunet.flash.handler.context.header.MessageContent;
-import org.qiunet.flash.handler.handler.response.IResponse;
+import org.qiunet.flash.handler.context.response.IResponse;
 
 /**
  * tcp udp的上下文

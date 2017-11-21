@@ -1,8 +1,11 @@
 package org.qiunet.flash.handler.context.request.http;
 
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.cookie.Cookie;
 import org.qiunet.flash.handler.context.request.IRequest;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by qiunet.
@@ -40,4 +43,22 @@ public interface IHttpRequest<RequestData> extends IRequest<RequestData> {
 	 * @return
 	 */
 	public String getRemoteAddress();
+	/***
+	 * 得到协议使用的http版本
+	 * @return
+	 */
+	public HttpVersion getProtocolVersion();
+
+	/**
+	 * 得到所有的cookie
+	 * @return 没有返回一个empty set
+	 */
+	public Set<Cookie> getCookieSet();
+
+	/**
+	 * 得到一个cookie
+	 * @param name cookie的名称
+	 * @return 没有 返回null
+	 */
+	public Cookie getCookieByName(String name);
 }

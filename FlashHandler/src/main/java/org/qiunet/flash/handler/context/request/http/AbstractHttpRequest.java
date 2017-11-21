@@ -1,17 +1,21 @@
 package org.qiunet.flash.handler.context.request.http;
 
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.context.request.BaseRequest;
-import org.qiunet.flash.handler.context.request.IRequest;
 import org.qiunet.flash.handler.context.header.MessageContent;
-import org.qiunet.flash.handler.handler.response.IResponse;
+import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * @author qiunet
@@ -71,6 +75,11 @@ public abstract class AbstractHttpRequest<RequestData, ResponseData> extends Bas
 	}
 
 	@Override
+	public HttpVersion getProtocolVersion() {
+		return request.protocolVersion();
+	}
+
+	@Override
 	public String getHttpHeader(String name) {
 		return request.headers().get(name);
 	}
@@ -82,13 +91,51 @@ public abstract class AbstractHttpRequest<RequestData, ResponseData> extends Bas
 
 	@Override
 	public void response(int protocolId, ResponseData responseData) {
+		boolean keepAlive = HttpUtil.isKeepAlive(request);
+		FullHttpResponse response = new DefaultFullHttpResponse(
+				HTTP_1_1, OK, Unpooled.wrappedBuffer(getResponseDataBytes(responseData)));
 
+		response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType());
+
+		if (! keepAlive) {
+			ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+		}
 	}
 
+	/***
+	 * 得到contentType
+	 * @return
+	 */
+	protected abstract String contentType();
 	/***
 	 * 得到responseData的数组数据
 	 * @param responseData
 	 * @return
 	 */
 	protected abstract byte[] getResponseDataBytes(ResponseData responseData);
+
+	private Map<String, Cookie> cookieMap;
+	private Map<String, Cookie> cookies(){
+		if (cookieMap != null) return cookieMap;
+		String cookieString = request.headers().get(HttpHeaderNames.COOKIE);
+		if (StringUtil.isEmpty(cookieString)) {
+			cookieMap = Collections.emptyMap();
+		}else {
+			Set<Cookie> cookies = ServerCookieDecoder.STRICT.decode(cookieString);
+			cookieMap = new HashMap<>();
+			for (Cookie cookie : cookies) {
+				cookieMap.put(cookie.name(), cookie);
+			}
+		}
+		return cookieMap;
+	}
+	@Override
+	public Set<Cookie> getCookieSet() {
+		return new HashSet<>(cookies().values());
+	}
+
+	@Override
+	public Cookie getCookieByName(String name) {
+		return cookies().get(name);
+	}
 }

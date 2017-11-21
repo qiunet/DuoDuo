@@ -17,7 +17,6 @@ public class HttpStringRequest extends AbstractHttpRequest<String, String> {
 		super(content, channelContext, request);
 	}
 
-
 	@Override
 	public String getRequestData() {
 		if (reqeustData == null) {
@@ -33,6 +32,11 @@ public class HttpStringRequest extends AbstractHttpRequest<String, String> {
 	@Override
 	public boolean handler() {
 		return false;
+	}
+
+	@Override
+	protected String contentType() {
+		return "text/plain; charset=UTF-8";
 	}
 
 	@Override
