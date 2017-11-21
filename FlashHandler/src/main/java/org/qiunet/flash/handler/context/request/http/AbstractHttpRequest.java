@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request.http;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -92,10 +93,17 @@ public abstract class AbstractHttpRequest<RequestData, ResponseData> extends Bas
 	@Override
 	public void response(int protocolId, ResponseData responseData) {
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
+		// 不能使用pooled的对象. 因为不清楚什么时候release
+		ByteBuf content = Unpooled.wrappedBuffer(getResponseDataBytes(responseData));
 		FullHttpResponse response = new DefaultFullHttpResponse(
-				HTTP_1_1, OK, Unpooled.wrappedBuffer(getResponseDataBytes(responseData)));
-
+				HTTP_1_1, OK,  content);
+		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
 		response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType());
+		if (keepAlive) {
+			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+		}
+		// 下面的 `writeAndFlush(Unpooled.EMPTY_BUFFER)` 会flush
+		ctx.write(response);
 
 		if (! keepAlive) {
 			ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
