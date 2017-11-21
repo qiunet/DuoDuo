@@ -12,14 +12,14 @@ import java.util.Map;
  * Created by qiunet.
  * 17/11/20
  */
-public abstract class BaseRequest<RequestData> implements IRequest<RequestData> {
+public abstract class BaseRequestContext<RequestData> implements IRequestContext<RequestData> {
 	protected MessageContent messageContent;
 	protected ChannelHandlerContext ctx;
 	protected byte [] bytes;
 
 	private Map<String , Object> attributes;
 
-	protected BaseRequest(MessageContent content, ChannelHandlerContext ctx) {
+	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {
 		this.ctx = ctx;
 		this.bytes = content.bytes();
 		this.messageContent = content;

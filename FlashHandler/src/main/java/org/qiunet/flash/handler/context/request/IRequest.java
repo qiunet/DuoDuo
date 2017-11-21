@@ -1,21 +1,13 @@
 package org.qiunet.flash.handler.context.request;
 
 import org.qiunet.flash.handler.context.request.attribute.IAttributeData;
-import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.utils.nonSyncQuene.QueueElement;
 
 /**
- *  处理请求的封装类
- *  数据封装成context 在整个流程流转.
- * @author qiunet
- *         Created on 17/3/13 19:48.
+ * requestdata 默认封装给handler的东西
+ * Created by qiunet.
+ * 17/11/21
  */
-public interface IRequest<RequestData> extends QueueElement, IAttributeData {
-	/**
-	 * 得到Ihandler
-	 * @return
-	 */
-	public IHandler getHandler();
+public interface IRequest<RequestData> extends IAttributeData {
 	/**
 	 * 得到请求数据
 	 * @return
@@ -26,4 +18,9 @@ public interface IRequest<RequestData> extends QueueElement, IAttributeData {
 	 * @return
 	 */
 	public int getSequence();
+	/**
+	 * 得到远程的Ip地址
+	 * @return
+	 */
+	public String getRemoteAddress();
 }

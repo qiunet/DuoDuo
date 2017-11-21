@@ -1,5 +1,4 @@
-package org.qiunet.flash.handler.netty.server.tcp.session;
-
+package org.qiunet.flash.handler.context.session;
 /**
  * 用户的session
  * Created by qiunet.

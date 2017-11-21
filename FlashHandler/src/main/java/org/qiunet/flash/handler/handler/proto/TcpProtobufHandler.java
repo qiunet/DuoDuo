@@ -14,7 +14,7 @@ public abstract class TcpProtobufHandler<RequestData> extends BaseTcpHandler<Req
 	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		if (method == null ) method = requestDataClass.getMethod("parseFrom", byte[].class);
+		if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
 		return (RequestData) method.invoke(null, bytes);
 	}
 

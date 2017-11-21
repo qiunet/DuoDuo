@@ -38,11 +38,6 @@ public interface IHttpRequest<RequestData> extends IRequest<RequestData> {
 	 * @return
 	 */
 	public List<String> getHttpHeadersByName(String name);
-	/**
-	 * 得到远程的Ip地址
-	 * @return
-	 */
-	public String getRemoteAddress();
 	/***
 	 * 得到协议使用的http版本
 	 * @return

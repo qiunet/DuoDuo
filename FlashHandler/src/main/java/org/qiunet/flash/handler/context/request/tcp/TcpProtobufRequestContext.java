@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
+import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
 
@@ -9,9 +10,9 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpProtobufRequest<RequestData> extends AbstractTcpRequest<RequestData> {
+public class TcpProtobufRequestContext<RequestData> extends AbstractTcpRequestContext<RequestData, GeneratedMessageV3> {
 	private RequestData requestData;
-	public TcpProtobufRequest(MessageContent content, ChannelHandlerContext channelContext) {
+	public TcpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext) {
 		super(content, channelContext);
 	}
 
@@ -31,7 +32,7 @@ public class TcpProtobufRequest<RequestData> extends AbstractTcpRequest<RequestD
 	}
 
 	@Override
-	public void response(int protocolId, Object o) {
+	public void response(int protocolId, GeneratedMessageV3 o) {
 
 	}
 

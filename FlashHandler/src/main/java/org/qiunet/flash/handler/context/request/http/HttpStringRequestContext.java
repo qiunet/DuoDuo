@@ -12,10 +12,10 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public class HttpStringRequest extends AbstractHttpRequest<String, String> {
+public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
 	private String reqeustData;
 
-	public HttpStringRequest(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
+	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
 		super(content, channelContext, request);
 	}
 

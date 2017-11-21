@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.acceptor;
 
-import org.qiunet.flash.handler.context.request.IRequest;
-import org.qiunet.flash.handler.context.request.tcp.AbstractTcpRequest;
+import org.qiunet.flash.handler.context.request.IRequestContext;
+import org.qiunet.flash.handler.context.request.tcp.AbstractTcpRequestContext;
 import org.qiunet.utils.nonSyncQuene.IndexNonSyncQueueHandler;
 
 /**
@@ -16,7 +16,7 @@ public class Acceptor {
 	/**使用几个线程来处理*/
 	private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 	/**线程的处理队列*/
-	private IndexNonSyncQueueHandler<IRequest> contextProcessor;
+	private IndexNonSyncQueueHandler<IRequestContext> contextProcessor;
 
 	/**
 	 * 创建当前cpu核数相当的线程作为 context的处理队列
@@ -57,13 +57,13 @@ public class Acceptor {
 	 * 请求的处理
 	 * @param iContext
 	 */
-	public void process(IRequest iContext) {
+	public void process(IRequestContext iContext) {
 		switch (iContext.getHandler().getHandlerType()) {
 			case HTTP:
 				iContext.handler();
 				break;
 			case TCP:
-				contextProcessor.addElement(iContext, ((AbstractTcpRequest)iContext).getQueueHandlerIndex());
+				contextProcessor.addElement(iContext, ((AbstractTcpRequestContext)iContext).getQueueHandlerIndex());
 				break;
 		}
 	}

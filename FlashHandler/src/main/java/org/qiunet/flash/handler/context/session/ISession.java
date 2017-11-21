@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.tcp.session;
+package org.qiunet.flash.handler.context.session;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.Channel;

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.tcp.handler;
 
+import org.qiunet.flash.handler.context.request.IRequest;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.handler.proto.TcpProtobufHandler;
 import org.qiunet.flash.handler.proto.LoginProto;
@@ -12,6 +13,6 @@ public class LoginProtobufHandler extends TcpProtobufHandler<LoginProto.LoginReq
 
 	@Override
 	public void handler(ITcpRequest<LoginProto.LoginRequest> context) {
-
+		context.getRequestData();
 	}
 }

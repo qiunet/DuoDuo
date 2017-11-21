@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.handler;
 
+import org.qiunet.flash.handler.context.request.http.IHttpRequest;
+
 /**
  * http的处理
  * @author qiunet
@@ -18,9 +20,9 @@ public interface IHttpHandler<RequestData, ResponseData> extends IHandler<Reques
 	 */
 	boolean needRecodeData();
 	/**
-	 * http返回处理后的ResponseData
-	 * @param requestData
+	 * http返回处理后的Response
+	 * @param request
 	 * @return
 	 */
-	ResponseData handler(RequestData requestData);
+	ResponseData handler(IHttpRequest<RequestData> request);
 }

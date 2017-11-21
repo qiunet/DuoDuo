@@ -1,15 +1,11 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import org.qiunet.flash.handler.context.request.IRequest;
+import org.qiunet.flash.handler.context.response.IResponse;
 
 /**
  * Created by qiunet.
- * 17/7/21
+ * 17/11/21
  */
-public interface ITcpRequest<RequestData> extends IRequest<RequestData> {
-	/**
-	 * 得到分配到哪个queueHandler 的一个索引,  要求是一次连接 到 断开过程中不在变化.
-	 * @return
-	 */
-	public int getQueueHandlerIndex();
+public interface ITcpRequest<RequestData> extends IRequest<RequestData>, IResponse {
 }

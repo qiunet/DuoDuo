@@ -11,9 +11,9 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public  class HttpProtobufRequest<RequestData, ResponseData> extends AbstractHttpRequest<RequestData, ResponseData> {
+public  class HttpProtobufRequestContext<RequestData, ResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	private RequestData requestData;
-	public HttpProtobufRequest(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
+	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
 		super(content, channelContext, request);
 	}
 
@@ -44,7 +44,8 @@ public  class HttpProtobufRequest<RequestData, ResponseData> extends AbstractHtt
 
 	@Override
 	public boolean handler() {
-		return false;
+
+		return true;
 	}
 
 	@Override

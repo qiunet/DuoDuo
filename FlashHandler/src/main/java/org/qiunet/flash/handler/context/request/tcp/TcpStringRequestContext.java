@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.utils.string.StringUtil;
 
@@ -12,9 +11,9 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpStringRequest extends AbstractTcpRequest<String> {
+public class TcpStringRequestContext extends AbstractTcpRequestContext<String, String> {
 	protected String requestData;
-	public TcpStringRequest(MessageContent content, ChannelHandlerContext channelContext) {
+	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext) {
 		super(content, channelContext);
 	}
 
@@ -35,7 +34,7 @@ public class TcpStringRequest extends AbstractTcpRequest<String> {
 	}
 
 	@Override
-	public void response(int protocolId, Object o) {
+	public void response(int protocolId, String o) {
 
 	}
 

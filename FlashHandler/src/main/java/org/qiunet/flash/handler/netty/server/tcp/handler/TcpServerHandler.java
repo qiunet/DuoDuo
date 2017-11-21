@@ -4,9 +4,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.apache.log4j.Logger;
 import org.qiunet.flash.handler.acceptor.Acceptor;
-import org.qiunet.flash.handler.context.request.IRequest;
-import org.qiunet.flash.handler.netty.server.tcp.session.IPlayerSession;
-import org.qiunet.flash.handler.netty.server.tcp.session.SessionManager;
+import org.qiunet.flash.handler.context.request.IRequestContext;
+import org.qiunet.flash.handler.context.session.IPlayerSession;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.param.TcpBootstrapParams;
 
 
@@ -26,7 +26,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		acceptor.process((IRequest) msg);
+		acceptor.process((IRequestContext) msg);
 	}
 
 	@Override

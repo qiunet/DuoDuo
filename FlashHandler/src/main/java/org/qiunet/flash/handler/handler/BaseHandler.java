@@ -5,8 +5,8 @@ package org.qiunet.flash.handler.handler;
  * 17/7/21
  */
 abstract class BaseHandler<RequestData> implements IHandler<RequestData> {
-	protected Class<RequestData> requestDataClass;
-	protected int protocolId;
+	private Class<RequestData> requestDataClass;
+	private int protocolId;
 	@Override
 	public int getProtocolID() {
 		return protocolId;

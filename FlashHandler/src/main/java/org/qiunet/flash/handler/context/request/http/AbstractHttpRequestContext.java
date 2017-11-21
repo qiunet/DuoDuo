@@ -7,7 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
-import org.qiunet.flash.handler.context.request.BaseRequest;
+import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.utils.string.StringUtil;
@@ -22,11 +22,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author qiunet
  *         Created on 17/3/17 14:28.
  */
-public abstract class AbstractHttpRequest<RequestData, ResponseData> extends BaseRequest<RequestData> implements IResponse<ResponseData>, IHttpRequest<RequestData> {
+public abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IResponse<ResponseData>, IHttpRequestContext<RequestData> {
 	private HttpRequest request;
 	private QueryStringDecoder queryStringDecoder;
 
-	public AbstractHttpRequest(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request)  {
+	public AbstractHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request)  {
 		super(content, channelContext);
 		this.request = request;
 	}
