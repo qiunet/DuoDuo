@@ -6,6 +6,7 @@ import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.properties.LoaderProperties;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 /**
  * @author qiunet
@@ -15,18 +16,18 @@ public class PropertiesScannerHandler implements IScannerHandler{
 
 	@Override
 	public boolean matchClazz(Class clazz) {
-		return clazz.getAnnotation(GameProperties.class) != null;
+		return ! Modifier.isAbstract(clazz.getModifiers())
+				&& LoaderProperties.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	public void handler(Class<?> clazz) {
 		GameProperties setting = clazz.getAnnotation(GameProperties.class);
 		try {
-			Constructor<LoaderProperties> constructor = (Constructor<LoaderProperties>) clazz.getConstructor(null);
+			Constructor<LoaderProperties> constructor = (Constructor<LoaderProperties>) clazz.getDeclaredConstructor(null);
 			if (!constructor.isAccessible()) constructor.setAccessible(true);
 			LoaderProperties properties = constructor.newInstance();
-
-			GameCfgManagers.getInstance().addPropertySetting(properties , setting.order());
+			GameCfgManagers.getInstance().addPropertySetting(properties , setting == null ? 0 : setting.order());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.gamecfg;
 
 import org.apache.log4j.Logger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -15,7 +18,7 @@ import java.util.zip.GZIPInputStream;
  * 17/7/16
  */
 public abstract class BaseGameCfgManager implements IGameCfgManager {
-	protected final Logger logger = Logger.getLogger(getClass());
+	protected final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private String fileName;
 	protected DataInputStream dis;
 	private InputStream in;
@@ -61,17 +64,23 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 				dis.readByte();
 			}catch (EOFException e) {
 				readOver = true;
+			} catch (IOException e) {
+				logger.error("读取配置文件"+fileName+"数据出现问题", e);
 			}
+
 			if (! readOver) {
-				throw new EOFException("读取配置文件"+fileName+"数据异常 有残留数据");
+				logger.error("读取配置文件"+fileName+"数据异常 有残留数据", new EOFException());
 			}
 		}
 		try {
 			if(dis != null)dis.close();
 			if (gin != null) gin.close();
 			if (in != null) in.close();
+			dis = null;
+			gin = null;
+			in = null;
 		} catch (IOException e) {
-			throw e;
+			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
 		}
 	}
 

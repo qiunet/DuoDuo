@@ -24,8 +24,8 @@ public class GameCfgScannerHandler implements IScannerHandler {
 	public void handler(Class<?> clazz) {
 		GameCfg setting = clazz.getAnnotation(GameCfg.class);
 		try {
-			Constructor<IGameCfgManager> constructor = (Constructor<IGameCfgManager>) clazz.getConstructor(null);
-			if (!constructor.isAccessible()) constructor.setAccessible(true);
+			Constructor<IGameCfgManager> constructor = (Constructor<IGameCfgManager>) clazz.getDeclaredConstructor();
+			constructor.setAccessible(true);
 			IGameCfgManager manager = constructor.newInstance();
 
 			GameCfgManagers.getInstance().addDataSettingManager(manager , setting == null ? 0 : setting.order());

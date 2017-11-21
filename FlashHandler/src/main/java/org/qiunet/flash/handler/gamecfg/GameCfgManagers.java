@@ -1,5 +1,8 @@
 package org.qiunet.flash.handler.gamecfg;
 
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.properties.LoaderProperties;
 
 import java.util.ArrayList;
@@ -12,6 +15,8 @@ import java.util.List;
  *         Created on 17/2/9 12:15.
  */
 public class GameCfgManagers {
+	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+
 	private static GameCfgManagers instance = new GameCfgManagers();
 	private List<GameSettingContainer<IGameCfgManager>> gameSettingList = new ArrayList<>();
 	private List<GameSettingContainer<LoaderProperties>> propertylist = new ArrayList<>();
@@ -43,8 +48,10 @@ public class GameCfgManagers {
 	 * 重新加载
 	 */
 	public void reloadSetting() throws  Exception{
+		qLogger.error("Game Setting Data Load start.....");
 		this.loadPropertySetting();
 		this.loadDataSetting();
+		qLogger.error("Game Setting Data Load over.....");
 	}
 
 	/**
@@ -80,7 +87,21 @@ public class GameCfgManagers {
 		}
 	}
 
+	/***
+	 * 得到cfg的数量
+	 * @return
+	 */
+	public int cfgSize(){
+		return this.gameSettingList.size();
+	}
 
+	/***
+	 * 得到properties的数量
+	 * @return
+	 */
+	public int propertySize(){
+		return propertylist.size();
+	}
 	/***
 	 * IGameSetting  的包装类 包含排序
 	 * @param <T>
