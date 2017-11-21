@@ -5,6 +5,8 @@ import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * tcp 请求解析成字符串的.
  * Created by qiunet.
@@ -19,7 +21,15 @@ public class TcpStringRequest extends AbstractTcpRequest<String> {
 	@Override
 	public String getRequestData() {
 		if (StringUtil.isEmpty(requestData)) {
-			this.requestData = new String(bytes, CharsetUtil.UTF_8);
+			try {
+				this.requestData = getHandler().parseRequestData(bytes);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return requestData;
 	}

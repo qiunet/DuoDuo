@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.handler;
 
+import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +17,11 @@ public interface IHandler<RequestData> {
 	 * @return
 	 */
 	public HandlerType getHandlerType();
+	/***
+	 * 得到数据类型
+	 * @return
+	 */
+	public DataType getDataType();
 	/**
 	 * 得到 ProtocolId
 	 * @return

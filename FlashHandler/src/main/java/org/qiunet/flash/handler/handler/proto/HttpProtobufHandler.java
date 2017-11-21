@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.handler.proto;
 
-import org.qiunet.flash.handler.handler.BaseTcpHandler;
+import org.qiunet.flash.handler.common.enums.DataType;
+import org.qiunet.flash.handler.handler.BaseHttpHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -9,11 +10,16 @@ import java.lang.reflect.Method;
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class BaseProtoTcpHandler<RequestData> extends BaseTcpHandler<RequestData> {
+public abstract class HttpProtobufHandler<RequestData, ResponseData> extends BaseHttpHandler<RequestData, ResponseData> {
 	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		if (method == null ) method = requestDataClass.getMethod("parseFrom", byte[].class);
+		if (method == null) method = requestDataClass.getMethod("parseFrom", byte[].class);
 		return (RequestData) method.invoke(null, bytes);
+	}
+
+	@Override
+	public DataType getDataType() {
+		return DataType.PROTOBUF;
 	}
 }

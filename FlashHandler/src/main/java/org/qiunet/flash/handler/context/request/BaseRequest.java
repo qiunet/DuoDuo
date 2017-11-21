@@ -25,7 +25,7 @@ public abstract class BaseRequest<RequestData> implements IRequest<RequestData> 
 		this.messageContent = content;
 	}
 	@Override
-	public IHandler getHandler() {
+	public IHandler<RequestData> getHandler() {
 		return RequestHandlerMapping.getInstance().getHandler(messageContent.getProtocolId());
 	}
 

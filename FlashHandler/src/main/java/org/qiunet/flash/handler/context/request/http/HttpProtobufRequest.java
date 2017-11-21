@@ -1,6 +1,8 @@
-package org.qiunet.flash.handler.context.request.tcp;
+package org.qiunet.flash.handler.context.request.http;
 
+import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.context.header.MessageContent;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,10 +11,20 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpProtobufRequest<RequestData> extends AbstractTcpRequest<RequestData> {
+public  class HttpProtobufRequest<RequestData, ResponseData> extends AbstractHttpRequest<RequestData, ResponseData> {
 	private RequestData requestData;
-	public TcpProtobufRequest(MessageContent content, ChannelHandlerContext channelContext) {
-		super(content, channelContext);
+	public HttpProtobufRequest(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
+		super(content, channelContext, request);
+	}
+
+	@Override
+	protected String contentType() {
+		return "application/octet-stream";
+	}
+
+	@Override
+	protected byte[] getResponseDataBytes(ResponseData responseData) {
+		return ((GeneratedMessageV3) responseData).toByteArray();
 	}
 
 	@Override
@@ -28,11 +40,6 @@ public class TcpProtobufRequest<RequestData> extends AbstractTcpRequest<RequestD
 			e.printStackTrace();
 		}
 		return requestData;
-	}
-
-	@Override
-	public void response(int protocolId, Object o) {
-
 	}
 
 	@Override

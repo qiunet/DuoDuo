@@ -5,6 +5,8 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * 把请求解析为string的对象
  * Created by qiunet.
@@ -20,7 +22,15 @@ public class HttpStringRequest extends AbstractHttpRequest<String, String> {
 	@Override
 	public String getRequestData() {
 		if (reqeustData == null) {
-			reqeustData = new String(bytes, CharsetUtil.UTF_8);
+			try {
+				reqeustData = getHandler().parseRequestData(bytes);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return reqeustData;
 	}
