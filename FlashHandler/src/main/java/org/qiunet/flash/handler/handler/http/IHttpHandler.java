@@ -1,6 +1,7 @@
-package org.qiunet.flash.handler.handler;
+package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
+import org.qiunet.flash.handler.handler.IHandler;
 
 /**
  * http的处理

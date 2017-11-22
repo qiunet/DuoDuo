@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.context.request;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.RequestHandlerMapping;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 
 import java.util.HashMap;
 import java.util.Map;

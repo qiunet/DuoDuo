@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.handler.tcp;
 
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
-import org.qiunet.flash.handler.handler.string.TcpStringHandler;
 
 /**
  * Created by qiunet.

@@ -1,5 +1,6 @@
-package org.qiunet.flash.handler.handler;
+package org.qiunet.flash.handler.handler.mapping;
 
+import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.exceptions.SingletonException;
 
 import java.lang.reflect.Field;

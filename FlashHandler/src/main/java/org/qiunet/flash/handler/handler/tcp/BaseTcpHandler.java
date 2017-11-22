@@ -1,6 +1,7 @@
-package org.qiunet.flash.handler.handler;
+package org.qiunet.flash.handler.handler.tcp;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.handler.BaseHandler;
 
 /**
  * Created by qiunet.

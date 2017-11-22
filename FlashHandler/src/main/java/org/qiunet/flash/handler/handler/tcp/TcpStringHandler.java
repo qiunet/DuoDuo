@@ -1,8 +1,8 @@
-package org.qiunet.flash.handler.handler.string;
+package org.qiunet.flash.handler.handler.tcp;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.enums.DataType;
-import org.qiunet.flash.handler.handler.BaseHttpHandler;
+import org.qiunet.flash.handler.handler.tcp.BaseTcpHandler;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public abstract class HttpStringHandler extends BaseHttpHandler<String, String> {
+public abstract class TcpStringHandler extends BaseTcpHandler<String> {
 
 	@Override
 	public DataType getDataType() {

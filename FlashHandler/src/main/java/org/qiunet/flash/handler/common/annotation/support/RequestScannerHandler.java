@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.annotation.support;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.RequestHandlerMapping;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.classScanner.IScannerHandler;
 
 import java.lang.reflect.Constructor;
