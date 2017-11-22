@@ -3,8 +3,8 @@ package org.qiunet.flash.handler.netty.server.tcp.init;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
-import org.qiunet.flash.handler.netty.protocol.Encoder;
-import org.qiunet.flash.handler.netty.protocol.Decoder;
+import org.qiunet.flash.handler.netty.coder.Encoder;
+import org.qiunet.flash.handler.netty.coder.Decoder;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
 

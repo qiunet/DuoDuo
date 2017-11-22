@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.protocol;
+package org.qiunet.flash.handler.netty.coder;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
