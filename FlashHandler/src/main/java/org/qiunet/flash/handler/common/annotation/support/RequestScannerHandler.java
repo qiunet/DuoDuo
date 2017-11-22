@@ -15,7 +15,8 @@ import java.lang.reflect.Constructor;
 public class RequestScannerHandler implements IScannerHandler {
 	@Override
 	public boolean matchClazz(Class clazz) {
-		return clazz.getAnnotation(RequestHandler.class) != null;
+		return clazz.getAnnotation(RequestHandler.class) != null
+				&& IHandler.class.isAssignableFrom(clazz);
 	}
 
 	@Override

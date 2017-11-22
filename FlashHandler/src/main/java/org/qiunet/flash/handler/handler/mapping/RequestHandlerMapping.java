@@ -46,9 +46,19 @@ public class RequestHandlerMapping {
 	 * @param handler
 	 */
 	public void addHandler(int protocolId, IHandler handler) {
-		Class requestDataClass = (Class) ((ParameterizedType)handler.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-		setHandlerField(handler, "requestDataClass", requestDataClass);
-		setHandlerField(handler, "protocolId", protocolId);
+		Class clazz = handler.getClass();
+		do {
+			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+				clazz = clazz.getSuperclass();
+				continue;
+			}
+
+			Class requestDataClass = (Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+
+			setHandlerField(handler, "requestDataClass", requestDataClass);
+			setHandlerField(handler, "protocolId", protocolId);
+			break;
+		}while (clazz != Object.class);
 		this.handlers.put(protocolId, handler);
 	}
 
