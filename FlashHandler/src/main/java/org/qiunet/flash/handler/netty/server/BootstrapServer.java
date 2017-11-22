@@ -106,6 +106,9 @@ public class BootstrapServer {
 	 * @return
 	 */
 	public BootstrapServer httpListener(HttpBootstrapParams params) {
+		if (this.httpServer != null) {
+			throw new RuntimeException("httpServer already setting! ");
+		}
 		this.httpServer = new NettyHttpServer(params);
 		Thread httpThread = new Thread(this.httpServer, "BootstrapServer-Http");
 		httpThread.setDaemon(true);
@@ -119,6 +122,10 @@ public class BootstrapServer {
 	 * @return
 	 */
 	public BootstrapServer tcpListener(TcpBootstrapParams params) {
+		if (this.tcpServer != null) {
+			throw new RuntimeException("tcpServer already setting! ");
+		}
+
 		this.tcpServer = new NettyTcpServer(params);
 		Thread tcpThread = new Thread(tcpServer, "BootstrapServer-Tcp");
 		tcpThread.setDaemon(true);
