@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.netty.server;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ServerChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
@@ -23,6 +25,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -91,16 +94,12 @@ public class BootstrapServer {
 				qLogger.error("BootstrapServer sendShutdown but shutdownPort is less than 0!");
 				System.exit(1);
 			}
-
 			qLogger.error("BootstrapServer sendShutdown And stopServer!");
 
-			String hostAddress = InetAddress.getByName("localhost").getHostAddress();
-			Socket socket = new Socket(hostAddress, shutdownPort);
-			OutputStream stream = socket.getOutputStream();
-			stream.write(shutdownMsg.getBytes(CharsetUtil.UTF_8));
-			stream.flush();
-			stream.close();
-			socket.close();
+			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), shutdownPort));
+			channel.write(ByteBuffer.wrap(shutdownMsg.getBytes(CharsetUtil.UTF_8)));
+			channel.close();
+
 		} catch (IOException e) {
 			qLogger.error("BootstrapServer sendShutdown: ", e);
 			System.exit(1);
@@ -216,7 +215,7 @@ public class BootstrapServer {
 							}
 						}
 					}
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
