@@ -13,8 +13,10 @@ import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -28,13 +30,9 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/21
  */
 public class BootstrapServer {
-	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private static final QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 
 	private volatile static BootstrapServer instance;
-
-	private Thread httpThread;
-
-	private Thread tcpThread;
 
 	private NettyHttpServer httpServer;
 
@@ -45,8 +43,6 @@ public class BootstrapServer {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 
 		this.hook = hook;
-		this.tcpServer = new NettyTcpServer();
-		this.httpServer =  new NettyHttpServer();
 
 		Thread thread = new Thread(new ShutdownListener(this , shutdownPort, shutdownMsg), "ShutdownListener");
 		thread.setDaemon(true);
@@ -54,7 +50,6 @@ public class BootstrapServer {
 
 		instance = this;
 	}
-
 	/***
 	 * 可以自己添加给hook.
 	 * @param shutdownPort
@@ -85,37 +80,56 @@ public class BootstrapServer {
 		return createBootstrap(shutdownPort, shutdownMsg, null);
 	}
 
-
-	public BootstrapServer httpListener(final HttpBootstrapParams params) {
-		this.httpThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					httpServer.start(params);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	/***
+	 * 停止服务器, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
+	 * @param shutdownPort
+	 * @param shutdownMsg
+	 */
+	public static void sendShutdown(int shutdownPort, String shutdownMsg) {
+		try {
+			if (shutdownPort <= 0) {
+				qLogger.error("BootstrapServer sendShutdown but shutdownPort is less than 0!");
+				System.exit(1);
 			}
-		}, "BootstrapServer-Http");
-		this.httpThread.setDaemon(true);
-		this.httpThread.start();
+
+			qLogger.error("BootstrapServer sendShutdown And stopServer!");
+
+			String hostAddress = InetAddress.getByName("localhost").getHostAddress();
+			Socket socket = new Socket(hostAddress, shutdownPort);
+			OutputStream stream = socket.getOutputStream();
+			stream.write(shutdownMsg.getBytes(CharsetUtil.UTF_8));
+			stream.flush();
+			stream.close();
+			socket.close();
+		} catch (IOException e) {
+			qLogger.error("BootstrapServer sendShutdown: ", e);
+			System.exit(1);
+		}
+	}
+
+	/**
+	 * 启动http监听
+	 * @param params
+	 * @return
+	 */
+	public BootstrapServer httpListener(HttpBootstrapParams params) {
+		this.httpServer = new NettyHttpServer(params);
+		Thread httpThread = new Thread(this.httpServer, "BootstrapServer-Http");
+		httpThread.setDaemon(true);
+		httpThread.start();
 		return this;
 	}
 
-
-	public BootstrapServer tcpListener(final TcpBootstrapParams params) {
-		this.tcpThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					tcpServer.start(params);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}, "BootstrapServer-Tcp");
-		this.tcpThread.setDaemon(true);
-		this.tcpThread.start();
+	/**
+	 * 启动tcp监听
+	 * @param params
+	 * @return
+	 */
+	public BootstrapServer tcpListener(TcpBootstrapParams params) {
+		this.tcpServer = new NettyTcpServer(params);
+		Thread tcpThread = new Thread(tcpServer, "BootstrapServer-Tcp");
+		tcpThread.setDaemon(true);
+		tcpThread.start();
 		return this;
 	}
 	public static Thread awaitThread;
@@ -147,18 +161,18 @@ public class BootstrapServer {
 		private Selector selector;
 		private String shutdownMsg;
 		private BootstrapServer server;
-
-		ShutdownListener(BootstrapServer bootstrapServer, int shutdownPort, String shutdownMsg) {
+		private ServerSocketChannel serverSocketChannel;
+				ShutdownListener(BootstrapServer bootstrapServer, int shutdownPort, String shutdownMsg) {
 			this.shutdownMsg = shutdownMsg;
 			this.server = bootstrapServer;
 
 			try {
-				ServerSocketChannel channel = ServerSocketChannel.open();
-				channel.configureBlocking(false);
-				channel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), shutdownPort));
+				serverSocketChannel = ServerSocketChannel.open();
+				serverSocketChannel.configureBlocking(false);
+				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), shutdownPort));
 
 				this.selector = Selector.open();
-				channel.register(this.selector, SelectionKey.OP_ACCEPT);
+				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -191,8 +205,13 @@ public class BootstrapServer {
 							msg = StringUtil.powerfulTrim(msg);
 							qLogger.error("[shutdownListener]服务端 Received Msg: ["+msg+"]");
 							if (msg.equals(shutdownMsg)) {
+
 								// 释放锁.
 								server.shutdown();
+								// 不调整位置, shutdown 后关闭. 脚本能看到结果. 否则关闭后. 线程其实还在shutdown
+								channel.close();
+								this.serverSocketChannel.close();
+								this.selector.close();
 								break;
 							}
 						}

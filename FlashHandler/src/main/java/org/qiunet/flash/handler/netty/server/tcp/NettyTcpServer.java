@@ -8,19 +8,31 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+
+import java.net.InetSocketAddress;
 
 /**
  * Created by qiunet.
  * 17/8/13
  */
-public final class NettyTcpServer {
+public final class NettyTcpServer implements Runnable {
+	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 
+	private TcpBootstrapParams params;
 	/***
 	 * 启动
 	 * @param params  启动使用的端口等启动参数
 	 */
-	public void start(TcpBootstrapParams params){
+	public NettyTcpServer(TcpBootstrapParams params) {
+		this.params = params;
+	}
+
+	@Override
+	public void run() {
 		EventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("tcp-boss-event-loop-"));
 		EventLoopGroup worker = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() , new DefaultThreadFactory("tcp-worker-event-loop-"));
 		try {
@@ -38,7 +50,7 @@ public final class NettyTcpServer {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			ChannelFuture f = bootstrap.bind(params.getAddress()).sync();
-
+			qLogger.error("Netty Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			f.channel().closeFuture().sync();
 		}catch (Exception e) {
 			e.printStackTrace();

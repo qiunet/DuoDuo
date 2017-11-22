@@ -11,31 +11,41 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+
+import java.net.InetSocketAddress;
+
 /**
  * Created by qiunet.
  * 17/11/11
  */
-public class NettyHttpServer {
-
+public class NettyHttpServer implements Runnable {
+	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private HttpBootstrapParams params;
 	/***
 	 * 启动
 	 * @param params  启动使用的端口等
 	 */
-	public void start(HttpBootstrapParams params) throws Exception {
-		// Configure SSL.
-		final SslContext sslCtx;
-		if (params.isSsl()) {
-			SelfSignedCertificate ssc = new SelfSignedCertificate();
-			sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-		} else {
-			sslCtx = null;
-		}
+	public NettyHttpServer(HttpBootstrapParams params) {
+		this.params = params;
+	}
 
-
+	@Override
+	public void run() {
 		EventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("http-boss-event-loop-"));
 		EventLoopGroup worker = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() , new DefaultThreadFactory("http-worker-event-loop-"));
 		try {
+			// Configure SSL.
+			final SslContext sslCtx;
+			if (params.isSsl()) {
+				SelfSignedCertificate ssc = new SelfSignedCertificate();
+				sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
+			} else {
+				sslCtx = null;
+			}
 			ServerBootstrap bootstrap = new ServerBootstrap();
 			bootstrap.group(boss, worker);
 
@@ -50,8 +60,8 @@ public class NettyHttpServer {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			ChannelFuture f = bootstrap.bind(params.getAddress()).sync();
-			System.err.println("Http server is started by" +
-					(params.isSsl()? "HTTPS" : "http") + " mode.");
+			qLogger.error("Netty Http server is started by" +
+					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			f.channel().closeFuture().sync();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -60,4 +70,5 @@ public class NettyHttpServer {
 			worker.shutdownGracefully();
 		}
 	}
+
 }
