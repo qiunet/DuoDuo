@@ -1,9 +1,8 @@
-package org.qiunet.flash.handler.tcp.handler;
+package org.qiunet.flash.handler.handler.tcp;
 
-import org.qiunet.flash.handler.context.request.IRequest;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.handler.proto.TcpProtobufHandler;
-import org.qiunet.flash.handler.proto.LoginProto;
+import org.qiunet.flash.handler.handler.proto.LoginProto;
 
 /**
  * Created by qiunet.

@@ -1,8 +1,8 @@
-package org.qiunet.flash.handler.http.handler;
+package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.proto.HttpProtobufHandler;
-import org.qiunet.flash.handler.proto.LoginProto;
+import org.qiunet.flash.handler.handler.proto.LoginProto;
 
 /**
  * Created by qiunet.

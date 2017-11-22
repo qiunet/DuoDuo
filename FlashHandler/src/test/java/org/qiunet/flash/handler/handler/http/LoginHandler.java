@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.http.handler;
+package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.string.HttpStringHandler;
