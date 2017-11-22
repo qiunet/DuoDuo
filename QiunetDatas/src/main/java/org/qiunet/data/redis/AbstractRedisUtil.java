@@ -1056,6 +1056,16 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 
+
+	public long lrem(String key, final long count ,final String val){
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
+			@Override
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				return jedis.lrem(key, count, val);
+			}
+		}.execAndReturn();
+	}
+
 	/**
 	 * 频繁请求访问控制
 	 * @param key
