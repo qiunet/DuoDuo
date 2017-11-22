@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.param;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
@@ -35,12 +36,14 @@ public final class TcpBootstrapParams {
 
 		 private SocketAddress address;
 
-		 public Build setAddress(SocketAddress address) {
-		 	this.address = address;
+		 public Build setPort(int port) {
+		 	this.address = new InetSocketAddress(port);
 		 	return this;
 		 }
 
 		 public TcpBootstrapParams build(){
+			if (address == null) throw new NullPointerException("Must set port for Tcp Listener! ");
+
 			TcpBootstrapParams params = new TcpBootstrapParams();
 			params.Address = this.address;
 		 	return params;

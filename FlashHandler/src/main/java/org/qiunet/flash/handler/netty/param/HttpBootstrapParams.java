@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.param;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
@@ -17,24 +18,8 @@ public final class HttpBootstrapParams {
 	 * 使用ssl 模式
 	 */
 	private boolean ssl;
-	/**
-	 * 解析成字符串就行
-	 */
-	private boolean string;
-	/**
-	 * 解析成json
-	 */
-	private boolean json;
 
 	private HttpBootstrapParams(){}
-
-	public boolean isJson(){
-		return json;
-	}
-
-	public boolean isString() {
-		return string;
-	}
 
 	public boolean isSsl() {
 		return ssl;
@@ -55,23 +40,11 @@ public final class HttpBootstrapParams {
 	 * */
 	public static class Builder {
 		private Builder(){}
-		private boolean json;
-		private boolean string;
 		private boolean ssl;
 		private SocketAddress address;
 
-		public Builder setJson(boolean json) {
-			this.json = json;
-			return this;
-		}
-
-		public Builder setString(boolean string) {
-			this.string = string;
-			return this;
-		}
-
-		public Builder setAddress(SocketAddress address) {
-			this.address = address;
+		public Builder setPort(int port) {
+			this.address = new InetSocketAddress(port);
 			return this;
 		}
 
@@ -81,11 +54,10 @@ public final class HttpBootstrapParams {
 		}
 
 		public HttpBootstrapParams build(){
+			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			HttpBootstrapParams params = new HttpBootstrapParams();
 			params.Address = this.address;
 			params.ssl = this.ssl;
-			params.json = this.json;
-			params.string = string;
 			return params;
 		}
 	}
