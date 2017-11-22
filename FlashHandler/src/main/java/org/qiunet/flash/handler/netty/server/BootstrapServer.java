@@ -4,6 +4,7 @@ import io.netty.channel.ServerChannel;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.hook.ShutdownHook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.logger.LoggerManager;
@@ -39,9 +40,11 @@ public class BootstrapServer {
 
 	private NettyTcpServer tcpServer;
 
-	private BootstrapServer(int shutdownPort, String shutdownMsg) {
+	private ShutdownHook hook;
+	private BootstrapServer(int shutdownPort, String shutdownMsg, ShutdownHook hook) {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 
+		this.hook = hook;
 		this.tcpServer = new NettyTcpServer();
 		this.httpServer =  new NettyHttpServer();
 
@@ -53,12 +56,13 @@ public class BootstrapServer {
 	}
 
 	/***
-	 * 创建一个bootstrap
-	 * @param shutdownPort 停止的端口
-	 * @param shutdownMsg 停止的消息
+	 * 可以自己添加给hook.
+	 * @param shutdownPort
+	 * @param shutdownMsg
+	 * @param hook  钩子 关闭时候,先执行你的代码
 	 * @return
 	 */
-	public static BootstrapServer createBootstrap(int shutdownPort, String shutdownMsg) {
+	public static BootstrapServer createBootstrap(int shutdownPort, String shutdownMsg, ShutdownHook hook) {
 		if (StringUtil.isEmpty(shutdownMsg)) {
 			throw new NullPointerException("shutdownMsg can not be empty!");
 		}
@@ -66,10 +70,19 @@ public class BootstrapServer {
 		synchronized (BootstrapServer.class) {
 			if (instance == null)
 			{
-				new BootstrapServer(shutdownPort, shutdownMsg);
+				new BootstrapServer(shutdownPort, shutdownMsg, hook);
 			}
 		}
 		return instance;
+	}
+	/***
+	 * 创建一个bootstrap
+	 * @param shutdownPort 停止的端口
+	 * @param shutdownMsg 停止的消息
+	 * @return
+	 */
+	public static BootstrapServer createBootstrap(int shutdownPort, String shutdownMsg) {
+		return createBootstrap(shutdownPort, shutdownMsg, null);
 	}
 
 
@@ -119,6 +132,9 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
+		if (hook != null) {
+			hook.shutdown();
+		}
 		LockSupport.unpark(awaitThread);
 	}
 

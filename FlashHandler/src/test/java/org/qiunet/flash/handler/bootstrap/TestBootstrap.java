@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.bootstrap;
 
+import org.qiunet.flash.handler.bootstrap.hook.MyShutdownHook;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 
 /**
@@ -14,6 +15,6 @@ public class TestBootstrap {
 	}
 
 	public void startShutdownListener(){
-		BootstrapServer.createBootstrap(1314, "shutdown").await();
+		BootstrapServer.createBootstrap(1314, "shutdown", new MyShutdownHook()).await();
 	}
 }
