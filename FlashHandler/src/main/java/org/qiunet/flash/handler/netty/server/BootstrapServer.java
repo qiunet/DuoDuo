@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.netty.server;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.hook.ShutdownHook;
+import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.logger.LoggerManager;
@@ -35,13 +35,15 @@ public class BootstrapServer {
 
 	private NettyTcpServer tcpServer;
 
-	private ShutdownHook hook;
-	private BootstrapServer(int shutdownPort, String shutdownMsg, ShutdownHook hook) {
+	private Hook hook;
+	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-
+		if (hook == null) {
+			throw new RuntimeException("hook can not be null");
+		}
 		this.hook = hook;
 
-		Thread thread = new Thread(new ShutdownListener(this , shutdownPort, shutdownMsg), "ShutdownListener");
+		Thread thread = new Thread(new HookListener(this , hook), "HookListener");
 		thread.setDaemon(true);
 		thread.start();
 
@@ -49,53 +51,42 @@ public class BootstrapServer {
 	}
 	/***
 	 * 可以自己添加给hook.
-	 * @param shutdownPort
-	 * @param shutdownMsg
 	 * @param hook  钩子 关闭时候,先执行你的代码
 	 * @return
 	 */
-	public static BootstrapServer createBootstrap(int shutdownPort, String shutdownMsg, ShutdownHook hook) {
-		if (StringUtil.isEmpty(shutdownMsg)) {
+	public static BootstrapServer createBootstrap(Hook hook) {
+		if (StringUtil.isEmpty(hook.getShutdownMsg())) {
 			throw new NullPointerException("shutdownMsg can not be empty!");
 		}
 
 		synchronized (BootstrapServer.class) {
 			if (instance == null)
 			{
-				new BootstrapServer(shutdownPort, shutdownMsg, hook);
+				new BootstrapServer(hook);
 			}
 		}
 		return instance;
 	}
-	/***
-	 * 创建一个bootstrap
-	 * @param shutdownPort 停止的端口
-	 * @param shutdownMsg 停止的消息
-	 * @return
-	 */
-	public static BootstrapServer createBootstrap(int shutdownPort, String shutdownMsg) {
-		return createBootstrap(shutdownPort, shutdownMsg, null);
-	}
 
 	/***
-	 * 停止服务器, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
-	 * @param shutdownPort
-	 * @param shutdownMsg
+	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
+	 * @param hookPort
+	 * @param msg
 	 */
-	public static void sendShutdown(int shutdownPort, String shutdownMsg) {
+	public static void sendHookMsg(int hookPort, String msg) {
 		try {
-			if (shutdownPort <= 0) {
-				qLogger.error("BootstrapServer sendShutdown but shutdownPort is less than 0!");
+			if (hookPort <= 0) {
+				qLogger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
 				System.exit(1);
 			}
-			qLogger.error("BootstrapServer sendShutdown And stopServer!");
+			qLogger.error("BootstrapServer sendHookMsg ["+msg+"]!");
 
-			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), shutdownPort));
-			channel.write(ByteBuffer.wrap(shutdownMsg.getBytes(CharsetUtil.UTF_8)));
+			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), hookPort));
+			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
 			channel.close();
 
 		} catch (IOException e) {
-			qLogger.error("BootstrapServer sendShutdown: ", e);
+			qLogger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
 		}
 	}
@@ -153,23 +144,22 @@ public class BootstrapServer {
 	}
 
 	/***
-	 * 停止的监听
+	 * Hook的监听
 	 */
-	private static class ShutdownListener implements Runnable {
+	private static class HookListener implements Runnable {
 		private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
-
+		private Hook hook;
 		private Selector selector;
-		private String shutdownMsg;
 		private BootstrapServer server;
 		private ServerSocketChannel serverSocketChannel;
-				ShutdownListener(BootstrapServer bootstrapServer, int shutdownPort, String shutdownMsg) {
-			this.shutdownMsg = shutdownMsg;
+		HookListener(BootstrapServer bootstrapServer, Hook hook) {
 			this.server = bootstrapServer;
+			this.hook = hook;
 
 			try {
 				serverSocketChannel = ServerSocketChannel.open();
 				serverSocketChannel.configureBlocking(false);
-				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), shutdownPort));
+				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
 
 				this.selector = Selector.open();
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
@@ -180,7 +170,7 @@ public class BootstrapServer {
 
 		@Override
 		public void run() {
-			qLogger.error("[shutdownListener]服务端: 启动成功");
+			qLogger.error("[HookListener]服务端: 启动成功");
 			while (true) {
 				try {
 					this.selector.select();
@@ -190,7 +180,7 @@ public class BootstrapServer {
 						itr.remove();
 
 						if (key.isAcceptable()) {
-							qLogger.error("[shutdownListener]服务端: Acceptor Msg");
+							qLogger.error("[HookListener]服务端: Acceptor Msg");
 							ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 							SocketChannel channel = serverSocketChannel.accept();
 							channel.configureBlocking(false);
@@ -203,8 +193,8 @@ public class BootstrapServer {
 							byteBuffer.flip();
 							String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
 							msg = StringUtil.powerfulTrim(msg);
-							qLogger.error("[shutdownListener]服务端 Received Msg: ["+msg+"]");
-							if (msg.equals(shutdownMsg)) {
+							qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
+							if (msg.equals(hook.getShutdownMsg())) {
 
 								// 释放锁.
 								server.shutdown();
@@ -213,6 +203,16 @@ public class BootstrapServer {
 								this.serverSocketChannel.close();
 								this.selector.close();
 								break;
+
+							}else if (msg.equals(hook.getReloadCfgMsg())){
+								hook.reloadCfg();
+								channel.close();
+								continue;
+
+							}else {
+								hook.custom(msg);
+								channel.close();
+								continue;
 							}
 						}
 					}

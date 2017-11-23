@@ -1,8 +1,19 @@
 package org.qiunet.flash.handler.bootstrap;
 
+import org.qiunet.flash.handler.bootstrap.hook.MyHook;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
+import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.BootstrapServer;
+
 /**
+ * 测试接收数据
  * Created by qiunet.
  * 17/11/22
  */
-public class TestBootStrap {
+public class TestBootStrap extends RequestHandlerScanner {
+	public static void main(String[] args) {
+		HttpBootstrapParams httpParams = HttpBootstrapParams.custom().setPort(8080).build();
+		BootstrapServer.createBootstrap(new MyHook()).httpListener(httpParams).await();
+	}
+
 }

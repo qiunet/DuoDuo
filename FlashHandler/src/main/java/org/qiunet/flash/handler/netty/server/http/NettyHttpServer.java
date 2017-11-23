@@ -60,7 +60,7 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			ChannelFuture f = bootstrap.bind(params.getAddress()).sync();
-			qLogger.error("Netty Http server is started by" +
+			qLogger.error("Netty Http server is started by " +
 					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			f.channel().closeFuture().sync();
 		}catch (Exception e) {
