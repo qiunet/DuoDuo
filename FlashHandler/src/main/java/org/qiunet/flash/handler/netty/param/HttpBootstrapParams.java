@@ -11,12 +11,22 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 * 使用ssl 模式
 	 */
 	private boolean ssl;
+	/**
+	 * 游戏的uriPath
+	 * http://localhost:8080/f?a=b&c=d 后面的/f
+	 */
+	private String gameURIPath;
 
 	private HttpBootstrapParams(){}
 
 	public boolean isSsl() {
 		return ssl;
 	}
+
+	public String getGameURIPath() {
+		return gameURIPath;
+	}
+
 	/***
 	 * 得到
 	 * @return
@@ -31,9 +41,16 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	public static class Builder extends AbstractBootstrapParam.SuperBuilder<HttpBootstrapParams, Builder> {
 		private Builder(){}
 		private boolean ssl;
+		// 默认 /f
+		private String gameURIPath = "/f";
 
 		public Builder setSsl(boolean ssl) {
 			this.ssl = ssl;
+			return this;
+		}
+
+		public Builder setGameURIPath(String gameURIPath) {
+			this.gameURIPath = gameURIPath;
 			return this;
 		}
 
@@ -44,7 +61,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
-			params.address = this.address;
+			params.gameURIPath = this.gameURIPath;
 			params.ssl = this.ssl;
 		}
 	}

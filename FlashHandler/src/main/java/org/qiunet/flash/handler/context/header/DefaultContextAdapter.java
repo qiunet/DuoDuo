@@ -19,7 +19,7 @@ public class DefaultContextAdapter implements ContextAdapter {
 
 	@Override
 	public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content.getProtocolId());
+		IHandler handler = RequestHandlerMapping.getInstance().getGameHandler(content.getProtocolId());
 		switch (handler.getDataType()) {
 			case STRING:
 				return new HttpStringRequestContext(content, channelContext, request);
@@ -31,7 +31,7 @@ public class DefaultContextAdapter implements ContextAdapter {
 
 	@Override
 	public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext) {
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content.getProtocolId());
+		IHandler handler = RequestHandlerMapping.getInstance().getGameHandler(content.getProtocolId());
 		switch (handler.getDataType()) {
 			case STRING:
 				return new TcpStringRequestContext(content, channelContext);

@@ -26,7 +26,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	}
 	@Override
 	public IHandler<RequestData> getHandler() {
-		return RequestHandlerMapping.getInstance().getHandler(messageContent.getProtocolId());
+		return RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());
 	}
 
 	@Override

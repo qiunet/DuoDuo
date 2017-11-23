@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.handler.mapping;
 
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.exceptions.SingletonException;
 
 import java.lang.reflect.Field;
@@ -16,8 +17,10 @@ import java.util.Map;
  */
 public class RequestHandlerMapping {
 	private volatile static RequestHandlerMapping instance;
-	/**所有的 handler*/
-	private Map<Integer, IHandler> handlers = new HashMap<>();
+	/**所有游戏的 handler*/
+	private Map<Integer, IHandler> gameHandlers = new HashMap<>();
+	/**所有非游戏的 http handler*/
+	private Map<String, IHttpHandler> otherHandlers = new HashMap<>();
 
 	private RequestHandlerMapping() {
 		synchronized (RequestHandlerMapping.class) {
@@ -46,6 +49,35 @@ public class RequestHandlerMapping {
 	 * @param handler
 	 */
 	public void addHandler(int protocolId, IHandler handler) {
+		if (this.gameHandlers.containsKey(protocolId)) {
+			throw new RuntimeException("protocolId ["+protocolId+"] is already exist!");
+		}
+
+		handlerSetRequestDataClass(handler);
+		setHandlerField(handler, "protocolId", protocolId);
+		this.gameHandlers.put(protocolId, handler);
+	}
+
+
+	/**
+	 * 存一个handler对应mapping
+	 * @param uriPath
+	 * @param handler
+	 */
+	public void addHandler(String uriPath, IHttpHandler handler) {
+		if (this.otherHandlers.containsKey(uriPath)) {
+			throw new RuntimeException("uriPath ["+uriPath+"] is already exist!");
+		}
+
+		handlerSetRequestDataClass(handler);
+		this.otherHandlers.put(uriPath, handler);
+	}
+
+	/***
+	 * 给handler 设置 requestDataClass 属性
+	 * @param handler
+	 */
+	private void handlerSetRequestDataClass(IHandler handler){
 		Class clazz = handler.getClass();
 		do {
 			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
@@ -54,12 +86,9 @@ public class RequestHandlerMapping {
 			}
 
 			Class requestDataClass = (Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-
 			setHandlerField(handler, "requestDataClass", requestDataClass);
-			setHandlerField(handler, "protocolId", protocolId);
 			break;
 		}while (clazz != Object.class);
-		this.handlers.put(protocolId, handler);
 	}
 
 	/**
@@ -88,11 +117,19 @@ public class RequestHandlerMapping {
 		}
 	}
 	/**
-	 * 得到一个handler
+	 * 得到一个游戏的 handler
 	 * @param requestId
 	 * @return
 	 */
-	public IHandler getHandler(int requestId) {
-		return handlers.get(requestId);
+	public IHandler getGameHandler(int requestId) {
+		return gameHandlers.get(requestId);
+	}
+
+	/***
+	 * 得到一个非游戏的handler
+	 * @return
+	 */
+	public IHttpHandler getOtherRequestHandler(String uriPath){
+		return otherHandlers.get(uriPath);
 	}
 }
