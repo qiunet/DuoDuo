@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
+import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
@@ -38,5 +39,6 @@ public class TestBootStrap extends RequestHandlerScanner {
 		FullHttpResponse httpResponse = httpClient.sendRequest(Unpooled.wrappedBuffer(test.getBytes(CharsetUtil.UTF_8)), "/back?a=b");
 		Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 		Assert.assertEquals(httpResponse.content().toString(CharsetUtil.UTF_8), test);
+		ReferenceCountUtil.release(httpResponse);
 	}
 }
