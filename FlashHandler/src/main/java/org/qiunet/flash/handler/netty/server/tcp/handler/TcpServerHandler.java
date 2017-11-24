@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.session.IPlayerSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
-import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
 
 /**

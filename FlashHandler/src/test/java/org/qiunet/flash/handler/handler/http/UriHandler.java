@@ -8,9 +8,10 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequest;
  * 17/11/23
  */
 @OtherRequestHandler(uriPath = "/back")
-public class TestUriHandler extends HttpStringHandler {
+public class UriHandler extends HttpStringHandler {
 	@Override
 	public String handler(IHttpRequest<String> request) {
+
 		return null;
 	}
 }

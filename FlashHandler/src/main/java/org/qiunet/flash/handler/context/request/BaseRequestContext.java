@@ -22,6 +22,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {
 		this.ctx = ctx;
 		this.bytes = content.bytes();
+		this.messageContent = content;
 		if (content.getProtocolId() > 0) {
 			this.handler = RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());
 		}else {

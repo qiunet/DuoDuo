@@ -10,6 +10,8 @@ import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
+import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
@@ -25,11 +27,13 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IResponse<ResponseData>, IHttpRequestContext<RequestData> {
 	private HttpRequest request;
+	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;
 
-	public AbstractHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request)  {
+	public AbstractHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request)  {
 		super(content, channelContext);
 		this.request = request;
+		this.params = params;
 	}
 
 	private Map<String ,List<String>> parameters(){

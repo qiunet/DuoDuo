@@ -1,8 +1,8 @@
 package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;

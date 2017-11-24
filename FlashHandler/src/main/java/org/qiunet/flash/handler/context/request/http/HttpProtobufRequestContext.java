@@ -4,6 +4,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -13,8 +14,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public  class HttpProtobufRequestContext<RequestData, ResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	private RequestData requestData;
-	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
-		super(content, channelContext, request);
+	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
+		super(content, channelContext, params, request);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
-package org.qiunet.flash.handler.netty.param;
+package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.netty.interceptor.HttpInterceptor;
+import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 
 /**
  * 使用引导类 参数.

@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
-import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
@@ -100,7 +100,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			return;
 		}
 
-		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, request);
+		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, params, request);
 		acceptor.process(context);
 	}
 	/***
@@ -117,7 +117,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			return;
 		}
 
-		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, request);
+		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, params, request);
 		acceptor.process(context);
 	}
 

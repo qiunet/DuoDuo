@@ -10,6 +10,8 @@ import org.qiunet.flash.handler.context.request.tcp.TcpProtobufRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.TcpStringRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
 /**
  * Created by qiunet.
@@ -29,18 +31,18 @@ public class DefaultContextAdapter implements ContextAdapter {
 	}
 
 	@Override
-	public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpRequest request) {
+	public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
 		switch (handler.getDataType()) {
 			case STRING:
-				return new HttpStringRequestContext(content, channelContext, request);
+				return new HttpStringRequestContext(content, channelContext, params, request);
 			case PROTOBUF:
-				return new HttpProtobufRequestContext(content, channelContext, request);
+				return new HttpProtobufRequestContext(content, channelContext, params, request);
 		}
 		return null;
 	}
 
 	@Override
-	public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler) {
+	public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
 		switch (handler.getDataType()) {
 			case STRING:
 				return new TcpStringRequestContext(content, channelContext);

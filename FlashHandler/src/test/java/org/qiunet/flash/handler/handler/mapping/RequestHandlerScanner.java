@@ -15,7 +15,7 @@ import java.net.URISyntaxException;
 
 public abstract class RequestHandlerScanner {
 
-	public RequestHandlerScanner(){
+	static {
 		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
 
 		try {

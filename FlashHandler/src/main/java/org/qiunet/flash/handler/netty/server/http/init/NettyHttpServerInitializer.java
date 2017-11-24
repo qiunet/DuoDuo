@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.ssl.SslContext;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
-import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
  * Created by qiunet.

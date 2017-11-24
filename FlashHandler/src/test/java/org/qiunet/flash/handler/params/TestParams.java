@@ -2,10 +2,11 @@ package org.qiunet.flash.handler.params;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.netty.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.interceptor.DefaultHttpStringInterceptor;
+import org.qiunet.flash.handler.interceptor.DefaultTcpStringInterceptor;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
@@ -19,11 +20,16 @@ public class TestParams {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
 				.setSsl(true)
+				.setInterceptor(new DefaultHttpStringInterceptor())
 				.build();
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 		Assert.assertEquals(true, params.isSsl());
 
-		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom().setPort(1315).build();
+		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
+				.setPort(1315)
+				.setMaxReceivedLength(1024*1024)
+				.setInterceptor(new DefaultTcpStringInterceptor())
+				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}
 }

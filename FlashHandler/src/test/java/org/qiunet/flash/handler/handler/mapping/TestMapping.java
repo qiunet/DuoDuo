@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.LoginHandler;
 import org.qiunet.flash.handler.handler.http.LoginProtobufHandler;
-import org.qiunet.flash.handler.handler.http.TestUriHandler;
+import org.qiunet.flash.handler.handler.http.UriHandler;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -29,6 +29,6 @@ public class TestMapping extends RequestHandlerScanner {
 
 		IHttpHandler httpHandler = RequestHandlerMapping.getInstance().getOtherRequestHandler("/back");
 		Assert.assertNotNull(httpHandler);
-		Assert.assertTrue(httpHandler instanceof TestUriHandler);
+		Assert.assertTrue(httpHandler instanceof UriHandler);
 	}
 }

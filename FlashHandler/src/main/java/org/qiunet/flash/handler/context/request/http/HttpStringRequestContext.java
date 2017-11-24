@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.handler.http.IHttpHandler;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -15,8 +17,8 @@ import java.lang.reflect.InvocationTargetException;
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
 	private String reqeustData;
 
-	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpRequest request) {
-		super(content, channelContext, request);
+	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
+		super(content, channelContext, params, request);
 	}
 
 	@Override
@@ -41,7 +43,8 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 
 	@Override
 	public boolean handler() {
-
+		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
+		String responseData = (String) params.getInterceptor().handler((IHttpHandler) getHandler(), requestData);
 		return false;
 	}
 

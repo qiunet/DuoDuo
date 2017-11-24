@@ -1,6 +1,6 @@
-package org.qiunet.flash.handler.netty.param;
+package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.netty.interceptor.TcpInterceptor;
+import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
 
 /**
  * 使用引导类 参数.
@@ -43,8 +43,9 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		private Builder(){}
 
-		public void setInterceptor(TcpInterceptor interceptor) {
+		public Builder setInterceptor(TcpInterceptor interceptor) {
 			this.interceptor = interceptor;
+			return this;
 		}
 
 		public Builder setMaxReceivedLength(int maxReceivedLength) {

@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.param;
+package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.context.header.ContextAdapter;
 import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
