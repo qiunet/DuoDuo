@@ -5,10 +5,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.netty.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,12 +20,27 @@ import java.util.List;
  */
 public class Decoder extends ByteToMessageDecoder {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private TcpBootstrapParams params;
+	public Decoder(TcpBootstrapParams params ) {
+		this.params = params;
+	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		if (! in.isReadable(ProtocolHeader.REQUEST_HEADER_LENGTH)) return;
 		in.markReaderIndex();
 
 		ProtocolHeader header = new ProtocolHeader(in);
+		if (! header.isMagicValid()) {
+			logger.error("Invalid message, magic is error! "+ Arrays.toString(header.getMagic()));
+			ctx.channel().close();
+			return;
+		}
+
+		if (header.getLength() <= 0 || header.getLength() > params.getMaxReceivedLength()) {
+			logger.error("Invalid message, length is error! length is : "+ header.getLength());
+			ctx.channel().close();
+			return;
+		}
 
 		if (! in.isReadable(header.getLength())) {
 			in.resetReaderIndex();

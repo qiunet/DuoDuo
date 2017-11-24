@@ -21,7 +21,7 @@ public class NettyTcpServerInitializer extends ChannelInitializer<SocketChannel>
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
 		pipeline.addLast("Encoder", new Encoder());
-		pipeline.addLast("Decoder", new Decoder());
+		pipeline.addLast("Decoder", new Decoder(params));
 		pipeline.addLast("handler", new TcpServerHandler(params));
 	}
 }
