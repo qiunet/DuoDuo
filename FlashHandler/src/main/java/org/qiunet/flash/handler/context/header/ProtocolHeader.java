@@ -105,6 +105,18 @@ public class ProtocolHeader {
 	}
 
 	/**
+	 * 检查包头是否是自己的包.
+	 * @return
+	 */
+	public boolean isMagicValid(){
+		for (int i = 0; i < MAGIC_CONTENTS.length; i++) {
+			if (this.magic[i] != MAGIC_CONTENTS[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+	/**
 	 * 将当前header 写入 bytebuf
 	 * @param out
 	 */
