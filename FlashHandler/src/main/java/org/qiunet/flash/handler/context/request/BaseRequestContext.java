@@ -16,17 +16,22 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected MessageContent messageContent;
 	protected ChannelHandlerContext ctx;
 	protected byte [] bytes;
-
+	private IHandler<RequestData> handler;
 	private Map<String , Object> attributes;
 
 	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {
 		this.ctx = ctx;
 		this.bytes = content.bytes();
-		this.messageContent = content;
+		if (content.getProtocolId() > 0) {
+			this.handler = RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());
+		}else {
+
+			this.handler = RequestHandlerMapping.getInstance().getOtherRequestHandler(messageContent.getUriPath());
+		}
 	}
 	@Override
 	public IHandler<RequestData> getHandler() {
-		return RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());
+		return handler;
 	}
 
 	@Override

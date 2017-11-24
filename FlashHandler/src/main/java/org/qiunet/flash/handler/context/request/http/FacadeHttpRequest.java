@@ -37,6 +37,16 @@ public class FacadeHttpRequest<RequestData> implements IHttpRequest<RequestData>
 	}
 
 	@Override
+	public boolean otherRequest() {
+		return context.otherRequest();
+	}
+
+	@Override
+	public String getUriPath() {
+		return context.getUriPath();
+	}
+
+	@Override
 	public String getParameter(String key) {
 		return context.getParameter(key);
 	}

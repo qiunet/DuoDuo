@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.*;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
@@ -47,6 +48,16 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 			return ret.get(0);
 		}
 		return null;
+	}
+
+	@Override
+	public String getUriPath() {
+		return messageContent.getUriPath();
+	}
+
+	@Override
+	public boolean otherRequest() {
+		return messageContent.getProtocolId() == 0;
 	}
 
 	@Override

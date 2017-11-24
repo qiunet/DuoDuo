@@ -17,10 +17,19 @@ public class MessageContent implements IAttributeData {
 	protected int protocolId;
 	protected int sequence;
 	private Map<String, Object> attributes;
+
+	private String uriPath;
+
 	public MessageContent(int protocolId, int sequence, byte [] bytes) {
 		this.bytes = bytes;
 		this.sequence = sequence;
 		this.protocolId = protocolId;
+		this.attributes = new HashMap<>();
+	}
+
+	public MessageContent(String uriPath, byte [] bytes) {
+		this.bytes = bytes;
+		this.uriPath = uriPath;
 		this.attributes = new HashMap<>();
 	}
 
@@ -34,6 +43,10 @@ public class MessageContent implements IAttributeData {
 
 	public byte [] bytes() {
 		return bytes;
+	}
+
+	public String getUriPath() {
+		return uriPath;
 	}
 
 	@Override

@@ -13,14 +13,25 @@ import java.util.Set;
  */
 public interface IHttpRequest<RequestData> extends IRequest<RequestData> {
 	/***
-	 * 得到请求的get参数
+	 * 是外部的请求. 内部使用的protocolId区别
+	 * 外部请求使用uri
+	 * @return
+	 */
+	public boolean otherRequest();
+	/***
+	 * 得到UriPath
+	 * @return
+	 */
+	public String getUriPath();
+	/***
+	 * 得到get请求的参数
 	 * @param key
 	 * @return
 	 */
 	public String getParameter(String key);
 
 	/**
-	 * 得到请求的参数. 返回是一个数组
+	 * 得到get请求的参数. 返回是一个数组
 	 * @param key
 	 * @return
 	 */
