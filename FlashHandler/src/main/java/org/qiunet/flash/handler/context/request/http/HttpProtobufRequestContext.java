@@ -4,6 +4,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 import java.lang.reflect.InvocationTargetException;
@@ -45,7 +46,9 @@ public  class HttpProtobufRequestContext<RequestData, ResponseData> extends Abst
 
 	@Override
 	public boolean handler() {
-
+		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
+		ResponseData data = (ResponseData) params.getInterceptor().handler((IHttpHandler)getHandler(), request);
+		this.response(data);
 		return true;
 	}
 
