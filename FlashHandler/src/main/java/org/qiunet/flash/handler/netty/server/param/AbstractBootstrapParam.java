@@ -23,6 +23,12 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected boolean crc;
 
+	protected int maxReceivedLength;
+
+	public int getMaxReceivedLength() {
+		return maxReceivedLength;
+	}
+
 	public SocketAddress getAddress() {
 		return address;
 	}
@@ -40,10 +46,17 @@ public abstract class AbstractBootstrapParam {
 	 * */
 	public abstract static class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder> {
 		protected SocketAddress address;
+		// 最大上行1M的长度(HTTP 同样有满足)
+		private int maxReceivedLength = 1024 * 1024;
 
 		protected ContextAdapter adapter = new DefaultContextAdapter();
 
 		protected boolean crc = true;
+
+		public B setMaxReceivedLength(int maxReceivedLength) {
+			this.maxReceivedLength = maxReceivedLength;
+			return (B) this;
+		}
 
 		public B setCrc(boolean crc) {
 			this.crc = crc;
@@ -65,6 +78,7 @@ public abstract class AbstractBootstrapParam {
 		public P build(){
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			P p = newParams();
+			p.maxReceivedLength = maxReceivedLength;
 			p.address = address;
 			p.adapter = adapter;
 			p.crc = crc;
