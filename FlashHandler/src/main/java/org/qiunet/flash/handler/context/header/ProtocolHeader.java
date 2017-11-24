@@ -12,15 +12,13 @@ public class ProtocolHeader {
 
 
 	/**请求头固定长度*/
-	public static final int REQUEST_HEADER_LENGTH = 20;
+	public static final int REQUEST_HEADER_LENGTH = 16;
 	/**辨别 请求使用*/
 	private byte [] magic;
 	// 长度
 	private int length;
 	// 请求的 响应的协议 id
 	private int protocolId;
-	// byte 的加密块大小 (多个块互换)
-	private int chunkSize;
 	// crc code
 	private int crc;
 
@@ -30,14 +28,12 @@ public class ProtocolHeader {
 	 * 由外面读取后 调构造函数传入
 	 * @param length 后面byte数组 长度
 	 * @param protocolId 请求的id
-	 * @param chunkSize 加密块的大小
 	 * @param crc crc 完整校验 (最后强转int 校验使用. int足够)
 	 */
-	public ProtocolHeader(int length, int protocolId, int chunkSize, int crc) {
+	public ProtocolHeader(int length, int protocolId, int crc) {
 		this.magic = MAGIC_CONTENTS;
 		this.crc = crc;
 		this.length = length;
-		this.chunkSize = chunkSize;
 		this.protocolId = protocolId;
 	}
 
@@ -50,14 +46,8 @@ public class ProtocolHeader {
 		in.readBytes(magic);
 		this.length = in.readInt();
 		this.protocolId = in.readInt();
-		this.chunkSize = in.readInt();
 		this.crc = in.readInt();
 	}
-
-	public int getChunkSize() {
-		return chunkSize;
-	}
-
 	/***
 	 * crc是否有效
 	 * @param crc
@@ -111,7 +101,6 @@ public class ProtocolHeader {
 		out.writeBytes(magic);
 		out.writeInt(length);
 		out.writeInt(protocolId);
-		out.writeInt(chunkSize);
 		out.writeInt(crc);
 	}
 }

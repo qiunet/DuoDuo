@@ -7,11 +7,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
@@ -25,7 +28,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author qiunet
  *         Created on 17/3/17 14:28.
  */
-public abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IResponse<ResponseData>, IHttpRequestContext<RequestData> {
+public abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData> {
 	private HttpRequest request;
 	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;
@@ -106,10 +109,17 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 	}
 
 	@Override
-	public void response(int protocolId, ResponseData responseData) {
+	public void response(ResponseData responseData) {
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
+		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
-		ByteBuf content = Unpooled.wrappedBuffer(getResponseDataBytes(responseData));
+		ByteBuf content = Unpooled.buffer();
+		int crc = (int) CrcUtil.getCrc32Value(data);
+		ProtocolHeader header = new ProtocolHeader(data.length, messageContent.getProtocolId(), crc);
+
+		header.writeToByteBuf(content);
+		content.writeBytes(data);
+
 		FullHttpResponse response = new DefaultFullHttpResponse(
 				HTTP_1_1, OK,  content);
 		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());

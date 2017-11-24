@@ -17,6 +17,11 @@ public abstract class AbstractBootstrapParam {
 	protected SocketAddress address;
 
 	protected ContextAdapter adapter;
+	/**
+	 * 是否检验crc
+	 * 一般测试时候使用
+	 */
+	protected boolean crc;
 
 	public SocketAddress getAddress() {
 		return address;
@@ -24,6 +29,10 @@ public abstract class AbstractBootstrapParam {
 
 	public ContextAdapter getAdapter() {
 		return adapter;
+	}
+
+	public boolean isCrc() {
+		return crc;
 	}
 
 	/***
@@ -34,6 +43,12 @@ public abstract class AbstractBootstrapParam {
 
 		protected ContextAdapter adapter = new DefaultContextAdapter();
 
+		protected boolean crc = true;
+
+		public B setCrc(boolean crc) {
+			this.crc = crc;
+			return (B) this;
+		}
 		public B setPort(int port) {
 			this.address = new InetSocketAddress(port);
 			return (B)this;
@@ -52,6 +67,7 @@ public abstract class AbstractBootstrapParam {
 			P p = newParams();
 			p.address = address;
 			p.adapter = adapter;
+			p.crc = crc;
 			this.buildInner(p);
 			return p;
 		}

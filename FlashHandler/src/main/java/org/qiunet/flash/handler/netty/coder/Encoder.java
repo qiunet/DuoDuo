@@ -5,9 +5,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
+
+import java.util.zip.CRC32;
 
 /**
  * Created by qiunet.
@@ -30,8 +33,7 @@ public class Encoder extends MessageToByteEncoder<MessageContent> {
 	 */
 	private ProtocolHeader fillProtocolHeader(int protocolId, byte [] bytes) {
 		int length = bytes.length;
-		int chunkSize = 0;
-		int crc = 0;
-		return new ProtocolHeader(length, protocolId, chunkSize, crc);
+		int crc = (int) CrcUtil.getCrc32Value(bytes);
+		return new ProtocolHeader(length, protocolId, crc);
 	}
 }
