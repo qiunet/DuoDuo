@@ -113,6 +113,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 		MessageContent content = new MessageContent(uriPath, bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
+			logger.error("uriPath ["+uriPath+"] not found !");
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
