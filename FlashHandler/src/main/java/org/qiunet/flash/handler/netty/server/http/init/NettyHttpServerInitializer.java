@@ -29,7 +29,7 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
 		}
 		p.addLast(new HttpRequestDecoder());
 		p.addLast(new HttpResponseEncoder());
-		p.addLast(new HttpObjectAggregator(1048576));
+		p.addLast(new HttpObjectAggregator(params.getMaxReceivedLength()));
 		p.addLast(new HttpServerHandler(params));
 	}
 }
