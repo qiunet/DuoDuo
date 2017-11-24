@@ -33,14 +33,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 
 	private HttpBootstrapParams params;
 
-	private HttpRequest request;
-
-	private ByteBuf byteBuf;
-
 
 	public HttpServerHandler (HttpBootstrapParams params) {
 		this.params = params;
-		this.byteBuf = PooledBytebufFactory.getInstance().alloc();
 	}
 
 	@Override
@@ -55,44 +50,32 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (msg instanceof HttpRequest) {
-			this.request = (HttpRequest) msg;
-			this.byteBuf.clear();
-
-			if (HttpUtil.is100ContinueExpected(request)) {
-				send100Continue(ctx);
-			}
+		if (! ( msg instanceof FullHttpRequest)) {
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
+			return;
 		}
-		if (msg instanceof HttpContent) {
-			if (((HttpContent) msg).content().isReadable()) {
-				byteBuf.writeBytes(((HttpContent) msg).content());
+		FullHttpRequest request = ((FullHttpRequest) msg);
+		try {
+			URI uri = URI.create(request.uri());
+			if (params.getGameURIPath().equals(uri.getRawPath())) {
+				handlerGameUriPathRequest(ctx, request);
+			}else {
+				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
 			}
-			if (msg instanceof LastHttpContent) {
-				try {
-					URI uri = URI.create(request.uri());
-					if (params.getGameURIPath().equals(uri.getRawPath())) {
-						handlerGameUriPathRequest(ctx);
-					}else {
-						handlerOtherUriPathRequest(ctx, uri.getRawPath());
-					}
-				}catch (Exception e) {
-					sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+		}catch (Exception e) {
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
-					logger.error("HttpServerHandler Parse request error: ", e);
-				}finally {
-					this.request = null;
-				}
-			}
+			logger.error("HttpServerHandler Parse request error: ", e);
 		}
 	}
 	/***
 	 * 处理其它请求
 	 * @return
 	 */
-	private void handlerGameUriPathRequest(ChannelHandlerContext ctx){
-		ProtocolHeader header = new ProtocolHeader(byteBuf);
-		byte [] bytes = new byte[byteBuf.readableBytes()];
-		byteBuf.readBytes(bytes);
+	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
+		ProtocolHeader header = new ProtocolHeader(request.content());
+		byte [] bytes = new byte[request.content().readableBytes()];
+		request.content().readBytes(bytes);
 		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
@@ -107,9 +90,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	 * 处理其它请求
 	 * @return
 	 */
-	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, String uriPath){
-		byte [] bytes = new byte[byteBuf.readableBytes()];
-		byteBuf.readBytes(bytes);
+	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
+		byte [] bytes = new byte[request.content().readableBytes()];
+		request.content().readBytes(bytes);
 		MessageContent content = new MessageContent(uriPath, bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
