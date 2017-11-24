@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 public class UriHandler extends HttpStringHandler {
 	@Override
 	public String handler(IHttpRequest<String> request) {
-
-		return null;
+		return request.getRequestData();
 	}
 }

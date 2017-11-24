@@ -16,7 +16,7 @@ public class DefaultHttpStringInterceptor implements HttpInterceptor {
 
 	@Override
 	public Object handler(IHttpHandler handler, IHttpRequest request) {
-
-		return "收到";
+		logger.info("收到请求 message: "+request.getRequestData());
+		return handler.handler(request);
 	}
 }

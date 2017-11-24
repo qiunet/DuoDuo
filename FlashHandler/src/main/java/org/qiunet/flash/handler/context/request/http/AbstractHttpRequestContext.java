@@ -59,7 +59,10 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 
 	@Override
 	public String getUriPath() {
-		return messageContent.getUriPath();
+		if (messageContent.getProtocolId() == 0)
+			return messageContent.getUriPath();
+		else
+			return params.getGameURIPath();
 	}
 
 	@Override
@@ -114,10 +117,13 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content = Unpooled.buffer();
-		int crc = (int) CrcUtil.getCrc32Value(data);
-		ProtocolHeader header = new ProtocolHeader(data.length, messageContent.getProtocolId(), crc);
+		if (getUriPath() == params.getGameURIPath()) {
+			// 不是游戏业务. 不写业务头.
+			int crc = (int) CrcUtil.getCrc32Value(data);
+			ProtocolHeader header = new ProtocolHeader(data.length, messageContent.getProtocolId(), crc);
 
-		header.writeToByteBuf(content);
+			header.writeToByteBuf(content);
+		}
 		content.writeBytes(data);
 
 		FullHttpResponse response = new DefaultFullHttpResponse(

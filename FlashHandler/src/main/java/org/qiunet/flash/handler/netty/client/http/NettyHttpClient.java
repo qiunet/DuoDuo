@@ -17,90 +17,169 @@ package org.qiunet.flash.handler.netty.client.http;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.util.CharsetUtil;
-
-import java.net.URI;
 
 /**
+ * 给客户端测试使用的一个HttpClient类
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
+	private int port;
+	private String host;
+	private boolean https;
+	private boolean keepAlive;
+	private HttpClientHandler clientHandler;
 
-    static final String URL = System.getProperty("url", "http://127.0.0.1:8080/");
+	public NettyHttpClient (String host, int port) {
+		this(host, port, false, false);
+	}
 
-    public static void main(String[] args) throws Exception {
-        URI uri = new URI(URL);
-        String scheme = uri.getScheme() == null? "http" : uri.getScheme();
-        String host = uri.getHost() == null? "127.0.0.1" : uri.getHost();
-        int port = uri.getPort();
-        if (port == -1) {
-            if ("http".equalsIgnoreCase(scheme)) {
-                port = 80;
-            } else if ("https".equalsIgnoreCase(scheme)) {
-                port = 443;
-            }
-        }
+	public NettyHttpClient (String host, int port, boolean https, boolean keepAlive) {
+		this.host = host;
+		this.port = port;
+		this.https = https;
+		this.keepAlive = keepAlive;
+		clientHandler = new HttpClientHandler();
+//		try {
+//			this.connect();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+	}
 
-        if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
-            System.err.println("Only HTTP(S) is supported.");
-            return;
-        }
+	/***
+	 * 链接后, 返回数据
+	 * @return
+	 * @throws Exception
+	 */
+	private void connect() throws Exception {
+		EventLoopGroup group = new NioEventLoopGroup();
+		try {
+			Bootstrap b = createBootstrap(group);
+			Channel channel = b.connect(host, port).sync().channel();
 
-        // Configure SSL context if necessary.
-        final boolean ssl = "https".equalsIgnoreCase(scheme);
-        final SslContext sslCtx;
-        if (ssl) {
-            sslCtx = SslContextBuilder.forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-        } else {
-            sslCtx = null;
-        }
+			channel.closeFuture().sync();
+		} finally {
+			group.shutdownGracefully();
+		}
+	}
 
-        // Configure the client.
-        EventLoopGroup group = new NioEventLoopGroup();
-        try {
-            Bootstrap b = new Bootstrap();
-            b.group(group)
-             .channel(NioSocketChannel.class)
-             .handler(new HttpClientInitializer(sslCtx));
-            String text = "我们是中国人!";
-            // Make the connection attempt.
-            Channel ch = b.connect(host, port).sync().channel();
-            ByteBuf byteBuf = Unpooled.buffer();
-//            byteBuf.writeBytes(text.getBytes(CharsetUtil.UTF_8));
-            byteBuf.writeCharSequence(text, CharsetUtil.UTF_8);
-            // Prepare the HTTP request.
-            DefaultFullHttpRequest request = new DefaultFullHttpRequest(
-                    HttpVersion.HTTP_1_1, HttpMethod.POST, uri.getRawPath(), byteBuf);
+	/***
+	 *
+	 * @param queryUri 格式: /back?key1=value1&key2=value2
+	 * @param byteBuf post 的数据
+	 * @return
+	 */
+	public FullHttpResponse sendRequest(ByteBuf byteBuf, String queryUri) {
+		EventLoopGroup group = new NioEventLoopGroup();
+		try {
+			Bootstrap b = createBootstrap(group);
+			Channel channel = b.connect(host, port).sync().channel();
+			clientHandler.sendRequest(byteBuf, queryUri);
+			channel.closeFuture().sync();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			group.shutdownGracefully();
+		}
+		return clientHandler.response;
+	}
 
-            request.headers().set(HttpHeaderNames.HOST, host);
-            request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-            request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
-            request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
-            // Set some example cookies.
-//            request.headers().set(
-//                    HttpHeaderNames.COOKIE,
-//                    ClientCookieEncoder.STRICT.encode(
-//                            new DefaultCookie("my-cookie", "foo"),
-//                            new DefaultCookie("another-cookie", "bar")));
+	/***
+	 * 得到bootstrap
+	 * @return
+	 * @throws Exception
+	 */
+	private Bootstrap createBootstrap(EventLoopGroup group) throws Exception {
+		final SslContext sslCtx;
+		if (https) {
+			sslCtx = SslContextBuilder.forClient()
+					.trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+		} else {
+			sslCtx = null;
+		}
+
+		Bootstrap b = new Bootstrap();
+		b.group(group)
+				.channel(NioSocketChannel.class)
+				.handler(new ChannelInitializer<SocketChannel>(){
+					@Override
+					protected void initChannel(SocketChannel ch) throws Exception {
+						ChannelPipeline p = ch.pipeline();
+
+						if (sslCtx != null) {
+							p.addLast(sslCtx.newHandler(ch.alloc()));
+						}
+						p.addLast(new HttpResponseDecoder());
+						p.addLast(new HttpRequestEncoder());
+						p.addLast(new HttpObjectAggregator(1024* 1024 * 2));
+						p.addLast(clientHandler);
+					}
+				});
+		return b;
+	}
 
 
-            // Send the HTTP request.
-            ch.writeAndFlush(request);
-            // Wait for the server to close the connection.
-            ch.closeFuture().sync();
-        } finally {
-            // Shut down executor threads to exit.
-            group.shutdownGracefully();
-        }
-    }
+	public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+		private FullHttpResponse response;
+		private ChannelHandlerContext ctx;
+		private Thread currThread;
+
+		@Override
+		public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			this.ctx = ctx;
+		}
+
+		/****
+		 * 如果是keepalive 可以重用channel
+		 * 这里因为是客户端测试, 特地使用阻塞来同步. 服务端一般不能这样
+		 * @param queryUri 格式: /back?key1=value1&key2=value2
+		 * @param byteBuf post 的数据
+		 * @return
+		 */
+		public FullHttpResponse sendRequest(ByteBuf byteBuf, String queryUri) {
+			this.response = null;
+			DefaultFullHttpRequest request = new DefaultFullHttpRequest(
+					HttpVersion.HTTP_1_1, HttpMethod.POST, queryUri, byteBuf);
+
+			request.headers().set(HttpHeaderNames.HOST, host);
+			if (keepAlive ) {
+				request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+			}
+			request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
+			request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
+			ctx.channel().writeAndFlush(request);
+			currThread = Thread.currentThread();
+//			LockSupport.park();
+			return this.response;
+		}
+
+		@Override
+		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
+			if (!(msg instanceof FullHttpResponse)) {
+				return;
+			}
+
+			this.response =  ((FullHttpResponse) msg).copy();
+//			LockSupport.unpark(currThread);
+			if (! keepAlive) {
+				ctx.close();
+			}
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+			cause.printStackTrace();
+			ctx.close();
+		}
+	}
 }
