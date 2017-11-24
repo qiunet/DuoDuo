@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.param;
 
+import org.qiunet.flash.handler.netty.interceptor.HttpInterceptor;
+
 /**
  * 使用引导类 参数.
  * 建造者模式
@@ -17,6 +19,8 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	private String gameURIPath;
 
+	private HttpInterceptor interceptor;
+
 	private HttpBootstrapParams(){}
 
 	public boolean isSsl() {
@@ -25,6 +29,10 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	public String getGameURIPath() {
 		return gameURIPath;
+	}
+
+	public HttpInterceptor getInterceptor() {
+		return interceptor;
 	}
 
 	/***
@@ -44,8 +52,15 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		// 默认 /f
 		private String gameURIPath = "/f";
 
+		private HttpInterceptor interceptor;
+
 		public Builder setSsl(boolean ssl) {
 			this.ssl = ssl;
+			return this;
+		}
+
+		public Builder setInterceptor(HttpInterceptor interceptor) {
+			this.interceptor = interceptor;
 			return this;
 		}
 
@@ -61,7 +76,9 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
+			if (interceptor == null) throw new NullPointerException("Interceptor can not be Null");
 			params.gameURIPath = this.gameURIPath;
+			params.interceptor = interceptor;
 			params.ssl = this.ssl;
 		}
 	}

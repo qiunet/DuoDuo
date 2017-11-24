@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.param;
 
+import org.qiunet.flash.handler.netty.interceptor.TcpInterceptor;
+
 /**
  * 使用引导类 参数.
  * 建造者模式
@@ -7,11 +9,19 @@ package org.qiunet.flash.handler.netty.param;
  * 17/7/19
  */
 public final class TcpBootstrapParams extends AbstractBootstrapParam {
+	/** tcp 粘包最大长度判断 */
 	private int maxReceivedLength;
+
+	private TcpInterceptor interceptor;
+
 	private TcpBootstrapParams(){}
 
 	public int getMaxReceivedLength() {
 		return maxReceivedLength;
+	}
+
+	public TcpInterceptor getInterceptor() {
+		return interceptor;
 	}
 
 	/***
@@ -29,7 +39,13 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 		// 最大上行1M的长度
 		private int maxReceivedLength = 1024 * 1024;
 
-		 private Builder(){}
+		private TcpInterceptor interceptor;
+
+		private Builder(){}
+
+		public void setInterceptor(TcpInterceptor interceptor) {
+			this.interceptor = interceptor;
+		}
 
 		public Builder setMaxReceivedLength(int maxReceivedLength) {
 			this.maxReceivedLength = maxReceivedLength;
@@ -43,7 +59,10 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(TcpBootstrapParams tcpBootstrapParams) {
+			if (interceptor == null) throw new NullPointerException("Interceptor can not be Null");
+
 			tcpBootstrapParams.maxReceivedLength = this.maxReceivedLength;
+			tcpBootstrapParams.interceptor = this.interceptor;
 		}
 	}
 }
