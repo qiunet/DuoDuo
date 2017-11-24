@@ -14,11 +14,6 @@ public interface IRequest<RequestData> extends IAttributeData {
 	 */
 	public RequestData getRequestData();
 	/**
-	 * 得到请求序列
-	 * @return
-	 */
-	public int getSequence();
-	/**
 	 * 得到远程的Ip地址
 	 * @return
 	 */

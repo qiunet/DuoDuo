@@ -44,8 +44,4 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 		if (attributes == null) attributes = new HashMap<>();
 		attributes.put(key, val);
 	}
-	@Override
-	public int getSequence() {
-		return messageContent.getSequence();
-	}
 }

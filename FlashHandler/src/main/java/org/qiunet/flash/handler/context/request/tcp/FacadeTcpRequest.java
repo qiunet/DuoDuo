@@ -17,11 +17,6 @@ public class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
 	}
 
 	@Override
-	public int getSequence() {
-		return context.getSequence();
-	}
-
-	@Override
 	public String getRemoteAddress() {
 		return context.getRemoteAddress();
 	}

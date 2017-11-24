@@ -22,11 +22,6 @@ public class FacadeHttpRequest<RequestData> implements IHttpRequest<RequestData>
 	}
 
 	@Override
-	public int getSequence() {
-		return context.getSequence();
-	}
-
-	@Override
 	public Object getAttribute(String key) {
 		return context.getAttribute(key);
 	}

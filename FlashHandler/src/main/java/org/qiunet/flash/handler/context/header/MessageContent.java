@@ -15,14 +15,12 @@ import java.util.Map;
 public class MessageContent implements IAttributeData {
 	protected byte [] bytes;
 	protected int protocolId;
-	protected int sequence;
 	private Map<String, Object> attributes;
 
 	private String uriPath;
 
-	public MessageContent(int protocolId, int sequence, byte [] bytes) {
+	public MessageContent(int protocolId, byte [] bytes) {
 		this.bytes = bytes;
-		this.sequence = sequence;
 		this.protocolId = protocolId;
 		this.attributes = new HashMap<>();
 	}
@@ -31,10 +29,6 @@ public class MessageContent implements IAttributeData {
 		this.bytes = bytes;
 		this.uriPath = uriPath;
 		this.attributes = new HashMap<>();
-	}
-
-	public int getSequence() {
-		return sequence;
 	}
 
 	public int getProtocolId() {

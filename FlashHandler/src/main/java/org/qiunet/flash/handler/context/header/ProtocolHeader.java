@@ -12,13 +12,11 @@ public class ProtocolHeader {
 
 
 	/**请求头固定长度*/
-	public static final int REQUEST_HEADER_LENGTH = 24;
+	public static final int REQUEST_HEADER_LENGTH = 20;
 	/**辨别 请求使用*/
 	private byte [] magic;
 	// 长度
 	private int length;
-	// 请求序列
-	private int sequence;
 	// 请求的 响应的协议 id
 	private int protocolId;
 	// byte 的加密块大小 (多个块互换)
@@ -31,16 +29,14 @@ public class ProtocolHeader {
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
 	 * @param length 后面byte数组 长度
-	 * @param sequence 请求的序列码
 	 * @param protocolId 请求的id
 	 * @param chunkSize 加密块的大小
 	 * @param crc crc 完整校验 (最后强转int 校验使用. int足够)
 	 */
-	public ProtocolHeader(int length, int sequence, int protocolId, int chunkSize, int crc) {
+	public ProtocolHeader(int length, int protocolId, int chunkSize, int crc) {
 		this.magic = MAGIC_CONTENTS;
 		this.crc = crc;
 		this.length = length;
-		this.sequence = sequence;
 		this.chunkSize = chunkSize;
 		this.protocolId = protocolId;
 	}
@@ -53,7 +49,6 @@ public class ProtocolHeader {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
 		this.length = in.readInt();
-		this.sequence = in. readInt();
 		this.protocolId = in.readInt();
 		this.chunkSize = in.readInt();
 		this.crc = in.readInt();
@@ -89,14 +84,6 @@ public class ProtocolHeader {
 	}
 
 	/***
-	 * 序列
-	 * @return
-	 */
-	public int getSequence() {
-		return sequence;
-	}
-
-	/***
 	 * protocol 协议id
 	 * @return
 	 */
@@ -123,7 +110,6 @@ public class ProtocolHeader {
 	public  void writeToByteBuf(ByteBuf out) {
 		out.writeBytes(magic);
 		out.writeInt(length);
-		out.writeInt(sequence);
 		out.writeInt(protocolId);
 		out.writeInt(chunkSize);
 		out.writeInt(crc);

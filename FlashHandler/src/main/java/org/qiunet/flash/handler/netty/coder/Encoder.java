@@ -18,7 +18,7 @@ public class Encoder extends MessageToByteEncoder<MessageContent> {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
 		logger.info("[encode] : " + msg.toString());
-		ProtocolHeader header = fillProtocolHeader(msg.getProtocolId(), msg.bytes() ,msg.getSequence());
+		ProtocolHeader header = fillProtocolHeader(msg.getProtocolId(), msg.bytes());
 		header.writeToByteBuf(out);
 		out.writeBytes(msg.bytes());
 	}
@@ -28,10 +28,10 @@ public class Encoder extends MessageToByteEncoder<MessageContent> {
 	 * @param bytes
 	 * @return
 	 */
-	private ProtocolHeader fillProtocolHeader(int protocolId, byte [] bytes, int sequence) {
+	private ProtocolHeader fillProtocolHeader(int protocolId, byte [] bytes) {
 		int length = bytes.length;
 		int chunkSize = 0;
 		int crc = 0;
-		return new ProtocolHeader(length, sequence, protocolId, chunkSize, crc);
+		return new ProtocolHeader(length, protocolId, chunkSize, crc);
 	}
 }

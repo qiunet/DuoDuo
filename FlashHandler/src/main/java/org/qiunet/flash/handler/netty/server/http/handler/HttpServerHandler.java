@@ -93,7 +93,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 		ProtocolHeader header = new ProtocolHeader(byteBuf);
 		byte [] bytes = new byte[byteBuf.readableBytes()];
 		byteBuf.readBytes(bytes);
-		MessageContent content = new MessageContent(header.getProtocolId(), header.getSequence(), bytes);
+		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);

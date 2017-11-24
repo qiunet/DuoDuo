@@ -49,7 +49,7 @@ public class Decoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		MessageContent context = new MessageContent(header.getProtocolId(), header.getSequence(), bytes);
+		MessageContent context = new MessageContent(header.getProtocolId(), bytes);
 		out.add(context);
 	}
 }
