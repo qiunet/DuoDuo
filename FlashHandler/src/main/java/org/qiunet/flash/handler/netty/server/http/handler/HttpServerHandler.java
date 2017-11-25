@@ -77,7 +77,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 		ProtocolHeader header = new ProtocolHeader(request.content());
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
-		if (params.isCrc() && header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
+		if (params.isCrc() && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
 			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
 			// crc 不对, 不被认证的请求
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);

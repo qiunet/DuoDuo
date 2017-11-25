@@ -52,7 +52,7 @@ public class Decoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		if (crc && header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
+		if (crc && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
 			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
 			ctx.channel().close();
 			return;
