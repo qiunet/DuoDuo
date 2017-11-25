@@ -24,6 +24,7 @@ import java.net.InetSocketAddress;
  */
 public class NettyHttpServer implements Runnable {
 	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private ChannelFuture channelFuture;
 	private HttpBootstrapParams params;
 	/***
 	 * 启动
@@ -60,10 +61,10 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
-			ChannelFuture f = bootstrap.bind(params.getAddress()).sync();
+			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
 			qLogger.error("Netty Http server is started by " +
 					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
-			f.channel().closeFuture().sync();
+			this.channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
@@ -72,4 +73,10 @@ public class NettyHttpServer implements Runnable {
 		}
 	}
 
+	/***
+	 * 停止
+	 */
+	public void shutdown(){
+		this.channelFuture.channel().close();
+	}
 }

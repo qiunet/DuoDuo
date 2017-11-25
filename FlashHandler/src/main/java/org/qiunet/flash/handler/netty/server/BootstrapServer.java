@@ -140,6 +140,12 @@ public class BootstrapServer {
 		if (hook != null) {
 			hook.shutdown();
 		}
+		if (this.httpServer != null) {
+			this.httpServer.shutdown();
+		}
+		if (this.tcpServer != null) {
+			this.tcpServer.shutdown();
+		}
 		LockSupport.unpark(awaitThread);
 	}
 
@@ -171,7 +177,7 @@ public class BootstrapServer {
 		@Override
 		public void run() {
 			qLogger.error("[HookListener]服务端: 启动成功");
-			while (true) {
+			while (this.selector.isOpen()) {
 				try {
 					this.selector.select();
 					Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator();

@@ -23,6 +23,8 @@ public final class NettyTcpServer implements Runnable {
 	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 
 	private TcpBootstrapParams params;
+
+	private ChannelFuture channelFuture;
 	/***
 	 * 启动
 	 * @param params  启动使用的端口等启动参数
@@ -49,14 +51,18 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
-			ChannelFuture f = bootstrap.bind(params.getAddress()).sync();
+			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
 			qLogger.error("Netty Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
-			f.channel().closeFuture().sync();
+			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}
+	}
+
+	public void shutdown(){
+		this.channelFuture.channel().close();
 	}
 }
