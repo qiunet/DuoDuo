@@ -56,7 +56,6 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_BACKLOG, 128);
 			bootstrap.option(ChannelOption.SO_RCVBUF, 10240);
 			bootstrap.option(ChannelOption.SO_SNDBUF, 10240);
-			bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 			bootstrap.option(ChannelOption.TCP_NODELAY, true);
 			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);

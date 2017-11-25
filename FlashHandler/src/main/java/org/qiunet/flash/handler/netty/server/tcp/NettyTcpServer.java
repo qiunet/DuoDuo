@@ -49,6 +49,7 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_SNDBUF, 10240);
 			bootstrap.option(ChannelOption.TCP_NODELAY, true);
 			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
+			bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
