@@ -20,9 +20,9 @@ import java.util.List;
  */
 public class Decoder extends ByteToMessageDecoder {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
-	private TcpBootstrapParams params;
-	public Decoder(TcpBootstrapParams params ) {
-		this.params = params;
+	private int maxReceivedLength;
+	public Decoder(int maxReceivedLength) {
+		this.maxReceivedLength = maxReceivedLength;
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -36,7 +36,7 @@ public class Decoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		if (header.getLength() <= 0 || header.getLength() > params.getMaxReceivedLength()) {
+		if (header.getLength() <= 0 || header.getLength() > maxReceivedLength) {
 			logger.error("Invalid message, length is error! length is : "+ header.getLength());
 			ctx.channel().close();
 			return;
