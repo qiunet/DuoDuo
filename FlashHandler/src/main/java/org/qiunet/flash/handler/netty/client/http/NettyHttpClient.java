@@ -25,41 +25,31 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.qiunet.utils.string.StringUtil;
+
+import java.net.URI;
+import java.net.URL;
 
 /**
  * 给客户端测试使用的一个HttpClient类
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private int port;
-	private String host;
-	private boolean https;
-	private boolean keepAlive;
-	private HttpClientHandler clientHandler;
-
-	public NettyHttpClient (String host, int port) {
-		this(host, port, false, false);
-	}
-
-	public NettyHttpClient (String host, int port, boolean https, boolean keepAlive) {
-		this.host = host;
-		this.port = port;
-		this.https = https;
-		this.keepAlive = keepAlive;
-		clientHandler = new HttpClientHandler();
-	}
 	/***
 	 *
-	 * @param queryUri 格式: /back?key1=value1&key2=value2
+	 * @param url 格式: http://localhost:80/back?key1=value1&key2=value2
 	 * @param byteBuf post 的数据
 	 * @return
 	 */
-	public FullHttpResponse sendRequest(ByteBuf byteBuf, String queryUri) {
+	public static FullHttpResponse sendRequest(ByteBuf byteBuf, String url) {
+		URI uri = URI.create(url);
+
+		HttpClientHandler clientHandler = new HttpClientHandler();
 		EventLoopGroup group = new NioEventLoopGroup();
 		try {
-			Bootstrap b = createBootstrap(group);
-			ChannelFuture future = b.connect(host, port).sync();
-			clientHandler.sendRequest(byteBuf, queryUri);
+			Bootstrap b = createBootstrap(group, clientHandler, uri);
+			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
+			clientHandler.sendRequest(byteBuf, uri);
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -76,9 +66,9 @@ public final class NettyHttpClient {
 	 * @return
 	 * @throws Exception
 	 */
-	private Bootstrap createBootstrap(EventLoopGroup group) throws Exception {
+	private static Bootstrap createBootstrap(EventLoopGroup group, final HttpClientHandler clientHandler, URI uri) throws Exception {
 		final SslContext sslCtx;
-		if (https) {
+		if ("https".equalsIgnoreCase(uri.getScheme())) {
 			sslCtx = SslContextBuilder.forClient()
 					.trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 		} else {
@@ -107,7 +97,7 @@ public final class NettyHttpClient {
 	}
 
 
-	public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private FullHttpResponse response;
 		private ChannelHandlerContext ctx;
 
@@ -119,19 +109,18 @@ public final class NettyHttpClient {
 		/****
 		 * 如果是keepalive 可以重用channel
 		 * 这里因为是客户端测试, 特地使用阻塞来同步. 服务端一般不能这样
-		 * @param queryUri 格式: /back?key1=value1&key2=value2
+		 * @param uri
 		 * @param byteBuf post 的数据
 		 * @return
 		 */
-		public FullHttpResponse sendRequest(ByteBuf byteBuf, String queryUri) {
-			this.response = null;
-			DefaultFullHttpRequest request = new DefaultFullHttpRequest(
-					HttpVersion.HTTP_1_1, HttpMethod.POST, queryUri, byteBuf);
+		public FullHttpResponse sendRequest(ByteBuf byteBuf, URI uri) {
+			String pathAndQuery = (StringUtil.isEmpty(uri.getRawQuery()) ? uri.getRawPath() : (uri.getRawPath() +'?' + uri.getRawQuery()));
 
-			request.headers().set(HttpHeaderNames.HOST, host);
-			if (keepAlive ) {
-				request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-			}
+			DefaultFullHttpRequest request = new DefaultFullHttpRequest(
+					HttpVersion.HTTP_1_1, HttpMethod.POST, pathAndQuery, byteBuf);
+
+			request.headers().set(HttpHeaderNames.HOST, uri.getHost());
+			request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 			request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
 			request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
 			ctx.channel().writeAndFlush(request);
@@ -145,9 +134,7 @@ public final class NettyHttpClient {
 			}
 
 			this.response =  ((FullHttpResponse) msg).copy();
-			if (! keepAlive || ! HttpHeaderValues.KEEP_ALIVE.toString().equals(response.headers().get(HttpHeaderNames.CONNECTION))) {
-				ctx.close();
-			}
+			ctx.close();
 		}
 
 		@Override

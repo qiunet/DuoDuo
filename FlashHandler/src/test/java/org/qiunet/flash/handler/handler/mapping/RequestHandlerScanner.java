@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.handler.mapping;
 
+import org.junit.BeforeClass;
 import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
 import org.qiunet.flash.handler.gamecfg.GiftCfg;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;
@@ -14,8 +15,8 @@ import java.net.URISyntaxException;
  */
 
 public abstract class RequestHandlerScanner {
-
-	static {
+	@BeforeClass
+	public static void initHandler() {
 		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
 
 		try {

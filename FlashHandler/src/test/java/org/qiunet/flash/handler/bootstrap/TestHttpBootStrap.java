@@ -9,14 +9,9 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.interceptor.DefaultHttpInterceptor;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 /**
@@ -24,24 +19,15 @@ import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
  * Created by qiunet.
  * 17/11/22
  */
-public class TestBootStrap extends RequestHandlerScanner {
-	public static void main(String[] args) {
-
-		HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-				.setInterceptor(new DefaultHttpInterceptor())
-				.setPort(8080)
-				.build();
-		BootstrapServer.createBootstrap(new MyHook()).httpListener(httpParams).await();
-	}
+public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testOtherHttpProtobuf() throws InvalidProtocolBufferException {
-		String test = "测试";
-		NettyHttpClient httpClient = new NettyHttpClient("localhost", 8080);
+		String test = "测试[testOtherHttpProtobuf]";
 		ByteBuf byteBuf = Unpooled.buffer();
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
 		byte [] bytes = request.toByteArray();
 		byteBuf.writeBytes(bytes);
-		FullHttpResponse httpResponse = httpClient.sendRequest(byteBuf, "/protobufTest");
+		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/protobufTest");
 		Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
 		bytes = new byte[httpResponse.content().readableBytes()];
@@ -53,15 +39,14 @@ public class TestBootStrap extends RequestHandlerScanner {
 
 	@Test
 	public void testHttpProtobuf() throws InvalidProtocolBufferException {
-		String test = "测试";
-		NettyHttpClient httpClient = new NettyHttpClient("localhost", 8080);
+		String test = "[测试testHttpProtobuf]";
 		ByteBuf byteBuf = Unpooled.buffer();
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
 		byte [] bytes = request.toByteArray();
 		ProtocolHeader header = new ProtocolHeader(bytes.length, 1001, (int) CrcUtil.getCrc32Value(bytes));
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
-		FullHttpResponse httpResponse = httpClient.sendRequest(byteBuf, "/f");
+		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/f");
 		Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
 		header = new ProtocolHeader(httpResponse.content());
@@ -77,14 +62,13 @@ public class TestBootStrap extends RequestHandlerScanner {
 	 */
 	@Test
 	public void testHttpString() throws InvalidProtocolBufferException {
-		String test = "测试";
-		NettyHttpClient httpClient = new NettyHttpClient("localhost", 8080);
+		String test = "测试[testHttpString]";
 		ByteBuf byteBuf = Unpooled.buffer();
 		byte [] bytes = test.getBytes(CharsetUtil.UTF_8);
 		ProtocolHeader header = new ProtocolHeader(bytes.length, 1000, (int) CrcUtil.getCrc32Value(bytes));
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
-		FullHttpResponse httpResponse = httpClient.sendRequest(byteBuf, "/f");
+		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/f");
 		Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
 		header = new ProtocolHeader(httpResponse.content());
@@ -96,9 +80,8 @@ public class TestBootStrap extends RequestHandlerScanner {
 	 */
 	@Test
 	public void testOtherHttpString(){
-		String test = "测试";
-		NettyHttpClient httpClient = new NettyHttpClient("localhost", 8080);
-		FullHttpResponse httpResponse = httpClient.sendRequest(Unpooled.wrappedBuffer(test.getBytes(CharsetUtil.UTF_8)), "/back?a=b");
+		String test = "测试[testOtherHttpString]";
+		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(Unpooled.wrappedBuffer(test.getBytes(CharsetUtil.UTF_8)), "Http://localhost:8080/back?a=b");
 		Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 		Assert.assertEquals(httpResponse.content().toString(CharsetUtil.UTF_8), test);
 		ReferenceCountUtil.release(httpResponse);
