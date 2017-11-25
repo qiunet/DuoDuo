@@ -6,6 +6,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
@@ -21,7 +22,9 @@ import java.util.List;
 public class Decoder extends ByteToMessageDecoder {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private int maxReceivedLength;
-	public Decoder(int maxReceivedLength) {
+	private boolean crc;
+	public Decoder(int maxReceivedLength, boolean needCrc) {
+		this.crc = needCrc;
 		this.maxReceivedLength = maxReceivedLength;
 	}
 	@Override
@@ -48,6 +51,12 @@ public class Decoder extends ByteToMessageDecoder {
 		}
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
+
+		if (crc && header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
+			ctx.channel().close();
+			return;
+		}
 
 		MessageContent context = new MessageContent(header.getProtocolId(), bytes);
 		out.add(context);

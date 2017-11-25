@@ -73,6 +73,10 @@ public class ProtocolHeader {
 		return length;
 	}
 
+	public int getCrc() {
+		return crc;
+	}
+
 	/***
 	 * protocol 协议id
 	 * @return

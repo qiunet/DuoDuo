@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
@@ -76,6 +77,12 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 		ProtocolHeader header = new ProtocolHeader(request.content());
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
+		if (params.isCrc() && header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
+			// crc 不对, 不被认证的请求
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			return;
+		}
 		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
