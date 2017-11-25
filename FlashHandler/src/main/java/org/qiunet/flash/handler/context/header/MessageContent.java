@@ -1,8 +1,5 @@
 package org.qiunet.flash.handler.context.header;
 
-import org.qiunet.flash.handler.context.request.attribute.IAttributeData;
-
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -12,7 +9,7 @@ import java.util.Map;
  * @author qiunet
  *         Created on 17/3/13 19:50.
  */
-public class MessageContent implements IAttributeData {
+public class MessageContent {
 	protected byte [] bytes;
 	protected int protocolId;
 	private Map<String, Object> attributes;
@@ -22,13 +19,11 @@ public class MessageContent implements IAttributeData {
 	public MessageContent(int protocolId, byte [] bytes) {
 		this.bytes = bytes;
 		this.protocolId = protocolId;
-		this.attributes = new HashMap<>();
 	}
 
 	public MessageContent(String uriPath, byte [] bytes) {
 		this.bytes = bytes;
 		this.uriPath = uriPath;
-		this.attributes = new HashMap<>();
 	}
 
 	public int getProtocolId() {
@@ -41,15 +36,5 @@ public class MessageContent implements IAttributeData {
 
 	public String getUriPath() {
 		return uriPath;
-	}
-
-	@Override
-	public Object getAttribute(String key) {
-		return attributes.get(key);
-	}
-
-	@Override
-	public void setAttribute(String key, Object val) {
-		attributes.put(key, val);
 	}
 }
