@@ -10,16 +10,10 @@ package org.qiunet.flash.handler.context.header;
 public class MessageContent {
 	protected byte [] bytes;
 	protected int protocolId;
-	private String uriPath;
 
 	public MessageContent(int protocolId, byte [] bytes) {
 		this.bytes = bytes;
 		this.protocolId = protocolId;
-	}
-
-	public MessageContent(String uriPath, byte [] bytes) {
-		this.bytes = bytes;
-		this.uriPath = uriPath;
 	}
 
 	public int getProtocolId() {
@@ -28,9 +22,5 @@ public class MessageContent {
 
 	public byte [] bytes() {
 		return bytes;
-	}
-
-	public String getUriPath() {
-		return uriPath;
 	}
 }
