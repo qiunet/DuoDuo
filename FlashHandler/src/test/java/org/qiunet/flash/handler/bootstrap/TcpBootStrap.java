@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
  */
 public class TcpBootStrap extends RequestHandlerScanner {
 	protected static Hook hook = new MyHook();
+	protected static int port = 8888;
 	@BeforeClass
 	public static void init(){
 		Thread thread = new Thread(new Runnable() {
@@ -23,7 +24,7 @@ public class TcpBootStrap extends RequestHandlerScanner {
 			public void run() {
 				TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
 						.setInterceptor(new DefaultTcpInterceptor())
-						.setPort(1314)
+						.setPort(port)
 						.setCrc(true)
 						.build();
 				BootstrapServer.createBootstrap(hook).tcpListener(tcpParams).await();
