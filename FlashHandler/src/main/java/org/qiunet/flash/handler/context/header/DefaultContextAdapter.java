@@ -26,7 +26,7 @@ public class DefaultContextAdapter implements ContextAdapter {
 		if (content.getProtocolId() > 0) {
 			return RequestHandlerMapping.getInstance().getGameHandler(content.getProtocolId());
 		}else {
-			return RequestHandlerMapping.getInstance().getOtherRequestHandler(content.getUriPath());
+			return RequestHandlerMapping.getInstance().getOtherRequestHandler(((UriHttpMessageContent) content).getUriPath());
 		}
 	}
 

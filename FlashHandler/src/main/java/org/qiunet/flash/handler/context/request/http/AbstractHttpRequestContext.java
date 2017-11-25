@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
@@ -60,7 +61,7 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 	@Override
 	public String getUriPath() {
 		if (messageContent.getProtocolId() == 0)
-			return messageContent.getUriPath();
+			return ((UriHttpMessageContent) messageContent).getUriPath();
 		else
 			return params.getGameURIPath();
 	}

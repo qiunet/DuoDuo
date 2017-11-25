@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.request;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 
@@ -27,7 +28,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 			this.handler = RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());
 		}else {
 
-			this.handler = RequestHandlerMapping.getInstance().getOtherRequestHandler(messageContent.getUriPath());
+			this.handler = RequestHandlerMapping.getInstance().getOtherRequestHandler(((UriHttpMessageContent) messageContent).getUriPath());
 		}
 	}
 	@Override

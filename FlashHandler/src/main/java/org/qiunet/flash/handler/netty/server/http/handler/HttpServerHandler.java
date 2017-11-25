@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
@@ -100,7 +101,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
-		MessageContent content = new MessageContent(uriPath, bytes);
+		MessageContent content = new UriHttpMessageContent(uriPath, bytes);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
