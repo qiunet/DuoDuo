@@ -51,11 +51,12 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
-			qLogger.error("Netty Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
+			qLogger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
+			qLogger.error("[NettyTcpServer] is shutdown! ");
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}
