@@ -47,30 +47,7 @@ public final class NettyHttpClient {
 		this.https = https;
 		this.keepAlive = keepAlive;
 		clientHandler = new HttpClientHandler();
-//		try {
-//			this.connect();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
 	}
-
-	/***
-	 * 链接后, 返回数据
-	 * @return
-	 * @throws Exception
-	 */
-	private void connect() throws Exception {
-		EventLoopGroup group = new NioEventLoopGroup();
-		try {
-			Bootstrap b = createBootstrap(group);
-			Channel channel = b.connect(host, port).sync().channel();
-
-			channel.closeFuture().sync();
-		} finally {
-			group.shutdownGracefully();
-		}
-	}
-
 	/***
 	 *
 	 * @param queryUri 格式: /back?key1=value1&key2=value2
@@ -81,9 +58,9 @@ public final class NettyHttpClient {
 		EventLoopGroup group = new NioEventLoopGroup();
 		try {
 			Bootstrap b = createBootstrap(group);
-			Channel channel = b.connect(host, port).sync().channel();
+			ChannelFuture future = b.connect(host, port).sync();
 			clientHandler.sendRequest(byteBuf, queryUri);
-			channel.closeFuture().sync();
+			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -125,6 +102,7 @@ public final class NettyHttpClient {
 						p.addLast(clientHandler);
 					}
 				});
+		b.option(ChannelOption.TCP_NODELAY, true);
 		return b;
 	}
 
@@ -132,7 +110,6 @@ public final class NettyHttpClient {
 	public class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private FullHttpResponse response;
 		private ChannelHandlerContext ctx;
-		private Thread currThread;
 
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -158,8 +135,6 @@ public final class NettyHttpClient {
 			request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
 			request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
 			ctx.channel().writeAndFlush(request);
-			currThread = Thread.currentThread();
-//			LockSupport.park();
 			return this.response;
 		}
 
@@ -170,8 +145,7 @@ public final class NettyHttpClient {
 			}
 
 			this.response =  ((FullHttpResponse) msg).copy();
-//			LockSupport.unpark(currThread);
-			if (! keepAlive) {
+			if (! keepAlive || ! HttpHeaderValues.KEEP_ALIVE.toString().equals(response.headers().get(HttpHeaderNames.CONNECTION))) {
 				ctx.close();
 			}
 		}
