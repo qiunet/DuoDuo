@@ -1,7 +1,5 @@
 package org.qiunet.flash.handler.context.header;
 
-import java.util.Map;
-
 /**
  *  上下行消息的封装类.
  *  netty 只跟byte数组打交道.
@@ -12,8 +10,6 @@ import java.util.Map;
 public class MessageContent {
 	protected byte [] bytes;
 	protected int protocolId;
-	private Map<String, Object> attributes;
-
 	private String uriPath;
 
 	public MessageContent(int protocolId, byte [] bytes) {
