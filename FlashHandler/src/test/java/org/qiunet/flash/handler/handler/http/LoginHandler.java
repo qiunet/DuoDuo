@@ -12,6 +12,6 @@ public class LoginHandler extends HttpStringHandler {
 	@Override
 	public String handler(IHttpRequest<String> request) {
 		String str = request.getRequestData();
-		return null;
+		return str;
 	}
 }

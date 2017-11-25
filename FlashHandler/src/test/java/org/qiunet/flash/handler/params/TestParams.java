@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.params;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.interceptor.DefaultHttpStringInterceptor;
-import org.qiunet.flash.handler.interceptor.DefaultTcpStringInterceptor;
+import org.qiunet.flash.handler.interceptor.DefaultHttpInterceptor;
+import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
@@ -20,7 +20,7 @@ public class TestParams {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
 				.setSsl(true)
-				.setInterceptor(new DefaultHttpStringInterceptor())
+				.setInterceptor(new DefaultHttpInterceptor())
 				.build();
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 		Assert.assertEquals(true, params.isSsl());
@@ -28,7 +28,7 @@ public class TestParams {
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setPort(1315)
 				.setMaxReceivedLength(1024*1024)
-				.setInterceptor(new DefaultTcpStringInterceptor())
+				.setInterceptor(new DefaultTcpInterceptor())
 				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}

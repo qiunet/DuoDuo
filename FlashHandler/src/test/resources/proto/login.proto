@@ -7,15 +7,9 @@ option java_package = "org.qiunet.flash.handler.handler.proto";
 option java_outer_classname = "LoginProto";
 
 message LoginRequest {
-	string openid = 1;			// 平台的 openid
-	string token = 2;			// 选服时下发的token
+	string testString = 1;
 }
 // 登录请求响应
 message LoginResponse {
-	int32 uid = 1;				// uid
-	bool needRegister = 2;		// 需要注册 true  不需要 false
-}
-// 房间准备好了
-message FightStart {
-	repeated int32 uids = 1;		// 战斗的人
+	string testString = 1;
 }
