@@ -45,7 +45,7 @@ public final class NettyHttpClient {
 		URI uri = URI.create(url);
 
 		HttpClientHandler clientHandler = new HttpClientHandler();
-		EventLoopGroup group = new NioEventLoopGroup();
+		EventLoopGroup group = new NioEventLoopGroup(1);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
 			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
