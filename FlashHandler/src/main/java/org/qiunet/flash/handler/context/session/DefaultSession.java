@@ -16,8 +16,8 @@ public class DefaultSession implements ISession<String> {
 	public  DefaultSession(ChannelHandlerContext ctx) {
 		this.ctx = ctx;
 		this.dt = System.currentTimeMillis();
-		this.queueIndex = this.key.hashCode();
 		this.key = ctx.channel().id().asLongText();
+		this.queueIndex = this.key.hashCode();
 	}
 	@Override
 	public int getQueueIndex() {

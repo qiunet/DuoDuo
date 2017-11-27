@@ -12,7 +12,6 @@ public class TestTcpBootStrap extends TcpBootStrap {
 	@Test
 	public void testTcpString(){
 		String test = "测试 [testTcpString]";
-		System.out.println(test);
 		byte [] bytes = test.getBytes(CharsetUtil.UTF_8);
 		MessageContent messageContent  = new MessageContent(1003, bytes);
 		this.tcpClient.sendTcpMessage(messageContent);

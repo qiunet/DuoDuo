@@ -72,7 +72,7 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 	@Override
 	public void run() {
 		try {
-			logger.error("Curr Session Manager Size ["+sessions.size()+"]");
+			logger.error("[SessionManager] Curr Session Manager Size ["+sessions.size()+"]");
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();

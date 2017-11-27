@@ -35,16 +35,15 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		params.getSessionEvent().sessionRegistered(ctx);
-		sessionManager.addSession(params.getSessionBuilder().createSession(ctx));
-	}
-
-	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		params.getSessionEvent().sessionUnregistered(ctx);
 		sessionManager.removeSession(ctx.channel().id().asLongText());
 	}
 
+	@Override
+	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+		params.getSessionEvent().sessionRegistered(ctx);
+		sessionManager.addSession(params.getSessionBuilder().createSession(ctx));
+	}
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);

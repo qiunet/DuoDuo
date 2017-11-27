@@ -9,16 +9,16 @@ import org.qiunet.utils.logger.log.QLogger;
  * Created by qiunet.
  * 17/11/27
  */
-public class DefaultSessionEcent implements ISessionEvent {
+public class DefaultSessionEvent implements ISessionEvent {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 
 	@Override
 	public void sessionRegistered(ChannelHandlerContext ctx) {
-		logger.info("DefaultSessionEcent called sessionRegistered");
+		logger.info("DefaultSessionEvent called sessionRegistered");
 	}
 
 	@Override
 	public void sessionUnregistered(ChannelHandlerContext ctx) {
-		logger.info("DefaultSessionEcent called sessionUnregistered");
+		logger.info("DefaultSessionEvent called sessionUnregistered");
 	}
 }
