@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.session;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.header.MessageContent;
 
 /**
  * session 的接口,
@@ -15,6 +16,13 @@ public interface ISession<Key> {
 	 * @return
 	 */
 	int getQueueIndex();
+
+	/***
+	 * 设置队列索引. 因为可能进入房间了. 所有人的队列索引都设置为一样
+	 * @param queueIndex
+	 * @return
+	 */
+	void setQueueIndex(int queueIndex);
 	/***
 	 *
 	 * @return
@@ -28,7 +36,18 @@ public interface ISession<Key> {
 	Key getKey();
 	/***
 	 * push 一个消息
-	 * @param obj
+	 * @param content
 	 */
-	void write(GeneratedMessageV3 obj);
+	void write(MessageContent content);
+
+	/**
+	 * 最后活跃的时间戳
+	 * @return
+	 */
+	long lastPackageTimeStamp();
+
+	/***
+	 * 最后的活跃时间
+	 */
+	void setLastPackageTimeStamp();
 }

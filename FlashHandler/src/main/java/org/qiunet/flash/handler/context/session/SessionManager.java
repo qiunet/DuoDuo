@@ -1,12 +1,17 @@
 package org.qiunet.flash.handler.context.session;
 
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by qiunet.
  * 17/10/23
  */
-public class SessionManager<Key, Val extends ISession<Key>> {
+public class SessionManager<Key, Val extends ISession<Key>> implements Runnable {
+	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	/***
 	 * 所有的session
 	 */
@@ -16,6 +21,11 @@ public class SessionManager<Key, Val extends ISession<Key>> {
 
 	private SessionManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
+
+		Thread thisThread = new Thread(this, "SessionManager");
+		thisThread.setDaemon(true);
+		thisThread.start();
+
 		instance = this;
 	}
 
@@ -56,6 +66,16 @@ public class SessionManager<Key, Val extends ISession<Key>> {
 	public void removeSession(Key... keys) {
 		for (Key key : keys) {
 			this.sessions.remove(key);
+		}
+	}
+
+	@Override
+	public void run() {
+		try {
+			logger.error("Curr Session Manager Size ["+sessions.size()+"]");
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

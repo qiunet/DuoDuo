@@ -10,4 +10,10 @@ public interface IPlayerSession<Key> extends ISession<Key> {
 	 * @return
 	 */
 	int getUid();
+
+	/***
+	 * 有uid了设置uid
+	 * @param uid
+	 */
+	void setUid(int uid);
 }
