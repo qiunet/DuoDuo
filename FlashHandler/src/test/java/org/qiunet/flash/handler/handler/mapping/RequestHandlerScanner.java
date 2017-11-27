@@ -15,8 +15,12 @@ import java.net.URISyntaxException;
  */
 
 public abstract class RequestHandlerScanner {
+	private static boolean inited;
 	@BeforeClass
 	public static void initHandler() {
+		if (inited) return;
+
+		inited = true;
 		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
 
 		try {
