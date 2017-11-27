@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
  */
 public class DefaultTcpInterceptor implements TcpInterceptor {
 	@Override
-	public void preHandler(ITcpHandler handler, ITcpRequest request) {
-
+	public void handler(ITcpHandler handler, ITcpRequest request) {
+		System.out.println("Protocol Id ["+handler.getProtocolID()+"] received message: "+request.getRequestData());
 	}
 }
