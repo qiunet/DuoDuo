@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ * 大量请求的泄漏测试
  * Created by qiunet.
  * 17/11/27
  */
