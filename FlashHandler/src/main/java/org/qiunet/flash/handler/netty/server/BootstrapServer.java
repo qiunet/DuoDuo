@@ -83,11 +83,13 @@ public class BootstrapServer {
 
 			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), hookPort));
 			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
+			Thread.sleep(1000);
 			channel.close();
-
 		} catch (IOException e) {
 			qLogger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 

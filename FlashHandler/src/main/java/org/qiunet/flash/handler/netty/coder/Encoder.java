@@ -20,7 +20,6 @@ public class Encoder extends MessageToByteEncoder<MessageContent> {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
-		logger.info("[encode] : " + msg.toString());
 		ProtocolHeader header = fillProtocolHeader(msg.getProtocolId(), msg.bytes());
 		header.writeToByteBuf(out);
 		out.writeBytes(msg.bytes());

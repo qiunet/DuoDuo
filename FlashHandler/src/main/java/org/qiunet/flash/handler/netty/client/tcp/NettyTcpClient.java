@@ -15,29 +15,15 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/25
  */
-public class NettyTcpClient implements Runnable {
+public class NettyTcpClient {
 	private NioEventLoopGroup group = new NioEventLoopGroup();
 	private ChannelHandlerContext channelHandlerContext;
 	private InetSocketAddress address;
 	private ITcpResponseTrigger trigger;
-	private Thread clientThread;
 
-	public void connect(InetSocketAddress address, ITcpResponseTrigger trigger) {
+	public NettyTcpClient(InetSocketAddress address, ITcpResponseTrigger trigger) {
 		this.trigger = trigger;
 		this.address = address;
-		clientThread = new Thread(this, "NettyTcpClient");
-	}
-
-	public void sendTcpMessage(MessageContent content){
-		channelHandlerContext.channel().writeAndFlush(content);
-	}
-
-	public void close(){
-		channelHandlerContext.channel().close();
-	}
-
-	@Override
-	public void run() {
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
@@ -50,6 +36,19 @@ public class NettyTcpClient implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void sendTcpMessage(MessageContent content){
+		channelHandlerContext.channel().writeAndFlush(content);
+	}
+
+	public void close(){
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		channelHandlerContext.channel().close();
 	}
 
 	public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {

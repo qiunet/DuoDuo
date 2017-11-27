@@ -13,5 +13,5 @@ public interface TcpInterceptor {
  	 * @param handler
 	 * @param request
 	 */
-	public void preHandler(ITcpHandler handler, ITcpRequest request);
+	public void handler(ITcpHandler handler, ITcpRequest request);
 }
