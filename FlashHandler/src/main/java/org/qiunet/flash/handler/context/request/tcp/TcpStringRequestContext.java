@@ -1,7 +1,11 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,8 +17,13 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class TcpStringRequestContext extends AbstractTcpRequestContext<String, String> {
 	protected String requestData;
-	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext) {
-		super(content, channelContext);
+	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, TcpBootstrapParams params) {
+		super(content, channelContext, params);
+	}
+
+	@Override
+	protected byte[] getResponseDataBytes(String s) {
+		return s.getBytes(CharsetUtil.UTF_8);
 	}
 
 	@Override
@@ -34,13 +43,10 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	}
 
 	@Override
-	public void response(int protocolId, String o) {
-
-	}
-
-	@Override
 	public boolean handler() {
-		return false;
+		FacadeTcpRequest<String> facadeTcpRequest = new FacadeTcpRequest<>(this);
+		params.getInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
+		return true;
 	}
 
 	@Override

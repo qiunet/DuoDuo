@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
  * Created by qiunet.
  * 17/11/21
  */
-public  class HttpProtobufRequestContext<RequestData, ResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
+public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3, ResponseData  extends GeneratedMessageV3> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	private RequestData requestData;
 	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channelContext, params, request);
@@ -26,7 +26,7 @@ public  class HttpProtobufRequestContext<RequestData, ResponseData> extends Abst
 
 	@Override
 	protected byte[] getResponseDataBytes(ResponseData responseData) {
-		return ((GeneratedMessageV3) responseData).toByteArray();
+		return  responseData.toByteArray();
 	}
 
 	@Override

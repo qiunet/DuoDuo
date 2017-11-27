@@ -45,9 +45,9 @@ public class DefaultContextAdapter implements ContextAdapter {
 	public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
 		switch (handler.getDataType()) {
 			case STRING:
-				return new TcpStringRequestContext(content, channelContext);
+				return new TcpStringRequestContext(content, channelContext, params);
 			case PROTOBUF:
-				return new TcpProtobufRequestContext(content, channelContext);
+				return new TcpProtobufRequestContext(content, channelContext, params);
 		}
 		return null;
 	}
