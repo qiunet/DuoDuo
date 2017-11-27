@@ -139,6 +139,7 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 
 		if (! keepAlive) {
 			ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+			ctx.close();
 		}
 	}
 

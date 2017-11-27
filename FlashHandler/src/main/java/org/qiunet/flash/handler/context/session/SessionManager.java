@@ -4,6 +4,8 @@ import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,13 +21,16 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 
 	private volatile static SessionManager instance;
 
+	private int maxSessionValidTime = 5 * 60;
+
+	private Thread thread;
+
 	private SessionManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 
-		Thread thisThread = new Thread(this, "SessionManager");
-		thisThread.setDaemon(true);
-		thisThread.start();
-
+		thread = new Thread(this, "SessionManager");
+		thread.setDaemon(true);
+		thread.start();
 		instance = this;
 	}
 
@@ -40,7 +45,6 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 		}
 		return instance;
 	}
-
 	/***
 	 * 存入key
 	 * @param val
@@ -69,13 +73,32 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 		}
 	}
 
+	/***
+	 * 得到当前的人数
+	 * @return
+	 */
+	public int sessionSize(){
+		return sessions.size();
+	}
 	@Override
 	public void run() {
-		try {
-			logger.error("[SessionManager] Curr Session Manager Size ["+sessions.size()+"]");
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		while (true) {
+			long now = System.currentTimeMillis();
+
+			Iterator<Map.Entry<Key, Val>> it = sessions.entrySet().iterator();
+			while(it.hasNext()){
+				Map.Entry<Key, Val> en = it.next();
+				if (now - en.getValue().lastPackageTimeStamp() > maxSessionValidTime*1000 ){
+					it.remove();
+				}
+			}
+
+			logger.error("[SessionManager] Curr Session Manager Size ["+sessionSize()+"]");
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

@@ -18,5 +18,6 @@ public class DefaultTcpInterceptor implements TcpInterceptor {
 	@Override
 	public void handler(ITcpHandler handler, ITcpRequest request) {
 		logger.info("Protocol Id ["+handler.getProtocolID()+"] received message: "+request.getRequestData());
+		handler.handler(request);
 	}
 }

@@ -49,9 +49,13 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
-			ctx.channel().writeAndFlush(params.getErrorMessage().getHandlerNotFound()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound()).addListener(ChannelFutureListener.CLOSE);
+			ctx.close();
 			return;
 		}
+		// 更新最后时间 方便去除很久没有心跳的channel
+		sessionManager.getSession(ctx.channel().id().asLongText()).setLastPackageTimeStamp();
+
 		ITcpRequestContext context = params.getAdapter().createTcpRequestContext(content, ctx, handler, params);
 		acceptor.process(context);
 	}

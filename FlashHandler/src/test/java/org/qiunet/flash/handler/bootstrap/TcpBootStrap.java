@@ -62,12 +62,15 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ITcp
 	}
 	@After
 	public void closeConnect(){
+		currThread = Thread.currentThread();
+		LockSupport.park();
 		tcpClient.close();
 	}
 
 	@Override
 	public void response(MessageContent data) {
 		this.responseTcpMessage(data);
+		LockSupport.unpark(currThread);
 	}
 
 	protected abstract void responseTcpMessage(MessageContent data);

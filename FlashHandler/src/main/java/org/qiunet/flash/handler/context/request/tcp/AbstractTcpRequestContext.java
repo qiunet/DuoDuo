@@ -32,7 +32,7 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 	public void response(int protocolId, ResponseData data) {
 		byte [] bytes = getResponseDataBytes(data);
 		MessageContent content = new MessageContent(protocolId, bytes);
-		this.ctx.channel().write(content);
+		this.ctx.writeAndFlush(content);
 	}
 	/***
 	 * 得到responseData的数组数据

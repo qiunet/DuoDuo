@@ -127,5 +127,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	private static void sendHttpResonseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+		ctx.close();
 	}
 }
