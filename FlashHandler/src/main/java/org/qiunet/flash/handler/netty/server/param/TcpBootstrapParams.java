@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.context.session.DefaultSessionBuilder;
+import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.context.session.ISessionBuilder;
 import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
@@ -53,9 +54,9 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	public static class Builder extends SuperBuilder<TcpBootstrapParams, Builder> {
 		private ISessionBuilder sessionBuilder = new DefaultSessionBuilder();
 
-		private IClientErrorMessage errorMessage;
+		private ISessionEvent sessionEvent = new DefaultSessionEvent();
 
-		private ISessionEvent sessionEvent;
+		private IClientErrorMessage errorMessage;
 
 		private TcpInterceptor interceptor;
 
