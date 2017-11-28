@@ -45,10 +45,7 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.childHandler(new NettyTcpServerInitializer(params));
 
 			bootstrap.option(ChannelOption.SO_BACKLOG, 512);
-			bootstrap.option(ChannelOption.SO_RCVBUF, 10240);
-			bootstrap.option(ChannelOption.SO_SNDBUF, 10240);
-			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
-			bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
 			qLogger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
