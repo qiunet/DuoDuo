@@ -19,6 +19,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -81,6 +82,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
 		ProtocolHeader header = new ProtocolHeader(request.content());
+		if (! header.isMagicValid()) {
+			logger.error("Invalid message magic! client is "+ Arrays.toString(header.getMagic()));
+			// crc 不对, 不被认证的请求
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			return;
+		}
+
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
 		if (params.isCrc() && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
