@@ -42,7 +42,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		super.exceptionCaught(ctx, cause);
+		logger.error("HttpServerHandler throw Exception : ", cause);
 		ctx.close();
 	}
 	@Override
@@ -113,18 +113,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 		acceptor.process(context);
 	}
 
-
-	private static void send100Continue(ChannelHandlerContext ctx) {
-		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, HttpResponseStatus.CONTINUE);
-		ctx.write(response);
-	}
-
 	/***
 	 * 发送响应.
 	 * @param ctx
 	 * @param status 对应的响应码
 	 */
 	private static void sendHttpResonseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
+		logger.error("Http message response status ["+status+"]");
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 		ctx.close();

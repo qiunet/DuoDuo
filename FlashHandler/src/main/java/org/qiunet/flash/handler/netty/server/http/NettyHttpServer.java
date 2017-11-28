@@ -54,9 +54,7 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.childHandler(new NettyHttpServerInitializer(sslCtx, params));
 
 			bootstrap.option(ChannelOption.SO_BACKLOG, 512);
-			bootstrap.option(ChannelOption.SO_RCVBUF, 10240);
-			bootstrap.option(ChannelOption.SO_SNDBUF, 10240);
-			bootstrap.option(ChannelOption.SO_TIMEOUT, 2000);
+			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
 			qLogger.error("[NettyHttpServer]  Http server is started by " +
