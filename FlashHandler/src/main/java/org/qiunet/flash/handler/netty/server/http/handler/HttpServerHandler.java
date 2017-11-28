@@ -57,6 +57,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			return;
 		}
 		FullHttpRequest request = ((FullHttpRequest) msg);
+		if (! request.decoderResult().isSuccess()) {
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
+			return;
+		}
+
 		try {
 			URI uri = URI.create(request.uri());
 			if (params.getGameURIPath().equals(uri.getRawPath())) {
