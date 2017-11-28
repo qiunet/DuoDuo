@@ -39,10 +39,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 
 		latch.await();
 		long end = System.currentTimeMillis();
-		Thread.sleep(1000);
-
 		System.out.println("All Time is:["+(end - start)+"]ms");
-		Thread.sleep(100000);
 	}
 	@Override
 	protected void responseTcpMessage(MessageContent data) {
