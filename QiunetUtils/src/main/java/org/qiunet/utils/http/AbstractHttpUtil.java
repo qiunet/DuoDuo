@@ -26,7 +26,7 @@ public abstract class AbstractHttpUtil {
 	protected RequestConfig REQUESTCONFIG;// 设置请求和传输超时时间
 
 	/****
-	 * 
+	 *
 	 * @param httpsClientPool 默认的https pool
 	 * @param requestConfig 配置
 	 */
@@ -34,7 +34,7 @@ public abstract class AbstractHttpUtil {
 		this.httpsClientPool = httpsClientPool;
 		this.REQUESTCONFIG = requestConfig;
 	}
-	
+
 	public String httpRequest(String url, Map<String, Object> params){
 		return httpRequest(url, params, null);
 	}
@@ -60,7 +60,7 @@ public abstract class AbstractHttpUtil {
 	public <T> void  httpRequest(String url,HttpMethodEnums method,Map<String, Object> params, Map<String, Object> cookies, CharsetEnum charset, HttpRequestHandler<T> handler){
 
 		if(StringUtil.isEmpty(url)) throw new UrlEmptyException();
-		
+
 		HttpRequestBase request = null;
 		HttpResponse response;
 		HttpClient client = null;
@@ -95,7 +95,6 @@ public abstract class AbstractHttpUtil {
 				request.abort();
 			}
 		}finally{
-			if(request != null) request.releaseConnection();
 			if(client != null){
 				httpsClientPool.recycle(client);
 			}
