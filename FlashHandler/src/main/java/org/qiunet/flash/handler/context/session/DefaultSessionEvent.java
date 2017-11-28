@@ -20,5 +20,6 @@ public class DefaultSessionEvent implements ISessionEvent {
 	@Override
 	public void sessionUnregistered(ChannelHandlerContext ctx) {
 		logger.info("DefaultSessionEvent called sessionUnregistered");
+		SessionManager.getInstance().removeSession(ctx.channel().id().asLongText());
 	}
 }
