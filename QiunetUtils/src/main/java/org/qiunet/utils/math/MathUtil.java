@@ -66,7 +66,7 @@ public class MathUtil {
 	 * @param val
 	 * @return
 	 */
-	private static boolean isPowerOfTwo(int val) {
+	public static boolean isPowerOfTwo(int val) {
 		return (val & -val) == val;
 	}
 }
