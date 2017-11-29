@@ -226,7 +226,7 @@ public class StringUtil {
 	 * 屏蔽两端大部分空白字符
 	 * @return
 	 */
-	private static final Character [] spaceChars = {'ㅤ', '　'};
+	private static final Character [] spaceChars = {'ㅤ', '　', '\u007F'};
 	public static String powerfulTrim(String str){
 		if (str == null || str.isEmpty()) return str;
 
