@@ -69,4 +69,30 @@ public class MathUtil {
 	public static boolean isPowerOfTwo(int val) {
 		return (val & -val) == val;
 	}
+
+	/***
+	 * 数据的十六进制
+	 * @param val
+	 * @return
+	 */
+	public static String getHexVal(long val){
+		return String.format("%x", val).toUpperCase();
+	}
+	/***
+	 * 数据的十六进制
+	 * @param val
+	 * @param count 显示位数 右侧0补齐
+	 * @return
+	 */
+	public static String getHexVal(long val, int count){
+		return String.format("%0"+count+"x", val).toUpperCase();
+	}
+	/***
+	 * 得到一个数据的二进制表示
+	 * @param val
+	 * @return
+	 */
+	public static String getBinaryVal(int val) {
+		return Integer.toBinaryString(val);
+	}
 }
