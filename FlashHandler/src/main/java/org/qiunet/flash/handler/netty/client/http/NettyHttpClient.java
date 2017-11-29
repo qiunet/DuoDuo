@@ -113,6 +113,7 @@ public final class NettyHttpClient {
 		@Override
 		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
 			if (!(msg instanceof FullHttpResponse)) {
+				ctx.close();
 				return;
 			}
 			this.trigger.response(((FullHttpResponse) msg).copy());
