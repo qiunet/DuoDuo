@@ -35,6 +35,7 @@ import java.net.URL;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(1);
 	/***
 	 *
 	 * @param url 格式: http://localhost:80/back?key1=value1&key2=value2
@@ -45,20 +46,37 @@ public final class NettyHttpClient {
 		URI uri = URI.create(url);
 
 		HttpClientHandler clientHandler = new HttpClientHandler();
-		EventLoopGroup group = new NioEventLoopGroup(1);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
 			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
-			clientHandler.sendRequest(byteBuf, uri);
+			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			group.shutdownGracefully();
 		}
 		return clientHandler.response;
+	}
+
+	/****
+	 * 如果是keepalive 可以重用channel
+	 * 这里因为是客户端测试, 特地使用阻塞来同步. 服务端一般不能这样
+	 * @param uri
+	 * @param byteBuf post 的数据
+	 * @return
+	 */
+	public static DefaultFullHttpRequest buildRequest(ByteBuf byteBuf, URI uri) {
+		String pathAndQuery = (StringUtil.isEmpty(uri.getRawQuery()) ? uri.getRawPath() : (uri.getRawPath() +'?' + uri.getRawQuery()));
+
+		DefaultFullHttpRequest request = new DefaultFullHttpRequest(
+				HttpVersion.HTTP_1_1, HttpMethod.POST, pathAndQuery, byteBuf);
+
+		request.headers().set(HttpHeaderNames.HOST, uri.getHost());
+		request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+		request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
+		request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
+		return request;
 	}
 
 	/***
@@ -66,7 +84,7 @@ public final class NettyHttpClient {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Bootstrap createBootstrap(EventLoopGroup group, final HttpClientHandler clientHandler, URI uri) throws Exception {
+	private static Bootstrap createBootstrap(NioEventLoopGroup group, final HttpClientHandler clientHandler, URI uri) throws Exception {
 		final SslContext sslCtx;
 		if ("https".equalsIgnoreCase(uri.getScheme())) {
 			sslCtx = SslContextBuilder.forClient()
@@ -74,7 +92,6 @@ public final class NettyHttpClient {
 		} else {
 			sslCtx = null;
 		}
-
 		Bootstrap b = new Bootstrap();
 		b.group(group)
 				.channel(NioSocketChannel.class)
@@ -99,40 +116,12 @@ public final class NettyHttpClient {
 
 	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private FullHttpResponse response;
-		private ChannelHandlerContext ctx;
-
-		@Override
-		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			this.ctx = ctx;
-		}
-
-		/****
-		 * 如果是keepalive 可以重用channel
-		 * 这里因为是客户端测试, 特地使用阻塞来同步. 服务端一般不能这样
-		 * @param uri
-		 * @param byteBuf post 的数据
-		 * @return
-		 */
-		public FullHttpResponse sendRequest(ByteBuf byteBuf, URI uri) {
-			String pathAndQuery = (StringUtil.isEmpty(uri.getRawQuery()) ? uri.getRawPath() : (uri.getRawPath() +'?' + uri.getRawQuery()));
-
-			DefaultFullHttpRequest request = new DefaultFullHttpRequest(
-					HttpVersion.HTTP_1_1, HttpMethod.POST, pathAndQuery, byteBuf);
-
-			request.headers().set(HttpHeaderNames.HOST, uri.getHost());
-			request.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-			request.headers().set(HttpHeaderNames.ACCEPT_ENCODING, HttpHeaderValues.GZIP);
-			request.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
-			ctx.channel().writeAndFlush(request);
-			return this.response;
-		}
 
 		@Override
 		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
 			if (!(msg instanceof FullHttpResponse)) {
 				return;
 			}
-
 			this.response =  ((FullHttpResponse) msg).copy();
 			ctx.close();
 		}
