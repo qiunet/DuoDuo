@@ -60,4 +60,13 @@ public class MathUtil {
 	public static float random(float i){
 		return i * random.nextFloat();
 	}
+
+	/***
+	 * 是否是2的次幂数
+	 * @param val
+	 * @return
+	 */
+	private static boolean isPowerOfTwo(int val) {
+		return (val & -val) == val;
+	}
 }
