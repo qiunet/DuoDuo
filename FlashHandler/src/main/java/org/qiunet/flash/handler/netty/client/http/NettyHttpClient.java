@@ -35,30 +35,21 @@ import java.net.URL;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(1);
-	/***
-	 *
-	 * @param url 格式: http://localhost:80/back?key1=value1&key2=value2
-	 * @param byteBuf post 的数据
-	 * @return
-	 */
-	public static FullHttpResponse sendRequest(ByteBuf byteBuf, String url) {
+	public static NioEventLoopGroup group = new NioEventLoopGroup(1);
+	public static void sendRequest(ByteBuf byteBuf, String url, IHttpResponseTrigger trigger) {
 		URI uri = URI.create(url);
 
-		HttpClientHandler clientHandler = new HttpClientHandler();
+		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
 			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
 			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
-			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return clientHandler.response;
 	}
-
 	/****
 	 * 如果是keepalive 可以重用channel
 	 * 这里因为是客户端测试, 特地使用阻塞来同步. 服务端一般不能这样
@@ -115,14 +106,16 @@ public final class NettyHttpClient {
 
 
 	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
-		private FullHttpResponse response;
-
+		private IHttpResponseTrigger trigger;
+		HttpClientHandler(IHttpResponseTrigger trigger) {
+			this.trigger = trigger;
+		}
 		@Override
 		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
 			if (!(msg instanceof FullHttpResponse)) {
 				return;
 			}
-			this.response =  ((FullHttpResponse) msg).copy();
+			this.trigger.response(((FullHttpResponse) msg).copy());
 			ctx.close();
 		}
 
