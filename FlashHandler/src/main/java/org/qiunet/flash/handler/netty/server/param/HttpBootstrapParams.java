@@ -27,13 +27,8 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	private HttpInterceptor interceptor;
 
-	private WebSocketVersion webSocketVersion;
 
 	private HttpBootstrapParams(){}
-
-	public WebSocketVersion getWebSocketVersion() {
-		return webSocketVersion;
-	}
 
 	public String getWebsocketPath() {
 		return websocketPath;
@@ -74,13 +69,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		private HttpInterceptor interceptor;
 
-		private WebSocketVersion webSocketVersion = WebSocketVersion.VERSION_13;
-
-		public Builder setWebSocketVersion(WebSocketVersion webSocketVersion) {
-			this.webSocketVersion = webSocketVersion;
-			return this;
-		}
-
 		public Builder setWebsocketPath(String websocketPath) {
 			this.websocketPath = websocketPath;
 			return this;
@@ -110,7 +98,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		protected void buildInner(HttpBootstrapParams params) {
 			if (interceptor == null) throw new NullPointerException("Interceptor can not be Null");
 			if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can equals websocketPath");
-			params.webSocketVersion = this.webSocketVersion;
 			params.websocketPath = this.websocketPath;
 			params.gameURIPath = this.gameURIPath;
 			params.interceptor = this.interceptor;
