@@ -21,7 +21,7 @@ import java.util.concurrent.CountDownLatch;
  * Created by qiunet.
  * 17/11/27
  */
-public class TestMuchHttpRequest {
+public class TestMuchHttpRequest extends HttpBootStrap {
 	private int requestCount = 20000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
