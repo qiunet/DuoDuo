@@ -20,5 +20,10 @@ public class TestDbProperties {
 		Assert.assertFalse(DbProperties.getInstance().isValidId(110));
 		Assert.assertTrue(DbProperties.getInstance().isValidId(109));
 		Assert.assertTrue(DbProperties.getInstance().isValidId(100));
+
+		Assert.assertEquals(DbProperties.getInstance().getRealId(101), 1);
+		Assert.assertEquals(DbProperties.getInstance().getRealId(100), 1);
+
+		Assert.assertEquals(DbProperties.getInstance().getRealId(30020), 300);
 	}
 }

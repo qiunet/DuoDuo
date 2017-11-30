@@ -133,6 +133,15 @@ public class DbProperties extends LoaderProperties {
 		if (incrId == 0) throw new IllegalArgumentException("incrId can be zero!");
 		return incrId * uid_db_factor + dbIndex;
 	}
+
+	/***
+	 * 通过一个合成id 得到真实id
+	 * @param buildId
+	 * @return
+	 */
+	public int getRealId(int buildId) {
+		return buildId / uid_db_factor;
+	}
 	/***
 	 * 得到dbIndex
 	 *
