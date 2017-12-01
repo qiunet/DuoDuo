@@ -35,7 +35,14 @@ import java.net.URL;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	public static NioEventLoopGroup group = new NioEventLoopGroup(1);
+	private static NioEventLoopGroup group = new NioEventLoopGroup(1);
+
+	/***
+	 *
+	 * @param byteBuf
+	 * @param url
+	 * @param trigger
+	 */
 	public static void sendRequest(ByteBuf byteBuf, String url, IHttpResponseTrigger trigger) {
 		URI uri = URI.create(url);
 
@@ -57,7 +64,7 @@ public final class NettyHttpClient {
 	 * @param byteBuf post 的数据
 	 * @return
 	 */
-	public static DefaultFullHttpRequest buildRequest(ByteBuf byteBuf, URI uri) {
+	private static DefaultFullHttpRequest buildRequest(ByteBuf byteBuf, URI uri) {
 		String pathAndQuery = (StringUtil.isEmpty(uri.getRawQuery()) ? uri.getRawPath() : (uri.getRawPath() +'?' + uri.getRawQuery()));
 
 		DefaultFullHttpRequest request = new DefaultFullHttpRequest(

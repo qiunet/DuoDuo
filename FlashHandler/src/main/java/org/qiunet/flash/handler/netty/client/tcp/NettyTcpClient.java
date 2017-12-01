@@ -18,12 +18,10 @@ import java.net.InetSocketAddress;
 public class NettyTcpClient {
 	private NioEventLoopGroup group = new NioEventLoopGroup();
 	private ChannelHandlerContext channelHandlerContext;
-	private InetSocketAddress address;
 	private ITcpResponseTrigger trigger;
 
 	public NettyTcpClient(InetSocketAddress address, ITcpResponseTrigger trigger) {
 		this.trigger = trigger;
-		this.address = address;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
