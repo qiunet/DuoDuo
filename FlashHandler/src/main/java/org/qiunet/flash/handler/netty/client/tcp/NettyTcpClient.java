@@ -49,7 +49,7 @@ public class NettyTcpClient {
 		channelHandlerContext.channel().close();
 	}
 
-	public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
+	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
@@ -59,7 +59,7 @@ public class NettyTcpClient {
 		}
 	}
 
-	public class NettyClientHandler extends ChannelInboundHandlerAdapter {
+	private class NettyClientHandler extends ChannelInboundHandlerAdapter {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			channelHandlerContext = ctx;

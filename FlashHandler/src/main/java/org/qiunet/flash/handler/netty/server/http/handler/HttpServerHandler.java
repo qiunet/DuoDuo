@@ -1,23 +1,23 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.websocketx.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -33,6 +33,8 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	private static final Acceptor acceptor = Acceptor.getInstance();
 
 	private static final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+
+	private WebSocketServerHandshaker handshaker;
 
 	private HttpBootstrapParams params;
 
@@ -53,6 +55,10 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+		if (msg instanceof WebSocketFrame) {
+			this.handlerWebSocketMsg(ctx, ((WebSocketFrame) msg));
+			return;
+		}
 		if (! ( msg instanceof FullHttpRequest)) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
@@ -62,12 +68,23 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
 		}
+		if (request.uri().equals("/favicon.ico")) {
+			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			return;
+		}
+
 
 		try {
 			URI uri = URI.create(request.uri());
-			if (params.getGameURIPath().equals(uri.getRawPath())) {
+
+			if (params.getWebsocketPath().equals(uri.getRawPath())) {
+				// 升级握手信息
+				handlerWebSocketHandshark(ctx, request);
+			}else if (params.getGameURIPath().equals(uri.getRawPath())) {
+				// 游戏的请求
 				handlerGameUriPathRequest(ctx, request);
 			}else {
+				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
 			}
 		}catch (Exception e) {
@@ -76,6 +93,37 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			logger.error("HttpServerHandler Parse request error: ", e);
 		}
 	}
+
+	/***
+	 * 处理升级握手信息
+	 */
+	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
+		WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
+				"ws://localhost:"+ ((InetSocketAddress) params.getAddress()).getPort()+"/"+params.getWebsocketPath(),
+				null,
+				true
+		);
+
+		this.handshaker = wsFactory.newHandshaker(request);
+		if (this.handshaker == null) {
+			WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
+			ctx.flush().channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
+			return;
+		}
+
+		this.handshaker.handshake(ctx.channel(), request);
+	}
+	/**
+	 * 处理websocket
+	 * @param ctx
+	 * @param msg
+	 */
+	private void handlerWebSocketMsg(ChannelHandlerContext ctx, WebSocketFrame msg) {
+		System.out.println("class "+msg.getClass().getName());
+
+		ctx.writeAndFlush(msg.retain());
+	}
+
 	/***
 	 * 处理其它请求
 	 * @return
