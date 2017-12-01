@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.netty.client.websocket;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -12,6 +14,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.net.URI;
 
@@ -45,8 +49,12 @@ public class NettyWebsocketClient {
 		}
 	}
 
-	public void sendTcpMessage(WebSocketFrame frame){
-		channelHandlerContext.channel().writeAndFlush(frame);
+	public void sendTcpMessage(MessageContent content){
+		ProtocolHeader header = new ProtocolHeader(content.bytes().length, content.getProtocolId(), (int) CrcUtil.getCrc32Value(content.bytes()));
+		ByteBuf byteBuf = Unpooled.buffer();
+		header.writeToByteBuf(byteBuf);
+		byteBuf.writeBytes(content.bytes());
+		channelHandlerContext.channel().writeAndFlush(new BinaryWebSocketFrame(byteBuf));
 	}
 
 	public void close(){

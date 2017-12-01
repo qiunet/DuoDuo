@@ -1,9 +1,10 @@
 package org.qiunet.flash.handler;
 
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.util.CharsetUtil;
 import org.junit.Test;
 import org.qiunet.flash.handler.bootstrap.HttpBootStrap;
+import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.netty.client.websocket.IWebsocketResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
@@ -18,11 +19,13 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	private CountDownLatch latch;
 	@Test
 	public void testWebsocket() throws InterruptedException {
-		latch = new CountDownLatch(1);
-		TextWebSocketFrame frame = new TextWebSocketFrame("Hello world");
 		NettyWebsocketClient client = new NettyWebsocketClient(URI.create("ws://localhost:8080/ws"), new Trigger());
 
-		client.sendTcpMessage(frame);
+		latch = new CountDownLatch(1);
+		String text = "Hello world";
+		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
+		MessageContent content = new MessageContent(1005, bytes);
+		client.sendTcpMessage(content);
 
 		latch.await();
 	}
