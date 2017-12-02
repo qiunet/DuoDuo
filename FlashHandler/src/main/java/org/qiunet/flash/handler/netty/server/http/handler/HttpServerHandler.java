@@ -66,12 +66,12 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		try {
 			URI uri = URI.create(request.uri());
 
-			if (params.getWebsocketPath().equals(uri.getRawPath())) {
-				// 升级握手信息
-				handlerWebSocketHandshark(ctx, request);
-			}else if (params.getGameURIPath().equals(uri.getRawPath())) {
+			if (params.getGameURIPath().equals(uri.getRawPath())) {
 				// 游戏的请求
 				handlerGameUriPathRequest(ctx, request);
+			} else if (params.getWebsocketPath() != null && params.getWebsocketPath().equals(uri.getRawPath())) {
+				// 升级握手信息
+				handlerWebSocketHandshark(ctx, request);
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
