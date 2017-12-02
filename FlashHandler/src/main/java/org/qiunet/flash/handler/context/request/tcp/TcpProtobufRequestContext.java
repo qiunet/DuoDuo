@@ -41,7 +41,7 @@ public class TcpProtobufRequestContext<RequestData> extends AbstractTcpRequestCo
 	@Override
 	public boolean handler() {
 		FacadeTcpRequest<RequestData> facadeTcpRequest = new FacadeTcpRequest<>(this);
-		params.getInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
+		params.getTcpInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
 		return true;
 	}
 

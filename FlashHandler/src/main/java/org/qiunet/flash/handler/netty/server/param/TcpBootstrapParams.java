@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
  * 17/7/19
  */
 public final class TcpBootstrapParams extends AbstractBootstrapParam {
-	private TcpInterceptor interceptor;
+	private TcpInterceptor tcpInterceptor;
 
 	private ISessionEvent sessionEvent;
 
@@ -28,8 +28,8 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 		return sessionEvent;
 	}
 
-	public TcpInterceptor getInterceptor() {
-		return interceptor;
+	public TcpInterceptor getTcpInterceptor() {
+		return tcpInterceptor;
 	}
 
 	public IClientErrorMessage getErrorMessage() {
@@ -58,7 +58,7 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		private IClientErrorMessage errorMessage;
 
-		private TcpInterceptor interceptor;
+		private TcpInterceptor tcpInterceptor;
 
 		private Builder(){}
 
@@ -72,8 +72,8 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 			return this;
 		}
 
-		public Builder setInterceptor(TcpInterceptor interceptor) {
-			this.interceptor = interceptor;
+		public Builder setTcpInterceptor(TcpInterceptor interceptor) {
+			this.tcpInterceptor = interceptor;
 			return this;
 		}
 
@@ -89,11 +89,11 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(TcpBootstrapParams tcpBootstrapParams) {
-			if (interceptor == null) throw new NullPointerException("Interceptor can not be Null");
+			if (tcpInterceptor == null) throw new NullPointerException("Interceptor can not be Null");
 			tcpBootstrapParams.sessionBuilder = this.sessionBuilder;
 			tcpBootstrapParams.errorMessage = this.errorMessage;
 			tcpBootstrapParams.sessionEvent = this.sessionEvent;
-			tcpBootstrapParams.interceptor = this.interceptor;
+			tcpBootstrapParams.tcpInterceptor = this.tcpInterceptor;
 		}
 	}
 }

@@ -47,7 +47,7 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 	@Override
 	public boolean handler() {
 		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
-		ResponseData data = (ResponseData) params.getInterceptor().handler((IHttpHandler)getHandler(), request);
+		ResponseData data = (ResponseData) params.getHttpInterceptor().handler((IHttpHandler)getHandler(), request);
 		this.response(data);
 		return true;
 	}

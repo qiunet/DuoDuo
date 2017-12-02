@@ -38,7 +38,7 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ITcp
 			@Override
 			public void run() {
 				TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-						.setInterceptor(new DefaultTcpInterceptor())
+						.setTcpInterceptor(new DefaultTcpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
 						.setPort(port)
 						.setCrc(true)

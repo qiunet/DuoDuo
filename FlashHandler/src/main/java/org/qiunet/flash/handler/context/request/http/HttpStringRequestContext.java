@@ -44,7 +44,7 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	@Override
 	public boolean handler() {
 		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
-		String responseData = (String) params.getInterceptor().handler((IHttpHandler) getHandler(), requestData);
+		String responseData = (String) params.getHttpInterceptor().handler((IHttpHandler) getHandler(), requestData);
 		this.response(responseData);
 		return true;
 	}

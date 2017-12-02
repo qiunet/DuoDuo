@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler;
+package org.qiunet.flash.handler.bootstrap;
 
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.util.CharsetUtil;

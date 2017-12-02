@@ -2,9 +2,11 @@ package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
@@ -17,7 +19,6 @@ import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
-import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -29,12 +30,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * Created by qiunet.
  * 17/11/11
  */
-public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
+public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
 	private static final Acceptor acceptor = Acceptor.getInstance();
 
 	private static final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
-
-	private WebSocketServerHandshaker handshaker;
 
 	private HttpBootstrapParams params;
 
@@ -54,16 +53,8 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (msg instanceof WebSocketFrame) {
-			this.handlerWebSocketMsg(ctx, ((WebSocketFrame) msg));
-			return;
-		}
-		if (! ( msg instanceof FullHttpRequest)) {
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
-			return;
-		}
-		FullHttpRequest request = ((FullHttpRequest) msg);
+	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+		FullHttpRequest request = (msg);
 		if (! request.decoderResult().isSuccess()) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
@@ -72,8 +63,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
-
-
 		try {
 			URI uri = URI.create(request.uri());
 
@@ -98,30 +87,14 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<Object> {
 	 * 处理升级握手信息
 	 */
 	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
-		WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-				"ws://localhost:"+ ((InetSocketAddress) params.getAddress()).getPort()+"/"+params.getWebsocketPath(),
-				null,
-				true
-		);
+		WebsocketServerHandler websocketServerHandler = new WebsocketServerHandler(params);
 
-		this.handshaker = wsFactory.newHandshaker(request);
-		if (this.handshaker == null) {
-			WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
-			ctx.flush().channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
-			return;
-		}
+		ChannelPipeline pipeline = ctx.channel().pipeline();
+		pipeline.addLast(new WebSocketServerCompressionHandler());
+//		pipeline.addLast(new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, true));
+		pipeline.addLast(websocketServerHandler);
 
-		this.handshaker.handshake(ctx.channel(), request);
-	}
-	/**
-	 * 处理websocket
-	 * @param ctx
-	 * @param msg
-	 */
-	private void handlerWebSocketMsg(ChannelHandlerContext ctx, WebSocketFrame msg) {
-		System.out.println("class "+msg.getClass().getName());
-
-		ctx.writeAndFlush(msg.retain());
+		websocketServerHandler.handlerWebSocketHandshark(ctx, request);
 	}
 
 	/***

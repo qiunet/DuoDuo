@@ -20,7 +20,7 @@ public class TestParams {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
 				.setSsl(true)
-				.setInterceptor(new DefaultHttpInterceptor())
+				.setHttpInterceptor(new DefaultHttpInterceptor())
 				.build();
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 		Assert.assertEquals(true, params.isSsl());
@@ -28,7 +28,7 @@ public class TestParams {
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setPort(1315)
 				.setMaxReceivedLength(1024*1024)
-				.setInterceptor(new DefaultTcpInterceptor())
+				.setTcpInterceptor(new DefaultTcpInterceptor())
 				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}

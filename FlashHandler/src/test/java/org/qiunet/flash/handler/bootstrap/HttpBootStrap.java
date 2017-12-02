@@ -25,7 +25,7 @@ public class HttpBootStrap extends RequestHandlerScanner {
 			@Override
 			public void run() {
 				HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-						.setInterceptor(new DefaultHttpInterceptor())
+						.setHttpInterceptor(new DefaultHttpInterceptor())
 						.setPort(8080)
 						.build();
 				BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);

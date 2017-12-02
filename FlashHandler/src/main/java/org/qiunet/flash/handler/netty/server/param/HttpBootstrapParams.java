@@ -22,7 +22,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	private String websocketPath;
 
-	private HttpInterceptor interceptor;
+	private HttpInterceptor httpInterceptor;
 
 
 	private HttpBootstrapParams(){}
@@ -39,8 +39,8 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		return gameURIPath;
 	}
 
-	public HttpInterceptor getInterceptor() {
-		return interceptor;
+	public HttpInterceptor getHttpInterceptor() {
+		return httpInterceptor;
 	}
 
 	/***
@@ -64,7 +64,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		 */
 		private String websocketPath = "/ws";
 
-		private HttpInterceptor interceptor;
+		private HttpInterceptor httpInterceptor;
 
 		public Builder setWebsocketPath(String websocketPath) {
 			this.websocketPath = websocketPath;
@@ -76,8 +76,8 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 			return this;
 		}
 
-		public Builder setInterceptor(HttpInterceptor interceptor) {
-			this.interceptor = interceptor;
+		public Builder setHttpInterceptor(HttpInterceptor httpInterceptor) {
+			this.httpInterceptor = httpInterceptor;
 			return this;
 		}
 
@@ -93,11 +93,11 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
-			if (interceptor == null) throw new NullPointerException("Interceptor can not be Null");
+			if (httpInterceptor == null) throw new NullPointerException("Interceptor can not be Null");
 			if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can equals websocketPath");
 			params.websocketPath = this.websocketPath;
 			params.gameURIPath = this.gameURIPath;
-			params.interceptor = this.interceptor;
+			params.httpInterceptor = this.httpInterceptor;
 			params.ssl = this.ssl;
 		}
 	}

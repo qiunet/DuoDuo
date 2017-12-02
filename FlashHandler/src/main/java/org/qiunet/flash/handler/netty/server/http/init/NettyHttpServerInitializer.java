@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
+import org.qiunet.flash.handler.netty.server.http.handler.WebsocketServerHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -32,9 +33,6 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
 		}
 		p.addLast(new HttpServerCodec());
 		p.addLast(new HttpObjectAggregator(params.getMaxReceivedLength()));
-		p.addLast(new WebSocketServerCompressionHandler());
-		p.addLast(new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, true));
-
 		p.addLast(new HttpServerHandler(params));
 	}
 }

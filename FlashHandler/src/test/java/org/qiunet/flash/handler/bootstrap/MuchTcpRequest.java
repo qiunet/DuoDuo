@@ -37,7 +37,7 @@ public abstract class MuchTcpRequest extends RequestHandlerScanner implements IT
 			@Override
 			public void run() {
 				TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-						.setInterceptor(new DefaultTcpInterceptor())
+						.setTcpInterceptor(new DefaultTcpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
 						.setPort(port)
 						.build();
