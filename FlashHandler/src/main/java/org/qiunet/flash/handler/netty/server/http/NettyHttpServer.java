@@ -37,7 +37,7 @@ public class NettyHttpServer implements Runnable {
 	@Override
 	public void run() {
 		EventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("http-boss-event-loop-"));
-		EventLoopGroup worker = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() , new DefaultThreadFactory("http-worker-event-loop-"));
+		EventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("http-worker-event-loop-"));
 		try {
 			// Configure SSL.
 			final SslContext sslCtx;
