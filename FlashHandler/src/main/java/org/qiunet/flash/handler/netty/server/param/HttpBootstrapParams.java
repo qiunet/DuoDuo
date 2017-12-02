@@ -1,8 +1,10 @@
 package org.qiunet.flash.handler.netty.server.param;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
+import org.qiunet.flash.handler.netty.server.interceptor.WebSocketInterceptor;
 
 /**
  * 使用引导类 参数.
+ * 该模式通用 websocket
  * 建造者模式
  * Created by qiunet.
  * 17/7/19
@@ -24,8 +26,14 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	private HttpInterceptor httpInterceptor;
 
+	private WebSocketInterceptor webSocketInterceptor;
+
 
 	private HttpBootstrapParams(){}
+
+	public WebSocketInterceptor getWebSocketInterceptor() {
+		return webSocketInterceptor;
+	}
 
 	public String getWebsocketPath() {
 		return websocketPath;
@@ -62,9 +70,16 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		/***
 		 * 升级websocket的路径
 		 */
-		private String websocketPath = "/ws";
+		private String websocketPath;
 
 		private HttpInterceptor httpInterceptor;
+
+		private WebSocketInterceptor webSocketInterceptor;
+
+		public Builder setWebSocketInterceptor(WebSocketInterceptor webSocketInterceptor) {
+			this.webSocketInterceptor = webSocketInterceptor;
+			return this;
+		}
 
 		public Builder setWebsocketPath(String websocketPath) {
 			this.websocketPath = websocketPath;
@@ -93,9 +108,15 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
-			if (httpInterceptor == null) throw new NullPointerException("Interceptor can not be Null");
-			if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can equals websocketPath");
-			params.websocketPath = this.websocketPath;
+			if (httpInterceptor == null) throw new NullPointerException("httpInterceptor can not be Null");
+			if (websocketPath != null) {
+				if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can equals websocketPath");
+				if (webSocketInterceptor == null) throw new NullPointerException("webSocketInterceptor can not be Null");
+				if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
+				params.webSocketInterceptor = this.webSocketInterceptor;
+				params.websocketPath = this.websocketPath;
+			}
+
 			params.gameURIPath = this.gameURIPath;
 			params.httpInterceptor = this.httpInterceptor;
 			params.ssl = this.ssl;

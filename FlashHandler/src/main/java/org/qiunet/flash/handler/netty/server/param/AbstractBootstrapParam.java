@@ -2,6 +2,11 @@ package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.context.header.ContextAdapter;
 import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
+import org.qiunet.flash.handler.context.session.DefaultSessionBuilder;
+import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
+import org.qiunet.flash.handler.context.session.ISessionBuilder;
+import org.qiunet.flash.handler.context.session.ISessionEvent;
+import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -11,6 +16,12 @@ import java.net.SocketAddress;
  * 17/11/22
  */
 public abstract class AbstractBootstrapParam {
+
+	protected ISessionEvent sessionEvent;
+
+	protected ISessionBuilder sessionBuilder;
+	// 一些定义好的错误消息.
+	protected IClientErrorMessage errorMessage;
 	/***
 	 * 接收端口
 	 */
@@ -24,6 +35,18 @@ public abstract class AbstractBootstrapParam {
 	protected boolean crc;
 
 	protected int maxReceivedLength;
+
+	public ISessionEvent getSessionEvent() {
+		return sessionEvent;
+	}
+
+	public IClientErrorMessage getErrorMessage() {
+		return errorMessage;
+	}
+
+	public ISessionBuilder getSessionBuilder() {
+		return sessionBuilder;
+	}
 
 	public int getMaxReceivedLength() {
 		return maxReceivedLength;
@@ -47,11 +70,31 @@ public abstract class AbstractBootstrapParam {
 	public abstract static class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder> {
 		protected SocketAddress address;
 		// 最大上行1M的长度(HTTP 同样有满足)
-		private int maxReceivedLength = 1024 * 1024;
+		protected int maxReceivedLength = 1024 * 1024;
 
 		protected ContextAdapter adapter = new DefaultContextAdapter();
 
+		protected ISessionBuilder sessionBuilder = new DefaultSessionBuilder();
+
+		protected ISessionEvent sessionEvent = new DefaultSessionEvent();
+
+		protected IClientErrorMessage errorMessage;
+
 		protected boolean crc = true;
+
+		public B setSessionEvent(ISessionEvent sessionEvent) {
+			this.sessionEvent = sessionEvent;
+			return (B) this;
+		}
+		public B setErrorMessage(IClientErrorMessage errorMessage) {
+			this.errorMessage = errorMessage;
+			return (B) this;
+		}
+
+		public B setSessionBuilder(ISessionBuilder sessionBuilder) {
+			this.sessionBuilder = sessionBuilder;
+			return (B) this;
+		}
 
 		public B setMaxReceivedLength(int maxReceivedLength) {
 			this.maxReceivedLength = maxReceivedLength;
@@ -79,6 +122,9 @@ public abstract class AbstractBootstrapParam {
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			P p = newParams();
 			p.maxReceivedLength = maxReceivedLength;
+			p.sessionBuilder = sessionBuilder;
+			p.errorMessage = errorMessage;
+			p.sessionEvent = sessionEvent;
 			p.address = address;
 			p.adapter = adapter;
 			p.crc = crc;
