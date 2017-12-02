@@ -44,10 +44,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		sessionManager.addSession(params.getSessionBuilder().createSession(ctx));
+		params.getSessionEvent().sessionRegistered(ctx);
 	}
 
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+		params.getSessionEvent().sessionUnregistered(ctx);
 		sessionManager.removeSession(ctx.channel().id().asLongText());
 	}
 
