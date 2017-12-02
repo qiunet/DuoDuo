@@ -1,7 +1,4 @@
 package org.qiunet.flash.handler.netty.server.param;
-
-import io.netty.channel.group.ChannelGroup;
-import org.qiunet.flash.handler.common.enums.WebSocketVersion;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 
 /**
