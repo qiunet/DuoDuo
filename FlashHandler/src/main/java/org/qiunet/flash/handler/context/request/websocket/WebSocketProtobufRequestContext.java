@@ -3,8 +3,7 @@ package org.qiunet.flash.handler.context.request.websocket;
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.header.MessageContent;
-import org.qiunet.flash.handler.context.request.tcp.FacadeTcpRequest;
-import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,7 +40,7 @@ public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSoc
 	@Override
 	public boolean handler() {
 		FacadeWebSocketRequest<RequestData> facadeWebSocketRequest = new FacadeWebSocketRequest(this);
-		params.getWebSocketInterceptor().handler((ITcpHandler) getHandler(), facadeWebSocketRequest);
+		params.getWebSocketInterceptor().handler((IWebSocketHandler) getHandler(), facadeWebSocketRequest);
 		return true;
 	}
 

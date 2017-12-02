@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.server.interceptor;
 
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
-import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 
 /**
  * Created by qiunet.
@@ -13,5 +13,5 @@ public interface WebSocketInterceptor {
 	 * @param handler
 	 * @param request
 	 */
-	public void handler(ITcpHandler handler, IWebSocketRequest request);
+	public void handler(IWebSocketHandler handler, IWebSocketRequest request);
 }

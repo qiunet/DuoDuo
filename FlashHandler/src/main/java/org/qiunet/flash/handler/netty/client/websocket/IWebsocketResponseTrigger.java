@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.client.websocket;
 
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import org.qiunet.flash.handler.context.header.MessageContent;
 
 /**
  * Created by qiunet.
@@ -9,7 +9,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 public interface IWebsocketResponseTrigger {
 	/***
 	 * response
-	 * @param webSocketFrame
+	 * @param data
 	 */
-	void response(WebSocketFrame webSocketFrame);
+	void response(MessageContent data);
 }

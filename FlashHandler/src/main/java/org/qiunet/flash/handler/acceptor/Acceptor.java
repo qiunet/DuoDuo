@@ -71,7 +71,8 @@ public class Acceptor {
 				iContext.handler();
 				break;
 			case WEB_SOCKET:
-				contextProcessor.addElement(iContext, ((AbstractWebSocketRequestContext)iContext).getQueueHandlerIndex());
+//				contextProcessor.addElement(iContext, ((AbstractWebSocketRequestContext)iContext).getQueueHandlerIndex());
+				iContext.handler();
 				break;
 			case TCP:
 				contextProcessor.addElement(iContext, ((AbstractTcpRequestContext)iContext).getQueueHandlerIndex());

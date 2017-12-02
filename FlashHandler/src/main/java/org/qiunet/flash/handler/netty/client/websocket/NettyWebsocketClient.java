@@ -131,16 +131,16 @@ public class NettyWebsocketClient {
 				throw new IllegalStateException("Unexpected FullHttpResponse (getStatus=" + ((FullHttpResponse) msg).status());
 			}
 
-			if (msg instanceof TextWebSocketFrame) {
-				TextWebSocketFrame textFrame = (TextWebSocketFrame) msg;
-				System.out.println("WebSocket Client received message: " + textFrame.text());
-			} else if (msg instanceof PongWebSocketFrame) {
-				System.out.println("WebSocket Client received pong");
-			} else if (msg instanceof CloseWebSocketFrame) {
-				System.out.println("WebSocket Client received closing");
-				ctx.close();
+			if (! (msg instanceof BinaryWebSocketFrame)) {
+				System.out.println("Not a Binary WebSocket Frame");
+				return;
 			}
-			trigger.response(((WebSocketFrame) msg));
+
+			BinaryWebSocketFrame webSocketFrame = ((BinaryWebSocketFrame) msg);
+			ProtocolHeader header = new ProtocolHeader(webSocketFrame.content());
+			byte [] bytes = new byte[webSocketFrame.content().readableBytes()];
+			webSocketFrame.content().readBytes(bytes);
+			trigger.response(new MessageContent(header.getProtocolId() ,bytes));
 		}
 	}
 }
