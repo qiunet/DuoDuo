@@ -48,7 +48,6 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
 		BinaryWebSocketFrame frame = new BinaryWebSocketFrame(byteBuf);
-		ReferenceCountUtil.release(byteBuf);
 		return frame;
 	}
 	/***
