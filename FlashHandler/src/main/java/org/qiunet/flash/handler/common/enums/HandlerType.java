@@ -15,5 +15,9 @@ public enum HandlerType {
 	 *  但是udp可以使用该类型的context和handler
 	 */
 	TCP,
+	/**
+	 * webSocket
+	 */
+	WEB_SOCKET;
 	;
 }

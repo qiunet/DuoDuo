@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -27,7 +28,13 @@ public interface ContextAdapter {
 	 * @return
 	 */
 	IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request);
-
+	/**
+	 * 得到一个webSocket使用的context
+	 * @param content
+	 * @param channelContext
+	 * @return
+	 */
+	IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params);
 	/**
 	 * 得到一个tcp使用的context
 	 * @param content

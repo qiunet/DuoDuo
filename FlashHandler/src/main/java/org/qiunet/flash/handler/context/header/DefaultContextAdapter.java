@@ -8,6 +8,9 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.TcpProtobufRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.TcpStringRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.WebSocketProtobufRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -37,6 +40,17 @@ public class DefaultContextAdapter implements ContextAdapter {
 				return new HttpStringRequestContext(content, channelContext, params, request);
 			case PROTOBUF:
 				return new HttpProtobufRequestContext(content, channelContext, params, request);
+		}
+		return null;
+	}
+
+	@Override
+	public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params) {
+		switch (handler.getDataType()) {
+			case STRING:
+				return new WebSocketStringRequestContext(content, channelContext, params);
+			case PROTOBUF:
+				return new WebSocketProtobufRequestContext(content, channelContext, params);
 		}
 		return null;
 	}
