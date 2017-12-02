@@ -34,6 +34,18 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		latch.await();
 	}
 
+	@Test
+	public void testProtobufWebSocket() throws InterruptedException {
+		text = "test [testProtobufWebSocket]";
+		NettyWebsocketClient client = new NettyWebsocketClient(URI.create("ws://localhost:8080/ws"), new Trigger());
+		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
+		MessageContent content = new MessageContent(1006, request.toByteArray());
+		latch = new CountDownLatch(1);
+
+		client.sendTcpMessage(content);
+		latch.await();
+	}
+
 	public class Trigger implements IWebsocketResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
