@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
+import io.netty.channel.Channel;
+
 /**
  * tcp request 的外观类
  * Created by qiunet.
@@ -34,5 +36,10 @@ public class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
 	@Override
 	public void response(int protocolId, Object responseData) {
 		context.response(protocolId, responseData);
+	}
+
+	@Override
+	public Channel channel() {
+		return context.channel();
 	}
 }

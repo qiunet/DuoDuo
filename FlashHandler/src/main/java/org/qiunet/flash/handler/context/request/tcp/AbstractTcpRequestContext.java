@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
@@ -17,7 +18,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/7/19
  */
-public abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData>, IResponse<ResponseData> {
+public abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData>, IResponse {
 	protected TcpBootstrapParams params;
 	protected AbstractTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext,TcpBootstrapParams params) {
 		super(content, channelContext);
@@ -29,8 +30,8 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 	}
 
 	@Override
-	public void response(int protocolId, ResponseData data) {
-		byte [] bytes = getResponseDataBytes(data);
+	public void response(int protocolId, Object data) {
+		byte [] bytes = getResponseDataBytes((ResponseData) data);
 		MessageContent content = new MessageContent(protocolId, bytes);
 		this.ctx.writeAndFlush(content);
 	}
@@ -40,6 +41,7 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 	 * @return
 	 */
 	protected abstract byte[] getResponseDataBytes(ResponseData responseData);
+
 	@Override
 	public String getRemoteAddress() {
 		String ip = "";
@@ -47,5 +49,10 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 			ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
 		}
 		return ip;
+	}
+
+	@Override
+	public Channel channel() {
+		return ctx.channel();
 	}
 }
