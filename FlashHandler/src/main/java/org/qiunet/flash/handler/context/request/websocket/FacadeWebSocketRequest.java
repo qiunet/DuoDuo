@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.context.request.websocket;
 
 
+import io.netty.channel.Channel;
+
 /**
  * Created by qiunet.
  * 17/12/2
@@ -29,6 +31,11 @@ public class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<Re
 	@Override
 	public void setAttribute(String key, Object val) {
 		context.setAttribute(key, val);
+	}
+
+	@Override
+	public Channel channel() {
+		return context.channel();
 	}
 
 	@Override

@@ -3,9 +3,9 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.util.ReferenceCountUtil;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/12/2
  */
-public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  extends BaseRequestContext<RequestData> implements IWebSocketRequestContext<RequestData>, IResponse<ResponseData> {
+public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  extends BaseRequestContext<RequestData> implements IWebSocketRequestContext<RequestData>, IResponse {
 	protected HttpBootstrapParams params;
 	protected AbstractWebSocketRequestContext(MessageContent content, ChannelHandlerContext ctx,HttpBootstrapParams params) {
 		super(content, ctx);
@@ -32,8 +32,13 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 	}
 
 	@Override
-	public void response(int protocolId, ResponseData data) {
-		this.ctx.writeAndFlush(encode(protocolId, data));
+	public void response(int protocolId, Object data) {
+		this.ctx.writeAndFlush(encode(protocolId, (ResponseData) data));
+	}
+
+	@Override
+	public Channel channel() {
+		return ctx.channel();
 	}
 
 	/***
