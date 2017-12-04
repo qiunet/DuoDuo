@@ -4,8 +4,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.netty.client.tcp.ITcpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -19,20 +23,24 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 	@Test
 	public void muchRequest() throws InterruptedException {
 		long start = System.currentTimeMillis();
-		final int threadCount = 50;
-		final NettyTcpClient tcpClient = this.tcpClient;
-
+		final int threadCount = 100;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					int count = requestCount/threadCount;
-					for (int i = 0 ; i < count; i ++) {
-						String text = "test [testTcpProtobuf]: "+i;
-						LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
-						MessageContent content = new MessageContent(1004, request.toByteArray());
-						tcpClient.sendTcpMessage(content);
+					NettyTcpClient tcpClient = null;
+					try {
+						tcpClient = new NettyTcpClient(new InetSocketAddress(InetAddress.getByName(host), port), new Trigger());
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
 					}
+					int count = requestCount/threadCount;
+				for (int i = 0 ; i < count; i ++) {
+					String text = "test [testTcpProtobuf]: "+i;
+					LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
+					MessageContent content = new MessageContent(1004, request.toByteArray());
+					tcpClient.sendTcpMessage(content);
+				}
 				}
 			}).start();
 		}
@@ -41,15 +49,18 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 		long end = System.currentTimeMillis();
 		System.out.println("All Time is:["+(end - start)+"]ms");
 	}
-	@Override
-	protected void responseTcpMessage(MessageContent data) {
-		LoginProto.LoginResponse response = null;
-		try {
-			response = LoginProto.LoginResponse.parseFrom(data.bytes());
-		} catch (InvalidProtocolBufferException e) {
-			e.printStackTrace();
+
+	public class Trigger implements ITcpResponseTrigger {
+		@Override
+		public void response(MessageContent data) {
+			LoginProto.LoginResponse response = null;
+			try {
+				response = LoginProto.LoginResponse.parseFrom(data.bytes());
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
+			}
+			System.out.println(response.getTestString());
+			latch.countDown();
 		}
-		System.out.println(response.getTestString());
-		latch.countDown();
 	}
 }

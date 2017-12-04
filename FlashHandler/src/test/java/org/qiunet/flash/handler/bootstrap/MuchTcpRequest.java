@@ -24,11 +24,10 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/27
  */
-public abstract class MuchTcpRequest extends RequestHandlerScanner implements ITcpResponseTrigger {
+public abstract class MuchTcpRequest extends RequestHandlerScanner {
 	protected static String host = "localhost";
 	protected static int port = 8889;
 	protected static Hook hook = new MyHook();
-	protected NettyTcpClient tcpClient;
 	private static Thread currThread;
 	@BeforeClass
 	public static void init(){
@@ -49,26 +48,6 @@ public abstract class MuchTcpRequest extends RequestHandlerScanner implements IT
 		thread.start();
 		LockSupport.park();
 	}
-	@Before
-	public void connect(){
-		currThread = Thread.currentThread();
-		try {
-			tcpClient = new NettyTcpClient(new InetSocketAddress(InetAddress.getByName(host), port), this);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-	}
-	@After
-	public void closeConnect(){
-		tcpClient.close();
-	}
-
-	@Override
-	public void response(MessageContent data) {
-		this.responseTcpMessage(data);
-	}
-
-	protected abstract void responseTcpMessage(MessageContent data);
 
 	@AfterClass
 	public static void shutdown() throws InterruptedException {
