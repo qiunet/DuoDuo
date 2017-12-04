@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.client.robot;
+package org.qiunet.test.robot;
 
 /**
  * Created by qiunet.

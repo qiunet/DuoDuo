@@ -97,6 +97,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
+				<artifactId>FlashHandler</artifactId>
+				<version>3.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
 				<artifactId>QiunetDatas</artifactId>
 				<version>3.0</version>
 			</dependency>
