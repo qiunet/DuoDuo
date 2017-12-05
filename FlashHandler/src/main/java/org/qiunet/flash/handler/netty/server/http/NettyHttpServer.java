@@ -53,7 +53,7 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.channel(NioServerSocketChannel.class);
 			bootstrap.childHandler(new NettyHttpServerInitializer(sslCtx, params));
 
-			bootstrap.option(ChannelOption.SO_BACKLOG, 512);
+			bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
