@@ -996,6 +996,32 @@ public abstract class AbstractRedisUtil {
 		}.execAndReturn();
 	}
 
+	public long decr(String key){
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
+			@Override
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				return jedis.decr(key);
+			}
+			@Override
+			protected Object[] params() {
+				return new Object[]{};
+			}
+		}.execAndReturn();
+	}
+
+	public long decrby(String key, final int val){
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
+			@Override
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				return jedis.decrBy(key, val);
+			}
+			@Override
+			protected Object[] params() {
+				return new Object[]{ val};
+			}
+		}.execAndReturn();
+	}
+
 	public String lpop(String key){
 		return new RedisCommand<String>(jedisPool, key) {
 			@Override
