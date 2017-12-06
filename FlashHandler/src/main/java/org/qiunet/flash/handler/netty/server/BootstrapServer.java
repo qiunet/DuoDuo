@@ -15,11 +15,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -44,7 +43,6 @@ public class BootstrapServer {
 		this.hook = hook;
 
 		Thread thread = new Thread(new HookListener(this , hook), "HookListener");
-		thread.setDaemon(true);
 		thread.start();
 
 		instance = this;
@@ -157,20 +155,14 @@ public class BootstrapServer {
 	private static class HookListener implements Runnable {
 		private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 		private Hook hook;
-		private Selector selector;
 		private BootstrapServer server;
-		private ServerSocketChannel serverSocketChannel;
+		private AsynchronousServerSocketChannel serverChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
-			this.server = bootstrapServer;
 			this.hook = hook;
-
+			this.server = bootstrapServer;
 			try {
-				serverSocketChannel = ServerSocketChannel.open();
-				serverSocketChannel.configureBlocking(false);
-				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
-
-				this.selector = Selector.open();
-				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
+				serverChannel = AsynchronousServerSocketChannel.open();
+				serverChannel.bind(new InetSocketAddress("localhost", hook.getHookPort()));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -179,56 +171,49 @@ public class BootstrapServer {
 		@Override
 		public void run() {
 			qLogger.error("[HookListener]服务端: 启动成功");
-			while (this.selector.isOpen()) {
-				try {
-					this.selector.select();
-					Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator();
-					while (itr.hasNext()) {
-						SelectionKey key = itr.next();
-						itr.remove();
+			this.serverChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
+				@Override
+				public void completed(AsynchronousSocketChannel result, Void attachment) {
+					serverChannel.accept(null, this);
 
-						if (key.isAcceptable()) {
-							qLogger.error("[HookListener]服务端: Acceptor Msg");
-							ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-							SocketChannel channel = serverSocketChannel.accept();
-							channel.configureBlocking(false);
-
-							channel.register(this.selector, SelectionKey.OP_READ);
-						}else if( key.isReadable()){
-							SocketChannel channel = (SocketChannel) key.channel();
-							ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
-							channel.read(byteBuffer);
-							byteBuffer.flip();
-							String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
-							msg = StringUtil.powerfulTrim(msg);
-							qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
-							if (msg.equals(hook.getShutdownMsg())) {
-
-								// 释放锁.
-								server.shutdown();
-								// 不调整位置, shutdown 后关闭. 脚本能看到结果. 否则关闭后. 线程其实还在shutdown
-								channel.close();
-								this.serverSocketChannel.close();
-								this.selector.close();
-								break;
-
-							}else if (msg.equals(hook.getReloadCfgMsg())){
-								hook.reloadCfg();
-								channel.close();
-								continue;
-
-							}else {
-								hook.custom(msg);
-								channel.close();
-								continue;
-							}
+					ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
+					Future<Integer> future = result.read(byteBuffer);
+					try {
+						if (future.get() > 0) this.handlerMsg((ByteBuffer) byteBuffer.flip());
+					} catch (Exception e) {
+						qLogger.error("[HookListener]处理消息异常: ", e);
+					}finally {
+						try {
+							result.close();
+						} catch (IOException e) {
+							qLogger.error("[HookListener]关闭异常: ", e);
 						}
 					}
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
-
-			}
+				/***
+				 * 处理现有的消息. 可以用户自定义
+				 * @param byteBuffer
+				 * @throws IOException
+				 */
+				private boolean handlerMsg(ByteBuffer byteBuffer) throws IOException {
+					String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
+					msg = StringUtil.powerfulTrim(msg);
+					qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
+					if (msg.equals(hook.getShutdownMsg())) {
+						server.shutdown();
+						return true;
+					}else if (msg.equals(hook.getReloadCfgMsg())){
+						hook.reloadCfg();
+					}else {
+						hook.custom(msg);
+					}
+					return false;
+				}
+				@Override
+				public void failed(Throwable exc, Void attachment) {
+					qLogger.error("[HookListener]异常: ", exc);
+				}
+			});
 		}
 	}
 }
