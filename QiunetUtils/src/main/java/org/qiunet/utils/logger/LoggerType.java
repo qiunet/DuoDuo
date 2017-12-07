@@ -12,5 +12,7 @@ public enum LoggerType {
 	QIUNET_UTILS,
 
 	FLASH_HANDLER,
+
+	GAME_TEST,
 	;
 }
