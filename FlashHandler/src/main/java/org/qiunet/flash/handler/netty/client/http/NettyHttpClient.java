@@ -25,10 +25,10 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.URI;
-import java.net.URL;
 
 /**
  * 给客户端测试使用的一个HttpClient类

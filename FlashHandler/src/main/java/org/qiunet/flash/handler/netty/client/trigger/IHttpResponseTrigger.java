@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.client.http;
+package org.qiunet.flash.handler.netty.client.trigger;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 

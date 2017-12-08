@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.client.tcp;
+package org.qiunet.flash.handler.netty.client.trigger;
 
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.context.header.MessageContent;
@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.header.MessageContent;
  * Created by qiunet.
  * 17/11/25
  */
-public interface ITcpResponseTrigger {
+public interface IResponseTrigger {
 	/***
 	 * 触发的响应
 	 * @param data

@@ -10,7 +10,7 @@ import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.netty.client.http.IHttpResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 

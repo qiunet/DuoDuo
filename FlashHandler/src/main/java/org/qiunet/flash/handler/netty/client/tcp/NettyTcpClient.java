@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.Decoder;
 import org.qiunet.flash.handler.netty.coder.Encoder;
 
@@ -18,9 +19,9 @@ import java.net.InetSocketAddress;
 public class NettyTcpClient {
 	private NioEventLoopGroup group = new NioEventLoopGroup();
 	private ChannelHandlerContext channelHandlerContext;
-	private ITcpResponseTrigger trigger;
+	private IResponseTrigger trigger;
 
-	public NettyTcpClient(InetSocketAddress address, ITcpResponseTrigger trigger) {
+	public NettyTcpClient(InetSocketAddress address, IResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);

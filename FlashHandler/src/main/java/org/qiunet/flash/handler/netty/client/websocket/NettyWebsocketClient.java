@@ -15,6 +15,7 @@ import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.net.URI;
@@ -25,9 +26,9 @@ import java.net.URI;
  */
 public class NettyWebsocketClient {
 	private ChannelHandlerContext channelHandlerContext;
-	private IWebsocketResponseTrigger trigger;
+	private IResponseTrigger trigger;
 
-	public NettyWebsocketClient(URI uri, IWebsocketResponseTrigger trigger) {
+	public NettyWebsocketClient(URI uri, IResponseTrigger trigger) {
 		this.trigger = trigger;
 
 		NioEventLoopGroup group = new NioEventLoopGroup(1);

@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
-import org.qiunet.flash.handler.netty.client.tcp.ITcpResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -25,7 +25,7 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/25
  */
-public abstract class TcpBootStrap extends RequestHandlerScanner implements ITcpResponseTrigger {
+public abstract class TcpBootStrap extends RequestHandlerScanner implements IResponseTrigger {
 	protected static String host = "localhost";
 	protected static int port = 8888;
 	protected static Hook hook = new MyHook();
