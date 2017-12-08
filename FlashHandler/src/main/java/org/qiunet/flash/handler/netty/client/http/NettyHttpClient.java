@@ -38,7 +38,7 @@ public final class NettyHttpClient {
 	private static NioEventLoopGroup group = new NioEventLoopGroup(1);
 
 	/***
-	 *
+	 * 不阻塞的方式请求.
 	 * @param byteBuf
 	 * @param url
 	 * @param trigger
@@ -56,6 +56,27 @@ public final class NettyHttpClient {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	/***
+	 * 阻塞的方式请求
+	 * @param byteBuf
+	 * @param url
+	 */
+	public static FullHttpResponse sendRequest(ByteBuf byteBuf, String url) {
+		URI uri = URI.create(url);
+
+		HttpClientHandler clientHandler = new HttpClientHandler(null);
+		try {
+			Bootstrap b = createBootstrap(group, clientHandler, uri);
+			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
+			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
+			future.channel().closeFuture().sync();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return clientHandler.response;
 	}
 	/****
 	 * 如果是keepalive 可以重用channel
@@ -114,6 +135,7 @@ public final class NettyHttpClient {
 
 	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private IHttpResponseTrigger trigger;
+		private FullHttpResponse response;
 		HttpClientHandler(IHttpResponseTrigger trigger) {
 			this.trigger = trigger;
 		}
@@ -123,7 +145,8 @@ public final class NettyHttpClient {
 				ctx.close();
 				return;
 			}
-			this.trigger.response(((FullHttpResponse) msg).copy());
+			this.response = ((FullHttpResponse) msg).copy();
+			if (trigger != null) this.trigger.response(response);
 			ctx.close();
 		}
 
