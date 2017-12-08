@@ -45,6 +45,11 @@ public class DefaultSession implements ISession<String> {
 	}
 
 	@Override
+	public void writeAndFlush(MessageContent content) {
+		getChannel().writeAndFlush(content);
+	}
+
+	@Override
 	public long lastPackageTimeStamp() {
 		return dt;
 	}

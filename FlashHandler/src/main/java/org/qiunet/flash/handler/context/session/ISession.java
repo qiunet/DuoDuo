@@ -39,7 +39,11 @@ public interface ISession<Key> {
 	 * @param content
 	 */
 	void write(MessageContent content);
-
+	/***
+	 * push 一个消息
+	 * @param content
+	 */
+	void writeAndFlush(MessageContent content);
 	/**
 	 * 最后活跃的时间戳
 	 * @return
