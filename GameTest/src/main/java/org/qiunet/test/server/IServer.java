@@ -3,6 +3,7 @@ package org.qiunet.test.server;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 
 /**
  * Created by qiunet.
@@ -22,13 +23,8 @@ public interface IServer {
 	 */
 	public HandlerType getType();
 	/**
-	 *
+	 * 得到请求的地址 socket 则只有host  port 可用
 	 * @return
 	 */
-	public InetSocketAddress getAddress();
-	/**
-	 * 如果有则返回.
-	 * @return
-	 */
-	public String uri();
+	public URI uri();
 }

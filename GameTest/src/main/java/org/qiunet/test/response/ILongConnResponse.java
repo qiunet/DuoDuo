@@ -7,11 +7,11 @@ import org.qiunet.test.robot.IRobot;
  * Created by qiunet.
  * 17/12/4
  */
-public interface IResponse {
+public interface ILongConnResponse<Robot extends IRobot> {
 	/***
 	 * 响应数据
 	 * @param robot
 	 * @param content
 	 */
-	void response(IRobot robot, MessageContent content);
+	void response(Robot robot, MessageContent content);
 }

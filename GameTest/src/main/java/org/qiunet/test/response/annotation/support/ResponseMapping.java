@@ -1,6 +1,6 @@
 package org.qiunet.test.response.annotation.support;
 
-import org.qiunet.test.response.IResponse;
+import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.utils.exceptions.SingletonException;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.Map;
 public class ResponseMapping {
 
 	private volatile static ResponseMapping instance;
-	private Map<Integer, IResponse> gameResponses = new HashMap<>();
+	private Map<Integer, ILongConnResponse> gameResponses = new HashMap<>();
 
 	private ResponseMapping() {
 		synchronized (ResponseMapping.class) {
@@ -38,14 +38,17 @@ public class ResponseMapping {
 
 	/**
 	 * 存一个handler对应mapping
-	 * @param protocolId
+	 * @param responseId
 	 * @param response
 	 */
-	public void addResponse(int protocolId, IResponse response) {
-		if (this.gameResponses.containsKey(protocolId)) {
-			throw new RuntimeException("protocolId ["+protocolId+"] is already exist!");
+	public void addResponse(int responseId, ILongConnResponse response) {
+		if (this.gameResponses.containsKey(responseId)) {
+			throw new RuntimeException("responseId ["+responseId+"] is already exist!");
 		}
-		this.gameResponses.put(protocolId, response);
+		this.gameResponses.put(responseId, response);
 	}
 
+	public ILongConnResponse getResponse(int responseId) {
+		return gameResponses.get(responseId);
+	}
 }

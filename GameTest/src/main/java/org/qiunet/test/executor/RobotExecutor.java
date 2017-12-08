@@ -2,7 +2,7 @@ package org.qiunet.test.executor;
 
 
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
-import org.qiunet.test.params.ExecutorParams;
+import org.qiunet.test.executor.params.ExecutorParams;
 import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;

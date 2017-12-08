@@ -35,12 +35,6 @@ public interface ITestCase<Robot extends IRobot> {
 	 * @return
 	 */
 	int getRequestID();
-//	/***
-//	 * 得到是怎么处理的
-//	 * 登录服 在线服 房间服的session都不同. 需要
-//	 * @return
-//	 */
-//	IServer getServer();
 	/***
 	 * 得到一个请求数据
 	 * @param robot

@@ -1,4 +1,4 @@
-package org.qiunet.test.params;
+package org.qiunet.test.executor.params;
 
 import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.robot.init.IRobotFactory;

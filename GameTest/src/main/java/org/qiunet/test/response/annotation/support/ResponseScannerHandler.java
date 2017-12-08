@@ -1,7 +1,7 @@
 package org.qiunet.test.response.annotation.support;
 
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.test.response.IResponse;
+import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.Response;
 import org.qiunet.utils.classScanner.IScannerHandler;
 
@@ -25,9 +25,9 @@ public class ResponseScannerHandler implements IScannerHandler {
 	public void handler(Class<?> clazz) {
 		Response reponseAnnotation = clazz.getAnnotation(Response.class);
 		try {
-			Constructor<IResponse> constructor = (Constructor<IResponse>) clazz.getConstructor(null);
+			Constructor<ILongConnResponse> constructor = (Constructor<ILongConnResponse>) clazz.getConstructor(null);
 			if (!constructor.isAccessible()) constructor.setAccessible(true);
-			IResponse response = constructor.newInstance();
+			ILongConnResponse response = constructor.newInstance();
 			if (response != null) {
 				ResponseMapping.getInstance().addResponse(reponseAnnotation.ID(), response);
 			}
