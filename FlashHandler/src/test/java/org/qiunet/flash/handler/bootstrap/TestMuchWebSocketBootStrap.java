@@ -5,7 +5,7 @@ import io.netty.util.CharsetUtil;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
 import java.net.URI;
@@ -31,7 +31,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 						String text = "testMuchWebSocket: "+j;
 						byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
 						MessageContent content = new MessageContent(1005, bytes);
-						client.sendTcpMessage(content);
+						client.sendMessage(content);
 					}
 				}
 			}).start();
@@ -41,7 +41,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		System.out.println("All Time is:["+(end - start)+"]ms");
 	}
 
-	public class Trigger implements IResponseTrigger {
+	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
 			switch (data.getProtocolId()) {

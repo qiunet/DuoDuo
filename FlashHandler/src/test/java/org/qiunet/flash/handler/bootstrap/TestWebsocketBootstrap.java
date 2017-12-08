@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
 import java.net.URI;
@@ -27,7 +27,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 
 		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
 		MessageContent content = new MessageContent(1005, bytes);
-		client.sendTcpMessage(content);
+		client.sendMessage(content);
 
 		latch.await();
 	}
@@ -40,11 +40,11 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
 
-		client.sendTcpMessage(content);
+		client.sendMessage(content);
 		latch.await();
 	}
 
-	public class Trigger implements IResponseTrigger {
+	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
 			switch (data.getProtocolId()) {

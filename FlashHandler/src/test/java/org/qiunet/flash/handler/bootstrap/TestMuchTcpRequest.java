@@ -4,7 +4,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Test;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 
 import java.net.InetAddress;
@@ -39,7 +39,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 					String text = "test [testTcpProtobuf]: "+i;
 					LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 					MessageContent content = new MessageContent(1004, request.toByteArray());
-					tcpClient.sendTcpMessage(content);
+					tcpClient.sendMessage(content);
 				}
 				}
 			}).start();
@@ -50,7 +50,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 		System.out.println("All Time is:["+(end - start)+"]ms");
 	}
 
-	public class Trigger implements IResponseTrigger {
+	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
 			LoginProto.LoginResponse response = null;

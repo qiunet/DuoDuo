@@ -15,7 +15,8 @@ import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
+import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.net.URI;
@@ -24,11 +25,11 @@ import java.net.URI;
  * Created by qiunet.
  * 17/12/1
  */
-public class NettyWebsocketClient {
+public class NettyWebsocketClient implements ILongConnClient {
 	private ChannelHandlerContext channelHandlerContext;
-	private IResponseTrigger trigger;
+	private ILongConnResponseTrigger trigger;
 
-	public NettyWebsocketClient(URI uri, IResponseTrigger trigger) {
+	public NettyWebsocketClient(URI uri, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 
 		NioEventLoopGroup group = new NioEventLoopGroup(1);
@@ -49,8 +50,8 @@ public class NettyWebsocketClient {
 			e.printStackTrace();
 		}
 	}
-
-	public void sendTcpMessage(MessageContent content){
+	@Override
+	public void sendMessage(MessageContent content){
 		ProtocolHeader header = new ProtocolHeader(content.bytes().length, content.getProtocolId(), (int) CrcUtil.getCrc32Value(content.bytes()));
 		ByteBuf byteBuf = Unpooled.buffer();
 		header.writeToByteBuf(byteBuf);
@@ -58,6 +59,7 @@ public class NettyWebsocketClient {
 		channelHandlerContext.channel().writeAndFlush(new BinaryWebSocketFrame(byteBuf));
 	}
 
+	@Override
 	public void close(){
 		try {
 			Thread.sleep(500);

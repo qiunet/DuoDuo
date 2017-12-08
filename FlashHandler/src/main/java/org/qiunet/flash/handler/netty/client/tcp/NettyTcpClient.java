@@ -6,7 +6,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.flash.handler.context.header.MessageContent;
-import org.qiunet.flash.handler.netty.client.trigger.IResponseTrigger;
+import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.Decoder;
 import org.qiunet.flash.handler.netty.coder.Encoder;
 
@@ -16,12 +17,12 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/25
  */
-public class NettyTcpClient {
+public class NettyTcpClient implements ILongConnClient {
 	private NioEventLoopGroup group = new NioEventLoopGroup();
 	private ChannelHandlerContext channelHandlerContext;
-	private IResponseTrigger trigger;
+	private ILongConnResponseTrigger trigger;
 
-	public NettyTcpClient(InetSocketAddress address, IResponseTrigger trigger) {
+	public NettyTcpClient(InetSocketAddress address, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
@@ -36,11 +37,11 @@ public class NettyTcpClient {
 			e.printStackTrace();
 		}
 	}
-
-	public void sendTcpMessage(MessageContent content){
+	@Override
+	public void sendMessage(MessageContent content){
 		channelHandlerContext.channel().writeAndFlush(content);
 	}
-
+	@Override
 	public void close(){
 		try {
 			Thread.sleep(500);

@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.header.MessageContent;
  * Created by qiunet.
  * 17/11/25
  */
-public interface IResponseTrigger {
+public interface ILongConnResponseTrigger {
 	/***
 	 * 触发的响应
 	 * @param data

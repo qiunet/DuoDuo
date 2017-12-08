@@ -18,7 +18,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 		text = "测试 [testTcpString]";
 		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
 		MessageContent messageContent  = new MessageContent(1003, bytes);
-		this.tcpClient.sendTcpMessage(messageContent);
+		this.tcpClient.sendMessage(messageContent);
 	}
 
 	@Test
@@ -26,7 +26,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 		text = "test [testTcpProtobuf]";
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 		MessageContent content = new MessageContent(1004, request.toByteArray());
-		this.tcpClient.sendTcpMessage(content);
+		this.tcpClient.sendMessage(content);
 	}
 
 	@Override
