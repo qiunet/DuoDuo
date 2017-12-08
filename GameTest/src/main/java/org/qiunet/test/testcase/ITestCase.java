@@ -1,5 +1,6 @@
 package org.qiunet.test.testcase;
 
+import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
 
@@ -30,9 +31,20 @@ public interface ITestCase<Robot extends IRobot> {
 	boolean cancelIfConditionMiss();
 
 	/***
-	 * 得到是怎么处理的
-	 * 登录服 在线服 房间服的session都不同. 需要
+	 * 请求id
 	 * @return
 	 */
-	IServer getServer();
+	int getRequestID();
+//	/***
+//	 * 得到是怎么处理的
+//	 * 登录服 在线服 房间服的session都不同. 需要
+//	 * @return
+//	 */
+//	IServer getServer();
+	/***
+	 * 得到一个请求数据
+	 * @param robot
+	 * @return
+	 */
+	MessageContent buildRequest(Robot robot);
 }
