@@ -1,6 +1,6 @@
 syntax="proto3";
 
-option java_package = "com.dayou.game.xiuzhen.common.net";
+option java_package = "org.qiunet.test.proto";
 
 option java_outer_classname = "HeaderProto";
 
@@ -13,4 +13,8 @@ message RequestHeader {
 message ResponseHeader {
 	int32 ret = 1;						// 返回的ret 为 0 或者 1 为正确, 其他错误
 	string msg = 2;						// 如果 ret 不为0 则msg为错误描述
+}
+
+message ErrorResponse {
+	ResponseHeader header = 1;
 }

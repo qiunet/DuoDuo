@@ -6,13 +6,17 @@ option java_package = "org.qiunet.test.proto";
 
 option java_outer_classname = "LoginProto";
 
+import "Header.proto";
+
 message LoginRequest {
-	string openid = 1;
+	RequestHeader header = 1;
+	string openid = 2;
 }
 
 // 登录请求响应
 message LoginResponse {
-	int32 uid = 1;
-	string token = 2;
-	bool registered = 3;	// 是否注册过
+	ResponseHeader header = 1;
+	int32 uid = 2;
+	string token = 3;
+	bool registered = 4;	// 是否注册过
 }

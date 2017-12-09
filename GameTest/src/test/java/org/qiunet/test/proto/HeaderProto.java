@@ -1266,8 +1266,8 @@ public final class HeaderProto {
 
   }
 
-  public interface ResponseCheckOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ResponseCheck)
+  public interface ErrorResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:ErrorResponse)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -1284,17 +1284,17 @@ public final class HeaderProto {
     org.qiunet.test.proto.HeaderProto.ResponseHeaderOrBuilder getHeaderOrBuilder();
   }
   /**
-   * Protobuf type {@code ResponseCheck}
+   * Protobuf type {@code ErrorResponse}
    */
-  public  static final class ResponseCheck extends
+  public  static final class ErrorResponse extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:ResponseCheck)
-      ResponseCheckOrBuilder {
-    // Use ResponseCheck.newBuilder() to construct.
-    private ResponseCheck(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:ErrorResponse)
+      ErrorResponseOrBuilder {
+    // Use ErrorResponse.newBuilder() to construct.
+    private ErrorResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private ResponseCheck() {
+    private ErrorResponse() {
     }
 
     @java.lang.Override
@@ -1302,7 +1302,7 @@ public final class HeaderProto {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private ResponseCheck(
+    private ErrorResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1348,14 +1348,14 @@ public final class HeaderProto {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.qiunet.test.proto.HeaderProto.internal_static_ResponseCheck_descriptor;
+      return org.qiunet.test.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.qiunet.test.proto.HeaderProto.internal_static_ResponseCheck_fieldAccessorTable
+      return org.qiunet.test.proto.HeaderProto.internal_static_ErrorResponse_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              org.qiunet.test.proto.HeaderProto.ResponseCheck.class, org.qiunet.test.proto.HeaderProto.ResponseCheck.Builder.class);
+              org.qiunet.test.proto.HeaderProto.ErrorResponse.class, org.qiunet.test.proto.HeaderProto.ErrorResponse.Builder.class);
     }
 
     public static final int HEADER_FIELD_NUMBER = 1;
@@ -1415,10 +1415,10 @@ public final class HeaderProto {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof org.qiunet.test.proto.HeaderProto.ResponseCheck)) {
+      if (!(obj instanceof org.qiunet.test.proto.HeaderProto.ErrorResponse)) {
         return super.equals(obj);
       }
-      org.qiunet.test.proto.HeaderProto.ResponseCheck other = (org.qiunet.test.proto.HeaderProto.ResponseCheck) obj;
+      org.qiunet.test.proto.HeaderProto.ErrorResponse other = (org.qiunet.test.proto.HeaderProto.ErrorResponse) obj;
 
       boolean result = true;
       result = result && (hasHeader() == other.hasHeader());
@@ -1445,58 +1445,58 @@ public final class HeaderProto {
       return hash;
     }
 
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(byte[] data)
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(java.io.InputStream input)
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseDelimitedFrom(java.io.InputStream input)
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseDelimitedFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck parseFrom(
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1508,7 +1508,7 @@ public final class HeaderProto {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(org.qiunet.test.proto.HeaderProto.ResponseCheck prototype) {
+    public static Builder newBuilder(org.qiunet.test.proto.HeaderProto.ErrorResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -1523,25 +1523,25 @@ public final class HeaderProto {
       return builder;
     }
     /**
-     * Protobuf type {@code ResponseCheck}
+     * Protobuf type {@code ErrorResponse}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ResponseCheck)
-        org.qiunet.test.proto.HeaderProto.ResponseCheckOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ErrorResponse)
+        org.qiunet.test.proto.HeaderProto.ErrorResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.qiunet.test.proto.HeaderProto.internal_static_ResponseCheck_descriptor;
+        return org.qiunet.test.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.qiunet.test.proto.HeaderProto.internal_static_ResponseCheck_fieldAccessorTable
+        return org.qiunet.test.proto.HeaderProto.internal_static_ErrorResponse_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                org.qiunet.test.proto.HeaderProto.ResponseCheck.class, org.qiunet.test.proto.HeaderProto.ResponseCheck.Builder.class);
+                org.qiunet.test.proto.HeaderProto.ErrorResponse.class, org.qiunet.test.proto.HeaderProto.ErrorResponse.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.HeaderProto.ResponseCheck.newBuilder()
+      // Construct using org.qiunet.test.proto.HeaderProto.ErrorResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1569,23 +1569,23 @@ public final class HeaderProto {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.qiunet.test.proto.HeaderProto.internal_static_ResponseCheck_descriptor;
+        return org.qiunet.test.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
       }
 
-      public org.qiunet.test.proto.HeaderProto.ResponseCheck getDefaultInstanceForType() {
-        return org.qiunet.test.proto.HeaderProto.ResponseCheck.getDefaultInstance();
+      public org.qiunet.test.proto.HeaderProto.ErrorResponse getDefaultInstanceForType() {
+        return org.qiunet.test.proto.HeaderProto.ErrorResponse.getDefaultInstance();
       }
 
-      public org.qiunet.test.proto.HeaderProto.ResponseCheck build() {
-        org.qiunet.test.proto.HeaderProto.ResponseCheck result = buildPartial();
+      public org.qiunet.test.proto.HeaderProto.ErrorResponse build() {
+        org.qiunet.test.proto.HeaderProto.ErrorResponse result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public org.qiunet.test.proto.HeaderProto.ResponseCheck buildPartial() {
-        org.qiunet.test.proto.HeaderProto.ResponseCheck result = new org.qiunet.test.proto.HeaderProto.ResponseCheck(this);
+      public org.qiunet.test.proto.HeaderProto.ErrorResponse buildPartial() {
+        org.qiunet.test.proto.HeaderProto.ErrorResponse result = new org.qiunet.test.proto.HeaderProto.ErrorResponse(this);
         if (headerBuilder_ == null) {
           result.header_ = header_;
         } else {
@@ -1622,16 +1622,16 @@ public final class HeaderProto {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.qiunet.test.proto.HeaderProto.ResponseCheck) {
-          return mergeFrom((org.qiunet.test.proto.HeaderProto.ResponseCheck)other);
+        if (other instanceof org.qiunet.test.proto.HeaderProto.ErrorResponse) {
+          return mergeFrom((org.qiunet.test.proto.HeaderProto.ErrorResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(org.qiunet.test.proto.HeaderProto.ResponseCheck other) {
-        if (other == org.qiunet.test.proto.HeaderProto.ResponseCheck.getDefaultInstance()) return this;
+      public Builder mergeFrom(org.qiunet.test.proto.HeaderProto.ErrorResponse other) {
+        if (other == org.qiunet.test.proto.HeaderProto.ErrorResponse.getDefaultInstance()) return this;
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
         }
@@ -1647,11 +1647,11 @@ public final class HeaderProto {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        org.qiunet.test.proto.HeaderProto.ResponseCheck parsedMessage = null;
+        org.qiunet.test.proto.HeaderProto.ErrorResponse parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (org.qiunet.test.proto.HeaderProto.ResponseCheck) e.getUnfinishedMessage();
+          parsedMessage = (org.qiunet.test.proto.HeaderProto.ErrorResponse) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1788,39 +1788,39 @@ public final class HeaderProto {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:ResponseCheck)
+      // @@protoc_insertion_point(builder_scope:ErrorResponse)
     }
 
-    // @@protoc_insertion_point(class_scope:ResponseCheck)
-    private static final org.qiunet.test.proto.HeaderProto.ResponseCheck DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:ErrorResponse)
+    private static final org.qiunet.test.proto.HeaderProto.ErrorResponse DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new org.qiunet.test.proto.HeaderProto.ResponseCheck();
+      DEFAULT_INSTANCE = new org.qiunet.test.proto.HeaderProto.ErrorResponse();
     }
 
-    public static org.qiunet.test.proto.HeaderProto.ResponseCheck getDefaultInstance() {
+    public static org.qiunet.test.proto.HeaderProto.ErrorResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<ResponseCheck>
-        PARSER = new com.google.protobuf.AbstractParser<ResponseCheck>() {
-      public ResponseCheck parsePartialFrom(
+    private static final com.google.protobuf.Parser<ErrorResponse>
+        PARSER = new com.google.protobuf.AbstractParser<ErrorResponse>() {
+      public ErrorResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new ResponseCheck(input, extensionRegistry);
+          return new ErrorResponse(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<ResponseCheck> parser() {
+    public static com.google.protobuf.Parser<ErrorResponse> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<ResponseCheck> getParserForType() {
+    public com.google.protobuf.Parser<ErrorResponse> getParserForType() {
       return PARSER;
     }
 
-    public org.qiunet.test.proto.HeaderProto.ResponseCheck getDefaultInstanceForType() {
+    public org.qiunet.test.proto.HeaderProto.ErrorResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1837,10 +1837,10 @@ public final class HeaderProto {
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_ResponseHeader_fieldAccessorTable;
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ResponseCheck_descriptor;
+    internal_static_ErrorResponse_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_ResponseCheck_fieldAccessorTable;
+      internal_static_ErrorResponse_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1852,7 +1852,7 @@ public final class HeaderProto {
     java.lang.String[] descriptorData = {
       "\n\014Header.proto\"+\n\rRequestHeader\022\r\n\005token" +
       "\030\001 \001(\t\022\013\n\003uid\030\002 \001(\005\"*\n\016ResponseHeader\022\013\n" +
-      "\003ret\030\001 \001(\005\022\013\n\003msg\030\002 \001(\t\"0\n\rResponseCheck" +
+      "\003ret\030\001 \001(\005\022\013\n\003msg\030\002 \001(\t\"0\n\rErrorResponse" +
       "\022\037\n\006header\030\001 \001(\0132\017.ResponseHeaderB$\n\025org" +
       ".qiunet.test.protoB\013HeaderProtob\006proto3"
     };
@@ -1880,11 +1880,11 @@ public final class HeaderProto {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_ResponseHeader_descriptor,
         new java.lang.String[] { "Ret", "Msg", });
-    internal_static_ResponseCheck_descriptor =
+    internal_static_ErrorResponse_descriptor =
       getDescriptor().getMessageTypes().get(2);
-    internal_static_ResponseCheck_fieldAccessorTable = new
+    internal_static_ErrorResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_ResponseCheck_descriptor,
+        internal_static_ErrorResponse_descriptor,
         new java.lang.String[] { "Header", });
   }
 
