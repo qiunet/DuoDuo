@@ -31,7 +31,7 @@ public interface IHandler<RequestData> {
 	 * 必须要sid 才能进入action
 	 * @return
 	 */
-	public boolean needSid();
+	public boolean needToken();
 	/***
 	 * 得到requestData的class
 	 */
