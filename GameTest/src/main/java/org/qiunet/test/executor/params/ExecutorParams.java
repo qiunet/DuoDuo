@@ -1,6 +1,7 @@
 package org.qiunet.test.executor.params;
 
 import org.qiunet.test.executor.IExecutorInitializer;
+import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
 import org.qiunet.utils.classScanner.IScannerHandler;
@@ -37,41 +38,49 @@ public class ExecutorParams {
 		return testCases;
 	}
 
-	public static Build custom(){
-		return new Build();
+	public static Builder custom(){
+		return new Builder();
 	}
 
-	public static class Build {
-		private Build(){}
+	public static class Builder {
+		private Builder(){}
 		private IRobotFactory robotFactory;
 		private IExecutorInitializer initializer;
 		private List<IScannerHandler> scannerHandlers = new ArrayList<>(3);
 		private List<ITestCase> testCases = new ArrayList<>(128);
 
-		public Build setInitializer(IExecutorInitializer initializer) {
+		public Builder setInitializer(IExecutorInitializer initializer) {
 			this.initializer = initializer;
 			return this;
 		}
 
-		public Build addTestCase(ITestCase testCase) {
+		public Builder addTestCase(ITestCase testCase) {
 			this.testCases.add(testCase);
 			return this;
 		}
 
-		public Build addScannerHandler(IScannerHandler scannerHandler) {
+		public Builder addScannerHandler(IScannerHandler scannerHandler) {
 			this.scannerHandlers.add(scannerHandler);
 			return this;
 		}
-		public Build setRobotFactory(IRobotFactory robotFactory) {
+		public Builder setRobotFactory(IRobotFactory robotFactory) {
 			this.robotFactory = robotFactory;
 			return this;
 		}
 
 		public ExecutorParams build(){
+			if (robotFactory == null) throw new IllegalArgumentException("robotFactory can not be null! ");
+			if (testCases.isEmpty()) throw new IllegalArgumentException("testCases is empty! must set ITestCase more than one.");
+
 			ExecutorParams params = new ExecutorParams();
 			params.robotFactory = this.robotFactory;
 			params.initializer = this.initializer;
 			params.testCases = Collections.unmodifiableList(testCases);
+			boolean hasResponseScanner = false;
+			for (IScannerHandler scannerHandler : scannerHandlers) {
+				if (hasResponseScanner = scannerHandler instanceof ResponseScannerHandler) break;
+			}
+			if (!hasResponseScanner) this.addScannerHandler(new ResponseScannerHandler());
 			params.scannerHandlers = Collections.unmodifiableList(scannerHandlers);
 			return params;
 		}
