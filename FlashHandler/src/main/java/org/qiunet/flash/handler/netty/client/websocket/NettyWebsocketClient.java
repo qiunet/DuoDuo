@@ -26,13 +26,13 @@ import java.net.URI;
  * 17/12/1
  */
 public class NettyWebsocketClient implements ILongConnClient {
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(1);
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 
 	public NettyWebsocketClient(URI uri, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 
-		NioEventLoopGroup group = new NioEventLoopGroup(1);
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
