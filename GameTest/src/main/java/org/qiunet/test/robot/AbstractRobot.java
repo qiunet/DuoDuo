@@ -40,6 +40,17 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 	}
 
 	@Override
+	public String getToken() {
+		return token;
+	}
+
+	@Override
+	public void setUidAndToken(int uid, String token) {
+		this.uid = uid;
+		this.token = token;
+	}
+
+	@Override
 	public void brokeRobot(String brokeReason) {
 		this.brokeReason = brokeReason;
 	}
@@ -60,7 +71,6 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 				// 如果条件不满足, 就终止的case
 				break;
 			}
-
 		}
 	}
 }

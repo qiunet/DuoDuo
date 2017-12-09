@@ -11,9 +11,9 @@ import java.util.List;
  * Created by qiunet.
  * 17/12/6
  */
-public class TestRobot extends AbstractRobot<DefaultRobotInfo> {
+public class Robot extends AbstractRobot<DefaultRobotInfo> {
 
-	public TestRobot(List<ITestCase> testCases, DefaultRobotInfo info) {
+	public Robot(List<ITestCase> testCases, DefaultRobotInfo info) {
 		super(testCases, info);
 	}
 }

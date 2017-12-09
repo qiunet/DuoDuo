@@ -14,6 +14,18 @@ public interface IRobot<Info extends IRobotInitInfo> extends Runnable, IRobotFun
 	 * @return
 	 */
 	int getUid();
+
+	/**
+	 * 得到token
+	 * @return
+	 */
+	String getToken();
+	/**
+	 * 登录后设置 uid  token
+	 * @param uid
+	 * @param token
+	 */
+	void setUidAndToken(int uid, String token);
 	/**
 	 *
 	 * @return

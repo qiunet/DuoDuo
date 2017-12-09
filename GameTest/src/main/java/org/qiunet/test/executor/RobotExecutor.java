@@ -2,8 +2,8 @@ package org.qiunet.test.executor;
 
 
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
+import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;
 import org.qiunet.utils.logger.LoggerManager;
@@ -24,11 +24,14 @@ public final class RobotExecutor {
 		this.pressureTesting(1);
 	}
 
+	public RobotExecutor(ExecutorParams.Builder builder){
+		this(builder.build());
+	}
+
 	public RobotExecutor(ExecutorParams params){
 		this.params = params;
 		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
 		logger.error("-------测试初始化开始-------");
-		scannerAllClassFile.addScannerHandler(new ResponseScannerHandler());
 		for (IScannerHandler scannerHandler : params.getScannerHandlers()) {
 			scannerAllClassFile.addScannerHandler(scannerHandler);
 		}
@@ -56,5 +59,7 @@ public final class RobotExecutor {
 		for (int i = 0; i < robotCount; i++) {
 			new Thread(params.getRobotFactory().createRobot(params.getTestCases()), "Pressure_Testing_Thread_"+i).start();
 		}
+
+		NettyHttpClient.shutdown();
 	}
 }

@@ -3,6 +3,7 @@ package org.qiunet.test.testcase.http;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import org.qiunet.flash.handler.context.header.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
@@ -26,6 +27,15 @@ public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends 
 		MessageContent content = buildRequest(robot);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(content.bytes());
 		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf , getServerUri().toString());
+		if (httpResponse == null) {
+			robot.brokeRobot("http response is null .server maybe was shutdown!");
+			return;
+		}
+
+		if (httpResponse.status() != HttpResponseStatus.OK) {
+			robot.brokeRobot("http status not 200");
+			return;
+		}
 		new ProtocolHeader(httpResponse.content());
 		byte [] bytes = new byte[httpResponse.content().readableBytes()];
 		httpResponse.content().readBytes(bytes);
