@@ -9,7 +9,7 @@ import org.qiunet.test.server.IServer;
  * Created by qiunet.
  * 17/11/24
  */
-public interface IRobot<Info extends IRobotInitInfo> extends Runnable {
+public interface IRobot<Info extends IRobotInitInfo> extends Runnable, IRobotFunc {
 	/***
 	 *
 	 * @return
