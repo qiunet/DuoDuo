@@ -1,8 +1,7 @@
 package org.qiunet.test.robot;
 
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+
 import org.qiunet.test.robot.init.IRobotInitInfo;
-import org.qiunet.test.server.IServer;
 
 /**
  * 机器人的接口
@@ -25,16 +24,4 @@ public interface IRobot<Info extends IRobotInitInfo> extends Runnable, IRobotFun
 	 * 一般是服务器返回登录不成功 创建角色不成功等.
 	 */
 	void brokeRobot(String brokeReason);
-
-	/**
-	 * 阻塞等待某个响应id
-	 * @param id
-	 */
-	void parkForResponseID(int id);
-	/***
-	 * 得到长连接客户端的对象
-	 * @param Server
-	 * @return
-	 */
-	ILongConnClient getLongConnClient(IServer Server);
 }
