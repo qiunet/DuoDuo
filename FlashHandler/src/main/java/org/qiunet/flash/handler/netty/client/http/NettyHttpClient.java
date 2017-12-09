@@ -37,6 +37,13 @@ import java.net.URI;
 public final class NettyHttpClient {
 	private static NioEventLoopGroup group = new NioEventLoopGroup(1);
 
+	/**
+	 * 需要关闭NioEventLoop
+	 */
+	public static void shutdown(){
+		group.shutdownGracefully();
+	}
+
 	/***
 	 * 不阻塞的方式请求.
 	 * @param byteBuf
