@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class Robot extends AbstractRobot<DefaultRobotInfo> {
 	public RobotPackData packData = new RobotPackData();
+	/**累计天数*/
+	public int counterDays;
 
 	public Robot(List<ITestCase> testCases, DefaultRobotInfo info) {
 		super(testCases, info);

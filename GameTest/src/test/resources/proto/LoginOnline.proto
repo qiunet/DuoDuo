@@ -15,4 +15,5 @@ message LoginOnlineRequest {
 // 登录请求响应
 message LoginOnlineResponse {
 	ResponseHeader header = 1;
+	int32 day = 2;			// 需要一个数字. 否则没有东西序列化出来
 }

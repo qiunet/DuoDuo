@@ -590,6 +590,15 @@ public final class LoginOnlineProto {
      * <code>.ResponseHeader header = 1;</code>
      */
     org.qiunet.test.proto.HeaderProto.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <pre>
+     * 需要一个数字. 否则没有东西序列化出来
+     * </pre>
+     *
+     * <code>int32 day = 2;</code>
+     */
+    int getDay();
   }
   /**
    * <pre>
@@ -607,6 +616,7 @@ public final class LoginOnlineProto {
       super(builder);
     }
     private LoginOnlineResponse() {
+      day_ = 0;
     }
 
     @java.lang.Override
@@ -645,6 +655,11 @@ public final class LoginOnlineProto {
                 header_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 16: {
+
+              day_ = input.readInt32();
               break;
             }
           }
@@ -691,6 +706,19 @@ public final class LoginOnlineProto {
       return getHeader();
     }
 
+    public static final int DAY_FIELD_NUMBER = 2;
+    private int day_;
+    /**
+     * <pre>
+     * 需要一个数字. 否则没有东西序列化出来
+     * </pre>
+     *
+     * <code>int32 day = 2;</code>
+     */
+    public int getDay() {
+      return day_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -706,6 +734,9 @@ public final class LoginOnlineProto {
       if (header_ != null) {
         output.writeMessage(1, getHeader());
       }
+      if (day_ != 0) {
+        output.writeInt32(2, day_);
+      }
     }
 
     public int getSerializedSize() {
@@ -716,6 +747,10 @@ public final class LoginOnlineProto {
       if (header_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getHeader());
+      }
+      if (day_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, day_);
       }
       memoizedSize = size;
       return size;
@@ -738,6 +773,8 @@ public final class LoginOnlineProto {
         result = result && getHeader()
             .equals(other.getHeader());
       }
+      result = result && (getDay()
+          == other.getDay());
       return result;
     }
 
@@ -752,6 +789,8 @@ public final class LoginOnlineProto {
         hash = (37 * hash) + HEADER_FIELD_NUMBER;
         hash = (53 * hash) + getHeader().hashCode();
       }
+      hash = (37 * hash) + DAY_FIELD_NUMBER;
+      hash = (53 * hash) + getDay();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -880,6 +919,8 @@ public final class LoginOnlineProto {
           header_ = null;
           headerBuilder_ = null;
         }
+        day_ = 0;
+
         return this;
       }
 
@@ -907,6 +948,7 @@ public final class LoginOnlineProto {
         } else {
           result.header_ = headerBuilder_.build();
         }
+        result.day_ = day_;
         onBuilt();
         return result;
       }
@@ -950,6 +992,9 @@ public final class LoginOnlineProto {
         if (other == org.qiunet.test.proto.LoginOnlineProto.LoginOnlineResponse.getDefaultInstance()) return this;
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
+        }
+        if (other.getDay() != 0) {
+          setDay(other.getDay());
         }
         onChanged();
         return this;
@@ -1093,6 +1138,44 @@ public final class LoginOnlineProto {
         }
         return headerBuilder_;
       }
+
+      private int day_ ;
+      /**
+       * <pre>
+       * 需要一个数字. 否则没有东西序列化出来
+       * </pre>
+       *
+       * <code>int32 day = 2;</code>
+       */
+      public int getDay() {
+        return day_;
+      }
+      /**
+       * <pre>
+       * 需要一个数字. 否则没有东西序列化出来
+       * </pre>
+       *
+       * <code>int32 day = 2;</code>
+       */
+      public Builder setDay(int value) {
+        
+        day_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 需要一个数字. 否则没有东西序列化出来
+       * </pre>
+       *
+       * <code>int32 day = 2;</code>
+       */
+      public Builder clearDay() {
+        
+        day_ = 0;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -1163,9 +1246,10 @@ public final class LoginOnlineProto {
     java.lang.String[] descriptorData = {
       "\n\021LoginOnline.proto\032\014Header.proto\"4\n\022Log" +
       "inOnlineRequest\022\036\n\006header\030\001 \001(\0132\016.Reques" +
-      "tHeader\"6\n\023LoginOnlineResponse\022\037\n\006header" +
-      "\030\001 \001(\0132\017.ResponseHeaderB)\n\025org.qiunet.te" +
-      "st.protoB\020LoginOnlineProtob\006proto3"
+      "tHeader\"C\n\023LoginOnlineResponse\022\037\n\006header" +
+      "\030\001 \001(\0132\017.ResponseHeader\022\013\n\003day\030\002 \001(\005B)\n\025" +
+      "org.qiunet.test.protoB\020LoginOnlineProtob" +
+      "\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1191,7 +1275,7 @@ public final class LoginOnlineProto {
     internal_static_LoginOnlineResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoginOnlineResponse_descriptor,
-        new java.lang.String[] { "Header", });
+        new java.lang.String[] { "Header", "Day", });
     org.qiunet.test.proto.HeaderProto.getDescriptor();
   }
 

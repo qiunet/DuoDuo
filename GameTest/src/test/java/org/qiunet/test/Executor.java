@@ -36,8 +36,8 @@ public class Executor {
 
 				.addTestCase(new TestLogin())
 				.addTestCase(new TestLoginOnline())
-				.addTestCase(new TestPlayerIndex())
-				.addTestCase(new TestLoginRoom())
+//				.addTestCase(new TestPlayerIndex())
+//				.addTestCase(new TestLoginRoom())
 
 				).testing();
 		server.shutdown();
