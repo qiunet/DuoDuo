@@ -147,4 +147,8 @@ public class NettyWebsocketClient implements ILongConnClient {
 			trigger.response(new MessageContent(header.getProtocolId() ,bytes));
 		}
 	}
+
+	public static void shutdown(){
+		if (! group.isShutdown()) group.shutdownGracefully();
+	}
 }

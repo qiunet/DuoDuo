@@ -3,6 +3,8 @@ package org.qiunet.test.executor;
 
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.test.executor.params.ExecutorParams;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.utils.classScanner.IScannerHandler;
@@ -78,6 +80,9 @@ public final class RobotExecutor {
 		}
 		logger.info("===============压测结束===============");
 		executor.shutdown();
+
+		NettyWebsocketClient.shutdown();
 		NettyHttpClient.shutdown();
+		NettyTcpClient.shutdown();
 	}
 }

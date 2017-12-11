@@ -52,6 +52,10 @@ public class NettyTcpClient implements ILongConnClient {
 		channelHandlerContext.channel().close();
 	}
 
+	public static void shutdown(){
+		if (! group.isShutdown()) group.shutdownGracefully();
+	}
+
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
