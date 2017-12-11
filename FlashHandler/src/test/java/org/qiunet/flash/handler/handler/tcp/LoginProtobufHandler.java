@@ -2,6 +2,8 @@ package org.qiunet.flash.handler.handler.tcp;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
+import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 
 /**
@@ -13,6 +15,6 @@ public class LoginProtobufHandler extends TcpProtobufHandler<LoginProto.LoginReq
 
 	@Override
 	public void handler(ITcpRequest<LoginProto.LoginRequest> context) {
-		context.response(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build());
+		ResponseMsgUtil.responseTcpMessage(context.channel().id().asLongText(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
 	}
 }
