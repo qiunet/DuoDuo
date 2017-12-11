@@ -1,6 +1,6 @@
 package org.qiunet.test.TestCase.login;
 
-import org.qiunet.test.TestCase.BaseOnlineTestCase;
+import org.qiunet.test.TestCase.base.BaseOnlineTestCase;
 import org.qiunet.test.proto.LoginOnlineProto;
 import org.qiunet.test.robot.Robot;
 import org.qiunet.utils.string.StringUtil;

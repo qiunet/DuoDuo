@@ -1,6 +1,6 @@
 package org.qiunet.test.TestCase.login;
 
-import org.qiunet.test.TestCase.BaseLogicTestCase;
+import org.qiunet.test.TestCase.base.BaseLogicTestCase;
 import org.qiunet.test.proto.LoginProto;
 import org.qiunet.test.robot.Robot;
 

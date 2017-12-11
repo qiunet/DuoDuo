@@ -21,7 +21,7 @@ public abstract class ProtobufResponse<ResponseData, Robot extends IRobot> imple
 				continue;
 			}
 
-			this.responseDataClass = (Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[1];
+			this.responseDataClass = (Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
 			break;
 		}while (clazz != Object.class);
 	}

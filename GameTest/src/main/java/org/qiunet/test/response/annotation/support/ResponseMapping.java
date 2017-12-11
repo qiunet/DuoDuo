@@ -2,6 +2,9 @@ package org.qiunet.test.response.annotation.support;
 
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.utils.exceptions.SingletonException;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +14,7 @@ import java.util.Map;
  * 17/12/6
  */
 public class ResponseMapping {
-
+	private QLogger logger = LoggerManager.getLogger(LoggerType.GAME_TEST);
 	private volatile static ResponseMapping instance;
 	private Map<Integer, ILongConnResponse> gameResponses = new HashMap<>();
 
@@ -49,6 +52,9 @@ public class ResponseMapping {
 	}
 
 	public ILongConnResponse getResponse(int responseId) {
+		if (!gameResponses.containsKey(responseId)) {
+			logger.error("Response ID ["+responseId+"] was not define");
+		}
 		return gameResponses.get(responseId);
 	}
 }

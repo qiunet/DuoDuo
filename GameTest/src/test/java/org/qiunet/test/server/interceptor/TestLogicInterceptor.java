@@ -1,4 +1,4 @@
-package org.qiunet.test.interceptor;
+package org.qiunet.test.server.interceptor;
 
 import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
@@ -11,7 +11,7 @@ import org.qiunet.test.proto.HeaderProto;
  * Created by qiunet.
  * 17/12/9
  */
-public class TestHttpInterceptor implements HttpInterceptor {
+public class TestLogicInterceptor implements HttpInterceptor {
 	@Override
 	public Object handler(IHttpHandler handler, IHttpRequest request) {
 		if (handler.needToken()) {

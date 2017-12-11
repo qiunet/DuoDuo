@@ -1,4 +1,4 @@
-package org.qiunet.test.server;
+package org.qiunet.test.server.handler;
 
 /**
  * 有个规则就行. 主要是验证

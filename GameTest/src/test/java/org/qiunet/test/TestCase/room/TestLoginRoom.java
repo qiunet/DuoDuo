@@ -1,6 +1,6 @@
 package org.qiunet.test.TestCase.room;
 
-import org.qiunet.test.TestCase.BaseRoomTestCase;
+import org.qiunet.test.TestCase.base.BaseRoomTestCase;
 import org.qiunet.test.proto.LoginRoomProto;
 import org.qiunet.test.robot.Robot;
 import org.qiunet.utils.string.StringUtil;

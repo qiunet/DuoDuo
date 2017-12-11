@@ -7,12 +7,13 @@ import org.qiunet.test.TestCase.player.TestPlayerIndex;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
 import org.qiunet.test.executor.RobotExecutor;
 import org.qiunet.test.executor.params.ExecutorParams;
+import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.Robot;
 import org.qiunet.test.robot.init.DefaultRobotInfo;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.server.ServerStartup;
-import org.qiunet.test.server.ServerUidAndTokenBuilder;
+import org.qiunet.test.server.handler.ServerUidAndTokenBuilder;
 import org.qiunet.test.testcase.ITestCase;
 
 import java.util.List;
@@ -30,12 +31,13 @@ public class Executor {
 		server.startup();
 		new RobotExecutor(ExecutorParams.custom()
 				.addScannerHandler(new RequestScannerHandler())
+				.addScannerHandler(new ResponseScannerHandler())
 				.setRobotFactory(new RobotFactory())
 
 				.addTestCase(new TestLogin())
-//				.addTestCase(new TestLoginOnline())
-//				.addTestCase(new TestPlayerIndex())
-//				.addTestCase(new TestLoginRoom())
+				.addTestCase(new TestLoginOnline())
+				.addTestCase(new TestPlayerIndex())
+				.addTestCase(new TestLoginRoom())
 
 				).testing();
 		server.shutdown();

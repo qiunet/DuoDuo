@@ -1,10 +1,10 @@
-package org.qiunet.test.TestCase;
+package org.qiunet.test.TestCase.base;
 
 import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.test.proto.HeaderProto;
 import org.qiunet.test.robot.Robot;
 import org.qiunet.test.server.IServer;
-import org.qiunet.test.server.ServerType;
+import org.qiunet.test.server.type.ServerType;
 import org.qiunet.test.testcase.LongConn.LongConnProtobufTestCase;
 
 /**

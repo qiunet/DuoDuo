@@ -4,7 +4,12 @@ package org.qiunet.test.server;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.test.interceptor.TestHttpInterceptor;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.test.server.error.ErrorHandler;
+import org.qiunet.test.server.interceptor.TestLogicInterceptor;
+import org.qiunet.test.server.interceptor.TestOnlineInterceptor;
+import org.qiunet.test.server.interceptor.TestRoomInterceptor;
+import org.qiunet.test.server.type.ServerType;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
@@ -29,14 +34,18 @@ public final class ServerStartup {
 			public void run() {
 				BootstrapServer server = BootstrapServer.createBootstrap(hook);
 				server.httpListener(HttpBootstrapParams.custom()
-						.setHttpInterceptor(new TestHttpInterceptor())
+						.setHttpInterceptor(new TestLogicInterceptor())
 						.setPort(ServerType.HTTP_LOGIC.uri().getPort())
+						.setWebSocketInterceptor(new TestOnlineInterceptor())
+						.setErrorMessage(new ErrorHandler())
+						.setWebsocketPath("/ws")
 						.build());
 
-//				server.tcpListener(TcpBootstrapParams.custom()
-//						.setPort(ServerType.LC_ONLINE.uri().getPort())
-//
-//						.build());
+				server.tcpListener(TcpBootstrapParams.custom()
+						.setPort(ServerType.LC_ROOM.uri().getPort())
+						.setTcpInterceptor(new TestRoomInterceptor())
+						.setErrorMessage(new ErrorHandler())
+						.build());
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {

@@ -18,7 +18,7 @@ public class ResponseScannerHandler implements IScannerHandler {
 	public boolean matchClazz(Class clazz) {
 		return clazz.getAnnotation(Response.class) != null
 				&& ! Modifier.isAbstract(clazz.getModifiers())
-				&& IHandler.class.isAssignableFrom(clazz);
+				&& ILongConnResponse.class.isAssignableFrom(clazz);
 	}
 
 	@Override

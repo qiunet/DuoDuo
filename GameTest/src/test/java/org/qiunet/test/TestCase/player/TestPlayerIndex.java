@@ -1,6 +1,6 @@
 package org.qiunet.test.TestCase.player;
 
-import org.qiunet.test.TestCase.BaseOnlineTestCase;
+import org.qiunet.test.TestCase.base.BaseOnlineTestCase;
 import org.qiunet.test.proto.PlayerIndexProto;
 import org.qiunet.test.robot.Robot;
 

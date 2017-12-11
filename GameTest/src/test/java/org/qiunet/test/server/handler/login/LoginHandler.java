@@ -1,10 +1,10 @@
-package org.qiunet.test.server.login;
+package org.qiunet.test.server.handler.login;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.http.HttpProtobufHandler;
 import org.qiunet.test.proto.LoginProto;
-import org.qiunet.test.server.ServerUidAndTokenBuilder;
+import org.qiunet.test.server.handler.ServerUidAndTokenBuilder;
 
 /**
  * Created by qiunet.

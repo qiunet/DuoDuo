@@ -1,4 +1,4 @@
-package org.qiunet.test.server.room;
+package org.qiunet.test.server.handler.room;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
