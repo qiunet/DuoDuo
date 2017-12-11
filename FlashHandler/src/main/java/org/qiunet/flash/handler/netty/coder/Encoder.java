@@ -18,19 +18,6 @@ public class Encoder extends MessageToByteEncoder<MessageContent> {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
-		ProtocolHeader header = fillProtocolHeader(msg.getProtocolId(), msg.bytes());
-		header.writeToByteBuf(out);
-		out.writeBytes(msg.bytes());
-	}
-
-	/**
-	 * 通过消息的bytes 填充header
-	 * @param bytes
-	 * @return
-	 */
-	private ProtocolHeader fillProtocolHeader(int protocolId, byte [] bytes) {
-		int length = bytes.length;
-		int crc = (int) CrcUtil.getCrc32Value(bytes);
-		return new ProtocolHeader(length, protocolId, crc);
+		out.writeBytes(msg.encodeToByteBuf());
 	}
 }

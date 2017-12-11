@@ -53,11 +53,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	}
 	@Override
 	public void sendMessage(MessageContent content){
-		ProtocolHeader header = new ProtocolHeader(content.bytes().length, content.getProtocolId(), (int) CrcUtil.getCrc32Value(content.bytes()));
-		ByteBuf byteBuf = Unpooled.buffer();
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(content.bytes());
-		channelHandlerContext.channel().writeAndFlush(new BinaryWebSocketFrame(byteBuf));
+		channelHandlerContext.channel().writeAndFlush(new BinaryWebSocketFrame(content.encodeToByteBuf()));
 	}
 
 	@Override

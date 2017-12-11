@@ -26,12 +26,7 @@ public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends 
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
-		ByteBuf byteBuf = Unpooled.buffer();
-
-		ProtocolHeader header = new ProtocolHeader(content.bytes().length, content.getProtocolId(), (int) CrcUtil.getCrc32Value(content.bytes()));
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(content.bytes());
-		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf , getServerUri().toString());
+		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(content.encodeToByteBuf() , getServerUri().toString());
 		if (httpResponse == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;

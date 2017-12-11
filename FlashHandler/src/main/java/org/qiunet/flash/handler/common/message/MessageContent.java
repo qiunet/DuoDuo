@@ -1,5 +1,10 @@
 package org.qiunet.flash.handler.common.message;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
+
 /**
  *  上下行消息的封装类.
  *  netty 只跟byte数组打交道.
@@ -22,5 +27,17 @@ public class MessageContent {
 
 	public byte [] bytes() {
 		return bytes;
+	}
+
+	/***
+	 * 把header信息也encode 进去. 返回bytebuf
+	 * @return
+	 */
+	public ByteBuf encodeToByteBuf(){
+		ByteBuf byteBuf = Unpooled.buffer();
+		ProtocolHeader header = new ProtocolHeader(bytes.length, protocolId, (int) CrcUtil.getCrc32Value(bytes));
+		header.writeToByteBuf(byteBuf);
+		byteBuf.writeBytes(bytes);
+		return byteBuf;
 	}
 }
