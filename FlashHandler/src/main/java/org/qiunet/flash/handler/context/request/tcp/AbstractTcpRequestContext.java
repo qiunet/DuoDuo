@@ -5,6 +5,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
+import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
 import java.net.InetSocketAddress;
@@ -27,16 +29,14 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 
 	@Override
 	public void response(int protocolId, Object data) {
-		byte [] bytes = getResponseDataBytes((ResponseData) data);
-		MessageContent content = new MessageContent(protocolId, bytes);
-		this.ctx.writeAndFlush(content);
+		ResponseMsgUtil.responseTcpMessage(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
 	}
 	/***
 	 * 得到responseData的数组数据
 	 * @param responseData
 	 * @return
 	 */
-	protected abstract byte[] getResponseDataBytes(ResponseData responseData);
+	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
 
 	@Override
 	public String getRemoteAddress() {

@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import io.netty.channel.Channel;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 
@@ -16,9 +18,17 @@ public class ResponseMsgUtil {
 	 */
 	public static void responseTcpMessage(String channelLongId, IMessage message) {
 		ISession session = SessionManager.getInstance().getSession(channelLongId);
-		session.writeAndFlush(message.encode());
+		responseTcpMessage(session.getChannel(), message);
 	}
 
+	/***
+	 * 推送一个普通socket message 给指定的客户端
+	 * @param channel
+	 * @param message
+	 */
+	public static void responseTcpMessage(Channel channel, IMessage message) {
+		channel.writeAndFlush(message.encode());
+	}
 	/***
 	 * 推送一个Websocket message 给指定的客户端
 	 * @param channelLongId
@@ -26,6 +36,14 @@ public class ResponseMsgUtil {
 	 */
 	public static void responseWebsocketMessage(String channelLongId, IMessage message) {
 		ISession session = SessionManager.getInstance().getSession(channelLongId);
-		session.getChannel().writeAndFlush(message.encode().encodeToByteBuf());
+		responseWebsocketMessage(session.getChannel(), message);
+	}
+	/***
+	 * 推送一个Websocket message 给指定的客户端
+	 * @param channel
+	 * @param message
+	 */
+	public static void responseWebsocketMessage(Channel channel, IMessage message) {
+		channel.writeAndFlush(new BinaryWebSocketFrame(message.encode().encodeToByteBuf()));
 	}
 }

@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.request.websocket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
+import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
@@ -33,8 +35,8 @@ public class WebSocketStringRequestContext extends AbstractWebSocketRequestConte
 	}
 
 	@Override
-	protected byte[] getResponseDataBytes(String data) {
-		return data.getBytes(CharsetUtil.UTF_8);
+	protected IMessage getResponseMessage(int protocolId, String s) {
+		return new DefaultStringMessage(protocolId, s);
 	}
 
 	@Override

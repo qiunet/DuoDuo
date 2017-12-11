@@ -1,11 +1,10 @@
 package org.qiunet.flash.handler.context.response.push;
 
-import com.google.protobuf.GeneratedMessageV3;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
- * 默认的protobuf 的message
+ * 默认的string 的message
  * Created by qiunet.
  * 17/12/11
  */

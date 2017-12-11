@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.request.tcp;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
+import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
@@ -21,8 +23,8 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	}
 
 	@Override
-	protected byte[] getResponseDataBytes(String s) {
-		return s.getBytes(CharsetUtil.UTF_8);
+	protected IMessage getResponseMessage(int protocolId, String s) {
+		return new DefaultStringMessage(protocolId, s);
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.request.tcp;
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
+import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
@@ -34,8 +36,8 @@ public class TcpProtobufRequestContext<RequestData> extends AbstractTcpRequestCo
 	}
 
 	@Override
-	protected byte[] getResponseDataBytes(GeneratedMessageV3 generatedMessageV3) {
-		return generatedMessageV3.toByteArray();
+	protected IMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
+		return new DefaultProtobufMessage(protocolId, generatedMessageV3);
 	}
 
 	@Override

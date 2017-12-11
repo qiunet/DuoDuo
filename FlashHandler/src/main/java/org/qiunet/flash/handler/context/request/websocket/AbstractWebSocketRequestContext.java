@@ -10,6 +10,8 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
+import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
@@ -33,28 +35,19 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 
 	@Override
 	public void response(int protocolId, Object data) {
-		this.ctx.writeAndFlush(encode(protocolId, (ResponseData) data));
+		ResponseMsgUtil.responseWebsocketMessage(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
 	}
 
 	@Override
 	public Channel channel() {
 		return ctx.channel();
 	}
-
-	/***
-	 * 序列化
-	 * @param protocolId
-	 * @param data
-	 */
-	private BinaryWebSocketFrame encode(int protocolId, ResponseData data){
-		return new BinaryWebSocketFrame(new MessageContent(protocolId, getResponseDataBytes(data)).encodeToByteBuf());
-	}
 	/***
 	 * 得到responseData的数组数据
 	 * @param responseData
 	 * @return
 	 */
-	protected abstract byte[] getResponseDataBytes(ResponseData responseData);
+	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
 	@Override
 	public String getRemoteAddress() {
 		String ip = "";
