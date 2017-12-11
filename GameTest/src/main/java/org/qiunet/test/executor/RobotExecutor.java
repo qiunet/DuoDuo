@@ -10,6 +10,10 @@ import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 /**
  * Created by qiunet.
  * 17/11/24
@@ -56,10 +60,31 @@ public final class RobotExecutor {
 	public void pressureTesting(int robotCount) {
 		if (robotCount < 1) throw new IllegalArgumentException("robot count can not less than 1! ");
 
-		for (int i = 0; i < robotCount; i++) {
-			new Thread(params.getRobotFactory().createRobot(params.getTestCases()), "Pressure_Testing_Thread_"+i).start();
-		}
+		Map<String, Thread> allThread = new HashMap<>();
 
+		logger.info("===============压测开始===============");
+		for (int i = 0; i < robotCount; i++) {
+			String threadName = "Pressure_Testing_Thread_"+i;
+			Thread thread = new Thread(params.getRobotFactory().createRobot(params.getTestCases()), threadName);
+			thread.start();
+
+			allThread.put(threadName, thread);
+		}
+		/***阻断  直到所有的thread都结束*/
+		do {
+			Iterator<Map.Entry<String,Thread>> it = allThread.entrySet().iterator();
+			while(it.hasNext()){
+				Map.Entry<String,Thread> en = it.next();
+				if (! en.getValue().isAlive()) it.remove();
+			}
+
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} while (! allThread.isEmpty());
+		logger.info("===============压测结束===============");
 		NettyHttpClient.shutdown();
 	}
 }

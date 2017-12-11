@@ -10,16 +10,21 @@ import org.qiunet.test.server.ServerUidAndTokenBuilder;
  * Created by qiunet.
  * 17/12/8
  */
-@RequestHandler(ID = 1001, desc = "http 版本的登录")
-public class LoginHttpHandler extends HttpProtobufHandler<LoginProto.LoginRequest , LoginProto.LoginResponse> {
+@RequestHandler(ID = 1000, desc = "http登录")
+public class LoginHandler extends HttpProtobufHandler<LoginProto.LoginRequest , LoginProto.LoginResponse> {
 	@Override
 	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request) {
-		logger.info("LoginHttpHandler: "+request.getRequestData()+ " Address: "+request.getRemoteAddress());
+		logger.info("LoginHandler: "+request.getRequestData()+ " Address: "+request.getRemoteAddress());
 
 		return  LoginProto.LoginResponse.newBuilder()
 				.setUid(ServerUidAndTokenBuilder.getUid(request.getRequestData().getOpenid()))
 				.setToken(ServerUidAndTokenBuilder.getToken(request.getRequestData().getOpenid()))
 				.setRegistered(true)
 				.build();
+	}
+
+	@Override
+	public boolean needToken() {
+		return false;
 	}
 }

@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.testcase.ITestCase;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.net.URI;
 
@@ -25,7 +26,11 @@ public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends 
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(content.bytes());
+		ByteBuf byteBuf = Unpooled.buffer();
+
+		ProtocolHeader header = new ProtocolHeader(content.bytes().length, content.getProtocolId(), (int) CrcUtil.getCrc32Value(content.bytes()));
+		header.writeToByteBuf(byteBuf);
+		byteBuf.writeBytes(content.bytes());
 		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf , getServerUri().toString());
 		if (httpResponse == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");

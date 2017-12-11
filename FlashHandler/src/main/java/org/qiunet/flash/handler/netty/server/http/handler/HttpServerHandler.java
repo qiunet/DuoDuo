@@ -98,7 +98,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	}
 
 	/***
-	 * 处理其它请求
+	 * 处理游戏请求
 	 * @return
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
