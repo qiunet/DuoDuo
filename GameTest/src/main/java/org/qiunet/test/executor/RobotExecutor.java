@@ -4,15 +4,18 @@ package org.qiunet.test.executor;
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.test.executor.params.ExecutorParams;
+import org.qiunet.test.robot.IRobot;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Created by qiunet.
@@ -60,31 +63,20 @@ public final class RobotExecutor {
 	public void pressureTesting(int robotCount) {
 		if (robotCount < 1) throw new IllegalArgumentException("robot count can not less than 1! ");
 
-		Map<String, Thread> allThread = new HashMap<>();
-
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(50, 100, 2 , TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(600), new DefaultThreadFactory("Pressure_Testing_Thread_"));
 		logger.info("===============压测开始===============");
 		for (int i = 0; i < robotCount; i++) {
-			String threadName = "Pressure_Testing_Thread_"+i;
-			Thread thread = new Thread(params.getRobotFactory().createRobot(params.getTestCases()), threadName);
-			thread.start();
-
-			allThread.put(threadName, thread);
+			executor.submit(params.getRobotFactory().createRobot(params.getTestCases()));
 		}
-		/***阻断  直到所有的thread都结束*/
-		do {
-			Iterator<Map.Entry<String,Thread>> it = allThread.entrySet().iterator();
-			while(it.hasNext()){
-				Map.Entry<String,Thread> en = it.next();
-				if (! en.getValue().isAlive()) it.remove();
-			}
-
+		while (executor.getActiveCount() != 0) {
 			try {
-				Thread.sleep(20);
+				Thread.sleep(2);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} while (! allThread.isEmpty());
+		}
 		logger.info("===============压测结束===============");
+		executor.shutdown();
 		NettyHttpClient.shutdown();
 	}
 }
