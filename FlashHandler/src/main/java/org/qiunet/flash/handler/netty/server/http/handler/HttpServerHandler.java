@@ -87,12 +87,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
 		WebsocketServerHandler websocketServerHandler = new WebsocketServerHandler(params);
-
-		ChannelPipeline pipeline = ctx.channel().pipeline();
-		pipeline.addLast(new WebSocketServerCompressionHandler());
-//		pipeline.addLast(new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, true));
-		pipeline.addLast(websocketServerHandler);
-
 		websocketServerHandler.handlerWebSocketHandshark(ctx, request);
 	}
 

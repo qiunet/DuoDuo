@@ -9,6 +9,7 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
@@ -34,12 +35,9 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 				public void run() {
 					for (int i = 0; i < requestCount/threadCount; i++) {
 						final String test = "[测试testHttpProtobuf]"+i;
-						byte [] bytes = test.getBytes(CharsetUtil.UTF_8);
-						ByteBuf byteBuf = Unpooled.buffer();
-						ProtocolHeader header = new ProtocolHeader(bytes.length, 1000, (int) CrcUtil.getCrc32Value(bytes));
-						header.writeToByteBuf(byteBuf);
-						byteBuf.writeBytes(bytes);
-						NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/f" , new IHttpResponseTrigger() {
+
+						MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
+						NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f" , new IHttpResponseTrigger() {
 							@Override
 							public void response(FullHttpResponse response) {
 								Assert.assertEquals(response.status() , HttpResponseStatus.OK);

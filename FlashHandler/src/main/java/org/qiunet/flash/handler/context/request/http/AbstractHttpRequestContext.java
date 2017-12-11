@@ -114,15 +114,14 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
 		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
-		ByteBuf content = Unpooled.buffer();
+		ByteBuf content;
 		if (getUriPath() == params.getGameURIPath()) {
 			// 不是游戏业务. 不写业务头.
-			int crc = (int) CrcUtil.getCrc32Value(data);
-			ProtocolHeader header = new ProtocolHeader(data.length, messageContent.getProtocolId(), crc);
-
-			header.writeToByteBuf(content);
+			content = new MessageContent(messageContent.getProtocolId(), data).encodeToByteBuf();
+		}else {
+			content = Unpooled.buffer();
+			content.writeBytes(data);
 		}
-		content.writeBytes(data);
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
 				HTTP_1_1, OK,  content);

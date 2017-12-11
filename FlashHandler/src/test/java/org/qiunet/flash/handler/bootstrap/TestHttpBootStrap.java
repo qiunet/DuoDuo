@@ -9,6 +9,7 @@ import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
@@ -26,10 +27,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testOtherHttpProtobuf() throws InvalidProtocolBufferException {
 		final String test = "测试[testOtherHttpProtobuf]";
-		ByteBuf byteBuf = Unpooled.buffer();
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
-		byte [] bytes = request.toByteArray();
-		byteBuf.writeBytes(bytes);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(request.toByteArray());
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/protobufTest", new IHttpResponseTrigger() {
 			@Override
@@ -56,14 +55,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testHttpProtobuf() throws InvalidProtocolBufferException {
 		final String test = "[测试testHttpProtobuf]";
-		ByteBuf byteBuf = Unpooled.buffer();
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
-		byte [] bytes = request.toByteArray();
-		ProtocolHeader header = new ProtocolHeader(bytes.length, 1001, (int) CrcUtil.getCrc32Value(bytes));
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(bytes);
+		MessageContent content = new MessageContent(1001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/f", new IHttpResponseTrigger() {
+		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
 			@Override
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
@@ -91,14 +86,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testHttpString() throws InvalidProtocolBufferException {
 		final String test = "测试[testHttpString]";
-		ByteBuf byteBuf = Unpooled.buffer();
-		byte [] bytes = test.getBytes(CharsetUtil.UTF_8);
-		ProtocolHeader header = new ProtocolHeader(bytes.length, 1000, (int) CrcUtil.getCrc32Value(bytes));
-		header.writeToByteBuf(byteBuf);
-
-		byteBuf.writeBytes(bytes);
+		MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/f", new IHttpResponseTrigger() {
+		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
 			@Override
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);

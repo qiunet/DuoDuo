@@ -47,13 +47,7 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 	 * @param data
 	 */
 	private BinaryWebSocketFrame encode(int protocolId, ResponseData data){
-		byte [] bytes = getResponseDataBytes(data);
-		ProtocolHeader header = new ProtocolHeader(bytes.length, protocolId, (int) CrcUtil.getCrc32Value(bytes));
-		ByteBuf byteBuf = Unpooled.buffer();
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(bytes);
-		BinaryWebSocketFrame frame = new BinaryWebSocketFrame(byteBuf);
-		return frame;
+		return new BinaryWebSocketFrame(new MessageContent(protocolId, getResponseDataBytes(data)).encodeToByteBuf());
 	}
 	/***
 	 * 得到responseData的数组数据

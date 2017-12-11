@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -15,6 +16,8 @@ import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestConte
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.netty.coder.Decoder;
+import org.qiunet.flash.handler.netty.coder.Encoder;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
@@ -70,6 +73,10 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		}
 
 		this.handshaker.handshake(ctx.channel(), request);
+
+		ChannelPipeline pipeline = ctx.channel().pipeline();
+		pipeline.remove("HttpServerHandler");
+		pipeline.addLast("WebsocketServerHandler", this);
 	}
 
 	/***
