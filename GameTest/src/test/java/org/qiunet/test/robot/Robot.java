@@ -17,6 +17,8 @@ public class Robot extends AbstractRobot<DefaultRobotInfo> {
 	/**累计天数*/
 	public int counterDays;
 
+	public int roomSize;
+
 	public Robot(List<ITestCase> testCases, DefaultRobotInfo info) {
 		super(testCases, info);
 	}

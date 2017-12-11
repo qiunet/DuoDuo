@@ -87,7 +87,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 			return null;
 		}
 
-		if (header.getLength() <= 0 || header.getLength() > params.getMaxReceivedLength()) {
+		if (header.getLength() < 0 || header.getLength() > params.getMaxReceivedLength()) {
 			logger.error("Invalid message, length is error! length is : "+ header.getLength());
 			ctx.channel().close();
 			return null;

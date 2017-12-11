@@ -38,7 +38,7 @@ public class Decoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		if (header.getLength() <= 0 || header.getLength() > maxReceivedLength) {
+		if (header.getLength() < 0 || header.getLength() > maxReceivedLength) {
 			logger.error("Invalid message, length is error! length is : "+ header.getLength());
 			ctx.channel().close();
 			return;

@@ -47,6 +47,7 @@ public final class RobotExecutor {
 			GameCfgManagers.getInstance().initSetting();
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 		logger.error("-------测试初始化结束-------");
 

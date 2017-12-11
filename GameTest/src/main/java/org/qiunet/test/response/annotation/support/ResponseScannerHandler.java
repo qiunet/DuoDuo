@@ -16,20 +16,20 @@ import java.lang.reflect.Modifier;
 public class ResponseScannerHandler implements IScannerHandler {
 	@Override
 	public boolean matchClazz(Class clazz) {
-		return clazz.getAnnotation(Response.class) != null
-				&& ! Modifier.isAbstract(clazz.getModifiers())
-				&& ILongConnResponse.class.isAssignableFrom(clazz);
+		return  ILongConnResponse.class.isAssignableFrom(clazz)
+				&& ! Modifier.isAbstract(clazz.getModifiers());
 	}
 
 	@Override
 	public void handler(Class<?> clazz) {
-		Response reponseAnnotation = clazz.getAnnotation(Response.class);
+		Response responseAnnotation = clazz.getAnnotation(Response.class);
+		if (responseAnnotation == null) throw new NullPointerException("class ["+clazz.getSimpleName()+"] not define ID");
 		try {
 			Constructor<ILongConnResponse> constructor = (Constructor<ILongConnResponse>) clazz.getConstructor(null);
 			if (!constructor.isAccessible()) constructor.setAccessible(true);
 			ILongConnResponse response = constructor.newInstance();
 			if (response != null) {
-				ResponseMapping.getInstance().addResponse(reponseAnnotation.ID(), response);
+				ResponseMapping.getInstance().addResponse(responseAnnotation.ID(), response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

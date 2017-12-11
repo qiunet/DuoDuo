@@ -13,6 +13,7 @@ import org.qiunet.test.proto.LoginRoomProto;
 public class LoginRoomHandler extends TcpProtobufHandler<LoginRoomProto.LoginRoomRequest> {
 	@Override
 	public void handler(ITcpRequest<LoginRoomProto.LoginRoomRequest> context) {
-		context.response(1000003, LoginRoomProto.LoginRoomResponse.newBuilder().build());
+		logger.info("LoginRoomHandler received message "+context.getRequestData());
+		context.response(1000003, LoginRoomProto.LoginRoomResponse.newBuilder().setRoomSize(8).build());
 	}
 }

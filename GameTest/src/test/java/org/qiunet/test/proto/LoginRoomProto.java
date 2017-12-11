@@ -590,6 +590,15 @@ public final class LoginRoomProto {
      * <code>.ResponseHeader header = 1;</code>
      */
     org.qiunet.test.proto.HeaderProto.ResponseHeaderOrBuilder getHeaderOrBuilder();
+
+    /**
+     * <pre>
+     * 一个数字需要
+     * </pre>
+     *
+     * <code>int32 roomSize = 2;</code>
+     */
+    int getRoomSize();
   }
   /**
    * <pre>
@@ -607,6 +616,7 @@ public final class LoginRoomProto {
       super(builder);
     }
     private LoginRoomResponse() {
+      roomSize_ = 0;
     }
 
     @java.lang.Override
@@ -645,6 +655,11 @@ public final class LoginRoomProto {
                 header_ = subBuilder.buildPartial();
               }
 
+              break;
+            }
+            case 16: {
+
+              roomSize_ = input.readInt32();
               break;
             }
           }
@@ -691,6 +706,19 @@ public final class LoginRoomProto {
       return getHeader();
     }
 
+    public static final int ROOMSIZE_FIELD_NUMBER = 2;
+    private int roomSize_;
+    /**
+     * <pre>
+     * 一个数字需要
+     * </pre>
+     *
+     * <code>int32 roomSize = 2;</code>
+     */
+    public int getRoomSize() {
+      return roomSize_;
+    }
+
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
@@ -706,6 +734,9 @@ public final class LoginRoomProto {
       if (header_ != null) {
         output.writeMessage(1, getHeader());
       }
+      if (roomSize_ != 0) {
+        output.writeInt32(2, roomSize_);
+      }
     }
 
     public int getSerializedSize() {
@@ -716,6 +747,10 @@ public final class LoginRoomProto {
       if (header_ != null) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getHeader());
+      }
+      if (roomSize_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, roomSize_);
       }
       memoizedSize = size;
       return size;
@@ -738,6 +773,8 @@ public final class LoginRoomProto {
         result = result && getHeader()
             .equals(other.getHeader());
       }
+      result = result && (getRoomSize()
+          == other.getRoomSize());
       return result;
     }
 
@@ -752,6 +789,8 @@ public final class LoginRoomProto {
         hash = (37 * hash) + HEADER_FIELD_NUMBER;
         hash = (53 * hash) + getHeader().hashCode();
       }
+      hash = (37 * hash) + ROOMSIZE_FIELD_NUMBER;
+      hash = (53 * hash) + getRoomSize();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -880,6 +919,8 @@ public final class LoginRoomProto {
           header_ = null;
           headerBuilder_ = null;
         }
+        roomSize_ = 0;
+
         return this;
       }
 
@@ -907,6 +948,7 @@ public final class LoginRoomProto {
         } else {
           result.header_ = headerBuilder_.build();
         }
+        result.roomSize_ = roomSize_;
         onBuilt();
         return result;
       }
@@ -950,6 +992,9 @@ public final class LoginRoomProto {
         if (other == org.qiunet.test.proto.LoginRoomProto.LoginRoomResponse.getDefaultInstance()) return this;
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
+        }
+        if (other.getRoomSize() != 0) {
+          setRoomSize(other.getRoomSize());
         }
         onChanged();
         return this;
@@ -1093,6 +1138,44 @@ public final class LoginRoomProto {
         }
         return headerBuilder_;
       }
+
+      private int roomSize_ ;
+      /**
+       * <pre>
+       * 一个数字需要
+       * </pre>
+       *
+       * <code>int32 roomSize = 2;</code>
+       */
+      public int getRoomSize() {
+        return roomSize_;
+      }
+      /**
+       * <pre>
+       * 一个数字需要
+       * </pre>
+       *
+       * <code>int32 roomSize = 2;</code>
+       */
+      public Builder setRoomSize(int value) {
+        
+        roomSize_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 一个数字需要
+       * </pre>
+       *
+       * <code>int32 roomSize = 2;</code>
+       */
+      public Builder clearRoomSize() {
+        
+        roomSize_ = 0;
+        onChanged();
+        return this;
+      }
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
         return this;
@@ -1163,9 +1246,10 @@ public final class LoginRoomProto {
     java.lang.String[] descriptorData = {
       "\n\017LoginRoom.proto\032\014Header.proto\"2\n\020Login" +
       "RoomRequest\022\036\n\006header\030\001 \001(\0132\016.RequestHea" +
-      "der\"4\n\021LoginRoomResponse\022\037\n\006header\030\001 \001(\013" +
-      "2\017.ResponseHeaderB\'\n\025org.qiunet.test.pro" +
-      "toB\016LoginRoomProtob\006proto3"
+      "der\"F\n\021LoginRoomResponse\022\037\n\006header\030\001 \001(\013" +
+      "2\017.ResponseHeader\022\020\n\010roomSize\030\002 \001(\005B\'\n\025o" +
+      "rg.qiunet.test.protoB\016LoginRoomProtob\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -1191,7 +1275,7 @@ public final class LoginRoomProto {
     internal_static_LoginRoomResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_LoginRoomResponse_descriptor,
-        new java.lang.String[] { "Header", });
+        new java.lang.String[] { "Header", "RoomSize", });
     org.qiunet.test.proto.HeaderProto.getDescriptor();
   }
 
