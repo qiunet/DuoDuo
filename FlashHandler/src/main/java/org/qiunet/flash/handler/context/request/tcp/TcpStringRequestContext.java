@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;

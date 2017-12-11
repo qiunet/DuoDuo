@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 

@@ -5,7 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.Decoder;

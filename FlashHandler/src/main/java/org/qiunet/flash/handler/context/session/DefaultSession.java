@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * Created by qiunet.

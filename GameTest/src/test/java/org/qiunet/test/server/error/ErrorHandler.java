@@ -1,6 +1,6 @@
 package org.qiunet.test.server.error;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 /**

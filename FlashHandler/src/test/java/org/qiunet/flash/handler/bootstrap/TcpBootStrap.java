@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;

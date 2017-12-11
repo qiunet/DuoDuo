@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.server.tcp.error;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * 对错误进行封装

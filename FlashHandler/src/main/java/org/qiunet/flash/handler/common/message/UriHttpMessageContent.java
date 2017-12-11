@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.context.header;
+package org.qiunet.flash.handler.common.message;
 
 /**
  * Created by qiunet.

@@ -1,7 +1,7 @@
 package org.qiunet.test.testcase.LongConn;
 
 import com.google.protobuf.GeneratedMessageV3;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
 /**

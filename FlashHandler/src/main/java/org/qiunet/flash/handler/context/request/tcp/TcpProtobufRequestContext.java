@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 

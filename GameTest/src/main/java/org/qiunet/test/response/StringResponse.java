@@ -1,7 +1,7 @@
 package org.qiunet.test.response;
 
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
 /**

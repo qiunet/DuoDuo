@@ -8,18 +8,15 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
+import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
-import org.qiunet.flash.handler.context.response.IResponse;
-import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.util.*;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;

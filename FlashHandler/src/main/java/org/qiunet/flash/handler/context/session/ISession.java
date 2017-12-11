@@ -1,8 +1,7 @@
 package org.qiunet.flash.handler.context.session;
 
-import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * session 的接口,

@@ -1,8 +1,7 @@
 package org.qiunet.test.testcase;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
-import org.qiunet.test.server.IServer;
 
 /**
  * 测试的用例

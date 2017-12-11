@@ -6,7 +6,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;

@@ -1,15 +1,11 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.net.InetSocketAddress;
 

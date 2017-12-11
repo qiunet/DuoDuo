@@ -1,6 +1,6 @@
 package org.qiunet.test.response;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
 /**

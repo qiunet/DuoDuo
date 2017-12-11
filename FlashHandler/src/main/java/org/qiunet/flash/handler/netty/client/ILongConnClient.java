@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.client;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * 长连接客户端

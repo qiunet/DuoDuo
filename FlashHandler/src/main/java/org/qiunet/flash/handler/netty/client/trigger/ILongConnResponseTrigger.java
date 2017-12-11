@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.client.trigger;
 
-import io.netty.buffer.ByteBuf;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * Created by qiunet.

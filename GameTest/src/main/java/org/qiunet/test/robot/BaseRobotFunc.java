@@ -1,6 +1,6 @@
 package org.qiunet.test.robot;
 
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;

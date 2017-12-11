@@ -1,8 +1,8 @@
 package org.qiunet.flash.handler.context.request;
 
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.header.MessageContent;
-import org.qiunet.flash.handler.context.header.UriHttpMessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 

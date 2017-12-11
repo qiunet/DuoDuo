@@ -3,14 +3,12 @@ package org.qiunet.flash.handler.netty.coder;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
-import org.qiunet.flash.handler.context.header.MessageContent;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
-
-import java.util.zip.CRC32;
 
 /**
  * Created by qiunet.
