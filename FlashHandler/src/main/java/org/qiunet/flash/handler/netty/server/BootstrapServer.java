@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.IOException;
@@ -16,8 +17,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
-import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.LockSupport;
 
@@ -156,12 +155,14 @@ public class BootstrapServer {
 		private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 		private Hook hook;
 		private BootstrapServer server;
+		private AsynchronousChannelGroup hookListenerGroup;
 		private AsynchronousServerSocketChannel serverChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
 			this.hook = hook;
 			this.server = bootstrapServer;
 			try {
-				serverChannel = AsynchronousServerSocketChannel.open();
+				this.hookListenerGroup = AsynchronousChannelGroup.withFixedThreadPool(1, new DefaultThreadFactory("Hook-Listener-Asynchronous-Channel-Group"));
+				serverChannel = AsynchronousServerSocketChannel.open(hookListenerGroup);
 				serverChannel.bind(new InetSocketAddress("localhost", hook.getHookPort()));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -201,6 +202,7 @@ public class BootstrapServer {
 					qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 					if (msg.equals(hook.getShutdownMsg())) {
 						server.shutdown();
+						hookListenerGroup.shutdown();
 						return true;
 					}else if (msg.equals(hook.getReloadCfgMsg())){
 						hook.reloadCfg();
