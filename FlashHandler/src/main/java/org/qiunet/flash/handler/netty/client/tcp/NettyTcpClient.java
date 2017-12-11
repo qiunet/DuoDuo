@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.Decoder;
 import org.qiunet.flash.handler.netty.coder.Encoder;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 
 import java.net.InetSocketAddress;
 
@@ -18,7 +19,7 @@ import java.net.InetSocketAddress;
  * 17/11/25
  */
 public class NettyTcpClient implements ILongConnClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup();
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 
