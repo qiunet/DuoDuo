@@ -37,7 +37,7 @@ public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends 
 			return;
 		}
 
-		if (httpResponse.status() != HttpResponseStatus.OK) {
+		if (! httpResponse.status().equals(HttpResponseStatus.OK)) {
 			robot.brokeRobot("http status not 200");
 			return;
 		}

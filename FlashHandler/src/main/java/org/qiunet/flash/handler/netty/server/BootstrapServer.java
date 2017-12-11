@@ -202,7 +202,6 @@ public class BootstrapServer {
 					qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 					if (msg.equals(hook.getShutdownMsg())) {
 						server.shutdown();
-						hookListenerGroup.shutdown();
 						return true;
 					}else if (msg.equals(hook.getReloadCfgMsg())){
 						hook.reloadCfg();

@@ -20,7 +20,7 @@ public class DefaultThreadFactory implements ThreadFactory {
 	public Thread newThread(Runnable paramRunnable) {
 		Thread localThread = new Thread(this.group, paramRunnable,this.prefixName + this.threadNum.getAndIncrement(), 0L);
 		if (localThread.isDaemon()){
-			localThread.setDaemon(false);
+			localThread.setDaemon(true);
 		}
 		if (localThread.getPriority() != 5){
 			localThread.setPriority(5);
