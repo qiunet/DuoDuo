@@ -23,7 +23,7 @@ public class LoginOnlineHandler extends WebSocketProtobufHandler<LoginOnlineProt
 		logger.info("LoginOnlineHandler: "+ context.getRequestData());
 
 		LoginOnlineProto.LoginOnlineResponse response = LoginOnlineProto.LoginOnlineResponse.newBuilder()
-				.setDay(11)
+				.setDay(context.getRequestData().getHeader().getUid())
 				.build();
 		context.response(1000000, response);
 	}

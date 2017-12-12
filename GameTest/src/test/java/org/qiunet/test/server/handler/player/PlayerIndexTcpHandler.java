@@ -15,13 +15,13 @@ public class PlayerIndexTcpHandler extends WebSocketProtobufHandler<PlayerIndexP
 	@Override
 	public void handler(IWebSocketRequest<PlayerIndexProto.PlayerIndexRequest> context) {
 		context.response(1000001, PlayerIndexProto.PlayerIndexResponse.newBuilder()
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123450).setCount(20).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123451).setCount(21).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123452).setCount(22).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123453).setCount(23).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123454).setCount(24).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123455).setCount(25).build())
-				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123456).setCount(26).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123450).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123451).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123452).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123453).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123454).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123455).setCount(context.getRequestData().getHeader().getUid()).build())
+				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123456).setCount(context.getRequestData().getHeader().getUid()).build())
 				.build());
 	}
 }

@@ -14,6 +14,6 @@ public class LoginRoomHandler extends TcpProtobufHandler<LoginRoomProto.LoginRoo
 	@Override
 	public void handler(ITcpRequest<LoginRoomProto.LoginRoomRequest> context) {
 		logger.info("LoginRoomHandler received message "+context.getRequestData());
-		context.response(1000003, LoginRoomProto.LoginRoomResponse.newBuilder().setRoomSize(8).build());
+		context.response(1000003, LoginRoomProto.LoginRoomResponse.newBuilder().setRoomSize(context.getRequestData().getHeader().getUid()).build());
 	}
 }
