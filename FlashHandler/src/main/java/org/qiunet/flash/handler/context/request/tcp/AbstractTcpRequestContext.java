@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
 import java.net.InetSocketAddress;
@@ -24,7 +25,7 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 	}
 	@Override
 	public int getQueueHandlerIndex() {
-		return ctx.channel().id().asLongText().hashCode();
+		return SessionManager.getInstance().getSession(ctx.channel().id().asLongText()).getQueueIndex();
 	}
 
 	@Override

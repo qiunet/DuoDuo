@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
@@ -30,7 +31,7 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 
 	@Override
 	public int getQueueHandlerIndex() {
-		return ctx.channel().id().asLongText().hashCode();
+		return SessionManager.getInstance().getSession(ctx.channel().id().asLongText()).getQueueIndex();
 	}
 
 	@Override
