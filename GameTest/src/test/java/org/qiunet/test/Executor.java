@@ -30,14 +30,17 @@ public class Executor {
 		ServerStartup server = new ServerStartup();
 		server.startup();
 		new RobotExecutor(ExecutorParams.custom()
+				// 全局扫描的一些东西
 				.addScannerHandler(new RequestScannerHandler())
 				.addScannerHandler(new ResponseScannerHandler())
+				// 机器人工厂.  自己定义
 				.setRobotFactory(new RobotFactory())
-
+				// 测试用例
 				.addTestCase(new TestLogin())
 				.addTestCase(new TestLoginOnline())
 				.addTestCase(new TestPlayerIndex())
 				.addTestCase(new TestLoginRoom())
+
 		).pressureTesting(2000);
 		server.shutdown();
 	}
