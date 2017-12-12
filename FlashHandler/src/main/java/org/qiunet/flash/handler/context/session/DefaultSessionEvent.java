@@ -14,12 +14,10 @@ public class DefaultSessionEvent implements ISessionEvent {
 
 	@Override
 	public void sessionRegistered(ChannelHandlerContext ctx) {
-		logger.info("DefaultSessionEvent called sessionRegistered");
 	}
 
 	@Override
 	public void sessionUnregistered(ChannelHandlerContext ctx) {
-		logger.info("DefaultSessionEvent called sessionUnregistered");
 		SessionManager.getInstance().removeSession(ctx.channel().id().asLongText());
 	}
 }
