@@ -38,7 +38,7 @@ public class Executor {
 				.addTestCase(new TestLoginOnline())
 				.addTestCase(new TestPlayerIndex())
 				.addTestCase(new TestLoginRoom())
-		).testing();
+		).pressureTesting(2000);
 		server.shutdown();
 	}
 
