@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import io.netty.channel.Channel;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
@@ -12,12 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by qiunet.
  * 17/10/23
  */
-public class SessionManager<Key, Val extends ISession<Key>> implements Runnable {
+public class SessionManager<Val extends ISession> implements Runnable {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	/***
 	 * 所有的session
 	 */
-	private final ConcurrentHashMap<Key, Val> sessions = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, Val> sessions = new ConcurrentHashMap<>();
 
 	private volatile static SessionManager instance;
 
@@ -56,21 +57,35 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 	}
 
 	/***
-	 * 得到一个key
+	 * 得到一个Session
 	 * @param key
 	 * @return
 	 */
-	public Val getSession(Key key) {
+	public Val getSession(String key) {
 		return sessions.get(key);
 	}
+	/***
+	 * 得到一个Session
+	 * @param channel
+	 * @return
+	 */
+	public Val getSession(Channel channel) {return getSession(channel.id().asLongText()); }
 	/**
 	 * 移除 session
 	 * @param keys
 	 */
-	public void removeSession(Key... keys) {
-		for (Key key : keys) {
+	public void removeSession(String... keys) {
+		for (String key : keys) {
 			this.sessions.remove(key);
 		}
+	}
+
+	/**
+	 * 移除 session
+	 * @param channel
+	 */
+	public void removeSession(Channel channel) {
+		this.sessions.remove(channel.id().asLongText());
 	}
 
 	/***
@@ -85,9 +100,9 @@ public class SessionManager<Key, Val extends ISession<Key>> implements Runnable 
 		while (true) {
 			long now = System.currentTimeMillis();
 
-			Iterator<Map.Entry<Key, Val>> it = sessions.entrySet().iterator();
+			Iterator<Map.Entry<String, Val>> it = sessions.entrySet().iterator();
 			while(it.hasNext()){
-				Map.Entry<Key, Val> en = it.next();
+				Map.Entry<String, Val> en = it.next();
 				if (now - en.getValue().lastPackageTimeStamp() > maxSessionValidTime*1000 ){
 					it.remove();
 				}

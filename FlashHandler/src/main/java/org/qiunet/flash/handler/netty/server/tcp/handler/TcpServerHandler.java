@@ -4,6 +4,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.qiunet.flash.handler.acceptor.Acceptor;
+import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -20,8 +21,6 @@ import org.qiunet.utils.logger.log.QLogger;
  * 17/8/13
  */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
-	private static final SessionManager<String, ISession<String>> sessionManager = SessionManager.getInstance();
-
 	private static final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private Acceptor acceptor = Acceptor.getInstance();
 	private TcpBootstrapParams params;
@@ -33,13 +32,11 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		params.getSessionEvent().sessionUnregistered(ctx);
-		sessionManager.removeSession(ctx.channel().id().asLongText());
 	}
 
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		params.getSessionEvent().sessionRegistered(ctx);
-		sessionManager.addSession(params.getSessionBuilder().createSession(ctx));
 	}
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -50,10 +47,9 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 			ctx.close();
 			return;
 		}
-		// 更新最后时间 方便去除很久没有心跳的channel
-		sessionManager.getSession(ctx.channel().id().asLongText()).setLastPackageTimeStamp();
 
 		ITcpRequestContext context = params.getAdapter().createTcpRequestContext(content, ctx, handler, params);
+		params.getSessionEvent().sessionReceived(ctx, HandlerType.TCP, context);
 		acceptor.process(context);
 	}
 

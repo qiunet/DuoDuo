@@ -10,6 +10,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import org.qiunet.flash.handler.acceptor.Acceptor;
+import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
@@ -31,8 +32,6 @@ import java.util.Arrays;
  * 17/12/1
  */
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSocketFrame> {
-	private static final SessionManager<String, ISession<String>> sessionManager = SessionManager.getInstance();
-
 	private static final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private Acceptor acceptor = Acceptor.getInstance();
 
@@ -45,14 +44,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-		sessionManager.addSession(params.getSessionBuilder().createSession(ctx));
 		params.getSessionEvent().sessionRegistered(ctx);
 	}
 
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		params.getSessionEvent().sessionUnregistered(ctx);
-		sessionManager.removeSession(ctx.channel().id().asLongText());
 	}
 
 	/***
@@ -123,11 +120,10 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 			ctx.close();
 			return;
 		}
-
 		// 更新最后时间 方便去除很久没有心跳的channel
-		sessionManager.getSession(ctx.channel().id().asLongText()).setLastPackageTimeStamp();
 
 		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params);
+		params.getSessionEvent().sessionReceived(ctx, HandlerType.WEB_SOCKET, context);
 		acceptor.process(context);
 	}
 }

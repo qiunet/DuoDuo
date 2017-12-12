@@ -1,12 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.context.session.DefaultSessionBuilder;
-import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
-import org.qiunet.flash.handler.context.session.ISessionBuilder;
-import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
-import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
-
 /**
  * 使用引导类 参数.
  * 建造者模式

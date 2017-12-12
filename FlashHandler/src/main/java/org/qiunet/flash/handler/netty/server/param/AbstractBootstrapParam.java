@@ -2,9 +2,7 @@ package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.context.header.ContextAdapter;
 import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
-import org.qiunet.flash.handler.context.session.DefaultSessionBuilder;
 import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
-import org.qiunet.flash.handler.context.session.ISessionBuilder;
 import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
@@ -19,7 +17,6 @@ public abstract class AbstractBootstrapParam {
 
 	protected ISessionEvent sessionEvent;
 
-	protected ISessionBuilder sessionBuilder;
 	// 一些定义好的错误消息.
 	protected IClientErrorMessage errorMessage;
 	/***
@@ -42,10 +39,6 @@ public abstract class AbstractBootstrapParam {
 
 	public IClientErrorMessage getErrorMessage() {
 		return errorMessage;
-	}
-
-	public ISessionBuilder getSessionBuilder() {
-		return sessionBuilder;
 	}
 
 	public int getMaxReceivedLength() {
@@ -74,8 +67,6 @@ public abstract class AbstractBootstrapParam {
 
 		protected ContextAdapter adapter = new DefaultContextAdapter();
 
-		protected ISessionBuilder sessionBuilder = new DefaultSessionBuilder();
-
 		protected ISessionEvent sessionEvent = new DefaultSessionEvent();
 
 		protected IClientErrorMessage errorMessage;
@@ -88,11 +79,6 @@ public abstract class AbstractBootstrapParam {
 		}
 		public B setErrorMessage(IClientErrorMessage errorMessage) {
 			this.errorMessage = errorMessage;
-			return (B) this;
-		}
-
-		public B setSessionBuilder(ISessionBuilder sessionBuilder) {
-			this.sessionBuilder = sessionBuilder;
 			return (B) this;
 		}
 
@@ -122,7 +108,6 @@ public abstract class AbstractBootstrapParam {
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			P p = newParams();
 			p.maxReceivedLength = maxReceivedLength;
-			p.sessionBuilder = sessionBuilder;
 			p.errorMessage = errorMessage;
 			p.sessionEvent = sessionEvent;
 			p.address = address;

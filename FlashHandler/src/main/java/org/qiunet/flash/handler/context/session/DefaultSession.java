@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * Created by qiunet.
  * 17/11/26
  */
-public class DefaultSession implements ISession<String> {
+public class DefaultSession implements ISession {
 	private ChannelHandlerContext ctx;
 	private int queueIndex;
 	private String key;
