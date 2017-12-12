@@ -24,7 +24,7 @@ public abstract class AbstractTcpRequestContext<RequestData, ResponseData> exten
 		this.params = params;
 	}
 	@Override
-	public int getQueueHandlerIndex() {
+	public int getQueueIndex() {
 		return SessionManager.getInstance().getSession(ctx.channel().id().asLongText()).getQueueIndex();
 	}
 

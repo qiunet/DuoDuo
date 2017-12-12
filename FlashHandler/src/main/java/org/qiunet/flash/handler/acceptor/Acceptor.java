@@ -1,8 +1,8 @@
 package org.qiunet.flash.handler.acceptor;
 
 import org.qiunet.flash.handler.context.request.IRequestContext;
-import org.qiunet.flash.handler.context.request.tcp.AbstractTcpRequestContext;
-import org.qiunet.flash.handler.context.request.websocket.AbstractWebSocketRequestContext;
+import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.utils.nonSyncQuene.IndexNonSyncQueueHandler;
 
 /**
@@ -71,10 +71,10 @@ public class Acceptor {
 				iContext.handler();
 				break;
 			case WEB_SOCKET:
-				contextProcessor.addElement(iContext, ((AbstractWebSocketRequestContext)iContext).getQueueHandlerIndex());
+				contextProcessor.addElement(iContext, ((IWebSocketRequestContext)iContext).getQueueIndex());
 				break;
 			case TCP:
-				contextProcessor.addElement(iContext, ((AbstractTcpRequestContext)iContext).getQueueHandlerIndex());
+				contextProcessor.addElement(iContext, ((ITcpRequestContext)iContext).getQueueIndex());
 				break;
 		}
 	}

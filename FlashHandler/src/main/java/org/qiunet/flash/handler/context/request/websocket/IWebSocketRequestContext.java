@@ -12,5 +12,5 @@ public interface IWebSocketRequestContext<RequestData> extends IRequestContext<R
 	 * 得到分配到哪个queueHandler 的一个索引,  要求是一次连接 到 断开过程中不在变化.
 	 * @return
 	 */
-	public int getQueueHandlerIndex();
+	public int getQueueIndex();
 }
