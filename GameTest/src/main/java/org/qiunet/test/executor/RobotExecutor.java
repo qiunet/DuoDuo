@@ -65,13 +65,12 @@ public final class RobotExecutor {
 	 */
 	public void pressureTesting(int robotCount) {
 		if (robotCount < 1) throw new IllegalArgumentException("robot count can not less than 1! ");
-		LinkedBlockingQueue queue = new LinkedBlockingQueue<Runnable>();
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 300, 10 , TimeUnit.SECONDS, queue , new DefaultThreadFactory("Pressure_Testing_Thread_"));
+		ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 300, 10 , TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(5000) , new DefaultThreadFactory("Pressure_Testing_Thread_"));
 		logger.info("===============压测开始===============");
 		for (int i = 0; i < robotCount; i++) {
 			executor.submit(params.getRobotFactory().createRobot(params.getTestCases()));
 		}
-		while (executor.getActiveCount() != 0 || !queue.isEmpty()) {
+		while (executor.getActiveCount() != 0 || !executor.getQueue().isEmpty()) {
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {
