@@ -33,6 +33,11 @@ public abstract class MuchTcpRequest extends RequestHandlerScanner {
 						.setPort(port)
 						.build();
 				BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				LockSupport.unpark(currThread);
 				server.await();
 			}
