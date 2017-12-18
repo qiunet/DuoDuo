@@ -36,3 +36,8 @@
 	* NioServerSocketChannel 
 	* NioSocketChannel 
 	他们的的unsafe 是不一样的两个实现类.
+	
+	
+## 内存细节
+	-XX:MaxDirectMemorySize
+	正式使用需要设置该参数
