@@ -15,6 +15,6 @@ public class LoginProtobufHandler extends TcpProtobufHandler<LoginProto.LoginReq
 
 	@Override
 	public void handler(ITcpRequest<LoginProto.LoginRequest> context) {
-		ResponseMsgUtil.responseTcpMessage(context.channel().id().asLongText(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
+		ResponseMsgUtil.responseTcpMessage(context.channel(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
 	}
 }

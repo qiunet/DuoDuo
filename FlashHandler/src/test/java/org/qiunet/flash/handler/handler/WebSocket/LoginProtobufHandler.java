@@ -18,6 +18,6 @@ public class LoginProtobufHandler extends WebSocketProtobufHandler<LoginProto.Lo
 
 	@Override
 	public void handler(IWebSocketRequest<LoginProto.LoginRequest> context) {
-		ResponseMsgUtil.responseWebsocketMessage(context.channel().id().asLongText(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
+		ResponseMsgUtil.responseWebsocketMessage(context.channel(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
 	}
 }

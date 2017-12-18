@@ -31,7 +31,7 @@ public abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>
 
 	@Override
 	public int getQueueIndex() {
-		return SessionManager.getInstance().getSession(ctx.channel().id().asLongText()).getQueueIndex();
+		return SessionManager.getInstance().getSession(ctx.channel()).getQueueIndex();
 	}
 
 	@Override
