@@ -83,7 +83,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	}
 
 
-	private class NettyClientHandler extends ChannelInboundHandlerAdapter {
+	private class NettyClientHandler extends SimpleChannelInboundHandler<Object> {
 		private WebSocketClientHandshaker handshaker;
 		private ChannelPromise handshakeFuture;
 
@@ -114,7 +114,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 
 
 		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
 			if (!handshaker.isHandshakeComplete()) {
 				try {
 					handshaker.finishHandshake(ctx.channel(), (FullHttpResponse) msg);
