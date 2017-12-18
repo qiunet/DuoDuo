@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.gamecfg;
 
-import org.apache.log4j.Logger;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
