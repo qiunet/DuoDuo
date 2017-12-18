@@ -1,8 +1,10 @@
 package org.qiunet.flash.handler.common.message;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 /**
@@ -31,10 +33,13 @@ public class MessageContent {
 
 	/***
 	 * 把header信息也encode 进去. 返回bytebuf
+	 *
+	 * 业务不要调用这个方法.
+	 *
 	 * @return
 	 */
 	public ByteBuf encodeToByteBuf(){
-		ByteBuf byteBuf = Unpooled.buffer();
+		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + ProtocolHeader.REQUEST_HEADER_LENGTH);
 		ProtocolHeader header = new ProtocolHeader(bytes.length, protocolId, (int) CrcUtil.getCrc32Value(bytes));
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);

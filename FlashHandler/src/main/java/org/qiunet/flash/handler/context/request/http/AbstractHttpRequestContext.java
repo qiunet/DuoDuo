@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
+import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -119,8 +120,7 @@ public abstract class AbstractHttpRequestContext<RequestData, ResponseData> exte
 			// 不是游戏业务. 不写业务头.
 			content = new MessageContent(messageContent.getProtocolId(), data).encodeToByteBuf();
 		}else {
-			content = Unpooled.buffer();
-			content.writeBytes(data);
+			content = PooledBytebufFactory.getInstance().alloc(data);
 		}
 
 		FullHttpResponse response = new DefaultFullHttpResponse(

@@ -37,16 +37,24 @@ public class PooledBytebufFactory {
 	 * @return
 	 */
 	public ByteBuf alloc(){
-		return allocor.buffer();
+		return alloc(256);
 	}
 
+	/**
+	 * 分配一个bytebuf
+	 * @param initialCapacity 初始容量
+	 * @return
+	 */
+	public ByteBuf alloc(int initialCapacity){
+		return allocor.directBuffer(initialCapacity);
+	}
 	/***
 	 * 使用指定的bytes 分配一个bytebuf
 	 * @param bytes
 	 * @return
 	 */
 	public ByteBuf alloc(byte [] bytes){
-		ByteBuf bytebuf =  allocor.buffer(bytes.length);
+		ByteBuf bytebuf =  alloc(bytes.length);
 		bytebuf.writeBytes(bytes);
 		return bytebuf;
 	}
