@@ -30,15 +30,7 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	@Override
 	public String getRequestData() {
 		if (StringUtil.isEmpty(requestData)) {
-			try {
-				this.requestData = getHandler().parseRequestData(messageContent.bytes());
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
+			this.requestData = getHandler().parseRequestData(messageContent.bytes());
 		}
 		return requestData;
 	}

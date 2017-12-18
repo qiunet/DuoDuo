@@ -13,9 +13,14 @@ import java.lang.reflect.Method;
 public abstract class TcpProtobufHandler<RequestData> extends BaseTcpHandler<RequestData> {
 	private Method method;
 	@Override
-	public RequestData parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
-		return (RequestData) method.invoke(null, bytes);
+	public RequestData parseRequestData(byte[] bytes){
+		if (method == null ) try {
+			method = getRequestClass().getMethod("parseFrom", byte[].class);
+			return (RequestData) method.invoke(null, bytes);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

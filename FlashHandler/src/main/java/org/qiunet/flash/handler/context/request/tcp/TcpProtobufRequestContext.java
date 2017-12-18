@@ -23,15 +23,7 @@ public class TcpProtobufRequestContext<RequestData> extends AbstractTcpRequestCo
 	@Override
 	public RequestData getRequestData() {
 		if (requestData != null) return requestData;
-		try {
-			this.requestData = getHandler().parseRequestData(messageContent.bytes());
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		this.requestData = getHandler().parseRequestData(messageContent.bytes());
 		return requestData;
 	}
 

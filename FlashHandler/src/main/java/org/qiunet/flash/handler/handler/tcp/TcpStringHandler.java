@@ -18,7 +18,7 @@ public abstract class TcpStringHandler extends BaseTcpHandler<String> {
 	}
 
 	@Override
-	public String parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+	public String parseRequestData(byte[] bytes) {
 		return new String(bytes, CharsetUtil.UTF_8);
 	}
 }

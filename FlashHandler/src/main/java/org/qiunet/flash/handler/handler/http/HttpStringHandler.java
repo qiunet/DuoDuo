@@ -17,7 +17,7 @@ public abstract class HttpStringHandler extends BaseHttpHandler<String, String> 
 	}
 
 	@Override
-	public String parseRequestData(byte[] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+	public String parseRequestData(byte[] bytes) {
 		return new String(bytes, CharsetUtil.UTF_8);
 	}
 }

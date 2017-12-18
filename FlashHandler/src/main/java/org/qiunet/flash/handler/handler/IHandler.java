@@ -42,5 +42,5 @@ public interface IHandler<RequestData> {
 	 * @param bytes
 	 * @return
 	 */
-	public RequestData parseRequestData(byte [] bytes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException;
+	public RequestData parseRequestData(byte [] bytes);
 }
