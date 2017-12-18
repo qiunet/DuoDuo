@@ -23,7 +23,7 @@ public class WebSocketStringRequestContext extends AbstractWebSocketRequestConte
 	public String getRequestData() {
 		if (requestData != null) return requestData;
 		try {
-			this.requestData = getHandler().parseRequestData(bytes);
+			this.requestData = getHandler().parseRequestData(messageContent.bytes());
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

@@ -25,7 +25,7 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	public String getRequestData() {
 		if (reqeustData == null) {
 			try {
-				reqeustData = getHandler().parseRequestData(bytes);
+				reqeustData = getHandler().parseRequestData(messageContent.bytes());
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {

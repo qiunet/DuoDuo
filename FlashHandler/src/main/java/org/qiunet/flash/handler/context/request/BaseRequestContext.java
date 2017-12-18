@@ -16,13 +16,11 @@ import java.util.Map;
 public abstract class BaseRequestContext<RequestData> implements IRequestContext<RequestData> {
 	protected MessageContent messageContent;
 	protected ChannelHandlerContext ctx;
-	protected byte [] bytes;
 	private IHandler<RequestData> handler;
 	private Map<String , Object> attributes;
 
 	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {
 		this.ctx = ctx;
-		this.bytes = content.bytes();
 		this.messageContent = content;
 		if (content.getProtocolId() > 0) {
 			this.handler = RequestHandlerMapping.getInstance().getGameHandler(messageContent.getProtocolId());

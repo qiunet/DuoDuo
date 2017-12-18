@@ -23,7 +23,7 @@ public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSoc
 	public RequestData getRequestData() {
 		if (requestData != null) return requestData;
 		try {
-			this.requestData = getHandler().parseRequestData(bytes);
+			this.requestData = getHandler().parseRequestData(messageContent.bytes());
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
