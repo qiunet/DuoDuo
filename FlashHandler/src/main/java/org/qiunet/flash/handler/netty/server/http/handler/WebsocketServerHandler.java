@@ -1,14 +1,13 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -111,6 +110,26 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 	}
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, WebSocketFrame msg) throws Exception {
+		if (msg instanceof PingWebSocketFrame) {
+			msg.content().retain();
+			ctx.channel().writeAndFlush(new PongWebSocketFrame(msg.content()));
+			return;
+		}
+		if (msg instanceof PongWebSocketFrame) {
+			return;
+		}
+
+		if (msg instanceof CloseWebSocketFrame) {
+			if (handshaker != null) {
+				msg.retain();
+				handshaker.close(ctx.channel(), (CloseWebSocketFrame) msg);
+			} else {
+				ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+			}
+			return;
+		}
+
+
 		MessageContent content = decode(ctx, msg);
 		if (content == null) return;
 
