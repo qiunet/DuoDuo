@@ -13,8 +13,8 @@ public abstract class WebSocketProtobufHandler<RequestData> extends BaseWebSocke
 	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) {
-		if (method == null ) try {
-			method = getRequestClass().getMethod("parseFrom", byte[].class);
+		try {
+			if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
 			return (RequestData) method.invoke(null, bytes);
 		} catch (Exception e) {
 			e.printStackTrace();
