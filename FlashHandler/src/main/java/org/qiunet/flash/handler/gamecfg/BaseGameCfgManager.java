@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.gamecfg;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
+import org.qiunet.utils.safeCollections.SafeHashMap;
+import org.qiunet.utils.safeCollections.SafeList;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -96,13 +98,14 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	 */
 	protected  <Key, Cfg extends ISimpleMapConfig<Key>> Map<Key, Cfg> getSimpleMapCfg(String filePath, Class<Cfg> cfgClass) throws Exception{
 		int num = loadXdFileToDataInputStream(filePath);
-		Map<Key, Cfg> cfgMap = new LinkedHashMap<>();
+		SafeHashMap<Key, Cfg> cfgMap = new SafeHashMap<>();
 		for (int i = 0 ; i < num; i++ ) {
 			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
 			cfgConstructor.setAccessible(true);
 			Cfg cfg = cfgConstructor.newInstance(dis);
 			cfgMap.put(cfg.getKey(), cfg);
 		}
+		cfgMap.safeLock();
 		return cfgMap;
 	}
 
@@ -117,7 +120,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	 * @throws Exception
 	 */
 	protected <Key, SubKey, Cfg extends INestMapConfig<Key,SubKey>> Map<Key, Map<SubKey, Cfg>> getNestMapCfg(String fileName , Class<Cfg> cfgClass) throws Exception {
-		Map<Key, Map<SubKey, Cfg>> cfgMap = new HashMap<>();
+		SafeHashMap<Key, Map<SubKey, Cfg>> cfgMap = new SafeHashMap<>();
 		int num = loadXdFileToDataInputStream(fileName);
 		for (int i = 0; i < num; i++) {
 			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
@@ -126,11 +129,15 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 			Map<SubKey, Cfg> subMap = cfgMap.get(cfg.getKey());
 			if (subMap == null) {
-				subMap = new LinkedHashMap<>();
+				subMap = new SafeHashMap<>();
 				cfgMap.put(cfg.getKey(), subMap);
 			}
 			subMap.put(cfg.getSubKey(), cfg);
 		}
+		for (Map<SubKey, Cfg> subKeyCfgMap : cfgMap.values()) {
+			((SafeHashMap) subKeyCfgMap).safeLock();
+		}
+		cfgMap.safeLock();
 		return cfgMap;
 	}
 
@@ -144,7 +151,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	 * @throws Exception
 	 */
 	protected <Key, Cfg extends INestListConfig<Key>> Map<Key, List<Cfg>> getNestListCfg(String fileName , Class<Cfg> cfgClass) throws Exception {
-		Map<Key, List<Cfg>> cfgMap = new HashMap<>();
+		SafeHashMap<Key, List<Cfg>> cfgMap = new SafeHashMap<>();
 		int num = loadXdFileToDataInputStream(fileName);
 		for (int i = 0; i < num; i++) {
 			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
@@ -153,11 +160,15 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 			List<Cfg> subList = cfgMap.get(cfg.getKey());
 			if (subList == null) {
-				subList = new ArrayList<>();
+				subList = new SafeList<>();
 				cfgMap.put(cfg.getKey(), subList);
 			}
 			subList.add(cfg);
 		}
+		for (List<Cfg> cfgList : cfgMap.values()) {
+			((SafeList) cfgList).safeLock();
+		}
+		cfgMap.safeLock();
 		return cfgMap;
 	}
 }

@@ -31,6 +31,14 @@ public class GiftManager extends BaseGameCfgManager {
 		this.map = getNestListCfg("config/gift_data.xd", GiftCfg.class);
 	}
 
+	public void clear(){
+		this.map.clear();
+	}
+
+	public void add(){
+		this.map.put("", null);
+	}
+
 	public List<GiftCfg> getGiftcfgList(String boxId) {
 		return map.get(boxId);
 	}

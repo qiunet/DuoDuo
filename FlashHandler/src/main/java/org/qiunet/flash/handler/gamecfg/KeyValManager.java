@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.gamecfg;
 
+import org.qiunet.utils.safeCollections.SafeHashMap;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +12,12 @@ public abstract class KeyValManager extends BaseGameCfgManager {
 	private Map<Integer, String> map = new HashMap<>();
 
 	protected void loadVars(String filePath)throws Exception{
-		Map<Integer, String> vars = new HashMap<>();
+		SafeHashMap<Integer, String> vars = new SafeHashMap<>();
 		int num = loadXdFileToDataInputStream(filePath);
 		for(int i = 0 ; i < num; i++){
 			vars.put(dis.readInt(), dis.readUTF());
 		}
+		vars.safeLock();
 		this.map = vars;
 	}
 
