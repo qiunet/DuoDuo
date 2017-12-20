@@ -46,7 +46,6 @@ public final class RobotExecutor {
 		}
 		try {
 			scannerAllClassFile.scanner();
-			GameCfgManagers.getInstance().initSetting();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);

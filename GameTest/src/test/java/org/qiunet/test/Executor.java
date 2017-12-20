@@ -1,10 +1,12 @@
 package org.qiunet.test;
 
 import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
+import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
 import org.qiunet.test.TestCase.player.TestPlayerIndex;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
+import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.executor.RobotExecutor;
 import org.qiunet.test.executor.params.ExecutorParams;
 import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
@@ -33,6 +35,16 @@ public class Executor {
 				// 全局扫描的一些东西
 				.addScannerHandler(new RequestScannerHandler())
 				.addScannerHandler(new ResponseScannerHandler())
+				.setInitializer(new IExecutorInitializer() {
+					@Override
+					public void handler() {
+						try {
+							GameCfgManagers.getInstance().initSetting();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				})
 				// 机器人工厂.  自己定义
 				.setRobotFactory(new RobotFactory())
 				// 测试用例
