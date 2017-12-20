@@ -107,10 +107,6 @@ public class NettyWebsocketClient implements ILongConnClient {
 			handshaker.handshake(ctx.channel());
 		}
 
-		@Override
-		public void channelInactive(ChannelHandlerContext ctx) {
-			System.out.println("WebSocket Client disconnected!");
-		}
 
 
 		@Override
@@ -118,7 +114,6 @@ public class NettyWebsocketClient implements ILongConnClient {
 			if (!handshaker.isHandshakeComplete()) {
 				try {
 					handshaker.finishHandshake(ctx.channel(), (FullHttpResponse) msg);
-					System.out.println("WebSocket Client connected!");
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {
 					System.out.println("WebSocket Client failed to connect");
