@@ -36,7 +36,7 @@ import java.net.URI;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private static NioEventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("netty-http-client-event-loop-"));
+	private static NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
 	 * 需要关闭NioEventLoop
