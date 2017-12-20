@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
  * 17/11/25
  */
 public class NettyTcpClient implements ILongConnClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 

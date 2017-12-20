@@ -27,7 +27,7 @@ import java.net.URI;
  * 17/12/1
  */
 public class NettyWebsocketClient implements ILongConnClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(0 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 
