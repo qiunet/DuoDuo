@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
+import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -145,6 +146,8 @@ public class BootstrapServer {
 		if (this.tcpServer != null) {
 			this.tcpServer.shutdown();
 		}
+
+		Acceptor.getInstance().shutdown();
 		LockSupport.unpark(awaitThread);
 	}
 

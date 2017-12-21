@@ -30,13 +30,6 @@ public class Acceptor {
 
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
 		this.contextProcessor = new IndexNonSyncQueueHandler<>(threadCount, true);
-
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
-				stop();
-			}
-		}));
 		instance = this;
 	}
 
@@ -58,7 +51,7 @@ public class Acceptor {
 	/**
 	 * 停止所有的线程
 	 */
-	private void stop() {
+	public void shutdown() {
 		contextProcessor.stop();
 	}
 	/**
