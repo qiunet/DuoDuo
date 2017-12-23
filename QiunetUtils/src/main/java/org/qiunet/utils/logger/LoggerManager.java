@@ -29,6 +29,15 @@ public final class LoggerManager {
 	}
 	/***
 	 * 得到自己的日志
+	 * @param clazz
+	 * @return
+	 */
+	public static QLogger getLogger(Class clazz) {
+		return getLogger(clazz.getName());
+	}
+
+	/***
+	 * 得到自己的日志
 	 * @param loggerName
 	 * @return
 	 */
