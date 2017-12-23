@@ -44,7 +44,7 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.channel(NioServerSocketChannel.class);
 			bootstrap.childHandler(new NettyTcpServerInitializer(params));
 
-			bootstrap.option(ChannelOption.SO_BACKLOG, 1024);
+			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 

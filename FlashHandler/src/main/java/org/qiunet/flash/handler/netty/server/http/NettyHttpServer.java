@@ -53,7 +53,7 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.channel(NioServerSocketChannel.class);
 			bootstrap.childHandler(new NettyHttpServerInitializer(sslCtx, params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
-			bootstrap.option(ChannelOption.SO_BACKLOG, 2048);
+			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
 			qLogger.error("[NettyHttpServer]  Http server is started by " +
 					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
