@@ -2,6 +2,7 @@ package org.qiunet.utils.nonSyncQuene;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
@@ -20,12 +21,18 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 	private final Thread msgThread;
 
 	private boolean RUNNING = true;
+	// 需要完成才能停止
+	private boolean needComplete;
 	/*队列*/
 	private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
 
 	private NonSyncQueueHandler(String threadName, boolean daemon){
 		this.msgThread = new Thread(new HandlerTHread(), threadName);
-		this.msgThread.setDaemon(daemon);
+		/**交给外面关闭有问题, 很多人不会去关闭, 导致线程不停止*/
+		if (!daemon) {
+			logger.info("因为线程交给使用者关闭并非一个好决策, 所以默认使用守护模式线程. 如果需要处理完再停止, 请停止jvm前调用 completeAndShutdown() ");
+		}
+		this.msgThread.setDaemon(true);
 		this.msgThread.start();
 	}
 
@@ -43,6 +50,26 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 
 	public void shutdown() {
 		this.RUNNING = false;
+	}
+
+	private Thread currThread;
+	/***
+	 * 处理完毕shutdown
+	 */
+	public void completeAndShutdown() {
+		this.needComplete = true;
+		currThread = Thread.currentThread();
+		LockSupport.park();
+	}
+
+	/**
+	 * 循环的条件
+	 * @return
+	 */
+	protected boolean running(){
+		boolean ret = RUNNING;
+		if (needComplete) ret = !queue.isEmpty();
+		return ret;
 	}
 	/***
 	 * 添加element   会自动调用element.handler()
@@ -62,7 +89,7 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 	private class HandlerTHread implements Runnable{
 		@Override
 		public void run() {
-			while(RUNNING){
+			while(running()){
 				boolean success = false;
 				T element = null;
 				try {
@@ -76,6 +103,7 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 					}
 				}
 			}
+			if (currThread != null) LockSupport.unpark(currThread);
 		}
 	}
 }
