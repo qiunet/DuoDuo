@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 public class TestNonSyncQueue extends BaseTest {
-	private static NonSyncQueueHandler<TestElement> testElementNonSyncQueueHandler = NonSyncQueueHandler.create(false);
+	private static NonSyncQueueHandler<QueueElement> testElementNonSyncQueueHandler = NonSyncQueueHandler.create(false);
 	@Test
 	public void testNonSyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
@@ -25,9 +25,15 @@ public class TestNonSyncQueue extends BaseTest {
 				public void run() {
 					for (int j = 0 ; j < loopCount; j++) {
 						integer.incrementAndGet();
-						TestElement element = new TestElement(Thread.currentThread().getName());
-						testElementNonSyncQueueHandler.addElement(element);
-						latch.countDown();
+						testElementNonSyncQueueHandler.addElement(new QueueElement(){
+							@Override
+							public boolean handler() {
+								latch.countDown();
+								return true;
+							}
+							@Override
+							public String toStr() { return null; }
+						});
 					}
 				}
 			}, "-thread-"+i).start();
@@ -39,7 +45,6 @@ public class TestNonSyncQueue extends BaseTest {
 			e.printStackTrace();
 		}
 		Assert.assertTrue(integer.get() == threadCount * loopCount);
-		while (testElementNonSyncQueueHandler.size() > 0) ;
 		Assert.assertTrue(testElementNonSyncQueueHandler.size() == 0);
 	}
 }
