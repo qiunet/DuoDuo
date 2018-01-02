@@ -113,6 +113,15 @@ public class StringUtil {
 	 * @param separator
 	 * @return
 	 */
+	public static <T> String arraysToString(T [] arrays ,String separator){
+		return arraysToString(arrays, "", "", separator);
+	}
+	/**
+	 * 数组拼串
+	 * @param arrays
+	 * @param separator
+	 * @return
+	 */
 	public static <T> String arraysToString(T [] arrays , String start ,String end ,String separator){
 		StringBuffer sb = new StringBuffer(start);
 		if(arrays == null || arrays.length == 0) return sb.append("").append(end).toString();
