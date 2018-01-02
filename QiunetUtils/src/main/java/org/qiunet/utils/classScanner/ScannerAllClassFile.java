@@ -103,6 +103,7 @@ public class ScannerAllClassFile {
 				if (handler.matchClazz(c))		handler.handler(c);
 			}
 		}
-		this.allclass.clear();
+		this.allclass = null;
+
 	}
 }
