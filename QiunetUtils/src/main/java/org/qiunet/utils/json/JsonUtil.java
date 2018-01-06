@@ -3,6 +3,8 @@ package org.qiunet.utils.json;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  * json 工具类
  * @author qiunet
@@ -16,7 +18,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static String toJsonString(Object o){
-		return JSON.toJSONString(o);
+		return JSON.toJSONString(o, SerializerFeature.DisableCircularReferenceDetect);
 	}
 	/**
 	 * 得到通用的列表
