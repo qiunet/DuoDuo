@@ -1,4 +1,4 @@
-package org.qiunet.utils.safeCollections;
+package org.qiunet.utils.collection.safe;
 
 import org.qiunet.utils.exceptions.SafeColletionsModifyException;
 

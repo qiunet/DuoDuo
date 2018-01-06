@@ -2,6 +2,7 @@ package org.qiunet.utils.safeCollections;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.collection.safe.SafeList;
 
 import java.util.Iterator;
 
@@ -24,7 +25,7 @@ public class TestSafeList {
 			exception = true;
 		}
 		Assert.assertTrue(exception);
-		
+
 		exception = false;
 		try {
 			for(Iterator<String> it = list.iterator(); it.hasNext();){

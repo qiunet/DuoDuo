@@ -3,8 +3,8 @@ package org.qiunet.flash.handler.gamecfg;
 import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.logger.log.QLogger;
-import org.qiunet.utils.safeCollections.SafeHashMap;
-import org.qiunet.utils.safeCollections.SafeList;
+import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeList;
 
 import java.io.DataInputStream;
 import java.io.EOFException;

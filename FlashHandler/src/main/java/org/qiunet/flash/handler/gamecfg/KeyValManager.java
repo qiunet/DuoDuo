@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.gamecfg;
 
-import org.qiunet.utils.safeCollections.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeHashMap;
 
 import java.util.HashMap;
 import java.util.Map;

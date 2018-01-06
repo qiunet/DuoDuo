@@ -1,4 +1,4 @@
-package org.qiunet.utils.safeCollections;
+package org.qiunet.utils.collection.safe;
 
 import org.qiunet.utils.exceptions.SafeColletionsModifyException;
 
@@ -14,7 +14,7 @@ public class SafeList<E> extends ArrayList<E> {
 	 * 一个只允许初始化一次的锁变量
 	 */
 	private boolean safeLock;
-	
+
 	public SafeList(){
 		super();
 	}
@@ -65,7 +65,7 @@ public class SafeList<E> extends ArrayList<E> {
 	protected void removeRange(int fromIndex, int toIndex) {
 		if (safeLock)
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		
+
 		super.removeRange(fromIndex, toIndex);
 	}
 

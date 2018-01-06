@@ -1,4 +1,4 @@
-package org.qiunet.utils.safeCollections;
+package org.qiunet.utils.collection.safe;
 
 import org.qiunet.utils.exceptions.SafeColletionsModifyException;
 
@@ -56,5 +56,5 @@ public class SafeHashSet<E> extends HashSet<E> {
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
 		return super.retainAll(c);
 	}
-	
+
 }
