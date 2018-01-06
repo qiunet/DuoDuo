@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.interceptor;
 
+import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
@@ -16,7 +17,7 @@ public class DefaultHttpInterceptor implements HttpInterceptor {
 
 	@Override
 	public Object handler(IHttpHandler handler, IHttpRequest request) {
-		if (request.getRequestData().getClass() == String.class) {
+		if (handler.getDataType() == DataType.STRING) {
 			logger.info("收到string请求 message: "+request.getRequestData());
 		}else {
 			logger.info("收到protobuf请求 message: "+request.getRequestData());
