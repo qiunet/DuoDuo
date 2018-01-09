@@ -54,9 +54,9 @@ public abstract class BasicPool<T> implements Pool<T>  {
 
 		this.simpleClassName = getClass().getSimpleName();
 
-		this.maxIdle = keyValueData.getInt(getKey("maxIdle"), 50);
-		this.minIdle = keyValueData.getInt(getKey("minIdle"), 10);
-		this.maxActive = keyValueData.getInt(getKey("maxActive"), 100);
+		this.maxIdle = keyValueData.getInt(getKey("maxIdle"), 30);
+		this.minIdle = keyValueData.getInt(getKey("minIdle"), 5);
+		this.maxActive = keyValueData.getInt(getKey("maxActive"), 200);
 		this.maxWaitTimeout = keyValueData.getInt(getKey("maxWaitTimeout"), 3000);
 	}
 	/**
