@@ -24,7 +24,20 @@ public abstract class AbstractHttpUtil {
 	private  HttpsClientPool httpsClientPool;
 	/* httpclient */
 	protected RequestConfig REQUESTCONFIG;// 设置请求和传输超时时间
-
+	/****
+	 * 完全使用默认的数据.
+	 */
+	protected AbstractHttpUtil(){
+		this(new HttpsClientPool());
+	}
+	/****
+	 *
+	 * @param httpsClientPool 默认的https pool
+	 */
+	protected AbstractHttpUtil(HttpsClientPool httpsClientPool){
+		this.httpsClientPool = httpsClientPool;
+		this.REQUESTCONFIG = RequestConfig.custom().setSocketTimeout(6000).setConnectTimeout(6000).build();
+	}
 	/****
 	 *
 	 * @param httpsClientPool 默认的https pool

@@ -7,6 +7,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.pool.BasicPool;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
 
 /**
  * @author qiunet
@@ -22,6 +24,10 @@ import java.security.cert.X509Certificate;
  */
 public class HttpsClientPool extends BasicPool<HttpClient> {
 	private HttpClientBuilder builder;
+	public HttpsClientPool() {
+		this(new KeyValueData(new HashMap()));
+	}
+
 	public HttpsClientPool(IKeyValueData keyValueData){
 		super(keyValueData);
 
@@ -54,7 +60,7 @@ public class HttpsClientPool extends BasicPool<HttpClient> {
 	protected void clear(HttpClient httpClient) {
 		// close 后使用可能会有问题
 	}
-	
+
 	@Override
 	protected void close(HttpClient httpClient) {
 		if (httpClient instanceof CloseableHttpClient){

@@ -9,8 +9,8 @@ import org.apache.http.client.config.RequestConfig;
 public class HttpUtils extends AbstractHttpUtil {
 	private volatile static HttpUtils instance;
 
-	private HttpUtils( HttpsClientPool httpsClientPool, RequestConfig requestConfig) {
-		super(httpsClientPool , requestConfig );
+	private HttpUtils() {
+		super();
 	}
 
 	/***
@@ -22,9 +22,7 @@ public class HttpUtils extends AbstractHttpUtil {
 			synchronized (HttpUtils.class) {
 				if (instance == null)
 				{
-					HttpsClientPool httpsClientPool = new HttpsClientPool(PoolProperties.getInstance());
-					RequestConfig config = RequestConfig.custom().setSocketTimeout(6000).setConnectTimeout(6000).build();
-					instance = new HttpUtils(httpsClientPool, config);
+					instance = new HttpUtils();
 				}
 			}
 		}
