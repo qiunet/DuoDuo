@@ -35,7 +35,7 @@ public class TestGameCfgManager {
 		Assert.assertTrue(GameCfgManagers.getInstance().cfgSize() == 4);
 		Assert.assertTrue(GameCfgManagers.getInstance().propertySize() == 1);
 
-		Assert.assertEquals(300, InitManager.getInstance().getIntValue(10));
+		Assert.assertEquals(300, InitManager.getInstance().getInt(10));
 		Assert.assertEquals("[{\"count\":20,\"cfgId\":100002}]", InitManager.getInstance().getValue(24));
 
 		Assert.assertEquals(3, GiftManager.getInstance().getGiftcfgList("203001").size());
