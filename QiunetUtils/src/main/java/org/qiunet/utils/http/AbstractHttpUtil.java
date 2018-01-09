@@ -10,7 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.qiunet.utils.enums.CharsetEnum;
-import org.qiunet.utils.enums.HttpMethodEnums;
+import org.qiunet.utils.enums.HttpMethodEnum;
 import org.qiunet.utils.exceptions.HttpMethodNotSupportException;
 import org.qiunet.utils.exceptions.UrlEmptyException;
 import org.qiunet.utils.string.StringUtil;
@@ -53,10 +53,10 @@ public abstract class AbstractHttpUtil {
 	}
 
 	public String httpRequest(String url, Map<String, Object> params, Map<String, Object> cookies){
-		return httpRequest(url, HttpMethodEnums.POST, params, cookies);
+		return httpRequest(url, HttpMethodEnum.POST, params, cookies);
 	}
 
-	public String httpRequest(String url, HttpMethodEnums method, Map<String, Object> params, Map<String, Object> cookies){
+	public String httpRequest(String url, HttpMethodEnum method, Map<String, Object> params, Map<String, Object> cookies){
 		DefaultHttpRequestHandler handler = new DefaultHttpRequestHandler();
 		httpRequest(url, method, params, cookies, CharsetEnum.UTF_8, handler);
 		return handler.returnResult();
@@ -70,7 +70,7 @@ public abstract class AbstractHttpUtil {
 	 * @param charset charset utf8 default
 	 * @param handler request handler
 	 */
-	public <T> void  httpRequest(String url,HttpMethodEnums method,Map<String, Object> params, Map<String, Object> cookies, CharsetEnum charset, HttpRequestHandler<T> handler){
+	public <T> void  httpRequest(String url, HttpMethodEnum method, Map<String, Object> params, Map<String, Object> cookies, CharsetEnum charset, HttpRequestHandler<T> handler){
 
 		if(StringUtil.isEmpty(url)) throw new UrlEmptyException();
 
