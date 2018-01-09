@@ -20,7 +20,7 @@ public class TestHttpUtil extends BaseTest{
 		Map<String,Object> params = new HashMap();
 		params.put("wd", "qiunet");
 		for (int i = 0 ; i < 5; i++){
-			String ret = HttpUtils.getInstance().httpRequest(url, HttpMethodEnum.GET , params, new HashMap<String,Object>());
+			String ret = DefaultHttpUtil.getInstance().httpRequest(url, HttpMethodEnum.GET , params, new HashMap<String,Object>());
 			Assert.assertNotNull(ret);
 			logger.info(i+"==================="+ret);
 		}
