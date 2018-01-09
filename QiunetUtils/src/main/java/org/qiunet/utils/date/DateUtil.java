@@ -280,6 +280,16 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static boolean isSameDay(Date d1, Date d2) {
-		return DateUtils.isSameDay(d1, d2);
+		if (d1 == null || d2 == null) {
+			throw new IllegalArgumentException("The date must not be null");
+		}
+
+		final Calendar cal1 = Calendar.getInstance();
+		cal1.setTime(d1);
+		final Calendar cal2 = Calendar.getInstance();
+		cal2.setTime(d2);
+		return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
+				cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+				cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
 	}
 }
