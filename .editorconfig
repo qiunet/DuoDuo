@@ -9,12 +9,19 @@ root = true
 charset = utf-8
 ## 尾字符 lf
 end_of_line = lf
-## 缩进使用tab
-indent_style = tab
 ## 最后插入一行
 insert_final_newline = true
 ## 删除尾行的空格
 trim_trailing_whitespace = true
+
+
+[*.{java,js,md,xml}]
+## 缩进使用tab
+indent_style = tab
+
+[*.py]
+indent_style = space
+indent_size = 4
 
 
 # 对后缀名为 md 的文件生效
