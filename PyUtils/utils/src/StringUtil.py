@@ -4,13 +4,15 @@
 
 __author__ = 'qiunet'
 
-import CommonUtil
 import logging
+
+from utils.src import CommonUtil
+
 
 def isEmpty(string):
     """
-    判断空对象 
-    :param o: 
+    判断空对象
+    :param o:
     :return: True False
     """
     return CommonUtil.isEmpty(string)
@@ -21,7 +23,7 @@ def split(string, split):
     分割字符串
     严格按照 split 分割的
     ',,' 会分割为 ['', '', '']
-    :param string: 需要分割的字符 
+    :param string: 需要分割的字符
     :param split: 分割符号
     :return: 分割后的数组
     """
