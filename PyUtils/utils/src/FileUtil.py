@@ -2,6 +2,7 @@
 
 # 文件的工具类
 
+import os
 __author__ = 'qiunet'
 
 
@@ -19,4 +20,20 @@ def readContent(filename):
         file.close()
 
 
+def delFile(filepath):
+    """
+    删除一个文件
+    :param filepath: 文件绝对路径
+    :return:
+    """
+    os.remove(filepath)
+
+
+def existFile(filepath):
+    """
+    判断一个文件是否存在
+    :param filepath: 文件绝对路径
+    :return:  True 存在  False 不存在
+    """
+    return os.path.exists(filepath)
 
