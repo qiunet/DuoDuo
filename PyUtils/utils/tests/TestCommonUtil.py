@@ -2,15 +2,16 @@
 # 系统命令相关的python功能.
 
 import unittest
-from utils.src.CommonUtil import *
+
+from utils import CommonUtil
 
 
 class TestCommonUtilFunc(unittest.TestCase):
 
     def test_is_empty(self):
-        self.assertTrue(isEmpty(""))
-        self.assertTrue(isEmpty(None))
-        self.assertFalse(isEmpty("me"))
+        self.assertTrue(CommonUtil.isEmpty(""))
+        self.assertTrue(CommonUtil.isEmpty(None))
+        self.assertFalse(CommonUtil.isEmpty("me"))
 
 
 if __name__ == '__main__':

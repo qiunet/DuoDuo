@@ -6,7 +6,7 @@ __author__ = 'qiunet'
 
 import logging
 
-from utils.src import CommonUtil
+from utils import CommonUtil
 
 
 def isEmpty(string):
