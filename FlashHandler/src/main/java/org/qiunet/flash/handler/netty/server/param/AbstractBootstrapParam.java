@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.context.header.ContextAdapter;
+import org.qiunet.flash.handler.context.header.IContextAdapter;
 import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
 import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.context.session.ISessionEvent;
@@ -24,7 +24,7 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected SocketAddress address;
 
-	protected ContextAdapter adapter;
+	protected IContextAdapter adapter;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
@@ -49,7 +49,7 @@ public abstract class AbstractBootstrapParam {
 		return address;
 	}
 
-	public ContextAdapter getAdapter() {
+	public IContextAdapter getAdapter() {
 		return adapter;
 	}
 
@@ -65,7 +65,7 @@ public abstract class AbstractBootstrapParam {
 		// 最大上行1M的长度(HTTP 同样有满足)
 		protected int maxReceivedLength = 1024 * 1024;
 
-		protected ContextAdapter adapter = new DefaultContextAdapter();
+		protected IContextAdapter adapter = new DefaultContextAdapter();
 
 		protected ISessionEvent sessionEvent = new DefaultSessionEvent();
 
@@ -96,7 +96,7 @@ public abstract class AbstractBootstrapParam {
 			return (B)this;
 		}
 
-		public B setAdapter(ContextAdapter adapter) {
+		public B setAdapter(IContextAdapter adapter) {
 			this.adapter = adapter;
 			return (B)this;
 		}

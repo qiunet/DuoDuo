@@ -22,7 +22,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
  * Created by qiunet.
  * 17/11/22
  */
-public class DefaultContextAdapter implements ContextAdapter {
+public class DefaultContextAdapter implements IContextAdapter {
 
 	@Override
 	public IHandler getHandler(MessageContent content) {

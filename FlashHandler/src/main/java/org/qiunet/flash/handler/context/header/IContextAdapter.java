@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
  * Created by qiunet.
  * 17/11/22
  */
-public interface ContextAdapter {
+public interface IContextAdapter {
 	/**
 	 * 是否是有效的handler
 	 * @param content
