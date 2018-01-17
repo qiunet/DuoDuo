@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.http.channel;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelMatcher;
@@ -31,11 +32,15 @@ public class ServerChannelGroup {
 		return channelGroup.writeAndFlush(msg, matcher);
 	}
 
+	public Channel find(ChannelId channelId) {
+		return channelGroup.find(channelId);
+	}
+
 	public ChannelGroup flush() {
 		return channelGroup.flush();
 	}
 
-	public boolean discard(Channel channel) {
+	public boolean remove(Channel channel) {
 		return channelGroup.remove(channel);
 	}
 
