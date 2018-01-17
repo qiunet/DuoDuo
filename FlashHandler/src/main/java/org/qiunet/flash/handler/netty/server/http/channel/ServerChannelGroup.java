@@ -12,42 +12,46 @@ import io.netty.util.concurrent.GlobalEventExecutor;
  * Created by qiunet.
  * 17/11/30
  */
-public class ServerChannelGroup {
-	private static final ChannelGroup CHANNEL_GROUP = new DefaultChannelGroup("ServerChannelGroup", GlobalEventExecutor.INSTANCE);
+public abstract class ServerChannelGroup {
+	private final ChannelGroup channelGroup;
 
-	public static void add(Channel channel) {
-		CHANNEL_GROUP.add(channel);
+	public ServerChannelGroup(String name) {
+		channelGroup = new DefaultChannelGroup(name, GlobalEventExecutor.INSTANCE);
 	}
 
-	public static ChannelGroupFuture broadcast(Object msg) {
-		return CHANNEL_GROUP.writeAndFlush(msg);
+	public void add(Channel channel) {
+		channelGroup.add(channel);
 	}
 
-	public static ChannelGroupFuture broadcast(Object msg, ChannelMatcher matcher) {
-		return CHANNEL_GROUP.writeAndFlush(msg, matcher);
+	public ChannelGroupFuture broadcast(Object msg) {
+		return channelGroup.writeAndFlush(msg);
 	}
 
-	public static ChannelGroup flush() {
-		return CHANNEL_GROUP.flush();
+	public ChannelGroupFuture broadcast(Object msg, ChannelMatcher matcher) {
+		return channelGroup.writeAndFlush(msg, matcher);
 	}
 
-	public static boolean discard(Channel channel) {
-		return CHANNEL_GROUP.remove(channel);
+	public ChannelGroup flush() {
+		return channelGroup.flush();
 	}
 
-	public static ChannelGroupFuture disconnect() {
-		return CHANNEL_GROUP.disconnect();
+	public boolean discard(Channel channel) {
+		return channelGroup.remove(channel);
 	}
 
-	public static ChannelGroupFuture disconnect(ChannelMatcher matcher) {
-		return CHANNEL_GROUP.disconnect(matcher);
+	public ChannelGroupFuture disconnect() {
+		return channelGroup.disconnect();
 	}
 
-	public static boolean contains(Channel channel) {
-		return CHANNEL_GROUP.contains(channel);
+	public ChannelGroupFuture disconnect(ChannelMatcher matcher) {
+		return channelGroup.disconnect(matcher);
 	}
 
-	public static int size() {
-		return CHANNEL_GROUP.size();
+	public boolean contains(Channel channel) {
+		return channelGroup.contains(channel);
+	}
+
+	public int size() {
+		return channelGroup.size();
 	}
 }
