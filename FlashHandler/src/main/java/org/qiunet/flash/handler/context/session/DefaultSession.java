@@ -9,10 +9,10 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * 17/11/26
  */
 public class DefaultSession implements ISession {
-	private ChannelHandlerContext ctx;
-	private int queueIndex;
-	private String key;
-	private long dt;
+	protected ChannelHandlerContext ctx;
+	protected int queueIndex;
+	protected String key;
+	protected long dt;
 	public  DefaultSession(ChannelHandlerContext ctx) {
 		this.ctx = ctx;
 		this.dt = System.currentTimeMillis();
