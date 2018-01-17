@@ -6,8 +6,11 @@ __author__ = 'qiunet'
 
 import smtplib
 import logging
+from utils import StringUtil
+from utils import CommonUtil
 from email.header import Header
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from email.utils import parseaddr, formataddr
 
 
@@ -34,22 +37,36 @@ class MailObject:
         name, addr = parseaddr(str)
         return formataddr((Header(name, 'Utf-8').encode(), addr))
 
-    def sendMail(self, mailTo, subject, content):
+    def sendMail(self, mailTo, subject, content, cc=[]):
         """
         发送邮件的方法
         :param mailTo: toAddr 发送到的邮箱地址 需要是数组
         :param subject: 标题
         :param content: 内容
+        :param cc  抄送
         """
-        mail = MIMEText(content, 'plain', 'Utf-8')
-        mail['To'] = mailTo
+        if not isinstance(mailTo, list):
+            logging.error("mailTo: TypeError: must be list")
+            return
+        if cc is not None and not isinstance(cc, list):
+            logging.error("cc: TypeError: must be list")
+            return
+
+        mail = MIMEMultipart()
+        msg = MIMEText(content, 'plain', 'Utf-8')
+        mail.attach(msg)
+
+        mail['To'] = self.__formatAddr("<%s>" % StringUtil.arrayToStr(mailTo, ';'))
+        if not CommonUtil.isEmpty(cc):
+            mail['Cc'] = StringUtil.arrayToStr(cc, ';')
+            mailTo = mailTo + cc
+
         mail['Subject'] = Header(subject, 'UTF-8').encode()
         mail['From'] = self.__formatAddr(self.__fromAlias +' <%s>' % self.__mailFrom)
 
         try:
             server = smtplib.SMTP(self.__smtpServer, self.__smtpPort)
 
-            server.set_debuglevel(1)
             server.login(self.__mailFrom, self.__password)
             server.sendmail(self.__mailFrom, mailTo, mail.as_string())
         except smtplib.SMTPException:
