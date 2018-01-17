@@ -12,7 +12,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
  * Created by qiunet.
  * 17/11/30
  */
-public abstract class ServerChannelGroup {
+public class ServerChannelGroup {
 	private final ChannelGroup channelGroup;
 
 	public ServerChannelGroup(String name) {
