@@ -13,12 +13,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by qiunet.
  * 17/10/23
  */
-public class SessionManager<Val extends ISession> implements Runnable {
+public class SessionManager implements Runnable {
 	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	/***
 	 * 所有的session
 	 */
-	private final ConcurrentHashMap<String, Val> sessions = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<String, ISession> sessions = new ConcurrentHashMap<>();
 
 	private volatile static SessionManager instance;
 
@@ -51,9 +51,9 @@ public class SessionManager<Val extends ISession> implements Runnable {
 	 * @param val
 	 * @return
 	 */
-	public Val addSession(Val val) {
+	public <T extends ISession> T addSession(ISession val) {
 		this.sessions.putIfAbsent(val.getKey(), val);
-		return sessions.get(val.getKey());
+		return (T) sessions.get(val.getKey());
 	}
 
 	/***
@@ -61,15 +61,15 @@ public class SessionManager<Val extends ISession> implements Runnable {
 	 * @param key
 	 * @return
 	 */
-	public Val getSession(String key) {
-		return sessions.get(key);
+	public <T extends ISession> T getSession(String key) {
+		return (T) sessions.get(key);
 	}
 	/***
 	 * 得到一个Session
 	 * @param channel
 	 * @return
 	 */
-	public Val getSession(Channel channel) {return getSession(channel.id().asLongText()); }
+	public <T extends ISession> T getSession(Channel channel) {return getSession(channel.id().asLongText()); }
 	/**
 	 * 移除 session
 	 * @param keys
@@ -100,9 +100,9 @@ public class SessionManager<Val extends ISession> implements Runnable {
 		while (true) {
 			long now = System.currentTimeMillis();
 
-			Iterator<Map.Entry<String, Val>> it = sessions.entrySet().iterator();
+			Iterator<Map.Entry<String, ISession>> it = sessions.entrySet().iterator();
 			while(it.hasNext()){
-				Map.Entry<String, Val> en = it.next();
+				Map.Entry<String, ISession> en = it.next();
 				if (now - en.getValue().lastPackageTimeStamp() > maxSessionValidTime*1000 ){
 					it.remove();
 				}
