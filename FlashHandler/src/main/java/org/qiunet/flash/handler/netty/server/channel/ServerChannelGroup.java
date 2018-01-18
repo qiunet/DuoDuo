@@ -4,8 +4,9 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.ChannelMatchers;
 import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.IMessage;
 
 /**
  * 方便广播使用的组
@@ -13,7 +14,10 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * 17/11/30
  */
 public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
-
+	/***
+	 * 构造函数
+	 * @param name
+	 */
 	public ServerChannelGroup(String name) {
 		super(name, GlobalEventExecutor.INSTANCE);
 	}
@@ -35,8 +39,27 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture broadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		MessageContent content = new MessageContent(protocolId, bytes(msg));
-		return super.writeAndFlush(content, matcher);
+		return super.writeAndFlush(buildMessage(protocolId, msg).encode(), matcher);
+	}
+	/***
+	 * 群发一个webSocket msg
+	 * @param protocolId 协议id
+	 * @param msg 消息
+	 * @return
+	 */
+	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg) {
+		return this.wsBroadcast(protocolId, msg, ChannelMatchers.all());
+	}
+
+	/***
+	 * 群发一个webSocket msg
+	 * @param protocolId 协议id
+	 * @param msg 消息
+	 * @param matcher 匹配选择对象
+	 * @return
+	 */
+	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
+		return super.writeAndFlush(new BinaryWebSocketFrame(buildMessage(protocolId, msg).encode().encodeToByteBuf()), matcher);
 	}
 
 	@Override
@@ -83,5 +106,5 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @param msg
 	 * @return
 	 */
-	protected abstract byte[] bytes(Msg msg);
+	protected abstract IMessage buildMessage(int protocolId, Msg msg);
 }
