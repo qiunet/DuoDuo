@@ -39,7 +39,7 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture broadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		return super.writeAndFlush(buildMessage(protocolId, msg).encode(), matcher);
+		return super.writeAndFlush(buildMessage(protocolId, msg).encode(), matcher, false);
 	}
 	/***
 	 * 群发一个webSocket msg
