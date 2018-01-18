@@ -97,6 +97,7 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 					if(element != null ) success = element.handler();
 				}catch (Exception e){
 					// 出现异常, 不捕获. 会导致线程停止了
+					logger.error(element.toString(), e);
 				}finally{
 					if(!success && element != null) {
 						logger.error(element.toString());
