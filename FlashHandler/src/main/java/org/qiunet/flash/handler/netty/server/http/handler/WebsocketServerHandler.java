@@ -135,7 +135,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().getHandlerNotFound().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().getHandlerNotFound().encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
 			ctx.close();
 			return;
 		}
