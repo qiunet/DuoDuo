@@ -11,7 +11,7 @@ import org.qiunet.test.testcase.LongConn.LongConnProtobufTestCase;
  * Created by qiunet.
  * 17/12/9
  */
-public abstract class BaseOnlineTestCase<ResponseData extends GeneratedMessageV3> extends LongConnProtobufTestCase<ResponseData, Robot> {
+public abstract class BaseOnlineTestCase<RequestData extends GeneratedMessageV3> extends LongConnProtobufTestCase<RequestData, Robot> {
 
 	protected HeaderProto.RequestHeader headerBuilder(Robot robot) {
 		return HeaderProto.RequestHeader.newBuilder()
