@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.http.channel;
+package org.qiunet.flash.handler.netty.server.channel;
 
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelMatcher;
