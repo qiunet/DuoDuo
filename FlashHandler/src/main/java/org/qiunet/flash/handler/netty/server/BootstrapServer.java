@@ -18,6 +18,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.Iterator;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.LockSupport;
 
@@ -34,6 +35,8 @@ public class BootstrapServer {
 
 	private NettyTcpServer tcpServer;
 
+	private HookListener hookListener;
+
 	private Hook hook;
 	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
@@ -41,8 +44,8 @@ public class BootstrapServer {
 			throw new RuntimeException("hook can not be null");
 		}
 		this.hook = hook;
-
-		Thread thread = new Thread(new HookListener(this , hook), "HookListener");
+		hookListener = new HookListener(this , hook);
+		Thread thread = new Thread(hookListener, "HookListener");
 		thread.start();
 
 		instance = this;
@@ -137,6 +140,8 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
+		hookListener.RUNNING = false;
+
 		if (hook != null) {
 			hook.shutdown();
 		}
@@ -148,6 +153,7 @@ public class BootstrapServer {
 		}
 
 		Acceptor.getInstance().shutdown();
+
 		LockSupport.unpark(awaitThread);
 	}
 
@@ -157,67 +163,83 @@ public class BootstrapServer {
 	private static class HookListener implements Runnable {
 		private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 		private Hook hook;
+		private Selector selector;
+		private boolean RUNNING = true;
 		private BootstrapServer server;
-		private AsynchronousChannelGroup hookListenerGroup;
-		private AsynchronousServerSocketChannel serverChannel;
+		private ServerSocketChannel serverSocketChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
 			this.hook = hook;
 			this.server = bootstrapServer;
 			try {
-				this.hookListenerGroup = AsynchronousChannelGroup.withFixedThreadPool(1, new DefaultThreadFactory("Hook-Listener-Asynchronous-Channel-Group"));
-				serverChannel = AsynchronousServerSocketChannel.open(hookListenerGroup);
-				serverChannel.bind(new InetSocketAddress("localhost", hook.getHookPort()));
+				serverSocketChannel = ServerSocketChannel.open();
+				serverSocketChannel.configureBlocking(false);
+				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+
+				this.selector = Selector.open();
+				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		/***
+		 * 处理现有的消息. 可以用户自定义
+		 * @param byteBuffer
+		 * @throws IOException
+		 */
+		private boolean handlerMsg(ByteBuffer byteBuffer) throws IOException {
+			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
+			msg = StringUtil.powerfulTrim(msg);
+			qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
+			if (msg.equals(hook.getShutdownMsg())) {
+				server.shutdown();
+				return true;
+			}else if (msg.equals(hook.getReloadCfgMsg())){
+				hook.reloadCfg();
+			}else {
+				hook.custom(msg);
+			}
+			return false;
 		}
 
 		@Override
 		public void run() {
 			qLogger.error("[HookListener]服务端: 启动成功");
-			this.serverChannel.accept(null, new CompletionHandler<AsynchronousSocketChannel, Void>() {
-				@Override
-				public void completed(AsynchronousSocketChannel result, Void attachment) {
-					serverChannel.accept(null, this);
-
-					ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
-					Future<Integer> future = result.read(byteBuffer);
+			try {
+			while (RUNNING) {
 					try {
-						if (future.get() > 0) this.handlerMsg((ByteBuffer) byteBuffer.flip());
-					} catch (Exception e) {
-						qLogger.error("[HookListener]处理消息异常: ", e);
-					}finally {
-						try {
-							result.close();
-						} catch (IOException e) {
-							qLogger.error("[HookListener]关闭异常: ", e);
+						this.selector.select(1000);
+						Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator();
+						while (itr.hasNext()) {
+							SelectionKey key = itr.next();
+							itr.remove();
+
+							if (key.isAcceptable()) {
+								qLogger.error("[HookListener]服务端: Acceptor Msg");
+								ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+								SocketChannel channel = serverSocketChannel.accept();
+								channel.configureBlocking(false);
+
+								channel.register(this.selector, SelectionKey.OP_READ);
+							}else if( key.isReadable()){
+								SocketChannel channel = (SocketChannel) key.channel();
+								ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
+								channel.read(byteBuffer);
+								byteBuffer.flip();
+								handlerMsg(byteBuffer);
+								channel.close();
+							}
 						}
+					}catch (Exception e) {
+						qLogger.error(e.getMessage());
 					}
 				}
-				/***
-				 * 处理现有的消息. 可以用户自定义
-				 * @param byteBuffer
-				 * @throws IOException
-				 */
-				private boolean handlerMsg(ByteBuffer byteBuffer) throws IOException {
-					String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
-					msg = StringUtil.powerfulTrim(msg);
-					qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
-					if (msg.equals(hook.getShutdownMsg())) {
-						server.shutdown();
-						return true;
-					}else if (msg.equals(hook.getReloadCfgMsg())){
-						hook.reloadCfg();
-					}else {
-						hook.custom(msg);
-					}
-					return false;
+			}finally {
+				try {
+					this.selector.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				@Override
-				public void failed(Throwable exc, Void attachment) {
-					qLogger.error("[HookListener]异常: ", exc);
-				}
-			});
+			}
 		}
 	}
 }
