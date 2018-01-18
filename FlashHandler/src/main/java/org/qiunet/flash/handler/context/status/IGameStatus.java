@@ -21,6 +21,8 @@ public interface IGameStatus {
 
 	/** 参数错误 */
 	IGameStatus PARAMS_ERROR = BaseGameStatus.PARAMS_ERROR;
+	/**404*/
+	IGameStatus HANdLER_NOT_FOUND = BaseGameStatus.HANdLER_NOT_FOUND;
 	/***
 	 * 得到状态
 	 * @return

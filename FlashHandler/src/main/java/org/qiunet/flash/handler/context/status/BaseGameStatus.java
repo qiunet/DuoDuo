@@ -13,6 +13,8 @@ public enum  BaseGameStatus implements IGameStatus {
 	BAN(4, "被封号, 禁止登陆了"),
 
 	PARAMS_ERROR(10, "参数错误"),
+
+	HANdLER_NOT_FOUND(404, "没有Cmdid对应的RequestHandler"),
 	;
 	private int status;
 	private String desc;
