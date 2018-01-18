@@ -13,7 +13,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
  * Created by qiunet.
  * 17/11/30
  */
-public class ServerChannelGroup {
+public class ServerChannelGroup<Msg> {
 	private final ChannelGroup channelGroup;
 
 	public ServerChannelGroup(String name) {
@@ -24,11 +24,11 @@ public class ServerChannelGroup {
 		channelGroup.add(channel);
 	}
 
-	public ChannelGroupFuture broadcast(Object msg) {
+	public ChannelGroupFuture broadcast(Msg msg) {
 		return channelGroup.writeAndFlush(msg);
 	}
 
-	public ChannelGroupFuture broadcast(Object msg, ChannelMatcher matcher) {
+	public ChannelGroupFuture broadcast(Msg msg, ChannelMatcher matcher) {
 		return channelGroup.writeAndFlush(msg, matcher);
 	}
 
