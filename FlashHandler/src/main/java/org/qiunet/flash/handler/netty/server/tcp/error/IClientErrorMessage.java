@@ -13,4 +13,11 @@ public interface IClientErrorMessage {
 	 * @return
 	 */
 	IMessage getHandlerNotFound();
+
+	/***
+	 * 出现异常
+	 * @param cause
+	 * @return
+	 */
+	IMessage exception( Throwable cause);
 }

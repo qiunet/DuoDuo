@@ -145,4 +145,11 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		params.getSessionEvent().sessionReceived(ctx, HandlerType.WEB_SOCKET, context);
 		acceptor.process(context);
 	}
+
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("Exception : ", cause);
+		ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().exception(cause).encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
+		ctx.close();
+	}
 }
