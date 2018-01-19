@@ -16,4 +16,9 @@ public class DefaultErrorMessage implements IClientErrorMessage{
 	public IMessage getHandlerNotFound() {
 		return null;
 	}
+
+	@Override
+	public IMessage exception(Throwable cause) {
+		return null;
+	}
 }
