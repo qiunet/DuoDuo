@@ -6,12 +6,23 @@ __author__ = 'qiunet'
 
 import smtplib
 import logging
+import enum
 from utils import StringUtil
 from utils import CommonUtil
 from email.header import Header
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import parseaddr, formataddr
+
+
+class MimeTypeEnum(enum.Enum):
+    """
+    邮件的类型枚举
+    """
+    PLAIN = 'plain'
+
+    HTML = 'HTML'
+
 
 
 class MailObject:
@@ -37,13 +48,15 @@ class MailObject:
         name, addr = parseaddr(str)
         return formataddr((Header(name, 'Utf-8').encode(), addr))
 
-    def sendMail(self, mailTo, subject, content, cc=[]):
+    def sendMail(self, mailTo, subject, content, cc=[], _charset="UTF-8", mimeTypeEnum=MimeTypeEnum.PLAIN):
         """
         发送邮件的方法
         :param mailTo: toAddr 发送到的邮箱地址 需要是数组
         :param subject: 标题
         :param content: 内容
         :param cc  抄送
+        :param _charset 编码
+        :param mimeTypeEnum 邮件格式
         """
         if not isinstance(mailTo, list):
             logging.error("mailTo: TypeError: must be list")
@@ -53,7 +66,7 @@ class MailObject:
             return
 
         mail = MIMEMultipart()
-        msg = MIMEText(content, 'plain', 'Utf-8')
+        msg = MIMEText(content, _subtype=mimeTypeEnum.value, _charset=_charset)
         mail.attach(msg)
 
         mail['To'] = self.__formatAddr("<%s>" % StringUtil.arrayToStr(mailTo, ';'))
