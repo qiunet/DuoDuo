@@ -17,11 +17,16 @@ public class DefaultSession implements ISession {
 		this.ctx = ctx;
 		this.dt = System.currentTimeMillis();
 		this.key = ctx.channel().id().asLongText();
-		this.queueIndex = this.key.hashCode();
+		this.resetQueueIndex();
 	}
 	@Override
 	public int getQueueIndex() {
 		return queueIndex;
+	}
+
+	@Override
+	public void resetQueueIndex() {
+		this.queueIndex = this.key.hashCode();
 	}
 
 	@Override

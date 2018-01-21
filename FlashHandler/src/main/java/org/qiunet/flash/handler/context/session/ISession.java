@@ -15,7 +15,11 @@ public interface ISession {
 	 * @return
 	 */
 	int getQueueIndex();
-
+	/***
+	 * 重置队列索引.
+	 * @return
+	 */
+	void resetQueueIndex();
 	/***
 	 * 设置队列索引. 因为可能进入房间了. 所有人的队列索引都设置为一样
 	 * @param queueIndex
