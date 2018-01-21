@@ -29,4 +29,18 @@ public class TestProtobuf {
 		Assert.assertEquals(error.getHeader().getRet(), playerIndexResponse.getHeader().getRet());
 		Assert.assertEquals(error.getHeader().getMsg(), playerIndexResponse.getHeader().getMsg());
 	}
+
+	@Test
+	public void testOnlyHeaderToProtobuf() throws InvalidProtocolBufferException {
+		HeaderProto.ResponseHeader header = HeaderProto.ResponseHeader.newBuilder()
+				.setRet(10001)
+				.setMsg("测试")
+				.build();
+
+		byte [] bytes = header.toByteArray();
+		LoginProto.LoginResponse response = LoginProto.LoginResponse.parseFrom(bytes);
+
+		Assert.assertNotEquals(response.getHeader().getRet() , header.getRet());
+		Assert.assertNotEquals(response.getHeader().getMsg() , header.getMsg());
+	}
 }
