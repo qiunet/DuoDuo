@@ -14,4 +14,11 @@ public class ErrorHandler implements IClientErrorMessage {
 
 		return null;
 	}
+
+	@Override
+	public IMessage exception(Throwable cause) {
+		return null;
+	}
+
+
 }
