@@ -26,6 +26,9 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
 
@@ -36,6 +39,7 @@ import java.net.URI;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
+	private static QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private static NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
@@ -59,10 +63,8 @@ public final class NettyHttpClient {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
 			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
 			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception", e);
 		}
 	}
 	/***

@@ -18,6 +18,9 @@ import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 
 import java.net.URI;
@@ -28,6 +31,7 @@ import java.net.URI;
  */
 public class NettyWebsocketClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
+	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 
@@ -47,8 +51,8 @@ public class NettyWebsocketClient implements ILongConnClient {
 		try {
 			ChannelFuture future = bootstrap.connect(uri.getHost(), uri.getPort()).sync();
 			handler.handshakeFuture().sync();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Exception", e);
 		}
 	}
 	@Override
