@@ -57,7 +57,7 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 		try {
 			return URLEncoder.encode(input, charset.toString());
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error("[DefaultHttpRequestHandler] Exception: ", e);
 		}
 		return "";
 	}

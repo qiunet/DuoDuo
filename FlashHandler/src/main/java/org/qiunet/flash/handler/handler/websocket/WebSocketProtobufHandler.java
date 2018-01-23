@@ -17,7 +17,7 @@ public abstract class WebSocketProtobufHandler<RequestData> extends BaseWebSocke
 			if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
 			return (RequestData) method.invoke(null, bytes);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
 		return null;
 	}

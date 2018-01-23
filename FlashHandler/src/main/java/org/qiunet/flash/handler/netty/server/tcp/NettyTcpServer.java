@@ -52,7 +52,7 @@ public final class NettyTcpServer implements Runnable {
 			qLogger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
-			e.printStackTrace();
+			qLogger.error("[NettyTcpServer] Exception: ", e);
 		}finally {
 			qLogger.error("[NettyTcpServer] is shutdown! ");
 			boss.shutdownGracefully();

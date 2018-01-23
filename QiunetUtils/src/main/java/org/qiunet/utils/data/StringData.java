@@ -48,10 +48,8 @@ public class StringData {
 				Object val = null;
 				try {
 					val = getObjectVal(f.get(obj));
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					logger.error("[StringData] Exception: ", e);
 				}finally{
 					f.setAccessible(false);
 				}
@@ -93,7 +91,7 @@ public class StringData {
  				return loadObject(obj);
  			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
 		return "ERR";
 	}

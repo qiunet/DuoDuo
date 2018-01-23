@@ -1,5 +1,10 @@
 package org.qiunet.utils.classScanner;
 
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
+import sun.rmi.runtime.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
@@ -17,7 +22,7 @@ import java.util.jar.JarFile;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile {
-
+	private QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
 	private List<String> allclass = new LinkedList<>();
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();
@@ -41,7 +46,7 @@ public class ScannerAllClassFile {
 			basepath = new File(basePath).toURI().toURL().getPath();
 			this.listAllFiles(basepath);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
 	}
 	/***

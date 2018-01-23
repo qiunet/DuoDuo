@@ -59,7 +59,7 @@ public class NettyHttpServer implements Runnable {
 					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			this.channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
-			e.printStackTrace();
+			qLogger.error("[NettyHttpServer] Exception: ", e);
 		}finally {
 			qLogger.error("[NettyHttpServer] is shutdown! ");
 			boss.shutdownGracefully();

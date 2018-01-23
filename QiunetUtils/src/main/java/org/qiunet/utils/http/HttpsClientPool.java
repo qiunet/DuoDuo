@@ -40,12 +40,8 @@ public class HttpsClientPool extends BasicPool<HttpClient> {
 				}
 			});
 			sslsf=new SSLConnectionSocketFactory(sslContextBuilder.build());
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		} catch (KeyStoreException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
 		this.builder = HttpClientBuilder.create();
 		this.builder.setMaxConnTotal(getMaxActive());

@@ -1,5 +1,8 @@
 package org.qiunet.data.async;
 
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.nonSyncQuene.mutiThread.DefaultExecutorRejectHandler;
 
@@ -7,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.logging.LogManager;
 
 /**
  * 异步更新的公用类
@@ -14,6 +18,7 @@ import java.util.concurrent.*;
  *         Created on 17/2/11 08:04.
  */
 public class AsyncJobSupport {
+	private QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
 	private ExecutorService executor = new ThreadPoolExecutor(
 			10,
 			512,
@@ -68,14 +73,14 @@ public class AsyncJobSupport {
 						// 必须try catch 否则导致线程停止
 						node.updateRedisDataToDatabase();
 					}catch (Exception e) {
-						e.printStackTrace();
+						logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 					}
 				}
 			});
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 			}
 		}
 	}
