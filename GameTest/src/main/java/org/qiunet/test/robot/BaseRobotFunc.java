@@ -60,12 +60,13 @@ public abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRob
 
 		@Override
 		public void response(MessageContent data) {
-			if (data.getProtocolId() == parkResponseId ) {
-				LockSupport.unpark(currThread);
-			}
-
 			ILongConnResponse response = ResponseMapping.getInstance().getResponse(data.getProtocolId());
 			response.response(robot, data);
+
+			if (data.getProtocolId() == BaseRobotFunc.this.parkResponseId) {
+				BaseRobotFunc.this.parkResponseId = 0;
+				LockSupport.unpark(currThread);
+			}
 		}
 	}
 }
