@@ -18,6 +18,3 @@ class PropertiesTest(unittest.TestCase):
         self.assertEqual('qiuyang1', self.data.get('qiu1'))
         self.assertNotEqual('qiuyang1', self.data.get('qiu2'))
 
-
-if __name__ == '__main__':
-    unittest.main()

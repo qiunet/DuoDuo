@@ -21,6 +21,3 @@ class TestJsonFunc (unittest.TestCase) :
         print(type(map))
         self.assertEqual("yang2", map.get("qiu2"))
 
-
-if __name__ == '__main__':
-    unittest.main()

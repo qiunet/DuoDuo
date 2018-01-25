@@ -31,7 +31,3 @@ class TestStringUtilFunc(unittest.TestCase):
         list = [1, 2, 3]
         self.assertEqual("1,2,3", StringUtil.arrayToStr(list, ","))
         self.assertEqual("[1,2,3]", StringUtil.arrayToStr(list, ",", "[", "]"))
-
-
-if __name__ == '__main__':
-    unittest.main()
