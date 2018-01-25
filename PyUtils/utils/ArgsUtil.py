@@ -21,12 +21,16 @@ class ArgsDict:
             args = arg.split("=")
             self.__dict.setdefault(args[0][2:], args[1])
 
-    def get(self, argumentName):
+    def get(self, argumentName, defaultVal=None):
         """
         得到参数对应的值. ,没有. 默认为 None
         :param argumentName:  参数名
+        :param defaultVal 默认值
         :return:  对应的值
         """
+        if not self.containKey(argumentName):
+            return defaultVal
+
         return self.__dict.get(argumentName, None)
 
     def containKey(self, argumentName):
