@@ -6,6 +6,48 @@ import os
 __author__ = 'qiunet'
 
 
+class Properties:
+    def __init__(self, fileName):
+        """
+        初始化
+        :param fileName: 文件名
+        """
+        self.fileName = fileName
+        self.__properties = {}
+        try:
+            file = open(fileName, mode='r', encoding='utf-8')
+            for text in file:
+                line = text.strip()
+                if line.startswith('#') or line.find('=') <= 0:
+                    continue
+                strs = line.split('=')
+                self.__properties[strs[0].strip()] = strs[1].strip()
+
+        except Exception as e:
+            raise e
+        finally:
+            file.close()
+
+    def containKey(self, key):
+        """
+        是否包含key
+        :param key:
+        :return:
+        """
+        return key in self.__properties.keys()
+
+    def get(self, key, defaultValue=None):
+        """
+        得到指定key的值
+        :param key:
+        :param defaultValue:
+        :return:
+        """
+        if not self.containKey(key):
+            return defaultValue
+        return self.__properties[key]
+
+
 def readContent(filename):
     """
     读取一个文件的全部内容
