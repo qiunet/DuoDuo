@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.acceptor.Acceptor;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -141,8 +142,6 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
-		hookListener.RUNNING = false;
-
 		if (hook != null) {
 			hook.shutdown();
 		}
@@ -154,7 +153,6 @@ public class BootstrapServer {
 		}
 
 		Acceptor.getInstance().shutdown();
-
 		LockSupport.unpark(awaitThread);
 	}
 
@@ -179,8 +177,9 @@ public class BootstrapServer {
 
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
+				this.RUNNING = false;
 				server.shutdown();
-				qLogger.error("[HookListener] start", e);
+				qLogger.error("[HookListener] Start Exception", e);
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -194,6 +193,7 @@ public class BootstrapServer {
 			msg = StringUtil.powerfulTrim(msg);
 			qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
+				this.RUNNING = false;
 				server.shutdown();
 				return true;
 			}else if (msg.equals(hook.getReloadCfgMsg())){
