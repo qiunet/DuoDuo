@@ -48,4 +48,4 @@ class ArgsDict:
         :param argumentName:
         :return:
         """
-        return argumentName in self.__dict
+        return argumentName in self.__dict.keys()
