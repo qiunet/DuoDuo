@@ -18,17 +18,15 @@ public class TestMathUtilRandom {
 	private int randStart;
 	private int randEnd;
 
-	private int val;
-	public TestMathUtilRandom(int randStart, int randEnd, int val) {
+	public TestMathUtilRandom(int randStart, int randEnd) {
 		this.randStart = randStart;
 		this.randEnd = randEnd;
-		this.val = val;
 	}
 	@Parameterized.Parameters
 	public static Collection params(){
 		List<Object[]> ret = new ArrayList<>();
-		for (int i = 0 ; i < 20; i++) {
-			ret.add(new Object[]{i, i+1, i});
+		for (int i = 1 ; i <= 20; i++) {
+			ret.add(new Object[]{i, i*3});
 		}
 		return ret;
 	}
@@ -36,6 +34,6 @@ public class TestMathUtilRandom {
 	@Test
 	public void testRandom(){
 		int rand = MathUtil.random(randStart, randEnd);
-		Assert.assertEquals(val, rand);
+		Assert.assertTrue(rand >= randStart && rand < randEnd);
 	}
 }
