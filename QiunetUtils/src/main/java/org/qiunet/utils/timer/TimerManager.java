@@ -10,7 +10,7 @@ import java.util.Timer;
  * 18/1/26
  */
 public class TimerManager {
-	private static final Timer timer = new Timer("Qiunet-TimerManager");
+	private static final Timer timer = new Timer("Qiunet-TimerManager", true);
 
 	private volatile static TimerManager instance;
 
