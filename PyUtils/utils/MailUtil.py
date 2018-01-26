@@ -27,7 +27,7 @@ class MimeTypeEnum(enum.Enum):
 
 class MailObject:
 
-    def __init__(self, mailFrom, fromAlias, smtpServer, password, smtpPort=25):
+    def __init__(self, mailFrom: str(), fromAlias: str(), smtpServer: str, password: str, smtpPort: int=25):
         """
         初始化函数
         :param mailFrom: 发送人地址
@@ -44,11 +44,11 @@ class MailObject:
         self.__smtpServer = smtpServer
         pass
 
-    def __formatAddr(self, str):
-        name, addr = parseaddr(str)
+    def __formatAddr(self, string: str):
+        name, addr = parseaddr(string)
         return formataddr((Header(name, 'Utf-8').encode(), addr))
 
-    def sendMail(self, mailTo, subject, content, cc=[], _charset="UTF-8", mimeTypeEnum=MimeTypeEnum.PLAIN):
+    def sendMail(self, mailTo: list, subject: str, content: str, cc: list=[], _charset: str="UTF-8", mimeTypeEnum=MimeTypeEnum.PLAIN):
         """
         发送邮件的方法
         :param mailTo: toAddr 发送到的邮箱地址 需要是数组
@@ -79,7 +79,7 @@ class MailObject:
 
         try:
             server = smtplib.SMTP(self.__smtpServer, self.__smtpPort)
-
+            server.set_debuglevel(1)
             server.login(self.__mailFrom, self.__password)
             server.sendmail(self.__mailFrom, mailTo, mail.as_string())
         except smtplib.SMTPException:

@@ -21,7 +21,7 @@ class ArgsDict:
             args = arg.split("=")
             self.__dict.setdefault(args[0][2:], args[1])
 
-    def getStr(self, argumentName, defaultVal=''):
+    def getStr(self, argumentName: str, defaultVal: str='') -> str:
         """
         得到参数对应的值. ,没有. 默认为 None
         :param argumentName:  参数名
@@ -33,7 +33,7 @@ class ArgsDict:
 
         return self.__dict.get(argumentName, None)
 
-    def getInt(self, argumentName, defaultVal=0):
+    def getInt(self, argumentName: str, defaultVal: int=0) -> int:
         """
         得到参数对应的值. ,没有. 默认为 None
         :param argumentName:  参数名
@@ -42,7 +42,7 @@ class ArgsDict:
         """
         return int(self.getStr(argumentName, str(defaultVal)))
 
-    def containKey(self, argumentName):
+    def containKey(self, argumentName: str) -> bool:
         """
         判断是否有改值.
         :param argumentName:

@@ -5,10 +5,10 @@
 __author__ = 'qiunet'
 
 
-def isEmpty(o):
+def isEmpty(o: object) -> bool:
     """
-    判断空对象 
-    :param o: 
+    判断空对象
+    :param o:
     :return: True False
     """
     return o is None or len(o) == 0

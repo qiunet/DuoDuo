@@ -9,28 +9,28 @@ import logging
 from utils import CommonUtil
 
 
-def isEmpty(string):
+def isEmpty(string: str) -> bool:
     """
     判断空对象
-    :param o:
+    :param string:
     :return: True False
     """
     return CommonUtil.isEmpty(string)
 
 
-def split(string, split):
+def split(string: str, sp: str) -> str():
     """
     分割字符串
-    严格按照 split 分割的
+    严格按照 sp 分割的
     ',,' 会分割为 ['', '', '']
     :param string: 需要分割的字符
-    :param split: 分割符号
+    :param sp: 分割符号
     :return: 分割后的数组
     """
-    return str(string).split(split)
+    return str(string).split(sp)
 
 
-def arrayToStr(listObj, sep=',', start='', end=''):
+def arrayToStr(listObj: list, sep: str=',', start: str='', end: str=''):
     """
     对数组进行拼串
     :param listObj:  数组

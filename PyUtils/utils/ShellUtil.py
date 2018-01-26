@@ -6,7 +6,7 @@ import subprocess
 __author__ = 'qiunet'
 
 
-def execShell(cmd, *args, timeout=None):
+def execShell(cmd: str, *args, timeout=None) -> int:
     """
     执行shell 命令
     :param cmd: 命令

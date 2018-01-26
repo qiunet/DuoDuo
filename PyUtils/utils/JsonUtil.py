@@ -7,10 +7,10 @@ import json
 __author__ = 'qiunet'
 
 
-def toJsonString(obj):
+def toJsonString(obj: object) -> str:
     return json.dumps(obj)
 
 
-def getGeneralObject(jsonString, cls=None):
+def getGeneralObject(jsonString: str, cls=None):
     return json.loads(jsonString, encoding="UTF8", cls=cls)
 
