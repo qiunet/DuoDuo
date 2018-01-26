@@ -124,6 +124,7 @@ public class BootstrapServer {
 		Thread tcpThread = new Thread(tcpServer, "BootstrapServer-Tcp");
 		tcpThread.setDaemon(true);
 		tcpThread.start();
+
 		return this;
 	}
 	public static Thread awaitThread;
@@ -171,14 +172,16 @@ public class BootstrapServer {
 			this.hook = hook;
 			this.server = bootstrapServer;
 			try {
+				this.selector = Selector.open();
 				serverSocketChannel = ServerSocketChannel.open();
 				serverSocketChannel.configureBlocking(false);
 				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
 
-				this.selector = Selector.open();
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
-				e.printStackTrace();
+				server.shutdown();
+				qLogger.error("[HookListener] start", e);
+				Thread.currentThread().interrupt();
 			}
 		}
 		/***
@@ -230,7 +233,7 @@ public class BootstrapServer {
 							}
 						}
 					}catch (Exception e) {
-						qLogger.error(e.getMessage());
+						qLogger.error("[HookListener]", e);
 					}
 				}
 			}finally {
