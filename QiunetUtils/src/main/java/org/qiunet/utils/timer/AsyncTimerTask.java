@@ -1,25 +1,37 @@
 package org.qiunet.utils.timer;
 
-import org.qiunet.utils.nonSyncQuene.mutiThread.MultiNonSyncQueueHandler;
+import org.qiunet.utils.logger.LoggerManager;
+import org.qiunet.utils.logger.log.QLogger;
 
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * 异步的时间调度的一个类
  * Created by qiunet.
  * 18/1/26
  */
-public abstract class AsyncTimerTask extends TimerTask {
-	private static final MultiNonSyncQueueHandler queueHandler = new MultiNonSyncQueueHandler("Qiunet-Timer-MultiNonSyncQueueHandler", 5, 300, 60, TimeUnit.SECONDS);
+public abstract class AsyncTimerTask implements Runnable {
+	private static final QLogger logger = LoggerManager.getLogger(AsyncTimerTask.class);
+	private ScheduledFuture future;
+
+	void setFuture(ScheduledFuture future) {
+		this.future = future;
+	}
+
+	/***
+	 * 终止当前线程
+	 */
+	public void cancel(){
+		future.cancel(true);
+	}
+
 	@Override
 	public void run() {
-		queueHandler.addElement(new Runnable() {
-			@Override
-			public void run() {
-				asyncRun();
-			}
-		});
+		try {
+			asyncRun();
+		}catch (Exception e) {
+			logger.error("AsyncTimerTask: Exception: ", e);
+		}
 	}
 
 	protected abstract void asyncRun();

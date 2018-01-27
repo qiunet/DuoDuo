@@ -1,8 +1,11 @@
 package org.qiunet.utils.timer;
 
 
-import java.util.Date;
-import java.util.Timer;
+import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -10,7 +13,7 @@ import java.util.Timer;
  * 18/1/26
  */
 public class TimerManager {
-	private static final Timer timer = new Timer("Qiunet-TimerManager", true);
+	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(1, new DefaultThreadFactory("Qiunet-TimerManager"));
 
 	private volatile static TimerManager instance;
 
@@ -32,33 +35,19 @@ public class TimerManager {
 	}
 
 	/***
-	 * 中断timer
+	 * 停闭
 	 */
-	public void cannel(){
-		timer.cancel();
+	public void shutdown(){
+		schedule.shutdownNow();
 	}
-
-	/**
-	 * 清理已经结束cancel的task
-	 * @return
+	/***
+	 * 默认使用毫秒
+	 * @param timerTask 任务
+	 * @param deley 延时毫秒
+	 * @param period 调度周期
 	 */
-	public int purge(){
-		return timer.purge();
-	}
-
 	public void scheduleAtFixedRate(AsyncTimerTask timerTask, long deley, long period){
-		timer.scheduleAtFixedRate(timerTask, deley, period);
-	}
-
-	public void scheduleAtFixedRate(AsyncTimerTask timerTask, Date firstTime, long period){
-		timer.scheduleAtFixedRate(timerTask, firstTime, period);
-	}
-
-	public void schedule(AsyncTimerTask timerTask, long deley, long period){
-		timer.schedule(timerTask, deley, period);
-	}
-
-	public void schedule(AsyncTimerTask timerTask, Date firstTime, long period){
-		timer.schedule(timerTask, firstTime, period);
+		ScheduledFuture future = schedule.scheduleAtFixedRate(timerTask, deley, period, TimeUnit.MILLISECONDS);
+		timerTask.setFuture(future);
 	}
 }
