@@ -18,6 +18,12 @@ import java.net.URI;
  * 17/12/4
  */
 public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot> implements ITestCase<Robot> {
+
+	/***
+	 * 请求id
+	 * @return
+	 */
+	protected abstract int getRequestID();
 	/***
 	 * 得到请求的uri
 	 * @return

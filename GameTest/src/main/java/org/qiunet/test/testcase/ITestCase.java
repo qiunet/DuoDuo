@@ -28,12 +28,6 @@ public interface ITestCase<Robot extends IRobot> {
 	 * @return true 终止
 	 */
 	boolean cancelIfConditionMiss();
-
-	/***
-	 * 请求id
-	 * @return
-	 */
-	int getRequestID();
 	/***
 	 * 得到一个请求数据
 	 * @param robot

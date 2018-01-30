@@ -11,6 +11,11 @@ import org.qiunet.test.testcase.ITestCase;
  */
 public abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<Robot> {
 	/***
+	 * 请求id
+	 * @return
+	 */
+	protected abstract int getRequestID();
+	/***
 	 * 得到当前的server数据
 	 * @return
 	 */
