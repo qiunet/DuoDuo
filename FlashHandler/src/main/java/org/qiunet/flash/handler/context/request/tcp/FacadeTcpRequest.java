@@ -7,7 +7,7 @@ import io.netty.channel.Channel;
  * Created by qiunet.
  * 17/11/21
  */
-public class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
+class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
 	private AbstractTcpRequestContext<RequestData, Object> context;
 
 	public FacadeTcpRequest (AbstractTcpRequestContext context) {

@@ -7,7 +7,7 @@ import io.netty.channel.Channel;
  * Created by qiunet.
  * 17/12/2
  */
-public class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<RequestData> {
+class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<RequestData> {
 	private AbstractWebSocketRequestContext<RequestData, Object> context;
 	public FacadeWebSocketRequest(AbstractWebSocketRequestContext<RequestData, Object> context) {
 		this.context = context;

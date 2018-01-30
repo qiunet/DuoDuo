@@ -17,7 +17,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/7/19
  */
-public abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData>, IResponse {
+abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData>, IResponse {
 	protected TcpBootstrapParams params;
 	protected AbstractTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext,TcpBootstrapParams params) {
 		super(content, channelContext);

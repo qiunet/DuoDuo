@@ -27,7 +27,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author qiunet
  *         Created on 17/3/17 14:28.
  */
-public abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData> {
+abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData> {
 	private HttpRequest request;
 	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;

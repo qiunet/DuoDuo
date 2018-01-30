@@ -10,7 +10,7 @@ import java.util.Set;
  * Created by qiunet.
  * 17/11/21
  */
-public class FacadeHttpRequest<RequestData> implements IHttpRequest<RequestData> {
+class FacadeHttpRequest<RequestData> implements IHttpRequest<RequestData> {
 	private IHttpRequestContext<RequestData> context;
 	public FacadeHttpRequest(IHttpRequestContext context) {
 		this.context = context;

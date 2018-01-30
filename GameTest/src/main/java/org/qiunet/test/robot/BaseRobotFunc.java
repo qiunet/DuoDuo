@@ -19,7 +19,7 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/12/9
  */
-public abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info> {
+abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info> {
 	private BaseRobotFunc.LongConnResponseTrigger trigger = new BaseRobotFunc.LongConnResponseTrigger();
 	/***
 	 * 长连接的session map

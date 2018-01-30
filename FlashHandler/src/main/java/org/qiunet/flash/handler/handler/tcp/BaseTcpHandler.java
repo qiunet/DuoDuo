@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.handler.BaseHandler;
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class BaseTcpHandler<RequestData> extends BaseHandler<RequestData> implements ITcpHandler<RequestData> {
+abstract class BaseTcpHandler<RequestData> extends BaseHandler<RequestData> implements ITcpHandler<RequestData> {
 	@Override
 	public HandlerType getHandlerType() {
 		return HandlerType.TCP;

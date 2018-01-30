@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.handler.BaseHandler;
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class BaseHttpHandler<RequestData, ResponseData> extends BaseHandler<RequestData> implements IHttpHandler<RequestData, ResponseData>{
+abstract class BaseHttpHandler<RequestData, ResponseData> extends BaseHandler<RequestData> implements IHttpHandler<RequestData, ResponseData>{
 	@Override
 	public boolean fastRequestControl() {
 		return true;
