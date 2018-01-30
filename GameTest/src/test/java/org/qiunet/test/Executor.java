@@ -4,6 +4,7 @@ import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
+import org.qiunet.test.TestCase.player.TestJsonPlayerInfo;
 import org.qiunet.test.TestCase.player.TestPlayerIndex;
 import org.qiunet.test.TestCase.player.TestPlayerInfo;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
@@ -53,6 +54,7 @@ public class Executor {
 				.addTestCase(new TestLoginOnline())
 				.addTestCase(new TestPlayerIndex())
 				.addTestCase(new TestPlayerInfo())
+				.addTestCase(new TestJsonPlayerInfo())
 				.addTestCase(new TestLoginRoom())
 
 		).pressureTesting(1);
