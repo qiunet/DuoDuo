@@ -17,17 +17,7 @@ public class TestLogicInterceptor implements HttpInterceptor {
 		if (handler.needToken()) {
 
 		}
-		GeneratedMessageV3 responseData = (GeneratedMessageV3) handler.handler(request);
+		Object responseData = handler.handler(request);
 		return responseData;
-	}
-
-
-	private HeaderProto.ErrorResponse buildErrorResponse(IGameStatus status) {
-		return HeaderProto.ErrorResponse.newBuilder()
-				.setHeader(
-						HeaderProto.ResponseHeader.newBuilder()
-						.setRet(status.getStatus())
-						.setMsg(status.getDesc()))
-				.build();
 	}
 }

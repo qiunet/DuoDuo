@@ -3,6 +3,7 @@ package org.qiunet.test.TestCase.base;
 import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.test.proto.HeaderProto;
 import org.qiunet.test.robot.Robot;
+import org.qiunet.test.server.IServer;
 import org.qiunet.test.server.type.ServerType;
 import org.qiunet.test.testcase.http.HttpProtobufTestCase;
 
@@ -22,7 +23,7 @@ public abstract class BaseLogicTestCase<RequestData extends GeneratedMessageV3, 
 	}
 
 	@Override
-	public URI getServerUri() {
-		return ServerType.HTTP_LOGIC.uri();
+	protected IServer getServer() {
+		return ServerType.HTTP_LOGIC;
 	}
 }

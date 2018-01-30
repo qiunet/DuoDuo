@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
 import org.qiunet.test.TestCase.player.TestPlayerIndex;
+import org.qiunet.test.TestCase.player.TestPlayerInfo;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
 import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.executor.RobotExecutor;
@@ -51,9 +52,10 @@ public class Executor {
 				.addTestCase(new TestLogin())
 				.addTestCase(new TestLoginOnline())
 				.addTestCase(new TestPlayerIndex())
+				.addTestCase(new TestPlayerInfo())
 				.addTestCase(new TestLoginRoom())
 
-		).pressureTesting(2000);
+		).pressureTesting(1);
 		server.shutdown();
 	}
 
