@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.bootstrap;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,6 +12,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
+import org.qiunet.flash.handler.context.response.json.JsonResponse;
+import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
@@ -121,4 +125,49 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		LockSupport.park();
 
 	}
+	@Test
+	public void testHttpJson() throws InvalidProtocolBufferException {
+		final String test = "测试[testHttpJson]";
+		final JsonRequest request = new JsonRequest();
+		request.addAttribute("test", test);
+
+		MessageContent content = new MessageContent(1007, request.toString().getBytes(CharsetUtil.UTF_8));
+		final Thread currThread = Thread.currentThread();
+		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
+			@Override
+			public void response(FullHttpResponse httpResponse) {
+				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+
+				new ProtocolHeader(httpResponse.content());
+				JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
+				Assert.assertEquals(test, response.getString("test"));
+				ReferenceCountUtil.release(httpResponse);
+				LockSupport.unpark(currThread);
+			}
+		});
+		LockSupport.park();
+
+	}
+	@Test
+	public void testOtherHttpJson(){
+		final String test = "测试[testOtherHttpJson]";
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("test",test);
+		final Thread currThread = Thread.currentThread();
+
+		NettyHttpClient.sendRequest(Unpooled.wrappedBuffer(jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8)), "Http://localhost:8080/jsonUrl", new IHttpResponseTrigger() {
+			@Override
+			public void response(FullHttpResponse httpResponse) {
+				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+				String responseString = httpResponse.content().toString(CharsetUtil.UTF_8);
+				JsonResponse response = JsonResponse.parse(responseString);
+				Assert.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
+				Assert.assertEquals(response.get("test"), test);
+				ReferenceCountUtil.release(httpResponse);
+				LockSupport.unpark(currThread);
+			}
+		});
+		LockSupport.park();
+	}
+
 }
