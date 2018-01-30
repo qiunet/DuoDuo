@@ -59,7 +59,7 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		return super.writeAndFlush(new BinaryWebSocketFrame(buildMessage(protocolId, msg).encode().encodeToByteBuf()), matcher);
+		return super.writeAndFlush(new BinaryWebSocketFrame(buildMessage(protocolId, msg).encode().encodeToByteBuf()), matcher, false);
 	}
 
 	@Override
