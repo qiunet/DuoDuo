@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.annotation.support;
 
-import org.qiunet.flash.handler.common.annotation.OtherRequestHandler;
+import org.qiunet.flash.handler.common.annotation.UriPathRequestHandler;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
@@ -19,7 +19,7 @@ public class RequestScannerHandler implements IScannerHandler {
 	public boolean matchClazz(Class clazz) {
 		return (
 				clazz.getAnnotation(RequestHandler.class) != null
-			 || clazz.getAnnotation(OtherRequestHandler.class) != null
+			 || clazz.getAnnotation(UriPathRequestHandler.class) != null
 				)
 				&& IHandler.class.isAssignableFrom(clazz);
 	}
@@ -27,7 +27,7 @@ public class RequestScannerHandler implements IScannerHandler {
 	@Override
 	public void handler(Class<?> clazz) {
 		RequestHandler requestHandler = clazz.getAnnotation(RequestHandler.class);
-		OtherRequestHandler otherRequestHandler = clazz.getAnnotation(OtherRequestHandler.class);
+		UriPathRequestHandler otherRequestHandler = clazz.getAnnotation(UriPathRequestHandler.class);
 		try {
 			Constructor<IHandler> constructor = (Constructor<IHandler>) clazz.getConstructor(null);
 			if (!constructor.isAccessible()) constructor.setAccessible(true);

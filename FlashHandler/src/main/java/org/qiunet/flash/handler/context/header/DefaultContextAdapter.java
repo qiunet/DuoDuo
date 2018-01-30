@@ -31,7 +31,7 @@ public class DefaultContextAdapter implements IContextAdapter {
 		if (content.getProtocolId() > 0) {
 			return RequestHandlerMapping.getInstance().getGameHandler(content.getProtocolId());
 		}else {
-			return RequestHandlerMapping.getInstance().getOtherRequestHandler(((UriHttpMessageContent) content).getUriPath());
+			return RequestHandlerMapping.getInstance().getUriPathRequestHandler(((UriHttpMessageContent) content).getUriPath());
 		}
 	}
 

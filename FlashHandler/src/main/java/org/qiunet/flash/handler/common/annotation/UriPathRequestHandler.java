@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OtherRequestHandler {
+public @interface UriPathRequestHandler {
 	/***
 	 * uriPath
 	 * 仅http使用.

@@ -27,7 +27,7 @@ public class TestMapping extends RequestHandlerScanner {
 		Assert.assertEquals(handler.getDataType() , DataType.PROTOBUF);
 		Assert.assertTrue(handler instanceof LoginProtobufHandler);
 
-		IHttpHandler httpHandler = RequestHandlerMapping.getInstance().getOtherRequestHandler("/back");
+		IHttpHandler httpHandler = RequestHandlerMapping.getInstance().getUriPathRequestHandler("/back");
 		Assert.assertNotNull(httpHandler);
 		Assert.assertTrue(httpHandler instanceof UriHandler);
 	}

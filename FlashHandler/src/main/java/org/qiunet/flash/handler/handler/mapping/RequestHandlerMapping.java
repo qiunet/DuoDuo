@@ -25,7 +25,7 @@ public class RequestHandlerMapping {
 	/**所有游戏的 handler*/
 	private Map<Integer, IHandler> gameHandlers = new HashMap<>();
 	/**所有非游戏的 http handler*/
-	private Map<String, IHttpHandler> otherHandlers = new HashMap<>();
+	private Map<String, IHttpHandler> uriPathHandlers = new HashMap<>();
 
 	private RequestHandlerMapping() {
 		synchronized (RequestHandlerMapping.class) {
@@ -70,12 +70,14 @@ public class RequestHandlerMapping {
 	 * @param handler
 	 */
 	public void addHandler(String uriPath, IHttpHandler handler) {
-		if (this.otherHandlers.containsKey(uriPath)) {
+		if(! uriPath.startsWith("/")) uriPath = "/" + uriPath;
+
+		if (this.uriPathHandlers.containsKey(uriPath)) {
 			throw new RuntimeException("uriPath ["+uriPath+"] is already exist!");
 		}
 
 		handlerSetRequestDataClass(handler);
-		this.otherHandlers.put(uriPath, handler);
+		this.uriPathHandlers.put(uriPath, handler);
 	}
 
 	/***
@@ -134,7 +136,7 @@ public class RequestHandlerMapping {
 	 * 得到一个非游戏的handler
 	 * @return
 	 */
-	public IHttpHandler getOtherRequestHandler(String uriPath){
-		return otherHandlers.get(uriPath);
+	public IHttpHandler getUriPathRequestHandler(String uriPath){
+		return uriPathHandlers.get(uriPath);
 	}
 }
