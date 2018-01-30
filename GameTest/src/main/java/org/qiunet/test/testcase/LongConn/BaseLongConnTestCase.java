@@ -1,5 +1,6 @@
 package org.qiunet.test.testcase.LongConn;
 
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
@@ -9,12 +10,18 @@ import org.qiunet.test.testcase.ITestCase;
  * Created by qiunet.
  * 17/12/8
  */
-public abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<Robot> {
+abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<Robot> {
 	/***
 	 * 请求id
 	 * @return
 	 */
 	protected abstract int getRequestID();
+	/***
+	 * 得到一个请求数据
+	 * @param robot
+	 * @return
+	 */
+	protected abstract MessageContent buildRequest(Robot robot);
 	/***
 	 * 得到当前的server数据
 	 * @return

@@ -7,6 +7,7 @@ import org.qiunet.test.TestCase.login.TestLoginOnline;
 import org.qiunet.test.TestCase.player.TestJsonPlayerInfo;
 import org.qiunet.test.TestCase.player.TestPlayerIndex;
 import org.qiunet.test.TestCase.player.TestPlayerInfo;
+import org.qiunet.test.TestCase.player.TestUriPathPlayerInfo;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
 import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.executor.RobotExecutor;
@@ -55,6 +56,7 @@ public class Executor {
 				.addTestCase(new TestPlayerIndex())
 				.addTestCase(new TestPlayerInfo())
 				.addTestCase(new TestJsonPlayerInfo())
+				.addTestCase(new TestUriPathPlayerInfo())
 				.addTestCase(new TestLoginRoom())
 
 		).pressureTesting(1);

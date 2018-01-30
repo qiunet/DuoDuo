@@ -8,22 +8,19 @@ import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
 import org.qiunet.test.testcase.ITestCase;
+import org.qiunet.utils.http.AbstractHttpUtil;
 
 /**
  * Created by qiunet.
  * 17/12/4
  */
-public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot> implements ITestCase<Robot> {
+abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot> extends AbstractHttpTestCase<RequestData, ResponseData, Robot> {
 	/***
 	 * 请求id
 	 * @return
 	 */
 	protected abstract int getRequestID();
-	/***
-	 * 得到当前的server数据
-	 * @return
-	 */
-	protected abstract IServer getServer();
+
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
@@ -43,29 +40,16 @@ public abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends 
 		content = new MessageContent(0, bytes);
 		responseData(robot, content);
 	}
-
-	@Override
-	public boolean cancelIfConditionMiss() {
-		return false;
-	}
+	/***
+	 * 得到一个请求数据
+	 * @param robot
+	 * @return
+	 */
+	protected abstract MessageContent buildRequest(Robot robot);
 	/**
 	 *
 	 * @param bytes
 	 * @return
 	 */
 	protected abstract void responseData(Robot robot, MessageContent bytes);
-
-	/**
-	 * 下层的requestBuild
-	 * @param robot
-	 * @return
-	 */
-	protected abstract RequestData requestBuild(Robot robot);
-
-	/**
-	 * 下层的响应
-	 * @param robot
-	 * @param responseData
-	 */
-	protected abstract void responseData(Robot robot, ResponseData responseData);
 }
