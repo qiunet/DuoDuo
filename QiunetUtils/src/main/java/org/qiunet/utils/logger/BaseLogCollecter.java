@@ -22,7 +22,7 @@ public abstract class BaseLogCollecter {
 
 	private String logPath;
 	/**日志的分割符号*/
-	private String separator;
+	protected String separator;
 	/**日期格式*/
 	private String dataPattern;
 	/**日志的记录格式*/
