@@ -1,7 +1,6 @@
 package org.qiunet.utils.logger;
 
 import org.qiunet.utils.logger.log.Log4j1Logger;
-import org.qiunet.utils.logger.log.Log4j2Logger;
 import org.qiunet.utils.logger.log.QLogger;
 
 import java.util.Map;
@@ -43,13 +42,8 @@ public final class LoggerManager {
 	 */
 	public static QLogger getLogger(String loggerName) {
 		if (! loggerMap.containsKey(loggerName)) {
-			if (!use_log4j2) {
-				org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
-				loggerMap.put(loggerName, new Log4j1Logger(logger));
-			} else {
-				org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(loggerName);
-				loggerMap.put(loggerName, new Log4j2Logger(logger));
-			}
+			org.apache.log4j.Logger logger = org.apache.log4j.LogManager.getLogger(loggerName);
+			loggerMap.put(loggerName, new Log4j1Logger(logger));
 		}
 		return loggerMap.get(loggerName);
 	}
