@@ -11,10 +11,10 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
  * 17/11/11
  */
 public class NettyHttpServer implements Runnable {
-	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private ChannelFuture channelFuture;
 	private HttpBootstrapParams params;
 	/***
@@ -55,13 +55,13 @@ public class NettyHttpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
-			qLogger.error("[NettyHttpServer]  Http server is started by " +
+			logger.error("[NettyHttpServer]  Http server is started by " +
 					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			this.channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
-			qLogger.error("[NettyHttpServer] Exception: ", e);
+			logger.error("[NettyHttpServer] Exception: ", e);
 		}finally {
-			qLogger.error("[NettyHttpServer] is shutdown! ");
+			logger.error("[NettyHttpServer] is shutdown! ");
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}

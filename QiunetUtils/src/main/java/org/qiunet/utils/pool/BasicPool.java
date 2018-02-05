@@ -8,9 +8,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.PoolException;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /***
  * 池的配置
@@ -30,7 +30,7 @@ import org.qiunet.utils.logger.log.QLogger;
  * @param <T>
  */
 public abstract class BasicPool<T> implements Pool<T>  {
-	protected QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	/**锁*/
 	private Lock lock;
 

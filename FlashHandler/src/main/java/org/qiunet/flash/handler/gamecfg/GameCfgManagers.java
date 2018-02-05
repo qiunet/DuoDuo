@@ -1,9 +1,9 @@
 package org.qiunet.flash.handler.gamecfg;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.properties.LoaderProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,7 +15,7 @@ import java.util.List;
  *         Created on 17/2/9 12:15.
  */
 public class GameCfgManagers {
-	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger qLogger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 
 	private static GameCfgManagers instance = new GameCfgManagers();
 	private List<GameSettingContainer<IGameCfgManager>> gameSettingList = new ArrayList<>();

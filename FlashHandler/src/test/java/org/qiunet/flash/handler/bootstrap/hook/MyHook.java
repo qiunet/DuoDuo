@@ -2,16 +2,16 @@ package org.qiunet.flash.handler.bootstrap.hook;
 
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.
  * 17/11/22
  */
 public class MyHook implements Hook {
-	QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	Logger qLogger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 
 	@Override
 	public String getReloadCfgMsg() {

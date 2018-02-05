@@ -1,21 +1,19 @@
 package org.qiunet.utils.properties;
 
 import org.qiunet.utils.data.KeyValueData;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 /**
  * 加载properties 的工具类. 可以加载中文
  */
 public abstract class LoaderProperties extends KeyValueData<Object, Object> {
-	protected QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	protected String fileName;
 	/***
 	 * 要求传入的绝对地址

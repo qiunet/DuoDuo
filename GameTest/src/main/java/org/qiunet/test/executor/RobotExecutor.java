@@ -1,22 +1,17 @@
 package org.qiunet.test.executor;
 
 
-import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.test.robot.IRobot;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -24,7 +19,7 @@ import java.util.concurrent.*;
  * 17/11/24
  */
 public final class RobotExecutor {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.GAME_TEST);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
 	private ExecutorParams params;
 	/**
 	 * 测试所有

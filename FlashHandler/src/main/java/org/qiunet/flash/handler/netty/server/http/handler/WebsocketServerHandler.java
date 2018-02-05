@@ -13,16 +13,12 @@ import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.coder.Decoder;
-import org.qiunet.flash.handler.netty.coder.Encoder;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -31,7 +27,7 @@ import java.util.Arrays;
  * 17/12/1
  */
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSocketFrame> {
-	private static final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private Acceptor acceptor = Acceptor.getInstance();
 
 	private WebSocketServerHandshaker handshaker;

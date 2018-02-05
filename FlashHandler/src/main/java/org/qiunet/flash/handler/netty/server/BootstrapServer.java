@@ -2,17 +2,15 @@ package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.acceptor.Acceptor;
-import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -20,7 +18,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
-import java.util.concurrent.Future;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -28,7 +25,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/21
  */
 public class BootstrapServer {
-	private static final QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 
 	private volatile static BootstrapServer instance;
 
@@ -78,17 +75,17 @@ public class BootstrapServer {
 	public static void sendHookMsg(int hookPort, String msg) {
 		try {
 			if (hookPort <= 0) {
-				qLogger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
+				logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
 				System.exit(1);
 			}
-			qLogger.error("BootstrapServer sendHookMsg ["+msg+"]!");
+			logger.error("BootstrapServer sendHookMsg ["+msg+"]!");
 
 			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), hookPort));
 			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
 			Thread.sleep(1000);
 			channel.close();
 		} catch (IOException e) {
-			qLogger.error("BootstrapServer sendHookMsg: ", e);
+			logger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -160,7 +157,6 @@ public class BootstrapServer {
 	 * Hook的监听
 	 */
 	private static class HookListener implements Runnable {
-		private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
 		private Hook hook;
 		private Selector selector;
 		private boolean RUNNING = true;
@@ -179,7 +175,7 @@ public class BootstrapServer {
 			} catch (IOException e) {
 				this.RUNNING = false;
 				server.shutdown();
-				qLogger.error("[HookListener] Start Exception", e);
+				logger.error("[HookListener] Start Exception", e);
 				Thread.currentThread().interrupt();
 			}
 		}
@@ -191,7 +187,7 @@ public class BootstrapServer {
 		private boolean handlerMsg(ByteBuffer byteBuffer) throws IOException {
 			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
 			msg = StringUtil.powerfulTrim(msg);
-			qLogger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
+			logger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.RUNNING = false;
 				server.shutdown();
@@ -206,7 +202,7 @@ public class BootstrapServer {
 
 		@Override
 		public void run() {
-			qLogger.error("[HookListener]服务端: 启动成功");
+			logger.error("[HookListener]服务端: 启动成功");
 			try {
 			while (RUNNING) {
 					try {
@@ -217,7 +213,7 @@ public class BootstrapServer {
 							itr.remove();
 
 							if (key.isAcceptable()) {
-								qLogger.error("[HookListener]服务端: Acceptor Msg");
+								logger.error("[HookListener]服务端: Acceptor Msg");
 								ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 								SocketChannel channel = serverSocketChannel.accept();
 								channel.configureBlocking(false);
@@ -233,7 +229,7 @@ public class BootstrapServer {
 							}
 						}
 					}catch (Exception e) {
-						qLogger.error("[HookListener]", e);
+						logger.error("[HookListener]", e);
 					}
 				}
 			}finally {

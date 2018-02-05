@@ -26,11 +26,11 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
@@ -39,7 +39,7 @@ import java.net.URI;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private static QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private static NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**

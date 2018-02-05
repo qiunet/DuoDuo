@@ -4,9 +4,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 异步队列处理
@@ -14,7 +14,7 @@ import org.qiunet.utils.logger.log.QLogger;
  *
  */
 public class NonSyncQueueHandler<T extends QueueElement> {
-	private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	// 线程计数
 	private static final AtomicInteger threadNum = new AtomicInteger();
 

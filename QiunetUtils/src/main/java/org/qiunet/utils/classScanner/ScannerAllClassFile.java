@@ -1,9 +1,8 @@
 package org.qiunet.utils.classScanner;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
-import sun.rmi.runtime.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.jar.JarFile;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	private List<String> allclass = new LinkedList<>();
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();

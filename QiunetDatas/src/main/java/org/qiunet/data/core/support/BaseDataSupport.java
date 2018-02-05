@@ -6,16 +6,16 @@ import org.qiunet.data.core.support.entityInfo.IBaseEntityInfo;
 import org.qiunet.data.db.support.base.IDbBase;
 import org.qiunet.data.redis.AbstractRedisUtil;
 import org.qiunet.data.redis.support.info.IRedisEntity;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author qiunet
  *         Created on 17/2/10 18:18.
  */
 abstract class BaseDataSupport<PO extends IRedisEntity>  extends BaseAsyncNode {
-	protected final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
+	protected final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
 
 	/*** db的使用 */
 	protected IDbBase<PO> dbSupport;

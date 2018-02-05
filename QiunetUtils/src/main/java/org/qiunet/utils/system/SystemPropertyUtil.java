@@ -15,9 +15,9 @@
  */
 package org.qiunet.utils.system;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -26,7 +26,7 @@ import java.security.PrivilegedAction;
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
-    private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+    private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 
     /**
      * Returns {@code true} if and only if the system property with the specified {@code key}

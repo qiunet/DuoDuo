@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.netty.client.websocket;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -17,11 +15,10 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
@@ -31,7 +28,7 @@ import java.net.URI;
  */
 public class NettyWebsocketClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
-	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 

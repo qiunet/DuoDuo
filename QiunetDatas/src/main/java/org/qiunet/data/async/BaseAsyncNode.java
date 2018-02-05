@@ -2,16 +2,16 @@ package org.qiunet.data.async;
 
 import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.data.redis.AbstractRedisUtil;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author qiunet
  *         Created on 17/2/21 09:44.
  */
 public abstract class BaseAsyncNode implements AsyncNode {
-	protected static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
+	protected static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
 	@Override
 	public void updateRedisDataToDatabase() {
 		for (int dbIndex : DbProperties.getInstance().getDbIndexList()) {

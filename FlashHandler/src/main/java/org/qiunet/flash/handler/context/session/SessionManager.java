@@ -1,9 +1,9 @@
 package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 17/10/23
  */
 public class SessionManager implements Runnable {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	/***
 	 * 所有的session
 	 */

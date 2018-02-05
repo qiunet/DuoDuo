@@ -5,14 +5,14 @@ package org.qiunet.utils.logger;
  * Created by qiunet.
  * 17/8/18
  */
-public enum LoggerType {
+public class LoggerType {
 
-	QIUNET_DATAS,
+	public static final String QIUNET_DATAS = "QIUNET_DATAS";
 
-	QIUNET_UTILS,
+	public static final String QIUNET_UTILS = "QIUNET_UTILS";
 
-	FLASH_HANDLER,
+	public static final String FLASH_HANDLER = "FLASH_HANDLER";
 
-	GAME_TEST,
+	public static final String GAME_TEST = "GAME_TEST";
 	;
 }

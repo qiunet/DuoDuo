@@ -6,9 +6,9 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  * 17/8/13
  */
 public class Decoder extends ByteToMessageDecoder {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private int maxReceivedLength;
 	private boolean crc;
 	public Decoder(int maxReceivedLength, boolean needCrc) {

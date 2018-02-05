@@ -2,9 +2,9 @@ package org.qiunet.test.robot;
 
 import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.testcase.ITestCase;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * 17/12/6
  */
 public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRobotFunc<Info> implements IRobot<Info> {
-	protected QLogger logger = LoggerManager.getLogger(LoggerType.GAME_TEST);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
 	private String brokeReason;
 
 	protected int uid;

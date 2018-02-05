@@ -8,10 +8,10 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
  * 17/8/13
  */
 public final class NettyTcpServer implements Runnable {
-	private QLogger qLogger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 
 	private TcpBootstrapParams params;
 
@@ -49,12 +49,12 @@ public final class NettyTcpServer implements Runnable {
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
 			this.channelFuture = bootstrap.bind(params.getAddress());
-			qLogger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
+			logger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
-			qLogger.error("[NettyTcpServer] Exception: ", e);
+			logger.error("[NettyTcpServer] Exception: ", e);
 		}finally {
-			qLogger.error("[NettyTcpServer] is shutdown! ");
+			logger.error("[NettyTcpServer] is shutdown! ");
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}

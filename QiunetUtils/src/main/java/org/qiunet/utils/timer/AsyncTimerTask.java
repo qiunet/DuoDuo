@@ -1,7 +1,7 @@
 package org.qiunet.utils.timer;
 
-import org.qiunet.utils.logger.LoggerManager;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.ScheduledFuture;
  * 18/1/26
  */
 public abstract class AsyncTimerTask implements Runnable {
-	private static final QLogger logger = LoggerManager.getLogger(AsyncTimerTask.class);
+	private static final Logger logger = LoggerFactory.getLogger(AsyncTimerTask.class);
 	private ScheduledFuture future;
 
 	void setFuture(ScheduledFuture future) {

@@ -10,9 +10,9 @@ import org.qiunet.test.server.interceptor.TestLogicInterceptor;
 import org.qiunet.test.server.interceptor.TestOnlineInterceptor;
 import org.qiunet.test.server.interceptor.TestRoomInterceptor;
 import org.qiunet.test.server.type.ServerType;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -68,7 +68,7 @@ public final class ServerStartup {
 	 * 自己的钩子
 	 */
 	private static class MyHook implements Hook {
-		private QLogger logger = LoggerManager.getLogger(LoggerType.GAME_TEST);
+		private Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
 
 		@Override
 		public String getReloadCfgMsg() {

@@ -1,11 +1,10 @@
 package org.qiunet.data.redis.base;
 
-import org.apache.log4j.Level;
 import org.qiunet.utils.data.StringData;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -16,7 +15,7 @@ import java.util.Arrays;
  *         Created on 17/2/6 11:44.
  */
 public abstract class RedisCommand<T> {
-	protected QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
 	protected JedisPool pool;
 	protected T defaultResult;
 	private String key;
@@ -63,7 +62,7 @@ public abstract class RedisCommand<T> {
 			}
 			return ret;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("" , e);
 		} finally {
 			releaseJedis(jedis, key);
 		}

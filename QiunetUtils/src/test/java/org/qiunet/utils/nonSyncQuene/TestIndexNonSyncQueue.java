@@ -28,14 +28,14 @@ public class TestIndexNonSyncQueue {
 							latch.countDown();
 						}
 					}
-				}, "-thread-"+i).start();
+				}, "thread-"+i).start();
 			}
 			latch.await();
 		}catch (Exception e) {
 			e.printStackTrace();
 			exception = true;
 		}
-		
+
 		Assert.assertFalse(exception);
 	}
 }

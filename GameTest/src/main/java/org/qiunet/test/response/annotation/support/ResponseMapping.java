@@ -2,9 +2,9 @@ package org.qiunet.test.response.annotation.support;
 
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.utils.exceptions.SingletonException;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
  * 17/12/6
  */
 public class ResponseMapping {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.GAME_TEST);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
 	private volatile static ResponseMapping instance;
 	private Map<Integer, ILongConnResponse> gameResponses = new HashMap<>();
 

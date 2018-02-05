@@ -1,16 +1,15 @@
 package org.qiunet.data.async;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.nonSyncQuene.mutiThread.DefaultExecutorRejectHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.*;
-import java.util.logging.LogManager;
 
 /**
  * 异步更新的公用类
@@ -18,7 +17,7 @@ import java.util.logging.LogManager;
  *         Created on 17/2/11 08:04.
  */
 public class AsyncJobSupport {
-	private QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_DATAS);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
 	private ExecutorService executor = new ThreadPoolExecutor(
 			10,
 			512,

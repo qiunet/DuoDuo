@@ -2,6 +2,7 @@ package org.qiunet.utils.logger;
 
 import org.apache.log4j.*;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public abstract class BaseLogCollecter {
 			loggerMap.putIfAbsent(fileName, logger);
 			logger = loggerMap.get(fileName);
 		} catch (IOException e) {
-			LoggerManager.getLogger(LoggerType.QIUNET_UTILS).info("Exception", e);
+			LoggerFactory.getLogger(LoggerType.QIUNET_UTILS).info("Exception", e);
 		}
 		return logger;
 	}

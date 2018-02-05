@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 把一个类的所有字段拼串. {} 为对象.  [] 数组
@@ -20,7 +20,7 @@ import org.qiunet.utils.logger.log.QLogger;
  *
  */
 public class StringData {
-	private static final QLogger logger = LoggerManager.getLogger(LoggerType.QIUNET_UTILS);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	private StringBuilder sb;
 
 	private StringData(Object obj){

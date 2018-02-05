@@ -1,10 +1,10 @@
 package org.qiunet.flash.handler.gamecfg;
 
-import org.qiunet.utils.logger.LoggerManager;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.logger.log.QLogger;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -19,7 +19,7 @@ import java.util.zip.GZIPInputStream;
  * 17/7/16
  */
 public abstract class BaseGameCfgManager implements IGameCfgManager {
-	protected final QLogger logger = LoggerManager.getLogger(LoggerType.FLASH_HANDLER);
+	protected final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
 	private String fileName;
 	protected DataInputStream dis;
 	private InputStream in;
