@@ -1,10 +1,11 @@
 package org.qiunet.utils.base;
 
-import org.apache.log4j.Logger;
 import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseTest {
-	protected static Logger logger = Logger.getLogger(BaseTest.class);
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Before
 	public void doInit(){
