@@ -28,7 +28,7 @@ public class TestIndexNonSyncQueue {
 							latch.countDown();
 						}
 					}
-				}, "thread-"+i).start();
+				}, ""+i).start();
 			}
 			latch.await();
 		}catch (Exception e) {
