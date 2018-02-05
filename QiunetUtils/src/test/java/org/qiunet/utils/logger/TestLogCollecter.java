@@ -1,6 +1,6 @@
 package org.qiunet.utils.logger;
 
-import org.junit.Test;
+import org.junit.Ignore;
 
 /**
  * Created by qiunet.
@@ -8,7 +8,7 @@ import org.junit.Test;
  */
 public class TestLogCollecter  {
 
-	@Test
+	@Ignore
 	public void logTest(){
 		LogCollecter.getInstance().log("dev.log", "item", 10001, 22, 13);
 	}
