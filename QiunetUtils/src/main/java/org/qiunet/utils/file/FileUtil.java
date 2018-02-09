@@ -124,8 +124,7 @@ public class FileUtil {
 				return;
 			}
 			if (file.canWrite() == false) {
-				logger.error("File '" + file + "' cannot be written to");
-				return;
+				file.setWritable(true);
 			}
 		} else {
 			final File parent = file.getParentFile();
