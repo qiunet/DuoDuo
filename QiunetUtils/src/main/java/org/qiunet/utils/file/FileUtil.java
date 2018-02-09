@@ -1,12 +1,18 @@
 package org.qiunet.utils.file;
 
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * @author qiunet
  *         Created on 17/2/17 18:02.
  */
 public class FileUtil {
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	/**
 	 * 移动文件
 	 * @param srcFile
@@ -99,25 +105,51 @@ public class FileUtil {
 	 * @param msg
 	 */
 	public static void appendToFile(String filePath, String msg , boolean append){
-		FileWriter fw = null;
-		BufferedWriter bw = null;
-		try {
-			fw = new FileWriter(filePath, append);
-			bw = new BufferedWriter(fw);
-			bw.write(msg);
-			bw.newLine();
-			bw.flush();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			try {
-				if(bw != null )bw.close();
-				if(fw != null )fw.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		writeStringToFile(new File(filePath), msg, "UTF-8", append);
 	}
 
+	/***
+	 * 写入数据到文件
+	 * @param file 文件
+	 * @param data 数据
+	 * @param encoding 编码
+	 * @param append 是否append
+	 */
+	public static void writeStringToFile(final File file, final String data, final String encoding, final boolean append){
+		Charset charset = Charset.forName(encoding);
+
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				logger.error("File '" + file + "' exists but is a directory");
+				return;
+			}
+			if (file.canWrite() == false) {
+				logger.error("File '" + file + "' cannot be written to");
+				return;
+			}
+		} else {
+			final File parent = file.getParentFile();
+			if (parent != null) {
+				if (!parent.mkdirs() && !parent.isDirectory()) {
+					logger.error("Directory '" + parent + "' could not be created");
+					return;
+				}
+			}
+		}
+		FileOutputStream output = null;
+		try {
+			output = new FileOutputStream(file, append);
+			output.write(data.getBytes(charset));
+		} catch (Exception e) {
+			logger.error("FileUtil Exception", e);
+		} finally {
+			if (output != null)
+				try {
+					output.close();
+				} catch (IOException e) {
+					logger.error("FileUtil Exception", e);
+				}
+		}
+	}
 	private FileUtil(){}
 }
