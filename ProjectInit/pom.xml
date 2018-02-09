@@ -16,12 +16,12 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.qiunet</groupId>
-			<artifactId>QiunetUtils</artifactId>
+			<groupId>commons-digester</groupId>
+			<artifactId>commons-digester</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
-			<artifactId>Template</artifactId>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
