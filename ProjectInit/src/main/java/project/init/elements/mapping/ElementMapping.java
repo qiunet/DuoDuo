@@ -53,6 +53,10 @@ public class ElementMapping extends SubVmElement {
 
 	public String getTableName(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("${dbName}.");
 
@@ -77,6 +81,10 @@ public class ElementMapping extends SubVmElement {
 	 */
 	public String getSelectSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ");
 		for (Field field : entity.getFields()) {
@@ -94,6 +102,10 @@ public class ElementMapping extends SubVmElement {
 	 */
 	public String getUpdateSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("update ").append(getTableName()).append(" set ");
 		for (Field field : entity.getFields()) {
@@ -121,6 +133,10 @@ public class ElementMapping extends SubVmElement {
 	 */
 	public String getInsertSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("insert into ").append(getTableName()).append(" (");
 		for (Field field : entity.getFields()) {
@@ -152,6 +168,10 @@ public class ElementMapping extends SubVmElement {
 	 */
 	public String getDeleteSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("delete from ").append(getTableName()).append(" where ");
 		if (isUniqid() && entity.getType().isListType()) {
@@ -168,6 +188,10 @@ public class ElementMapping extends SubVmElement {
 	}
 	public String getSelectStatment(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		if (entity == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		}
+
 		String selectStatment = "get"+poref;
 		if (entity.getType().isListType()) {
 			selectStatment += "s";
