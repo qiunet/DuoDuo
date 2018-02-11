@@ -27,12 +27,9 @@ class TestCommonUtilFunc(unittest.TestCase):
 
     def testFilter(self):
         nums = [1, 2, 3, 4, 5]
-        ds = CommonUtil.filterList(odd, nums)
+        # 使用了匿名函数
+        ds = CommonUtil.filterList(lambda x: x % 2 == 1, nums)
         self.assertEqual([1, 3, 5], ds)
-
-
-def odd(x):
-    return x % 2 == 1
 
 
 def doubles(x):
