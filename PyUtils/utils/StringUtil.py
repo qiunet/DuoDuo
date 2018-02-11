@@ -5,7 +5,6 @@
 __author__ = 'qiunet'
 
 import logging
-
 from utils import CommonUtil
 
 
@@ -30,6 +29,18 @@ def split(string: str, sp: str) -> str():
     return str(string).split(sp)
 
 
+def subString(string: str, start: int, end: int, step: int = 1) -> str:
+    """
+    字符串切分    
+    :param string: 需要切分的字符串 
+    :param start: 开始
+    :param end: 
+    :param step: 步长
+    :return: 
+    """
+    return CommonUtil.subObj(string, start, end, step)
+
+
 def arrayToStr(listObj: list, sep: str=',', start: str='', end: str=''):
     """
     对数组进行拼串
@@ -49,6 +60,50 @@ def arrayToStr(listObj: list, sep: str=',', start: str='', end: str=''):
 
     return string + str(listObj[len(listObj) - 1]) + end
 
+
+def bytesToStr(bytes: bytes, encoding: str='UTF-8') -> str:
+    """
+    转换bytes 到字符串
+    :param bytes:
+    :param encoding:
+    :return:
+    """
+    return bytes.decode(encoding)
+
+
+def strToBytes(string: str, encoding: str="UTF-8") -> bytes:
+    """
+    字符串 转 bytes
+    :param string:
+    :param encoding:
+    :return:
+    """
+    return string.encode(encoding)
+
+
+def strRealSize(string: str) -> int:
+    """
+    str占用真是byte的长度
+    :param string:
+    :return:
+    """
+    return len(strToBytes(string))
+
+
+def formatStr(string: str, replaces: tuple) -> str:
+    """
+    格式化字符
+    format('Hi, %s, you have $%d.' , ('Michael', 1000000))
+    常见的占位符号:
+    %d	整数
+    %f	浮点数
+    %s	字符串
+    %x	十六进制整数
+    :param string: 字符串
+    :param replaces: 替换的元组
+    :return: 格式化后的字符串
+    """
+    return string % replaces
 
 
 

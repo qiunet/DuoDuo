@@ -31,3 +31,8 @@ class TestStringUtilFunc(unittest.TestCase):
         list = [1, 2, 3]
         self.assertEqual("1,2,3", StringUtil.arrayToStr(list, ","))
         self.assertEqual("[1,2,3]", StringUtil.arrayToStr(list, ",", "[", "]"))
+
+    def testSubString(self):
+        string = "0123456789"
+        self.assertEqual(StringUtil.subString(string, 0, 6), "012345")
+        self.assertEqual(StringUtil.subString(string, 0, 6, 2), "024")

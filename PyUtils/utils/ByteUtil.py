@@ -9,8 +9,3 @@ import os
 import sys
 
 
-bytearr = bytearray('中文', 'utf8')
-for b in bytearr:
-    print(b)
-
-print(len(bytearr))
