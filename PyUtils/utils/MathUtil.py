@@ -6,6 +6,7 @@
 __author__ = 'qiunet'
 
 import random
+from collections import Iterable
 
 
 def randomInt(start: int, end: int) -> int:
@@ -35,3 +36,14 @@ def isPowerOfTwo(num: int) -> bool:
     :return: bool
     """
     return (num & -num) == num
+
+
+def sort(it: Iterable, reverse: bool= False, key=None):
+    """
+    排序
+    :param it: 
+    :param reverse: 
+    :param key: 
+    :return: 
+    """
+    return list(sorted(it, key=key, reverse=reverse))

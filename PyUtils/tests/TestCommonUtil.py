@@ -14,5 +14,26 @@ class TestCommonUtilFunc(unittest.TestCase):
 
     def testSubObj(self):
         num = 1.0
+        print(type(abs))
         # 异常检查判断
         self.assertRaises(Exception, CommonUtil.subObj, num, 0, 1)
+        self.assertEqual([1, 3, 5], CommonUtil.subObj([1, 2, 3, 4, 5, 6], 0, 6, 2))
+        self.assertEqual((1, 3, 5), CommonUtil.subObj((1, 2, 3, 4, 5, 6), 0, 6, 2))
+
+    def testMap(self):
+        nums = [1, 2, 3, 4, 5]
+        ds = CommonUtil.mapList(doubles, nums)
+        self.assertEqual([2, 4, 6, 8, 10], ds)
+
+    def testFilter(self):
+        nums = [1, 2, 3, 4, 5]
+        ds = CommonUtil.filterList(odd, nums)
+        self.assertEqual([1, 3, 5], ds)
+
+
+def odd(x):
+    return x % 2 == 1
+
+
+def doubles(x):
+    return x * 2

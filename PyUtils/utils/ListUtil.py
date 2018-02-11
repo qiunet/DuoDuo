@@ -7,6 +7,7 @@ __author__ = 'qiunet'
 
 from utils import CommonUtil
 
+
 def subList(ls: list, start: int, end: int, step: int = 1) -> list:
     """
     分割list
@@ -17,3 +18,4 @@ def subList(ls: list, start: int, end: int, step: int = 1) -> list:
     :return: 
     """
     return CommonUtil.subObj(ls, start, end, step)
+
