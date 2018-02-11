@@ -5,7 +5,7 @@
 __author__ = 'qiunet'
 
 from collections import Iterable
-
+from utils.Logger import log
 
 def isEmpty(o: object) -> bool:
     """
@@ -41,6 +41,7 @@ def mapList(func, ls: list) -> list:
     return list(map(func, ls))
 
 
+@log
 def filterList(func, ls: list)-> list:
     """
     对现有的list 进行filter

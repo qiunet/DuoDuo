@@ -9,3 +9,4 @@
  * 优化ProjetInit 的结构.
  * 加个 duoduo-all
  * 去掉lang包. 有什么喜欢的方法. 自己复制过来.
+ * ProjectInit 的一些默认值修改
