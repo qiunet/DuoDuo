@@ -6,6 +6,9 @@ __author__ = 'qiunet'
 
 from collections import Iterable
 from utils.Logger import log
+from types import FunctionType
+from types import LambdaType
+
 
 def isEmpty(o: object) -> bool:
     """
@@ -31,7 +34,7 @@ def subObj(it: Iterable, start: int, end: int, step: int = 1) -> Iterable:
     return it[start: end: step]
 
 
-def mapList(func, ls: list) -> list:
+def mapList(func: [FunctionType or LambdaType], ls: list) -> list:
     """
     对list的数据一次使用function迭代一次
     :param func: 函数方法
@@ -42,7 +45,7 @@ def mapList(func, ls: list) -> list:
 
 
 @log
-def filterList(func, ls: list)-> list:
+def filterList(func: [FunctionType or LambdaType], ls: list)-> list:
     """
     对现有的list 进行filter
     :param func: filter 返回True  False

@@ -6,6 +6,9 @@
 __author__ = 'qiunet'
 
 import random
+from types import LambdaType
+from types import FunctionType
+from types import BuiltinFunctionType
 from collections import Iterable
 
 
@@ -38,7 +41,7 @@ def isPowerOfTwo(num: int) -> bool:
     return (num & -num) == num
 
 
-def sort(it: Iterable, reverse: bool= False, key=None):
+def sort(it: Iterable, reverse: bool= False, key: [FunctionType or LambdaType or BuiltinFunctionType]=None):
     """
     排序
     :param it: 
