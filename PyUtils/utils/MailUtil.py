@@ -15,19 +15,17 @@ from email.mime.multipart import MIMEMultipart
 from email.utils import parseaddr, formataddr
 
 
-class MimeTypeEnum(enum.Enum):
+@enum.unique
+class MimeType(enum.Enum):
     """
     邮件的类型枚举
     """
     PLAIN = 'plain'
-
     HTML = 'HTML'
 
 
-
 class MailObject:
-
-    def __init__(self, mailFrom: str(), fromAlias: str(), smtpServer: str, password: str, smtpPort: int=25):
+    def __init__(self, mailFrom: str(), fromAlias: str(), smtpServer: str, password: str, smtpPort: int = 25):
         """
         初始化函数
         :param mailFrom: 发送人地址
@@ -48,7 +46,13 @@ class MailObject:
         name, addr = parseaddr(string)
         return formataddr((Header(name, 'Utf-8').encode(), addr))
 
-    def sendMail(self, mailTo: list, subject: str, content: str, cc: list=[], _charset: str="UTF-8", mimeTypeEnum=MimeTypeEnum.PLAIN):
+    def sendMail(self,
+                 mailTo: list,
+                 subject: str,
+                 content: str, cc: list = [],
+                 _charset: str = "UTF-8",
+                 mimeType: MimeType = MimeType.PLAIN
+                 ):
         """
         发送邮件的方法
         :param mailTo: toAddr 发送到的邮箱地址 需要是数组
@@ -56,7 +60,7 @@ class MailObject:
         :param content: 内容
         :param cc  抄送
         :param _charset 编码
-        :param mimeTypeEnum 邮件格式
+        :param mimeType 邮件格式
         """
         if not isinstance(mailTo, list):
             logging.error("mailTo: TypeError: must be list")
@@ -66,7 +70,7 @@ class MailObject:
             return
 
         mail = MIMEMultipart()
-        msg = MIMEText(content, _subtype=mimeTypeEnum.value, _charset=_charset)
+        msg = MIMEText(content, _subtype=mimeType.value, _charset=_charset)
         mail.attach(msg)
 
         mail['To'] = self.__formatAddr("<%s>" % StringUtil.arrayToStr(mailTo, ';'))
@@ -75,7 +79,7 @@ class MailObject:
             mailTo = mailTo + cc
 
         mail['Subject'] = Header(subject, 'UTF-8').encode()
-        mail['From'] = self.__formatAddr(self.__fromAlias +' <%s>' % self.__mailFrom)
+        mail['From'] = self.__formatAddr(self.__fromAlias + ' <%s>' % self.__mailFrom)
 
         try:
             server = smtplib.SMTP(self.__smtpServer, self.__smtpPort)
@@ -86,4 +90,3 @@ class MailObject:
             logging.error("邮件发送失败")
         finally:
             server.quit()
-
