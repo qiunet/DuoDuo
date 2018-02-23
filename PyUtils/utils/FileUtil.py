@@ -14,19 +14,13 @@ class Properties:
         """
         self.fileName = fileName
         self.__properties = {}
-        try:
-            file = open(fileName, mode='r', encoding='utf-8')
-            for text in file:
+        with open(fileName, mode='r', encoding='utf-8') as file:
+            for text in file.readlines():
                 line = text.strip()
                 if line.startswith('#') or line.find('=') <= 0:
                     continue
                 strs = line.split('=')
                 self.__properties[strs[0].strip()] = strs[1].strip()
-
-        except Exception as e:
-            raise e
-        finally:
-            file.close()
 
     def containKey(self, key: str) -> bool:
         """
