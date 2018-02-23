@@ -19,6 +19,15 @@ def isEmpty(o: object) -> bool:
     return o is None or len(o) == 0
 
 
+def listAllAttr(obj):
+    """
+    列出一个对象的所有的属性
+    :param obj: 
+    :return: 
+    """
+    return dir(obj)
+
+
 def subObj(it: Iterable, start: int, end: int, step: int = 1) -> Iterable:
     """
     分割list

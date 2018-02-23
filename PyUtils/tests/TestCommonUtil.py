@@ -31,6 +31,9 @@ class TestCommonUtilFunc(unittest.TestCase):
         ds = CommonUtil.filterList(lambda x: x % 2 == 1, nums)
         self.assertEqual([1, 3, 5], ds)
 
+    def testAttr(self):
+        print(CommonUtil.listAllAttr('123'))
+
 
 def doubles(x):
     return x * 2
