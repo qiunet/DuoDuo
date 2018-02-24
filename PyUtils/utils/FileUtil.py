@@ -53,7 +53,8 @@ def readContent(filename: str) -> str:
         all_content = file.read()
         return all_content
     finally:
-        file.close()
+        if file:
+            file.close()
 
 
 def delFile(filepath: str):
