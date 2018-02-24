@@ -3,6 +3,7 @@
 # 文件的工具类
 
 import os
+
 __author__ = 'qiunet'
 
 
@@ -30,7 +31,7 @@ class Properties:
         """
         return key in self.__properties.keys()
 
-    def get(self, key: str, defaultValue: str=None) -> str:
+    def get(self, key: str, defaultValue: str = None) -> str:
         """
         得到指定key的值
         :param key:
@@ -42,19 +43,34 @@ class Properties:
         return self.__properties[key]
 
 
-def readContent(filename: str) -> str:
+def readContent(filename: str, encoding: str = "utf-8",mode: str='r') -> str:
     """
     读取一个文件的全部内容
+    :param mode: 
+    :param encoding: 编码
     :param filename: 文件名
     :return: 所有的内容
     """
-    file = open(filename, mode='r', encoding="utf-8")
+    file = open(filename, encoding=encoding, mode=mode)
     try:
         all_content = file.read()
         return all_content
     finally:
         if file:
             file.close()
+
+
+def writeContent(fileName: str, content: str, mode='a', encoding: str = "utf-8"):
+    """
+    往文件写入内容    
+    :param mode: 默认是追加 w 是覆盖
+    :param fileName: 文件名 
+    :param content: 内容
+    :param encoding: 编码
+    :return: 
+    """
+    with open(fileName, encoding=encoding, mode=mode) as f:
+        f.write(content)
 
 
 def delFile(filepath: str):
@@ -73,4 +89,3 @@ def existFile(filepath: str) -> bool:
     :return:  True 存在  False 不存在
     """
     return os.path.exists(filepath)
-
