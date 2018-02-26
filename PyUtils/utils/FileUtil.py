@@ -82,6 +82,15 @@ def delFile(filepath: str):
     os.remove(filepath)
 
 
+def dirname(filePath: str) ->str:
+    """
+    得到目录名称
+    :param filePath: 文件目录 
+    :return: 
+    """
+    return os.path.split(filePath)[0]
+
+
 def existFile(filepath: str) -> bool:
     """
     判断一个文件是否存在
