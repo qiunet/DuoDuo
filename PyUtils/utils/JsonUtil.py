@@ -8,9 +8,9 @@ __author__ = 'qiunet'
 
 
 def toJsonString(obj: object) -> str:
-    return json.dumps(obj)
+    return json.dumps(obj, default=lambda obj: obj.__dict__)
 
 
-def getGeneralObject(jsonString: str, cls=None):
-    return json.loads(jsonString, encoding="UTF8", cls=cls)
+def getGeneralObject(jsonString: str):
+    return json.loads(jsonString)
 
