@@ -36,3 +36,7 @@ class TestStringUtilFunc(unittest.TestCase):
         string = "0123456789"
         self.assertEqual(StringUtil.subString(string, 0, 6), "012345")
         self.assertEqual(StringUtil.subString(string, 0, 6, 2), "024")
+
+    def testRegex(self):
+        string = r"1234"
+        self.assertTrue(StringUtil.matchRegex(r"[0-9]*", string))

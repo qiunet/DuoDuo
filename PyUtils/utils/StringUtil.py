@@ -4,6 +4,7 @@
 
 __author__ = 'qiunet'
 
+import re
 import logging
 from utils import CommonUtil
 
@@ -106,4 +107,11 @@ def formatStr(string: str, replaces: tuple) -> str:
     return string % replaces
 
 
-
+def matchRegex(regex: str, string: str)-> bool:
+    """
+    是否匹配正则表达式
+    :param regex:  最好加前缀 r
+    :param string: 匹配的字符串
+    :return: bool
+    """
+    return re.match(regex, string)
