@@ -28,7 +28,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static boolean isEmpty(String str){
-		return StringUtils.isEmpty(str);
+		return str == null || str.length() == 0;
 	}
 	/***
 	 * 判断字符串是不是数字
