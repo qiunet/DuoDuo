@@ -125,6 +125,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
 				HTTP_1_1, OK,  content);
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
 		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
 		response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType());
 		if (keepAlive) {

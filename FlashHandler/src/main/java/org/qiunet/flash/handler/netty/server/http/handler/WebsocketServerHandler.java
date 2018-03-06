@@ -5,8 +5,10 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
@@ -63,8 +65,9 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 			ctx.flush().channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
 			return;
 		}
-
-		this.handshaker.handshake(ctx.channel(), request);
+		HttpHeaders headers = new DefaultHttpHeaders();
+		headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+		this.handshaker.handshake(ctx.channel(), request, headers, ctx.channel().newPromise());
 
 		ChannelPipeline pipeline = ctx.channel().pipeline();
 		pipeline.remove("HttpServerHandler");
