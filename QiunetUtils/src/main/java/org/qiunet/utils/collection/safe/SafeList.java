@@ -58,6 +58,7 @@ public class SafeList<E> extends ArrayList<E> {
 	 * 把当前的list设置为锁定状态. 不允许修改里面的数据
 	 */
 	public void safeLock() {
+		this.trimToSize();
 		this.safeLock = true;
 	}
 
