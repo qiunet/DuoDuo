@@ -43,6 +43,11 @@ public class MyHook implements Hook {
 	}
 
 	@Override
+	public String[] ipFilter() {
+		return new String[]{"192.168.1.240"};
+	}
+
+	@Override
 	public void custom(String msg) {
 		switch (msg) {
 			case "A":

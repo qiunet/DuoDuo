@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
+import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -157,19 +158,32 @@ public class BootstrapServer {
 	 * Hook的监听
 	 */
 	private static class HookListener implements Runnable {
+		private static final String [] DEFAULT_LOCAL_IPS = {"localhost", "127.0.0.1"};
 		private Hook hook;
+		private String [] ips;
 		private Selector selector;
+		private boolean needIpFilter;
 		private boolean RUNNING = true;
 		private BootstrapServer server;
 		private ServerSocketChannel serverSocketChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
 			this.hook = hook;
 			this.server = bootstrapServer;
+			needIpFilter = hook.ipFilter() != null && hook.ipFilter().length != 0;
+
 			try {
 				this.selector = Selector.open();
 				serverSocketChannel = ServerSocketChannel.open();
 				serverSocketChannel.configureBlocking(false);
-				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+				if (needIpFilter) {
+					ips = new String[DEFAULT_LOCAL_IPS.length + hook.ipFilter().length];
+					System.arraycopy(DEFAULT_LOCAL_IPS, 0, ips, 0, DEFAULT_LOCAL_IPS.length);
+					System.arraycopy(hook.ipFilter(), 0, ips, DEFAULT_LOCAL_IPS.length, hook.ipFilter().length);
+
+					serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+				}else {
+					serverSocketChannel.socket().bind(new InetSocketAddress(this.hook.getHookPort()));
+				}
 
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
@@ -216,8 +230,15 @@ public class BootstrapServer {
 								logger.error("[HookListener]服务端: Acceptor Msg");
 								ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 								SocketChannel channel = serverSocketChannel.accept();
-								channel.configureBlocking(false);
 
+								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
+								if (needIpFilter && !CommonUtil.existInList(ip, ips)) {
+									logger.error("[HookListener]服务端: Remote ip ["+ip+"] is not allow !");
+									channel.close();
+									continue;
+								}
+
+								channel.configureBlocking(false);
 								channel.register(this.selector, SelectionKey.OP_READ);
 							}else if( key.isReadable()){
 								SocketChannel channel = (SocketChannel) key.channel();

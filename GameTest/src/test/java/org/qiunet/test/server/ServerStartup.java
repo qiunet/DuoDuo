@@ -96,6 +96,11 @@ public final class ServerStartup {
 		}
 
 		@Override
+		public String[] ipFilter() {
+			return new String[0];
+		}
+
+		@Override
 		public void custom(String msg) {
 
 		}
