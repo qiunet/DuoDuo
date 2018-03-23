@@ -8,6 +8,14 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -19,7 +27,13 @@ import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
+import org.qiunet.utils.http.DefaultHttpUtil;
+import org.qiunet.utils.json.JsonUtil;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -170,4 +184,39 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		LockSupport.park();
 	}
 
+	@Test
+	public void testWithHttpClient() {
+		HttpPost httpPost = new HttpPost("http://localhost:8080/jsonUrl");
+		CloseableHttpClient client = HttpClients.createDefault();
+		String respContent = null;
+
+		//        json方式
+		Map<String, Object> map = new HashMap<>();
+		map.put("uid", 30406L);
+		map.put("Content", "fsdf--测试");
+		map.put("SourceType" ,1);
+		map.put("test" ,"myTest");
+
+		StringEntity entity = null;
+		try {
+			entity = new StringEntity(JsonUtil.toJsonString(map));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		entity.setContentEncoding("UTF-8");
+		entity.setContentType("application/json");
+		httpPost.setEntity(entity);
+		try {
+			HttpResponse resp = client.execute(httpPost);
+			if(resp.getStatusLine().getStatusCode() == 200) {
+				HttpEntity he = resp.getEntity();
+				respContent = EntityUtils.toString(he,"UTF-8");
+				System.out.println("================="+ respContent);
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
