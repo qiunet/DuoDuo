@@ -146,7 +146,7 @@ public class ExcelToStream {
 
 			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
 			appenderAttachable.addAppender(new XdAppender(parentPath, fileNamePrefix));
-			appenderAttachable.addAppender(new CliJsonAppender(clientPath, fileNamePrefix));
+//			appenderAttachable.addAppender(new CliJsonAppender(clientPath, fileNamePrefix));
 
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
