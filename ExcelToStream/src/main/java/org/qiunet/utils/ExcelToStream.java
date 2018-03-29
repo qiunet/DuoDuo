@@ -67,8 +67,6 @@ public class ExcelToStream {
 		System.out.print("File:["+attachable.getFileName()+"] Sheet:["+sheet.getSheetName()+"]---------LASTROW:");
 			/*设定excel 行数据的规则
 			 * 第一行：说明	        		实际对应的row 为 0
-			 * 第二行：英文名称   				实际对应的row 为 1
-			 * 第三行：客户端是否需要记录		实际对应的row 为 2
 			 * 第四行：数据类型				实际对应的row 为 3
 			 */
 		int rowNum = 0,columnNum = 0;
@@ -82,8 +80,8 @@ public class ExcelToStream {
 
 			int cellLength = getCellLength(sheet);
 			Row dateTypeRow = sheet.getRow(DATA_DEFINE_ROW-1);									//数据类型行
-			Row cliFlagRow = sheet.getRow(DATA_DEFINE_ROW-2);									//cliFlag类型行
-			Row dataNameRow = sheet.getRow(DATA_DEFINE_ROW-3);									//数据名称行
+//			Row cliFlagRow = sheet.getRow(DATA_DEFINE_ROW-2);									//cliFlag类型行
+//			Row dataNameRow = sheet.getRow(DATA_DEFINE_ROW-3);									//数据名称行
 
 			for (rowNum = DATA_DEFINE_ROW; rowNum < lastRow; rowNum++) {
 				Row row = sheet.getRow(rowNum);
@@ -101,25 +99,25 @@ public class ExcelToStream {
 
 					String dataName = ""; // 名称
 					boolean cliFlag = false;     // 客户端的flag
-					if (cliFlagRow != null ) {
-						Cell flag = cliFlagRow.getCell(columnNum);
-						if (flag != null) {
-							flag.setCellType(CellType.STRING);
-							if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue()))  flag.setCellValue("0");
-
-							cliFlag = Double.parseDouble(flag.getStringCellValue()) > 0;
-						}
-					}
-
-					if (dataNameRow != null) {
-						Cell name = dataNameRow.getCell(columnNum);
-						if (name != null) {
-							name.setCellType(CellType.STRING);
-							if (name.getStringCellValue() == null) name.setCellValue("");
-
-							dataName = name.getStringCellValue().trim();
-						}
-					}
+//					if (cliFlagRow != null ) {
+//						Cell flag = cliFlagRow.getCell(columnNum);
+//						if (flag != null) {
+//							flag.setCellType(CellType.STRING);
+//							if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue()))  flag.setCellValue("0");
+//
+//							cliFlag = Double.parseDouble(flag.getStringCellValue()) > 0;
+//						}
+//					}
+//
+//					if (dataNameRow != null) {
+//						Cell name = dataNameRow.getCell(columnNum);
+//						if (name != null) {
+//							name.setCellType(CellType.STRING);
+//							if (name.getStringCellValue() == null) name.setCellValue("");
+//
+//							dataName = name.getStringCellValue().trim();
+//						}
+//					}
 
 					attachable.append(dateType, dataName, c.getStringCellValue().trim(), cliFlag);
 
