@@ -15,7 +15,7 @@ import java.util.Iterator;
  */
 public class ExcelToStream {
 	/**定义数据的行数-行号*/
-	private static final int DATA_DEFINE_ROW = 4;
+	private static final int DATA_DEFINE_ROW = 2;
 
 	/***
 	 * 得到最后一行的数据
