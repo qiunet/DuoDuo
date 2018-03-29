@@ -21,10 +21,10 @@ import java.util.Map;
  */
 public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSupport<PO> {
 	protected IEntityListInfo entityInfo;
-	
+
 	public EntityListDataSupport(IEntityListInfo entityListInfo){
 		super(new DbListSupport<PO>(), entityListInfo);
-		
+
 		this.entityInfo = entityListInfo;
 		this.selectStatment = entityInfo.getNameSpace()+".get"+entityInfo.getClazz().getSimpleName()+"s";
 	}
@@ -33,13 +33,16 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	 * @param po 需要更新的对象po
 	 */
 	public void updatePo(PO po) {
+		//  防止有的人直接insert . 没有获取列表. 导致redis出现脏数据
+		this.getVoMap(entityInfo.getDbInfoKey(po));
+
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
-		
+
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		List<PO> poList = new ArrayList<PO>(1);
+		List<PO> poList = new ArrayList(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().setListToHash(key, poList);
-		
+
 		if (! entityInfo.needAsync()) {
 			dbSupport.update(po, updateStatment);
 		}else {
@@ -52,6 +55,8 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	 * @return 1 表示成功
 	 */
 	public int insertPo(PO po){
+		//  防止有的人直接insert . 没有获取列表. 导致redis出现脏数据
+		this.getVoMap(entityInfo.getDbInfoKey(po));
 
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		int ret = dbSupport.insert(po, insertStatment);
@@ -65,7 +70,7 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 			insertToRedis = entityInfo.getRedisUtil().exists(key);
 		}
 		if (insertToRedis) {
-			List<PO> poList = new ArrayList<PO>(1);
+			List<PO> poList = new ArrayList(1);
 			poList.add(po);
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
@@ -90,10 +95,10 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 		if (voMap != null) {
 			voMap.remove(entityInfo.getSubKey(po));
 		}
-		List<PO> poList = new ArrayList<PO>(1);
+		List<PO> poList = new ArrayList(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().deleteList(key, poList);
-		
+
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		dbSupport.delete(po, deleteStatment);
 	}
@@ -106,14 +111,14 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 		String key = entityInfo.getRedisKey(dbInfoKey);
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
-		
+
 		voMap = new HashMap<Integer, VO>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null){
-			poList = ((IDbList)dbSupport).selectList(selectStatment, (IEntityListDbInfo) entityInfo.getEntityDbInfo(dbInfoKey, 0));
+			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, 0));
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
-		
+
 		if (poList != null && !poList.isEmpty()) {
 			for (PO po : poList) {
 				voMap.put(entityInfo.getSubKey(po), (VO) entityInfo.getVo(po));
