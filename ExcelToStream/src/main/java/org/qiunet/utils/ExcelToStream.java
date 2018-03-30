@@ -138,13 +138,17 @@ public class ExcelToStream {
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(sourceFile));//能自动识别excel版本
 			String fileNamePrefix = sourceFile.getName().substring(sourceFile.getName().indexOf("_")+1, sourceFile.getName().indexOf("."));
 			String parentPath = sourceFile.getParent();
-			String clientPath = FileUtil.returnPathFromProjectFile();
-			if (! clientPath.endsWith(File.separator)) clientPath += File.separator;
-			clientPath += "clientJson";
+			String projectPath = FileUtil.returnPathFromProjectFile();
+//			projectPath += "clientJson";
+			String configPath = projectPath+ File.separator+".xd.config";
+			if (! parentPath.equals(projectPath)) configPath += parentPath.substring(projectPath.length());
+
+			File dir = new File(configPath);
+			if (! dir.exists()) dir.mkdirs();
 
 			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
-			appenderAttachable.addAppender(new XdAppender(parentPath, fileNamePrefix));
-//			appenderAttachable.addAppender(new CliJsonAppender(clientPath, fileNamePrefix));
+			appenderAttachable.addAppender(new XdAppender(configPath, fileNamePrefix));
+//			appenderAttachable.addAppender(new CliJsonAppender(projectPath, fileNamePrefix));
 
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
