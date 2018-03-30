@@ -136,7 +136,7 @@ public class ExcelToStream {
 	public String excelToStream(File sourceFile) {
 		try {
 			Workbook workbook = WorkbookFactory.create(new FileInputStream(sourceFile));//能自动识别excel版本
-			String fileNamePrefix = sourceFile.getName().substring(0, sourceFile.getName().indexOf("."));
+			String fileNamePrefix = sourceFile.getName().substring(sourceFile.getName().indexOf("_")+1, sourceFile.getName().indexOf("."));
 			String parentPath = sourceFile.getParent();
 			String clientPath = FileUtil.returnPathFromProjectFile();
 			if (! clientPath.endsWith(File.separator)) clientPath += File.separator;
