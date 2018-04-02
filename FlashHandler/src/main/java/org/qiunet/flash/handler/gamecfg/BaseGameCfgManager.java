@@ -51,7 +51,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 			this.init();
 			ret = true;
 		} catch (Exception e) {
-			logger.error("读取配置文件"+fileName+"失败 ERROR:["+e.getMessage()+"]");
+			logger.error("读取配置文件"+fileName+"失败 ERROR:", e);
 		}finally{
 			this.close();
 		}
