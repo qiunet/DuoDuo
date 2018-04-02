@@ -77,12 +77,14 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 			if(dis != null)dis.close();
 			if (gin != null) gin.close();
 			if (in != null) in.close();
-			dis = null;
-			gin = null;
-			in = null;
 		} catch (IOException e) {
 			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
 		}
+
+		fileName = null;
+		dis = null;
+		gin = null;
+		in = null;
 	}
 
 	protected abstract void init()throws Exception;
