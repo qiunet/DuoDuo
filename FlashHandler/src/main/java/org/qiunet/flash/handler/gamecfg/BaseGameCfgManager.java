@@ -112,6 +112,25 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	}
 
 	/***
+	 * 得到一个简单的list
+	 * @param filePath
+	 * @param cfgClass
+	 * @param <Cfg>
+	 * @throws Exception
+	 */
+	protected <Cfg> List<Cfg> getSimpleListCfg(String filePath, Class<Cfg> cfgClass) throws Exception {
+		int num = loadXdFileToDataInputStream(filePath);
+		List<Cfg> list = new ArrayList<>();
+		for (int i = 0; i < num; i++) {
+			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
+			cfgConstructor.setAccessible(true);
+			Cfg cfg = cfgConstructor.newInstance(dis);
+			list.add(cfg);
+		}
+		((SafeList<Cfg>) list).safeLock();
+		return list;
+	}
+	/***
 	 * 得到一个一定格式的嵌套map
 	 * @param fileName
 	 * @param cfgClass
