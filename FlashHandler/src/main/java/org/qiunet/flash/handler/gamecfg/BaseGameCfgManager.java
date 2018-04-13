@@ -120,7 +120,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	 */
 	protected <Cfg> List<Cfg> getSimpleListCfg(String filePath, Class<Cfg> cfgClass) throws Exception {
 		int num = loadXdFileToDataInputStream(filePath);
-		List<Cfg> list = new ArrayList<>();
+		List<Cfg> list = new SafeList<>();
 		for (int i = 0; i < num; i++) {
 			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
 			cfgConstructor.setAccessible(true);
