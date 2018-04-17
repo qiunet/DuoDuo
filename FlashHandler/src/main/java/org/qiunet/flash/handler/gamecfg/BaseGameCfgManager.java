@@ -23,7 +23,6 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	private String fileName;
 	protected DataInputStream dis;
 	private InputStream in;
-	private GZIPInputStream gin;
 	/**
 	 * 获取xd文件
 	 * @param fileName
@@ -36,8 +35,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 		this.fileName = fileName;
 		logger.debug("读取配置文件 [ "+fileName+" ]");
 		in = getClass().getClassLoader().getResourceAsStream(fileName);
-		gin=new GZIPInputStream(in);
-		dis = new DataInputStream(gin);
+		dis = new DataInputStream(in);
 		return dis.readInt();
 	}
 
@@ -75,7 +73,6 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 		}
 		try {
 			if(dis != null)dis.close();
-			if (gin != null) gin.close();
 			if (in != null) in.close();
 		} catch (IOException e) {
 			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
@@ -83,7 +80,6 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 		fileName = null;
 		dis = null;
-		gin = null;
 		in = null;
 	}
 

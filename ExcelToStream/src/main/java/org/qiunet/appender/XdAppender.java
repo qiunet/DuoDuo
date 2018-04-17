@@ -69,13 +69,11 @@ public class XdAppender implements Appender {
 		if (sheetName.startsWith("_")) sheetName = sheetName.substring(1, sheetName.length());
 
 		FileOutputStream outStream = null;
-		GZIPOutputStream gos = null;
 		DataOutputStream dos = null;
 		try {
 			File outFile = new File(outFileParent, filePrefix+"_"+ sheetName + ".xd");
 			outStream = new FileOutputStream(outFile);
-			gos = new GZIPOutputStream(outStream);
-			dos = new DataOutputStream(gos);
+			dos = new DataOutputStream(outStream);
 
 			dos.write(this.baos.toByteArray());
 
@@ -84,7 +82,6 @@ public class XdAppender implements Appender {
 		}finally {
 			try {
 				if(dos != null) dos.close();
-				if (gos != null) gos.close();
 				if (outStream != null) outStream.close();
 
 				if (this.baos != null) this.baos.close();
