@@ -6,11 +6,9 @@ import org.qiunet.utils.collection.safe.SafeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 
@@ -34,7 +32,8 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 		this.fileName = fileName;
 		logger.debug("读取配置文件 [ "+fileName+" ]");
-		in = getClass().getClassLoader().getResourceAsStream(fileName);
+		URL url = getClass().getClassLoader().getResource(fileName);
+		in = new FileInputStream(url.getPath());
 		dis = new DataInputStream(in);
 		return dis.readInt();
 	}
