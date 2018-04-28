@@ -32,8 +32,15 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 		this.fileName = fileName;
 		logger.debug("读取配置文件 [ "+fileName+" ]");
+
 		URL url = getClass().getClassLoader().getResource(fileName);
-		in = new FileInputStream(url.getPath());
+		if (url.getPath().contains(".jar!")) {
+			//jar包里面的文件. 只能用这种加载方式. 缺点是有缓存. 不能热加载设定
+			in = getClass().getClassLoader().getResourceAsStream(fileName);
+		}else {
+			in = new FileInputStream(url.getPath());
+		}
+
 		dis = new DataInputStream(in);
 		return dis.readInt();
 	}
@@ -42,20 +49,20 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	 * 初始化设定
 	 */
 	@Override
-	public boolean loadCfg()throws Exception{
-		boolean ret = false;
+	public String loadCfg() {
+		String failFileName = "";
 		try {
 			this.init();
-			ret = true;
 		} catch (Exception e) {
 			logger.error("读取配置文件"+fileName+"失败 ERROR:", e);
+			failFileName = this.fileName;
 		}finally{
 			this.close();
+			return failFileName;
 		}
-		return ret;
 	}
 
-	private void close() throws IOException {
+	private void close() {
 		if (dis != null) {
 			boolean readOver = false;
 			try {

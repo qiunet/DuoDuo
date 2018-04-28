@@ -11,5 +11,5 @@ public interface IGameCfgManager {
 	 * @return
 	 * @throws Exception
 	 */
-	boolean loadCfg ()throws Exception;
+	String loadCfg ()throws Exception;
 }

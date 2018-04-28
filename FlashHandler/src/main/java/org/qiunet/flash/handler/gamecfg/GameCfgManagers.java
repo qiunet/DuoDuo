@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.gamecfg;
 
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
+import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +45,18 @@ public class GameCfgManagers {
 		Collections.sort(propertylist);
 		this.reloadSetting();
 	}
-	/**
+
+	/***
 	 * 重新加载
+	 * @return 返回加载失败的文件名称
+	 * @throws Exception
 	 */
-	public void reloadSetting() throws  Exception{
+	public List<String> reloadSetting() throws  Exception{
 		qLogger.error("Game Setting Data Load start.....");
 		this.loadPropertySetting();
-		this.loadDataSetting();
+		List<String> failFileNames = this.loadDataSetting();
 		qLogger.error("Game Setting Data Load over.....");
+		return failFileNames;
 	}
 
 	/**
@@ -73,18 +78,26 @@ public class GameCfgManagers {
 	/**
 	 * 加载property
 	 */
-	protected void loadPropertySetting() throws  Exception{
+	protected void loadPropertySetting() {
 		for (GameSettingContainer<? extends LoaderProperties> container : propertylist){
 			container.t.reload();
 		}
 	}
-	/**
-	 * 加载数据设定
+
+	/***
+	 * 加载设定文件
+	 * @return 返回加载失败的文件名称
+	 * @throws Exception
 	 */
-	protected void loadDataSetting() throws  Exception{
+	protected List<String> loadDataSetting() throws  Exception{
+		List<String> failFileNames = new ArrayList<>(5);
 		for (GameSettingContainer<IGameCfgManager> container : gameSettingList) {
-			container.t.loadCfg();
+			String name = container.t.loadCfg();
+			if(!StringUtil.isEmpty(name)) {
+				failFileNames.add(name);
+			}
 		}
+		return failFileNames;
 	}
 
 	/***
