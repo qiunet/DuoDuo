@@ -10,10 +10,7 @@ import org.qiunet.utils.data.CommonData;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author qiunet
@@ -23,7 +20,7 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	protected IEntityListInfo entityInfo;
 
 	public EntityListDataSupport(IEntityListInfo entityListInfo){
-		super(new DbListSupport<PO>(), entityListInfo);
+		super(new DbListSupport(), entityListInfo);
 
 		this.entityInfo = entityListInfo;
 		this.selectStatment = entityInfo.getNameSpace()+".get"+entityInfo.getClazz().getSimpleName()+"s";
@@ -105,14 +102,14 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	/**
 	 * 取到一个map
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @return po的VO对象
+	 * @return po的VO对象有序的map
 	 */
 	public Map<Integer, VO> getVoMap(Object dbInfoKey){
 		String key = entityInfo.getRedisKey(dbInfoKey);
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 
-		voMap = new HashMap<Integer, VO>();
+		voMap = new LinkedHashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null){
 			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, 0));
