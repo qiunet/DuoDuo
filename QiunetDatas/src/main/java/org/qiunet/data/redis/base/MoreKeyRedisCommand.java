@@ -14,7 +14,7 @@ import java.util.Arrays;
  *         Created on 17/2/6 14:34.
  */
 public abstract class MoreKeyRedisCommand<T> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO_REDIS);
 
 	protected JedisPool pool;
 	protected T defaultResult;

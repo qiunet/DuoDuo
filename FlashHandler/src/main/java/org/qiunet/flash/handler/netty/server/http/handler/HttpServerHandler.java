@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
@@ -31,7 +30,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
 	private static final Acceptor acceptor = Acceptor.getInstance();
 
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private HttpBootstrapParams params;
 

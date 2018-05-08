@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * 17/7/21
  */
 public abstract class BaseHandler<RequestData> implements IHandler<RequestData> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private Class<RequestData> requestDataClass;
 	private int protocolId;

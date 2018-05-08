@@ -17,7 +17,7 @@ import java.util.concurrent.*;
  *         Created on 17/2/11 08:04.
  */
 public class AsyncJobSupport {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_DATAS);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private ExecutorService executor = new ThreadPoolExecutor(
 			10,
 			512,

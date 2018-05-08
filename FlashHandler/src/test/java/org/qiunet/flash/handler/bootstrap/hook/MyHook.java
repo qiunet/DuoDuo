@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * 17/11/22
  */
 public class MyHook implements Hook {
-	Logger qLogger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	Logger qLogger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	@Override
 	public String getReloadCfgMsg() {

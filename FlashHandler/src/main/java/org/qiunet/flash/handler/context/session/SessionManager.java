@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 17/10/23
  */
 public class SessionManager implements Runnable {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/***
 	 * 所有的session
 	 */

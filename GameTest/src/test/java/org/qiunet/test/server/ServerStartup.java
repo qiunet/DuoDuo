@@ -68,7 +68,7 @@ public final class ServerStartup {
 	 * 自己的钩子
 	 */
 	private static class MyHook implements Hook {
-		private Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
+		private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 		@Override
 		public String getReloadCfgMsg() {

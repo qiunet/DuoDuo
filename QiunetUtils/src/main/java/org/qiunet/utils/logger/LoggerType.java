@@ -6,13 +6,11 @@ package org.qiunet.utils.logger;
  * 17/8/18
  */
 public class LoggerType {
+	/**普通的日志打印*/
+	public static final String DUODUO = "duoduo";
+	/**sql日志打印*/
+	public static final String DUODUO_SQL = "duoduo.sql";
+	/**redis 的 日志打印*/
+	public static final String DUODUO_REDIS = "duoduo.redis";
 
-	public static final String QIUNET_DATAS = "QIUNET_DATAS";
-
-	public static final String QIUNET_UTILS = "QIUNET_UTILS";
-
-	public static final String FLASH_HANDLER = "FLASH_HANDLER";
-
-	public static final String GAME_TEST = "GAME_TEST";
-	;
 }

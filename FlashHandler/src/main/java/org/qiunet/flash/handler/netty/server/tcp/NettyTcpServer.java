@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
  * 17/8/13
  */
 public final class NettyTcpServer implements Runnable {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private TcpBootstrapParams params;
 

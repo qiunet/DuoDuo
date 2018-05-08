@@ -21,7 +21,7 @@ import java.util.jar.JarFile;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private List<String> allclass = new LinkedList<>();
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();

@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
  *         Created on 17/2/17 18:02.
  */
 public class FileUtil {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/**
 	 * 移动文件
 	 * @param srcFile

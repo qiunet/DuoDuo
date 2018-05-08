@@ -19,7 +19,7 @@ import java.util.List;
  * 17/8/13
  */
 public class Decoder extends ByteToMessageDecoder {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private int maxReceivedLength;
 	private boolean crc;
 	public Decoder(int maxReceivedLength, boolean needCrc) {

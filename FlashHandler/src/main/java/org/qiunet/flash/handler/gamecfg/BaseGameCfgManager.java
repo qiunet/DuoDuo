@@ -10,14 +10,13 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.*;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Created by qiunet.
  * 17/7/16
  */
 public abstract class BaseGameCfgManager implements IGameCfgManager {
-	protected final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	protected final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private String fileName;
 	protected DataInputStream dis;
 	private InputStream in;

@@ -39,7 +39,7 @@ import java.net.URI;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private static NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class StringData {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private StringBuilder sb;
 
 	private StringData(Object obj){

@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * 17/12/2
  */
 public class DefaultWebSocketInterceptor implements WebSocketInterceptor {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	@Override
 	public void handler(IWebSocketHandler handler, IWebSocketRequest request) {

@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultExecutorRejectHandler implements RejectedExecutionHandler {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private String threadName;
 	public DefaultExecutorRejectHandler(String name){
 		this.threadName = name;

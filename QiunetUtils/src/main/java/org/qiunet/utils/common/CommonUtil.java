@@ -16,7 +16,7 @@ import java.util.*;
  *
  */
 public class CommonUtil {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private CommonUtil() { }
 	/**

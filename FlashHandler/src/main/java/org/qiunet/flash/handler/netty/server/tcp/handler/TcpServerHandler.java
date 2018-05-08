@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * 17/8/13
  */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private Acceptor acceptor = Acceptor.getInstance();
 	private TcpBootstrapParams params;
 

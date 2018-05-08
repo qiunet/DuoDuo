@@ -13,7 +13,7 @@ import java.util.List;
  * 17/12/6
  */
 public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRobotFunc<Info> implements IRobot<Info> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.GAME_TEST);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private String brokeReason;
 
 	protected int uid;

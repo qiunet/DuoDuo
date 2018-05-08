@@ -80,7 +80,7 @@ public abstract class BaseLogCollecter {
 //			loggerMap.putIfAbsent(fileName, logger);
 //			logger = loggerMap.get(fileName);
 //		} catch (IOException e) {
-//			LoggerFactory.getLogger(LoggerType.QIUNET_UTILS).info("Exception", e);
+//			LoggerFactory.getLogger(LoggerType.DUODUO).info("Exception", e);
 //		}
 //		return logger;
 //	}

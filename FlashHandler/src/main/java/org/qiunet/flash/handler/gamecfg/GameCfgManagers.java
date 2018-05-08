@@ -16,7 +16,7 @@ import java.util.List;
  *         Created on 17/2/9 12:15.
  */
 public class GameCfgManagers {
-	private Logger qLogger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger qLogger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private static GameCfgManagers instance = new GameCfgManagers();
 	private List<GameSettingContainer<IGameCfgManager>> gameSettingList = new ArrayList<>();

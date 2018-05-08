@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * 17/8/13
  */
 public class Encoder extends MessageToByteEncoder<MessageContent> {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
 		ByteBuf srcMsg = msg.encodeToByteBuf();

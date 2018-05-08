@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * 17/11/23
  */
 public class DefaultHttpInterceptor implements HttpInterceptor {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	@Override
 	public Object handler(IHttpHandler handler, IHttpRequest request) {

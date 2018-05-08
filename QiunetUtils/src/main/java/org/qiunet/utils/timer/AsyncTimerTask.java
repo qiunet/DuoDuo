@@ -1,5 +1,6 @@
 package org.qiunet.utils.timer;
 
+import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
  * 18/1/26
  */
 public abstract class AsyncTimerTask implements Runnable {
-	private static final Logger logger = LoggerFactory.getLogger(AsyncTimerTask.class);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private ScheduledFuture future;
 
 	void setFuture(ScheduledFuture future) {

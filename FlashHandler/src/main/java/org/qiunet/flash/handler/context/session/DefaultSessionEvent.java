@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * 17/11/27
  */
 public class DefaultSessionEvent implements ISessionEvent {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	protected SessionManager sessionManager = SessionManager.getInstance();
 	@Override
 	public void sessionRegistered(ChannelHandlerContext ctx) {

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AsyncQueueHandler<T extends QueueElement> {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	// 线程计数
 	private static final AtomicInteger threadNum = new AtomicInteger();
 

@@ -29,7 +29,7 @@ import java.util.Arrays;
  * 17/12/1
  */
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSocketFrame> {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.FLASH_HANDLER);
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private Acceptor acceptor = Acceptor.getInstance();
 
 	private WebSocketServerHandshaker handshaker;
