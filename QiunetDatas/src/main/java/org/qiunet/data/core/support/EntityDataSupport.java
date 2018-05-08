@@ -58,15 +58,15 @@ public class EntityDataSupport<PO extends IRedisEntity, VO> extends BaseDataSupp
 	 * @param po 需要插入的po
 	 * @return 1 表示成功
 	 */
-	public int insertPo(PO po){
+	public VO insertPo(PO po){
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		int ret = dbSupport.insert(po, insertStatment);
+		dbSupport.insert(po, insertStatment);
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
 		entityInfo.getRedisUtil().setObjectToHash(key, po);
 
 		ThreadContextData.put(key, entityInfo.getVo(po));
-		return  ret;
+		return  ThreadContextData.get(key);
 	}
 
 	/**

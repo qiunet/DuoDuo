@@ -10,10 +10,7 @@ import org.qiunet.utils.data.CommonData;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author qiunet
@@ -21,12 +18,12 @@ import java.util.Map;
  */
 public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> extends BaseDataSupport<PO> {
 	private IPlatformEntityListInfo<PO, VO> entityInfo;
-	
+
 	public PlatformEntityListDataSupport(IPlatformEntityListInfo<PO, VO> entityInfo) {
-		super(new DbListSupport<PO>(), entityInfo);
-		
+		super(new DbListSupport(), entityInfo);
+
 		this.entityInfo = entityInfo;
-		
+
 		this.selectStatment = entityInfo.getNameSpace() + ".get"+entityInfo.getClazz().getSimpleName() +"s";
 	}
 	/**
@@ -35,49 +32,53 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	 */
 	public void updatePo(PO po) {
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		
+
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		List<PO> poList = new ArrayList<PO>(1);
+		List<PO> poList = new ArrayList(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().setListToHash(key, poList);
-		
+
 		if (! entityInfo.needAsync()) {
 			dbSupport.update(po, updateStatment);
 		}else {
 			String asyncValue = entityInfo.getDbInfoKey(po) +"_"+po.getPlatformName()+"_"+po.getSubId();
 			entityInfo.getRedisUtil().saddString(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)),  asyncValue);
 		}
-		
+
 	}
 	/**
 	 * insert po
 	 * @param po 需要插入的po
 	 * @return 1 表示成功
 	 */
-	public int insertPo(PO po){
+	public VO insertPo(PO po){
+		// 防止有人误操作. insert时候. 没有得到所有的列表.
+		this.getVoMap(entityInfo.getEntityDbInfo(po), po.getPlatform());
+
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		int ret = dbSupport.insert(po, insertStatment);
-		
+		dbSupport.insert(po, insertStatment);
+
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		VO vo = entityInfo.getVo(po);
 		boolean insertRedis = voMap != null;
 		if (voMap != null) {
-			voMap.put(po.getSubId(), entityInfo.getVo(po));
+			voMap.put(po.getSubId(), vo);
 		}else {
 			insertRedis = entityInfo.getRedisUtil().exists(key);
 		}
 
 		if (insertRedis) {
-			List<PO> poList = new ArrayList<PO>(1);
+			List<PO> poList = new ArrayList<>(1);
 			poList.add(po);
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
-		return ret;
+		return vo;
 	}
 	/**
 	 * 对缓存失效处理
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @param platform 平台   
+	 * @param platform 平台
 	 */
 	public void expireCache(Object dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
@@ -90,15 +91,15 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	 */
 	public void deletePo(PO po) {
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		
+
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) {
 			voMap.remove(po.getSubId());
 		}
-		List<PO> poList = new ArrayList<PO>(1);
+		List<PO> poList = new ArrayList(1);
 		poList.add(po);
 		entityInfo.getRedisUtil().deleteList(key, poList);
-		
+
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		dbSupport.delete(po, deleteStatment);
 	}
@@ -112,11 +113,11 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
-		
-		voMap = new HashMap<Integer, VO>();
+
+		voMap = new LinkedHashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null) {
-			poList = ((IDbList)dbSupport).selectList(selectStatment, (IEntityListDbInfo) entityInfo.getEntityDbInfo(dbInfoKey, platform, 0));
+			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform, 0));
 			if (poList != null){
 				entityInfo.getRedisUtil().setListToHash(key, poList);
 			}

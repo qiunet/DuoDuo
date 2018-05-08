@@ -51,18 +51,19 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	 * @param po 需要插入的po
 	 * @return 1 表示成功
 	 */
-	public int insertPo(PO po){
+	public VO insertPo(PO po){
 		//  防止有的人直接insert . 没有获取列表. 导致redis出现脏数据
 		this.getVoMap(entityInfo.getDbInfoKey(po));
 
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		int ret = dbSupport.insert(po, insertStatment);
+		dbSupport.insert(po, insertStatment);
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		boolean insertToRedis = voMap != null;
+		VO vo = (VO) entityInfo.getVo(po);
 		if (voMap != null) {
-			voMap.put(entityInfo.getSubKey(po), (VO) entityInfo.getVo(po));
+			voMap.put(entityInfo.getSubKey(po), vo);
 		}else {
 			insertToRedis = entityInfo.getRedisUtil().exists(key);
 		}
@@ -71,7 +72,7 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 			poList.add(po);
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
-		return  ret;
+		return vo;
 	}
 	/**
 	 * 对缓存失效处理

@@ -14,12 +14,12 @@ import org.qiunet.utils.threadLocal.ThreadContextData;
  */
 public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> extends BaseDataSupport<PO> {
 	private IPlatformEntityInfo<PO, VO> entityInfo;
-	
+
 	public PlatformEntityDataSupport(IPlatformEntityInfo<PO, VO> entityInfo) {
-		super(new DbEntitySupport<PO>() , entityInfo);
-		
+		super(new DbEntitySupport() , entityInfo);
+
 		this.entityInfo = entityInfo;
-		
+
 		this.selectStatment = entityInfo.getNameSpace() + ".get"+entityInfo.getClazz().getSimpleName();
 	}
 	/**
@@ -30,7 +30,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		entityInfo.getRedisUtil().setObjectToHash(key, po);
-		
+
 		if (!entityInfo.needAsync() ) {
 			dbSupport.update(po, updateStatment);
 		}else {
@@ -58,20 +58,20 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 	 * @param po 需要插入的po
 	 * @return 1 表示成功
 	 */
-	public int insertPo(PO po){
+	public VO insertPo(PO po){
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		int ret = dbSupport.insert(po, insertStatment);
+		dbSupport.insert(po, insertStatment);
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		entityInfo.getRedisUtil().setObjectToHash(key, po);
 		ThreadContextData.put(key, entityInfo.getVo(po));
-		
-		return ret;
+
+		return ThreadContextData.get(key);
 	}
 	/**
 	 * 对缓存失效处理
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @param platform 平台   
+	 * @param platform 平台
 	 */
 	public void expireCache(Object dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
@@ -89,7 +89,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		ThreadContextData.removeKey(key);
 		entityInfo.getRedisUtil().expire(key, 0);
 	}
-	
+
 	/**
 	 * 得到vo
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
@@ -100,7 +100,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		VO vo = ThreadContextData.get(key);
 		if (vo != null) return vo;
-		
+
 		PO po = entityInfo.getRedisUtil().getObjectFromHash(key, entityInfo.getClazz());
 		if (po == null) {
 			po = (PO) ((IDbEntity)dbSupport).selectOne(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform));
