@@ -1,10 +1,9 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -12,8 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  *
  */
-public class TestNonSyncQueueComplete extends BaseTest {
-	private static NonSyncQueueHandler<TestElement> testElementNonSyncQueueHandler = NonSyncQueueHandler.create(false);
+public class TestAsyncQueueComplete extends BaseTest {
+	private static AsyncQueueHandler<TestElement> testElementAsyncQueueHandler = AsyncQueueHandler.create(false);
 	@Test
 	public void testNonSyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
@@ -25,14 +24,14 @@ public class TestNonSyncQueueComplete extends BaseTest {
 					for (int j = 0 ; j < loopCount; j++) {
 						integer.incrementAndGet();
 						TestElement element = new TestElement(j+"");
-						testElementNonSyncQueueHandler.addElement(element);
+						testElementAsyncQueueHandler.addElement(element);
 					}
 				}
 			}, "-thread-"+i).start();
 		}
-		testElementNonSyncQueueHandler.completeAndShutdown();
+		testElementAsyncQueueHandler.completeAndShutdown();
 
 		Assert.assertTrue(integer.get() == threadCount * loopCount);
-		Assert.assertTrue(testElementNonSyncQueueHandler.size() == 0);
+		Assert.assertTrue(testElementAsyncQueueHandler.size() == 0);
 	}
 }

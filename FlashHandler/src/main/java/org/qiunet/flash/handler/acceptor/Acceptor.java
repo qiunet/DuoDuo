@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.acceptor;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
-import org.qiunet.utils.nonSyncQuene.IndexNonSyncQueueHandler;
+import org.qiunet.utils.asyncQuene.IndexAsyncQueueHandler;
 
 /**
  * 整个的游戏入口, 处理TCP 和 HTTP过来的请求
@@ -17,7 +17,7 @@ public class Acceptor {
 	/**使用几个线程来处理*/
 	private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
 	/**线程的处理队列*/
-	private IndexNonSyncQueueHandler<IRequestContext> contextProcessor;
+	private IndexAsyncQueueHandler<IRequestContext> contextProcessor;
 
 	/**
 	 * 创建当前cpu核数相当的线程作为 context的处理队列
@@ -29,7 +29,7 @@ public class Acceptor {
 		}
 
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
-		this.contextProcessor = new IndexNonSyncQueueHandler<>(threadCount, true);
+		this.contextProcessor = new IndexAsyncQueueHandler<>(threadCount, true);
 		instance = this;
 	}
 

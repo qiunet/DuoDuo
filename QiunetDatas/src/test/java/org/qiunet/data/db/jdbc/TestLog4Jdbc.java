@@ -1,6 +1,5 @@
 package org.qiunet.data.db.jdbc;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import java.sql.Connection;

@@ -12,7 +12,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 /**
  * 处理的对象
  * @author qiunet

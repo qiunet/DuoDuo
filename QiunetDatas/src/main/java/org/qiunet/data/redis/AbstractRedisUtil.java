@@ -1,7 +1,6 @@
 package org.qiunet.data.redis;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.log4j.Level;
 import org.qiunet.data.redis.base.MoreKeyRedisCommand;
 import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.data.redis.support.info.IRedisList;

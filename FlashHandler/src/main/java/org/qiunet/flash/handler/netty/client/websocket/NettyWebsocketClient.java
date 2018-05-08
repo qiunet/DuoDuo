@@ -16,7 +16,7 @@ import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

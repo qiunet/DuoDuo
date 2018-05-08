@@ -1,7 +1,7 @@
 package org.qiunet.utils.timer;
 
 
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;

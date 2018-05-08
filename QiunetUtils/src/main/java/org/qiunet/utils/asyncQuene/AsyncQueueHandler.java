@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author qiunet
  *
  */
-public class NonSyncQueueHandler<T extends QueueElement> {
+public class AsyncQueueHandler<T extends QueueElement> {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 	// 线程计数
 	private static final AtomicInteger threadNum = new AtomicInteger();
@@ -26,7 +26,7 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 	/*队列*/
 	private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
 
-	private NonSyncQueueHandler(String threadName, boolean daemon){
+	private AsyncQueueHandler(String threadName, boolean daemon){
 		this.msgThread = new Thread(new HandlerTHread(), threadName);
 		/**交给外面关闭有问题, 很多人不会去关闭, 导致线程不停止*/
 		if (!daemon) {
@@ -36,16 +36,16 @@ public class NonSyncQueueHandler<T extends QueueElement> {
 		this.msgThread.start();
 	}
 
-	private NonSyncQueueHandler(boolean daemon){
-		this("NonSyncQueueHandler-"+threadNum.incrementAndGet(), daemon);
+	private AsyncQueueHandler(boolean daemon){
+		this("AsyncQueueHandler-"+threadNum.incrementAndGet(), daemon);
 	}
 
-	public static <T extends QueueElement> NonSyncQueueHandler<T> create(String  threadName, boolean daemon) {
-		return new NonSyncQueueHandler<>(threadName , daemon);
+	public static <T extends QueueElement> AsyncQueueHandler<T> create(String  threadName, boolean daemon) {
+		return new AsyncQueueHandler<>(threadName , daemon);
 	}
 
-	public static <T extends QueueElement> NonSyncQueueHandler<T> create(boolean daemon) {
-		return new NonSyncQueueHandler<>(daemon);
+	public static <T extends QueueElement> AsyncQueueHandler<T> create(boolean daemon) {
+		return new AsyncQueueHandler<>(daemon);
 	}
 
 	public void shutdown() {

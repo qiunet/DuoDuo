@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.string.StringUtil;
 
@@ -74,14 +73,6 @@ public final class DateUtil {
 	public static String dateToString(Date date) {
 		if(date == null) return "";
 		return dateToString(date, DEFAULT_DATE_TIME_FORMAT);
-	}
-	/**
-	 * 获取系统时间，毫秒级
-	 * @return
-	 */
-	public static long getCurrentTimeMillis(){
-		// 万一要微调 可以在这个地方修改
-		return System.currentTimeMillis();
 	}
 	/**
 	 * 日期转字符串 指定格式
@@ -209,7 +200,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Date addDays(Date dt, int days) {
-		return DateUtils.addDays(dt, days);
+		return dateAdjust(dt, days, Calendar.DAY_OF_MONTH);
 	}
 
 	/***
@@ -219,7 +210,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Date addHours(Date dt, int hours) {
-		return DateUtils.addHours(dt, hours);
+		return dateAdjust(dt, hours, Calendar.HOUR_OF_DAY);
 	}
 
 	/***
@@ -229,17 +220,17 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Date addMinutes(Date dt, int minutes) {
-		return DateUtils.addMinutes(dt, minutes);
+		return dateAdjust(dt, minutes, Calendar.MINUTE);
 	}
 
 	/***
 	 * 指定时间  加减 月
 	 * @param dt
-	 * @param mouths
+	 * @param months
 	 * @return
 	 */
-	public static Date addMonths(Date dt, int mouths) {
-		return DateUtils.addMonths(dt, mouths);
+	public static Date addMonths(Date dt, int months) {
+		return dateAdjust(dt, months, Calendar.MONTH);
 	}
 	/***
 	 * 指定时间  加减 秒
@@ -248,7 +239,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Date addSeconds(Date dt, int seconds) {
-		return DateUtils.addSeconds(dt, seconds);
+		return dateAdjust(dt, seconds, Calendar.SECOND);
 	}
 	/***
 	 * 指定时间  加减 毫秒
@@ -257,9 +248,15 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Date addMilliseconds(Date dt, int milliSeconds) {
-		return DateUtils.addMilliseconds(dt, milliSeconds);
+		return dateAdjust(dt, milliSeconds, Calendar.MILLISECOND);
 	}
 
+	private static Date dateAdjust(Date dt, int count, int field) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(dt);
+		calendar.add(field, count);
+		return calendar.getTime();
+	}
 	/**
 	 *获取两个日期相差的秒数
 	 * @return

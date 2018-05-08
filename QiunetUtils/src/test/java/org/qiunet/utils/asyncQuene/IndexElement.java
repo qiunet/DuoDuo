@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 /**
  * @author qiunet
@@ -17,7 +17,7 @@ public class IndexElement implements QueueElement {
 		String name = Thread.currentThread().getName();
 		int nameIndex = Integer.parseInt(name);
 		// 这里的2 是指
-		if (nameIndex != index % TestIndexNonSyncQueue.THREAD_COUNT) {
+		if (nameIndex != index % TestIndexAsyncQueue.THREAD_COUNT) {
 			throw new IllegalStateException("nameIndex ["+nameIndex+"] index ["+index+"]");
 		}
 		return true;

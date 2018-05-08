@@ -1,10 +1,10 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
-import org.qiunet.utils.nonSyncQuene.mutiThread.MultiNonSyncQueueHandler;
+import org.qiunet.utils.asyncQuene.mutiThread.MultiAsyncQueueHandler;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -14,10 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  *
  */
-public class TestMutiNonAsyncQueue extends BaseTest{
+public class TestMutiAsyncQueue extends BaseTest{
 	@Test
 	public void testAsyncQueue() {
-		final MultiNonSyncQueueHandler print = new MultiNonSyncQueueHandler("TestPrint");
+		final MultiAsyncQueueHandler print = new MultiAsyncQueueHandler("TestPrint");
 		final AtomicInteger integer = new AtomicInteger(0);
 		int threadCount = 10;
 		final int loopCount = 5;

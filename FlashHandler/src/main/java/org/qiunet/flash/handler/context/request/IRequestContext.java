@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.context.request;
 
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.utils.nonSyncQuene.QueueElement;
+import org.qiunet.utils.asyncQuene.QueueElement;
 
 /**
  *  处理请求的封装类

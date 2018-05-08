@@ -1,7 +1,5 @@
 package org.qiunet.utils.string;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.math.MathUtil;
 
@@ -29,14 +27,6 @@ public class StringUtil {
 	 */
 	public static boolean isEmpty(String str){
 		return str == null || str.length() == 0;
-	}
-	/***
-	 * 判断字符串是不是数字
-	 * @param s
-	 * @return
-	 */
-	public static boolean isNum(String s){
-		return NumberUtils.isNumber(s);
 	}
 	/**
 	 * 分割字符串

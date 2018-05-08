@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene.factory;
+package org.qiunet.utils.asyncQuene.factory;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

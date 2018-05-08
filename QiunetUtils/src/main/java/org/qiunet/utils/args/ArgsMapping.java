@@ -22,7 +22,7 @@ public class ArgsMapping extends KeyValueData<String,String> {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.QIUNET_UTILS);
 
 	public ArgsMapping(String [] args) {
-		super(new HashMap<String, String>());
+		super(new HashMap<>());
 
 		Map<String, String> temp = new HashMap<>();
 

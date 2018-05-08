@@ -5,7 +5,7 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>org.qiunet</groupId>
-        <version>3.0-SNAPSHOT</version>
+        <version>4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
     <inceptionYear>2016</inceptionYear>
 
 	<artifactId>QiunetUtils</artifactId>
-    <version>3.0</version>
+    <version>4.0</version>
 
     <developers>
         <developer>
@@ -25,16 +25,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-			<!--之后由外面提供 slf4j 的实现类. QiunetUtil 本身不再提供了-->
-			<!--<scope>provided</scope>-->
-		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>org.apache.logging.log4j</groupId>-->
-			<!--<artifactId>log4j-slf4j-impl</artifactId>-->
-		<!--</dependency>-->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
+			<scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>junit</groupId>

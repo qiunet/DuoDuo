@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene.mutiThread;
+package org.qiunet.utils.asyncQuene.mutiThread;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;

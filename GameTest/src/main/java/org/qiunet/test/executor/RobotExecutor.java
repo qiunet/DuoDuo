@@ -8,7 +8,7 @@ import org.qiunet.test.executor.params.ExecutorParams;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.classScanner.ScannerAllClassFile;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

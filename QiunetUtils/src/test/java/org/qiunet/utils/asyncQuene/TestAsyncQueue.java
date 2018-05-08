@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  *
  */
-public class TestNonSyncQueue extends BaseTest {
-	private static NonSyncQueueHandler<QueueElement> testElementNonSyncQueueHandler = NonSyncQueueHandler.create(false);
+public class TestAsyncQueue extends BaseTest {
+	private static AsyncQueueHandler<QueueElement> testElementAsyncQueueHandler = AsyncQueueHandler.create(false);
 	@Test
 	public void testNonSyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
@@ -25,7 +25,7 @@ public class TestNonSyncQueue extends BaseTest {
 				public void run() {
 					for (int j = 0 ; j < loopCount; j++) {
 						integer.incrementAndGet();
-						testElementNonSyncQueueHandler.addElement(new QueueElement(){
+						testElementAsyncQueueHandler.addElement(new QueueElement(){
 							@Override
 							public boolean handler() {
 								latch.countDown();
@@ -45,6 +45,6 @@ public class TestNonSyncQueue extends BaseTest {
 			e.printStackTrace();
 		}
 		Assert.assertTrue(integer.get() == threadCount * loopCount);
-		Assert.assertTrue(testElementNonSyncQueueHandler.size() == 0);
+		Assert.assertTrue(testElementAsyncQueueHandler.size() == 0);
 	}
 }

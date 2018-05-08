@@ -1,8 +1,8 @@
 package org.qiunet.data.async;
 
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.nonSyncQuene.factory.DefaultThreadFactory;
-import org.qiunet.utils.nonSyncQuene.mutiThread.DefaultExecutorRejectHandler;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.asyncQuene.mutiThread.DefaultExecutorRejectHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

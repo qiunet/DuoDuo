@@ -1,4 +1,4 @@
-package org.qiunet.utils.nonSyncQuene;
+package org.qiunet.utils.asyncQuene;
 
 
 public class TestElement implements QueueElement {
