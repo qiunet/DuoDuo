@@ -16,7 +16,7 @@ public enum  DbInfoType {
 	IPlatformEntityListDbInfo(IPlatformEntityListDbInfo.class),
 	;
 	private Class clazz;
-	private DbInfoType(Class clazz) {
+	DbInfoType(Class clazz) {
 		this.clazz = clazz;
 	}
 

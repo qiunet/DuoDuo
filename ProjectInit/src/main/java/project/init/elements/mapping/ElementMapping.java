@@ -15,7 +15,7 @@ public class ElementMapping extends SubVmElement {
 	private boolean uniqid;
 	private String selectKey;
 	private String tablePrefix;
-	private boolean splitTable = true;
+	private boolean splitTable;
 
 	public String getTablePrefix() {
 		return tablePrefix;

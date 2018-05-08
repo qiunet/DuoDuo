@@ -16,7 +16,7 @@
 
 		<!ELEMENT field EMPTY>
 		<!ATTLIST field name NMTOKEN #REQUIRED>
-		<!ATTLIST field type (int|String|Date|long|Boolean|boolean) #REQUIRED>
+		<!ATTLIST field type (int|String|long|boolean) #REQUIRED>
 		<!ATTLIST field defaultVal CDATA #IMPLIED >
 		<!ATTLIST field comment CDATA #REQUIRED>
 		]>
