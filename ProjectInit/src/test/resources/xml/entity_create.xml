@@ -23,7 +23,7 @@
 
 <base baseDir="src/test/java" vmfilePath="vm/entity_create.vm" filePostfix="java">
 
-	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="RedisEntity">
+	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="PlatformRedisEntity">
 		<constructor constructorFields="uid,openid,token" />
 
 		<field name="uid" type="int" comment="uid " />

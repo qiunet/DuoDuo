@@ -107,7 +107,7 @@ public class ${data.name} implements ${entityInfoType.toString()}<${entityObj.na
 #if(${entityObj.EntityType} == "PlatformRedisList" || ${entityObj.EntityType} == "PlatformRedisEntity" )
 	@Override
 	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.${data.NameSpace.toUpperCase()}.getKey(dbInfoKey, platform);
+		return RedisKey.${data.NameSpace.toUpperCase()}.getKeyByParams(dbInfoKey, platform);
 	}
 #else
 	@Override

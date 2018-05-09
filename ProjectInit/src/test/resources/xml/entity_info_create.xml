@@ -29,8 +29,9 @@
 	<beans>
 		<bean id="defaultRedis" clazz="project.test.RedisDataUtil" />
 
-		<bean id="UidEntityListDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidEntityListDbInfo" />
 		<bean id="UidEntityDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidEntityDbInfo" />
+		<bean id="UidEntityListDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidEntityListDbInfo" />
+		<bean id="UidPlatformEntityDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidPlatformEntityDbInfo" />
 		<bean id="OpenidEntityDbInfo" clazz="org.qiunet.data.db.support.info.openidInfo.OpenidEntityDbInfo" />
 		<bean id="IdEntityDbInfo" clazz="org.qiunet.data.db.support.info.idInfo.IdEntityDbInfo" />
 		<bean id="IdEntityListDbInfo" clazz="org.qiunet.data.db.support.info.idInfo.IdEntityListDbInfo" />
@@ -38,7 +39,7 @@
 	</beans>
 
 	<infos>
-		<info name="PlayerEntityInfo" poref="PlayerPo" vo="PlayerVo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityDbInfo" />
+		<info name="PlayerEntityInfo" poref="PlayerPo" vo="PlayerVo" async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityDbInfo" />
 		<info name="ItemEntityInfo" poref="ItemPo" vo="ItemVo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityListDbInfo" />
 		<info name="LoginEntityInfo" poref="LoginPo" vo="LoginVo" async="true" redisRef="defaultRedis" dbInfoRef="OpenidEntityDbInfo" />
 	</infos>
