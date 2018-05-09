@@ -29,7 +29,7 @@ public class IndexElement implements IndexQueueElement {
 	}
 
 	@Override
-	public int getIndex() {
+	public int getQueueIndex() {
 		return index;
 	}
 }

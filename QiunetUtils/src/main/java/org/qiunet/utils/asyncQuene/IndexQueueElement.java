@@ -8,5 +8,5 @@ public interface IndexQueueElement extends QueueElement {
 	 * 得到在IndexAsyncQueueHandler中处理使用的index
 	 * @return
 	 */
-	int getIndex();
+	int getQueueIndex();
 }
