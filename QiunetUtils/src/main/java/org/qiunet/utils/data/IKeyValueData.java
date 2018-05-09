@@ -111,4 +111,11 @@ public interface IKeyValueData<K, V> {
 	 * @return
 	 */
 	 double getDouble(K key);
+
+	/***
+	 * 得到boolean 值. 默认false
+	 * @param key
+	 * @return
+	 */
+	 boolean getBoolean(K key);
 }

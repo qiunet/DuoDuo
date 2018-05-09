@@ -117,4 +117,9 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	public double getDouble(K key) {
 		return getDouble(key , 0d);
 	}
+
+	@Override
+	public boolean getBoolean(K key) {
+		return "true".equals(getString(key));
+	}
 }
