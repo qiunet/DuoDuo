@@ -5,6 +5,7 @@ import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.KeyValueData;
 
 import java.io.DataInputStream;
+import java.util.Map;
 
 /***
  * 读取一个key value的结构
@@ -26,6 +27,16 @@ public abstract class KeyValManager<Key, Val> extends BaseGameCfgManager impleme
 
 	protected abstract Key readKey(DataInputStream dis) throws Exception;
 	protected abstract Val readVal(DataInputStream dis) throws Exception;
+
+	@Override
+	public boolean getBoolean(Key key) {
+		return keyValueData.getBoolean(key);
+	}
+
+	@Override
+	public Map<Key, Val> returnMap() {
+		return keyValueData.returnMap();
+	}
 
 	@Override
 	public boolean containKey(Key key) {
