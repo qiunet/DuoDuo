@@ -21,7 +21,7 @@
 		<!ATTLIST field comment CDATA #REQUIRED>
 		]>
 
-<base baseDir="src/main/java" vmfilePath="vm/entity_create.vm" filePostfix="java">
+<base baseDir="src/test/java" vmfilePath="vm/entity_create.vm" filePostfix="java">
 
 	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="RedisEntity">
 		<constructor constructorFields="uid,openid,token" />

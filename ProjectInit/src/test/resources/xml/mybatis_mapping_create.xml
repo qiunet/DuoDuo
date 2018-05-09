@@ -17,7 +17,7 @@
 <!-- tablePrefix 是自行指定数据库表的前缀.  而不是使用po的别名 有时候也有不一样的需求 -->
 <!-- splitTable 列表数据是否分表 true 分 false 不分 -->
 
-<base baseDir="src/main/resources/mybatis" filePostfix="xml" vmfilePath="vm/mybatis_mapping_create.vm" >
+<base baseDir="src/test/resources/mybatis" filePostfix="xml" vmfilePath="vm/mybatis_mapping_create.vm" >
 	<mapping name="login"  poref="LoginPo" />
 	<mapping name="player"  poref="PlayerPo" />
 	<mapping name="item"  poref="ItemPo"/>

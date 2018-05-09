@@ -11,15 +11,16 @@ import java.io.File;
  */
 public abstract class SubVmElement {
 	protected VmElement base;
-	
+
 	private String name;
+
 	public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public void parseOutFile(String outfilePath, String vmfilePath, String postfix) {
 		if (! outfilePath.endsWith(File.separator))  outfilePath += File.separator;
 

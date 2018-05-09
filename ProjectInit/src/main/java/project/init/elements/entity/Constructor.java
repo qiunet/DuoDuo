@@ -40,7 +40,6 @@ public class Constructor {
 		return fields;
 	}
 
-
 	public String getConstructorFields() {
 		return constructorFields;
 	}

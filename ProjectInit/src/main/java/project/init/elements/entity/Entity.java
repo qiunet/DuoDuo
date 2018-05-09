@@ -55,13 +55,16 @@ public class Entity extends SubVmElement {
 	public void setDbInfoKey(String dbInfoKey) {
 		this.dbInfoKey = dbInfoKey;
 	}
+
 	public String getSubKey() {
 		return subKey;
 	}
 	public void setSubKey(String subKey) {
-		if (entityType == null || isRedisList())
+		if (entityType == null || isRedisList()) {
 			this.subKey = subKey;
+		}
 	}
+
 	public void setEntityType(String entityType) {
 		this.entityType = EntityType.parse(entityType);
 		if (! isRedisList()) this.subKey = null;
@@ -69,12 +72,14 @@ public class Entity extends SubVmElement {
 	public String getEntityType() {
 		return entityType.toString();
 	}
+
 	public String getClassInfo(){
 		return entityType.getClazz().getName();
 	}
 	public boolean isRedisList(){
 		return entityType == EntityType.RedisList || entityType == EntityType.PlatformRedisList;
 	}
+
 	@Override
 	public String getOutFilePath() {
 		String path = packagePath.replace(".", File.separator);
@@ -84,6 +89,7 @@ public class Entity extends SubVmElement {
 	public EntityType getType(){
 		return entityType;
 	}
+
 	public String getAliasName(){
 		if (getName().endsWith("Po")) return getName().substring(0, getName().length() - 2).toLowerCase();
 		return getName().toLowerCase();

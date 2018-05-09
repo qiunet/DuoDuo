@@ -23,11 +23,11 @@
 		<!ATTLIST bean clazz NMTOKEN #REQUIRED>
 		]>
 
-<base baseDir="src/main/java" vmfilePath="vm/entity_info_create.vm" filePostfix="java">
+<base baseDir="src/test/java" vmfilePath="vm/entity_info_create.vm" filePostfix="java">
 	<rediskey clazz="project.test.RedisKey" />
 
 	<beans>
-		<bean id="defaultRedis" clazz="com.dayou.game.xiuzhen.redis.RedisDataUtil" />
+		<bean id="defaultRedis" clazz="project.test.RedisDataUtil" />
 
 		<bean id="UidEntityListDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidEntityListDbInfo" />
 		<bean id="UidEntityDbInfo" clazz="org.qiunet.data.db.support.info.uidinfo.UidEntityDbInfo" />

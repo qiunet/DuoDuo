@@ -12,7 +12,7 @@
 		<!ATTLIST config name CDATA #REQUIRED>
 		<!ATTLIST config path CDATA #REQUIRED>
 		]>
-<base baseDir="src/main/resources" filePostfix="xml" vmfilePath="vm/mybatis_config_create.vm" >
+<base baseDir="src/test/resources" filePostfix="xml" vmfilePath="vm/mybatis_config_create.vm" >
 	<config name="mybatis-config" path="mybatis" />
 	<extraConfigs>
 		<extra name="uid_builder1.xml" />
