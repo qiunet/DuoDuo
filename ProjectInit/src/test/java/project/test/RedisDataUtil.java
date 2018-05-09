@@ -12,7 +12,7 @@ public class RedisDataUtil extends AbstractRedisUtil {
 		super(jedisPool);
 	}
 
-	public AbstractRedisUtil getInstance(){
+	public static AbstractRedisUtil getInstance(){
 		return null;
 	}
 }
