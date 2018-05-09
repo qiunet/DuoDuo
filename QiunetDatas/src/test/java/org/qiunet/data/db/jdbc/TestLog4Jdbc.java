@@ -1,5 +1,6 @@
 package org.qiunet.data.db.jdbc;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -12,7 +13,7 @@ import java.sql.Statement;
  *         Created on 17/2/14 16:10.
  */
 public class TestLog4Jdbc {
-	@Test
+	@Ignore
 	public void testLog4Jdbc(){
 		String url = "jdbc:log4jdbc:mysql://127.0.0.1:3306/test_0?useUnicode=true&useSSL=false";
 		String driver= "net.sf.log4jdbc.DriverSpy";
