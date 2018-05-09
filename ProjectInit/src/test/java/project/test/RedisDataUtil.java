@@ -1,15 +1,15 @@
 package project.test;
 
 import org.qiunet.data.redis.AbstractRedisUtil;
+import org.qiunet.utils.data.KeyValueData;
 import redis.clients.jedis.JedisPool;
 
 public class RedisDataUtil extends AbstractRedisUtil {
 
 	/**
-	 * @param jedisPool the jedisPool to set
 	 */
-	public RedisDataUtil(JedisPool jedisPool) {
-		super(jedisPool);
+	public RedisDataUtil() {
+		super(new KeyValueData<>(), "data");
 	}
 
 	public static AbstractRedisUtil getInstance(){

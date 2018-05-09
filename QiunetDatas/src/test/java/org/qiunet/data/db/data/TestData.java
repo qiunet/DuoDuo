@@ -138,7 +138,7 @@ public class TestData {
 			Assert.assertEquals("param", vo1.getSysMsgPo().getParam());
 			it.remove();
 
-			dataSupport.deletePo(vo.getSysMsgPo());
+			dataSupport.deletePo(vo1.getSysMsgPo());
 		}
 
 		ThreadContextData.removeAll();

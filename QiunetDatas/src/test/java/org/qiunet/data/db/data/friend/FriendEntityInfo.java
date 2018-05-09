@@ -17,22 +17,22 @@ public class FriendEntityInfo implements IEntityInfo<FriendPo, FriendVo> {
 	public String getNameSpace() {
 		return "friend";
 	}
-	
+
 	@Override
 	public Class<FriendPo> getClazz() {
 		return FriendPo.class;
 	}
-	
+
 	@Override
 	public boolean needAsync() {
 		return true;
 	}
-	
+
 	@Override
 	public FriendVo getVo(FriendPo friendPo) {
 		return new FriendVo(friendPo);
 	}
-	
+
 	@Override
 	public AbstractRedisUtil getRedisUtil() {
 		return RedisDataUtil.getInstance();
@@ -45,17 +45,17 @@ public class FriendEntityInfo implements IEntityInfo<FriendPo, FriendVo> {
 	public String getAsyncKey(Object dbInfoKey) {
 		return RedisKey.FRIEND.getAsyncKey(dbInfoKey);
 	}
-	
+
 	@Override
 	public String getRedisKey(Object dbInfoKey) {
 		return RedisKey.FRIEND.getKey(dbInfoKey);
 	}
-	
+
 	@Override
 	public IEntityDbInfo getEntityDbInfo(Object dbInfoKey) {
-		return new UidEntityDbInfo((Integer) dbInfoKey);
+		return new UidEntityDbInfo(dbInfoKey);
 	}
-	
+
 	@Override
 	public IEntityDbInfo getEntityDbInfo(FriendPo friendPo) {
 		return getEntityDbInfo(friendPo.getUid());

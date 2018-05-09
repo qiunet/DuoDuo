@@ -53,7 +53,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	 */
 	public VO insertPo(PO po){
 		// 防止有人误操作. insert时候. 没有得到所有的列表.
-		this.getVoMap(entityInfo.getEntityDbInfo(po), po.getPlatform());
+		this.getVoMap(entityInfo.getDbInfoKey(po), po.getPlatform());
 
 		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 		dbSupport.insert(po, insertStatment);
@@ -114,7 +114,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 
-		voMap = new LinkedHashMap<>();
+		voMap = new HashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null) {
 			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform, 0));

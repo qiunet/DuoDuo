@@ -9,8 +9,8 @@ public class LoggerType {
 	/**普通的日志打印*/
 	public static final String DUODUO = "duoduo";
 	/**sql日志打印*/
-	public static final String DUODUO_SQL = "duoduo.sql";
+	public static final String DUODUO_SQL = "duoduo_sql";
 	/**redis 的 日志打印*/
-	public static final String DUODUO_REDIS = "duoduo.redis";
+	public static final String DUODUO_REDIS = "duoduo_redis";
 
 }

@@ -21,49 +21,49 @@ public class PlayerEntityInfo implements IPlatformEntityInfo<PlayerPo, PlayerVo>
 	public String getNameSpace() {
 		return "player";
 	}
-	
+
 	@Override
 	public Class<PlayerPo> getClazz() {
 		return PlayerPo.class;
 	}
-	
+
 	@Override
 	public boolean needAsync() {
 		return true;
 	}
-	
+
 	@Override
 	public PlayerVo getVo(PlayerPo playerPo) {
 		return new PlayerVo(playerPo);
 	}
-	
+
 	@Override
 	public AbstractRedisUtil getRedisUtil() {
 		return RedisDataUtil.getInstance();
 	}
-	
+
 	@Override
 	public Object getDbInfoKey(PlayerPo playerPo) {
 		return playerPo.getUid();
 	}
-	
+
 	@Override
 	public String getAsyncKey(Object dbInfoKey) {
 		return RedisKey.PLAYER.getAsyncKey(dbInfoKey);
 	}
-	
+
 	@Override
 	public IEntityDbInfo getEntityDbInfo(PlayerPo playerPo) {
 		return getEntityDbInfo(playerPo.getUid(), playerPo.getPlatform());
 	}
-	
+
 	@Override
 	public IPlatformEntityDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform) {
 		return new UidPlatformEntityDbInfo((Integer) dbInfoKey, platform);
 	}
-	
+
 	@Override
 	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.PLAYER.getKey(dbInfoKey, platform);
+		return RedisKey.PLAYER.getKeyByParams(dbInfoKey, platform);
 	}
 }

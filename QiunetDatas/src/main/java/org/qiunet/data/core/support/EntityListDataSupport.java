@@ -110,7 +110,7 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 		Map<Integer, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 
-		voMap = new LinkedHashMap<>();
+		voMap = new HashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null){
 			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, 0));

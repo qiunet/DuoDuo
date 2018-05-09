@@ -19,54 +19,54 @@ public class EquipEntityInfo implements IPlatformEntityListInfo<EquipPo, EquipVo
 	public String getNameSpace() {
 		return "equip";
 	}
-	
+
 	@Override
 	public Class<EquipPo> getClazz() {
 		return EquipPo.class;
 	}
-	
+
 	@Override
 	public boolean needAsync() {
 		return true;
 	}
-	
+
 	@Override
 	public EquipVo getVo(EquipPo equipPo) {
 		return new EquipVo(equipPo);
 	}
-	
+
 	@Override
 	public AbstractRedisUtil getRedisUtil() {
 		return RedisDataUtil.getInstance();
 	}
-	
+
 	@Override
 	public Object getDbInfoKey(EquipPo equipPo) {
 		return equipPo.getUid();
 	}
-	
+
 	@Override
 	public String getAsyncKey(Object dbInfoKey) {
 		return RedisKey.EQUIP.getAsyncKey(dbInfoKey);
 	}
-	
+
 	@Override
 	public IEntityDbInfo getEntityDbInfo(EquipPo equipPo) {
 		return getEntityDbInfo(getDbInfoKey(equipPo), equipPo.getPlatform(), getSubKey(equipPo));
 	}
-	
+
 	@Override
 	public IPlatformEntityListDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform, int subId) {
-		return new UidPlatformEntityListDbInfo((Integer) dbInfoKey, platform, subId);
+		return new UidPlatformEntityListDbInfo(dbInfoKey, platform, subId);
 	}
-	
+
 	@Override
 	public Integer getSubKey(EquipPo equipPo) {
 		return equipPo.getSubId();
 	}
-	
+
 	@Override
 	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.EQUIP.getKey(dbInfoKey, platform);
+		return RedisKey.EQUIP.getKeyByParams(dbInfoKey, platform);
 	}
 }
