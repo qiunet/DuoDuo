@@ -5,18 +5,22 @@ package org.qiunet.utils.asyncQuene;
  * @author qiunet
  *         Created on 17/3/14 11:22.
  */
-public class IndexAsyncQueueHandler<Element extends QueueElement> {
+public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 
-	private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+	public static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+	private static final String DEFAULT_THREAD_NAME = "IndexAsyncQueueHandler_";
 
 	private AsyncQueueHandler[] arrays;
 	/**本机的线程数量*/
 	private int currThreadCount;
 
-	public IndexAsyncQueueHandler(boolean daemon ) {
-		this(THREAD_COUNT, daemon);
+	public IndexAsyncQueueHandler() {
+		this(DEFAULT_THREAD_NAME, THREAD_COUNT);
 	}
-	public IndexAsyncQueueHandler(int threadCount , boolean daemon ) {
+	public IndexAsyncQueueHandler(String threadPrefixName) {
+		this(threadPrefixName, THREAD_COUNT);
+	}
+	public IndexAsyncQueueHandler(String threadPrefixName, int threadCount) {
 
 		if (threadCount < 1) throw new Error("Thread count can not less than 1 !");
 
@@ -24,7 +28,7 @@ public class IndexAsyncQueueHandler<Element extends QueueElement> {
 
 		this.arrays = new AsyncQueueHandler[threadCount];
 		for (int i = 0 ; i < threadCount ; i++) {
-			this.arrays[i] = AsyncQueueHandler.create("IndexAsyncQueueHandler["+i+"]: ", daemon);
+			this.arrays[i] = AsyncQueueHandler.create(threadPrefixName+i);
 		}
 	}
 
@@ -39,8 +43,8 @@ public class IndexAsyncQueueHandler<Element extends QueueElement> {
 	 * 添加一个QueueElement对象
 	 * @param element
 	 */
-	public void addElement(Element element, int index) {
-		int realIndex = Math.abs(index % currThreadCount);
+	public void addElement(Element element) {
+		int realIndex = Math.abs(element.getIndex()) % currThreadCount;
 		arrays[realIndex].addElement(element);
 	}
 }

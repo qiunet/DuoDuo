@@ -4,7 +4,7 @@ package org.qiunet.utils.asyncQuene;
  * @author qiunet
  *         Created on 17/3/14 11:46.
  */
-public class IndexElement implements QueueElement {
+public class IndexElement implements IndexQueueElement {
 
 	private int index;
 
@@ -16,8 +16,8 @@ public class IndexElement implements QueueElement {
 	public boolean handler() {
 		String name = Thread.currentThread().getName();
 		int nameIndex = Integer.parseInt(name);
-		// 这里的2 是指
-		if (nameIndex != index % TestIndexAsyncQueue.THREAD_COUNT) {
+		if (nameIndex != index % IndexAsyncQueueHandler.THREAD_COUNT) {
+			System.out.println("=========nameIndex ["+nameIndex+"] index ["+index+"]");
 			throw new IllegalStateException("nameIndex ["+nameIndex+"] index ["+index+"]");
 		}
 		return true;
@@ -26,5 +26,10 @@ public class IndexElement implements QueueElement {
 	@Override
 	public String toStr() {
 		return Thread.currentThread().getName();
+	}
+
+	@Override
+	public int getIndex() {
+		return index;
 	}
 }

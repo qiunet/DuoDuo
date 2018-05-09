@@ -22,7 +22,6 @@ public class TestHttpUtil extends BaseTest{
 		for (int i = 0 ; i < 5; i++){
 			String ret = DefaultHttpUtil.getInstance().httpRequest(url, HttpMethodEnum.GET , params, new HashMap<String,Object>());
 			Assert.assertNotNull(ret);
-			logger.info(i+"==================="+ret);
 		}
 	}
 	@Test

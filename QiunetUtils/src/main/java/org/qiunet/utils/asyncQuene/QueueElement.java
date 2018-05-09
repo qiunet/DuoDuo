@@ -9,10 +9,10 @@ public interface QueueElement {
 	 * 处理逻辑
 	 * @return
 	 */
-	public boolean handler();
+	 boolean handler();
 	/**
 	 * boolean 返回false 时候. 我会打印
 	 * @return
 	 */
-	public String toStr();
+	 String toStr();
 }

@@ -13,28 +13,25 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 public class TestAsyncQueue extends BaseTest {
-	private static AsyncQueueHandler<QueueElement> testElementAsyncQueueHandler = AsyncQueueHandler.create(false);
+	private static AsyncQueueHandler<QueueElement> testElementAsyncQueueHandler = AsyncQueueHandler.create();
 	@Test
 	public void testNonSyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
 		final int threadCount = 10, loopCount = 10;
 		final CountDownLatch latch = new CountDownLatch(threadCount * loopCount);
 		for(int i = 0 ; i < threadCount; i++){
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					for (int j = 0 ; j < loopCount; j++) {
-						integer.incrementAndGet();
-						testElementAsyncQueueHandler.addElement(new QueueElement(){
-							@Override
-							public boolean handler() {
-								latch.countDown();
-								return true;
-							}
-							@Override
-							public String toStr() { return null; }
-						});
-					}
+			new Thread(() -> {
+				for (int j = 0 ; j < loopCount; j++) {
+					integer.incrementAndGet();
+					testElementAsyncQueueHandler.addElement(new QueueElement(){
+						@Override
+						public boolean handler() {
+							latch.countDown();
+							return true;
+						}
+						@Override
+						public String toStr() { return null; }
+					});
 				}
 			}, "-thread-"+i).start();
 		}

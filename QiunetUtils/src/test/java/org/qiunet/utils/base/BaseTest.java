@@ -1,19 +1,20 @@
 package org.qiunet.utils.base;
 
 import org.junit.*;
+import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseTest {
-	protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
-	@Before
-	public void doInit(){
+	@BeforeClass
+	public static void doInit(){
 		logger.info("====================Test Init====================");
 	}
 
-	@After
-	public void doDestory(){
+	@AfterClass
+	public static void doDestory(){
 		logger.info("====================Test Destory====================");
 	}
 }

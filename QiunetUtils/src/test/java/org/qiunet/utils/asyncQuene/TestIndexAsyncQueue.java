@@ -10,25 +10,21 @@ import java.util.concurrent.CountDownLatch;
  *         Created on 17/3/14 11:37.
  */
 public class TestIndexAsyncQueue {
-	public static final int THREAD_COUNT = 2;
 	@Test
 	public void testIndexNonSyncQueue (){
-		final IndexAsyncQueueHandler<IndexElement> indexNonSyncQueueHandler = new IndexAsyncQueueHandler(THREAD_COUNT,false);
-		final int threadCount = 10, loopCount = 10;
+		final IndexAsyncQueueHandler<IndexElement> indexNonSyncQueueHandler = new IndexAsyncQueueHandler("");
+		final int threadCount = 5, loopCount = 11;
 		final CountDownLatch latch = new CountDownLatch(threadCount * loopCount);
 		boolean exception = false;
 		try {
 			for(int i = 0 ; i < threadCount; i++){
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						for (int j = 0 ; j < loopCount; j++) {
-							IndexElement element = new IndexElement(j);
-							indexNonSyncQueueHandler.addElement(element, j);
-							latch.countDown();
-						}
+				new Thread(() -> {
+					for (int j = 0 ; j < loopCount; j++) {
+						IndexElement element = new IndexElement(j);
+						indexNonSyncQueueHandler.addElement(element);
+						latch.countDown();
 					}
-				}, ""+i).start();
+				}, "CommonThread"+i).start();
 			}
 			latch.await();
 		}catch (Exception e) {

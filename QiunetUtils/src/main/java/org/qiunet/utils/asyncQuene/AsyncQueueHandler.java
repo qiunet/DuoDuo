@@ -26,26 +26,19 @@ public class AsyncQueueHandler<T extends QueueElement> {
 	/*队列*/
 	private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
 
-	private AsyncQueueHandler(String threadName, boolean daemon){
+	private AsyncQueueHandler(String threadName){
 		this.msgThread = new Thread(new HandlerTHread(), threadName);
-		/**交给外面关闭有问题, 很多人不会去关闭, 导致线程不停止*/
-		if (!daemon) {
-			logger.info("因为线程交给使用者关闭并非一个好决策, 所以默认使用守护模式线程. 如果需要处理完再停止, 请停止jvm前调用 completeAndShutdown() ");
-		}
 		this.msgThread.setDaemon(true);
 		this.msgThread.start();
 	}
 
-	private AsyncQueueHandler(boolean daemon){
-		this("AsyncQueueHandler-"+threadNum.incrementAndGet(), daemon);
+
+	public static <T extends QueueElement> AsyncQueueHandler<T> create(String  threadName) {
+		return new AsyncQueueHandler(threadName);
 	}
 
-	public static <T extends QueueElement> AsyncQueueHandler<T> create(String  threadName, boolean daemon) {
-		return new AsyncQueueHandler<>(threadName , daemon);
-	}
-
-	public static <T extends QueueElement> AsyncQueueHandler<T> create(boolean daemon) {
-		return new AsyncQueueHandler<>(daemon);
+	public static <T extends QueueElement> AsyncQueueHandler<T> create() {
+		return new AsyncQueueHandler("AsyncQueueHandler-"+threadNum.incrementAndGet());
 	}
 
 	public void shutdown() {
@@ -96,15 +89,21 @@ public class AsyncQueueHandler<T extends QueueElement> {
 					element = queue.take();
 					if(element != null ) success = element.handler();
 				}catch (Exception e){
-					// 出现异常, 不捕获. 会导致线程停止了
-					logger.error(element.toString(), e);
+					logger.error("[AsyncQueueHandler]出现异常"+e.getMessage());
 				}finally{
 					if(!success && element != null) {
-						logger.error(element.toString());
+						logger.error(element.toStr());
 					}
 				}
 			}
-			if (currThread != null) LockSupport.unpark(currThread);
+			if (currThread != null) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				LockSupport.unpark(currThread);
+			}
 		}
 	}
 }

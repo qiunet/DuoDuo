@@ -23,18 +23,13 @@ public class TestMutiAsyncQueue extends BaseTest{
 		final int loopCount = 5;
 		final CountDownLatch latch = new CountDownLatch(threadCount*loopCount);
 		for(int i = 0 ; i < threadCount; i++){
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					for (int j = 0; j < loopCount; j++) {
-						print.addElement( new Runnable() {
-							@Override
-							public void run() {
-								integer.incrementAndGet();
-								latch.countDown();
-							}
-						});
-					}
+			new Thread(() -> {
+				for (int j = 0; j < loopCount; j++) {
+					print.addElement( () -> {
+							integer.incrementAndGet();
+							latch.countDown();
+						}
+					);
 				}
 			}, "-thread-"+i).start();
 		}
