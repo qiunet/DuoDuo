@@ -29,7 +29,7 @@ public class Acceptor {
 		}
 
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
-		this.contextProcessor = new IndexAsyncQueueHandler<>(threadCount, true);
+		this.contextProcessor = new IndexAsyncQueueHandler();
 		instance = this;
 	}
 
@@ -64,10 +64,10 @@ public class Acceptor {
 				iContext.handler();
 				break;
 			case WEB_SOCKET:
-				contextProcessor.addElement(iContext, ((IWebSocketRequestContext)iContext).getQueueIndex());
+				contextProcessor.addElement(iContext);
 				break;
 			case TCP:
-				contextProcessor.addElement(iContext, ((ITcpRequestContext)iContext).getQueueIndex());
+				contextProcessor.addElement(iContext);
 				break;
 		}
 	}

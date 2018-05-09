@@ -42,6 +42,11 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
+	public int getQueueIndex() {
+		return 0;
+	}
+
+	@Override
 	protected String contentType() {
 		return "text/plain; charset=UTF-8";
 	}

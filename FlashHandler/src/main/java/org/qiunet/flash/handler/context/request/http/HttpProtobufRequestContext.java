@@ -45,6 +45,11 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 	}
 
 	@Override
+	public int getQueueIndex() {
+		return 0;
+	}
+
+	@Override
 	public String toStr() {
 		return null;
 	}
