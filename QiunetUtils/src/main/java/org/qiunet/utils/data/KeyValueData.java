@@ -13,6 +13,14 @@ import java.util.Properties;
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	private Map<K, V> map = new HashMap<>();
+
+	/***
+	 * 构建一个空的Keyval map
+	 */
+	public KeyValueData() {
+		this.load(new HashMap<>());
+	}
+
 	public KeyValueData(Map<K, V> map) {
 		this.load(map);
 	}
@@ -31,6 +39,11 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	protected void merge(Map<K, V> map){
 		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
 		this.map.putAll(map);
+	}
+
+	@Override
+	public Map<K, V> returnMap() {
+		return map;
 	}
 
 	@Override

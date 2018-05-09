@@ -25,34 +25,10 @@ public abstract class LoaderProperties extends KeyValueData<Object, Object> {
 		this.reload();
 	}
 	/**
-	 * 加载指定名称的 properties
-	 * @return
-	 */
-	private Properties load(){
-		Properties tempProperties = new Properties();
-		InputStreamReader isr = null ;
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(new File(fileName));
-			isr = new InputStreamReader(fis , "UTF-8");
-			tempProperties.load(isr);
-		} catch (Exception e) {
-			logger.error("[LoaderProperties] Exception: ", e);
-		} finally {
-			try {
-				if (isr != null) isr.close();
-				if (fis != null) fis.close();
-			}catch (Exception e) {
-				logger.error("[LoaderProperties] Close Exception: ", e);
-			}
-		}
-		return tempProperties;
-	}
-	/**
 	 * 重新加载
 	 */
 	public final void reload(){
-		super.load(load());
+		super.load(PropertiesUtil.loadProperties(fileName).returnMap());
 		this.onReloadOver();
 	}
 

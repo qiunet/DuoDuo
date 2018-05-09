@@ -1,4 +1,7 @@
 package org.qiunet.utils.data;
+
+import java.util.Map;
+
 /**
  * 封装一层 properties 比较好取值. 好打印错误
  * @author qiunet
@@ -11,6 +14,12 @@ public interface IKeyValueData<K, V> {
 	 * @return
 	 */
 	boolean containKey(K key);
+
+	/***
+	 * 得到map
+	 * @return
+	 */
+	Map<K, V> returnMap();
 	/**
 	 * 获得 value
 	 * @param k

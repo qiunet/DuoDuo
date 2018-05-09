@@ -1,4 +1,4 @@
-package org.qiunet.utils.utils.property;
+package org.qiunet.utils.property;
 
 import org.junit.Assert;
 import org.junit.Test;

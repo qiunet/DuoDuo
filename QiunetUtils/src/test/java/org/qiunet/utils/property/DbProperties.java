@@ -1,4 +1,4 @@
-package org.qiunet.utils.utils.property;
+package org.qiunet.utils.property;
 
 import org.qiunet.utils.properties.LoaderProperties;
 
@@ -19,7 +19,7 @@ public class DbProperties extends LoaderProperties {
 		instance = this;
 	}
 	private volatile static DbProperties instance;
-	
+
 	public static DbProperties getInstance() {
 		if (instance == null) {
 			synchronized (DbProperties.class) {
