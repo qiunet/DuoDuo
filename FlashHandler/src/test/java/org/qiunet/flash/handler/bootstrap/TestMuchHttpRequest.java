@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
  * 17/11/27
  */
 public class TestMuchHttpRequest extends HttpBootStrap {
-	private int requestCount = 20000;
+	private int requestCount = 10000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InvalidProtocolBufferException, InterruptedException {

@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.params;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.interceptor.DefaultHttpInterceptor;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -28,6 +29,7 @@ public class TestParams {
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setPort(1315)
 				.setMaxReceivedLength(1024*1024)
+				.setErrorMessage(new DefaultErrorMessage())
 				.setTcpInterceptor(new DefaultTcpInterceptor())
 				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
