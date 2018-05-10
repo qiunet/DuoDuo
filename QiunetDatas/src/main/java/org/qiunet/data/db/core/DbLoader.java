@@ -1,4 +1,4 @@
-package org.qiunet.data.core.loader;
+package org.qiunet.data.db.core;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -9,7 +9,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.qiunet.data.db.datasource.DataSourceType;
+import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -24,12 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DbLoader {
+ class DbLoader {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	/**mybatis 的配置文件名称**/
 	private static final String DEFAULT_MYBATIS_FILENAME = "mybatis/mybatis-config.xml";
-	// DataSourceType 对应的 dataSource
+	// DbSourceType 对应的 dataSource
 	private Map<String, SqlSessionFactory> dataSources = new HashMap<>();
 
 	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
@@ -49,9 +49,9 @@ public class DbLoader {
 			add(new DatasourceAttr("password", "", String.class));
 			add(new DatasourceAttr("driverClassName", "", String.class));
 
-			add(new DatasourceAttr("maxIdle", 2, int.class));
-			add(new DatasourceAttr("minIdle", 1, int.class));
-			add(new DatasourceAttr("maxTotal", 8, int.class));
+			add(new DatasourceAttr("maxIdle", 5, int.class));
+			add(new DatasourceAttr("minIdle", 2, int.class));
+			add(new DatasourceAttr("maxTotal", 10, int.class));
 			add(new DatasourceAttr("initialSize", 2, int.class));
 			add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
 			add(new DatasourceAttr("logAbandoned", true, boolean.class));
@@ -92,7 +92,7 @@ public class DbLoader {
 		instance = this;
 	}
 
-	public static DbLoader getInstance() {
+	static DbLoader getInstance() {
 		if (instance == null) {
 			synchronized (DbLoader.class) {
 				if (instance == null)
@@ -112,11 +112,11 @@ public class DbLoader {
 		for (int i = 0; i < DbProperties.getInstance().getDbMaxCount(); i += DbProperties.getInstance().getDbSizePerInstance()) {
 			String name = String.valueOf(i);
 			SqlSessionFactory factory = buildSqlSessionFactory(name);
-			this.dataSources.put(DataSourceType.DATASOURCE_PLAYER+name, factory);
+			this.dataSources.put(DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey(i), factory);
 		}
 
 		String globalName = DbProperties.getInstance().getString(DATASOURCE_GLOBAL_NAME);
-		this.dataSources.put(DataSourceType.DATASOURCE_GLOBAL, buildSqlSessionFactory(globalName));
+		this.dataSources.put(DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey(), buildSqlSessionFactory(globalName));
 	}
 	/**
 	 * 根据name 构建SqlSessionFactory

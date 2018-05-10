@@ -1,6 +1,6 @@
 package org.qiunet.data.db.util;
 
-import org.qiunet.data.db.datasource.DataSourceType;
+import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.utils.properties.LoaderProperties;
 
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public class DbProperties extends LoaderProperties {
 	 */
 	public String getDataSourceTypeByDbIndex(int dbIndex){
 		int tmp = (dbIndex / db_size_per_instance) * db_size_per_instance;
-		return DataSourceType.DATASOURCE_PLAYER+tmp;
+		return DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey(tmp);
 	}
 	/**
 	 * 返回库索引列表
@@ -111,7 +111,7 @@ public class DbProperties extends LoaderProperties {
 	 */
 	public List<Integer> getDbIndexList(){
 		if (dbIndexs == null ) {
-			List<Integer> dbIndexsTemp = new ArrayList<Integer>(db_max_count);
+			List<Integer> dbIndexsTemp = new ArrayList<>(db_max_count);
 			for (int i = 0  ; i < db_max_count; i++) dbIndexsTemp.add(i);
 			Collections.shuffle(dbIndexsTemp);
 			dbIndexs = Collections.unmodifiableList(dbIndexsTemp);

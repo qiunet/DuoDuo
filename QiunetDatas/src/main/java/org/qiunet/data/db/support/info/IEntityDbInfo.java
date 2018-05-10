@@ -20,5 +20,5 @@ public interface IEntityDbInfo {
 	 * 得到dbIndex
 	 * @return dbSource dbSource路由抉择使用
 	 */
-	public String getDbSourceType();
+	public String getDbSourceKey();
 }

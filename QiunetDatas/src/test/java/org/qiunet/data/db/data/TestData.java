@@ -22,24 +22,17 @@ import org.qiunet.data.db.data.sysmsg.SysmsgEntityInfo;
 import org.qiunet.data.db.data.sysmsg.SysmsgVo;
 import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.entity.*;
-import org.qiunet.data.redis.key.RedisKey;
 import org.qiunet.utils.threadLocal.ThreadContextData;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * @author qiunet
  *         Created on 17/2/12 11:16.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:bean/applicationContext*"})
 public class TestData {
-
 	@Test
 	public void testEntityData(){
 		FriendEntityInfo entityInfo = new FriendEntityInfo();

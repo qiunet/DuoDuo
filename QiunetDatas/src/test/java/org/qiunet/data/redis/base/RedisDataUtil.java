@@ -1,5 +1,6 @@
 package org.qiunet.data.redis.base;
 
+import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.data.redis.AbstractRedisUtil;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.properties.LoaderProperties;
@@ -17,13 +18,13 @@ import java.util.Properties;
 public class RedisDataUtil extends AbstractRedisUtil {
 	private volatile static RedisDataUtil instance;
 
-	private RedisDataUtil(String propertiesName) {
-		super(PropertiesUtil.loadPropertiesFromResourcesPath(propertiesName), "data");
+	private RedisDataUtil() {
+		super(DbProperties.getInstance(), "data");
 		instance = this;
 	}
 	public static RedisDataUtil getInstance() {
 		if (instance == null) {
-			new RedisDataUtil("redis.properties");
+			new RedisDataUtil();
 		}
 		return instance;
 	}

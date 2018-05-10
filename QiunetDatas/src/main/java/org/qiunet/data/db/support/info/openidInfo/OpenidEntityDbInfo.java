@@ -27,7 +27,7 @@ public class OpenidEntityDbInfo implements IEntityDbInfo {
 		return dbIndex;
 	}
 	@Override
-	public String getDbSourceType() {
+	public String getDbSourceKey() {
 		return DbProperties.getInstance().getDataSourceTypeByDbIndex(dbIndex);
 	}
 }

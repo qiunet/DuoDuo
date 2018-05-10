@@ -1,7 +1,6 @@
 package org.qiunet.data.db.dao;
 
 import org.qiunet.data.db.core.DatabaseSupport;
-import org.qiunet.data.db.datasource.CustomerContextHolder;
 import org.qiunet.data.db.support.info.IEntityDbInfo;
 import org.qiunet.data.db.support.info.uidinfo.UidPlatformEntityDbInfo;
 import org.qiunet.data.enums.PlatformType;
@@ -25,21 +24,20 @@ public class PlayerDaoImpl implements PlayerDao {
 	@Override
 	public PlayerPo getPlayerPo(int uid, PlatformType platformType) {
 		IEntityDbInfo dbInfo = new UidPlatformEntityDbInfo(uid, platformType);
-		CustomerContextHolder.setCustomerType(dbInfo.getDbSourceType());
-		return DatabaseSupport.getInstance().selectOne("player.getPlayerPo", dbInfo);
+		return DatabaseSupport.getInstance().selectOne(dbInfo.getDbSourceKey(),"player.getPlayerPo", dbInfo);
 	}
-	
+
 	@Override
 	public void insertPlayerPo(PlayerPo playerPo) {
 		IEntityDbInfo dbInfo = new UidPlatformEntityDbInfo(playerPo.getUid(), playerPo.getPlatform());
 		playerPo.setEntityDbInfo(dbInfo);
-		DatabaseSupport.getInstance().insert("player.insertPlayerPo", playerPo);
+		DatabaseSupport.getInstance().insert(dbInfo.getDbSourceKey(),"player.insertPlayerPo", playerPo);
 	}
-	
+
 	@Override
 	public void deletePlayerPo(PlayerPo playerPo) {
 		IEntityDbInfo dbInfo = new UidPlatformEntityDbInfo(playerPo.getUid(), playerPo.getPlatform());
 		playerPo.setEntityDbInfo(dbInfo);
-		DatabaseSupport.getInstance().delete("player.deletePlayerPo", playerPo);
+		DatabaseSupport.getInstance().delete(dbInfo.getDbSourceKey(),"player.deletePlayerPo", playerPo);
 	}
 }

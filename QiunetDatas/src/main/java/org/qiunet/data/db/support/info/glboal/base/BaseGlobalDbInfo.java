@@ -1,8 +1,7 @@
 package org.qiunet.data.db.support.info.glboal.base;
 
-import org.qiunet.data.db.datasource.DataSourceType;
+import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.data.db.support.info.IEntityDbInfo;
-import org.qiunet.data.db.support.info.idInfo.IdEntityDbInfo;
 import org.qiunet.data.db.util.DbProperties;
 
 /**
@@ -21,7 +20,7 @@ public abstract class BaseGlobalDbInfo implements IEntityDbInfo {
 		return 0;
 	}
 	@Override
-	public String getDbSourceType() {
-		return DataSourceType.DATASOURCE_GLOBAL;
+	public String getDbSourceKey() {
+		return DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey();
 	}
 }

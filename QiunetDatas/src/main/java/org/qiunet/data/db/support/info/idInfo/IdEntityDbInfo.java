@@ -31,7 +31,7 @@ public class IdEntityDbInfo implements IEntityDbInfo{
 	}
 
 	@Override
-	public String getDbSourceType() {
+	public String getDbSourceKey() {
 		return DbProperties.getInstance().getDataSourceTypeByDbIndex(dbIndex);
 	}
 }

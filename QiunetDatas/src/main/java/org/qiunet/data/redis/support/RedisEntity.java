@@ -6,16 +6,16 @@ import org.qiunet.utils.common.CommonUtil;
 
 import java.util.Map;
 
-/** 
+/**
  * 有id的对象, 非个人数据 单个在redis里面存
  *  工会
  * @author qiunet
  *         Created on 16/12/30 08:05.
  */
 public abstract class RedisEntity implements IRedisEntity {
-	
+
 	protected IEntityDbInfo entityDbInfo;
-	
+
 	public void setEntityDbInfo(IEntityDbInfo entityDbInfo) {
 		this.entityDbInfo = entityDbInfo;
 	}
@@ -41,7 +41,7 @@ public abstract class RedisEntity implements IRedisEntity {
 		return entityDbInfo.getDbIndex();
 	}
 	@Override
-	public String getDbSourceType() {
-		return entityDbInfo.getDbSourceType();
+	public String getDbSourceKey() {
+		return entityDbInfo.getDbSourceKey();
 	}
 }
