@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
@@ -16,15 +17,15 @@ public final class PropertiesUtil {
 
 	/***
 	 * 加载一个properties
-	 * @param fileName
+	 * @param fileName classpath 目录下的相对地址
 	 * @return
 	 */
 	public static IKeyValueData<Object, Object> loadProperties(String fileName) {
 		Properties tempProperties = new Properties();
 		InputStreamReader isr = null ;
-		FileInputStream fis = null;
+		InputStream fis = null;
 		try {
-			fis = new FileInputStream(new File(fileName));
+			fis = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
 			isr = new InputStreamReader(fis , "UTF-8");
 			tempProperties.load(isr);
 		} catch (Exception e) {
@@ -38,15 +39,5 @@ public final class PropertiesUtil {
 			}
 		}
 		return new KeyValueData(tempProperties);
-	}
-
-	/***
-	 * 从 resources 下加载文件
-	 * @param fileName
-	 * @return
-	 */
-	public static IKeyValueData<Object, Object> loadPropertiesFromResourcesPath(String fileName) {
-		fileName = PropertiesUtil.class.getResource("/").getPath() + fileName;
-		return loadProperties(fileName);
 	}
 }

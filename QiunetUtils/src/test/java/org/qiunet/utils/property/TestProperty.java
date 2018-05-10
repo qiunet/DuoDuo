@@ -8,7 +8,7 @@ import org.qiunet.utils.properties.PropertiesUtil;
 public class TestProperty {
 	@Test
 	public void testPropertyUtil(){
-		IKeyValueData keyValueData = PropertiesUtil.loadPropertiesFromResourcesPath("db.properties");
+		IKeyValueData keyValueData = PropertiesUtil.loadProperties("db.properties");
 		Assert.assertEquals("公告测试\n内容", keyValueData.getString("content"));
 	}
 }

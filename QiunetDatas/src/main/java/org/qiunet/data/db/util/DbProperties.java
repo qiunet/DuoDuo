@@ -19,7 +19,6 @@ public class DbProperties extends LoaderProperties {
 	private static final String KEY_DB_MAX_COUNT = "db_max_count";
 	private static final String KEY_DB_NAME_PREFIX="db_name_prefix";
 	private static final String KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE="db_size_per_instance";
-	private static final String filePath;
 	private static List<Integer> dbIndexs;
 	private int uid_db_factor;
 	private String db_name_prefix;
@@ -29,13 +28,10 @@ public class DbProperties extends LoaderProperties {
 	private int login_need_db;
 	/**	 * 玩家库支持的最大个数	 */
 	private int db_max_count;
-	static {
-		filePath = DbProperties.class.getResource("/").getPath() + "db.properties";
-	}
 
 
 	private DbProperties() {
-		super(filePath);
+		super("db.properties");
 		instance = this;
 	}
 	private volatile static DbProperties instance;
