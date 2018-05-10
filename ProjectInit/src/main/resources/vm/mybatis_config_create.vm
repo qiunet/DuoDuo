@@ -31,6 +31,9 @@
 	<package name="${entity.packagePath}" />
 		#end
 	</typeAliases>
+    <plugins>
+        <plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor" />
+    </plugins>
 	<mappers>
 		#foreach(${extraXml} in ${data.extraConfigs})
 		<mapper resource="${data.path}/${extraXml.name}" />
