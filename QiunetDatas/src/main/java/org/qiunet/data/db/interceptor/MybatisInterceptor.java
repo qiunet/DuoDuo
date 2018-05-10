@@ -35,14 +35,16 @@ public class MybatisInterceptor implements Interceptor {
 		Configuration configuration = mappedStatement.getConfiguration();
 
 		long start = System.currentTimeMillis();
-		Object returnValue = invocation.proceed();
-		long diff = System.currentTimeMillis() - start;
+		try {
+			return invocation.proceed();
+		}finally {
+			long diff = System.currentTimeMillis() - start;
 
-		StringBuilder sb = new StringBuilder();
-		sb.append(showSql(configuration, boundSql));
-		sb.append("\t(").append(diff).append("ms)");
-		logger.info(sb.toString());
-		return returnValue;
+			StringBuilder sb = new StringBuilder();
+			sb.append(showSql(configuration, boundSql));
+			sb.append("\t耗时:[").append(diff).append("ms]");
+			logger.info(sb.toString());
+		}
 	}
 
 	@Override
@@ -63,28 +65,30 @@ public class MybatisInterceptor implements Interceptor {
 			return obj == null ? "" : obj.toString();
 		}
 	}
-	public static String showSql(Configuration configuration, BoundSql boundSql) {
+
+	private String showSql(Configuration configuration, BoundSql boundSql) {
 		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
 		Object parameterObject = boundSql.getParameterObject();
+		if (parameterMappings == null || parameterMappings.isEmpty() || parameterObject == null) {
+			return boundSql.getSql();
+		}
 
 		String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
 
-		if (parameterMappings.size() > 0 && parameterObject != null) {
-			TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-			if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
-				sql = sql.replaceFirst("\\?", getParameterValue(parameterObject));
+		TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+		if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+			sql = sql.replaceFirst("\\?", getParameterValue(parameterObject));
 
-			} else {
-				MetaObject metaObject = configuration.newMetaObject(parameterObject);
-				for (ParameterMapping parameterMapping : parameterMappings) {
-					String propertyName = parameterMapping.getProperty();
-					if (metaObject.hasGetter(propertyName)) {
-						Object obj = metaObject.getValue(propertyName);
-						sql = sql.replaceFirst("\\?", getParameterValue(obj));
-					} else if (boundSql.hasAdditionalParameter(propertyName)) {
-						Object obj = boundSql.getAdditionalParameter(propertyName);
-						sql = sql.replaceFirst("\\?", getParameterValue(obj));
-					}
+		} else {
+			MetaObject metaObject = configuration.newMetaObject(parameterObject);
+			for (ParameterMapping parameterMapping : parameterMappings) {
+				String propertyName = parameterMapping.getProperty();
+				if (metaObject.hasGetter(propertyName)) {
+					Object obj = metaObject.getValue(propertyName);
+					sql = sql.replaceFirst("\\?", getParameterValue(obj));
+				} else if (boundSql.hasAdditionalParameter(propertyName)) {
+					Object obj = boundSql.getAdditionalParameter(propertyName);
+					sql = sql.replaceFirst("\\?", getParameterValue(obj));
 				}
 			}
 		}
