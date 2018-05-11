@@ -69,6 +69,9 @@ public class AsyncQueueHandler<T extends QueueElement> {
 	 * @param element
 	 */
 	public void addElement(T element){
+		if (element == null) {
+			throw new NullPointerException("element can not be null!");
+		}
 		queue.add(element);
 	}
 	/**
@@ -87,21 +90,17 @@ public class AsyncQueueHandler<T extends QueueElement> {
 				T element = null;
 				try {
 					element = queue.take();
-					if(element != null ) success = element.handler();
+					success = element.handler();
 				}catch (Exception e){
 					logger.error("[AsyncQueueHandler]出现异常"+e.getMessage());
 				}finally{
-					if(!success && element != null) {
+					if(!success) {
 						logger.error(element.toStr());
 					}
 				}
 			}
 			if (currThread != null) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				logger.info("Thread ["+currThread.getName()+"] needComplete["+needComplete+"] queueSize["+queue.size()+"] " );
 				LockSupport.unpark(currThread);
 			}
 		}
