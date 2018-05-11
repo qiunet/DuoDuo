@@ -11,8 +11,10 @@ import java.util.List;
  */
 public class DatabaseSupport {
 	private volatile static DatabaseSupport instance;
-	private static final DbLoader dbLoader = DbLoader.getInstance();
+	private final DbLoader dbLoader;
 	private DatabaseSupport() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		dbLoader = DbLoader.getInstance();
 		instance = this;
 	}
 

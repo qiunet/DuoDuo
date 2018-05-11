@@ -1,7 +1,7 @@
 package project.test;
 
 import org.junit.Test;
-import project.init.ProjectInitCreator;
+import org.qiunet.project.init.ProjectInitCreator;
 
 /**
  * Created by qiunet.
