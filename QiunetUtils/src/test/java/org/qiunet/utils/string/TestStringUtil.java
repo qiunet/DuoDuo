@@ -45,4 +45,11 @@ public class TestStringUtil extends BaseTest{
 		str = "　尹漂亮　 　";
 		Assert.assertEquals("尹漂亮", StringUtil.powerfulTrim(str));
 	}
+	@Test
+	public void testIsNum(){
+		Assert.assertTrue(StringUtil.isNum("123"));
+		Assert.assertTrue(StringUtil.isNum("-123"));
+		Assert.assertFalse(StringUtil.isNum("-1ff"));
+		Assert.assertFalse(StringUtil.isNum(""));
+	}
 }

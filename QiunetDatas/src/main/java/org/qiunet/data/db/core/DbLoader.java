@@ -12,6 +12,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +117,9 @@ import java.util.Map;
 		}
 
 		String globalName = DbProperties.getInstance().getString(DATASOURCE_GLOBAL_NAME);
-		this.dataSources.put(DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey(), buildSqlSessionFactory(globalName));
+		if (! StringUtil.isEmpty(globalName)) {
+			this.dataSources.put(DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey(), buildSqlSessionFactory(globalName));
+		}
 	}
 	/**
 	 * 根据name 构建SqlSessionFactory

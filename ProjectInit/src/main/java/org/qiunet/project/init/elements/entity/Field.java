@@ -30,7 +30,7 @@ public class Field {
 		this.type = type;
 	}
 
-	public String getDefaultVal(){
+	public String getDefaultVal() throws ParseException {
 		switch (type) {
 			case "String":
 				return null == defaultVal ? "\"\"" : "\""+defaultVal+"\"";
@@ -40,6 +40,9 @@ public class Field {
 			case "boolean":
 			case "Boolean":
 				return null == defaultVal ? null : defaultVal;
+			case "Date":
+				if ("now".equals(defaultVal)) return "new Date()";
+				return null == defaultVal ? "new Date(0)" : "new Date("+ DateUtil.stringToDate(defaultVal).getTime()+"L)";
 			default:
 				throw new IllegalArgumentException("not support type for ["+type+"]");
 		}
@@ -57,7 +60,7 @@ public class Field {
 		this.comment = comment;
 	}
 
-	public String getFieldDesc() {
+	public String getFieldDesc() throws ParseException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(type).append(" ").append(name);
 		String defaultVal = getDefaultVal();

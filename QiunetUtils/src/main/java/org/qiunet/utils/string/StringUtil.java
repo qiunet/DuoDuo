@@ -136,6 +136,15 @@ public class StringUtil {
 		return regex(matchStr, p);
 	}
 
+	/***
+	 * 是不是字符串
+	 * @param numStr
+	 * @return
+	 */
+	public static boolean isNum(String numStr) {
+		if (numStr == null) return false;
+		return numStr.matches("-?[0-9]+");
+	}
 	/**
 	 * 是否完美匹配
 	 * @param matchStr
