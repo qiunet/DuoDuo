@@ -72,6 +72,7 @@
 						<configuration>
 							<classifier>sources</classifier>
 							<includes>org/qiunet/**</includes>
+							<includes>**/*.vm</includes>
 							<includeScope>runtime</includeScope>
 							<includeGroupIds>${project.groupId}</includeGroupIds>
 							<outputDirectory>${generatedSourceDir}</outputDirectory>
