@@ -61,7 +61,10 @@ public class AsyncQueueHandler<T extends QueueElement> {
 	 */
 	protected boolean running(){
 		boolean ret = RUNNING;
-		if (needComplete) ret = !queue.isEmpty();
+		if (needComplete) {
+			ret = !queue.isEmpty();
+			logger.info("==================size["+queue.size()+"]=========="+ret);
+		}
 		return ret;
 	}
 	/***
