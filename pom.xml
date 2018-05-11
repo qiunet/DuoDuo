@@ -57,37 +57,8 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
-				<executions>
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-						<configuration>
-							<quiet>true</quiet>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
-				<executions>
-					<execution>
-						<id>source</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -105,7 +76,16 @@
 				<artifactId>QiunetDatas</artifactId>
 				<version>4.0</version>
 			</dependency>
-
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>GameTest</artifactId>
+				<version>4.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>ProjectInit</artifactId>
+				<version>4.0</version>
+			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-slf4j-impl</artifactId>
