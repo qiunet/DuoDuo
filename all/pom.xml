@@ -216,30 +216,35 @@
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>FlashHandler</artifactId>
+			<version>${project.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetUtils</artifactId>
+			<version>${project.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetDatas</artifactId>
+			<version>${project.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>ProjectInit</artifactId>
+			<version>${project.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>GameTest</artifactId>
+			<version>${project.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
