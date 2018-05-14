@@ -31,6 +31,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.3.5.RELEASE</spring.version>
+		<parent.version>4.0-SNAPSHOT</parent.version>
+		<modules.version>4.0</modules.version>
 	</properties>
 
 	<distributionManagement>
@@ -94,27 +96,27 @@
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>QiunetUtils</artifactId>
-				<version>4.0</version>
+				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>FlashHandler</artifactId>
-				<version>4.0</version>
+				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>QiunetDatas</artifactId>
-				<version>4.0</version>
+				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>GameTest</artifactId>
-				<version>4.0</version>
+				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>ProjectInit</artifactId>
-				<version>4.0</version>
+				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

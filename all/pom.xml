@@ -15,7 +15,6 @@
 
 	<properties>
 		<generatedSourceDir>${project.build.directory}/src</generatedSourceDir>
-		<DuoDuoVersion>4.0</DuoDuoVersion>
 	</properties>
 
 	<build>
@@ -217,35 +216,35 @@
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>FlashHandler</artifactId>
-			<version>${DuoDuoVersion}</version>
+			<version>${modules.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetUtils</artifactId>
-			<version>${DuoDuoVersion}</version>
+			<version>${modules.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetDatas</artifactId>
-			<version>${DuoDuoVersion}</version>
+			<version>${modules.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>ProjectInit</artifactId>
-			<version>${DuoDuoVersion}</version>
+			<version>${modules.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>GameTest</artifactId>
-			<version>${DuoDuoVersion}</version>
+			<version>${modules.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>

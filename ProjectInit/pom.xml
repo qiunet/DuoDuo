@@ -12,7 +12,7 @@
 	<artifactId>ProjectInit</artifactId>
 	<description>模板生成 po info等</description>
 	<inceptionYear>2017</inceptionYear>
-	<version>4.0</version>
+	<version>${modules.version}</version>
 	<build>
 		<testResources>
 			<testResource>

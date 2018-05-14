@@ -8,7 +8,7 @@
         <version>4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-	<version>4.0</version>
+	<version>${modules.version}</version>
 
     <packaging>jar</packaging>
     <name>GameTest</name>
