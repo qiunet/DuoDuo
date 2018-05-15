@@ -250,6 +250,13 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>LoggerSender</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
