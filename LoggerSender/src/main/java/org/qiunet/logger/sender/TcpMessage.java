@@ -23,7 +23,6 @@ public class TcpMessage implements IMessage {
 			buffer.clear();
 			MsgHeader.completeMessageHeader(buffer, gameId, (short) message.length);
 			buffer.put(message);
-			System.out.println();
 			buffer.flip();
 			channel.write(buffer);
 		} catch (IOException e) {
