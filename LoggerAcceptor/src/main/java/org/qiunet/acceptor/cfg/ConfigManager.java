@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.qiunet.acceptor.log.LoggerUtil;
 import org.qiunet.utils.properties.LoaderProperties;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -40,7 +41,11 @@ public class ConfigManager extends LoaderProperties implements Runnable {
 	 * @return
 	 */
 	public String getLogPath(){
-		return getString("log_data_path");
+		String path = getString("log_data_path");
+		if (! path.endsWith(File.separator)) {
+			path += File.separator;
+		}
+		return path;
 	}
 	/***
 	 * 得到日志的时间格式

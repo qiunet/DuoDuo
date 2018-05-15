@@ -5,6 +5,7 @@
 		<format>zip</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
+
 	<dependencySets>
 		<dependencySet>
 			<useProjectArtifact>false</useProjectArtifact>
@@ -12,15 +13,15 @@
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
-		<fileSet>
-			<directory>${basedir}/shell/</directory>
-			<outputDirectory>\</outputDirectory>
-		</fileSet>
+		<!--<fileSet>-->
+			<!--<directory>${basedir}/shell/</directory>-->
+			<!--<outputDirectory>\</outputDirectory>-->
+		<!--</fileSet>-->
 		<fileSet>
 			<directory>${project.build.outputDirectory}</directory>
-			<!--<excludes>-->
-				<!--<exclude>*.properties</exclude>-->
-			<!--</excludes>-->
+			<excludes>
+				<exclude>*.properties</exclude>
+			</excludes>
 			<outputDirectory>code</outputDirectory>
 		</fileSet>
 	</fileSets>
