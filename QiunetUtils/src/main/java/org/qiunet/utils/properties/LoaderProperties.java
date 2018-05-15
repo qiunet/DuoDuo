@@ -16,7 +16,7 @@ public abstract class LoaderProperties extends KeyValueData<Object, Object> {
 	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	protected String fileName;
 	/***
-	 * 要求传入的绝对地址
+	 * 要求相对 classpath的地址
 	 */
 	public LoaderProperties(String fileName){
 		super(new HashMap<>());
