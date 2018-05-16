@@ -2,7 +2,6 @@ package org.qiunet.acceptor.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -36,11 +35,16 @@ public class TCPServer {
 
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
-			bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
 			ChannelFuture channelFuture = bootstrap.bind(new InetSocketAddress(port));
 			logger.error("[NettyTcpServer]  Tcp server is Listener on port ["+port+"]");
+
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				logger.error("Shutdown now . close all channel!");
+				worker.shutdownGracefully();
+				boss.shutdownGracefully();
+			}));
 
 			channelFuture.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
@@ -65,6 +69,16 @@ public class TCPServer {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			logger.info("udp server is listener at port["+TCPServer.this.port+"]");
+		}
+
+		@Override
+		public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+			logger.info("channel id ["+ctx.channel().id().asLongText()+"] is connecting");
+		}
+
+		@Override
+		public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
+			logger.info("channel id ["+ctx.channel().id().asLongText()+"] is closing");
 		}
 
 		@Override
