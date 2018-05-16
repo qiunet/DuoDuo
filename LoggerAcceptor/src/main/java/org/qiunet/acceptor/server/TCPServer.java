@@ -83,7 +83,6 @@ public class TCPServer {
 			if (! in.isReadable(MsgHeader.MESSAGE_HEADER_LENGTH)) return;
 			in.markReaderIndex();
 			MsgHeader msgHeader = MsgHeader.parseFrom(in);
-			in.readBytes(MsgHeader.MESSAGE_HEADER_LENGTH);
 			in.resetReaderIndex();
 			if (! in.isReadable(msgHeader.getLength())) {
 				return;
