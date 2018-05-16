@@ -2,6 +2,7 @@ package org.qiunet.acceptor.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -84,12 +85,12 @@ public class TCPServer {
 			in.markReaderIndex();
 			MsgHeader msgHeader = MsgHeader.parseFrom(in);
 			in.resetReaderIndex();
-			if (! in.isReadable(msgHeader.getLength())) {
+			int totalLength = MsgHeader.MESSAGE_HEADER_LENGTH + msgHeader.getLength();
+			if (! in.isReadable(totalLength)) {
 				return;
 			}
-
-			out.add(new LogData(in.copy(in.readerIndex(), MsgHeader.MESSAGE_HEADER_LENGTH + msgHeader.getLength())));
-			in.skipBytes(MsgHeader.MESSAGE_HEADER_LENGTH + msgHeader.getLength());
+			out.add(new LogData(in.copy(in.readerIndex(), totalLength)));
+			in.skipBytes(totalLength);
 		}
 	}
 
