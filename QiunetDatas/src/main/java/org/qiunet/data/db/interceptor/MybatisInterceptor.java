@@ -57,13 +57,16 @@ public class MybatisInterceptor implements Interceptor {
 
 	}
 	private static String getParameterValue(Object obj) {
+		String val = null;
 		if (obj instanceof String) {
-			return "'" + obj.toString() + "'";
+			val = "'" + obj.toString() + "'";
 		} else if (obj instanceof Date) {
-			return "'" + DateUtil.dateToString(((Date) obj)) + "'";
+			val = "'" + DateUtil.dateToString(((Date) obj)) + "'";
 		} else {
-			return obj == null ? "" : obj.toString();
+			val = obj == null ? "" : obj.toString();
 		}
+		// 有问号会导致replaceFirst里面失效. 不会匹配到对应的地方
+		return val.replaceAll("\\?", "");
 	}
 
 	private String showSql(Configuration configuration, BoundSql boundSql) {
