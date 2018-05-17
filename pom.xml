@@ -16,8 +16,8 @@
 		<module>FlashHandler</module>
 		<module>LoggerSender</module>
 		<module>LoggerAcceptor</module>
-		<module>all</module>
 		<module>Quartz</module>
+		<module>all</module>
 	</modules>
 
 	<packaging>pom</packaging>
