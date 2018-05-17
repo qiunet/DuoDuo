@@ -32,11 +32,16 @@ public class CronExpressionData {
 	public CronExpressionData(String cronExpressionString) {
 		String quartzTimes [] = cronExpressionString.split(" +");
 		for (int i = 0; i < 6; i++) {
-			if (quartzTimes[i].equals("*")) parts[i] = new NormalExpressionPart();
-			else if (quartzTimes[i].contains(",")) parts[i] = new ArrayExpressionPart(quartzTimes[i]);
-			else if (quartzTimes[i].contains("-")) parts[i] = new IntervalExpressionPart(quartzTimes[i]);
-			else if (quartzTimes[i].contains("/")) parts[i] = new GapExpressionPart(quartzTimes[i]);
-			else parts[i] = new SpecifyExpressionPart(quartzTimes[i]);
+			String time = quartzTimes[i];
+			if (i != 3 && time.contains("L")) throw new IllegalArgumentException("Can not use L without month setting");
+
+			if (time.equals("*")) parts[i] = new NormalExpressionPart();
+			else if (time.contains("L")) parts[i] = new LastDayOfMonthExpressionPart(time);
+			else if (time.contains(",")) parts[i] = new ArrayExpressionPart(time);
+			else if (time.contains("-") && time.contains("/")) parts[i] = new IntervalGapExpressionPart(time);
+			else if (time.contains("-")) parts[i] = new IntervalExpressionPart(time);
+			else if (time.contains("/")) parts[i] = new GapExpressionPart(time);
+			else parts[i] = new SpecifyExpressionPart(time);
 		}
 	}
 
@@ -48,6 +53,7 @@ public class CronExpressionData {
 	public boolean isValid(Date dt){
 		Calendar c = Calendar.getInstance();
 		c.setTime(dt);
+
 		for (int i = 0; i < parts.length; i++) {
 			int curr = c.get(calendars[i]);
 			if(calendars[i] == Calendar.MONTH) curr++;
@@ -68,6 +74,10 @@ public class CronExpressionData {
 		 */
 		boolean valid(int num);
 	}
+
+	/**
+	 * 任意值皆可
+	 */
 	private class NormalExpressionPart implements IExpressionPart {
 		@Override
 		public boolean valid(int num) {
@@ -75,6 +85,10 @@ public class CronExpressionData {
 		}
 	}
 
+	/***
+	 * 格式: Number
+	 * 指定数字值
+	 */
 	private class SpecifyExpressionPart implements IExpressionPart {
 		private int val;
 		private SpecifyExpressionPart(String partStr) {
@@ -86,7 +100,28 @@ public class CronExpressionData {
 			return num == val;
 		}
 	}
-
+	/**
+	 * 格式 e,e,e,e
+	 * 在数组[]内即可
+	 */
+	private class LastDayOfMonthExpressionPart implements IExpressionPart {
+		private int val;
+		private LastDayOfMonthExpressionPart(String partStr) {
+			if (partStr.indexOf("L") != 0) {
+				this.val = Integer.parseInt(partStr.substring(0, partStr.indexOf("L")));
+			}
+		}
+		@Override
+		public boolean valid(int num) {
+			Calendar c = Calendar.getInstance();
+			int lastDayOfMonth = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+			return (lastDayOfMonth - val) == num;
+		}
+	}
+	/**
+	 * 格式 e,e,e,e
+	 * 在数组[]内即可
+	 */
 	private class ArrayExpressionPart implements IExpressionPart {
 		private Integer [] vals;
 		private ArrayExpressionPart(String partStr) {
@@ -97,7 +132,10 @@ public class CronExpressionData {
 			return CommonUtil.existInList(num, vals);
 		}
 	}
-
+	/**
+	 * 格式  S-E
+	 * 在区间[S, E]内即可
+	 */
 	private class IntervalExpressionPart implements IExpressionPart {
 		private int min, max;
 		private IntervalExpressionPart (String partStr) {
@@ -110,7 +148,10 @@ public class CronExpressionData {
 			return num >= min && num <= max;
 		}
 	}
-
+	/**
+	 * 格式  S/G
+	 * 从S开始, 间隔G一次
+	 */
 	private class GapExpressionPart implements IExpressionPart {
 		private int start;
 		private int gap;
@@ -121,6 +162,29 @@ public class CronExpressionData {
 		}
 		@Override
 		public boolean valid(int num) {
+			return (num - start) % gap == 0;
+		}
+	}
+
+	/**
+	 * 格式  S-E/G
+	 * 在区间[S, E]内, 间隔G一次
+	 */
+	private class IntervalGapExpressionPart implements IExpressionPart {
+		private int start;
+		private int end;
+		private int gap;
+		private IntervalGapExpressionPart(String partStr) {
+			String [] datas = StringUtil.split(partStr, "-");
+			this.start = Integer.parseInt(datas[0]);
+			Integer [] subDatas = StringUtil.conversion(datas[1], "/", Integer.class);
+			this.end = subDatas[0];
+			this.gap = subDatas[1];
+		}
+		@Override
+		public boolean valid(int num) {
+			if (num > end) return false;
+
 			return (num - start) % gap == 0;
 		}
 	}
