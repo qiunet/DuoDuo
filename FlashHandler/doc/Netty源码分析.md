@@ -4,7 +4,7 @@
 ## ServerBootstrap
 	初始化好NioServerSocketChannel  注册至 NioEventLoop.
 	 添加 ServerBootstrapAcceptor. 到pipeline
-	 在接收到消息时候, 移除资深, 添加 ChannelInitiliazer 的内容
+	 在接收到消息时候, 移除自身, 添加 ChannelInitiliazer 的内容
 
 ## NioEventLoop
 	 第一次执行executor(Task) 时候在doStart里面启动
