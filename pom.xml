@@ -17,6 +17,7 @@
 		<module>LoggerSender</module>
 		<module>LoggerAcceptor</module>
 		<module>all</module>
+		<module>Quartz</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -98,6 +99,11 @@
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>QiunetUtils</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>Quartz</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
