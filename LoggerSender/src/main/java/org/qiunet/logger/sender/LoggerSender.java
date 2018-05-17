@@ -26,13 +26,16 @@ public class LoggerSender {
 
 	private short gameId;
 
+	private String secret;
+
 	private SocketChannel channel;
 
-	public LoggerSender(String remoteIp, int port, short gameId) {
+	public LoggerSender(String remoteIp, int port, int gameId, String secret) {
 		try {
 			this.address = new InetSocketAddress(InetAddress.getByName(remoteIp), port);
 			this.handler = new HandlerMsgQueue();
-			this.gameId = gameId;
+			this.gameId = (short) gameId;
+			this.secret = secret;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
@@ -65,7 +68,7 @@ public class LoggerSender {
 		if (msgLength >= 1000) {
 			logger.error("udp package length can not more than: "+1000);
 		}
-		this.handler.add(new UdpMessage(address, gameId, bytes));
+		this.handler.add(new UdpMessage(address, gameId, secret, bytes));
 	}
 	/***
 	 * 发送重要消息 使用tcp.
@@ -80,6 +83,6 @@ public class LoggerSender {
 			}
 		}
 
-		this.handler.add(new TcpMessage(channel, gameId, (logName + "|" + msg).getBytes(charset)));
+		this.handler.add(new TcpMessage(channel, gameId, secret, (logName + "|" + msg).getBytes(charset)));
 	}
 }

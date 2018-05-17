@@ -10,10 +10,12 @@ public class TcpMessage implements IMessage {
 	private SocketChannel channel;
 	private byte [] message;
 	private short gameId;
-	TcpMessage(SocketChannel channel, short gameId, byte[] message)
+	private String secret;
+	TcpMessage(SocketChannel channel, short gameId, String secret, byte[] message)
 	{
 		this.channel = channel;
 		this.message = message;
+		this.secret = secret;
 		this.gameId = gameId;
 	}
 
@@ -21,7 +23,7 @@ public class TcpMessage implements IMessage {
 	public void send() {
 		try {
 			buffer.clear();
-			MsgHeader.completeMessageHeader(buffer, gameId, (short) message.length);
+			MsgHeader.completeMessageHeader(buffer, gameId, secret, (short) message.length);
 			buffer.put(message);
 			buffer.flip();
 			channel.write(buffer);

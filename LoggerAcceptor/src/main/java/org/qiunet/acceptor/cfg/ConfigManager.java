@@ -55,6 +55,14 @@ public class ConfigManager extends LoaderProperties implements Runnable {
 		return getString("log_date_pattern");
 	}
 	/***
+	 * 得到secret
+	 * @param gameid
+	 * @return
+	 */
+	public String getSecret(short gameid) {
+		return getString(String.valueOf(gameid));
+	}
+	/***
 	 * 得到日志的打印数据
 	 * @return
 	 */

@@ -23,8 +23,8 @@ public class MsgHeader {
 	 * 校验这个头是否有效
 	 * @return
 	 */
-	public boolean isValidHeader(){
-		return getValidKey(dt, length) == validKey;
+	public boolean isValidHeader(String secret){
+		return getValidKey(dt, secret, length) == validKey;
 	}
 	public short getGameId() {
 		return gameId;
@@ -40,12 +40,12 @@ public class MsgHeader {
 	 * 写一个头到byteBuffer中
 	 * @param buffer
 	 */
-	public static void completeMessageHeader(ByteBuffer buffer, short gameId, short length) {
+	public static void completeMessageHeader(ByteBuffer buffer, short gameId, String secret, short length) {
 		int dt = (int) (System.currentTimeMillis()/1000);
 		buffer.putShort(gameId);
 		buffer.putInt(dt);
 		buffer.putShort(length);
-		buffer.putInt(getValidKey(dt, length));
+		buffer.putInt(getValidKey(dt, secret, length));
 	}
 	/***
 	 * 得到一个msgHeader
@@ -67,9 +67,9 @@ public class MsgHeader {
 	 * 得到validKey
 	 * @return
 	 */
-	private static int getValidKey(int dt, int length) {
+	private static int getValidKey(int dt, String secret, int length) {
 		String dtString = String.valueOf(dt);
-		String key = dtString.substring(6) + length;
+		String key = dtString.substring(6) + length + secret;
 		String md5 = MD5Util.MD5(key);
 		int ret = 0;
 		for (int i = 0; i < indexs.length; i++) {

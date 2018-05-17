@@ -3,6 +3,7 @@ package org.qiunet.acceptor.log;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCountUtil;
 import org.apache.log4j.Logger;
+import org.qiunet.acceptor.cfg.ConfigManager;
 import org.qiunet.logger.sender.MsgHeader;
 
 import java.nio.charset.Charset;
@@ -26,7 +27,7 @@ public class LogData implements Runnable {
 	public void run() {
 		try {
 			MsgHeader header = MsgHeader.parseFrom(byteBuf);
-			if (! header.isValidHeader()){
+			if (! header.isValidHeader(ConfigManager.getInstance().getSecret(header.getGameId()))){
 				logger.error("MsgHeader ["+header.toString()+"] length ["+byteBuf.readableBytes()+"] is error!");
 				return;
 			}

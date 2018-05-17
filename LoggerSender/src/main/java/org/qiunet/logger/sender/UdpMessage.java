@@ -10,11 +10,13 @@ class UdpMessage implements IMessage {
 	private InetSocketAddress address;
 	private byte[] message;
 	private short gameId;
+	private String secret;
 
-	 UdpMessage(InetSocketAddress address, short gameId,byte[] message) {
+	 UdpMessage(InetSocketAddress address, short gameId, String secret, byte[] message) {
 		this.address = address;
 		this.message = message;
 		this.gameId = gameId;
+		this.secret = secret;
 	}
 	@Override
 	public void send() {
@@ -22,7 +24,7 @@ class UdpMessage implements IMessage {
 		try {
 			channel = DatagramChannel.open();
 			buffer.clear();
-			MsgHeader.completeMessageHeader(buffer, gameId, (short) message.length);
+			MsgHeader.completeMessageHeader(buffer, gameId, secret, (short) message.length);
 			buffer.put(message);
 			buffer.flip();
 			channel.send(buffer, address);
