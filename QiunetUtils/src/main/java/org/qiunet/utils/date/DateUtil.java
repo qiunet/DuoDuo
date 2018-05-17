@@ -16,21 +16,6 @@ import org.qiunet.utils.string.StringUtil;
  *
  */
 public final class DateUtil {
-	private static final  int[] calendars = {Calendar.SECOND,Calendar.MINUTE,Calendar.HOUR_OF_DAY,Calendar.DAY_OF_MONTH,Calendar.MONTH,Calendar.DAY_OF_WEEK};
-	/**对应  calendar 中的SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY 是中国的周几*/
-	public static final Map<Integer, Byte> DAY_OF_WEEK = new HashMap<Integer, Byte>(){
-		private static final long serialVersionUID = -4941953324010074815L;
-		{
-			put(Calendar.MONDAY, (byte)1);
-			put(Calendar.TUESDAY, (byte)2);
-			put(Calendar.WEDNESDAY, (byte)3);
-			put(Calendar.THURSDAY, (byte)4);
-			put(Calendar.FRIDAY, (byte)5);
-			put(Calendar.SATURDAY, (byte)6);
-			put(Calendar.SUNDAY, (byte)7);
-		}
-	};
-
 	/***
 	 * 当前的秒
 	 * @return
@@ -40,20 +25,6 @@ public final class DateUtil {
 	}
 
 	private DateUtil(){}
-
-	/**反查询周几是 calender的时间*/
-	public static final Map<Integer, Integer> REDAY_OF_WEEK = new HashMap<Integer, Integer>(){
-		private static final long serialVersionUID = -4941953324010074815L;
-		{
-			put(1,Calendar.MONDAY);
-			put(2,Calendar.TUESDAY);
-			put(3,Calendar.WEDNESDAY);
-			put(4,Calendar.THURSDAY);
-			put(5,Calendar.FRIDAY);
-			put(6,Calendar.SATURDAY);
-			put(7,Calendar.SUNDAY);
-		}
-	};
 
 	/**默认的时间格式(日期 时间)*/
 	public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
@@ -139,47 +110,7 @@ public final class DateUtil {
 
 		return d >= d1 && d < d2;
 	}
-	/**
-	 * 时间的格式验证
-	 * @param quartzs
-	 * @param dt
-	 * @return
-	 */
-	public static  boolean anyCheckDate(String [] quartzs,Date dt){
-		boolean ret = true;
-		if(quartzs == null || quartzs.length == 0)return false;
-		if(quartzs.length != 6){
-			throw new ArrayIndexOutOfBoundsException("date quartz string error!!");
-		}
-		Calendar c = Calendar.getInstance();
-		c.setTime(dt);
-		/*验证*/
-		for(int i = 0 ; i < quartzs.length; i++){
-			if(!quartzs[i].equals("*")){
-				int curr = c.get(calendars[i]);
-				if(calendars[i] == Calendar.MONTH)curr++;
-				if(calendars[i] == Calendar.DAY_OF_WEEK) curr = DAY_OF_WEEK.get(curr);
-				if(quartzs[i].indexOf(",") != -1){
-					String datas [] = quartzs[i].split(",");
-					if(!CommonUtil.existInList(curr+"",datas)){
-						ret = false;
-					}
-				}else if(quartzs[i].indexOf("-") != -1){
-					String datas [] = quartzs[i].split("-");
-					if(curr < Integer.parseInt(datas[0]) || curr > Integer.parseInt(datas[1])){
-						ret = false;
-					}
-				}else {
-					int datas = Integer.parseInt(quartzs[i]);
-					if(curr != datas){
-						ret = false;
-					}
-				}
-				if(! ret) break;
-			}
-		}
-		return ret;
-	}
+
 	/**
 	 * 时间的格式验证
 	 * @param quartzStr
@@ -188,9 +119,7 @@ public final class DateUtil {
 	 */
 	public static  boolean anyCheckDate(String quartzStr,Date dt){
 		if(StringUtil.isEmpty(quartzStr))return false;
-
-		String quartzTimes [] = quartzStr.split(" +");
-		return anyCheckDate(quartzTimes, dt);
+		return new CronExpressionData(quartzStr).isValid(dt);
 	}
 
 	/**

@@ -65,6 +65,9 @@ public class TestDateUtil  extends BaseTest{
 			quartz = "* * * 10-19 * *";
 			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 
+			quartz = "0 4/5 * * * *";
+			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
+
 			quartz = "* * * * 5,6,7 *";
 			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 
