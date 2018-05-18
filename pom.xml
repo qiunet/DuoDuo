@@ -33,8 +33,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>4.3.5.RELEASE</spring.version>
-		<parent.version>4.0-SNAPSHOT</parent.version>
 		<modules.version>4.0</modules.version>
 	</properties>
 
