@@ -28,10 +28,10 @@ public final class ProjectInitCreator {
 	 */
 	public static void create(String basePath) {
 		// 如果后期出现类错误, 没法编译通过, 无法生成的情况, 可以把这些类复制出去, 把basePath指向项目的目录, 也行.
-		BaseXmlParse entityParse = new EntityXmlParse(basePath, "src/test/resources/xml/entity_create.xml");
-		BaseXmlParse entityInfoParse = new EntityInfoXmlParse(basePath,"src/test/resources/xml/entity_info_create.xml");
-		BaseXmlParse mybatisConfigParse = new MybatisConfigXmlParse(basePath,"src/test/resources/xml/mybatis_config_create.xml");
-		BaseXmlParse mybatisMappingParse = new MybatisMappingXmlParse(basePath,"src/test/resources/xml/mybatis_mapping_create.xml");
+		BaseXmlParse entityParse = new EntityXmlParse(basePath, "xml/entity_create.xml");
+		BaseXmlParse entityInfoParse = new EntityInfoXmlParse(basePath,"xml/entity_info_create.xml");
+		BaseXmlParse mybatisConfigParse = new MybatisConfigXmlParse(basePath,"xml/mybatis_config_create.xml");
+		BaseXmlParse mybatisMappingParse = new MybatisMappingXmlParse(basePath,"xml/mybatis_mapping_create.xml");
 
 		Map<String, VmElement<? extends SubVmElement>> params = new HashMap<>();
 		try {

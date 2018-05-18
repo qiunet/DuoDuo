@@ -4,10 +4,7 @@ import org.apache.commons.digester.Digester;
 import org.qiunet.template.parse.xml.VmElement;
 import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * 初始解析xml使用的
@@ -16,10 +13,10 @@ import java.io.IOException;
  */
 public abstract class BaseXmlParse {
 	private Class<? extends VmElement> vmElementClass;
-	
+
 	private Digester digester;
 
-	private File xmlFile;
+	private String xmlFile;
 	/** 对于xmlfile和 vmfile的一个基础路径, 之后的xml 和 vm是基于该路径的相对路径. */
 	private String basePath;
 	/***
@@ -39,9 +36,9 @@ public abstract class BaseXmlParse {
 	 */
 	public BaseXmlParse(Class<? extends VmElement> vmElementClass, String basePath, String xmlConfigPath){
 		this.basePath = basePath;
-		this.vmElementClass = vmElementClass;
-		this.xmlFile = new File(basePath, xmlConfigPath);
+		this.xmlFile = xmlConfigPath;
 		this.digester = new Digester();
+		this.vmElementClass = vmElementClass;
 	}
 
 	public void setValidating(boolean validate){
@@ -59,8 +56,8 @@ public abstract class BaseXmlParse {
 	 */
 	void parse(){
 		try {
-			FileInputStream fis = new FileInputStream(xmlFile);
-			this.digester.parse(fis);
+			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(xmlFile);
+			this.digester.parse(is);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
