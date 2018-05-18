@@ -23,15 +23,23 @@ import java.util.Map;
  */
 public final class ProjectInitCreator {
 	private ProjectInitCreator(){}
+
 	/***
 	 * 根据模板创建玩家的对象
 	 */
-	public static void create(String basePath) {
+	public static void create() {
+		create(new DefaultProjectInitConfig());
+	}
+	/***
+	 * 根据模板创建玩家的对象
+	 */
+	public static void create(IProjectInitConfig config) {
+		String basePath = config.getBasePath();
 		// 如果后期出现类错误, 没法编译通过, 无法生成的情况, 可以把这些类复制出去, 把basePath指向项目的目录, 也行.
-		BaseXmlParse entityParse = new EntityXmlParse(basePath, "xml/entity_create.xml");
-		BaseXmlParse entityInfoParse = new EntityInfoXmlParse(basePath,"xml/entity_info_create.xml");
-		BaseXmlParse mybatisConfigParse = new MybatisConfigXmlParse(basePath,"xml/mybatis_config_create.xml");
-		BaseXmlParse mybatisMappingParse = new MybatisMappingXmlParse(basePath,"xml/mybatis_mapping_create.xml");
+		BaseXmlParse entityParse = new EntityXmlParse(basePath, config.getEntityXmlPath());
+		BaseXmlParse entityInfoParse = new EntityInfoXmlParse(basePath,config.getEntityInfoXmlPath());
+		BaseXmlParse mybatisConfigParse = new MybatisConfigXmlParse(basePath,config.getMybatisConfigXmlPath());
+		BaseXmlParse mybatisMappingParse = new MybatisMappingXmlParse(basePath,config.getMabatisMappingXmlPath());
 
 		Map<String, VmElement<? extends SubVmElement>> params = new HashMap<>();
 		try {
