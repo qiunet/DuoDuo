@@ -10,7 +10,6 @@ import org.qiunet.project.init.ProjectInitCreator;
 public class Creater {
 	@Test
 	public void testCreate(){
-		String basePath = System.getProperty("user.dir");
-		ProjectInitCreator.create(basePath);
+		ProjectInitCreator.create();
 	}
 }
