@@ -9,13 +9,13 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LogDataRegister {
 	private AtomicLong totalLogCount = new AtomicLong();
-	private final MultiAsyncQueueHandler multiNonSyncQueueHandler;
+	private final MultiAsyncQueueHandler multiAsyncQueueHandler;
 
 	private volatile static LogDataRegister instance;
 
 	private LogDataRegister() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		multiNonSyncQueueHandler = new MultiAsyncQueueHandler("LogDataRegister");
+		multiAsyncQueueHandler = new MultiAsyncQueueHandler("LogDataRegister");
 		instance = this;
 	}
 
@@ -37,7 +37,7 @@ public class LogDataRegister {
 	 */
 	public void addLogNode(LogData node) {
 		totalLogCount.incrementAndGet();
-		this.multiNonSyncQueueHandler.addElement(node);
+		this.multiAsyncQueueHandler.addElement(node);
 	}
 
 	/**
@@ -52,6 +52,6 @@ public class LogDataRegister {
 	 * @return
 	 */
 	public int size(){
-		return multiNonSyncQueueHandler.size();
+		return multiAsyncQueueHandler.size();
 	}
 }

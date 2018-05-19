@@ -11,8 +11,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestIndexAsyncQueue {
 	@Test
-	public void testIndexNonSyncQueue (){
-		final IndexAsyncQueueHandler<IndexElement> indexNonSyncQueueHandler = new IndexAsyncQueueHandler("");
+	public void testIndexAsyncQueue(){
+		final IndexAsyncQueueHandler<IndexElement> indexAsyncQueueHandler = new IndexAsyncQueueHandler("");
 		final int threadCount = 5, loopCount = 11;
 		final CountDownLatch latch = new CountDownLatch(threadCount * loopCount);
 		boolean exception = false;
@@ -21,7 +21,7 @@ public class TestIndexAsyncQueue {
 				new Thread(() -> {
 					for (int j = 0 ; j < loopCount; j++) {
 						IndexElement element = new IndexElement(j);
-						indexNonSyncQueueHandler.addElement(element);
+						indexAsyncQueueHandler.addElement(element);
 						latch.countDown();
 					}
 				}, "CommonThread"+i).start();

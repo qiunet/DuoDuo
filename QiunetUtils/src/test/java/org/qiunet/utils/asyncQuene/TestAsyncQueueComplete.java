@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestAsyncQueueComplete extends BaseTest {
 	private static AsyncQueueHandler<TestElement> testElementAsyncQueueHandler = AsyncQueueHandler.create();
 	@Test
-	public void testNonSyncQueue() {
+	public void testAsyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
 		final int threadCount = 2, loopCount = 10;
 		for(int i = 0 ; i < threadCount; i++){
