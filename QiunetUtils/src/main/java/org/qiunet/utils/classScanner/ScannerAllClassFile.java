@@ -1,6 +1,8 @@
 package org.qiunet.utils.classScanner;
 
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,13 @@ public class ScannerAllClassFile {
 	 */
 	public ScannerAllClassFile(){
 		this.loader = Thread.currentThread().getContextClassLoader();
-		this.scannerFilePath(ScannerAllClassFile.class.getResource("/").getPath());
+		String classPath  = System.getProperty("java.class.path");
+		String [] paths = StringUtil.split(classPath, SystemPropertyUtil.getPathSeparator());
+		for (String path : paths) {
+			if (path.endsWith(".jar")) continue;
+
+			this.scannerFilePath(path);
+		}
 	}
 	/***
 	 * 添加路径的文件
