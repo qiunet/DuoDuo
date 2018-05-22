@@ -55,7 +55,7 @@ public class RequestHandlerMapping {
 	 */
 	public void addHandler(int protocolId, IHandler handler) {
 		if (this.gameHandlers.containsKey(protocolId)) {
-			throw new RuntimeException("protocolId ["+protocolId+"] is already exist!");
+			throw new RuntimeException("protocolId ["+protocolId+"] className ["+handler.getClass().getSimpleName()+"] is already exist!");
 		}
 
 		handlerSetRequestDataClass(handler);
