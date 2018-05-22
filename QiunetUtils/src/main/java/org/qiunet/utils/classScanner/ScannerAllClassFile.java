@@ -39,11 +39,10 @@ public class ScannerAllClassFile {
 	 * 添加路径的文件
 	 * @param basePath
 	 */
-	private String basepath;
 	public void scannerFilePath(String basePath) {
 		try {
-			basepath = new File(basePath).toURI().toURL().getPath();
-			this.listAllFiles(basepath);
+			String basepath = new File(basePath).toURI().toURL().getPath();
+			this.listAllFiles(basepath, basepath);
 		} catch (MalformedURLException e) {
 			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
@@ -74,7 +73,7 @@ public class ScannerAllClassFile {
 	 * 找到当前basePath的所有的class
 	 * @param path
 	 */
-	private void listAllFiles(String path) throws MalformedURLException {
+	private void listAllFiles(String basepath, String path) throws MalformedURLException {
 		File file = new File(path);
 		if(file.isFile() && file.getName().endsWith(".class")){
 			String filePath = file.toURI().toURL().getPath();
@@ -83,7 +82,7 @@ public class ScannerAllClassFile {
 		}else if(file.isDirectory()){
 			File[] files = file.listFiles();
 			for (File f : files) {
-				this.listAllFiles(f.getPath());
+				this.listAllFiles(basepath, f.getPath());
 			}
 		}
 	}
