@@ -135,7 +135,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().getHandlerNotFound().encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
-			ctx.close();
+//			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			return;
 		}
 		// 更新最后时间 方便去除很久没有心跳的channel

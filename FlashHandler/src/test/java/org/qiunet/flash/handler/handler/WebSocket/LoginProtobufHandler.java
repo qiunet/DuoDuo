@@ -1,12 +1,10 @@
 package org.qiunet.flash.handler.handler.WebSocket;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
 import org.qiunet.flash.handler.handler.websocket.WebSocketProtobufHandler;
 
 /**
