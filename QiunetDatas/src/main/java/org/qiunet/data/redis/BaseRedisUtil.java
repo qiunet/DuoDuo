@@ -68,7 +68,7 @@ abstract class BaseRedisUtil {
 			@Override
 			protected Integer expression(Jedis jedis, String key)  throws Exception{
 				Long ret = jedis.hlen(key);
-				return ret == null ? -1 : ret.intValue();
+				return ret == null ? 0 : ret.intValue();
 			}
 		}.execAndReturn();
 	}
@@ -234,11 +234,11 @@ abstract class BaseRedisUtil {
 	 * @return 返回jedis 返回的值
 	 */
 	public long saddString(String key,final String... values){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.sadd(key,values);
-				return ret == null ? -1 : ret.longValue();
+				return ret == null ? 0 : ret.longValue();
 			}
 			@Override
 			protected Object[] params() {
@@ -254,12 +254,12 @@ abstract class BaseRedisUtil {
 	 * @return 返回jedis 返回的值
 	 */
 	public long saddByExpireSecond(String key,final String value,final int second){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.sadd(key,value);
 				jedis.expire(key, second);
-				return ret == null ? -1 : ret.longValue();
+				return ret == null ? 0 : ret.longValue();
 			}
 
 			@Override
@@ -547,11 +547,11 @@ abstract class BaseRedisUtil {
 	}
 
 	public long zRevRank(String key,final String member){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zrevrank(key, member);
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 			@Override
 			protected Object[] params() {
@@ -561,11 +561,11 @@ abstract class BaseRedisUtil {
 	}
 
 	public double zscore(String key,final String member){
-		return new RedisCommand<Double>(jedisPool, key, -1d) {
+		return new RedisCommand<Double>(jedisPool, key, 0d) {
 			@Override
 			protected Double expression(Jedis jedis, String key) throws Exception {
 				Double ret = jedis.zscore(key, member);
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 			@Override
 			protected Object[] params() {
@@ -581,11 +581,11 @@ abstract class BaseRedisUtil {
 	 * @return 返回jedis 返回的值
 	 */
 	public double zincrby(String key, final String member,final double val){
-		return new RedisCommand<Double>(jedisPool, key, -1d) {
+		return new RedisCommand<Double>(jedisPool, key, 0d) {
 			@Override
 			protected Double expression(Jedis jedis, String key) throws Exception {
 				Double ret = jedis.zincrby(key, val, member);
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 			@Override
 			protected Object[] params() {
@@ -598,14 +598,14 @@ abstract class BaseRedisUtil {
 		return zAdd(key, score, member, -1);
 	}
 	public long zAdd(String key,final double score,final String member,final int expire){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zadd(key, score, member);
 				if(expire  >= 0){
 					jedis.expire(key, expire);
 				}
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 
 			@Override
@@ -616,11 +616,11 @@ abstract class BaseRedisUtil {
 	}
 
 	public long zAdd(String key,final Map<String, Double> vals){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zadd(key, vals );
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 
 			@Override
@@ -631,12 +631,11 @@ abstract class BaseRedisUtil {
 	}
 
 	public long zRem(String key,final String... members){
-		return new RedisCommand<Long>(jedisPool, key, -1L) {
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zrem(key, members);
-				logger.info("jedis zRem key:" + key + " memebers:" + Arrays.toString(members) + " ret:" + ret);
-				return ret == null ? -1 : ret;
+				return ret == null ? 0 : ret;
 			}
 
 			@Override
