@@ -1,5 +1,6 @@
 package org.qiunet.project.init.elements.entity;
 
+import org.qiunet.project.init.IProjectInitConfig;
 import org.qiunet.template.parse.xml.SubVmElement;
 import org.qiunet.template.parse.xml.VmElement;
 import org.qiunet.project.init.elements.mapping.ElementMapping;
@@ -100,7 +101,9 @@ public class Entity extends SubVmElement {
 		for (ElementMapping sub : vmElement.getSubVmElementList()) {
 			if (sub.getPoref().equals(poName)) return sub.getName();
 		}
-		return "";
+
+		IProjectInitConfig config = (IProjectInitConfig) base.getParam("baseConfig");
+		throw new NullPointerException("poName ["+poName+"] is not set in ["+config.getMabatisMappingXmlPath()+"]");
 	}
 
 }

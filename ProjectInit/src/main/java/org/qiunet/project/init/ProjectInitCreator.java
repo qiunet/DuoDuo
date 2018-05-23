@@ -41,7 +41,9 @@ public final class ProjectInitCreator {
 		BaseXmlParse mybatisConfigParse = new MybatisConfigXmlParse(basePath,config.getMybatisConfigXmlPath());
 		BaseXmlParse mybatisMappingParse = new MybatisMappingXmlParse(basePath,config.getMabatisMappingXmlPath());
 
-		Map<String, VmElement<? extends SubVmElement>> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
+		params.put("baseConfig", config);
+
 		try {
 			VmElement<Entity> entityVmElements = new TemplateCreator(entityParse, params).parseTemplate();
 			params.put("entity", entityVmElements);
