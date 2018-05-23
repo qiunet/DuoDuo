@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -37,9 +34,22 @@ public class ScannerAllClassFile {
 		this.loader = Thread.currentThread().getContextClassLoader();
 		String classPath  = System.getProperty("java.class.path");
 		String [] paths = StringUtil.split(classPath, SystemPropertyUtil.getPathSeparator());
-		for (String path : paths) {
-			if (path.endsWith(".jar")) continue;
+		Set<String> pathSet = new HashSet();
+		try {
+			for (String path : paths) {
+				if (path.endsWith(".jar")) continue;
 
+				pathSet.add(new File(path).toURI().toURL().getPath());
+			}
+			String classesPath = ScannerAllClassFile.class.getResource("/").getPath();
+			pathSet.add(new File(classesPath).toURI().toURL().getPath());
+
+			String userdir = System.getProperty("user.dir");
+			pathSet.remove(new File(userdir).toURI().toURL().getPath());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		for (String path : pathSet) {
 			this.scannerFilePath(path);
 		}
 	}
