@@ -57,6 +57,8 @@ public class ScannerAllClassFile {
 	}
 	/***
 	 * 对jar文件操作
+	 * 如果 Managers.class 在jar包里面的话.使用下面的语句得到url
+	 * scanner.scannerJarFile(Managers.class.getResource("").toURI().toURL())
 	 * @param url
 	 */
 	public void scannerJarFile(URL url){
