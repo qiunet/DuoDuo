@@ -35,23 +35,34 @@ public class ScannerAllClassFile {
 		String classPath  = System.getProperty("java.class.path");
 		String [] paths = StringUtil.split(classPath, SystemPropertyUtil.getPathSeparator());
 		Set<String> pathSet = new HashSet();
-		try {
-			for (String path : paths) {
-				if (path.endsWith(".jar")) continue;
+		for (String path : paths) {
+			if (path.endsWith(".jar")) continue;
 
-				pathSet.add(new File(path).toURI().toURL().getPath());
-			}
-			String classesPath = ScannerAllClassFile.class.getResource("/").getPath();
-			pathSet.add(new File(classesPath).toURI().toURL().getPath());
-
-			String userdir = System.getProperty("user.dir");
-			pathSet.remove(new File(userdir).toURI().toURL().getPath());
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			pathSet.add(formatPath(path));
 		}
+		String classesPath = ScannerAllClassFile.class.getResource("/").getPath();
+		pathSet.add(formatPath(classesPath));
+
+		String userdir = System.getProperty("user.dir");
+		pathSet.remove(formatPath(userdir));
+
 		for (String path : pathSet) {
 			this.scannerFilePath(path);
 		}
+	}
+
+	/***
+	 * 格式化路径
+	 * @param path
+	 * @return
+	 */
+	private String formatPath(String path) {
+		try {
+			return new File(path).toURI().toURL().getPath();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	/***
 	 * 添加路径的文件
@@ -59,7 +70,7 @@ public class ScannerAllClassFile {
 	 */
 	public void scannerFilePath(String basePath) {
 		try {
-			String basepath = new File(basePath).toURI().toURL().getPath();
+			String basepath = formatPath(basePath);
 			this.listAllFiles(basepath, basepath);
 		} catch (MalformedURLException e) {
 			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
