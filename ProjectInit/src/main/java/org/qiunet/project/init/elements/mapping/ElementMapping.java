@@ -1,5 +1,6 @@
 package org.qiunet.project.init.elements.mapping;
 
+import org.qiunet.project.init.IProjectInitConfig;
 import org.qiunet.project.init.elements.entity.Entity;
 import org.qiunet.project.init.elements.entity.Field;
 import org.qiunet.template.parse.xml.SubVmElement;
@@ -54,7 +55,7 @@ public class ElementMapping extends SubVmElement {
 	public String getTableName(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -82,7 +83,7 @@ public class ElementMapping extends SubVmElement {
 	public String getSelectSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -103,7 +104,7 @@ public class ElementMapping extends SubVmElement {
 	public String getUpdateSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in  "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -134,7 +135,7 @@ public class ElementMapping extends SubVmElement {
 	public String getInsertSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -169,7 +170,7 @@ public class ElementMapping extends SubVmElement {
 	public String getDeleteSql(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in  "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -189,7 +190,7 @@ public class ElementMapping extends SubVmElement {
 	public String getSelectStatment(){
 		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
 		}
 
 		String selectStatment = "get"+poref;
