@@ -163,8 +163,7 @@ import java.util.Map;
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
 			logger.error("Failed to parse mapping resource: '" + mybatisConfigFileName + "'", e);
-			System.exit(1);
-			return null;
+			throw new ExceptionInInitializerError("Failed to parse mapping resource: '" + mybatisConfigFileName + "'");
 		} finally {
 			ErrorContext.instance().reset();
 		}
