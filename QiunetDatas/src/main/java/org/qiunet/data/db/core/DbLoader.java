@@ -162,7 +162,9 @@ import java.util.Map;
 			}
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
-			throw new IllegalArgumentException("Failed to parse mapping resource: '" + mybatisConfigFileName + "'", e);
+			logger.error("Failed to parse mapping resource: '" + mybatisConfigFileName + "'", e);
+			System.exit(1);
+			return null;
 		} finally {
 			ErrorContext.instance().reset();
 		}
