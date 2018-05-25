@@ -203,7 +203,7 @@ public class BootstrapServer {
 			logger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.RUNNING = false;
-				if (ip.equals("localhost") || ip.equals("127.0.0.1")) {
+				if (StringUtil.isLocalIp(ip)) {
 					server.shutdown();
 					return true;
 				}else {
@@ -236,7 +236,7 @@ public class BootstrapServer {
 								SocketChannel channel = serverSocketChannel.accept();
 
 								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
-								if (!StringUtil.isInnerIp(ip)) {
+								if (!StringUtil.isInnerIp(ip) && !StringUtil.isLocalIp(ip)) {
 									logger.error("[HookListener]服务端: Remote ip ["+ip+"] is not allow !");
 									channel.close();
 									continue;

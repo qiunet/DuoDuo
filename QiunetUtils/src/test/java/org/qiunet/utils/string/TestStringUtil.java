@@ -71,6 +71,6 @@ public class TestStringUtil extends BaseTest{
 		Assert.assertTrue(StringUtil.isInnerIp(ip));
 
 		ip = "127.0.0.1";
-		Assert.assertTrue(StringUtil.isInnerIp(ip));
+		Assert.assertTrue(StringUtil.isLocalIp(ip));
 	}
 }

@@ -259,16 +259,25 @@ public class StringUtil {
 			+ "(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){2}|"
 			+ "^(\\D)*10(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){3})");
 
+
 	/**
-	 * 是否是内网IP
+	 * 是否是本机ip
+	 *
 	 * 本机也返回true
 	 * @return
 	 */
-	public static boolean isInnerIp(String ip){
-		if (ip.equals("localhost") || ip.equals("127.0.0.1")) {
+	public static boolean isLocalIp(String ip){
+		if (ip.equals("localhost") || ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
 			return true;
 		}
+		return false;
+	}
 
+	/**
+	 * 是否是内网IP
+	 * @return
+	 */
+	public static boolean isInnerIp(String ip){
 		Matcher match = pattern.matcher(ip);
 		return match.find();
 	}
