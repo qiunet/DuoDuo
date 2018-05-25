@@ -560,6 +560,22 @@ abstract class BaseRedisUtil {
 		}.execAndReturn();
 	}
 
+
+	public long zrank(String key,final String member){
+		return new RedisCommand<Long>(jedisPool, key, 0L) {
+			@Override
+			protected Long expression(Jedis jedis, String key) throws Exception {
+				Long ret = jedis.zrank(key, member);
+				return ret == null ? 0 : ret;
+			}
+			@Override
+			protected Object[] params() {
+				return new Object[]{member};
+			}
+		}.execAndReturn();
+	}
+
+
 	public double zscore(String key,final String member){
 		return new RedisCommand<Double>(jedisPool, key, 0d) {
 			@Override
