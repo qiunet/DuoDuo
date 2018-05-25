@@ -246,7 +246,7 @@ public class BootstrapServer {
 								channel.register(this.selector, SelectionKey.OP_READ);
 							}else if( key.isReadable()){
 								SocketChannel channel = (SocketChannel) key.channel();
-								ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
+								ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
 								channel.read(byteBuffer);
 								byteBuffer.flip();
 								handlerMsg(byteBuffer, channel);
