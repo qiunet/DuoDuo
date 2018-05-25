@@ -546,7 +546,7 @@ abstract class BaseRedisUtil {
 		}.execAndReturn();
 	}
 
-	public long zRevRank(String key,final String member){
+	public Long zRevRank(String key,final String member){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
@@ -561,12 +561,12 @@ abstract class BaseRedisUtil {
 	}
 
 
-	public long zrank(String key,final String member){
+	public Long zrank(String key,final String member){
 		return new RedisCommand<Long>(jedisPool, key, 0L) {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zrank(key, member);
-				return ret == null ? 0 : ret;
+				return ret;
 			}
 			@Override
 			protected Object[] params() {
