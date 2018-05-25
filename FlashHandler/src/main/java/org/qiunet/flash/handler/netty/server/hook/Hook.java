@@ -33,15 +33,9 @@ public interface Hook {
 	 * 自己实现类.
 	 */
 	void shutdown();
-
-	/***
-	 * 提供一组ip. 如果为null 或者长度为 0 则hook只监听localhost的链接.
-	 * @return
-	 */
-	String [] ipFilter();
 	/***
 	 * 用户自定义msg的用途
 	 * @param msg
 	 */
-	void custom(String msg);
+	void custom(String msg, String ip);
 }

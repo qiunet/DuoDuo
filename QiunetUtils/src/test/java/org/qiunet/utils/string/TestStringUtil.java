@@ -52,4 +52,25 @@ public class TestStringUtil extends BaseTest{
 		Assert.assertFalse(StringUtil.isNum("-1ff"));
 		Assert.assertFalse(StringUtil.isNum(""));
 	}
+
+	/**
+	 *
+	 */
+	@Test
+	public void testInnerIp(){
+		String ip = "192.168.1.200";
+		Assert.assertTrue(StringUtil.isInnerIp(ip));
+
+		ip = "172.21.0.9";
+		Assert.assertTrue(StringUtil.isInnerIp(ip));
+
+		ip = "123.196.125.13";
+		Assert.assertFalse(StringUtil.isInnerIp(ip));
+
+		ip = "10.154.197.234";
+		Assert.assertTrue(StringUtil.isInnerIp(ip));
+
+		ip = "127.0.0.1";
+		Assert.assertTrue(StringUtil.isInnerIp(ip));
+	}
 }

@@ -254,4 +254,22 @@ public class StringUtil {
 		}
 		return str;
 	}
+	//合起来写
+	private static final Pattern pattern = Pattern.compile("((192\\.168|172\\.([1][6-9]|[2]\\d|3[01]))"
+			+ "(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){2}|"
+			+ "^(\\D)*10(\\.([2][0-4]\\d|[2][5][0-5]|[01]?\\d?\\d)){3})");
+
+	/**
+	 * 是否是内网IP
+	 * 本机也返回true
+	 * @return
+	 */
+	public static boolean isInnerIp(String ip){
+		if (ip.equals("localhost") || ip.equals("127.0.0.1")) {
+			return true;
+		}
+
+		Matcher match = pattern.matcher(ip);
+		return match.find();
+	}
 }

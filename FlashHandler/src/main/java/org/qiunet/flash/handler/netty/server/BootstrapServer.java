@@ -70,10 +70,20 @@ public class BootstrapServer {
 
 	/***
 	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
+	 * 默认给本地的端口发送
 	 * @param hookPort
 	 * @param msg
 	 */
 	public static void sendHookMsg(int hookPort, String msg) {
+		sendHookMsg("localhost", hookPort, msg);
+	}
+
+	/***
+	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
+	 * @param hookPort
+	 * @param msg
+	 */
+	public static void sendHookMsg(String serverIp, int hookPort, String msg) {
 		try {
 			if (hookPort <= 0) {
 				logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
@@ -81,7 +91,7 @@ public class BootstrapServer {
 			}
 			logger.error("BootstrapServer sendHookMsg ["+msg+"]!");
 
-			SocketChannel channel = SocketChannel.open(new InetSocketAddress(InetAddress.getByName("localhost"), hookPort));
+			SocketChannel channel = SocketChannel.open(new InetSocketAddress(serverIp, hookPort));
 			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
 			Thread.sleep(1000);
 			channel.close();
@@ -158,33 +168,21 @@ public class BootstrapServer {
 	 * Hook的监听
 	 */
 	private static class HookListener implements Runnable {
-		private static final String [] DEFAULT_LOCAL_IPS = {"localhost", "127.0.0.1"};
 		private Hook hook;
-		private String [] ips;
 		private Selector selector;
-		private boolean needIpFilter;
 		private boolean RUNNING = true;
 		private BootstrapServer server;
 		private ServerSocketChannel serverSocketChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
 			this.hook = hook;
 			this.server = bootstrapServer;
-			needIpFilter = hook.ipFilter() != null && hook.ipFilter().length != 0;
 
 			try {
-				this.selector = Selector.open();
 				serverSocketChannel = ServerSocketChannel.open();
 				serverSocketChannel.configureBlocking(false);
-				if (needIpFilter) {
-					ips = new String[DEFAULT_LOCAL_IPS.length + hook.ipFilter().length];
-					System.arraycopy(DEFAULT_LOCAL_IPS, 0, ips, 0, DEFAULT_LOCAL_IPS.length);
-					System.arraycopy(hook.ipFilter(), 0, ips, DEFAULT_LOCAL_IPS.length, hook.ipFilter().length);
+				this.selector = Selector.open();
 
-					serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
-				}else {
-					serverSocketChannel.socket().bind(new InetSocketAddress(this.hook.getHookPort()));
-				}
-
+				serverSocketChannel.socket().bind(new InetSocketAddress(this.hook.getHookPort()));
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
 				this.RUNNING = false;
@@ -198,18 +196,24 @@ public class BootstrapServer {
 		 * @param byteBuffer
 		 * @throws IOException
 		 */
-		private boolean handlerMsg(ByteBuffer byteBuffer) throws IOException {
+		private boolean handlerMsg(ByteBuffer byteBuffer, SocketChannel channel) throws IOException {
 			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
+			String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.RUNNING = false;
-				server.shutdown();
-				return true;
+				if (ip.equals("localhost") || ip.equals("127.0.0.1")) {
+					server.shutdown();
+					return true;
+				}else {
+					logger.error("[HookListener]服务端 Shutdown but ip ["+ip+"] error");
+					return false;
+				}
 			}else if (msg.equals(hook.getReloadCfgMsg())){
 				hook.reloadCfg();
 			}else {
-				hook.custom(msg);
+				hook.custom(msg, ip);
 			}
 			return false;
 		}
@@ -232,7 +236,7 @@ public class BootstrapServer {
 								SocketChannel channel = serverSocketChannel.accept();
 
 								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
-								if (needIpFilter && !CommonUtil.existInList(ip, ips)) {
+								if (!StringUtil.isInnerIp(ip)) {
 									logger.error("[HookListener]服务端: Remote ip ["+ip+"] is not allow !");
 									channel.close();
 									continue;
@@ -245,7 +249,7 @@ public class BootstrapServer {
 								ByteBuffer byteBuffer = ByteBuffer.allocate(1000);
 								channel.read(byteBuffer);
 								byteBuffer.flip();
-								handlerMsg(byteBuffer);
+								handlerMsg(byteBuffer, channel);
 								channel.close();
 							}
 						}

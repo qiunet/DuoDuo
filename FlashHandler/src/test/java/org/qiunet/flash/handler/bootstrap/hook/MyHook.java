@@ -43,12 +43,7 @@ public class MyHook implements Hook {
 	}
 
 	@Override
-	public String[] ipFilter() {
-		return new String[]{"192.168.1.240"};
-	}
-
-	@Override
-	public void custom(String msg) {
+	public void custom(String msg, String ip) {
 		switch (msg) {
 			case "A":
 				qLogger.error("A msg called");
