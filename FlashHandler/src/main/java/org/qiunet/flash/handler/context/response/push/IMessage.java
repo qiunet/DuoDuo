@@ -7,13 +7,18 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * Created by qiunet.
  * 17/12/11
  */
-public interface IMessage {
+public interface IMessage<T> {
 	/***
 	 * push 消息 编码
 	 * @return
 	 */
 	MessageContent encode();
 
+	/***
+	 * 得到消息的内容
+	 * @return
+	 */
+	T getContent();
 	/**
 	 * 得到消息id
 	 * @return

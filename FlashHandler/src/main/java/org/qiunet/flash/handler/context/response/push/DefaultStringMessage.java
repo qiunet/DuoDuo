@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultStringMessage implements IMessage {
+public class DefaultStringMessage implements IMessage<String> {
 
 	private int protocolId;
 	private String message;
@@ -21,6 +21,11 @@ public class DefaultStringMessage implements IMessage {
 	@Override
 	public MessageContent encode() {
 		return new MessageContent(protocolId, message.getBytes(CharsetUtil.UTF_8));
+	}
+
+	@Override
+	public String getContent() {
+		return message;
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import java.util.Arrays;
  * @Author qiunet
  * @Date Create in 2018/5/26 23:49
  **/
-public class DefaultBytesMessage implements IMessage {
+public class DefaultBytesMessage implements IMessage<byte []> {
 
 	private int protocolId;
 	private byte [] message;
@@ -28,6 +28,11 @@ public class DefaultBytesMessage implements IMessage {
 	@Override
 	public MessageContent encode() {
 		return new MessageContent(protocolId, message);
+	}
+
+	@Override
+	public byte[] getContent() {
+		return message;
 	}
 
 	@Override
