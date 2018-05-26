@@ -26,6 +26,11 @@ public class DefaultProtobufMessage implements IMessage {
 	}
 
 	@Override
+	public int getProtocolID() {
+		return protocolId;
+	}
+
+	@Override
 	public String toStr() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("===Response ProtocolID [").append(protocolId).append("] ==DATA: ");

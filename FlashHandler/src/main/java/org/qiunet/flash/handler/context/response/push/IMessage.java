@@ -15,6 +15,12 @@ public interface IMessage {
 	MessageContent encode();
 
 	/**
+	 * 得到消息id
+	 * @return
+	 */
+	int getProtocolID();
+
+	/**
 	 * 转logger 格式字符串
 	 * @return
 	 */

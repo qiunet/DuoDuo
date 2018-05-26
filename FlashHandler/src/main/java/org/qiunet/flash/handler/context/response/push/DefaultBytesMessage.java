@@ -21,6 +21,11 @@ public class DefaultBytesMessage implements IMessage {
 	}
 
 	@Override
+	public int getProtocolID() {
+		return protocolId;
+	}
+
+	@Override
 	public MessageContent encode() {
 		return new MessageContent(protocolId, message);
 	}
