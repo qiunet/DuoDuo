@@ -12,5 +12,11 @@ public interface IMessage {
 	 * push 消息 编码
 	 * @return
 	 */
-	public MessageContent encode();
+	MessageContent encode();
+
+	/**
+	 * 转logger 格式字符串
+	 * @return
+	 */
+	String toStr();
 }

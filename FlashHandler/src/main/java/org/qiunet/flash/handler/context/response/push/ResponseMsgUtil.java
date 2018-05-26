@@ -4,6 +4,9 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *  消息推送
@@ -11,6 +14,7 @@ import org.qiunet.flash.handler.context.session.SessionManager;
  * 17/11/21
  */
 public class ResponseMsgUtil {
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/***
 	 * 推送一个普通socket message 给指定的客户端
 	 * @param channelLongId
@@ -27,6 +31,9 @@ public class ResponseMsgUtil {
 	 * @param message
 	 */
 	public static void responseTcpMessage(Channel channel, IMessage message) {
+		if (logger.isInfoEnabled()) {
+			logger.info(message.toStr());
+		}
 		channel.writeAndFlush(message.encode());
 	}
 	/***
@@ -44,6 +51,9 @@ public class ResponseMsgUtil {
 	 * @param message
 	 */
 	public static void responseWebsocketMessage(Channel channel, IMessage message) {
+		if (logger.isInfoEnabled()) {
+			logger.info(message.toStr());
+		}
 		channel.writeAndFlush(new BinaryWebSocketFrame(message.encode().encodeToByteBuf()));
 	}
 }

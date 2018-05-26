@@ -22,4 +22,12 @@ public class DefaultStringMessage implements IMessage {
 	public MessageContent encode() {
 		return new MessageContent(protocolId, message.getBytes(CharsetUtil.UTF_8));
 	}
+
+	@Override
+	public String toStr() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("===Response ProtocolID [").append(protocolId).append("] ==DATA: ");
+		sb.append(message);
+		return sb.toString();
+	}
 }
