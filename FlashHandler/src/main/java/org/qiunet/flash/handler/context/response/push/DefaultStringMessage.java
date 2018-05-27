@@ -20,7 +20,12 @@ public class DefaultStringMessage implements IMessage<String> {
 
 	@Override
 	public MessageContent encode() {
-		return new MessageContent(protocolId, message.getBytes(CharsetUtil.UTF_8));
+		return new MessageContent(protocolId, bytes());
+	}
+
+	@Override
+	public byte[] bytes() {
+		return message.getBytes(CharsetUtil.UTF_8);
 	}
 
 	@Override

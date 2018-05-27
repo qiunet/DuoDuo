@@ -22,12 +22,17 @@ public class DefaultProtobufMessage implements IMessage<GeneratedMessageV3> {
 
 	@Override
 	public MessageContent encode() {
-		return new MessageContent(protocolId, message.toByteArray());
+		return new MessageContent(protocolId, bytes());
 	}
 
 	@Override
 	public GeneratedMessageV3 getContent() {
 		return message;
+	}
+
+	@Override
+	public byte[] bytes() {
+		return message.toByteArray();
 	}
 
 	@Override

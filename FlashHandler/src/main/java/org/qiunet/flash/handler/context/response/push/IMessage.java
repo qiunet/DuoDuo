@@ -19,6 +19,12 @@ public interface IMessage<T> {
 	 * @return
 	 */
 	T getContent();
+
+	/***
+	 * 转换bytes
+	 * @return
+	 */
+	byte[] bytes();
 	/**
 	 * 得到消息id
 	 * @return

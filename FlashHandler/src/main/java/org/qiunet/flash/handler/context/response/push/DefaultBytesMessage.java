@@ -36,6 +36,11 @@ public class DefaultBytesMessage implements IMessage<byte []> {
 	}
 
 	@Override
+	public byte[] bytes() {
+		return message;
+	}
+
+	@Override
 	public String toStr() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("===Response ProtocolID [").append(protocolId).append("] DATA: ");
