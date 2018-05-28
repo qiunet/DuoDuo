@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.handler.http.HttpStringHandler;
 public class PlayerInfoHttpStringHandler extends HttpStringHandler {
 
 	@Override
-	public String handler(IHttpRequest<String> request) {
+	public String handler(IHttpRequest<String> request)throws Exception {
 		return request.getRequestData();
 	}
 }

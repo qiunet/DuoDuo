@@ -12,6 +12,10 @@ public class TestOnlineInterceptor implements WebSocketInterceptor {
 
 	@Override
 	public void handler(IWebSocketHandler handler, IWebSocketRequest request) {
-		handler.handler(request);
+		try {
+			handler.handler(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

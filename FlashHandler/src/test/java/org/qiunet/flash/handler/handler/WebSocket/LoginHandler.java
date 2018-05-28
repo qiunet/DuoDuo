@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.handler.websocket.WebSocketStringHandler;
 public class LoginHandler extends WebSocketStringHandler {
 
 	@Override
-	public void handler(IWebSocketRequest<String> context) {
+	public void handler(IWebSocketRequest<String> context)throws Exception {
 		context.response(2000, context.getRequestData());
 	}
 }

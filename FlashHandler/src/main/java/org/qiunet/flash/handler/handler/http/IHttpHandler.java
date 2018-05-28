@@ -25,5 +25,5 @@ public interface IHttpHandler<RequestData, ResponseData> extends IHandler<Reques
 	 * @param request
 	 * @return
 	 */
-	ResponseData handler(IHttpRequest<RequestData> request);
+	ResponseData handler(IHttpRequest<RequestData> request)throws Exception;
 }

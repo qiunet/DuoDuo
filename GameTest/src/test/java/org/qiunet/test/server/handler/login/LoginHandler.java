@@ -13,7 +13,7 @@ import org.qiunet.test.server.handler.ServerUidAndTokenBuilder;
 @RequestHandler(ID = 1000, desc = "http登录")
 public class LoginHandler extends HttpProtobufHandler<LoginProto.LoginRequest , LoginProto.LoginResponse> {
 	@Override
-	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request) {
+	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request)throws Exception {
 		logger.info("LoginHandler: "+request.getRequestData()+ " Address: "+request.getRemoteAddress());
 
 		return  LoginProto.LoginResponse.newBuilder()

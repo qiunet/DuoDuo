@@ -13,5 +13,5 @@ public interface ITcpHandler<RequestData> extends IHandler<RequestData> {
 	 * @param context
 	 * @return
 	 */
-	void handler(ITcpRequest<RequestData> context);
+	void handler(ITcpRequest<RequestData> context)throws Exception;
 }

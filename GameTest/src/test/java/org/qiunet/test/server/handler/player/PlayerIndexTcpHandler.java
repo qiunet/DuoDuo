@@ -13,7 +13,7 @@ import org.qiunet.test.proto.PlayerIndexProto;
 public class PlayerIndexTcpHandler extends WebSocketProtobufHandler<PlayerIndexProto.PlayerIndexRequest> {
 
 	@Override
-	public void handler(IWebSocketRequest<PlayerIndexProto.PlayerIndexRequest> context) {
+	public void handler(IWebSocketRequest<PlayerIndexProto.PlayerIndexRequest> context) throws Exception {
 		context.response(1000001, PlayerIndexProto.PlayerIndexResponse.newBuilder()
 				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123450).setCount(context.getRequestData().getHeader().getUid()).build())
 				.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123451).setCount(context.getRequestData().getHeader().getUid()).build())

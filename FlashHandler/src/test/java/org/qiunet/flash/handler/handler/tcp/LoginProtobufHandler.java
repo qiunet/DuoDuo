@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.handler.proto.LoginProto;
 public class LoginProtobufHandler extends TcpProtobufHandler<LoginProto.LoginRequest> {
 
 	@Override
-	public void handler(ITcpRequest<LoginProto.LoginRequest> context) {
+	public void handler(ITcpRequest<LoginProto.LoginRequest> context)throws Exception {
 		ResponseMsgUtil.responseTcpMessage(context.channel(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
 	}
 }

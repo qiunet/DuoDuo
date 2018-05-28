@@ -19,7 +19,7 @@ public class LoginOnlineHandler extends WebSocketProtobufHandler<LoginOnlineProt
 	}
 
 	@Override
-	public void handler(IWebSocketRequest<LoginOnlineProto.LoginOnlineRequest> context) {
+	public void handler(IWebSocketRequest<LoginOnlineProto.LoginOnlineRequest> context)throws Exception {
 		logger.info("LoginOnlineHandler: "+ context.getRequestData());
 
 		LoginOnlineProto.LoginOnlineResponse response = LoginOnlineProto.LoginOnlineResponse.newBuilder()

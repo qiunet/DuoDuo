@@ -17,7 +17,12 @@ public class TestLogicInterceptor implements HttpInterceptor {
 		if (handler.needToken()) {
 
 		}
-		Object responseData = handler.handler(request);
+		Object responseData = null;
+		try {
+			responseData = handler.handler(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return responseData;
 	}
 }

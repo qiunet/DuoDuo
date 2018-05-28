@@ -12,6 +12,10 @@ public class TestRoomInterceptor implements TcpInterceptor {
 	@Override
 	public void handler(ITcpHandler handler, ITcpRequest request) {
 
-		handler.handler(request);
+		try {
+			handler.handler(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

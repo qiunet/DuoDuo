@@ -12,7 +12,7 @@ import org.qiunet.test.proto.LoginRoomProto;
 @RequestHandler(ID = 1003, desc = "房间服的登录")
 public class LoginRoomHandler extends TcpProtobufHandler<LoginRoomProto.LoginRoomRequest> {
 	@Override
-	public void handler(ITcpRequest<LoginRoomProto.LoginRoomRequest> context) {
+	public void handler(ITcpRequest<LoginRoomProto.LoginRoomRequest> context)throws Exception {
 		logger.info("LoginRoomHandler received message "+context.getRequestData());
 		context.response(1000003, LoginRoomProto.LoginRoomResponse.newBuilder().setRoomSize(context.getRequestData().getHeader().getUid()).build());
 	}

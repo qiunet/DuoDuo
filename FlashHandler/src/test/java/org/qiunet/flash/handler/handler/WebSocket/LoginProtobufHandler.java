@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.handler.websocket.WebSocketProtobufHandler;
 public class LoginProtobufHandler extends WebSocketProtobufHandler<LoginProto.LoginRequest> {
 
 	@Override
-	public void handler(IWebSocketRequest<LoginProto.LoginRequest> context) {
+	public void handler(IWebSocketRequest<LoginProto.LoginRequest> context) throws Exception {
 		ResponseMsgUtil.responseWebsocketMessage(context.channel(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
 	}
 }

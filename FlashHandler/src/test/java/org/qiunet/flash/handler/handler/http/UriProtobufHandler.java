@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.handler.proto.LoginProto;
 @UriPathRequest("/protobufTest")
 public class UriProtobufHandler extends HttpProtobufHandler<LoginProto.LoginRequest, LoginProto.LoginResponse> {
 	@Override
-	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request) {
+	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request)throws Exception {
 		return LoginProto.LoginResponse.newBuilder().setTestString(request.getRequestData().getTestString()).build();
 	}
 }

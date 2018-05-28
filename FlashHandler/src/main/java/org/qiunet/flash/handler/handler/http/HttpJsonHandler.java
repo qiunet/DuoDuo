@@ -18,7 +18,7 @@ import java.util.Set;
 public abstract class HttpJsonHandler extends HttpStringHandler {
 
 	@Override
-	public String handler(IHttpRequest<String> request) {
+	public String handler(IHttpRequest<String> request) throws Exception {
 		JsonResponse response = handler1(new HttpJsonFacaderRequest(request));
 		return response.toString();
 	}

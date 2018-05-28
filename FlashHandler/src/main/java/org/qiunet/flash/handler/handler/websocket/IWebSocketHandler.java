@@ -14,5 +14,5 @@ public interface IWebSocketHandler<RequestData> extends IHandler<RequestData> {
 	 * @param context
 	 * @return
 	 */
-	void handler(IWebSocketRequest<RequestData> context);
+	void handler(IWebSocketRequest<RequestData> context)throws Exception;
 }

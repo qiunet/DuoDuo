@@ -22,6 +22,11 @@ public class DefaultHttpInterceptor implements HttpInterceptor {
 		}else {
 			logger.info("收到protobuf请求 message: "+request.getRequestData());
 		}
-		return handler.handler(request);
+		try {
+			return handler.handler(request);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 @RequestHandler(ID = 1003, desc = "测试")
 public class LoginHandler extends TcpStringHandler{
 	@Override
-	public void handler(ITcpRequest<String> context) {
+	public void handler(ITcpRequest<String> context)throws Exception {
 		context.response(2000, context.getRequestData());
 	}
 }

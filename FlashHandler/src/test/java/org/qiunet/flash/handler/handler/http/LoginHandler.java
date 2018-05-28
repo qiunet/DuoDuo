@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 @RequestHandler(ID = 1000, desc = "login string type")
 public class LoginHandler extends HttpStringHandler {
 	@Override
-	public String handler(IHttpRequest<String> request) {
+	public String handler(IHttpRequest<String> request) throws Exception{
 		String str = request.getRequestData();
 		return str;
 	}
