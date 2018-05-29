@@ -249,8 +249,11 @@ public class BootstrapServer {
 								ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
 								channel.read(byteBuffer);
 								byteBuffer.flip();
-								handlerMsg(byteBuffer, channel);
-								channel.close();
+								try {
+									handlerMsg(byteBuffer, channel);
+								}finally {
+									channel.close();
+								}
 							}
 						}
 					}catch (Exception e) {
