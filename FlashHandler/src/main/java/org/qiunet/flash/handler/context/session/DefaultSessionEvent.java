@@ -26,6 +26,12 @@ public class DefaultSessionEvent implements ISessionEvent {
 
 	@Override
 	public void sessionReceived(ChannelHandlerContext ctx, HandlerType type, IRequest msg) {
-		sessionManager.getSession(ctx.channel()).setLastPackageTimeStamp();
+		ISession session = sessionManager.getSession(ctx.channel());
+		if (session == null) {
+			logger.error("Session is close in server. It is not accept any message. ");
+			ctx.close();
+			return;
+		}
+		session.setLastPackageTimeStamp();
 	}
 }
