@@ -5,3 +5,11 @@
 # 以后优化点
  * projectInit 支持下划线
  
+# install
+> `mvn clean && mvn install -DskipTests` <br />
+可以直接打包到本地. 然后在maven引用.
+
+
+
+ 
+ 
