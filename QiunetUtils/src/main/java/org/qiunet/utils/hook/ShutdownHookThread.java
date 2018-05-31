@@ -14,14 +14,12 @@ import java.util.List;
  **/
 public class ShutdownHookThread {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private List<IShutdownCloseHook> closes;
 
 	private volatile static ShutdownHookThread instance;
 
 	private Hook hook;
 	private ShutdownHookThread() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		closes = new ArrayList<>();
 		this.hook = new Hook();
 		this.effective();
 		instance = this;
@@ -44,7 +42,7 @@ public class ShutdownHookThread {
 	 * @param closeHook
 	 */
 	public void addShutdownHook(IShutdownCloseHook closeHook) {
-		this.closes.add(closeHook);
+		hook.closes.add(closeHook);
 	}
 
 	/***
@@ -65,6 +63,7 @@ public class ShutdownHookThread {
 	 * Thread 对外隐藏. 不能被调用run方法了.
 	 */
 	private class Hook extends Thread {
+		List<IShutdownCloseHook> closes = new ArrayList<>();
 		@Override
 		public void run() {
 			logger.error("----------------Shutdown now-----------------------");
