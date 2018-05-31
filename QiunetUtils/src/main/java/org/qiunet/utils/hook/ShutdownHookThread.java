@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /***
@@ -63,7 +64,7 @@ public class ShutdownHookThread {
 	 * Thread 对外隐藏. 不能被调用run方法了.
 	 */
 	private class Hook extends Thread {
-		List<IShutdownCloseHook> closes = new ArrayList<>();
+		List<IShutdownCloseHook> closes = new LinkedList<>();
 		@Override
 		public void run() {
 			logger.error("----------------Shutdown now-----------------------");
