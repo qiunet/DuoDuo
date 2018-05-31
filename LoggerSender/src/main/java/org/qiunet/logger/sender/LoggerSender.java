@@ -1,5 +1,6 @@
 package org.qiunet.logger.sender;
 
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,8 @@ public class LoggerSender {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> stop());
 
 		this.msgThread = new Thread(handler , "LoggerSenderMsgQueueThread");
 		this.msgThread.setDaemon(true);

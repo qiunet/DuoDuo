@@ -4,6 +4,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,8 @@ public class AsyncQueueHandler<T extends QueueElement> {
 	private final LinkedBlockingQueue<T> queue = new LinkedBlockingQueue<>();
 
 	private AsyncQueueHandler(String threadName){
+		ShutdownHookThread.getInstance().addShutdownHook(() -> shutdown());
+
 		this.msgThread = new Thread(new HandlerTHread(), threadName);
 		this.msgThread.setDaemon(true);
 		this.msgThread.start();

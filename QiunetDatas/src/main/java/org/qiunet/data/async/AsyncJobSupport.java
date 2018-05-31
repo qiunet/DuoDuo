@@ -1,8 +1,10 @@
 package org.qiunet.data.async;
 
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.asyncQuene.mutiThread.DefaultExecutorRejectHandler;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,9 @@ public class AsyncJobSupport {
 	private Set<AsyncNode> nodes = new HashSet<>();
 
 	public void addNode(AsyncNode node) {
+		if (nodes.isEmpty()) {
+			ShutdownHookThread.getInstance().addShutdownHook( () -> AsyncJobSupport.getInstance().shutdown());
+		}
 		this.nodes.add(node);
 	}
 

@@ -4,6 +4,7 @@ import org.qiunet.data.redis.base.MoreKeyRedisCommand;
 import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.Jedis;
@@ -11,6 +12,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Tuple;
 
+import java.sql.SQLException;
 import java.util.*;
 
 abstract class BaseRedisUtil {
@@ -47,6 +49,11 @@ abstract class BaseRedisUtil {
 		}else {
 			this.jedisPool = new JedisPool(poolConfig, host, port, timeout);
 		}
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> {
+			// 添加关闭.
+			this.jedisPool.close();
+		});
 	}
 
 	protected BaseRedisUtil(JedisPool jedisPool) {

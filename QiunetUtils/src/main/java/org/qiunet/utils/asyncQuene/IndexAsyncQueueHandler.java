@@ -1,5 +1,7 @@
 package org.qiunet.utils.asyncQuene;
 
+import org.qiunet.utils.hook.ShutdownHookThread;
+
 /**
  * 索引分配使用的哪个 AsyncQueueHandler
  * @author qiunet
@@ -30,6 +32,8 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 		for (int i = 0 ; i < threadCount ; i++) {
 			this.arrays[i] = AsyncQueueHandler.create(threadPrefixName+i);
 		}
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> stop());
 	}
 
 	/**

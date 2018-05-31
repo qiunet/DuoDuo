@@ -1,6 +1,7 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.asyncQuene.mutiThread.MultiAsyncQueueHandler;
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.timer.AsyncTimerTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -38,6 +39,11 @@ public class QuartzSchedule extends AsyncTimerTask {
 		if (jobs.isEmpty()) {
 			/**5秒后 开始执行调度*/
 			TimerManager.getInstance().scheduleAtFixedRate(this, 3000, 1000);
+
+			ShutdownHookThread.getInstance().addShutdownHook( () -> {
+				TimerManager.getInstance().shutdown();
+				QuartzSchedule.getInstance().shutdown();
+			});
 		}
 		this.jobs.add(new JobFacade(job));
 	}

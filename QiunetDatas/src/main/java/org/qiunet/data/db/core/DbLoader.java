@@ -1,5 +1,6 @@
 package org.qiunet.data.db.core;
 
+import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.executor.ErrorContext;
@@ -11,6 +12,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.data.db.util.DbProperties;
+import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -20,6 +22,9 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +92,18 @@ import java.util.Map;
 				mybatisConfigFileName = DbProperties.getInstance().getString(MYBATIS_CONFIG_FILENAME);
 			}
 			this.loaderDataSource();
+
+			ShutdownHookThread.getInstance().addShutdownHook( () -> {
+				AbandonedConnectionCleanupThread.checkedShutdown();
+				while (DriverManager.getDrivers().hasMoreElements()){
+					Driver driver = DriverManager.getDrivers().nextElement();
+					try {
+						DriverManager.deregisterDriver(driver);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -144,6 +161,15 @@ import java.util.Map;
 			Method method = BasicDataSource.class.getDeclaredMethod(setting.methodName, setting.clazz);
 			method.invoke(dataSource, val);
 		}
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> {
+			// 添加关闭.
+			try {
+				dataSource.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		});
 
 		Environment environment = new Environment.Builder(prefix)
 				.dataSource(dataSource)

@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.hook.ShutdownHookThread;
 
 /**
  * 多线程异步执行队列
@@ -28,6 +29,9 @@ public class MultiAsyncQueueHandler extends ThreadPoolExecutor{
             long keepAliveTime,
             TimeUnit unit){
 		super(corePoolSize, maximumPoolSize, keepAliveTime, unit, new LinkedBlockingQueue<>(2048),new DefaultThreadFactory(threadName+"Pool"), new DefaultExecutorRejectHandler(threadName+"Pool"));
+
+
+		ShutdownHookThread.getInstance().addShutdownHook(()-> shutdownNow());
 	}
 	/**
 	 * 建立一个默认 最小100 最大 1024 活跃时间60秒的线程池.
