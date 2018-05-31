@@ -7,7 +7,7 @@
     
 
 ## 模块简介:
-| 	命令			|	描述					|
+| 	模块			|	简介					|
 |----------		|----------	|
 |[Quartz](Quartz/README.md) 			|	 定时调度	|
 |[QiunetUtils](QiunetUtils/README.md)		|	 各种基本工具类|
