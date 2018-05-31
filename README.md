@@ -9,7 +9,6 @@
 > `mvn clean && mvn install -DskipTests` <br />
 可以直接打包到本地. 然后在maven引用.
 
-
-
- 
+# 交流
+QQ群: `669409114`
  
