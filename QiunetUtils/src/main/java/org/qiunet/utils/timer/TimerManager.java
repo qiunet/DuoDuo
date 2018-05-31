@@ -2,6 +2,7 @@ package org.qiunet.utils.timer;
 
 
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.hook.ShutdownHookThread;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -19,6 +20,9 @@ public class TimerManager {
 
 	private TimerManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		ShutdownHookThread.getInstance().addShutdownHook( () -> {
+			this.shutdown();
+		});
 		instance = this;
 	}
 

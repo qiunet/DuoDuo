@@ -40,10 +40,7 @@ public class QuartzSchedule extends AsyncTimerTask {
 			/**5秒后 开始执行调度*/
 			TimerManager.getInstance().scheduleAtFixedRate(this, 3000, 1000);
 
-			ShutdownHookThread.getInstance().addShutdownHook( () -> {
-				TimerManager.getInstance().shutdown();
-				QuartzSchedule.getInstance().shutdown();
-			});
+			ShutdownHookThread.getInstance().addShutdownHook( () ->  QuartzSchedule.getInstance().shutdown());
 		}
 		this.jobs.add(new JobFacade(job));
 	}
