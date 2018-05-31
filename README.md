@@ -7,7 +7,7 @@
 | 	命令			|	描述					|
 |----------		|----------	|
 |Quartz 			|	 定时调度	|
-|QiunetUtils		|	 各种基本工具类|
+|[QiunetUtils](QiunetUtils/README.md)		|	 各种基本工具类|
 |QiunetDatas 		|	 Mysql和Redis使用模块, 实现了异步更新等功能.|
 |ProjectInit 		| 通过xml配置.自动生成po xml 和调用的类.|
 |ExcelToStream	| Excel转设定的工具. 打包成可以执行的jar包.|
@@ -16,6 +16,12 @@
 |LoggerSender 	|	 日志发送模块|
 |LoggerAcceptor 	|  日志接收模块.| 
 |all 				|	 打包成一个duoduo-all 方便调用的模块.|
+ 
+## 安装环境
+* jdk 1.8
+* maven 3.5
+* mariadb redis 两个必须都有.
+
  
 ## install
 > `mvn clean && mvn install -DskipTests` <br />
