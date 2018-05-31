@@ -12,15 +12,17 @@ import java.util.List;
  * @Author qiunet
  * @Date Create in 2018/5/31 12:04
  **/
-public class ShutdownHookThread extends Thread {
+public class ShutdownHookThread {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private List<IShutdownCloseHook> closes;
 
 	private volatile static ShutdownHookThread instance;
 
+	private Hook hook;
 	private ShutdownHookThread() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		closes = new ArrayList<>();
+		this.hook = new Hook();
 		this.effective();
 		instance = this;
 	}
@@ -49,26 +51,32 @@ public class ShutdownHookThread extends Thread {
 	 * 完事自己添加到Runtime
 	 */
 	private void effective(){
-		Runtime.getRuntime().addShutdownHook(this);
+		Runtime.getRuntime().addShutdownHook(this.hook);
 	}
 	/***
 	 * 提前执行.  并从钩子里面去掉.
 	 */
 	public void shutdownNow() {
-		Runtime.getRuntime().removeShutdownHook(this);
-		this.run();
+		Runtime.getRuntime().removeShutdownHook(this.hook);
+		this.hook.run();
 	}
-	@Override
-	public void run() {
-		logger.error("----------------Shutdown now-----------------------");
-		for (IShutdownCloseHook close : closes) {
-			try {
-				close.close();
-				logger.info("Closed ["+close.getClass().getName()+"]");
-			}catch (Exception e) {
 
+	/***
+	 * Thread 对外隐藏. 不能被调用run方法了.
+	 */
+	private class Hook extends Thread {
+		@Override
+		public void run() {
+			logger.error("----------------Shutdown now-----------------------");
+			for (IShutdownCloseHook close : closes) {
+				try {
+					close.close();
+					logger.info("Closed ["+close.getClass().getName()+"]");
+				}catch (Exception e) {
+
+				}
 			}
+			logger.error("----------------Shutdown over-----------------------");
 		}
-		logger.error("----------------Shutdown over-----------------------");
 	}
 }
