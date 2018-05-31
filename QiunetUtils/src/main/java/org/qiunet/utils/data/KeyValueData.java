@@ -1,6 +1,9 @@
 package org.qiunet.utils.data;
 
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +15,7 @@ import java.util.Properties;
  *         Created on 16/12/21 07:52.
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private Map<K, V> map = new HashMap<>();
 
 	/***
@@ -53,6 +57,9 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public V getValue(K k) {
+		if (! map.containsKey(k)) {
+			logger.warn("Key ["+k+"] is not exist!");
+		}
 		return map.get(k);
 	}
 
