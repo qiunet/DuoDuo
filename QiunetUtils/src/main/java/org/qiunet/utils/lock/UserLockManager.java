@@ -1,5 +1,7 @@
 package org.qiunet.utils.lock;
 
+import org.qiunet.utils.hook.ShutdownHookThread;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,6 +29,9 @@ public class UserLockManager<UserID> implements Runnable {
 		this.maxLockedCount = maxLockedCount;
 
 		locks = new ConcurrentHashMap<>();
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> running = false);
+
 		thread = new Thread(this, "UserLockManager");
 		thread.setDaemon(true);
 		thread.start();
@@ -115,9 +120,11 @@ public class UserLockManager<UserID> implements Runnable {
 			}
 		}
 	}
+
+	private boolean running = true;
 	@Override
 	public void run() {
-		while (true) {
+		while (running) {
 			try {
 				Thread.sleep(CHECK_USER_LOCK_GAP_DT);
 			} catch (InterruptedException e) {

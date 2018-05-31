@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
@@ -21,7 +22,7 @@ import java.util.jar.JarFile;
  */
 public class ScannerAllClassFile {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private List<String> allclass = new LinkedList<>();
+	private Set<String> allclass = new HashSet(128, 0.85f);
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();
 
@@ -68,7 +69,7 @@ public class ScannerAllClassFile {
 	 * 添加路径的文件
 	 * @param basePath
 	 */
-	public void scannerFilePath(String basePath) {
+	private void scannerFilePath(String basePath) {
 		try {
 			String basepath = formatPath(basePath);
 			this.listAllFiles(basepath, basepath);
@@ -79,11 +80,21 @@ public class ScannerAllClassFile {
 	/***
 	 * 对jar文件操作
 	 * 如果 Managers.class 在jar包里面的话.使用下面的语句得到url
-	 * scanner.scannerJarFile(Managers.class.getResource("").toURI().toURL())
-	 * @param url
+	 * scanner.scannerJarFile(Managers.class)
+	 * @param clazz jar包里面的一个class类.
 	 */
-	public void scannerJarFile(URL url){
+	public void scannerJarFile(Class clazz){
+		URL url = null;
+		try {
+			url = clazz.getResource("").toURI().toURL();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+
 		if (!"jar".equals(url.getProtocol())) return;
+
 		try {
 			JarURLConnection conn = (JarURLConnection) url.openConnection();
 			JarFile jarFile = conn.getJarFile();
