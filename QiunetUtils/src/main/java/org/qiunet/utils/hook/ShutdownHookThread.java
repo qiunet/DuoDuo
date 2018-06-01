@@ -73,7 +73,7 @@ public class ShutdownHookThread {
 					close.close();
 					logger.info("Closed ["+close.getClass().getName()+"]");
 				}catch (Exception e) {
-
+					logger.error("Closing ["+close.getClass().getName()+"], But Exception.", e);
 				}
 			}
 			logger.error("----------------Shutdown over-----------------------");
