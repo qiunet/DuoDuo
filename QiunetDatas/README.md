@@ -3,9 +3,11 @@
 ### Redis Entity
 ![IredisObj 结构图](imgs/IRedisObj.png)     
 
-### DB
-    先导入sql/test.sql 到数据库测试使用
-    jdbc.properties 和 TestLog4jJdbc 需要修改对应的密码.
+### 测试
+    因为测试需要数据库, 所以需要先导入sql/test.sql 到数据库测试使用
+    jdbc.properties 和 TestLog4jJdbc 需要修改对应的账号密码信息.
+    然后执行 `mvn test`
+
 
 ### 结构
     分为几个部分
@@ -16,11 +18,7 @@
     
     
 ### Redis
-     dbInfoKey 指分库和redis key 需要的那个field 一般指能uid 工会等则指 工会id
-     redis 在对象 或者 list对象字段发生改变和缓存不一样时候 , 会返回null, 并且使缓存失效.
+     redis 主要是AbstractRedis. 
 
-### 自动对象生成
-     自动生成po  po为对应数据库的 以及 do (Data Object 对应客户端数据对象) ,两种都可以下行给客户端.
-     一个对象可能需要多种下行格式,比如playerPo 下行给自己,是下行全部, 下行给好友是给部分, 这个部分就使用do给出. 
-     do 使用 `BeanUtils.copyProperties` 方法复制
-     
+### Mysql
+	

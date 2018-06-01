@@ -84,12 +84,12 @@ public class TestDateUtil  extends BaseTest{
 			quartz = "* * * L * *";
 			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
 
-			quartz = "* * * 15L * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
+//			quartz = "* * * 15L * *";
+//			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 
-			dt = DateUtil.stringToDate("2016-05-31 23:59:00");
-			quartz = "* * * L * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
+//			dt = DateUtil.stringToDate("2016-05-31 23:59:00");
+//			quartz = "* * * L * *";
+//			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 
 		} catch (ParseException e) {
 			e.printStackTrace();

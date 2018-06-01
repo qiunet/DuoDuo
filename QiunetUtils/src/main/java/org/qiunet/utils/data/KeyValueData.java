@@ -57,9 +57,6 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public V getValue(K k) {
-		if (! map.containsKey(k)) {
-			logger.warn("Key ["+k+"] is not exist!");
-		}
 		return map.get(k);
 	}
 
@@ -72,10 +69,11 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 		}
 		return rt;
 	}
-
 	@Override
 	public String getString(K key) {
-		return getString(key , "");
+		V v = getValue(key);
+		if (v == null) return null;
+		return v.toString();
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public short getShort(K key) {
-		return getShort(key, 0);
+		return Short.parseShort(getString(key));
 	}
 
 	@Override
@@ -95,7 +93,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public int getInt(K key) {
-		return getInt(key, 0);
+		return Integer.parseInt(getString(key));
 	}
 
 	@Override
@@ -105,7 +103,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public byte getByte(K key) {
-		return getByte(key , 0);
+		return Byte.parseByte(getString(key));
 	}
 
 	@Override
@@ -115,7 +113,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public float getFloat(K key) {
-		return getFloat(key ,0f);
+		return Float.parseFloat(getString(key));
 	}
 
 	@Override
@@ -125,7 +123,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public long getLong(K key) {
-		return getLong(key , 0L);
+		return Long.parseLong(getString(key));
 	}
 
 	@Override
@@ -135,7 +133,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public double getDouble(K key) {
-		return getDouble(key , 0d);
+		return Double.parseDouble(getString(key));
 	}
 
 	@Override

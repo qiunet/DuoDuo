@@ -80,7 +80,7 @@ public class GameCfgManagers {
 	 */
 	protected void loadPropertySetting() {
 		for (GameSettingContainer<? extends LoaderProperties> container : propertylist){
-			qLogger.info("load properties [", container.t.getClass().getSimpleName() +"]");
+			qLogger.info("Load Properties ["+ container.t.getClass().getSimpleName() +"]");
 			container.t.reload();
 		}
 	}
@@ -94,7 +94,7 @@ public class GameCfgManagers {
 		List<String> failFileNames = new ArrayList<>(5);
 		for (GameSettingContainer<IGameCfgManager> container : gameSettingList) {
 			String name = container.t.loadCfg();
-			qLogger.info("load xd file[", container.t.getClass().getSimpleName() +"]");
+			qLogger.info("Load Game Config Manager["+ container.t.getClass().getSimpleName() +"]");
 
 			if(!StringUtil.isEmpty(name)) {
 				failFileNames.add(name);
