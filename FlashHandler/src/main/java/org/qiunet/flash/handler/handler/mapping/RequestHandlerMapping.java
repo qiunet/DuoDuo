@@ -60,6 +60,7 @@ public class RequestHandlerMapping {
 
 		handlerSetRequestDataClass(handler);
 		setHandlerField(handler, "protocolId", protocolId);
+		logger.info("RequestHandler ["+handler.getClass().getSimpleName()+"] protocolID ["+protocolId+"] was found and add.");
 		this.gameHandlers.put(protocolId, handler);
 	}
 
@@ -77,6 +78,7 @@ public class RequestHandlerMapping {
 		}
 
 		handlerSetRequestDataClass(handler);
+		logger.info("RequestHandler ["+handler.getClass().getSimpleName()+"] uriPath ["+uriPath+"] was found and add.");
 		this.uriPathHandlers.put(uriPath, handler);
 	}
 

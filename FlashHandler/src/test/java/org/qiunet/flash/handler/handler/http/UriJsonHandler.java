@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.handler.http;
 
-import org.qiunet.flash.handler.common.annotation.UriPathRequest;
+import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.response.json.JsonResponse;
  * Created by qiunet.
  * 18/1/29
  */
-@UriPathRequest("/jsonUrl")
+@UriPathHandler("/jsonUrl")
 public class UriJsonHandler extends HttpJsonHandler {
 	@Override
 	protected JsonResponse handler1(IHttpRequest<JsonRequest> request) {

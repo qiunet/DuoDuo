@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.handler.http;
 
-import org.qiunet.flash.handler.common.annotation.UriPathRequest;
+import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 
@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.handler.proto.LoginProto;
  * Created by qiunet.
  * 17/11/25
  */
-@UriPathRequest("/protobufTest")
+@UriPathHandler("/protobufTest")
 public class UriProtobufHandler extends HttpProtobufHandler<LoginProto.LoginRequest, LoginProto.LoginResponse> {
 	@Override
 	public LoginProto.LoginResponse handler(IHttpRequest<LoginProto.LoginRequest> request)throws Exception {
