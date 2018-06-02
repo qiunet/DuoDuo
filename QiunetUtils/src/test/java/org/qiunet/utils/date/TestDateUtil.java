@@ -5,6 +5,7 @@ import org.qiunet.utils.base.BaseTest;
 import org.junit.Test;
 
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -84,13 +85,12 @@ public class TestDateUtil  extends BaseTest{
 			quartz = "* * * L * *";
 			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
 
-//			quartz = "* * * 15L * *";
-//			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-//			dt = DateUtil.stringToDate("2016-05-31 23:59:00");
-//			quartz = "* * * L * *";
-//			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
+			dt = new Date();
+			Calendar cal = Calendar.getInstance();
+			int curr = cal.get(Calendar.DAY_OF_MONTH);
+			int max = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+			quartz = "* * * "+(max - curr)+"L * *";
+			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
