@@ -9,9 +9,9 @@ public class MathUtil {
 	 */
 	private static Random random = new Random(System.currentTimeMillis());
 	public enum RandomType{
-		/** 半开半闭*/
+		/** 前闭后开 [start,end) */
 		K,
-		/** 必区间*/
+		/** 闭区间 [start,end] */
 		B
 	}
 	/**
