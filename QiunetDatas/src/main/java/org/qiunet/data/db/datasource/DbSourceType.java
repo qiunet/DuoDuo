@@ -2,9 +2,9 @@ package org.qiunet.data.db.datasource;
 
 public enum DbSourceType {
 	/**玩家库*/
-	DATASOURCE_PLAYER("datasource_player"),
+	DATASOURCE_PLAYER(""),
 	/**全局库*/
-	DATASOURCE_GLOBAL("datasource_global"),
+	DATASOURCE_GLOBAL("global"),
 	;
 	private String keyPrefix;
 	DbSourceType(String keyPrefix) {
@@ -20,7 +20,7 @@ public enum DbSourceType {
 		if (this == DbSourceType.DATASOURCE_GLOBAL) {
 			throw new RuntimeException("can not access this method for global db");
 		}
-		return this.keyPrefix + dbSourceIndex;
+		return String.valueOf(dbSourceIndex);
 	}
 
 	/***
