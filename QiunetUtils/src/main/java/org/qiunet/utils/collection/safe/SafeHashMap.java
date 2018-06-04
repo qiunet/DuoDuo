@@ -1,6 +1,9 @@
 package org.qiunet.utils.collection.safe;
 
 import org.qiunet.utils.exceptions.SafeColletionsModifyException;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,15 +13,28 @@ import java.util.Map;
  *         Created on 17/3/1 16:35.
  */
 public class SafeHashMap<KEY, VAL> extends HashMap<KEY, VAL> {
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/**
 	 * 一个只允许初始化一次的锁变量
 	 */
 	private boolean safeLock;
+	/***
+	 * 缺失打印.
+	 */
+	private boolean loggerAbsent;
 	@Override
 	public VAL put(KEY key, VAL value) {
 		if (safeLock)
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
 		return super.put(key, value);
+	}
+
+	@Override
+	public VAL get(Object key) {
+		if (loggerAbsent && ! containsKey(key)) {
+			logger.error("Key ["+key+"] is not in map. ");
+		}
+		return super.get(key);
 	}
 
 	@Override
@@ -40,6 +56,14 @@ public class SafeHashMap<KEY, VAL> extends HashMap<KEY, VAL> {
 	public void safeLock() {
 		this.safeLock = true;
 	}
+
+	/**
+	 * 如果缺失.则打印
+	 */
+	public void loggerIfAbsent() {
+		this.loggerAbsent = true;
+	}
+
 	@Override
 	public void clear() {
 		if (safeLock)

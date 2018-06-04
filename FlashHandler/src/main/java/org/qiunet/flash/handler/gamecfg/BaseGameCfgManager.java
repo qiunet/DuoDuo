@@ -108,6 +108,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 			Cfg cfg = cfgConstructor.newInstance(dis);
 			cfgMap.put(cfg.getKey(), cfg);
 		}
+		cfgMap.loggerIfAbsent();
 		cfgMap.safeLock();
 		return cfgMap;
 	}
@@ -157,8 +158,10 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 			subMap.put(cfg.getSubKey(), cfg);
 		}
 		for (Map<SubKey, Cfg> subKeyCfgMap : cfgMap.values()) {
+			((SafeHashMap) subKeyCfgMap).loggerIfAbsent();
 			((SafeHashMap) subKeyCfgMap).safeLock();
 		}
+		cfgMap.loggerIfAbsent();
 		cfgMap.safeLock();
 		return cfgMap;
 	}
@@ -190,6 +193,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 		for (List<Cfg> cfgList : cfgMap.values()) {
 			((SafeList) cfgList).safeLock();
 		}
+		cfgMap.loggerIfAbsent();
 		cfgMap.safeLock();
 		return cfgMap;
 	}
