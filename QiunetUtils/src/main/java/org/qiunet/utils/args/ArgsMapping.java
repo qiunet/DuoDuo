@@ -39,7 +39,7 @@ public class ArgsMapping extends KeyValueData<String,String> {
 			}
 		}
 		if(logger.isInfoEnabled()){
-			logger.info(JsonUtil.toJsonString(temp));
+			logger.info("Jvm 启动参数: " + JsonUtil.toJsonString(temp));
 		}
 
 		this.load(temp);
