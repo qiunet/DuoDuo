@@ -13,16 +13,17 @@
 		</dependencySet>
 	</dependencySets>
 	<fileSets>
-		<!--<fileSet>-->
-			<!--<directory>${basedir}/shell/</directory>-->
-			<!--<outputDirectory>\</outputDirectory>-->
-		<!--</fileSet>-->
 		<fileSet>
 			<directory>${project.build.outputDirectory}</directory>
 			<excludes>
 				<exclude>*.properties</exclude>
 			</excludes>
-			<outputDirectory>code</outputDirectory>
+			<outputDirectory>classes</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/shell/</directory>
+			<outputDirectory>\</outputDirectory>
+			<fileMode>0755</fileMode>
 		</fileSet>
 	</fileSets>
 </assembly>

@@ -13,7 +13,7 @@ port=8888
 
 start(){
         if [ ! -d 'logs' ];then mkdir logs ; fi
-        cd code
+        cd classes
         java ${JAVA_OPTS}  -classpath .:../lib/* org.qiunet.acceptor.server.BootStrap --port=${port} 2>&1 &
         pid=$!
         cd -
