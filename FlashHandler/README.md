@@ -35,7 +35,7 @@
 ### 注解
 * RequestHandler
 	> 对游戏的Handler进行注解. 标识ID 和 desc 属性
-* OtherRequestHandler
+* UriPathHandler
 	> 其它类型的请求. 比如平台调用. 给你传入的参数等和游戏完全不一样.
 	 
 ### GameCfg(游戏设定数据)
