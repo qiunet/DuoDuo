@@ -142,7 +142,9 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params);
 		params.getSessionEvent().sessionReceived(ctx, HandlerType.WEB_SOCKET, context);
-		acceptor.process(context);
+		if (ctx.channel().isActive()) {
+			acceptor.process(context);
+		}
 	}
 
 	@Override

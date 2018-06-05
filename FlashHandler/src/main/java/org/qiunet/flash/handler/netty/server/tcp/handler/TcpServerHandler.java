@@ -48,7 +48,9 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 		ITcpRequestContext context = params.getAdapter().createTcpRequestContext(content, ctx, handler, params);
 		params.getSessionEvent().sessionReceived(ctx, HandlerType.TCP, context);
-		acceptor.process(context);
+		if (ctx.channel().isActive()) {
+			acceptor.process(context);
+		}
 	}
 
 	@Override
