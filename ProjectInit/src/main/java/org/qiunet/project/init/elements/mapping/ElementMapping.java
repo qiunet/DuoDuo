@@ -158,6 +158,9 @@ public class ElementMapping extends SubVmElement {
 					break;
 				}
 			}
+			if (field == null) {
+				throw new NullPointerException("not found field name ["+selectKey+"] in fields ");
+			}
 			sb.append("\n\t\t<selectKey resultType=\"").append(field.getType()).append("\" keyProperty=\"").append(selectKey).append("\">\n");
 			sb.append("\t\t\tSELECT @@IDENTITY AS ").append(selectKey).append(";\n");
 			sb.append("\t\t</selectKey>");

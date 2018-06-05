@@ -32,10 +32,12 @@ public class TestLog4Jdbc {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

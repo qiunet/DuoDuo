@@ -31,10 +31,12 @@ class UdpMessage implements IMessage {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			try {
-				channel.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (channel != null) {
+				try {
+					channel.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

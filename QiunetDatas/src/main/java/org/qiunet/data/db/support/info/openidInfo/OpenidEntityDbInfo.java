@@ -13,7 +13,7 @@ public class OpenidEntityDbInfo implements IEntityDbInfo {
 	private int dbIndex;
 	public OpenidEntityDbInfo(Object openid) {
 		this.openid = (String)openid;
-		this.dbIndex = Math.abs(openid.hashCode()) % DbProperties.getInstance().getLoginNeedDb();
+		this.dbIndex = Math.abs(openid.hashCode() % DbProperties.getInstance().getLoginNeedDb());
 	}
 	public String getOpenid() {
 		return openid;

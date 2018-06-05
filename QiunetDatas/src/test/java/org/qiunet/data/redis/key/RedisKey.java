@@ -45,6 +45,6 @@ public enum  RedisKey implements IRedisKey {
 	}
 	@Override
 	public String getAsyncKey(Object dbInfoKey) {
-		return asyncKey + Math.abs(dbInfoKey.hashCode()) % DbProperties.getInstance().getDbIndexList().size();
+		return asyncKey + Math.abs(dbInfoKey.hashCode() % DbProperties.getInstance().getDbIndexList().size());
 	}
 }

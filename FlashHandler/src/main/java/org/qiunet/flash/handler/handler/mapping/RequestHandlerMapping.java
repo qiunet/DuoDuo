@@ -117,6 +117,11 @@ public class RequestHandlerMapping {
 			if (field != null) break;
 
 		}while (clazz != Object.class);
+
+		if (field == null) {
+			throw new NullPointerException("not found field name ["+fieldName+"] in handler ["+handler.getClass().getSimpleName()+"]");
+		}
+
 		field.setAccessible(true);
 
 		try {

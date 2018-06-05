@@ -19,7 +19,7 @@ public class DbProperties extends LoaderProperties {
 	private static final String KEY_DB_MAX_COUNT = "db_max_count";
 	private static final String KEY_DB_NAME_PREFIX="db_name_prefix";
 	private static final String KEY_DB_DBCOUNT_FOR_SAME_DATASOURCE="db_size_per_instance";
-	private static List<Integer> dbIndexs;
+	private List<Integer> dbIndexs;
 	private int uid_db_factor;
 	private String db_name_prefix;
 	private int db_size_per_instance;
@@ -114,7 +114,7 @@ public class DbProperties extends LoaderProperties {
 			List<Integer> dbIndexsTemp = new ArrayList<>(db_max_count);
 			for (int i = 0  ; i < db_max_count; i++) dbIndexsTemp.add(i);
 			Collections.shuffle(dbIndexsTemp);
-			dbIndexs = Collections.unmodifiableList(dbIndexsTemp);
+			this.dbIndexs = Collections.unmodifiableList(dbIndexsTemp);
 		}
 		return dbIndexs;
 	}
