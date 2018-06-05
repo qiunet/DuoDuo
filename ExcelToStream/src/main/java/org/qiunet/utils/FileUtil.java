@@ -16,7 +16,6 @@ public class FileUtil {
 		String writeToFileName = getFileName();
 
 		System.out.println("WriteTo " + writeToFileName);
-		FileOutputStream fos = null;
 		PrintWriter print = null;
 		try {
 			print = new PrintWriter(new File(writeToFileName), "UTF-8");
@@ -26,12 +25,7 @@ public class FileUtil {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} finally {
-				try {
-					if (print != null) print.close();
-					if (fos != null) fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			if (print != null) print.close();
 		}
 	}
 
@@ -41,7 +35,6 @@ public class FileUtil {
 		if (! file.exists()) return null;
 
 		LineNumberReader reader = null;
-		FileReader fileReader = null;
 		try {
 			FileInputStream fis = new FileInputStream(new File(fileName));
 			InputStreamReader isr = new InputStreamReader(fis , "UTF-8");
@@ -52,7 +45,6 @@ public class FileUtil {
 		}finally {
 			try {
 			if (reader != null) reader.close();
-			if (fileReader != null)fileReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -6,7 +6,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -15,17 +17,17 @@ import java.util.Set;
  *         Created on 17/1/24 09:53.
  */
 public class GameAppClassLoader extends URLClassLoader {
-	
+
 	private String [] allowLoaderNames;
 	/**
-	 * 
+	 *
 	 * @param paths
 	 */
 	public GameAppClassLoader(String [] paths, String [] allowLoaderNames) {
 		super(returnURLs(paths).toArray(new URL[0]));
 		this.allowLoaderNames = allowLoaderNames;
 	}
-	
+
 	/**
 	 * 指定该加载器的父类加载器
 	 * @param paths
@@ -35,13 +37,13 @@ public class GameAppClassLoader extends URLClassLoader {
 		super(returnURLs(paths).toArray(new URL[0]), parent);
 		this.allowLoaderNames = allowLoaderNames;
 	}
-	
+
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> clazz = findLoadedClass(name);
 		if (clazz != null) return clazz;
 		boolean loader = false;
-		
+
 		for (String allow : allowLoaderNames){
 			if ( loader = name.startsWith(allow)) break;
 		}
@@ -51,7 +53,7 @@ public class GameAppClassLoader extends URLClassLoader {
 		}
 		return super.findClass(name);
 	}
-	
+
 	/**
 	 * 返回指定name的class byte 字节
 	 * @param name
@@ -70,7 +72,7 @@ public class GameAppClassLoader extends URLClassLoader {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 返回指定的url的class byte数组
 	 * @param url
@@ -84,16 +86,19 @@ public class GameAppClassLoader extends URLClassLoader {
 	 * @param paths
 	 * @return
 	 */
-	private static Set<URL> returnURLs(String [] paths){
-		Set<URL> urls = new HashSet<>();
+	private static List<URL> returnURLs(String [] paths){
+		List<URL> urls = new ArrayList<>();
 		for (String path : paths) {
 			try {
 				File folder = new File(path);
-				for (File file : folder.listFiles()) {
+				File [] files = folder.listFiles();
+				if (files == null) return urls;
+
+				for (File file : files) {
 					if (! file.isDirectory()){
 						String fileName = file.getName();
 						if (!fileName.endsWith("jar") && !fileName.endsWith("class")) continue;
-						
+
 						urls.add(file.toURI().toURL());
 					}else{
 						urls.addAll(returnURLs(new String[]{file.getPath()} ));

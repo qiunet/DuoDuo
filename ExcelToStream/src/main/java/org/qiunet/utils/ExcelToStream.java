@@ -89,7 +89,7 @@ public class ExcelToStream {
 					DataType dateType = DataType.parse(dateTypeRow.getCell(columnNum).getStringCellValue());
 
 					if (dateType == null) {
-						throw new IllegalArgumentException("File:["+attachable.getFileName()+"] Sheet: ["+sheet.getSheetName()+"] rowNum["+(rowNum+1)+"], columnNum["+(columnNum+1)+"] dateType error : " +dateType);
+						throw new IllegalArgumentException("File:["+attachable.getFileName()+"] Sheet: ["+sheet.getSheetName()+"] rowNum["+(rowNum+1)+"], columnNum["+(columnNum+1)+"] dateType error : " +dateTypeRow.getCell(columnNum).getStringCellValue());
 					}
 
 					Cell c = row.getCell(columnNum);

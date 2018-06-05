@@ -115,7 +115,10 @@ public class MainFrame extends BaseJFrame {
 		exchange.addActionListener(new ActionListener() {
 			private ExcelToStream excelToStream = new ExcelToStream();
 			private void exchangeAll(File dir, Set<String> errorFiles){
-				for (File file : dir.listFiles()) {
+				File [] files = dir.listFiles();
+				if (files == null) return;
+
+				for (File file : files) {
 					if (! filePostfixCheck(file) || file.getName().endsWith(".xd") || file.getName().endsWith(".json")) continue;
 
 					System.out.println(file.getName());
@@ -247,7 +250,10 @@ public class MainFrame extends BaseJFrame {
 	 * @param dirFile
 	 */
 	private void loadTree(DefaultMutableTreeNode dirRoot, File dirFile) {
-		for (File file : dirFile.listFiles()){
+		File [] files = dirFile.listFiles();
+		if (files == null) return;
+
+		for (File file : files){
 			if (! filePostfixCheck(file)) continue;
 
 			if (file.isFile()) {

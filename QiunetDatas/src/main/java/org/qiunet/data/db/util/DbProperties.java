@@ -32,9 +32,8 @@ public class DbProperties extends LoaderProperties {
 
 	private DbProperties() {
 		super("db.properties");
-		instance = this;
 	}
-	private volatile static DbProperties instance;
+	private volatile static DbProperties instance = new DbProperties();
 	public static DbProperties getInstance() {
 		if (instance == null)  new DbProperties();
 		return instance;

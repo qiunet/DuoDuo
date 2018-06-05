@@ -136,7 +136,7 @@ public class BootstrapServer {
 
 		return this;
 	}
-	public static Thread awaitThread;
+	private Thread awaitThread;
 
 	/***
 	 * 阻塞线程 最后调用阻塞当前线程

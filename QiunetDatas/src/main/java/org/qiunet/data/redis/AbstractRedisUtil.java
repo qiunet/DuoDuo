@@ -105,13 +105,9 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				if(! map.isEmpty()){
 					if(! (obj instanceof IRedisList) && map.size() != obj.getFieldCount()) {
 						Field fields = clazz.getDeclaredField("fields");
-						if (fields != null) {
-							fields.setAccessible(true);
-							String [] fieldStrs = (String[]) fields.get(obj);
-							logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFields"+JsonUtil.toJsonString(fieldStrs));
-						}else {
-							logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFieldCount:"+obj.getFieldCount());
-						}
+						fields.setAccessible(true);
+						String [] fieldStrs = (String[]) fields.get(obj);
+						logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFields"+JsonUtil.toJsonString(fieldStrs));
 //						jedis.expire(key, 0);
 //						return null;
 					}
@@ -202,13 +198,10 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 						Map<String,String> mapFields = JsonUtil.getGeneralObject(entry.getValue(), Map.class);
 						if (mapFields.size() != po.getFieldCount()) {
 							Field fields = clazz.getDeclaredField("fields");
-							if (fields != null) {
-								fields.setAccessible(true);
-								String[] fieldStrs = (String[]) fields.get(po);
-								logger.error("ListFieldSizeError getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"] ObjFields "+JsonUtil.toJsonString(fieldStrs));
-							}else {
-								logger.error("ListFieldSizeError getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"]");
-							}
+							fields.setAccessible(true);
+							String[] fieldStrs = (String[]) fields.get(po);
+							logger.error("ListFieldSizeError getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"] ObjFields "+JsonUtil.toJsonString(fieldStrs));
+
 //							jedis.expire(key, 0);
 //							return null;
 						}

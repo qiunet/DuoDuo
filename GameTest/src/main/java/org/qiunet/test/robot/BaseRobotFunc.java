@@ -51,6 +51,8 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 			case TCP:
 				connClient = new NettyTcpClient(new InetSocketAddress(server.uri().getHost(), server.uri().getPort()), trigger);
 				break;
+			default:
+				throw new RuntimeException("Type ["+server.getType()+"] is not support");
 		}
 		clients.put(server.getName(), connClient);
 		return clients.get(server.getName());

@@ -123,6 +123,8 @@ public class ScannerAllClassFile {
 			allclass.add(filePath.substring(basepath.length(), endIndex).replace("/", "."));
 		}else if(file.isDirectory()){
 			File[] files = file.listFiles();
+			if (files == null) return;
+
 			for (File f : files) {
 				this.listAllFiles(basepath, f.getPath());
 			}
