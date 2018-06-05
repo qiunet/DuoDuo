@@ -12,3 +12,5 @@
 ### 其它配置
 > 需要配置一个 `config.properties` , 里面指定日志打印路径. <br />
 > 以及其它参数. 每个游戏需要指定一个secret. 用来校验日志正确性.
+
+### [日志发送](../LoggerSender/README.md)
