@@ -7,7 +7,7 @@
 #---------------BODY-----------------
 cd `dirname $0`
 
-JAVA_OPTS="-server -Xmx512m -Xms512m -Xmn300m -Xss256k  -XX:PermSize=128M -XX:MaxPermSize=128M -XX:MaxDirectMemorySize=1g -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=logs/"
+JAVA_OPTS="-server -Xmx512m -Xms512m -Xmn300m -Xss256k  -XX:MaxDirectMemorySize=1g -XX:+UseParallelGC -XX:+UseParallelOldGC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=logs/"
 # 服务监听端口
 port=8888
 # 钩子服务监听端口
