@@ -101,8 +101,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return 得到dbSource
 	 */
 	public String getDataSourceTypeByDbIndex(int dbIndex){
-		int tmp = (dbIndex / db_size_per_instance) * db_size_per_instance;
-		return DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey(tmp);
+		return DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey((dbIndex / db_size_per_instance));
 	}
 	/**
 	 * 返回库索引列表
