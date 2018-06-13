@@ -39,11 +39,14 @@ public class MybatisInterceptor implements Interceptor {
 			return invocation.proceed();
 		}finally {
 			long diff = System.currentTimeMillis() - start;
-
-			StringBuilder sb = new StringBuilder();
-			sb.append(showSql(configuration, boundSql));
-			sb.append("\t耗时:[").append(diff).append("ms]");
-			logger.info(sb.toString());
+			try {
+				StringBuilder sb = new StringBuilder();
+				sb.append(showSql(configuration, boundSql));
+				sb.append("\t耗时:[").append(diff).append("ms]");
+				logger.info(sb.toString());
+			}catch (Exception e) {
+				logger.error("SQL打印异常: ", e);
+			}
 		}
 	}
 
