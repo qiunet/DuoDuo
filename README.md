@@ -39,5 +39,8 @@
 		<version>${version}</version>
 	</dependency>
 
+## 示例
+自己写了服务器端和H5客户端的交互. 可以参考[项目](https://github.com/qiunet/CocosCreatorAndServer)
+
 ## 交流
 QQ群: `669409114`
