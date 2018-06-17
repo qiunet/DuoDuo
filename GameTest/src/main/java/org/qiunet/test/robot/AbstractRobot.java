@@ -61,8 +61,12 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 				logger.error("中断错误: "+ brokeReason);
 				break;
 			}
-
-			boolean conditionJudgePass = testCase.conditionJudge(this);
+			boolean conditionJudgePass = false;
+			try {
+				conditionJudgePass = testCase.conditionJudge(this);
+			}catch (Exception e) {
+				logger.error("conditionJudgeError: ", e);
+			}
 			logger.info("OpenId ["+info.getOpenId()+"]("+uid+") ["+(conditionJudgePass?"Running":"Miss..........")+"] TestCase ["+testCase.getClass().getSimpleName()+"]");
 			if (conditionJudgePass) {
 				testCase.sendRequest(this);
