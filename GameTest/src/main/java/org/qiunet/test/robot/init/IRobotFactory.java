@@ -14,5 +14,5 @@ public interface IRobotFactory {
 	 * 得到机器人
 	 * @return
 	 */
-	IRobot createRobot(List<ITestCase> testCaseList);
+	IRobot createRobot(List<Class<? extends ITestCase>> testCaseList);
 }

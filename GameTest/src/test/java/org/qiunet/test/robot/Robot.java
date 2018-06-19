@@ -19,7 +19,7 @@ public class Robot extends AbstractRobot<DefaultRobotInfo> {
 
 	public int roomSize;
 
-	public Robot(List<ITestCase> testCases, DefaultRobotInfo info) {
+	public Robot(List<Class<? extends ITestCase>> testCases, DefaultRobotInfo info) {
 		super(testCases, info);
 	}
 }

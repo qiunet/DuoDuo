@@ -22,9 +22,9 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 	/***平台的信息*/
 	protected Info info;
 
-	private List<ITestCase> testCases;
+	private List<Class<? extends ITestCase>> testCases;
 
-	public AbstractRobot(List<ITestCase> testCases, Info info) {
+	public AbstractRobot(List<Class<? extends ITestCase>> testCases, Info info) {
 		this.testCases = testCases;
 		this.info = info;
 	}
@@ -56,7 +56,16 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 	}
 	@Override
 	public void run() {
-		for (ITestCase testCase : testCases) {
+		for (Class<? extends ITestCase> testCaseClass : testCases) {
+			ITestCase testCase = null;
+			try {
+				testCase = testCaseClass.newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+
 			if (brokeReason != null) {
 				logger.error("中断错误: "+ brokeReason);
 				break;

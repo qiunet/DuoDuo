@@ -51,13 +51,13 @@ public class Executor {
 				// 机器人工厂.  自己定义
 				.setRobotFactory(new RobotFactory())
 				// 测试用例
-				.addTestCase(new TestLogin())
-				.addTestCase(new TestLoginOnline())
-				.addTestCase(new TestPlayerIndex())
-				.addTestCase(new TestPlayerInfo())
-				.addTestCase(new TestJsonPlayerInfo())
-				.addTestCase(new TestUriPathPlayerInfo())
-				.addTestCase(new TestLoginRoom())
+				.addTestCase(TestLogin.class)
+				.addTestCase(TestLoginOnline.class)
+				.addTestCase(TestPlayerIndex.class)
+				.addTestCase(TestPlayerInfo.class)
+				.addTestCase(TestJsonPlayerInfo.class)
+				.addTestCase(TestUriPathPlayerInfo.class)
+				.addTestCase(TestLoginRoom.class)
 
 		).pressureTesting(1);
 		server.shutdown();
@@ -70,7 +70,7 @@ public class Executor {
 	private static class RobotFactory implements IRobotFactory {
 		private AtomicInteger incr = new AtomicInteger(100);
 		@Override
-		public IRobot createRobot(List<ITestCase> testCaseList) {
+		public IRobot createRobot(List<Class<? extends ITestCase>> testCaseList) {
 			String openId = ServerUidAndTokenBuilder.OPENID_PREFIX+incr.getAndIncrement();
 
 			return new Robot(testCaseList, new DefaultRobotInfo(openId, ""));

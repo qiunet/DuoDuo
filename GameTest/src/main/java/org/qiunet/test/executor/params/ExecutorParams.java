@@ -15,7 +15,7 @@ import java.util.List;
  * 17/12/6
  */
 public class ExecutorParams {
-	private List<ITestCase> testCases;
+	private List<Class<? extends ITestCase>> testCases;
 	private IRobotFactory robotFactory;
 	private IExecutorInitializer initializer;
 	private List<IScannerHandler> scannerHandlers;
@@ -34,7 +34,7 @@ public class ExecutorParams {
 		return robotFactory;
 	}
 
-	public List<ITestCase> getTestCases() {
+	public List<Class<? extends ITestCase>> getTestCases() {
 		return testCases;
 	}
 
@@ -47,14 +47,14 @@ public class ExecutorParams {
 		private IRobotFactory robotFactory;
 		private IExecutorInitializer initializer;
 		private List<IScannerHandler> scannerHandlers = new ArrayList<>(3);
-		private List<ITestCase> testCases = new ArrayList<>(128);
+		private List<Class<? extends ITestCase>> testCases = new ArrayList<>(128);
 
 		public Builder setInitializer(IExecutorInitializer initializer) {
 			this.initializer = initializer;
 			return this;
 		}
 
-		public Builder addTestCase(ITestCase testCase) {
+		public Builder addTestCase(Class<? extends ITestCase> testCase) {
 			this.testCases.add(testCase);
 			return this;
 		}
