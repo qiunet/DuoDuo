@@ -72,7 +72,11 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	@Override
 	public String getString(K key) {
 		V v = getValue(key);
-		if (v == null) return null;
+		if (v == null) {
+			// 这里需要打印缺少的key.
+			logger.error("Key ["+key+"] is not exist!");
+			return null;
+		}
 		return v.toString();
 	}
 
