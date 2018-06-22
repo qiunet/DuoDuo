@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +204,7 @@ public class BootstrapServer {
 			logger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.RUNNING = false;
-				if (StringUtil.isLocalIp(ip)) {
+				if (NetUtil.isLocalIp(ip)) {
 					server.shutdown();
 					return true;
 				}else {
@@ -236,7 +237,7 @@ public class BootstrapServer {
 								SocketChannel channel = serverSocketChannel.accept();
 
 								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
-								if (!StringUtil.isInnerIp(ip) && !StringUtil.isLocalIp(ip)) {
+								if (!NetUtil.isInnerIp(ip) && !NetUtil.isLocalIp(ip)) {
 									logger.error("[HookListener]服务端: Remote ip ["+ip+"] is not allow !");
 									channel.close();
 									continue;

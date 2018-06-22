@@ -18,6 +18,7 @@
 | hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
 | http 			|`Http 的工具类`|
 | json 			|`json相关的操作`|
+| net 			|`网络相关的操作 得到内网ip什么`|
 | math 			|`随机啊什么的工具相关`|
 | pool 			|`自己实现的简易池`|
 | property 		|`加载properties 相关的工具`|
