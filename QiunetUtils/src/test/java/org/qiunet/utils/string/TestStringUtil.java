@@ -73,4 +73,12 @@ public class TestStringUtil extends BaseTest{
 		ip = "127.0.0.1";
 		Assert.assertTrue(StringUtil.isLocalIp(ip));
 	}
+
+	/**
+	 * 得到内网ip
+	 */
+	@Test
+	public void testGetInnerIp(){
+		logger.info("内网IP: "+StringUtil.getInnerIp());
+	}
 }

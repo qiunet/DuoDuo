@@ -5,6 +5,8 @@ import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -280,5 +282,19 @@ public class StringUtil {
 	public static boolean isInnerIp(String ip){
 		Matcher match = pattern.matcher(ip);
 		return match.find();
+	}
+
+	/***
+	 * 得到内网ip
+	 * @return
+	 */
+	public static String getInnerIp() {
+		InetAddress address = null;
+		try {
+			address = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return address.getHostAddress();
 	}
 }
