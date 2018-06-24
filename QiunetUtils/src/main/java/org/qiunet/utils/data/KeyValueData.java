@@ -142,6 +142,6 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public boolean getBoolean(K key) {
-		return "true".equals(getString(key));
+		return "true".equals(getString(key, "false"));
 	}
 }

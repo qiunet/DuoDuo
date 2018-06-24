@@ -42,7 +42,7 @@ abstract class BaseRedisUtil {
 
 		String host = redisProperties.getString(getConfigKey("host"));
 		int port = redisProperties.getInt(getConfigKey("port"));
-		String password = redisProperties.getString(getConfigKey("pass"));
+		String password = redisProperties.getString(getConfigKey("pass"), "");
 		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
 		if (!StringUtil.isEmpty(password)) {
 			this.jedisPool = new JedisPool(poolConfig, host, port, timeout, password);

@@ -133,7 +133,7 @@ import java.util.Map;
 			this.dataSources.put(DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey(i), factory);
 		}
 
-		String globalName = DbProperties.getInstance().getString(DATASOURCE_GLOBAL_NAME);
+		String globalName = DbProperties.getInstance().getString(DATASOURCE_GLOBAL_NAME, "");
 		if (! StringUtil.isEmpty(globalName)) {
 			this.dataSources.put(DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey(), buildSqlSessionFactory(globalName));
 		}
