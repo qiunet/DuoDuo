@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
 	<packaging>jar</packaging>
-	<version>4.0.20</version>
+	<version>4.0.21</version>
 	<name>DuoDuo/All-in-One</name>
 
 	<properties>
@@ -294,6 +294,10 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.groovy</groupId>
+			<artifactId>groovy-all</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>

@@ -46,6 +46,8 @@
 * 从Mysql转MariaDB
 * 去掉 DbSourceType 类型. 支持多个global库.
 * ActiveMQ 的module添加. (单独于 all , 因为很多项目可能用不着)
+* 执行groovy 脚本.完成任务的功能抽象.
+
 
 ## 交流
 QQ群: `669409114`
