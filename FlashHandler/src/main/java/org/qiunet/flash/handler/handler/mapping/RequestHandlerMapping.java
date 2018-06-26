@@ -60,7 +60,7 @@ public class RequestHandlerMapping {
 
 		handlerSetRequestDataClass(handler);
 		setHandlerField(handler, "protocolId", protocolId);
-		logger.info("RequestHandler ["+handler.getClass().getSimpleName()+"] protocolID ["+protocolId+"] was found and add.");
+		logger.info("ProtocolID ["+protocolId+"] RequestHandler ["+handler.getClass().getSimpleName()+"] was found and mapping.");
 		this.gameHandlers.put(protocolId, handler);
 	}
 
