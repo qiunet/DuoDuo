@@ -16,6 +16,7 @@
 | date 			|`时间的工具类`|
 | encryptAndDecrypt |`加密 解密相关`|
 | hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
+| groovy			|`使用groovy 脚本的工具类.优化使用中可能出现的线程安全问题`|
 | http 			|`Http 的工具类`|
 | json 			|`json相关的操作`|
 | net 			|`网络相关的操作 得到内网ip什么`|
