@@ -9,6 +9,7 @@
 |----|----|
 | args 			|`处理参数的`|
 | classloader	|`类加载器`|
+| badword	|`输入敏感字库工具类`|
 | classScanner	|`类的扫描 可以扫描一些特定的class 避免需要配置来确定关系.`|
 | collection.safe |`安全的集合类, 使用后. 不允许修改内容.`|
 | common 		|`通用的一些判断, 在不在大的集合等`|
