@@ -1,5 +1,6 @@
 package org.qiunet.utils.badword;
 
+import java.util.Arrays;
 import java.util.List;
 
 /***
@@ -21,12 +22,7 @@ public class DefaultBadWord implements IBadWord {
 	}
 
 	public DefaultBadWord(String [] badwords) {
-		StringBuilder sb = new StringBuilder();
-		for (String badword : badwords) {
-			sb.append(badword).append('|');
-		}
-		if(sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
-		this.pattern = sb.toString();
+		this(Arrays.asList(badwords));
 	}
 
 
