@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author qiunet
@@ -27,6 +28,43 @@ public class TestDateUtil  extends BaseTest{
 			e.printStackTrace();
 		}
 	}
+
+	/***
+	 * SimpleDateFormat 线程安全测试
+	 * @throws ParseException
+	 * @throws InterruptedException
+	 */
+	@Test
+	public void threadSafeSdf() throws ParseException, InterruptedException {
+		String val1  = "2016-05-20 00:00:00";
+		String val2  = "2016-05-26 00:00:01";
+		Date dt1 = DateUtil.stringToDate(val1);
+		Date dt2 = DateUtil.stringToDate(val2);
+		long time1 = dt1.getTime();
+		long time2 = dt2.getTime();
+
+		CountDownLatch latch = new CountDownLatch(100);
+		for (int i = 0; i < 10; i++) {
+			new Thread(
+					() -> {
+						for (int i1 = 0; i1 < 10; i1++) {
+							Assert.assertEquals(DateUtil.dateToString(dt1), val1);
+							Assert.assertEquals(DateUtil.dateToString(dt2), val2);
+
+							try {
+								Assert.assertEquals(DateUtil.stringToDate(val1).getTime(), time1);
+								Assert.assertEquals(DateUtil.stringToDate(val2).getTime(), time2);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+							latch.countDown();
+						}
+					}
+			).start();
+		}
+		latch.await();
+	}
+
 	@Test
 	public void testAddHour(){
 		int hours = 5;

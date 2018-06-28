@@ -16,6 +16,7 @@ import org.qiunet.utils.string.StringUtil;
  *
  */
 public final class DateUtil {
+	private static final ThreadLocal<Map<String, SimpleDateFormat>> simpleDataFormatThreadLocal = new ThreadLocal<>();
 	/***
 	 * 当前的秒
 	 * @return
@@ -24,6 +25,19 @@ public final class DateUtil {
 		return System.currentTimeMillis()/1000;
 	}
 
+	private static SimpleDateFormat returnSdf(String format) {
+		Map<String, SimpleDateFormat> map = simpleDataFormatThreadLocal.get();
+		if (map == null) {
+			map = new HashMap<>();
+			simpleDataFormatThreadLocal.set(map);
+		}
+		SimpleDateFormat sdf = map.get(format);
+		if (sdf == null) {
+			sdf = new SimpleDateFormat(format);
+			map.put(format, sdf);
+		}
+		return sdf;
+	}
 	private DateUtil(){}
 
 	/**默认的时间格式(日期 时间)*/
@@ -53,8 +67,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static String dateToString(Date date, String format) {
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.format(date);
+		return returnSdf(format).format(date);
 	}
 	/**
 	 * 字符串转日期 按指定格式
@@ -64,8 +77,7 @@ public final class DateUtil {
 	 * @throws ParseException
 	 */
 	public static Date stringToDate(String stringValue,String format) throws ParseException{
-		SimpleDateFormat sdf = new SimpleDateFormat(format);
-		return sdf.parse(stringValue);
+		return returnSdf(format).parse(stringValue);
 	}
 	/**
 	 * 字符串转日期 按默认格式
