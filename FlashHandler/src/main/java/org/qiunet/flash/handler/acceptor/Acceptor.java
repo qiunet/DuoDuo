@@ -29,7 +29,7 @@ public class Acceptor {
 		}
 
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
-		this.contextProcessor = new IndexAsyncQueueHandler();
+		this.contextProcessor = new IndexAsyncQueueHandler("flash_handler_acceptor_", threadCount);
 		instance = this;
 	}
 
