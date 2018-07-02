@@ -1,33 +1,17 @@
 package org.qiunet.data.db.support.info.openidInfo;
 
-import org.qiunet.data.core.support.entityInfo.IEntityInfo;
-import org.qiunet.data.db.support.info.IEntityDbInfo;
-import org.qiunet.data.db.util.DbProperties;
-
+import org.qiunet.data.db.support.info.base.string.StringEntityDbInfo;
 /**
  * @author qiunet
  *         Created on 17/2/13 11:48.
  */
-public class OpenidEntityDbInfo implements IEntityDbInfo {
+public class OpenidEntityDbInfo extends StringEntityDbInfo {
 	private String openid;
-	private int dbIndex;
 	public OpenidEntityDbInfo(Object openid) {
-		this.openid = (String)openid;
-		this.dbIndex = Math.abs(openid.hashCode() % DbProperties.getInstance().getLoginNeedDb());
+		super(openid.toString());
+		this.openid = openid.toString();
 	}
 	public String getOpenid() {
 		return openid;
-	}
-	@Override
-	public String getDbName() {
-		return DbProperties.getInstance().getDbNameByDbIndex(dbIndex);
-	}
-	@Override
-	public int getDbIndex() {
-		return dbIndex;
-	}
-	@Override
-	public String getDbSourceKey() {
-		return DbProperties.getInstance().getDataSourceTypeByDbIndex(dbIndex);
 	}
 }
