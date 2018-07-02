@@ -2,7 +2,6 @@ package org.qiunet.data.db.data;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.qiunet.data.core.support.EntityDataSupport;
 import org.qiunet.data.core.support.EntityListDataSupport;
 import org.qiunet.data.core.support.PlatformEntityDataSupport;
@@ -12,7 +11,6 @@ import org.qiunet.data.db.data.equip.EquipEntityInfo;
 import org.qiunet.data.db.data.equip.EquipVo;
 import org.qiunet.data.db.data.friend.FriendEntityInfo;
 import org.qiunet.data.db.data.friend.FriendVo;
-import org.qiunet.data.db.data.global.GlobalTableEntityInfo;
 import org.qiunet.data.db.data.login.LoginEntityInfo;
 import org.qiunet.data.db.data.login.LoginPo;
 import org.qiunet.data.db.data.player.PlayerEntityInfo;
@@ -253,31 +251,5 @@ public class TestData {
 		dataSupport.deletePo(qunxiuPo);
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertNull(qunxiuPo);
-	}
-	@Test
-	public void testGlobalTable(){
-		GlobalTableEntityInfo entityInfo = new GlobalTableEntityInfo();
-		EntityDataSupport<GlobalTablePo, GlobalTablePo> dataSupport = new EntityDataSupport<GlobalTablePo, GlobalTablePo>(entityInfo);
-
-		GlobalTablePo globalTablePo = new GlobalTablePo();
-		globalTablePo.setName("qiunet");
-		dataSupport.insertPo(globalTablePo);
-		int id = globalTablePo.getId();
-
-		dataSupport.expireCache(globalTablePo.getId());
-
-		globalTablePo = dataSupport.getVo(id);
-		Assert.assertEquals("qiunet", globalTablePo.getName());
-		globalTablePo.setName("qiuyang");
-		dataSupport.updatePo(globalTablePo);
-		dataSupport.updateRedisDataToDatabase();
-		dataSupport.expireCache(id);
-
-		globalTablePo = dataSupport.getVo(id);
-		Assert.assertEquals("qiuyang", globalTablePo.getName());
-		dataSupport.deletePo(globalTablePo);
-
-		globalTablePo = dataSupport.getVo(id);
-		Assert.assertNull(globalTablePo);
 	}
 }
