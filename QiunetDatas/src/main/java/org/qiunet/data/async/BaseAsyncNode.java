@@ -44,7 +44,7 @@ public abstract class BaseAsyncNode implements AsyncNode {
 	 * @param dbIndex dbIndex
 	 * @return key
 	 */
-	protected abstract String getAsyncKey(Object dbIndex);
+	protected abstract String getAsyncKey(int dbIndex);
 
 	/**
 	 * 得到redis实例

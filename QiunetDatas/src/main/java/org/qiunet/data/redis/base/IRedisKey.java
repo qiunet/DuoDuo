@@ -1,7 +1,5 @@
 package org.qiunet.data.redis.base;
 
-import org.qiunet.data.db.util.DbProperties;
-
 /***
  * 定义redis 的key 需要的接口
  */

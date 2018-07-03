@@ -43,7 +43,7 @@ abstract class BaseDataSupport<PO extends IRedisEntity>  extends BaseAsyncNode {
 	}
 
 	@Override
-	protected String getAsyncKey(Object dbIndex) {
+	protected String getAsyncKey(int dbIndex) {
 		return entityInfo.getAsyncKey(dbIndex);
 	}
 

@@ -8,6 +8,12 @@
     jdbc.properties 和 TestLog4jJdbc 需要修改对应的账号密码信息.
     然后执行 `mvn test`
 
+### 名词
+* `dbIndex` 	分库的索引
+* `dbName`    库的名字, 因为多个库公用一个连接池. 所以需要库名区分.
+* `dbInfoKey` 能够决定分库的字段或者DbIndex
+* `dbSourceKey` 能够决定使用哪个数据库连接池, 通常为 0 ~ 99 的数字.在db.properties 里面配置
+
 
 ### 结构
     分为几个部分
@@ -16,8 +22,6 @@
     IEntityDbInfo 和数据库交互的都是该接口直接或者间接实现类
     IRedisEntity  和redis相关的都是该接口直接或者间接实现类 已经实现了4个通用的类.  在(org.qiunet.data.redis.support)包下
     
-    
-
 
 ### Mysql
 	使用db.properties 配置.
