@@ -9,15 +9,15 @@ import org.qiunet.data.enums.PlatformType;
  * @Author qiunet
  * @Date Create in 2018/7/2 15:56
  **/
-public abstract class NumberPlatformEntityListDbInfo extends NumberPlatformEntityDbInfo implements IPlatformEntityListDbInfo {
-	private int subId;
+public abstract class NumberPlatformEntityListDbInfo<SubKey> extends NumberPlatformEntityDbInfo implements IPlatformEntityListDbInfo<SubKey> {
+	private SubKey subId;
 	private int tbIndex;
 
 	public NumberPlatformEntityListDbInfo(int val, PlatformType platformType) {
-		this(val, platformType, 0);
+		this(val, platformType, null);
 	}
 
-	public NumberPlatformEntityListDbInfo(int val, PlatformType platformType, int subId) {
+	public NumberPlatformEntityListDbInfo(int val, PlatformType platformType, SubKey subId) {
 		super(val, platformType);
 		this.subId = subId;
 		this.tbIndex = DbProperties.getInstance().getTbIndexById(val);
@@ -28,7 +28,7 @@ public abstract class NumberPlatformEntityListDbInfo extends NumberPlatformEntit
 	}
 
 	@Override
-	public int getSubId() {
+	public SubKey getSubId() {
 		return subId;
 	}
 }

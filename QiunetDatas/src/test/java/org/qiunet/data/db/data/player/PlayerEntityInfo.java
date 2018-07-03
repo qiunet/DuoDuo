@@ -16,7 +16,7 @@ import java.util.Objects;
  * @author qiunet
  *         Created on 17/2/13 13:36.
  */
-public class PlayerEntityInfo implements IPlatformEntityInfo<PlayerPo, PlayerVo> {
+public class PlayerEntityInfo implements IPlatformEntityInfo<Integer, PlayerPo, PlayerVo> {
 	@Override
 	public String getNameSpace() {
 		return "player";
@@ -43,7 +43,7 @@ public class PlayerEntityInfo implements IPlatformEntityInfo<PlayerPo, PlayerVo>
 	}
 
 	@Override
-	public Object getDbInfoKey(PlayerPo playerPo) {
+	public Integer getDbInfoKey(PlayerPo playerPo) {
 		return playerPo.getUid();
 	}
 
@@ -58,8 +58,8 @@ public class PlayerEntityInfo implements IPlatformEntityInfo<PlayerPo, PlayerVo>
 	}
 
 	@Override
-	public IPlatformEntityDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform) {
-		return new UidPlatformEntityDbInfo((Integer) dbInfoKey, platform);
+	public IPlatformEntityDbInfo getEntityDbInfo(Integer dbInfoKey, PlatformType platform) {
+		return new UidPlatformEntityDbInfo(dbInfoKey, platform);
 	}
 
 	@Override

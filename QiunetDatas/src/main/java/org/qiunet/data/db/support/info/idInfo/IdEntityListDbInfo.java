@@ -6,9 +6,9 @@ import org.qiunet.data.db.support.info.base.number.NumberEntityListDbInfo;
  * Created by qiunet.
  * 17/6/20
  */
-public class IdEntityListDbInfo extends NumberEntityListDbInfo {
+public class IdEntityListDbInfo<SubKey> extends NumberEntityListDbInfo<SubKey> {
 	private int id;
-	public IdEntityListDbInfo(Object id, int subId) {
+	public IdEntityListDbInfo(Object id, SubKey subId) {
 		super((Integer) id, subId);
 		this.id = (int) id;
 	}

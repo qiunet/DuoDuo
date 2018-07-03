@@ -9,9 +9,9 @@ import org.qiunet.data.db.support.info.base.number.NumberEntityDbInfo;
  */
 public class IdEntityDbInfo extends NumberEntityDbInfo {
 	private int id;
-	public IdEntityDbInfo (Object id) {
-		super((Integer) id);
-		this.id = (Integer)id;
+	public IdEntityDbInfo (int id) {
+		super(id);
+		this.id = id;
 	}
 
 	public int getId() {

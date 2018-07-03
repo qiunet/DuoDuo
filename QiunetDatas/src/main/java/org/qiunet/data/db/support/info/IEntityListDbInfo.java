@@ -5,7 +5,7 @@ package org.qiunet.data.db.support.info;
  * @author qiunet
  *         Created on 17/1/6 09:39.
  */
-public interface IEntityListDbInfo extends IEntityDbInfo {
+public interface IEntityListDbInfo<SubKey> extends IEntityDbInfo {
 	/**
 	 * 得到TbIndex
 	 * @return 得到table的index
@@ -15,5 +15,5 @@ public interface IEntityListDbInfo extends IEntityDbInfo {
 	 * 得到subId
 	 * @return 得到 能决定
 	 */
-	public int getSubId();
+	public SubKey getSubId();
 }

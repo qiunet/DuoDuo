@@ -12,12 +12,12 @@ import org.qiunet.utils.threadLocal.ThreadContextData;
  * @author qiunet
  *         Created on 17/2/10 17:32.
  */
-public class EntityDataSupport<PO extends IRedisEntity, VO> extends BaseDataSupport<PO> {
+public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends BaseDataSupport<PO> {
 
-	protected IEntityInfo<PO, VO> entityInfo;
+	protected IEntityInfo<DbInfoKey, PO, VO> entityInfo;
 
-	public EntityDataSupport(IEntityInfo<PO, VO> entityInfo){
-		super(new DbEntitySupport<PO>(), entityInfo);
+	public EntityDataSupport(IEntityInfo<DbInfoKey, PO, VO> entityInfo){
+		super(new DbEntitySupport<>(), entityInfo);
 		this.entityInfo = entityInfo;
 		this.selectStatment = entityInfo.getNameSpace()+".get"+entityInfo.getClazz().getSimpleName();
 	}
@@ -96,7 +96,7 @@ public class EntityDataSupport<PO extends IRedisEntity, VO> extends BaseDataSupp
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 * @return po的VO对象
 	 */
-	public VO getVo(Object dbInfoKey){
+	public VO getVo(DbInfoKey dbInfoKey){
 		String key = entityInfo.getRedisKey(dbInfoKey);
 		VO vo = ThreadContextData.get(key);
 		if (vo != null) return vo;

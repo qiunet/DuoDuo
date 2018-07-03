@@ -10,7 +10,7 @@ import org.qiunet.utils.data.CommonData;
  * @author qiunet
  *         Created on 17/1/25 11:55.
  */
-public interface IEntityListInfo<PO extends IRedisList, VO> extends IBaseEntityInfo<PO, VO> {
+public interface IEntityListInfo<DbInfoKey, SubKey, PO extends IRedisList, VO> extends IBaseEntityInfo<DbInfoKey, PO, VO> {
 	/***
 	 * redis key
 	 * @param dbInfoKey 分库使用的key 这个对象里面, 就是uid
@@ -23,11 +23,11 @@ public interface IEntityListInfo<PO extends IRedisList, VO> extends IBaseEntityI
 	 * @param subId subID
 	 * @return dbInfo
 	 */
-	public IEntityListDbInfo getEntityDbInfo(Object dbInfoKey, int subId);
+	public IEntityListDbInfo getEntityDbInfo(DbInfoKey dbInfoKey, SubKey subId);
 	/**
 	 * 得到map 的key
 	 * @param po po对象
 	 * @return subId
 	 */
-	public Integer getSubKey(PO po);
+	public SubKey getSubKey(PO po);
 }

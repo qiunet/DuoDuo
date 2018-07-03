@@ -14,7 +14,7 @@ import org.qiunet.data.redis.key.RedisKey;
  * @author qiunet
  *         Created on 17/2/14 10:44.
  */
-public class EquipEntityInfo implements IPlatformEntityListInfo<EquipPo, EquipVo> {
+public class EquipEntityInfo implements IPlatformEntityListInfo<Integer, Integer, EquipPo, EquipVo> {
 	@Override
 	public String getNameSpace() {
 		return "equip";
@@ -41,7 +41,7 @@ public class EquipEntityInfo implements IPlatformEntityListInfo<EquipPo, EquipVo
 	}
 
 	@Override
-	public Object getDbInfoKey(EquipPo equipPo) {
+	public Integer getDbInfoKey(EquipPo equipPo) {
 		return equipPo.getUid();
 	}
 
@@ -56,7 +56,7 @@ public class EquipEntityInfo implements IPlatformEntityListInfo<EquipPo, EquipVo
 	}
 
 	@Override
-	public IPlatformEntityListDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform, int subId) {
+	public IPlatformEntityListDbInfo getEntityDbInfo(Integer dbInfoKey, PlatformType platform, Integer subId) {
 		return new UidPlatformEntityListDbInfo(dbInfoKey, platform, subId);
 	}
 

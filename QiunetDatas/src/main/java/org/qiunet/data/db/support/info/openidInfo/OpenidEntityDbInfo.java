@@ -7,9 +7,9 @@ import org.qiunet.data.db.support.info.base.string.StringEntityDbInfo;
  */
 public class OpenidEntityDbInfo extends StringEntityDbInfo {
 	private String openid;
-	public OpenidEntityDbInfo(Object openid) {
-		super(openid.toString());
-		this.openid = openid.toString();
+	public OpenidEntityDbInfo(String openid) {
+		super(openid);
+		this.openid = openid;
 	}
 	public String getOpenid() {
 		return openid;

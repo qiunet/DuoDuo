@@ -7,5 +7,5 @@ import org.qiunet.data.db.support.info.IPlatformEntityListDbInfo;
  *         Created on 17/2/8 15:55.
  */
 public interface IPlatformRedisList extends IRedisList, IPlatFormRedisEntity, IPlatformEntityListDbInfo {
-	
+
 }

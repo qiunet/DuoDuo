@@ -9,9 +9,9 @@ import org.qiunet.data.enums.PlatformType;
  */
 public class UidPlatformEntityDbInfo extends NumberPlatformEntityDbInfo {
 	private int uid;
-	public UidPlatformEntityDbInfo(Object uid, PlatformType platformType) {
-		super((Integer) uid, platformType);
-		this.uid = (int) uid;
+	public UidPlatformEntityDbInfo(int uid, PlatformType platformType) {
+		super(uid, platformType);
+		this.uid = uid;
 	}
 
 	public int getUid() {

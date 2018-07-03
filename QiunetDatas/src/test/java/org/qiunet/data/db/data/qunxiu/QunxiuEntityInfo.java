@@ -12,7 +12,7 @@ import org.qiunet.data.redis.key.RedisKey;
  * @author qiunet
  *         Created on 17/2/27 17:31.
  */
-public class QunxiuEntityInfo implements IEntityInfo<QunxiuPo, QunxiuPo> {
+public class QunxiuEntityInfo implements IEntityInfo<Integer, QunxiuPo, QunxiuPo> {
 	@Override
 	public String getNameSpace() {
 		return "qunxiu";
@@ -39,7 +39,7 @@ public class QunxiuEntityInfo implements IEntityInfo<QunxiuPo, QunxiuPo> {
 	}
 
 	@Override
-	public Object getDbInfoKey(QunxiuPo qunxiuPo) {
+	public Integer getDbInfoKey(QunxiuPo qunxiuPo) {
 		return qunxiuPo.getId();
 	}
 
@@ -59,7 +59,7 @@ public class QunxiuEntityInfo implements IEntityInfo<QunxiuPo, QunxiuPo> {
 	}
 
 	@Override
-	public IEntityDbInfo getEntityDbInfo(Object dbInfoKey) {
+	public IEntityDbInfo getEntityDbInfo(Integer dbInfoKey) {
 		return new IdEntityDbInfo(dbInfoKey);
 	}
 }

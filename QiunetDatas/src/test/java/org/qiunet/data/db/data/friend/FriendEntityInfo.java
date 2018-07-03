@@ -12,7 +12,7 @@ import org.qiunet.data.redis.key.RedisKey;
  * @author qiunet
  *         Created on 17/2/12 15:43.
  */
-public class FriendEntityInfo implements IEntityInfo<FriendPo, FriendVo> {
+public class FriendEntityInfo implements IEntityInfo<Integer, FriendPo, FriendVo> {
 	@Override
 	public String getNameSpace() {
 		return "friend";
@@ -38,7 +38,7 @@ public class FriendEntityInfo implements IEntityInfo<FriendPo, FriendVo> {
 		return RedisDataUtil.getInstance();
 	}
 	@Override
-	public Object getDbInfoKey(FriendPo friendPo) {
+	public Integer getDbInfoKey(FriendPo friendPo) {
 		return friendPo.getUid();
 	}
 	@Override
@@ -52,7 +52,7 @@ public class FriendEntityInfo implements IEntityInfo<FriendPo, FriendVo> {
 	}
 
 	@Override
-	public IEntityDbInfo getEntityDbInfo(Object dbInfoKey) {
+	public IEntityDbInfo getEntityDbInfo(Integer dbInfoKey) {
 		return new UidEntityDbInfo(dbInfoKey);
 	}
 

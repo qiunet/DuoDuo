@@ -34,7 +34,7 @@ public class TestData {
 	@Test
 	public void testEntityData(){
 		FriendEntityInfo entityInfo = new FriendEntityInfo();
-		EntityDataSupport<FriendPo , FriendVo> dataSupport = new EntityDataSupport<FriendPo , FriendVo>(entityInfo);
+		EntityDataSupport<Integer, FriendPo , FriendVo> dataSupport = new EntityDataSupport(entityInfo);
 
 		int uid = 10000;
 		FriendPo friendPo = new FriendPo();
@@ -64,7 +64,7 @@ public class TestData {
 	@Test
 	public void testPlatformEntityData(){
 		PlayerEntityInfo entityInfo = new PlayerEntityInfo();
-		PlatformEntityDataSupport<PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport<PlayerPo, PlayerVo>(entityInfo);
+		PlatformEntityDataSupport<Integer, PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport(entityInfo);
 
 		int uid = 1101;
 		PlatformType platform = PlatformType.IOS;
@@ -96,7 +96,7 @@ public class TestData {
 	@Test
 	public void testEntityListData(){
 		SysmsgEntityInfo entityListInfo = new SysmsgEntityInfo();
-		EntityListDataSupport<SysmsgPo, SysmsgVo> dataSupport = new EntityListDataSupport(entityListInfo);
+		EntityListDataSupport<Integer, Integer, SysmsgPo, SysmsgVo> dataSupport = new EntityListDataSupport(entityListInfo);
 
 		int uid = 2000;
 		SysmsgPo sysMsgPo1 = new SysmsgPo();
@@ -143,7 +143,7 @@ public class TestData {
 		PlatformType platformType = PlatformType.ANDROID;
 
 		EquipEntityInfo equipEntityInfo = new EquipEntityInfo();
-		PlatformEntityListDataSupport<EquipPo, EquipVo> dataSupport = new PlatformEntityListDataSupport(equipEntityInfo);
+		PlatformEntityListDataSupport<Integer, Integer, EquipPo, EquipVo> dataSupport = new PlatformEntityListDataSupport(equipEntityInfo);
 		EquipPo equipPo1 = new EquipPo();
 		equipPo1.setPlatform(platformType);
 		equipPo1.setUid(uid);
@@ -189,7 +189,7 @@ public class TestData {
 	public void testLogin(){
 		String openid = "qiunet12345";
 		LoginEntityInfo entityInfo = new LoginEntityInfo();
-		EntityDataSupport<LoginPo, LoginPo> dataSupport = new EntityDataSupport<LoginPo, LoginPo>(entityInfo);
+		EntityDataSupport<String, LoginPo, LoginPo> dataSupport = new EntityDataSupport<>(entityInfo);
 
 		LoginPo loginPo = new LoginPo();
 		loginPo.setOpenid(openid);
@@ -216,7 +216,7 @@ public class TestData {
 	@Test
 	public void testQunxiu(){
 		QunxiuEntityInfo entityInfo = new QunxiuEntityInfo();
-		EntityDataSupport<QunxiuPo, QunxiuPo> dataSupport = new EntityDataSupport(entityInfo);
+		EntityDataSupport<Integer, QunxiuPo, QunxiuPo> dataSupport = new EntityDataSupport(entityInfo);
 
 		QunxiuPo qunxiuPo = new QunxiuPo();
 		qunxiuPo.setLevel(10);

@@ -12,10 +12,10 @@ import org.qiunet.utils.threadLocal.ThreadContextData;
  * @author qiunet
  *         Created on 17/2/11 08:38.
  */
-public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> extends BaseDataSupport<PO> {
-	private IPlatformEntityInfo<PO, VO> entityInfo;
+public class PlatformEntityDataSupport<DbInfoKey, PO extends IPlatFormRedisEntity, VO> extends BaseDataSupport<PO> {
+	private IPlatformEntityInfo<DbInfoKey, PO, VO> entityInfo;
 
-	public PlatformEntityDataSupport(IPlatformEntityInfo<PO, VO> entityInfo) {
+	public PlatformEntityDataSupport(IPlatformEntityInfo<DbInfoKey, PO, VO> entityInfo) {
 		super(new DbEntitySupport() , entityInfo);
 
 		this.entityInfo = entityInfo;
@@ -73,7 +73,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 * @param platform 平台
 	 */
-	public void expireCache(Object dbInfoKey, PlatformType platform) {
+	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
@@ -96,7 +96,7 @@ public class PlatformEntityDataSupport<PO extends IPlatFormRedisEntity, VO> exte
 	 * @param platform 平台
 	 * @return po的VO对象
 	 */
-	public VO getVo(Object dbInfoKey, PlatformType platform) {
+	public VO getVo(DbInfoKey dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		VO vo = ThreadContextData.get(key);
 		if (vo != null) return vo;
