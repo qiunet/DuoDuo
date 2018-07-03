@@ -9,8 +9,8 @@ import org.qiunet.data.redis.support.info.IRedisList;
  * @author qiunet
  *         Created on 16/12/30 08:08.
  */
-public abstract class RedisList extends RedisEntity implements IRedisList {
-	
+public abstract class RedisList<SubKey> extends RedisEntity implements IRedisList<SubKey> {
+
 	@Override
 	public int getTbIndex() {
 		return ((IEntityListDbInfo)entityDbInfo).getTbIndex();
