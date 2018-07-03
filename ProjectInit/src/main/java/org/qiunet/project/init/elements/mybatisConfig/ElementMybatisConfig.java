@@ -21,9 +21,9 @@ public class ElementMybatisConfig extends SubVmElement {
 		this.path = path;
 	}
 
-	public List<ExtraELementConfig> getExtraConfigs(){
-		return ((ConfigVmElement) base).getExtraConfigs();
-	}
+//	public List<ExtraELementConfig> getExtraConfigs(){
+//		return ((ConfigVmElement) base).getExtraConfigs();
+//	}
 
 	@Override
 	protected String getOutFilePath() {

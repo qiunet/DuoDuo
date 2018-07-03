@@ -60,6 +60,53 @@ public class Entity extends SubVmElement {
 	public String getSubKey() {
 		return subKey;
 	}
+
+	/***
+	 * 得到SubKey 类型
+	 * @return
+	 */
+	public String getSubKeyType(){
+		return getKeyType(this.subKey);
+	}
+
+	/***
+	 * 得到 DbInfoKey 类型
+	 * @return
+	 */
+	public String getDbInfoKeyType() {
+		return getKeyType(this.subKey);
+	}
+
+	/***
+	 * 得到 dbINfoKey 或者 subKey 的类型. 用来作为泛型使用
+	 * @param fieldName
+	 * @return
+	 */
+	private String getKeyType(String fieldName){
+		Field field = null;
+		for (Field f : fields) {
+			if (f.getName().equals(this.subKey)) {
+				field = f;
+				break;
+			}
+		}
+
+		if (field == null) {
+			throw new NullPointerException("poName ["+this.getName()+"] not have key field ["+subKey+"]");
+		}
+
+		switch (field.getType()) {
+			case "int":
+				return "Integer";
+			case "String":
+				return "String";
+			default:
+				throw new NullPointerException("poName ["+this.getName()+"] key ["+subKey+"] type not support. just string and number");
+		}
+
+	}
+
+
 	public void setSubKey(String subKey) {
 		if (entityType == null || isRedisList()) {
 			this.subKey = subKey;
@@ -77,6 +124,11 @@ public class Entity extends SubVmElement {
 	public String getClassInfo(){
 		return entityType.getClazz().getName();
 	}
+
+	/***
+	 * 是否是redisList
+	 * @return
+	 */
 	public boolean isRedisList(){
 		return entityType == EntityType.RedisList || entityType == EntityType.PlatformRedisList;
 	}
@@ -87,23 +139,19 @@ public class Entity extends SubVmElement {
 		if (!path.endsWith(File.separator)) path += File.separator;
 		return path;
 	}
+
 	public EntityType getType(){
 		return entityType;
 	}
 
-	public String getAliasName(){
-		if (getName().endsWith("Po")) return getName().substring(0, getName().length() - 2).toLowerCase();
-		return getName().toLowerCase();
-	}
-
-	public String getConfigFileName(String poName){
-		VmElement<ElementMapping> vmElement = ((VmElement<ElementMapping>)base.getParam("mapping"));
-		for (ElementMapping sub : vmElement.getSubVmElementList()) {
-			if (sub.getPoref().equals(poName)) return sub.getName();
-		}
-
-		IProjectInitConfig config = (IProjectInitConfig) base.getParam("baseConfig");
-		throw new NullPointerException("poName ["+poName+"] is not set in ["+config.getMabatisMappingXmlPath()+"]");
-	}
+//	public String getConfigFileName(String poName){
+//		VmElement<ElementMapping> vmElement = ((VmElement<ElementMapping>)base.getParam("mapping"));
+//		for (ElementMapping sub : vmElement.getSubVmElementList()) {
+//			if (sub.getPoref().equals(poName)) return sub.getName();
+//		}
+//
+//		IProjectInitConfig config = (IProjectInitConfig) base.getParam("baseConfig");
+//		throw new NullPointerException("poName ["+poName+"] is not set in ["+config.getMabatisMappingXmlPath()+"]");
+//	}
 
 }

@@ -50,4 +50,11 @@
 		<field name="item_id" type="int" comment="物品id"/>
 		<field name="count" type="int" comment="物品数量"/>
 	</entity>
+
+	<entity name="EquipPo" dbInfoKey="uid" packagePath="project.init.test.equip.entity" entityType="PlatformRedisList" subKey="equip_id">
+		<field name="uid" type="int" comment="UId"/>
+		<field name="equip_id" type="String" comment="装备id"/>
+		<field name="exp" type="int" comment="经验"/>
+		<field name="level" type="int" comment="等级"/>
+	</entity>
 </base>

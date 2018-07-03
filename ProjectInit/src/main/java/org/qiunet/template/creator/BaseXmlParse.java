@@ -17,6 +17,7 @@ public abstract class BaseXmlParse {
 	private Digester digester;
 
 	private String xmlFile;
+
 	/** 对于xmlfile和 vmfile的一个基础路径, 之后的xml 和 vm是基于该路径的相对路径. */
 	private String basePath;
 	/***

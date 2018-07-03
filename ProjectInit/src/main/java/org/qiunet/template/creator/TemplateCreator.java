@@ -1,11 +1,9 @@
 package org.qiunet.template.creator;
 
-import org.qiunet.template.config.Constants;
+import org.qiunet.project.init.ProjectInitData;
 import org.qiunet.template.parse.template.VelocityFactory;
 import org.qiunet.template.parse.xml.SubVmElement;
 import org.qiunet.template.parse.xml.VmElement;
-
-import java.util.Map;
 
 /**
  * @author qiunet
@@ -13,47 +11,32 @@ import java.util.Map;
  */
 public class TemplateCreator<T extends SubVmElement> {
 	private BaseXmlParse parse;
-	/**循环该 xml得到SubVmElement 的 对象名称*/
-	private String dataObjName;
-	/**其他需要添加到velocity的参数对象. 名称自己指定. 不能包含rootObjName*/
-	private Map<String, Object> params;
-	
-	private VmElement<T> vmBase;
 
-	public void addVmBase(VmElement<T> vmBase){
-		this.vmBase = vmBase;
+	private ProjectInitData initData;
+
+	private VmElement<T> vmElement;
+
+	public void addVmElement(VmElement<T> vmElement){
+		this.vmElement = vmElement;
 	}
 
-	public TemplateCreator(BaseXmlParse parse) throws Exception {
-		this(parse, Constants.DEFAULT_DATA_OBJECT_NAME);
-	}
-	public TemplateCreator(BaseXmlParse parse, Map<String ,Object> params) throws Exception {
-		this(parse, Constants.DEFAULT_DATA_OBJECT_NAME,params);
-	}
-	public TemplateCreator(BaseXmlParse parse, String dataObjName) throws Exception {
-		this(parse, dataObjName,null);
-	}
-	public TemplateCreator(BaseXmlParse parse, String dataObjName, Map<String ,Object> params) throws Exception {
+	public TemplateCreator(BaseXmlParse parse, ProjectInitData initData) {
 		this.parse = parse;
-		this.params = params;
-		this.dataObjName = dataObjName;
-		
-		if (params != null && params.containsKey(dataObjName)) throw new Exception("can container rootObjName");
+		this.initData = initData;
 	}
-
 	/***
 	 * 输出base
 	 */
 	public VmElement<T> parseTemplate() {
 		parse.setValidating(false);
-		parse.push(this ,"addVmBase");
+		parse.push(this ,"addVmElement");
 		parse.parseXml();
 		parse.parse();
 
-		this.vmBase.initParams(params);
+		this.vmElement.initParams(initData);
 		// 输出basevm信息
-		VelocityFactory.getInstance().initVelocityEngine(dataObjName, params);
-		vmBase.parseVm(parse.getBasePath());
-		return vmBase;
+		VelocityFactory.getInstance().initVelocityEngine(initData);
+		vmElement.parseVm(parse.getBasePath());
+		return vmElement;
 	}
 }

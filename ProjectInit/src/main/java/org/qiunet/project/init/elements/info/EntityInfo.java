@@ -18,15 +18,15 @@ public class EntityInfo extends SubVmElement {
 	private String redisRef;
 	private String dbInfoRef;
 
-	public ElementRedisKey getRediskey(){
-		return ((BeanVmElement) base).getRedisKey();
-	}
-	public Bean getRedis(){
-		return ((BeanVmElement)base).getBean(redisRef);
-	}
-	public Bean getDbinfo(){
-		return ((BeanVmElement)base).getBean(dbInfoRef);
-	}
+//	public ElementRedisKey getRediskey(){
+//		return ((BeanVmElement) base).getRedisKey();
+//	}
+//	public Bean getRedis(){
+//		return ((BeanVmElement)base).getBean(redisRef);
+//	}
+//	public Bean getDbinfo(){
+//		return ((BeanVmElement)base).getBean(dbInfoRef);
+//	}
 	public String getRedisRef() {
 		return redisRef;
 	}
@@ -69,10 +69,10 @@ public class EntityInfo extends SubVmElement {
 	}
 	@Override
 	protected String getOutFilePath() {
-		if (base.getParam("entity") == null
-		|| ((VmElement)base.getParam("entity")).subVmElement(poref) == null) {
+		if (initData == null
+		|| initData.getEntity(poref) == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
 		}
-		return ((Entity)((VmElement)base.getParam("entity")).subVmElement(poref)).getInfoPackagePath().replace(".", File.separator);
+		return initData.getEntity(poref).getInfoPackagePath().replace(".", File.separator);
 	}
 }

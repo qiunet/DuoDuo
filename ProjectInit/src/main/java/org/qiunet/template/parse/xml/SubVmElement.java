@@ -1,5 +1,7 @@
 package org.qiunet.template.parse.xml;
 
+import org.qiunet.project.init.IProjectInitConfig;
+import org.qiunet.project.init.ProjectInitData;
 import org.qiunet.template.parse.template.VelocityFactory;
 
 import java.io.File;
@@ -10,13 +12,14 @@ import java.io.File;
  *         Created on 16/11/21 11:54.
  */
 public abstract class SubVmElement {
-	protected VmElement base;
+	protected ProjectInitData initData;
 
 	private String name;
 
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -25,7 +28,8 @@ public abstract class SubVmElement {
 		if (! outfilePath.endsWith(File.separator))  outfilePath += File.separator;
 
 		String outputFileName = outfilePath + name +"."+ postfix;
-		VelocityFactory.getInstance().parseOutFile(vmfilePath,outputFileName,this);
+
+		VelocityFactory.getInstance().parseOutFile(vmfilePath, outputFileName, this);
 	}
 	/**
 	 * 得到输出文件的路径
@@ -33,11 +37,14 @@ public abstract class SubVmElement {
 	 */
 	protected abstract String getOutFilePath();
 
+	protected IProjectInitConfig getProjectConfig() {
+		return initData.getConfig();
+	}
 	/**
-	 * 给每个subElement 设置 VmElement. 这样 subElement能取到VmElement的数据
-	 * @param base vmElement
+	 * 给每个subElement 设置 ProjectInitData. 这样 subElement能取到ProjectInitData的数据
+	 * @param initData ProjectInitData
 	 */
-	void setBase(VmElement base) {
-		this.base = base;
+	void setInitData(ProjectInitData initData) {
+		this.initData = initData;
 	}
 }
