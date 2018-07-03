@@ -64,7 +64,7 @@ public class ${allData.currData.name} implements ${entityInfoType.toString()}<${
 
 #if(${entityObj.redisList})
 	@Override
-	public Integer getSubKey(${entityObj.name} po) {
+	public ${entityObj.subKeyType} getSubKey(${entityObj.name} po) {
 		return po.getSubId();
 	}
 

@@ -1,33 +1,30 @@
 package org.qiunet.template.creator;
 
 import org.qiunet.project.init.ProjectInitData;
-import org.qiunet.template.parse.template.VelocityFactory;
-import org.qiunet.template.parse.xml.SubVmElement;
-import org.qiunet.template.parse.xml.VmElement;
 
 /**
  * @author qiunet
  *         Created on 16/11/16 20:39.
  */
-public class TemplateCreator<T extends SubVmElement> {
-	private BaseXmlParse parse;
+public class TemplateCreator<VmElement extends org.qiunet.template.parse.xml.VmElement, XmlParse extends BaseXmlParse<VmElement>> {
+	private XmlParse parse;
 
 	private ProjectInitData initData;
 
-	private VmElement<T> vmElement;
+	private VmElement vmElement;
 
-	public void addVmElement(VmElement<T> vmElement){
+	public void addVmElement(VmElement vmElement){
 		this.vmElement = vmElement;
 	}
 
-	public TemplateCreator(BaseXmlParse parse, ProjectInitData initData) {
+	public TemplateCreator(XmlParse parse, ProjectInitData initData) {
 		this.parse = parse;
 		this.initData = initData;
 	}
 	/***
 	 * 输出base
 	 */
-	public VmElement<T> parseTemplate() {
+	public VmElement parseTemplate() {
 		parse.setValidating(false);
 		parse.push(this ,"addVmElement");
 		parse.parseXml();

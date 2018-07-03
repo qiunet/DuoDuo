@@ -10,7 +10,7 @@ import org.qiunet.project.init.elements.info.EntityInfo;
  * @author qiunet
  *         Created on 17/2/15 18:20.
  */
-public class EntityInfoXmlParse extends BaseXmlParse {
+public class EntityInfoXmlParse extends BaseXmlParse<EntityInfoVmElement> {
 
 	/***
 	 * 构造一个 xmlparse 解析 xml

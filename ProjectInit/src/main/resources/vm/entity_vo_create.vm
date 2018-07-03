@@ -1,11 +1,11 @@
-package ${data.packagePath};
+package ${allData.currData.packagePath};
 
-public class ${data.voName} {
-	private ${data.poName} po;
-	public ${data.voName} (${data.poName} po) {
+public class ${allData.currData.voName} {
+	private ${allData.currData.poName} po;
+	public ${allData.currData.voName} (${allData.currData.poName} po) {
 		this.po = po;
 	}
-	public ${data.poName} get${data.poName}(){
+	public ${allData.currData.poName} get${allData.currData.poName}(){
 		return po;
 	}
 }

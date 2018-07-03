@@ -8,7 +8,7 @@ import org.qiunet.project.init.elements.mapping.ElementMapping;
  * @author qiunet
  *         Created on 17/2/23 18:15.
  */
-public class MybatisMappingXmlParse extends BaseXmlParse {
+public class MybatisMappingXmlParse extends BaseXmlParse<MappingVmElement> {
 
 	public MybatisMappingXmlParse(String basePath, String xmlConfigPath) {
 		super(MappingVmElement.class, basePath, xmlConfigPath);
