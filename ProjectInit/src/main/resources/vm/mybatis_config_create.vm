@@ -1,4 +1,4 @@
-#set($entityList=${entity.SubVmElementList})
+#set($entityList=${allData.allEntity})
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
 		PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
@@ -35,11 +35,11 @@
         <plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor" />
     </plugins>
 	<mappers>
-		#foreach(${extraXml} in ${data.extraConfigs})
-		<mapper resource="${data.path}/${extraXml.name}" />
-		#end
-		#foreach(${entity} in ${entityList})
-		<mapper resource="${data.path}/${entity.getConfigFileName(${entity.name})}.xml" />
-		#end
-	</mappers>
+        #foreach(${extraXml} in ${allData.currData.extraConfigs})
+        <mapper resource="${allData.currData.path}/${extraXml.name}" />
+        #end
+        #foreach(${entity} in ${entityList})
+        <mapper resource="${allData.currData.path}/${entity.getConfigFileName(${entity.name})}.xml" />
+        #end
+    </mappers>
 </configuration>

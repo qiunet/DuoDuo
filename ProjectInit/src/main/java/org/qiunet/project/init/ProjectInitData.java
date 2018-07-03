@@ -8,16 +8,15 @@ import org.qiunet.project.init.elements.info.EntityVo;
 import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.project.init.elements.mapping.MappingVmElement;
 import org.qiunet.project.init.elements.mybatisConfig.ConfigVmElement;
-import org.qiunet.project.init.elements.mybatisConfig.ElementMybatisConfig;
 import org.qiunet.project.init.xmlparse.EntityInfoXmlParse;
 import org.qiunet.project.init.xmlparse.EntityXmlParse;
-import org.qiunet.template.creator.BaseXmlParse;
+import org.qiunet.project.init.xmlparse.MybatisConfigXmlParse;
+import org.qiunet.project.init.xmlparse.MybatisMappingXmlParse;
 import org.qiunet.template.creator.TemplateCreator;
 import org.qiunet.template.parse.template.VelocityFactory;
-import org.qiunet.template.parse.xml.SubVmElement;
-import org.qiunet.template.parse.xml.VmElement;
 
 import java.io.File;
+import java.util.List;
 
 /***
  *
@@ -28,18 +27,22 @@ public class ProjectInitData {
 	private IProjectInitConfig config;
 	private EntityVmElement entity;
 	private EntityInfoVmElement entityInfo;
+	private ConfigVmElement elementConfig;
 	private MappingVmElement elementMapping;
-	private ConfigVmElement elementMybatisConfig;
 
 
 	private Object currData;
 
 	public ProjectInitData(IProjectInitConfig config) {
 		this.config = config;
+	}
 
+	public void create(){
 		this.initEntity();
 		this.initEntityInfo();
 		this.createEntityVo();
+		this.initMybatisMapping();
+		this.initMybatisConfig();
 	}
 	/***
 	 * 得到某个po的Entity对象
@@ -48,6 +51,22 @@ public class ProjectInitData {
 	 */
 	public Entity getEntity(String poName) {
 		return entity.subVmElement(poName);
+	}
+
+	/***
+	 * 得到所有的entity list
+	 * @return
+	 */
+	public List<Entity> getAllEntity() {
+		return entity.getSubVmElementList();
+	}
+
+	/***
+	 * 得到所有的entity list
+	 * @return
+	 */
+	public List<ElementMapping> getAllElementMapping() {
+		return elementMapping.getSubVmElementList();
 	}
 
 	private void initEntity() {
@@ -60,6 +79,18 @@ public class ProjectInitData {
 		EntityInfoXmlParse entityInfoParse = new EntityInfoXmlParse(config.getBasePath(),config.getEntityInfoXmlPath());
 		TemplateCreator<EntityInfoVmElement, EntityInfoXmlParse> creator = new TemplateCreator(entityInfoParse, this);
 		this.entityInfo = creator.parseTemplate();
+	}
+
+	private void initMybatisConfig(){
+		MybatisConfigXmlParse mybatisConfigXmlParse = new MybatisConfigXmlParse(config.getBasePath(), config.getMybatisConfigXmlPath());
+		TemplateCreator<ConfigVmElement, MybatisConfigXmlParse> creator = new TemplateCreator(mybatisConfigXmlParse, this);
+		this.elementConfig = creator.parseTemplate();
+	}
+
+	private void initMybatisMapping(){
+		MybatisMappingXmlParse mybatisMappingParse = new MybatisMappingXmlParse(config.getBasePath(), config.getMabatisMappingXmlPath());
+		TemplateCreator<MappingVmElement, MybatisMappingXmlParse> creator = new TemplateCreator(mybatisMappingParse, this);
+		this.elementMapping = creator.parseTemplate();
 	}
 
 	public Object getCurrData() {
@@ -85,17 +116,34 @@ public class ProjectInitData {
 		if (! entity.getBaseDir().endsWith(File.separator)) poBasePath.append(File.separator);
 
 		for (EntityInfo info : entityInfo.getSubVmElementList()) {
-			if (! info.getVo().equals(info.getPoref())) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(poBasePath).append(getEntity(info.getPoref()).getOutFilePath()).append(info.getVo()).append(".java");
+			StringBuilder sb = new StringBuilder();
+			sb.append(poBasePath).append(getEntity(info.getPoref()).getOutFilePath()).append(info.getVo()).append(".java");
 
-				File file = new File(sb.toString());
-				if (! file.exists()) {
-					EntityVo entityVo = new EntityVo(getEntity(info.getPoref()), info.getVo());
-					this.currData = entityVo;
+			File file = new File(sb.toString());
+			if (! file.exists()) {
+				EntityVo entityVo = new EntityVo(getEntity(info.getPoref()), info.getVo());
+				this.currData = entityVo;
 
-					VelocityFactory.getInstance().parseOutFile("vm/entity_vo_create.vm", sb.toString(), this);
-				}
+				VelocityFactory.getInstance().parseOutFile("vm/entity_vo_create.vm", sb.toString(), this);
+			}
+		}
+	}
+
+	private void createService(){
+		String basePath = config.getBasePath();
+		StringBuilder poBasePath = new StringBuilder(basePath);
+		if (! basePath.endsWith(File.separator)) poBasePath.append(File.separator);
+		poBasePath.append(entity.getBaseDir());
+		if (! entity.getBaseDir().endsWith(File.separator)) poBasePath.append(File.separator);
+
+		for (EntityInfo info : entityInfo.getSubVmElementList()) {
+			StringBuilder sb = new StringBuilder();
+			sb.append(poBasePath).append(getEntity(info.getPoref()).getOutFilePath()).append(info.getVo()).append(".java");
+
+			File file = new File(sb.toString());
+			if (! file.exists()) {
+
+				VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", sb.toString(), this);
 			}
 		}
 	}

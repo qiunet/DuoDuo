@@ -64,7 +64,7 @@ public class ElementMapping extends SubVmElement<MappingVmElement> {
 		if (!StringUtil.isEmpty(tablePrefix)) {
 			sb.append(tablePrefix);
 		} else {
-			if (poref.endsWith("Po")) sb.append(poref.substring(0, getName().length() - 2).toLowerCase());
+			if (poref.endsWith("Po")) sb.append(poref.substring(0, poref.length() - 2).toLowerCase());
 			else sb.append(poref.toLowerCase());
 		}
 

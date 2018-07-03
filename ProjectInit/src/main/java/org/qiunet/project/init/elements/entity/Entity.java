@@ -1,5 +1,6 @@
 package org.qiunet.project.init.elements.entity;
 
+import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.template.parse.xml.SubVmElement;
 import org.qiunet.project.init.enums.EntityType;
 
@@ -20,10 +21,6 @@ public class Entity extends SubVmElement<EntityVmElement> {
 	private List<Field> fields = new ArrayList<>();
 	private List<Constructor> constructors = new ArrayList<>();
 
-
-	public String getInfoPackagePath(){
-		return packagePath.substring(0, packagePath.lastIndexOf('.'))+".info";
-	}
 	public String getPackagePath() {
 		return packagePath;
 	}
@@ -149,14 +146,11 @@ public class Entity extends SubVmElement<EntityVmElement> {
 		return entityType;
 	}
 
-//	public String getConfigFileName(String poName){
-//		VmElement<ElementMapping> vmElement = ((VmElement<ElementMapping>)base.getParam("mapping"));
-//		for (ElementMapping sub : vmElement.getSubVmElementList()) {
-//			if (sub.getPoref().equals(poName)) return sub.getName();
-//		}
-//
-//		IProjectInitConfig config = (IProjectInitConfig) base.getParam("baseConfig");
-//		throw new NullPointerException("poName ["+poName+"] is not set in ["+config.getMabatisMappingXmlPath()+"]");
-//	}
+	public String getConfigFileName(String poName){
+		for (ElementMapping sub : getAllElementMapping()) {
+			if (sub.getPoref().equals(poName)) return sub.getName();
+		}
 
+		throw new NullPointerException("poName ["+poName+"] is not set in ["+getProjectConfig().getMabatisMappingXmlPath()+"]");
+	}
 }

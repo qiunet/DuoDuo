@@ -3,9 +3,11 @@ package org.qiunet.template.parse.xml;
 import org.qiunet.project.init.IProjectInitConfig;
 import org.qiunet.project.init.ProjectInitData;
 import org.qiunet.project.init.elements.entity.Entity;
+import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.template.parse.template.VelocityFactory;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * 可以输出vm模板的最小单位. 下面的数据结构自行定义.
@@ -42,6 +44,10 @@ public abstract class SubVmElement<T extends VmElement> {
 
 	protected Entity getEntity(String poName){
 		return vmElement.getInitData().getEntity(poName);
+	}
+
+	protected List<ElementMapping> getAllElementMapping() {
+		return vmElement.getInitData().getAllElementMapping();
 	}
 
 	protected IProjectInitConfig getProjectConfig() {

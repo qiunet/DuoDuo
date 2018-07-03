@@ -1,5 +1,6 @@
 package org.qiunet.project.init.elements.info;
 
+import org.qiunet.project.init.elements.entity.Entity;
 import org.qiunet.template.parse.xml.SubVmElement;
 
 import java.io.File;
@@ -74,6 +75,15 @@ public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 		if (getEntity(poref) == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
-		return getEntity(poref).getInfoPackagePath().replace(".", File.separator);
+		return getInfoPackagePath().replace(".", File.separator);
+	}
+
+	/***
+	 * 得到infoPackagePath
+	 * @return
+	 */
+	public String getInfoPackagePath(){
+		Entity entity = getEntity(poref);
+		return entity.getPackagePath().substring(0, entity.getPackagePath().lastIndexOf('.'))+".info";
 	}
 }

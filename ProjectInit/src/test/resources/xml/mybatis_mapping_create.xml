@@ -21,4 +21,5 @@
 	<mapping name="login"  poref="LoginPo" />
 	<mapping name="player"  poref="PlayerPo" />
 	<mapping name="item"  poref="ItemPo"/>
+	<mapping name="equip"  poref="EquipPo"/>
 </base>

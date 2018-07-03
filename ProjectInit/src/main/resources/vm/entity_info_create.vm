@@ -2,7 +2,7 @@
 #set($entityType = ${entityObj.type})
 #set($entityInfoType = ${entityType.InfoType})
 #set($entityDbInfoType = ${entityType.DbInfoType})
-package ${entityObj.InfoPackagePath};
+package ${allData.currData.InfoPackagePath};
 
 import ${allData.currData.redis.clazz};
 import ${allData.currData.dbinfo.clazz};
