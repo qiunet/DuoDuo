@@ -80,7 +80,7 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 * @param platform 平台
 	 */
-	public void expireCache(Object dbInfoKey, PlatformType platform) {
+	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
@@ -125,6 +125,7 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 		if (poList != null && !poList.isEmpty()) {
 			for (PO po : poList) {
 				po.setPlatform(platform);
+				po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 				voMap.put(entityInfo.getSubKey(po), entityInfo.getVo(po));
 			}
 		}

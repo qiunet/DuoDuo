@@ -111,6 +111,7 @@ public class PlatformEntityDataSupport<DbInfoKey, PO extends IPlatFormRedisEntit
 		if (po != null ){
 			po.setPlatform(platform);
 			vo = entityInfo.getVo(po);
+			po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 			ThreadContextData.put(key, vo);
 			return  vo;
 		}

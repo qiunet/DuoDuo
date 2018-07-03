@@ -119,7 +119,8 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 
 		if (poList != null && !poList.isEmpty()) {
 			for (PO po : poList) {
-				voMap.put(entityInfo.getSubKey(po), (VO) entityInfo.getVo(po));
+				po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
+				voMap.put(entityInfo.getSubKey(po), entityInfo.getVo(po));
 			}
 		}
 		ThreadContextData.put(key, voMap);
