@@ -11,7 +11,6 @@ import java.io.File;
  */
 public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 	private String poref;
-	private String vo;
 	private String async;
 	private String redisRef;
 	private String dbInfoRef;
@@ -47,11 +46,7 @@ public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 	}
 
 	public String getVo() {
-		return vo;
-	}
-
-	public void setVo(String vo) {
-		this.vo = vo;
+		return getEntityAliasName()+"Vo";
 	}
 
 	public String getPoref() {
@@ -62,6 +57,9 @@ public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 		this.poref = poref;
 	}
 
+	private String getEntityAliasName(){
+		return poref.substring(0, poref.length() - 2);
+	}
 	/**
 	 * 数据库mybatis 的nameSpace
 	 * @return
@@ -85,5 +83,18 @@ public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 	public String getInfoPackagePath(){
 		Entity entity = getEntity(poref);
 		return entity.getPackagePath().substring(0, entity.getPackagePath().lastIndexOf('.'))+".info";
+	}
+
+	/***
+	 * 得到infoPackagePath
+	 * @return
+	 */
+	public String getServicePackagePath(){
+		Entity entity = getEntity(poref);
+		return entity.getPackagePath().substring(0, entity.getPackagePath().lastIndexOf('.'))+".service";
+	}
+
+	public String getServiceFileName(){
+		return getEntityAliasName()+"Service";
 	}
 }

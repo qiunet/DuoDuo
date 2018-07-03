@@ -14,7 +14,6 @@
 		<!ATTLIST info poref CDATA #REQUIRED>
 		<!ATTLIST info redisRef IDREF #REQUIRED>
 		<!ATTLIST info dbInfoRef IDREF #REQUIRED>
-		<!ATTLIST info vo CDATA #REQUIRED>
 		<!ATTLIST info async (true|false) #REQUIRED>
 		<!ELEMENT beans (bean+) >
 
@@ -40,9 +39,9 @@
 	</beans>
 
 	<infos>
-		<info name="PlayerEntityInfo" poref="PlayerPo" vo="PlayerVo" async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityDbInfo" />
-		<info name="ItemEntityInfo" poref="ItemPo" vo="ItemVo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityListDbInfo" />
-		<info name="LoginEntityInfo" poref="LoginPo" vo="LoginVo" async="true" redisRef="defaultRedis" dbInfoRef="OpenidEntityDbInfo" />
-		<info name="EquipEntityInfo" poref="EquipPo" vo="EquipVo" async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityListDbInfo" />
+		<info name="PlayerEntityInfo" poref="PlayerPo"  async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityDbInfo" />
+		<info name="ItemEntityInfo" poref="ItemPo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityListDbInfo" />
+		<info name="LoginEntityInfo" poref="LoginPo" async="true" redisRef="defaultRedis" dbInfoRef="OpenidEntityDbInfo" />
+		<info name="EquipEntityInfo" poref="EquipPo" async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityListDbInfo" />
 	</infos>
 </base>

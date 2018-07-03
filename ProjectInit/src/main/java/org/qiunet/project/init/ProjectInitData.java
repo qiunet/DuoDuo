@@ -138,7 +138,8 @@ public class ProjectInitData {
 
 		for (EntityInfo info : entityInfo.getSubVmElementList()) {
 			StringBuilder sb = new StringBuilder();
-			sb.append(poBasePath).append(getEntity(info.getPoref()).getOutFilePath()).append(info.getVo()).append(".java");
+			String servicePath = info.getServicePackagePath();
+			sb.append(poBasePath).append(servicePath.replace(".", File.separator)).append(File.separator).append(info.getServiceFileName()).append(".java");
 
 			File file = new File(sb.toString());
 			if (! file.exists()) {
