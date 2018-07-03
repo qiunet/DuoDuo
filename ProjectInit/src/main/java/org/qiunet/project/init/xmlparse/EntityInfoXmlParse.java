@@ -1,5 +1,6 @@
 package org.qiunet.project.init.xmlparse;
 
+import org.qiunet.project.init.elements.info.EntityInfoVmElement;
 import org.qiunet.template.creator.BaseXmlParse;
 import org.qiunet.project.init.elements.info.Bean;
 import org.qiunet.project.init.elements.info.ElementRedisKey;
@@ -19,7 +20,7 @@ public class EntityInfoXmlParse extends BaseXmlParse {
 	xml 第一个元素的名称
 	 */
 	public EntityInfoXmlParse(String basePath, String xmlConfigPath) {
-		super(BeanVmElement.class, basePath, xmlConfigPath);
+		super(EntityInfoVmElement.class, basePath, xmlConfigPath);
 	}
 	@Override
 	public void parseXml() {

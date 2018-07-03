@@ -11,7 +11,7 @@ import org.qiunet.utils.string.StringUtil;
  * @author qiunet
  *         Created on 17/2/22 08:13.
  */
-public class ElementMapping extends SubVmElement {
+public class ElementMapping extends SubVmElement<MappingVmElement> {
 	private String poref;
 	private boolean uniqid;
 	private String selectKey;
@@ -53,7 +53,7 @@ public class ElementMapping extends SubVmElement {
 	}
 
 	public String getTableName(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in "+ getProjectConfig().getEntityXmlPath());
 		}
@@ -82,7 +82,7 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getSelectSql(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
@@ -103,7 +103,7 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getUpdateSql(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in  "+getProjectConfig().getEntityXmlPath());
 		}
@@ -134,7 +134,7 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getInsertSql(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
@@ -172,7 +172,7 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getDeleteSql(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in  "+getProjectConfig().getEntityXmlPath());
 		}
@@ -192,7 +192,7 @@ public class ElementMapping extends SubVmElement {
 		return sb.toString();
 	}
 	public String getSelectStatment(){
-		Entity entity = initData.getEntity(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
 			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}

@@ -1,6 +1,5 @@
 package org.qiunet.project.init.elements.mybatisConfig;
 
-import org.qiunet.project.init.xmlparse.ConfigVmElement;
 import org.qiunet.template.parse.xml.SubVmElement;
 
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
  * @author qiunet
  *         Created on 17/2/17 16:36.
  */
-public class ElementMybatisConfig extends SubVmElement {
+public class ElementMybatisConfig extends SubVmElement<ConfigVmElement> {
 
 	private String path;
 
@@ -21,9 +20,9 @@ public class ElementMybatisConfig extends SubVmElement {
 		this.path = path;
 	}
 
-//	public List<ExtraELementConfig> getExtraConfigs(){
-//		return ((ConfigVmElement) base).getExtraConfigs();
-//	}
+	public List<ExtraELementConfig> getExtraConfigs(){
+		return vmElement.getExtraConfigs();
+	}
 
 	@Override
 	protected String getOutFilePath() {

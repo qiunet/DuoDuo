@@ -2,6 +2,7 @@ package org.qiunet.template.parse.xml;
 
 import org.qiunet.project.init.IProjectInitConfig;
 import org.qiunet.project.init.ProjectInitData;
+import org.qiunet.project.init.elements.entity.Entity;
 import org.qiunet.template.parse.template.VelocityFactory;
 
 import java.io.File;
@@ -11,8 +12,8 @@ import java.io.File;
  * @author qiunet
  *         Created on 16/11/21 11:54.
  */
-public abstract class SubVmElement {
-	protected ProjectInitData initData;
+public abstract class SubVmElement<T extends VmElement> {
+	protected T vmElement;
 
 	private String name;
 
@@ -29,7 +30,9 @@ public abstract class SubVmElement {
 
 		String outputFileName = outfilePath + name +"."+ postfix;
 
-		VelocityFactory.getInstance().parseOutFile(vmfilePath, outputFileName, this);
+		vmElement.getInitData().setCurrData(this);
+
+		VelocityFactory.getInstance().parseOutFile(vmfilePath, outputFileName, vmElement.getInitData());
 	}
 	/**
 	 * 得到输出文件的路径
@@ -37,14 +40,18 @@ public abstract class SubVmElement {
 	 */
 	protected abstract String getOutFilePath();
 
+	protected Entity getEntity(String poName){
+		return vmElement.getInitData().getEntity(poName);
+	}
+
 	protected IProjectInitConfig getProjectConfig() {
-		return initData.getConfig();
+		return vmElement.getInitData().getConfig();
 	}
 	/**
-	 * 给每个subElement 设置 ProjectInitData. 这样 subElement能取到ProjectInitData的数据
-	 * @param initData ProjectInitData
+	 * 给每个subElement 设置 vmElement. 这样 subElement能取到ProjectInitData的数据
+	 * @param vmElement VmElement
 	 */
-	void setInitData(ProjectInitData initData) {
-		this.initData = initData;
+	void setVmElement(T vmElement) {
+		this.vmElement = vmElement;
 	}
 }

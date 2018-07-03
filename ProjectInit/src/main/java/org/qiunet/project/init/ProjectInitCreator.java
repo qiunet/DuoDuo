@@ -36,10 +36,6 @@ public final class ProjectInitCreator {
 		new ProjectInitData(config);
 
 		try {
-
-//			VmElement<EntityInfo> entityInfoVmElements = new TemplateCreator(entityInfoParse, params).parseTemplate();
-//			params.put("info", entityInfoVmElements);
-//
 //			handlerVo(basePath, entityVmElements, entityInfoVmElements);
 //
 //			VmElement<ElementMapping> mybatisMappingVmElement = new TemplateCreator(mybatisMappingParse, params).parseTemplate();

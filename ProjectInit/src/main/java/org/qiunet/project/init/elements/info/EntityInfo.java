@@ -1,9 +1,6 @@
 package org.qiunet.project.init.elements.info;
 
-import org.qiunet.project.init.elements.entity.Entity;
-import org.qiunet.project.init.xmlparse.BeanVmElement;
 import org.qiunet.template.parse.xml.SubVmElement;
-import org.qiunet.template.parse.xml.VmElement;
 
 import java.io.File;
 
@@ -11,22 +8,23 @@ import java.io.File;
  * @author qiunet
  *         Created on 17/2/15 18:17.
  */
-public class EntityInfo extends SubVmElement {
+public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 	private String poref;
 	private String vo;
 	private String async;
 	private String redisRef;
 	private String dbInfoRef;
 
-//	public ElementRedisKey getRediskey(){
-//		return ((BeanVmElement) base).getRedisKey();
-//	}
-//	public Bean getRedis(){
-//		return ((BeanVmElement)base).getBean(redisRef);
-//	}
-//	public Bean getDbinfo(){
-//		return ((BeanVmElement)base).getBean(dbInfoRef);
-//	}
+	public ElementRedisKey getRediskey(){
+		return vmElement.getRedisKey();
+	}
+	public Bean getRedis(){
+		return vmElement.getBean(redisRef);
+	}
+	public Bean getDbinfo(){
+		return vmElement.getBean(dbInfoRef);
+	}
+
 	public String getRedisRef() {
 		return redisRef;
 	}
@@ -63,16 +61,19 @@ public class EntityInfo extends SubVmElement {
 		this.poref = poref;
 	}
 
+	/**
+	 * 数据库mybatis 的nameSpace
+	 * @return
+	 */
 	public String getNameSpace(){
 		if (poref.endsWith("Po")) return poref.substring(0, poref.length() - 2).toLowerCase();
 		return poref.toLowerCase();
 	}
 	@Override
 	protected String getOutFilePath() {
-		if (initData == null
-		|| initData.getEntity(poref) == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		if (getEntity(poref) == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
-		return initData.getEntity(poref).getInfoPackagePath().replace(".", File.separator);
+		return getEntity(poref).getInfoPackagePath().replace(".", File.separator);
 	}
 }

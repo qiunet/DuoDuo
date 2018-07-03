@@ -20,15 +20,6 @@ public abstract class BaseXmlParse {
 
 	/** 对于xmlfile和 vmfile的一个基础路径, 之后的xml 和 vm是基于该路径的相对路径. */
 	private String basePath;
-	/***
-	 * 构造一个 xmlparse 解析 xml
-	 * @param basePath 对于xmlfile和 vmfile的一个基础路径, 之后生成文件 和 vm是基于该路径的相对路径.
-	 * @param xmlConfigPath xml路径
-	 */
-	public BaseXmlParse(String basePath, String xmlConfigPath){
-		this(VmElement.class, basePath, xmlConfigPath);
-	}
-
 	/**
 	 * 可以自己传一个自己定义的vmelement
 	 * @param vmElementClass vmelement 的class

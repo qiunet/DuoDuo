@@ -1,15 +1,15 @@
-#set($entityObj = ${entity.subVmElement(${data.poref})})
+#set($entityObj = ${allData.getEntity(${allData.currData.poref})})
 #set($entityType = ${entityObj.type})
 #set($entityInfoType = ${entityType.InfoType})
 #set($entityDbInfoType = ${entityType.DbInfoType})
 package ${entityObj.InfoPackagePath};
 
-import ${data.redis.clazz};
-import ${data.dbinfo.clazz};
-import ${data.rediskey.clazz};
+import ${allData.currData.redis.clazz};
+import ${allData.currData.dbinfo.clazz};
+import ${allData.currData.rediskey.clazz};
 import ${entityInfoType.Clazz.name};
-#if(${entityObj.name} != ${data.vo})
-import ${entityObj.packagePath}.${data.vo};
+#if(${entityObj.name} != ${allData.currData.vo})
+import ${entityObj.packagePath}.${allData.currData.vo};
 #end
 import ${entityObj.packagePath}.${entityObj.name};
 import org.qiunet.data.redis.AbstractRedisUtil;
@@ -17,15 +17,15 @@ import org.qiunet.data.db.support.info.IEntityDbInfo;
 #if(${entityDbInfoType.clazz.name} != "org.qiunet.data.db.support.info.IEntityDbInfo")
 import ${entityDbInfoType.clazz.name};
 #end
-#if(${entityObj.EntityType} == "PlatformRedisList" || ${entityObj.EntityType} == "PlatformRedisEntity" )
+#if(${entityObj.platformObj})
 import org.qiunet.data.enums.PlatformType;
 #end
 
-public class ${data.name} implements ${entityInfoType.toString()}<${entityObj.name}, ${data.vo}> {
+public class ${allData.currData.name} implements ${entityInfoType.toString()}<${entityObj.dbInfoKeyType}, #if(${entityObj.redisList})${entityObj.subKeyType}, #end${entityObj.name}, ${allData.currData.vo}> {
 
 	@Override
 	public String getNameSpace() {
-		return "${data.NameSpace}";
+		return "${allData.currData.nameSpace}";
 	}
 
 	@Override
@@ -35,34 +35,34 @@ public class ${data.name} implements ${entityInfoType.toString()}<${entityObj.na
 
 	@Override
 	public boolean needAsync() {
-        return ${data.async};
+        return ${allData.currData.async};
 	}
 
 	@Override
-	public ${data.vo} getVo(${entityObj.name} po) {
-#if(${data.vo} == ${entityObj.name})
+	public ${allData.currData.vo} getVo(${entityObj.name} po) {
+#if(${allData.currData.vo} == ${entityObj.name})
 		return po;
 #else
-		return new ${data.vo}(po);
+		return new ${allData.currData.vo}(po);
 #end
 	}
 
 	@Override
 	public AbstractRedisUtil getRedisUtil() {
-		return ${data.redis.name}.getInstance();
+		return ${allData.currData.redis.name}.getInstance();
 	}
 
 	@Override
-	public Object getDbInfoKey(${entityObj.name} po) {
+	public ${entityObj.dbInfoKeyType} getDbInfoKey(${entityObj.name} po) {
 		return po.get#firstUpperCase(${entityObj.dbInfoKey})();
 	}
 
 	@Override
 	public String getAsyncKey(Object dbInfoKey) {
-		return RedisKey.${data.NameSpace.toUpperCase()}.getAsyncKey(dbInfoKey);
+		return RedisKey.${allData.currData.NameSpace.toUpperCase()}.getAsyncKey(dbInfoKey);
 	}
 
-#if(${entityObj.EntityType} == "PlatformRedisList" || ${entityObj.EntityType} == "RedisList" )
+#if(${entityObj.redisList})
 	@Override
 	public Integer getSubKey(${entityObj.name} po) {
 		return po.getSubId();
@@ -84,35 +84,35 @@ public class ${data.name} implements ${entityInfoType.toString()}<${entityObj.na
 
 #if(${entityObj.EntityType} == "PlatformRedisList")
 	@Override
-	public IPlatformEntityListDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform, int subId) {
-		 return new ${data.dbinfo.name}(dbInfoKey, platform, subId);
+	public IPlatformEntityListDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, PlatformType platform, ${entityObj.subKeyType} subId) {
+		 return new ${allData.currData.dbinfo.name}(dbInfoKey, platform, subId);
 	}
 #elseif(${entityObj.EntityType} == "PlatformRedisEntity")
 	@Override
-	public IPlatformEntityDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform) {
-		return new ${data.dbinfo.name}(dbInfoKey, platform);
+	public IPlatformEntityDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, PlatformType platform) {
+		return new ${allData.currData.dbinfo.name}(dbInfoKey, platform);
 	}
 #elseif(${entityObj.EntityType} == "RedisList")
 	@Override
-	public IEntityListDbInfo getEntityDbInfo(Object dbInfoKey, int subId) {
-		 return new ${data.dbinfo.name}(dbInfoKey, subId);
+	public IEntityListDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, ${entityObj.subKeyType} subId) {
+		 return new ${allData.currData.dbinfo.name}(dbInfoKey, subId);
 	}
 #elseif(${entityObj.EntityType} == "RedisEntity")
 	@Override
-	public IEntityDbInfo getEntityDbInfo(Object dbInfoKey) {
-		return new ${data.dbinfo.name}(dbInfoKey);
+	public IEntityDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey) {
+		return new ${allData.currData.dbinfo.name}(dbInfoKey);
 	}
 #end
 
 #if(${entityObj.EntityType} == "PlatformRedisList" || ${entityObj.EntityType} == "PlatformRedisEntity" )
 	@Override
 	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.${data.NameSpace.toUpperCase()}.getKeyByParams(dbInfoKey, platform);
+		return RedisKey.${allData.currData.NameSpace.toUpperCase()}.getKeyByParams(dbInfoKey, platform);
 	}
 #else
 	@Override
 	public String getRedisKey(Object dbInfoKey) {
-		return RedisKey.${data.NameSpace.toUpperCase()}.getKey(dbInfoKey);
+		return RedisKey.${allData.currData.NameSpace.toUpperCase()}.getKey(dbInfoKey);
 	}
 #end
 }

@@ -1,9 +1,6 @@
 package org.qiunet.project.init.elements.entity;
 
-import org.qiunet.project.init.IProjectInitConfig;
 import org.qiunet.template.parse.xml.SubVmElement;
-import org.qiunet.template.parse.xml.VmElement;
-import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.project.init.enums.EntityType;
 
 import java.io.File;
@@ -14,7 +11,7 @@ import java.util.List;
  * @author qiunet
  *         Created on 16/11/21 13:15.
  */
-public class Entity extends SubVmElement {
+public class Entity extends SubVmElement<EntityVmElement> {
 
 	private String dbInfoKey;
 	private String subKey;
@@ -74,7 +71,7 @@ public class Entity extends SubVmElement {
 	 * @return
 	 */
 	public String getDbInfoKeyType() {
-		return getKeyType(this.subKey);
+		return getKeyType(this.dbInfoKey);
 	}
 
 	/***
@@ -85,14 +82,14 @@ public class Entity extends SubVmElement {
 	private String getKeyType(String fieldName){
 		Field field = null;
 		for (Field f : fields) {
-			if (f.getName().equals(this.subKey)) {
+			if (f.getName().equals(fieldName)) {
 				field = f;
 				break;
 			}
 		}
 
 		if (field == null) {
-			throw new NullPointerException("poName ["+this.getName()+"] not have key field ["+subKey+"]");
+			throw new NullPointerException("poName ["+this.getName()+"] not have key field ["+fieldName+"]");
 		}
 
 		switch (field.getType()) {
@@ -101,7 +98,7 @@ public class Entity extends SubVmElement {
 			case "String":
 				return "String";
 			default:
-				throw new NullPointerException("poName ["+this.getName()+"] key ["+subKey+"] type not support. just string and number");
+				throw new NullPointerException("poName ["+this.getName()+"] key ["+fieldName+"] type not support. just string and number");
 		}
 
 	}
@@ -131,6 +128,14 @@ public class Entity extends SubVmElement {
 	 */
 	public boolean isRedisList(){
 		return entityType == EntityType.RedisList || entityType == EntityType.PlatformRedisList;
+	}
+
+	/***
+	 * 是否是 platform 对象
+	 * @return
+	 */
+	public boolean isPlatformObj(){
+		return entityType == EntityType.PlatformRedisList || entityType == EntityType.PlatformRedisEntity;
 	}
 
 	@Override

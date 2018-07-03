@@ -4,6 +4,7 @@ import org.qiunet.project.init.elements.entity.Entity;
 import org.qiunet.project.init.elements.info.EntityInfo;
 import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.project.init.elements.mybatisConfig.ElementMybatisConfig;
+import org.qiunet.project.init.xmlparse.EntityInfoXmlParse;
 import org.qiunet.project.init.xmlparse.EntityXmlParse;
 import org.qiunet.template.creator.BaseXmlParse;
 import org.qiunet.template.creator.TemplateCreator;
@@ -29,6 +30,7 @@ public class ProjectInitData {
 		this.config = config;
 
 		this.initEntity();
+		this.initEntityInfo();
 	}
 	/***
 	 * 得到某个po的Entity对象
@@ -42,6 +44,11 @@ public class ProjectInitData {
 	private void initEntity() {
 		BaseXmlParse entityParse = new EntityXmlParse(config.getBasePath(), config.getEntityXmlPath());
 		this.entity = new TemplateCreator(entityParse, this).parseTemplate();
+	}
+
+	private void initEntityInfo(){
+		BaseXmlParse entityInfoParse = new EntityInfoXmlParse(config.getBasePath(),config.getEntityInfoXmlPath());
+		this.entityInfo = new TemplateCreator(entityInfoParse, this).parseTemplate();
 	}
 
 	public SubVmElement getCurrData() {

@@ -1,4 +1,4 @@
-package org.qiunet.project.init.xmlparse;
+package org.qiunet.project.init.elements.mybatisConfig;
 
 import org.qiunet.template.parse.xml.VmElement;
 import org.qiunet.project.init.elements.mybatisConfig.ElementMybatisConfig;

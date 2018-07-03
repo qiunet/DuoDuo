@@ -32,11 +32,11 @@ public class TemplateCreator<T extends SubVmElement> {
 		parse.push(this ,"addVmElement");
 		parse.parseXml();
 		parse.parse();
-
-		this.vmElement.initParams(initData);
-		// 输出basevm信息
-		VelocityFactory.getInstance().initVelocityEngine(initData);
+		// 是生成VmElement 后才能设置initData
+		this.vmElement.initData(initData);
+		// 调用parsevm 生成文件
 		vmElement.parseVm(parse.getBasePath());
+
 		return vmElement;
 	}
 }

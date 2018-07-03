@@ -15,7 +15,7 @@ import java.util.Map;
  * @author qiunet
  *         Created on 16/11/21 07:59.
  */
-public class VmElement<T extends SubVmElement> {
+public abstract class VmElement<T extends SubVmElement> {
 	private String baseDir;
 	private String vmfilePath;
 	private String filePostfix;
@@ -50,7 +50,7 @@ public class VmElement<T extends SubVmElement> {
 	 * 初始化一些参数
 	 * @param initData
 	 */
-	public void initParams(ProjectInitData initData) {
+	public void initData(ProjectInitData initData) {
 		this.initData = initData;
 	}
 	public void addSubElement(T element) {
@@ -63,7 +63,7 @@ public class VmElement<T extends SubVmElement> {
 			if(!nowClassName.equals(argClassName))
 				throw new IllegalArgumentException("VmElement Child must be same! ["+nowClassName+"] not equals ["+argClassName+"]");
 		}
-		element.setInitData(initData);
+		element.setVmElement(this);
 		this.subVmElements.add(element);
 		this.subVmElementMap.put(element.getName(), element);
 	}
@@ -84,6 +84,10 @@ public class VmElement<T extends SubVmElement> {
 	 */
 	public List<T> getSubVmElementList(){
 		return subVmElements;
+	}
+
+	ProjectInitData getInitData() {
+		return initData;
 	}
 
 	public void parseVm(String baseDir) {

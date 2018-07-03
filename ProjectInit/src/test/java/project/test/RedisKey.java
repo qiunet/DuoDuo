@@ -12,6 +12,7 @@ public enum  RedisKey implements IRedisKey {
 	ITEM,
 	LOGIN,
 	PLAYER,
+	EQUIP,
 	;
 	private String key;
 	private String asyncKey;
