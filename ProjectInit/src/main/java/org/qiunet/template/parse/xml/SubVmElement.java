@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class SubVmElement<T extends VmElement> {
 	protected T vmElement;
 
-	private String name;
+	protected String name;
 
 	public String getName() {
 		return name;

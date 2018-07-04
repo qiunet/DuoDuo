@@ -6,8 +6,8 @@ import org.qiunet.project.init.ProjectInitData;
  * @author qiunet
  *         Created on 16/11/16 20:39.
  */
-public class TemplateCreator<VmElement extends org.qiunet.template.parse.xml.VmElement, XmlParse extends BaseXmlParse<VmElement>> {
-	private XmlParse parse;
+public class TemplateCreator<VmElement extends org.qiunet.template.parse.xml.VmElement> {
+	private BaseXmlParse<VmElement> parse;
 
 	private ProjectInitData initData;
 
@@ -17,7 +17,7 @@ public class TemplateCreator<VmElement extends org.qiunet.template.parse.xml.VmE
 		this.vmElement = vmElement;
 	}
 
-	public TemplateCreator(XmlParse parse, ProjectInitData initData) {
+	public TemplateCreator(BaseXmlParse<VmElement> parse, ProjectInitData initData) {
 		this.parse = parse;
 		this.initData = initData;
 	}

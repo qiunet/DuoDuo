@@ -13,7 +13,6 @@ import java.util.List;
  *         Created on 16/11/21 13:15.
  */
 public class Entity extends SubVmElement<EntityVmElement> {
-	private String name;
 	private String dbInfoKey;
 	private String subKey;
 	private String packagePath;
@@ -21,16 +20,11 @@ public class Entity extends SubVmElement<EntityVmElement> {
 	private List<Field> fields = new ArrayList<>();
 	private List<Constructor> constructors = new ArrayList<>();
 
-	public String getName() {
-		return name;
-	}
-
 	public void setName(String name) {
 		if (! name.endsWith("Po")) {
 			throw new IllegalArgumentException("entity name must end with Po");
 		}
-
-		this.name = name;
+		super.name = name;
 	}
 	public String getPackagePath() {
 		return packagePath;
