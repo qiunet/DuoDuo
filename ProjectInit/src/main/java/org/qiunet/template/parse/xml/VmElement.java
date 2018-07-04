@@ -1,6 +1,7 @@
 package org.qiunet.template.parse.xml;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.qiunet.project.init.ProjectInitData;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
@@ -14,19 +15,22 @@ import java.util.Map;
  * @author qiunet
  *         Created on 16/11/21 07:59.
  */
-public class VmElement<T extends SubVmElement> {
+public abstract class VmElement<T extends SubVmElement> {
 	private String baseDir;
 	private String vmfilePath;
 	private String filePostfix;
-	private Map<String, Object> params;
+	private ProjectInitData initData;
 	private List<T> subVmElements = new ArrayList();
 	private Map<String, T> subVmElementMap = new HashedMap();
+
 	public String getBaseDir() {
 		return baseDir;
 	}
+
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
 	}
+
 	public void setVmfilePath(String vmfilePath) {
 		this.vmfilePath = vmfilePath;
 	}
@@ -42,13 +46,7 @@ public class VmElement<T extends SubVmElement> {
 	public String getFilePostfix() {
 		return filePostfix;
 	}
-	/**
-	 * 初始化一些参数
-	 * @param params
-	 */
-	public void initParams(Map<String, Object> params) {
-		this.params = params;
-	}
+
 	public void addSubElement(T element) {
 		if (StringUtil.isEmpty(element.getName())){
 			throw new NullPointerException("element ["+element.getClass().getName()+"]name is empty! ");
@@ -59,12 +57,12 @@ public class VmElement<T extends SubVmElement> {
 			if(!nowClassName.equals(argClassName))
 				throw new IllegalArgumentException("VmElement Child must be same! ["+nowClassName+"] not equals ["+argClassName+"]");
 		}
-		element.setBase(this);
+		element.setVmElement(this);
 		this.subVmElements.add(element);
 		this.subVmElementMap.put(element.getName(), element);
 	}
 	/**
-	 * 根据名称得到一个 SubVmElement 
+	 * 根据名称得到一个 SubVmElement
 	 * @param name
 	 * @return
 	 */
@@ -81,19 +79,22 @@ public class VmElement<T extends SubVmElement> {
 	public List<T> getSubVmElementList(){
 		return subVmElements;
 	}
-	
-	public void parseVm(String baseDir) {
-		if(! baseDir.endsWith(File.separator)) baseDir += File.separator;
-		baseDir += this.baseDir;
-		
-		if(! baseDir.endsWith(File.separator)) baseDir += File.separator;
-		
-		for(SubVmElement sub : subVmElements) {
-			sub.parseOutFile(baseDir + sub.getOutFilePath(), getVmfilePath(), getFilePostfix());
-		}
+
+	ProjectInitData getInitData() {
+		return initData;
 	}
-	
-	public Object getParam(String key){
-		return params.get(key);
+
+	public void parseVm(ProjectInitData initData) {
+		this.initData = initData;
+
+		String basePath = initData.getConfig().getBasePath();
+		if(! basePath.endsWith(File.separator)) basePath += File.separator;
+		basePath += this.baseDir;
+
+		if(! basePath.endsWith(File.separator)) basePath += File.separator;
+
+		for(SubVmElement sub : subVmElements) {
+			sub.parseOutFile(basePath + sub.getOutFilePath(), getVmfilePath(), getFilePostfix());
+		}
 	}
 }

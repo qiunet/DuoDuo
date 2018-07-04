@@ -11,7 +11,7 @@ import org.qiunet.data.redis.key.RedisKey;
  * @author qiunet
  *         Created on 17/2/14 12:01.
  */
-public class LoginEntityInfo implements IEntityInfo<LoginPo, LoginPo> {
+public class LoginEntityInfo implements IEntityInfo<String, LoginPo, LoginPo> {
 	@Override
 	public String getNameSpace() {
 		return "login";
@@ -38,7 +38,7 @@ public class LoginEntityInfo implements IEntityInfo<LoginPo, LoginPo> {
 	}
 
 	@Override
-	public Object getDbInfoKey(LoginPo loginPo) {
+	public String getDbInfoKey(LoginPo loginPo) {
 		return loginPo.getOpenid();
 	}
 
@@ -58,7 +58,7 @@ public class LoginEntityInfo implements IEntityInfo<LoginPo, LoginPo> {
 	}
 
 	@Override
-	public IEntityDbInfo getEntityDbInfo(Object dbInfoKey) {
+	public IEntityDbInfo getEntityDbInfo(String dbInfoKey) {
 		return new OpenidEntityDbInfo(dbInfoKey);
 	}
 }

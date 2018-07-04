@@ -16,8 +16,8 @@ import java.util.*;
  * @author qiunet
  *         Created on 17/2/10 17:57.
  */
-public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSupport<PO> {
-	protected IEntityListInfo entityInfo;
+public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> extends BaseDataSupport<PO> {
+	protected IEntityListInfo<DbInfoKey, SubKey, PO, VO> entityInfo;
 
 	public EntityListDataSupport(IEntityListInfo entityListInfo){
 		super(new DbListSupport(), entityListInfo);
@@ -59,9 +59,9 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 		dbSupport.insert(po, insertStatment);
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
-		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		Map<SubKey, VO> voMap = ThreadContextData.get(key);
 		boolean insertToRedis = voMap != null;
-		VO vo = (VO) entityInfo.getVo(po);
+		VO vo = entityInfo.getVo(po);
 		if (voMap != null) {
 			voMap.put(entityInfo.getSubKey(po), vo);
 		}else {
@@ -76,9 +76,8 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	}
 	/**
 	 * 对缓存失效处理
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 */
-	public void expireCache(Object dbInfoKey) {
+	public void expireCache(DbInfoKey dbInfoKey) {
 		String key = entityInfo.getRedisKey(dbInfoKey);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
@@ -105,21 +104,22 @@ public class EntityListDataSupport<PO extends IRedisList,VO> extends BaseDataSup
 	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 * @return po的VO对象有序的map
 	 */
-	public Map<Integer, VO> getVoMap(Object dbInfoKey){
+	public Map<SubKey, VO> getVoMap(DbInfoKey dbInfoKey){
 		String key = entityInfo.getRedisKey(dbInfoKey);
-		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		Map<SubKey, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 
 		voMap = new HashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null){
-			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, 0));
+			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, null));
 			entityInfo.getRedisUtil().setListToHash(key, poList);
 		}
 
 		if (poList != null && !poList.isEmpty()) {
 			for (PO po : poList) {
-				voMap.put(entityInfo.getSubKey(po), (VO) entityInfo.getVo(po));
+				po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
+				voMap.put(entityInfo.getSubKey(po), entityInfo.getVo(po));
 			}
 		}
 		ThreadContextData.put(key, voMap);

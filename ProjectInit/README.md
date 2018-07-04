@@ -11,6 +11,13 @@
  > 也可以自己指定下面的四个文件的路径和名称.<br />
  调用: `ProjectInitCreator.create(IProjectInitConfig config)`
 
+## 理解帮助
+	主要使用的约定大于自定义的方式. 
+	Po  和数据库一一映射的对象 存放于entity目录
+	Vo  处理Po的装饰类. 和Po存放一个目录
+	Info  存放一些跟Po对象相关的特定数据. 帮助DataSupport处理数据的关系. 存放在info目录
+	Service 和Po有关系的业务对象 存放在service目录下 
+
 ## 配置 
 1. #### `xml/entity_create.xml`
 		主要配置业务数据库对象. 生成po.里面仅仅包含 entity 元素.

@@ -1,5 +1,8 @@
 package org.qiunet.project.init;
 
+import java.io.File;
+import java.io.IOException;
+
 /***
  *
  * @Author qiunet
@@ -9,7 +12,13 @@ public class DefaultProjectInitConfig implements IProjectInitConfig {
 	@Override
 	public String getBasePath() {
 		String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath() + "../../";
-		return basePath;
+		File file  = new File(basePath);
+		try {
+			return file.getCanonicalPath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 	@Override

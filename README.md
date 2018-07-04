@@ -46,6 +46,7 @@
 * 从Mysql转MariaDB
 * 去掉 DbSourceType 类型. 支持多个global库.
 * ActiveMQ 的module添加. (单独于 all , 因为很多项目可能用不着)
+* 加入 dbInfoKey 和 subId的泛型
 
 
 ## 交流

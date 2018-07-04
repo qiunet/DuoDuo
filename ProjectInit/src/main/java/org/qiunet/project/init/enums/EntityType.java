@@ -1,5 +1,9 @@
 package org.qiunet.project.init.enums;
 
+import org.qiunet.data.core.support.EntityDataSupport;
+import org.qiunet.data.core.support.EntityListDataSupport;
+import org.qiunet.data.core.support.PlatformEntityDataSupport;
+import org.qiunet.data.core.support.PlatformEntityListDataSupport;
 import org.qiunet.data.redis.support.PlatformRedisEntity;
 import org.qiunet.data.redis.support.PlatformRedisList;
 import org.qiunet.data.redis.support.RedisEntity;
@@ -13,18 +17,20 @@ import org.qiunet.utils.exceptions.EnumParseException;
  *         Created on 17/2/14 18:25.
  */
 public enum  EntityType {
-    RedisEntity(        EntityInfoType.IEntityInfo,             RedisEntity.class,          DbInfoType.IEntityDbInfo),
-    PlatformRedisEntity(EntityInfoType.IPlatformEntityInfo,     PlatformRedisEntity.class,  DbInfoType.IPlatformEntityDbInfo),
-    RedisList(          EntityInfoType.IEntityListInfo,         RedisList.class,            DbInfoType.IEntityListDbInfo),
-    PlatformRedisList(  EntityInfoType.IPlatformEntityListInfo, PlatformRedisList.class,    DbInfoType.IPlatformEntityListDbInfo),
+    RedisEntity(        EntityInfoType.IEntityInfo,             RedisEntity.class,          DbInfoType.IEntityDbInfo, 				EntityDataSupport.class),
+    PlatformRedisEntity(EntityInfoType.IPlatformEntityInfo,     PlatformRedisEntity.class,  DbInfoType.IPlatformEntityDbInfo, 		PlatformEntityDataSupport.class),
+    RedisList(          EntityInfoType.IEntityListInfo,         RedisList.class,            DbInfoType.IEntityListDbInfo, 			EntityListDataSupport.class),
+    PlatformRedisList(  EntityInfoType.IPlatformEntityListInfo, PlatformRedisList.class,    DbInfoType.IPlatformEntityListDbInfo, 	PlatformEntityListDataSupport.class),
     ;
     private EntityInfoType infoType;
     private Class clazz;
     private DbInfoType dbInfoType;
-    private EntityType(EntityInfoType infoType, Class clazz, DbInfoType dbInfoType) {
+    private Class<?> dataSupportClass;
+    private EntityType(EntityInfoType infoType, Class clazz, DbInfoType dbInfoType, Class<?> dataSupportClass) {
         this.clazz = clazz;
         this.infoType = infoType;
         this.dbInfoType = dbInfoType;
+        this.dataSupportClass = dataSupportClass;
     }
 
     public Class getClazz(){
@@ -39,7 +45,11 @@ public enum  EntityType {
         return infoType;
     }
 
-    /**
+	public Class<?> getDataSupportClass() {
+		return dataSupportClass;
+	}
+
+	/**
      * 是否是平台类型
      * @return true 是
      */

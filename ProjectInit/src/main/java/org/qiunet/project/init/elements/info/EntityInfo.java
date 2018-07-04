@@ -1,9 +1,7 @@
 package org.qiunet.project.init.elements.info;
 
 import org.qiunet.project.init.elements.entity.Entity;
-import org.qiunet.project.init.xmlparse.BeanVmElement;
 import org.qiunet.template.parse.xml.SubVmElement;
-import org.qiunet.template.parse.xml.VmElement;
 
 import java.io.File;
 
@@ -11,22 +9,22 @@ import java.io.File;
  * @author qiunet
  *         Created on 17/2/15 18:17.
  */
-public class EntityInfo extends SubVmElement {
+public class EntityInfo extends SubVmElement<EntityInfoVmElement> {
 	private String poref;
-	private String vo;
 	private String async;
 	private String redisRef;
 	private String dbInfoRef;
 
 	public ElementRedisKey getRediskey(){
-		return ((BeanVmElement) base).getRedisKey();
+		return vmElement.getRedisKey();
 	}
 	public Bean getRedis(){
-		return ((BeanVmElement)base).getBean(redisRef);
+		return vmElement.getBean(redisRef);
 	}
 	public Bean getDbinfo(){
-		return ((BeanVmElement)base).getBean(dbInfoRef);
+		return vmElement.getBean(dbInfoRef);
 	}
+
 	public String getRedisRef() {
 		return redisRef;
 	}
@@ -48,11 +46,7 @@ public class EntityInfo extends SubVmElement {
 	}
 
 	public String getVo() {
-		return vo;
-	}
-
-	public void setVo(String vo) {
-		this.vo = vo;
+		return getEntityAliasName()+"Vo";
 	}
 
 	public String getPoref() {
@@ -63,16 +57,44 @@ public class EntityInfo extends SubVmElement {
 		this.poref = poref;
 	}
 
+	private String getEntityAliasName(){
+		return poref.substring(0, poref.length() - 2);
+	}
+	/**
+	 * 数据库mybatis 的nameSpace
+	 * @return
+	 */
 	public String getNameSpace(){
 		if (poref.endsWith("Po")) return poref.substring(0, poref.length() - 2).toLowerCase();
 		return poref.toLowerCase();
 	}
 	@Override
 	protected String getOutFilePath() {
-		if (base.getParam("entity") == null
-		|| ((VmElement)base.getParam("entity")).subVmElement(poref) == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in entity_create.xml");
+		if (getEntity(poref) == null) {
+			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
-		return ((Entity)((VmElement)base.getParam("entity")).subVmElement(poref)).getInfoPackagePath().replace(".", File.separator);
+		return getInfoPackagePath().replace(".", File.separator);
+	}
+
+	/***
+	 * 得到infoPackagePath
+	 * @return
+	 */
+	public String getInfoPackagePath(){
+		Entity entity = getEntity(poref);
+		return entity.getPackagePath().substring(0, entity.getPackagePath().lastIndexOf('.'))+".info";
+	}
+
+	/***
+	 * 得到infoPackagePath
+	 * @return
+	 */
+	public String getServicePackagePath(){
+		Entity entity = getEntity(poref);
+		return entity.getPackagePath().substring(0, entity.getPackagePath().lastIndexOf('.'))+".service";
+	}
+
+	public String getServiceFileName(){
+		return getEntityAliasName()+"Service";
 	}
 }

@@ -1,5 +1,6 @@
 package org.qiunet.data.core.support;
 
+import javafx.application.Platform;
 import org.qiunet.data.core.support.entityInfo.IPlatformEntityListInfo;
 import org.qiunet.data.db.support.base.DbListSupport;
 import org.qiunet.data.db.support.base.IDbList;
@@ -16,10 +17,10 @@ import java.util.*;
  * @author qiunet
  *         Created on 17/2/11 08:46.
  */
-public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> extends BaseDataSupport<PO> {
-	private IPlatformEntityListInfo<PO, VO> entityInfo;
+public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatformRedisList, VO> extends BaseDataSupport<PO> {
+	private IPlatformEntityListInfo<DbInfoKey, SubKey, PO, VO> entityInfo;
 
-	public PlatformEntityListDataSupport(IPlatformEntityListInfo<PO, VO> entityInfo) {
+	public PlatformEntityListDataSupport(IPlatformEntityListInfo<DbInfoKey, SubKey, PO, VO> entityInfo) {
 		super(new DbListSupport(), entityInfo);
 
 		this.entityInfo = entityInfo;
@@ -59,11 +60,11 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		dbSupport.insert(po, insertStatment);
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		Map<SubKey, VO> voMap = ThreadContextData.get(key);
 		VO vo = entityInfo.getVo(po);
 		boolean insertRedis = voMap != null;
 		if (voMap != null) {
-			voMap.put(po.getSubId(), vo);
+			voMap.put(entityInfo.getSubKey(po), vo);
 		}else {
 			insertRedis = entityInfo.getRedisUtil().exists(key);
 		}
@@ -77,10 +78,8 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	}
 	/**
 	 * 对缓存失效处理
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @param platform 平台
 	 */
-	public void expireCache(Object dbInfoKey, PlatformType platform) {
+	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
@@ -92,7 +91,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	public void deletePo(PO po) {
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 
-		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		Map<SubKey, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) {
 			voMap.remove(po.getSubId());
 		}
@@ -109,15 +108,15 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 	 * @param platform 平台
 	 * @return po的VO对象
 	 */
-	public Map<Integer, VO> getVoMap(Object dbInfoKey, PlatformType platform){
+	public Map<SubKey, VO> getVoMap(DbInfoKey dbInfoKey, PlatformType platform){
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
-		Map<Integer, VO> voMap = ThreadContextData.get(key);
+		Map<SubKey, VO> voMap = ThreadContextData.get(key);
 		if (voMap != null) return  voMap;
 
 		voMap = new HashMap<>();
 		List<PO> poList = entityInfo.getRedisUtil().getListFromHash(key, entityInfo.getClazz());
 		if (poList == null) {
-			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform, 0));
+			poList = ((IDbList)dbSupport).selectList(selectStatment, entityInfo.getEntityDbInfo(dbInfoKey, platform, null));
 			if (poList != null){
 				entityInfo.getRedisUtil().setListToHash(key, poList);
 			}
@@ -125,6 +124,7 @@ public class PlatformEntityListDataSupport<PO extends IPlatformRedisList,VO> ext
 		if (poList != null && !poList.isEmpty()) {
 			for (PO po : poList) {
 				po.setPlatform(platform);
+				po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
 				voMap.put(entityInfo.getSubKey(po), entityInfo.getVo(po));
 			}
 		}

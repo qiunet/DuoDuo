@@ -1,4 +1,4 @@
-package org.qiunet.project.init.xmlparse;
+package org.qiunet.project.init.elements.info;
 
 import org.qiunet.template.parse.xml.VmElement;
 import org.qiunet.project.init.elements.info.Bean;
@@ -11,7 +11,7 @@ import java.util.HashMap;
  * @author qiunet
  *         Created on 17/2/17 11:09.
  */
-public class BeanVmElement extends VmElement<EntityInfo> {
+public class EntityInfoVmElement extends VmElement<EntityInfo> {
 
 	private HashMap<String, Bean> beanMap = new HashMap<String, Bean>();
 

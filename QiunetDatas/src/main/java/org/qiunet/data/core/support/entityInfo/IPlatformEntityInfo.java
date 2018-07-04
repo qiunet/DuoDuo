@@ -8,7 +8,7 @@ import org.qiunet.data.redis.support.info.IPlatFormRedisEntity;
  * @author qiunet
  *         Created on 17/2/11 09:39.
  */
-public interface IPlatformEntityInfo<PO extends IPlatFormRedisEntity, VO> extends IBaseEntityInfo<PO, VO> {
+public interface IPlatformEntityInfo<DbInfoKey, PO extends IPlatFormRedisEntity, VO> extends IBaseEntityInfo<DbInfoKey, PO, VO> {
 	/**
 	 * 得到key
 	 * @param dbInfoKey 分库使用的key 一般uid
@@ -19,8 +19,8 @@ public interface IPlatformEntityInfo<PO extends IPlatFormRedisEntity, VO> extend
 	/**
 	 * 返回分库使用的条件
 	 * @param dbInfoKey 分库使用的key 一般uid
-	 * @param platform 平台                    
+	 * @param platform 平台
 	 * @return dbINfo
 	 */
-	public IPlatformEntityDbInfo getEntityDbInfo(Object dbInfoKey, PlatformType platform);
+	public IPlatformEntityDbInfo getEntityDbInfo(DbInfoKey dbInfoKey, PlatformType platform);
 }

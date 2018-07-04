@@ -1,5 +1,6 @@
 package org.qiunet.project.init.xmlparse;
 
+import org.qiunet.project.init.elements.mapping.MappingVmElement;
 import org.qiunet.template.creator.BaseXmlParse;
 import org.qiunet.project.init.elements.mapping.ElementMapping;
 
@@ -7,9 +8,10 @@ import org.qiunet.project.init.elements.mapping.ElementMapping;
  * @author qiunet
  *         Created on 17/2/23 18:15.
  */
-public class MybatisMappingXmlParse extends BaseXmlParse {
-	public MybatisMappingXmlParse(String basePath, String xmlConfigPath) {
-		super(basePath, xmlConfigPath);
+public class MybatisMappingXmlParse extends BaseXmlParse<MappingVmElement> {
+
+	public MybatisMappingXmlParse(String xmlConfigPath) {
+		super(MappingVmElement.class, xmlConfigPath);
 	}
 
 	@Override

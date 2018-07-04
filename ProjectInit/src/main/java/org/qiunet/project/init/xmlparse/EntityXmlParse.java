@@ -1,6 +1,7 @@
 package org.qiunet.project.init.xmlparse;
 
 import org.qiunet.project.init.elements.entity.Entity;
+import org.qiunet.project.init.elements.entity.EntityVmElement;
 import org.qiunet.project.init.elements.entity.Field;
 import org.qiunet.template.creator.BaseXmlParse;
 import org.qiunet.project.init.elements.entity.Constructor;
@@ -9,9 +10,9 @@ import org.qiunet.project.init.elements.entity.Constructor;
  * @author qiunet
  *         Created on 16/11/22 08:09.
  */
-public class EntityXmlParse extends BaseXmlParse {
-	public EntityXmlParse(String basePath , String xmlConfigPath) {
-		super(basePath, xmlConfigPath);
+public class EntityXmlParse extends BaseXmlParse<EntityVmElement> {
+	public EntityXmlParse(String xmlConfigPath) {
+		super(EntityVmElement.class, xmlConfigPath);
 	}
 
 	public void parseXml() {

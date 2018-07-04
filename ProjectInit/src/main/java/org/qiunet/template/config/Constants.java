@@ -8,7 +8,5 @@ public final class Constants {
 	/**项目默认的encoding*/
 	public static final String CHAR_ENCODING="UTF-8";
 	/**默认的 data数据节点名称*/
-	public static final String DEFAULT_DATA_OBJECT_NAME="data";
-	/**默认的 root数据节点名称*/
-	public static final String DEFAULT_ROOT_OBJECT_NAME="rootObj";
+	public static final String DEFAULT_DATA_OBJECT_NAME="allData";
 }

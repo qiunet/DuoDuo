@@ -8,7 +8,7 @@ import org.qiunet.data.redis.support.info.IRedisEntity;
  * @author qiunet
  *         Created on 17/2/13 14:37.
  */
-public interface IBaseEntityInfo<PO extends IRedisEntity, VO> {
+public interface IBaseEntityInfo<DbInfoKey, PO extends IRedisEntity, VO> {
 	/**
 	 * 得到数据库使用的nameSpace
 	 * @return 数据库batis nameSpase
@@ -40,7 +40,7 @@ public interface IBaseEntityInfo<PO extends IRedisEntity, VO> {
 	 * @param po po对象
 	 * @return 返回的dbINfoKey
 	 */
-	public Object getDbInfoKey(PO po);
+	public DbInfoKey getDbInfoKey(PO po);
 	/***
 	 * 得到异步更新数据库的key key+dbIndex
 	 * 存redis队列的key 名称

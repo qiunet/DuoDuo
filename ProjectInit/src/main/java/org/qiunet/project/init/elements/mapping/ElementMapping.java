@@ -11,7 +11,7 @@ import org.qiunet.utils.string.StringUtil;
  * @author qiunet
  *         Created on 17/2/22 08:13.
  */
-public class ElementMapping extends SubVmElement {
+public class ElementMapping extends SubVmElement<MappingVmElement> {
 	private String poref;
 	private boolean uniqid;
 	private String selectKey;
@@ -53,9 +53,9 @@ public class ElementMapping extends SubVmElement {
 	}
 
 	public String getTableName(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in "+ getProjectConfig().getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -64,7 +64,8 @@ public class ElementMapping extends SubVmElement {
 		if (!StringUtil.isEmpty(tablePrefix)) {
 			sb.append(tablePrefix);
 		} else {
-			sb.append(entity.getAliasName());
+			if (poref.endsWith("Po")) sb.append(poref.substring(0, poref.length() - 2).toLowerCase());
+			else sb.append(poref.toLowerCase());
 		}
 
 		if (entity.getType().isPlatformType()) {
@@ -81,9 +82,9 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getSelectSql(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -102,9 +103,9 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getUpdateSql(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in  "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in  "+getProjectConfig().getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -133,9 +134,9 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getInsertSql(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -171,9 +172,9 @@ public class ElementMapping extends SubVmElement {
 	 * @return
 	 */
 	public String getDeleteSql(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in  "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in  "+getProjectConfig().getEntityXmlPath());
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -191,9 +192,9 @@ public class ElementMapping extends SubVmElement {
 		return sb.toString();
 	}
 	public String getSelectStatment(){
-		Entity entity = ((VmElement<Entity>)base.getParam("entity")).subVmElement(poref);
+		Entity entity = getEntity(poref);
 		if (entity == null) {
-			throw new RuntimeException("poref ["+poref+"] is not in "+ ((IProjectInitConfig) base.getParam("baseConfig")).getEntityXmlPath());
+			throw new RuntimeException("poref ["+poref+"] is not in "+getProjectConfig().getEntityXmlPath());
 		}
 
 		String selectStatment = "get"+poref;
