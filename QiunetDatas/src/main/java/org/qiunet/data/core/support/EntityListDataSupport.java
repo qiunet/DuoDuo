@@ -77,8 +77,8 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 	/**
 	 * 对缓存失效处理
 	 */
-	public void expireCache(PO po) {
-		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
+	public void expireCache(DbInfoKey dbInfoKey) {
+		String key = entityInfo.getRedisKey(dbInfoKey);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
 	}

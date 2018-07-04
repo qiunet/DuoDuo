@@ -1,5 +1,6 @@
 package org.qiunet.data.core.support;
 
+import javafx.application.Platform;
 import org.qiunet.data.core.support.entityInfo.IPlatformEntityListInfo;
 import org.qiunet.data.db.support.base.DbListSupport;
 import org.qiunet.data.db.support.base.IDbList;
@@ -78,8 +79,8 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 	/**
 	 * 对缓存失效处理
 	 */
-	public void expireCache(PO po) {
-		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
+	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
+		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
 	}
