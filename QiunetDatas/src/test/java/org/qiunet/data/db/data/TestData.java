@@ -224,14 +224,14 @@ public class TestData {
 		qunxiuPo.setId(1001);
 		qunxiuPo.setMaster(1000);
 		dataSupport.insertPo(qunxiuPo);
-		dataSupport.expireCache(qunxiuPo.getId());
+		dataSupport.expireCache(qunxiuPo);
 
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		qunxiuPo.setMaster(1200);
 		qunxiuPo.setLevel(20);
 		dataSupport.updatePo(qunxiuPo);
 		dataSupport.updateRedisDataToDatabase();
-		dataSupport.expireCache(qunxiuPo.getId());
+		dataSupport.expireCache(qunxiuPo);
 
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 20 && qunxiuPo.getMaster() == 1200);
@@ -246,7 +246,7 @@ public class TestData {
 
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 10 && ! "temp".equals(qunxiuPo.getName()));
-		dataSupport.expireCache(qunxiuPo.getId());
+		dataSupport.expireCache(qunxiuPo);
 
 		dataSupport.deletePo(qunxiuPo);
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());

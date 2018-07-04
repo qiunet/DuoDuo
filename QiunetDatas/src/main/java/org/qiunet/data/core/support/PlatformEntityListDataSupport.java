@@ -77,11 +77,9 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 	}
 	/**
 	 * 对缓存失效处理
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
-	 * @param platform 平台
 	 */
-	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
-		String key = entityInfo.getRedisKey(dbInfoKey, platform);
+	public void expireCache(PO po) {
+		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
 	}

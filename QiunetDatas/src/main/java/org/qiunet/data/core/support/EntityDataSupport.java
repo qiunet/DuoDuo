@@ -84,10 +84,9 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 
 	/**
 	 * 对缓存失效处理
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
 	 */
-	public void expireCache(DbInfoKey dbInfoKey) {
-		String key = entityInfo.getRedisKey(dbInfoKey);
+	public void expireCache(PO po) {
+		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
 		ThreadContextData.removeKey(key);
 		getRedis().expire(key, 0);
 	}
