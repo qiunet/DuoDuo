@@ -3,8 +3,13 @@ package ${allData.currData.packagePath};
 #if(${allData.currData.platform})
 import org.qiunet.data.enums.PlatformType;
 #end
+#if(${allData.currData.list})
+import java.util.Map;
+#end
 import ${allData.currData.entityDataSupportPackage};
+#if(!${allData.currData.list})
 import org.qiunet.data.core.support.update.UpdateFields;
+#end
 import ${allData.currData.infoClassPackage};
 import ${allData.currData.poPackage};
 import ${allData.currData.voPackage};
@@ -15,7 +20,7 @@ import ${allData.currData.voPackage};
 public class ${allData.currData.name} {
 	private volatile static ${allData.currData.name} instance;
 	private ${allData.currData.infoClassName} entityInfo = new ${allData.currData.infoClassName}();
-	private ${allData.currData.entityDataSupportClass}<${allData.currData.dbInfoKeyType}, ${allData.currData.poName}, ${allData.currData.voName}> dataSupport;
+	private ${allData.currData.entityDataSupportClass}<${allData.currData.dbInfoKeyType}, #if(${allData.currData.list})${allData.currData.subKeyType},#end ${allData.currData.poName}, ${allData.currData.voName}> dataSupport;
 
 	private ${allData.currData.name}() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
@@ -34,10 +39,11 @@ public class ${allData.currData.name} {
 		}
 		return instance;
 	}
-
+#if(!${allData.currData.list})
 	public void expirePo(${allData.currData.poName} po) {
 		dataSupport.expireCache(po);
 	}
+#end
 ### get方法大不同
 #if(${allData.currData.entityDataSupportClass} == 'EntityDataSupport')
 	/**
@@ -58,6 +64,58 @@ public class ${allData.currData.name} {
 	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
 		return dataSupport.getVo(${allData.currData.dbInfoKeyName}, platform);
 	}
+#elseif(${allData.currData.entityDataSupportClass} == 'EntityListDataSupport')
+	/**
+	* 失效列表
+	*
+	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
+	*/
+	public void expireList(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
+		dataSupport.expireCache(${allData.currData.dbInfoKeyName});
+	}
+	/***
+	* 得到一个列表里面的po对象
+	* @param ${allData.currData.dbInfoKeyName}
+	* @param ${allData.currData.subKeyName}
+	* @return
+	*/
+	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, ${allData.currData.subKeyType}  ${allData.currData.subKeyName} ) {
+		return get${allData.currData.voName}Map(${allData.currData.dbInfoKeyName}).get(${allData.currData.subKeyName});
+	}
+	/****
+	* 	得到map列表. key为subKey
+	* @param uid
+	* @return
+	*/
+	public Map<${allData.currData.subKeyType}, ${allData.currData.voName}> get${allData.currData.voName}Map(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
+		return dataSupport.getVoMap(${allData.currData.dbInfoKeyName});
+	}
+#elseif(${allData.currData.entityDataSupportClass} == 'PlatformEntityListDataSupport')
+	/**
+	* 失效列表
+	*
+	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
+	*/
+	public void expireList(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
+		dataSupport.expireCache(${allData.currData.dbInfoKeyName}, platform);
+	}
+	/***
+	* 得到一个列表里面的po对象
+	* @param ${allData.currData.dbInfoKeyName}
+	* @param ${allData.currData.subKeyName}
+	* @return
+	*/
+	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, ${allData.currData.subKeyType}  ${allData.currData.subKeyName}, PlatformType platform) {
+		return get${allData.currData.voName}Map(${allData.currData.dbInfoKeyName}, platform).get(${allData.currData.subKeyName});
+	}
+	/****
+	* 	得到map列表. key为subKey
+	* @param uid
+	* @return
+	*/
+	public Map<${allData.currData.subKeyType}, ${allData.currData.voName}> get${allData.currData.voName}Map(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
+		return dataSupport.getVoMap(${allData.currData.dbInfoKeyName}, platform);
+	}
 #end
 	/**
 	* 插入一个po的数据
@@ -67,7 +125,6 @@ public class ${allData.currData.name} {
 	public ${allData.currData.voName} insert${allData.currData.poName}(${allData.currData.poName} po) {
 		return this.dataSupport.insertPo(po);
 	}
-
 	/**
 	* 更新数据
 	*
@@ -76,7 +133,7 @@ public class ${allData.currData.name} {
 	public void update${allData.currData.voName}(${allData.currData.voName} vo) {
 		dataSupport.updatePo(vo.get${allData.currData.poName}());
 	}
-
+#if(!${allData.currData.list})
 	/***
 	* 根据字段修改对象
 	* @param vo
@@ -85,6 +142,7 @@ public class ${allData.currData.name} {
 	public void updateWithFields(${allData.currData.voName} vo, UpdateFields fields) {
 		dataSupport.updateWithFields(vo.get${allData.currData.poName}(), fields);
 	}
+#end
 	/***
 	* 删除一个 po
 	* @param vo

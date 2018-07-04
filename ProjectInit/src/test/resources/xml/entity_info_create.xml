@@ -40,8 +40,8 @@
 
 	<infos>
 		<info name="PlayerEntityInfo" poref="PlayerPo"  async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityDbInfo" />
-		<info name="ItemEntityInfo" poref="ItemPo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityListDbInfo" />
 		<info name="LoginEntityInfo" poref="LoginPo" async="true" redisRef="defaultRedis" dbInfoRef="OpenidEntityDbInfo" />
+		<info name="ItemEntityInfo" poref="ItemPo" async="true" redisRef="defaultRedis" dbInfoRef="UidEntityListDbInfo" />
 		<info name="EquipEntityInfo" poref="EquipPo" async="true" redisRef="defaultRedis" dbInfoRef="UidPlatformEntityListDbInfo" />
 	</infos>
 </base>

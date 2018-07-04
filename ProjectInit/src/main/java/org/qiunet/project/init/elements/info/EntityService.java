@@ -48,6 +48,14 @@ public class EntityService {
 		return entity.getDbInfoKeyType();
 	}
 
+	public String getSubKeyName() {
+		return entity.getSubKey();
+	}
+
+	public String getSubKeyType() {
+		return entity.getSubKeyType();
+	}
+
 	public String getInfoClassPackage(){
 		return entityInfo.getInfoPackagePath()+"."+getInfoClassName();
 	}
@@ -80,7 +88,7 @@ public class EntityService {
 		return entity.isPlatformObj();
 	}
 
-	public boolean isRedis(){
+	public boolean isList(){
 		return entity.isRedisList();
 	}
 }

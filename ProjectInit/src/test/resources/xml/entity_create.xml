@@ -34,7 +34,6 @@
 		<field name="level" type="int" comment="等级" defaultVal="1"/>
 		<field name="m1" type="long" comment="金币" />
 		<field name="m2" type="int" comment="元宝" />
-
 	</entity>
 
 	<entity name="LoginPo" dbInfoKey="openid" packagePath="project.init.test.login.entity" entityType="RedisEntity">
