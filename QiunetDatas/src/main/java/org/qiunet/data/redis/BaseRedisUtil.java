@@ -558,7 +558,7 @@ abstract class BaseRedisUtil {
 			@Override
 			protected Long expression(Jedis jedis, String key) throws Exception {
 				Long ret = jedis.zrevrank(key, member);
-				return ret == null ? 0 : ret;
+				return ret;
 			}
 			@Override
 			protected Object[] params() {
