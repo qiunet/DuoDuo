@@ -10,8 +10,8 @@ import org.qiunet.project.init.elements.mapping.ElementMapping;
  */
 public class MybatisMappingXmlParse extends BaseXmlParse<MappingVmElement> {
 
-	public MybatisMappingXmlParse(String basePath, String xmlConfigPath) {
-		super(MappingVmElement.class, basePath, xmlConfigPath);
+	public MybatisMappingXmlParse(String xmlConfigPath) {
+		super(MappingVmElement.class, xmlConfigPath);
 	}
 
 	@Override

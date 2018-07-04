@@ -15,12 +15,11 @@ public class EntityInfoXmlParse extends BaseXmlParse<EntityInfoVmElement> {
 	/***
 	 * 构造一个 xmlparse 解析 xml
 
-	 * @param basePath	对于xmlfile和 vmfile的一个基础路径, 之后生成文件 和 vm是基于该路径的相对路径.
 	 * @param xmlConfigPath xml路径
 	xml 第一个元素的名称
 	 */
-	public EntityInfoXmlParse(String basePath, String xmlConfigPath) {
-		super(EntityInfoVmElement.class, basePath, xmlConfigPath);
+	public EntityInfoXmlParse(String xmlConfigPath) {
+		super(EntityInfoVmElement.class, xmlConfigPath);
 	}
 	@Override
 	public void parseXml() {

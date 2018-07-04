@@ -70,25 +70,25 @@ public class ProjectInitData {
 	}
 
 	private void initEntity() {
-		EntityXmlParse entityParse = new EntityXmlParse(config.getBasePath(), config.getEntityXmlPath());
+		EntityXmlParse entityParse = new EntityXmlParse( config.getEntityXmlPath());
 		TemplateCreator<EntityVmElement> creator = new TemplateCreator(entityParse, this);
 		this.entity = creator.parseTemplate();
 	}
 
 	private void initEntityInfo(){
-		EntityInfoXmlParse entityInfoParse = new EntityInfoXmlParse(config.getBasePath(),config.getEntityInfoXmlPath());
+		EntityInfoXmlParse entityInfoParse = new EntityInfoXmlParse(config.getEntityInfoXmlPath());
 		TemplateCreator<EntityInfoVmElement> creator = new TemplateCreator(entityInfoParse, this);
 		this.entityInfo = creator.parseTemplate();
 	}
 
 	private void initMybatisConfig(){
-		MybatisConfigXmlParse mybatisConfigXmlParse = new MybatisConfigXmlParse(config.getBasePath(), config.getMybatisConfigXmlPath());
+		MybatisConfigXmlParse mybatisConfigXmlParse = new MybatisConfigXmlParse( config.getMybatisConfigXmlPath());
 		TemplateCreator<ConfigVmElement> creator = new TemplateCreator(mybatisConfigXmlParse, this);
 		this.elementConfig = creator.parseTemplate();
 	}
 
 	private void initMybatisMapping(){
-		MybatisMappingXmlParse mybatisMappingParse = new MybatisMappingXmlParse(config.getBasePath(), config.getMabatisMappingXmlPath());
+		MybatisMappingXmlParse mybatisMappingParse = new MybatisMappingXmlParse( config.getMabatisMappingXmlPath());
 		TemplateCreator<MappingVmElement> creator = new TemplateCreator(mybatisMappingParse, this);
 		this.elementMapping = creator.parseTemplate();
 	}

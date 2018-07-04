@@ -11,8 +11,8 @@ import org.qiunet.project.init.elements.mybatisConfig.ExtraELementConfig;
  */
 public class MybatisConfigXmlParse extends BaseXmlParse<ConfigVmElement> {
 
-	public MybatisConfigXmlParse(String basePath, String xmlConfigPath) {
-		super(ConfigVmElement.class, basePath, xmlConfigPath);
+	public MybatisConfigXmlParse(String xmlConfigPath) {
+		super(ConfigVmElement.class, xmlConfigPath);
 	}
 
 	@Override

@@ -18,16 +18,12 @@ public abstract class BaseXmlParse<vmelement extends VmElement> {
 
 	private String xmlFile;
 
-	/** 对于xmlfile和 vmfile的一个基础路径, 之后的xml 和 vm是基于该路径的相对路径. */
-	private String basePath;
 	/**
 	 * 可以自己传一个自己定义的vmelement
 	 * @param vmElementClass vmelement 的class
-	 * @param basePath 对于xmlfile和 vmfile的一个基础路径, 之后生成文件 和 vm是基于该路径的相对路径.
 	 * @param xmlConfigPath xml路径
 	 */
-	public BaseXmlParse(Class<vmelement> vmElementClass, String basePath, String xmlConfigPath){
-		this.basePath = basePath;
+	public BaseXmlParse(Class<vmelement> vmElementClass, String xmlConfigPath){
 		this.xmlFile = xmlConfigPath;
 		this.digester = new Digester();
 		this.vmElementClass = vmElementClass;
@@ -83,9 +79,5 @@ public abstract class BaseXmlParse<vmelement extends VmElement> {
 	 */
 	protected  void addObjectCreate(String pattern, Class<?> clazz){
 		this.addObjectCreate(pattern, clazz, "addSubElement");
-	}
-
-	public String getBasePath(){
-		return basePath;
 	}
 }

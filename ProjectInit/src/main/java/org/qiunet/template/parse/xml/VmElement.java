@@ -46,13 +46,7 @@ public abstract class VmElement<T extends SubVmElement> {
 	public String getFilePostfix() {
 		return filePostfix;
 	}
-	/**
-	 * 初始化一些参数
-	 * @param initData
-	 */
-	public void initData(ProjectInitData initData) {
-		this.initData = initData;
-	}
+
 	public void addSubElement(T element) {
 		if (StringUtil.isEmpty(element.getName())){
 			throw new NullPointerException("element ["+element.getClass().getName()+"]name is empty! ");
@@ -90,14 +84,17 @@ public abstract class VmElement<T extends SubVmElement> {
 		return initData;
 	}
 
-	public void parseVm(String baseDir) {
-		if(! baseDir.endsWith(File.separator)) baseDir += File.separator;
-		baseDir += this.baseDir;
+	public void parseVm(ProjectInitData initData) {
+		this.initData = initData;
 
-		if(! baseDir.endsWith(File.separator)) baseDir += File.separator;
+		String basePath = initData.getConfig().getBasePath();
+		if(! basePath.endsWith(File.separator)) basePath += File.separator;
+		basePath += this.baseDir;
+
+		if(! basePath.endsWith(File.separator)) basePath += File.separator;
 
 		for(SubVmElement sub : subVmElements) {
-			sub.parseOutFile(baseDir + sub.getOutFilePath(), getVmfilePath(), getFilePostfix());
+			sub.parseOutFile(basePath + sub.getOutFilePath(), getVmfilePath(), getFilePostfix());
 		}
 	}
 }

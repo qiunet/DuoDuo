@@ -29,10 +29,8 @@ public class TemplateCreator<VmElement extends org.qiunet.template.parse.xml.VmE
 		parse.push(this ,"addVmElement");
 		parse.parseXml();
 		parse.parse();
-		// 是生成VmElement 后才能设置initData
-		this.vmElement.initData(initData);
 		// 调用parsevm 生成文件
-		vmElement.parseVm(parse.getBasePath());
+		vmElement.parseVm(initData);
 
 		return vmElement;
 	}

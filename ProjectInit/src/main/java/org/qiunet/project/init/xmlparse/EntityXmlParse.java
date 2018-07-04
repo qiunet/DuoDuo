@@ -11,8 +11,8 @@ import org.qiunet.project.init.elements.entity.Constructor;
  *         Created on 16/11/22 08:09.
  */
 public class EntityXmlParse extends BaseXmlParse<EntityVmElement> {
-	public EntityXmlParse(String basePath , String xmlConfigPath) {
-		super(EntityVmElement.class, basePath, xmlConfigPath);
+	public EntityXmlParse(String xmlConfigPath) {
+		super(EntityVmElement.class, xmlConfigPath);
 	}
 
 	public void parseXml() {
