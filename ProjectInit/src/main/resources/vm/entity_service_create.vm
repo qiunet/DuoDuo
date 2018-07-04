@@ -1,11 +1,95 @@
 package ${allData.currData.packagePath};
 
-public class ${allData.currData.voName} {
-	private ${allData.currData.poName} po;
-	public ${allData.currData.voName} (${allData.currData.poName} po) {
-		this.po = po;
+#if(${allData.currData.platform})
+import org.qiunet.data.enums.PlatformType;
+#end
+import ${allData.currData.entityDataSupportPackage};
+import org.qiunet.data.core.support.update.UpdateFields;
+import ${allData.currData.infoClassPackage};
+import ${allData.currData.poPackage};
+import ${allData.currData.voPackage};
+
+/**
+* Created by qiunet.
+*/
+public class ${allData.currData.name} {
+	private volatile static ${allData.currData.name} instance;
+	private ${allData.currData.infoClassName} entityInfo = new ${allData.currData.infoClassName}();
+	private ${allData.currData.entityDataSupportClass}<${allData.currData.dbInfoKeyType}, ${allData.currData.poName}, ${allData.currData.voName}> dataSupport;
+
+	private ${allData.currData.name}() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+
+		dataSupport = new ${allData.currData.entityDataSupportClass}(entityInfo);
+		instance = this;
 	}
-	public ${allData.currData.poName} get${allData.currData.poName}(){
-		return po;
+
+	public static ${allData.currData.name} getInstance() {
+		if (instance == null) {
+			synchronized (${allData.currData.name}.class) {
+				if (instance == null) {
+					new ${allData.currData.name}();
+				}
+			}
+		}
+		return instance;
+	}
+
+	public void expirePo(${allData.currData.poName} po) {
+		dataSupport.expireCache(po);
+	}
+### get方法大不同
+#if(${allData.currData.entityDataSupportClass} == 'EntityDataSupport')
+	/**
+	* 获得一个vo的数据
+	*
+	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
+	*/
+	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
+		return dataSupport.getVo(${allData.currData.dbInfoKeyName});
+	}
+#elseif(${allData.currData.entityDataSupportClass} == 'PlatformEntityDataSupport')
+	/**
+	* 获得一个vo的数据
+	*
+	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
+    * @param platform 平台信息
+	*/
+	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
+		return dataSupport.getVo(${allData.currData.dbInfoKeyName}, platform);
+	}
+#end
+	/**
+	* 插入一个po的数据
+	*
+	* @param po po数据
+	*/
+	public ${allData.currData.voName} insert${allData.currData.poName}(${allData.currData.poName} po) {
+		return this.dataSupport.insertPo(po);
+	}
+
+	/**
+	* 更新数据
+	*
+	* @param vo
+	*/
+	public void update${allData.currData.voName}(${allData.currData.voName} vo) {
+		dataSupport.updatePo(vo.get${allData.currData.poName}());
+	}
+
+	/***
+	* 根据字段修改对象
+	* @param vo
+	* @param fields
+	*/
+	public void updateWithFields(${allData.currData.voName} vo, UpdateFields fields) {
+		dataSupport.updateWithFields(vo.get${allData.currData.poName}(), fields);
+	}
+	/***
+	* 删除一个 po
+	* @param vo
+	*/
+	public void delete${allData.currData.poName}(${allData.currData.voName} vo) {
+		dataSupport.deletePo(vo.get${allData.currData.poName}());
 	}
 }

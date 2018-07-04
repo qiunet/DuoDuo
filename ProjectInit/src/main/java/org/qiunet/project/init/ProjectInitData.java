@@ -4,6 +4,7 @@ import org.qiunet.project.init.elements.entity.Entity;
 import org.qiunet.project.init.elements.entity.EntityVmElement;
 import org.qiunet.project.init.elements.info.EntityInfo;
 import org.qiunet.project.init.elements.info.EntityInfoVmElement;
+import org.qiunet.project.init.elements.info.EntityService;
 import org.qiunet.project.init.elements.info.EntityVo;
 import org.qiunet.project.init.elements.mapping.ElementMapping;
 import org.qiunet.project.init.elements.mapping.MappingVmElement;
@@ -41,6 +42,7 @@ public class ProjectInitData {
 		this.initEntity();
 		this.initEntityInfo();
 		this.createEntityVo();
+		this.createService();
 		this.initMybatisMapping();
 		this.initMybatisConfig();
 	}
@@ -129,6 +131,9 @@ public class ProjectInitData {
 		}
 	}
 
+	/***
+	 * 生成service对象
+	 */
 	private void createService(){
 		String basePath = config.getBasePath();
 		StringBuilder poBasePath = new StringBuilder(basePath);
@@ -143,7 +148,7 @@ public class ProjectInitData {
 
 			File file = new File(sb.toString());
 			if (! file.exists()) {
-
+				this.currData = new EntityService(info.getServiceFileName(), getEntity(info.getPoref()), info, servicePath);
 				VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", sb.toString(), this);
 			}
 		}

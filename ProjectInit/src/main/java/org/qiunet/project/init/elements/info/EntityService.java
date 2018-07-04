@@ -12,29 +12,75 @@ public class EntityService {
 	private String name;
 	private Entity entity;
 	private String packagePath;
+	private EntityInfo entityInfo;
+	public EntityService(String name, Entity entity, EntityInfo entityInfo, String packagePath) {
+		this.name = name;
+		this.entity = entity;
+		this.entityInfo = entityInfo;
+		this.packagePath = packagePath;
+	}
+
+	public EntityInfo getEntityInfo() {
+		return entityInfo;
+	}
+
+	public String getPoName(){
+		return entityInfo.getPoref();
+	}
+
+	public String getVoName(){
+		return entityInfo.getVo();
+	}
+
+	public String getPoPackage(){
+		return entity.getPackagePath() +"."+ getPoName();
+	}
+
+	public String getVoPackage(){
+		return entity.getPackagePath() +"."+ getVoName();
+	}
+
+	public String getDbInfoKeyName() {
+		return entity.getDbInfoKey();
+	}
+
+	public String getDbInfoKeyType() {
+		return entity.getDbInfoKeyType();
+	}
+
+	public String getInfoClassPackage(){
+		return entityInfo.getInfoPackagePath()+"."+getInfoClassName();
+	}
+
+	public String getInfoClassName(){
+		return entityInfo.getName();
+	}
 
 	public Entity getEntity() {
 		return entity;
 	}
 
-	public void setEntity(Entity entity) {
-		this.entity = entity;
+	public String getName() {
+		return name;
 	}
 
 	public String getPackagePath() {
 		return packagePath;
 	}
 
-	public void setPackagePath(String packagePath) {
-		this.packagePath = packagePath;
+	public String getEntityDataSupportPackage(){
+		return entity.getType().getDataSupportClass().getName();
 	}
 
-	public String getName() {
-
-		return name;
+	public String getEntityDataSupportClass(){
+		return entity.getType().getDataSupportClass().getSimpleName();
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public boolean isPlatform(){
+		return entity.isPlatformObj();
+	}
+
+	public boolean isRedis(){
+		return entity.isRedisList();
 	}
 }
