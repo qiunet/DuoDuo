@@ -262,11 +262,11 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
 			protected Object expression(Jedis jedis, String key) throws Exception {
-				String keys[]=new String[list.size()];
+				String keys[] = new String[list.size()];
 				int index=0;
-				for(IRedisList po:list){
-					Map<String,String> keyMap=CommonUtil.getMap(po, po.getSubKey());
-					keys[index++]=keyMap.get(po.getSubKey()).toString();
+				for(IRedisList po : list){
+					Map<String,String> keyMap = CommonUtil.getMap(po, po.getSubKey());
+					keys[index++] = keyMap.get(po.getSubKey());
 				}
 				jedis.hdel(key, keys);
 				return null;
