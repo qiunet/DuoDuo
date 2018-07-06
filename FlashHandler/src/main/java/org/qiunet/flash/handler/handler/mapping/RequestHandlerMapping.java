@@ -132,11 +132,14 @@ public class RequestHandlerMapping {
 	}
 	/**
 	 * 得到一个游戏的 handler
-	 * @param requestId
+	 * @param protocolId
 	 * @return
 	 */
-	public IHandler getGameHandler(int requestId) {
-		return gameHandlers.get(requestId);
+	public IHandler getGameHandler(int protocolId) {
+		if (! gameHandlers.containsKey(protocolId)) {
+			logger.error("Have not handler For ProtocolId ["+protocolId+"]");
+		}
+		return gameHandlers.get(protocolId);
 	}
 
 	/***
@@ -144,6 +147,9 @@ public class RequestHandlerMapping {
 	 * @return
 	 */
 	public IHttpHandler getUriPathRequestHandler(String uriPath){
+		if (! uriPathHandlers.containsKey(uriPath)) {
+			logger.error("Have not handler For UriPath ["+uriPath+"]");
+		}
 		return uriPathHandlers.get(uriPath);
 	}
 }
