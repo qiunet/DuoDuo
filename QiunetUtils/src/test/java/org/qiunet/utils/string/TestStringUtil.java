@@ -52,4 +52,15 @@ public class TestStringUtil extends BaseTest{
 		Assert.assertFalse(StringUtil.isNum("-1ff"));
 		Assert.assertFalse(StringUtil.isNum(""));
 	}
+	@Test
+	public void testArrayToString() {
+		String [] strings = new String[]{"0", "1", "2", "3", "4", "5"};
+
+		Assert.assertEquals("0,1,2,3,4,5", StringUtil.arraysToString(strings, ","));
+		Assert.assertEquals("[0,1,2,3,4,5]", StringUtil.arraysToString(strings,"[", "]", ","));
+		Assert.assertEquals("[1,2,3,4]", StringUtil.arraysToString(strings,"[", "]", 1, 4,","));
+
+		Object [] arr = new Object[]{"obj1", "obj2", strings};
+		Assert.assertEquals("obj1,obj2,[0, 1, 2, 3, 4, 5]", StringUtil.arraysToString(arr, ","));
+	}
 }

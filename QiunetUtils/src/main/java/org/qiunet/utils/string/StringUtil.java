@@ -5,9 +5,8 @@ import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,14 +114,31 @@ public class StringUtil {
 	 * @return
 	 */
 	public static <T> String arraysToString(T [] arrays , String start ,String end ,String separator){
+		return  arraysToString(arrays, start, end, 0, arrays.length - 1, separator);
+	}
+	/**
+	 * 数组拼串
+	 * @param arrays
+	 * @param separator
+	 * @return
+	 */
+	public static <T> String arraysToString(T [] arrays , String start ,String end , int startIndex, int endIndex, String separator){
 		StringBuffer sb = new StringBuffer(start);
-		if(arrays == null || arrays.length == 0) return sb.append("").append(end).toString();
+		if(arrays == null || arrays.length == 0) return sb.append(end).toString();
 
-		int offset = arrays.length - 1;
-		for(int i = 0 ; i < offset ; i++){
-			sb.append(arrays[i].toString()).append(separator);
+		for(int i = startIndex; i < endIndex; i++){
+			sb.append(objectToString(arrays[i])).append(separator);
 		}
-		return sb.append(arrays[offset].toString()).append(end).toString();
+		return sb.append(objectToString(arrays[endIndex])).append(end).toString();
+	}
+
+	private static String objectToString(Object obj) {
+		if (obj == null) return null;
+
+		if (obj.getClass().isArray()) {
+			return Arrays.toString((Object[]) obj);
+		}
+		return obj.toString();
 	}
 	/***
 	 * 返回是否符合正则表达式
