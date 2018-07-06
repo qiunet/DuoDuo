@@ -6,6 +6,7 @@ import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.properties.PropertiesUtil;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -27,5 +28,13 @@ public class RedisDataUtil extends AbstractRedisUtil {
 			new RedisDataUtil();
 		}
 		return instance;
+	}
+
+	/***
+	 * 直接可以调用jedis
+	 * @return
+	 */
+	public static JedisCommands returnJedis() {
+		return getInstance().returnJedisProxy();
 	}
 }

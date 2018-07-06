@@ -1,6 +1,7 @@
 package org.qiunet.data.redis;
 
 import com.alibaba.fastjson.JSON;
+import org.qiunet.data.redis.base.MoreKeyRedisCommand;
 import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.data.redis.support.info.IRedisList;
 import org.qiunet.data.redis.support.info.IRedisEntity;
@@ -288,6 +289,38 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				long ret = jedis.incr(key);
 				jedis.expire(key, 3);
 				return ret;
+			}
+		}.execAndReturn();
+	}
+
+	/**
+	 * @param keys redis的keys
+	 * @return 返回jedis 返回的值
+	 */
+	public List<String> mget(final List<String> keys){
+		if(keys == null || keys.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		return new MoreKeyRedisCommand<List<String>>(jedisPool, Collections.emptyList()) {
+			@Override
+			protected List<String> expression(Jedis jedis) throws Exception {
+				List<String> rt=new ArrayList<String>();
+				int maxKey=50;
+				if(keys.size()>maxKey){
+					List<String> tmp=new ArrayList<String>();
+					int size = keys.size();
+					int page = size / maxKey + ((size % maxKey)>0?1:0);
+					for(int i=0;i<page;i++){
+						tmp.addAll(CommonUtil.getSubListPage(keys, i*maxKey, maxKey));
+						rt.addAll(jedis.mget(tmp.toArray(new String[0])));
+						tmp.clear();
+					}
+				}else{
+					String[] keys2 = keys.toArray(new String[0]);
+					rt = jedis.mget(keys2);
+				}
+				return rt;
 			}
 		}.execAndReturn();
 	}

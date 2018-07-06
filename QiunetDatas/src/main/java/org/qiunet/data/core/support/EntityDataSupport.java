@@ -34,7 +34,7 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 		if (!entityInfo.needAsync() ) {
 			dbSupport.update(po, updateStatment);
 		}else {
-			entityInfo.getRedisUtil().saddString(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), String.valueOf(entityInfo.getDbInfoKey(po)));
+			entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), String.valueOf(entityInfo.getDbInfoKey(po)));
 		}
 	}
 	/**
@@ -50,7 +50,7 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 		if (!entityInfo.needAsync() ) {
 			dbSupport.update(po, updateStatment);
 		}else {
-			entityInfo.getRedisUtil().saddString(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), String.valueOf(entityInfo.getDbInfoKey(po)));
+			entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), String.valueOf(entityInfo.getDbInfoKey(po)));
 		}
 	}
 	/**
@@ -79,7 +79,7 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 		ThreadContextData.removeKey(key);
 
 		dbSupport.delete(po, deleteStatment);
-		entityInfo.getRedisUtil().expire(key, 0);
+		entityInfo.getRedisUtil().returnJedisProxy().expire(key, 0);
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 	public void expireCache(PO po) {
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po));
 		ThreadContextData.removeKey(key);
-		getRedis().expire(key, 0);
+		getRedis().returnJedisProxy().expire(key, 0);
 	}
 	/***
 	 * 得到vo

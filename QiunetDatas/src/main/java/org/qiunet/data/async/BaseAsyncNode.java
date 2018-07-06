@@ -16,9 +16,9 @@ public abstract class BaseAsyncNode implements AsyncNode {
 	public void updateRedisDataToDatabase() {
 		for (int dbIndex : DbProperties.getInstance().getDbIndexList()) {
 			String asyncKey = getAsyncKey(dbIndex);
-			long size = getRedis().scardString(asyncKey);
+			long size = getRedis().returnJedisProxy().scard(asyncKey);
 			for (int i = 0; i < size; i++) {
-				String asyncValue = getRedis().spopString(asyncKey);
+				String asyncValue = getRedis().returnJedisProxy().spop(asyncKey);
 				if (asyncValue == null) break;
 
 				try {
@@ -27,7 +27,7 @@ public abstract class BaseAsyncNode implements AsyncNode {
 						logger.error("Error async update db with string [" + getNodeClassDesc() + "--" + asyncValue + "]");
 					}
 				} catch (Exception e) {
-					getRedis().saddString(asyncKey, asyncValue);
+					getRedis().returnJedisProxy().sadd(asyncKey, asyncValue);
 					logger.error("asyncValue [" + asyncValue + "]", e);
 				}
 			}

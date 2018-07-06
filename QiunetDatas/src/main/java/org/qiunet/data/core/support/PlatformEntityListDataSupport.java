@@ -43,7 +43,7 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 			dbSupport.update(po, updateStatment);
 		}else {
 			String asyncValue = entityInfo.getDbInfoKey(po) +"_"+po.getPlatformName()+"_"+po.getSubId();
-			entityInfo.getRedisUtil().saddString(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)),  asyncValue);
+			entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)),  asyncValue);
 		}
 
 	}
@@ -66,7 +66,7 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 		if (voMap != null) {
 			voMap.put(entityInfo.getSubKey(po), vo);
 		}else {
-			insertRedis = entityInfo.getRedisUtil().exists(key);
+			insertRedis = entityInfo.getRedisUtil().returnJedisProxy().exists(key);
 		}
 
 		if (insertRedis) {
@@ -82,7 +82,7 @@ public class PlatformEntityListDataSupport<DbInfoKey, SubKey, PO extends IPlatfo
 	public void expireCache(DbInfoKey dbInfoKey, PlatformType platform) {
 		String key = entityInfo.getRedisKey(dbInfoKey, platform);
 		ThreadContextData.removeKey(key);
-		getRedis().expire(key, 0);
+		getRedis().returnJedisProxy().expire(key, 0);
 	}
 	/**
 	 * deletePo

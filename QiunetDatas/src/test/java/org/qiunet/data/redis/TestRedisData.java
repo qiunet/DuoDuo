@@ -23,9 +23,11 @@ public class TestRedisData {
 	}
 	@Test
 	public void testTtl(){
-		RedisDataUtil.getInstance().setString("qiunet", "123", 40);
-		long ttl = RedisDataUtil.getInstance().ttl("qiunet");
+		RedisDataUtil.returnJedis().setex("qiunet",40, "123");
+		long ttl = RedisDataUtil.returnJedis().ttl("qiunet");
 		Assert.assertTrue(ttl == 40);
+
+		RedisDataUtil.returnJedis().sadd("qiunet111", "1", "2", "3");
 	}
 
 	@Test
@@ -106,10 +108,10 @@ public class TestRedisData {
 		QunxiuPo guildPo1 = RedisDataUtil.getInstance().getObjectFromHash(key, QunxiuPo.class);
 		Assert.assertEquals(guildPo1.getName(), qunxiuPo.getName());
 
-		Assert.assertTrue(RedisDataUtil.getInstance().exists(key));
+		Assert.assertTrue(RedisDataUtil.returnJedis().exists(key));
 
-		RedisDataUtil.getInstance().expire(key , 0);
-		Assert.assertFalse(RedisDataUtil.getInstance().exists(key));
+		RedisDataUtil.getInstance().returnJedis().expire(key , 0);
+		Assert.assertFalse(RedisDataUtil.returnJedis().exists(key));
 	}
 
 	@Test public void testMget(){

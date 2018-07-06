@@ -43,7 +43,7 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 		if (! entityInfo.needAsync()) {
 			dbSupport.update(po, updateStatment);
 		}else {
-			entityInfo.getRedisUtil().saddString(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), entityInfo.getDbInfoKey(po) +"_" + entityInfo.getSubKey(po));
+			entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), entityInfo.getDbInfoKey(po) +"_" + entityInfo.getSubKey(po));
 		}
 	}
 	/**
@@ -65,7 +65,7 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 		if (voMap != null) {
 			voMap.put(entityInfo.getSubKey(po), vo);
 		}else {
-			insertToRedis = entityInfo.getRedisUtil().exists(key);
+			insertToRedis = entityInfo.getRedisUtil().returnJedisProxy().exists(key);
 		}
 		if (insertToRedis) {
 			List<PO> poList = new ArrayList(1);
@@ -80,7 +80,7 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 	public void expireCache(DbInfoKey dbInfoKey) {
 		String key = entityInfo.getRedisKey(dbInfoKey);
 		ThreadContextData.removeKey(key);
-		getRedis().expire(key, 0);
+		getRedis().returnJedisProxy().expire(key, 0);
 	}
 	/**
 	 * deletePo
