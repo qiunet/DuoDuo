@@ -1,6 +1,5 @@
 package org.qiunet.data.redis;
 
-import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.json.JsonUtil;
@@ -68,9 +67,12 @@ abstract class BaseRedisUtil {
 
 	private class JedisTemp implements InvocationHandler {
 		private Jedis jedis;
+		private boolean log;
 
-		JedisTemp(Jedis jedis) {
+
+		JedisTemp(Jedis jedis, boolean log) {
 			this.jedis = jedis;
+			this.log = log;
 		}
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -79,7 +81,7 @@ abstract class BaseRedisUtil {
 
 				Object object = method.invoke(jedis, args);
 
-				if (logger.isInfoEnabled()){
+				if (log && logger.isInfoEnabled()){
 					long endDt = System.currentTimeMillis();
 					StringBuilder sb = new StringBuilder();
 					sb.append("RedisCommand [").append(String.format("%-18s", method.getName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(args[0]).append("] ");
@@ -99,8 +101,17 @@ abstract class BaseRedisUtil {
 	 * @return
 	 */
 	public JedisCommands returnJedisProxy() {
+		return returnJedisProxy(true);
+	}
+	/***
+	 * 返回jedis代理
+	 * 使用完. 会自己close
+	 * @param log true 打印日志 false 不打印日志
+	 * @return
+	 */
+	public JedisCommands returnJedisProxy(boolean log) {
 		Jedis jedis = jedisPool.getResource();
-		InvocationHandler handler = new JedisTemp(jedis);
+		InvocationHandler handler = new JedisTemp(jedis, log);
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), jedis.getClass().getInterfaces(), handler);
 	}
 }
