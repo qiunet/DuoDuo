@@ -7,6 +7,9 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 方便广播使用的组
@@ -14,6 +17,7 @@ import org.qiunet.flash.handler.context.response.push.IMessage;
  * 17/11/30
  */
 public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/***
 	 * 构造函数
 	 * @param name
@@ -39,7 +43,11 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture broadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		return super.writeAndFlush(buildMessage(protocolId, msg).encode(), matcher, false);
+		IMessage message = buildMessage(protocolId, msg);
+		if (logger.isInfoEnabled()) {
+			logger.info(message.toStr());
+		}
+		return super.writeAndFlush(message.encode(), matcher, false);
 	}
 	/***
 	 * 群发一个webSocket msg
@@ -59,7 +67,11 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		return super.writeAndFlush(new BinaryWebSocketFrame(buildMessage(protocolId, msg).encode().encodeToByteBuf()), matcher, false);
+		IMessage message = buildMessage(protocolId, msg);
+		if (logger.isInfoEnabled()) {
+			logger.info(message.toStr());
+		}
+		return super.writeAndFlush(new BinaryWebSocketFrame(message.encode().encodeToByteBuf()), matcher, false);
 	}
 
 	@Override
