@@ -12,6 +12,11 @@ import java.net.URL;
 import java.util.*;
 
 /**
+ * 大部分数据可以分为:
+ * key  -> cfg
+ * key -> list<cfg>
+ * key -> map<subKey, cfg>
+ *
  * Created by qiunet.
  * 17/7/16
  */
@@ -91,7 +96,8 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	protected abstract void init()throws Exception;
 
 	/***
-	 * 得到有序的map
+	 * 得到的map
+	 * Map<Key, Cfg>
 	 * @param filePath
 	 * @param cfgClass
 	 * @param <Key>
@@ -114,7 +120,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	}
 
 	/***
-	 * 得到一个简单的list
+	 * 得到一个简单的list<cfg>
 	 * @param filePath
 	 * @param cfgClass
 	 * @param <Cfg>
@@ -134,6 +140,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 	}
 	/***
 	 * 得到一个一定格式的嵌套map
+	 * 格式: key 对应 Map<subKey, cfg>
 	 * @param fileName
 	 * @param cfgClass
 	 * @param <Key>
@@ -168,6 +175,7 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 
 	/***
 	 * 得到嵌套list的map数据
+	 * 一个key  对应一个 cfg list的结构
 	 * @param fileName
 	 * @param cfgClass
 	 * @param <Key>
