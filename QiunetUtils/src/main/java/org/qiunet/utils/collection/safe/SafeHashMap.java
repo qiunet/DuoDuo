@@ -6,13 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author qiunet
  *         Created on 17/3/1 16:35.
  */
-public class SafeHashMap<KEY, VAL> extends HashMap<KEY, VAL> {
+public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/**
 	 * 一个只允许初始化一次的锁变量
