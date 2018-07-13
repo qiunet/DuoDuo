@@ -15,7 +15,7 @@ import java.sql.Statement;
 public class TestLog4Jdbc {
 	@Test
 	public void testLog4Jdbc(){
-		String url = "jdbc:mysql://127.0.0.1:3306/test_0?useUnicode=true&useSSL=false";
+		String url = "jdbc:mariadb://127.0.0.1:3306/test_0?useUnicode=true&useSSL=false";
 		String driver= "org.mariadb.jdbc.Driver";
 		String ursename="root";
 		String password="qiuyang";

@@ -42,12 +42,12 @@
 	例如:
 	   # player_0 db
        database.0.driverClassName=org.mariadb.jdbc.Driver
-       database.0.url=jdbc:mysql://localhost:3306/test_0?useUnicode=true&characterEncoding=utf-8&useSSL=false
+       database.0.url=jdbc:mariadb://localhost:3306/test_0?useUnicode=true&characterEncoding=utf-8&useSSL=false
        database.0.username=root
        database.0.password=qiuyang
        
        database.global.driverClassName=org.mariadb.jdbc.Driver
-       database.global.url=jdbc:mysql://localhost:3306/test_global?useUnicode=true&characterEncoding=utf-8&useSSL=false
+       database.global.url=jdbc:mariadb://localhost:3306/test_global?useUnicode=true&characterEncoding=utf-8&useSSL=false
        database.global.username=root
        database.global.password=qiuyang
 
