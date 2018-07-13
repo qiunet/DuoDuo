@@ -1,6 +1,5 @@
 package org.qiunet.data.db.core;
 
-import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.executor.ErrorContext;
@@ -94,7 +93,6 @@ import java.util.Map;
 			this.loaderDataSource();
 
 			ShutdownHookThread.getInstance().addShutdownHook( () -> {
-				AbandonedConnectionCleanupThread.checkedShutdown();
 				while (DriverManager.getDrivers().hasMoreElements()){
 					Driver driver = DriverManager.getDrivers().nextElement();
 					try {

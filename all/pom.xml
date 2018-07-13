@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
 	<packaging>jar</packaging>
-	<version>4.0.25</version>
+	<version>4.0.26</version>
 	<name>DuoDuo/All-in-One</name>
 
 	<properties>
@@ -272,8 +272,8 @@
 			<artifactId>netty-all</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.protobuf</groupId>

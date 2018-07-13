@@ -43,7 +43,6 @@
 自己写了服务器端和H5客户端的交互. 可以参考[项目](https://github.com/qiunet/CocosCreatorAndServer)
 
 ## 5.0 修改
-* 从Mysql转MariaDB
 * 去掉 DbSourceType 类型. 支持多个global库.
 * ActiveMQ 的module添加. (单独于 all , 因为很多项目可能用不着)
 
