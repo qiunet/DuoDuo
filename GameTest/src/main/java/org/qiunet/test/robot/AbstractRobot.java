@@ -67,7 +67,7 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 			}
 
 			if (brokeReason != null) {
-				logger.error("中断错误: "+ brokeReason);
+				logger.error("机器人中断错误: "+ brokeReason);
 				break;
 			}
 			boolean conditionJudgePass = false;
@@ -80,7 +80,7 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 			if (conditionJudgePass) {
 				testCase.sendRequest(this);
 			}else if (testCase.cancelIfConditionMiss()){
-				logger.info("程序终止....");
+				logger.info("TestCase["+testCaseClass.getSimpleName()+"]条件不足并且设置了[cancelIfConditionMiss], 机器人终止测试....");
 				// 如果条件不满足, 就终止的case
 				break;
 			}
