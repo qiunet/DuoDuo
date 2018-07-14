@@ -40,10 +40,7 @@ public class MybatisInterceptor implements Interceptor {
 		}finally {
 			long diff = System.currentTimeMillis() - start;
 			try {
-				StringBuilder sb = new StringBuilder();
-				sb.append(showSql(configuration, boundSql));
-				sb.append("\t耗时:[").append(diff).append("ms]");
-				logger.info(sb.toString());
+				logger.info(new StringBuilder().append(formatSql(configuration, boundSql)).append("\t耗时:[").append(diff).append("ms]").toString());
 			}catch (Exception e) {
 				logger.error("SQL打印异常: ", e);
 			}
@@ -72,7 +69,7 @@ public class MybatisInterceptor implements Interceptor {
 		return val.replaceAll("\\?", "");
 	}
 
-	private String showSql(Configuration configuration, BoundSql boundSql) {
+	private String formatSql(Configuration configuration, BoundSql boundSql) {
 		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
 		Object parameterObject = boundSql.getParameterObject();
 		if (parameterMappings == null || parameterMappings.isEmpty() || parameterObject == null) {
