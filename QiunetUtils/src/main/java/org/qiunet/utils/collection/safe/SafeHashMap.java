@@ -33,7 +33,7 @@ public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
 	@Override
 	public VAL get(Object key) {
 		if (loggerAbsent && ! containsKey(key)) {
-			logger.error("Key ["+key+"] is not in map. ");
+			logger.error("=================Key ["+key+"] is not in map.=============== ");
 		}
 		return super.get(key);
 	}

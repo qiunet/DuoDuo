@@ -74,7 +74,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 		V v = getValue(key);
 		if (v == null) {
 			// 这里需要打印缺少的key.
-			logger.error("Key ["+key+"] is not exist!");
+			logger.error("=================Key ["+key+"] is not in map.=============== ");
 			return null;
 		}
 		return v.toString();
