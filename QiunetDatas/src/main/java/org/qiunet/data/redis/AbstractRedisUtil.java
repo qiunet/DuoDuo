@@ -212,7 +212,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 						CommonUtil.getObjFromMap(mapFields, po);
 						rt.add(po);
 					}
-					jedis.expire(clazz.getSimpleName(), seconds);
+					jedis.expire(key, seconds);
 					return rt;
 				}
 				return null;
