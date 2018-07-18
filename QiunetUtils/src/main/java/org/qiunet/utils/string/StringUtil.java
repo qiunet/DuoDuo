@@ -1,10 +1,10 @@
 package org.qiunet.utils.string;
 
-import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
 	private StringUtil(){}
+
+	public static final Charset UTF8 = Charset.forName("UTF-8");
 
 	/**汉字的正则表达式*/
 	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5\uF900-\uFA2D]*)");
@@ -259,11 +261,11 @@ public class StringUtil {
 		int start = 0;
 		int length = str.length();
 
-		while (start < length && ((str.charAt(start) > (char)0 && str.charAt(start) <= (char)32) || CommonUtil.existInList(str.charAt(start), spaceChars))) {
+		while (start < length && ! isAllowChar(str.charAt(start))) {
 			start ++;
 		}
 
-		while (length > start && ((str.charAt(length - 1) > (char)0 && str.charAt(length - 1) <= (char)32) || CommonUtil.existInList(str.charAt(length - 1), spaceChars))) {
+		while (length > start && ! isAllowChar(str.charAt(length - 1))) {
 			length --;
 		}
 
@@ -271,5 +273,21 @@ public class StringUtil {
 			return str.substring(start, length);
 		}
 		return str;
+	}
+
+	/***
+	 * 判断字符是否是允许字符
+	 * @param ch
+	 * @return
+	 */
+	private static boolean isAllowChar(char ch) {
+		if (ch > (char) 32 && ch < (char)128) {
+			return true;
+		}
+		String chStr = String.valueOf(ch);
+		if (regexChinese(chStr)) {
+			return true;
+		}
+		return false;
 	}
 }
