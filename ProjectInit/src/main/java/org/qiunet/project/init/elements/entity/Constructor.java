@@ -22,6 +22,7 @@ public class Constructor {
 	public void refreshFields(List<Field> fields){
 		String cFields [] = StringUtil.split(constructorFields, ",");
 		for (String field : cFields) {
+			field = field.trim();
 			Field target = null;
 			for (Field f : fields) {
 				if (f.getName().equals(field)) {
