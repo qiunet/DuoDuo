@@ -19,7 +19,9 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -31,9 +33,7 @@ public class BootstrapServer {
 
 	private volatile static BootstrapServer instance;
 
-	private NettyHttpServer httpServer;
-
-	private NettyTcpServer tcpServer;
+	private Set<INettyServer> nettyServers = new HashSet<>(8);
 
 	private HookListener hookListener;
 
@@ -110,11 +110,10 @@ public class BootstrapServer {
 	 * @return
 	 */
 	public BootstrapServer httpListener(HttpBootstrapParams params) {
-		if (this.httpServer != null) {
-			throw new RuntimeException("httpServer already setting! ");
-		}
-		this.httpServer = new NettyHttpServer(params);
-		Thread httpThread = new Thread(this.httpServer, "BootstrapServer-Http");
+		NettyHttpServer httpServer = new NettyHttpServer(params);
+		this.nettyServers.add(httpServer);
+
+		Thread httpThread = new Thread(httpServer, "BootstrapServer-Http Address ["+params.getAddress().toString()+"]");
 		httpThread.setDaemon(true);
 		httpThread.start();
 		return this;
@@ -126,12 +125,11 @@ public class BootstrapServer {
 	 * @return
 	 */
 	public BootstrapServer tcpListener(TcpBootstrapParams params) {
-		if (this.tcpServer != null) {
-			throw new RuntimeException("tcpServer already setting! ");
-		}
 
-		this.tcpServer = new NettyTcpServer(params);
-		Thread tcpThread = new Thread(tcpServer, "BootstrapServer-Tcp");
+		NettyTcpServer tcpServer = new NettyTcpServer(params);
+		this.nettyServers.add(tcpServer);
+
+		Thread tcpThread = new Thread(tcpServer, "BootstrapServer-Tcp Address ["+params.getAddress().toString()+"]");
 		tcpThread.setDaemon(true);
 		tcpThread.start();
 
@@ -154,14 +152,11 @@ public class BootstrapServer {
 		if (hook != null) {
 			hook.shutdown();
 		}
-		if (this.httpServer != null) {
-			this.httpServer.shutdown();
-		}
-		if (this.tcpServer != null) {
-			this.tcpServer.shutdown();
+
+		for (INettyServer server : this.nettyServers) {
+			server.shutdown();
 		}
 
-		Acceptor.getInstance().shutdown();
 		LockSupport.unpark(awaitThread);
 	}
 
@@ -221,7 +216,7 @@ public class BootstrapServer {
 
 		@Override
 		public void run() {
-			logger.error("[HookListener]服务端: 启动成功");
+			logger.error("[HookListener]服务端 Hook Listener on port ["+hook.getHookPort()+"]");
 			try {
 			while (RUNNING) {
 					try {

@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.acceptor;
 
 import org.qiunet.flash.handler.context.request.IRequestContext;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
-import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.utils.asyncQuene.IndexAsyncQueueHandler;
+import org.qiunet.utils.hook.ShutdownHookThread;
 
 /**
  * 整个的游戏入口, 处理TCP 和 HTTP过来的请求
@@ -30,6 +29,10 @@ public class Acceptor {
 
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
 		this.contextProcessor = new IndexAsyncQueueHandler("flash_handler_acceptor_", threadCount);
+
+		ShutdownHookThread.getInstance().addShutdownHook(() -> {
+			this.shutdown();
+		});
 		instance = this;
 	}
 

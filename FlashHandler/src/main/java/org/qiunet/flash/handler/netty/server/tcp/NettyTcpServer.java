@@ -6,6 +6,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
@@ -19,7 +20,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/8/13
  */
-public final class NettyTcpServer implements Runnable {
+public final class NettyTcpServer implements Runnable, INettyServer {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private TcpBootstrapParams params;
@@ -59,7 +60,7 @@ public final class NettyTcpServer implements Runnable {
 			worker.shutdownGracefully();
 		}
 	}
-
+	@Override
 	public void shutdown(){
 		this.channelFuture.channel().close();
 	}

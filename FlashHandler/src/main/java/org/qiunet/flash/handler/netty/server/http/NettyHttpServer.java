@@ -9,6 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.utils.logger.LoggerType;
@@ -22,7 +23,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/11
  */
-public class NettyHttpServer implements Runnable {
+public class NettyHttpServer implements Runnable, INettyServer {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private ChannelFuture channelFuture;
 	private HttpBootstrapParams params;
@@ -70,6 +71,7 @@ public class NettyHttpServer implements Runnable {
 	/***
 	 * 停止
 	 */
+	@Override
 	public void shutdown(){
 		this.channelFuture.channel().close();
 	}
