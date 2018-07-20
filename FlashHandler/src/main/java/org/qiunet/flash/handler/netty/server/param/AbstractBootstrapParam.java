@@ -2,8 +2,6 @@ package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.context.header.IContextAdapter;
 import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
-import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
-import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
@@ -14,9 +12,6 @@ import java.net.SocketAddress;
  * 17/11/22
  */
 public abstract class AbstractBootstrapParam {
-
-	protected ISessionEvent sessionEvent;
-
 	// 一些定义好的错误消息.
 	protected IClientErrorMessage errorMessage;
 	/***
@@ -32,10 +27,6 @@ public abstract class AbstractBootstrapParam {
 	protected boolean crc;
 
 	protected int maxReceivedLength;
-
-	public ISessionEvent getSessionEvent() {
-		return sessionEvent;
-	}
 
 	public IClientErrorMessage getErrorMessage() {
 		return errorMessage;
@@ -67,16 +58,11 @@ public abstract class AbstractBootstrapParam {
 
 		protected IContextAdapter adapter = new DefaultContextAdapter();
 
-		protected ISessionEvent sessionEvent = new DefaultSessionEvent();
 
 		protected IClientErrorMessage errorMessage;
 
 		protected boolean crc = true;
 
-		public B setSessionEvent(ISessionEvent sessionEvent) {
-			this.sessionEvent = sessionEvent;
-			return (B) this;
-		}
 		public B setErrorMessage(IClientErrorMessage errorMessage) {
 			this.errorMessage = errorMessage;
 			return (B) this;
@@ -109,7 +95,6 @@ public abstract class AbstractBootstrapParam {
 			P p = newParams();
 			p.maxReceivedLength = maxReceivedLength;
 			p.errorMessage = errorMessage;
-			p.sessionEvent = sessionEvent;
 			p.address = address;
 			p.adapter = adapter;
 			p.crc = crc;

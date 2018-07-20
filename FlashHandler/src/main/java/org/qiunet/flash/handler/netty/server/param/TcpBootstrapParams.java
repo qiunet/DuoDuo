@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
+import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
 /**
  * 使用引导类 参数.
@@ -9,8 +11,12 @@ import org.qiunet.flash.handler.netty.server.interceptor.TcpInterceptor;
  */
 public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	private TcpInterceptor tcpInterceptor;
-
+	private ISessionEvent sessionEvent;
 	private TcpBootstrapParams(){}
+
+	public ISessionEvent getSessionEvent() {
+		return sessionEvent;
+	}
 
 	public TcpInterceptor getTcpInterceptor() {
 		return tcpInterceptor;
@@ -28,11 +34,14 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 */
 	public static class Builder extends SuperBuilder<TcpBootstrapParams, Builder> {
-
 		private TcpInterceptor tcpInterceptor;
+		private ISessionEvent sessionEvent = new DefaultSessionEvent();
 
 		private Builder(){}
-
+		public Builder setSessionEvent(ISessionEvent sessionEvent) {
+			this.sessionEvent = sessionEvent;
+			return this;
+		}
 
 		public Builder setTcpInterceptor(TcpInterceptor interceptor) {
 			this.tcpInterceptor = interceptor;
@@ -49,6 +58,7 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 			if (tcpInterceptor == null) throw new NullPointerException("tcpInterceptor can not be Null");
 			if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
 			tcpBootstrapParams.tcpInterceptor = this.tcpInterceptor;
+			tcpBootstrapParams.sessionEvent = sessionEvent;
 		}
 	}
 }
