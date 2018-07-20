@@ -104,6 +104,7 @@ public class SessionManager implements Runnable {
 			while(it.hasNext()){
 				Map.Entry<String, ISession> en = it.next();
 				if (now - en.getValue().lastPackageTimeStamp() > maxSessionValidTime*1000 ){
+					en.getValue().getChannel().close();
 					it.remove();
 				}
 			}

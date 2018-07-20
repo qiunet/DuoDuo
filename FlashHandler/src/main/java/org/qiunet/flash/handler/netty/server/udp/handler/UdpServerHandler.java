@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.udp.handler;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
@@ -19,7 +20,8 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket msg) throws Exception {
-		System.out.println(msg.content().toString(StringUtil.UTF8));
+		System.out.println("channel:["+msg.sender().hashCode()+"] "+ msg.content().toString(StringUtil.UTF8));
+		ctx.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer("xxxx", StringUtil.UTF8), msg.sender()));
 	}
 
 	@Override
