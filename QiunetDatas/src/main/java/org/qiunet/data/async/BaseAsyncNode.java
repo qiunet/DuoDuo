@@ -16,7 +16,7 @@ public abstract class BaseAsyncNode implements AsyncNode {
 	public void updateRedisDataToDatabase() {
 		for (int dbIndex : DbProperties.getInstance().getDbIndexList()) {
 			String asyncKey = getAsyncKey(dbIndex);
-			long size = getRedis().returnJedisProxy().scard(asyncKey);
+			long size = getRedis().returnJedisProxy(false).scard(asyncKey);
 			for (int i = 0; i < size; i++) {
 				String asyncValue = getRedis().returnJedisProxy().spop(asyncKey);
 				if (asyncValue == null) break;
