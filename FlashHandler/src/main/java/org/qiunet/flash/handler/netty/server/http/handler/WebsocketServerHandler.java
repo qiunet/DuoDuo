@@ -19,6 +19,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +42,20 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-		params.getSessionEvent().sessionRegistered(ctx);
+		try {
+			params.getSessionEvent().sessionRegistered(ctx);
+		}finally {
+			ThreadContextData.removeAll();
+		}
 	}
 
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-		params.getSessionEvent().sessionUnregistered(ctx);
+		try {
+			params.getSessionEvent().sessionUnregistered(ctx);
+		}finally {
+			ThreadContextData.removeAll();
+		}
 	}
 
 	/***
