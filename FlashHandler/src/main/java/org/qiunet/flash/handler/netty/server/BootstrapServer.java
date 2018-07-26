@@ -173,6 +173,12 @@ public class BootstrapServer {
 		for (INettyServer server : this.nettyServers) {
 			server.shutdown();
 		}
+		try {
+			// 业务需要时间停止.
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 
 		LockSupport.unpark(awaitThread);
 	}

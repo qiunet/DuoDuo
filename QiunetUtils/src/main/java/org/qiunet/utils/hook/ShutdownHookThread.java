@@ -37,7 +37,13 @@ public class ShutdownHookThread {
 		}
 		return instance;
 	}
-
+	/***
+	 * 添加 到开头
+	 * @param closeHook
+	 */
+	public void addFirst(IShutdownCloseHook closeHook) {
+		hook.closes.addFirst(closeHook);
+	}
 	/***
 	 * 添加
 	 * @param closeHook
@@ -64,7 +70,7 @@ public class ShutdownHookThread {
 	 * Thread 对外隐藏. 不能被调用run方法了.
 	 */
 	private class Hook extends Thread {
-		List<IShutdownCloseHook> closes = new LinkedList<>();
+		LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
 		@Override
 		public void run() {
 			logger.error("----------------Shutdown now-----------------------");
