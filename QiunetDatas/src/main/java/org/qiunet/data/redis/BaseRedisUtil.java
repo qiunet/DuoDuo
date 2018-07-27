@@ -42,13 +42,13 @@ abstract class BaseRedisUtil {
 
 		String host = redisProperties.getString(getConfigKey("host"));
 		int port = redisProperties.getInt(getConfigKey("port"));
-		String password = redisProperties.getString(getConfigKey("pass"), "");
+		String password = redisProperties.getString(getConfigKey("pass"), null);
+		if ("".equals(password)) password = null;
+
 		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
-		if (!StringUtil.isEmpty(password)) {
-			this.jedisPool = new JedisPool(poolConfig, host, port, timeout, password);
-		}else {
-			this.jedisPool = new JedisPool(poolConfig, host, port, timeout);
-		}
+		int db = redisProperties.getInt(getConfigKey("db"), 0);
+
+		this.jedisPool = new JedisPool(poolConfig, host, port, timeout, password, db, null);
 
 		ShutdownHookThread.getInstance().addShutdownHook(() -> {
 			// 添加关闭.
