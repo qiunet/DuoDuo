@@ -18,6 +18,10 @@ public enum HandlerType {
 	/**
 	 * webSocket
 	 */
-	WEB_SOCKET;
+	WEB_SOCKET,
+	/***
+	 * 可靠的 UDP
+	 */
+	UDP,
 	;
 }
