@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
+import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,19 @@ public class ResponseMsgUtil {
 		}
 		channel.writeAndFlush(message.encode());
 	}
+	/***
+	 * 推送一个普通udp message 给指定的客户端
+	 * @param channel
+	 * @param importantMsg 是否是需要保证可靠性的消息. true 需要 false 不需要
+	 * @param message
+	 */
+	public static void responseUdpMessage(UdpChannel channel, boolean importantMsg, IMessage message) {
+		if (logger.isInfoEnabled()) {
+			logger.info(message.toStr());
+		}
+		channel.sendMessage(message.encode(), importantMsg);
+	}
+
 	/***
 	 * 推送一个Websocket message 给指定的客户端
 	 * @param channelLongId

@@ -26,13 +26,30 @@ public class UdpChannel implements Channel {
 		UdpSenderManager.getInstance().addSender(sender, this);
 	}
 
+	/***
+	 * 发送消息
+	 * @param message
+	 */
+	public void sendMessage(Object message) {
+		this.sendMessage(message, true);
+	}
+
+	/***
+	 * 发送消息
+	 * @param message
+	 * @param importantMsg false的消息, 不需要等待回应. 发送后就取消掉了.
+	 */
+	public void sendMessage(Object message, boolean importantMsg) {
+
+	}
+
 	public InetSocketAddress getSender() {
 		return sender;
 	}
 
 	@Override
 	public ChannelId id() {
-		return channel.id();
+		return new UdpChannelId(sender);
 	}
 
 	@Override
@@ -77,7 +94,7 @@ public class UdpChannel implements Channel {
 
 	@Override
 	public SocketAddress remoteAddress() {
-		return channel.remoteAddress();
+		return sender;
 	}
 
 	@Override
@@ -245,5 +262,27 @@ public class UdpChannel implements Channel {
 	@Override
 	public int compareTo(Channel o) {
 		return channel.compareTo(o);
+	}
+
+	private class UdpChannelId implements ChannelId {
+		private String id;
+		UdpChannelId(InetSocketAddress address) {
+			this.id = address.toString();
+		}
+
+		@Override
+		public String asShortText() {
+			return id;
+		}
+
+		@Override
+		public String asLongText() {
+			return id;
+		}
+
+		@Override
+		public int compareTo(ChannelId o) {
+			return 0;
+		}
 	}
 }
