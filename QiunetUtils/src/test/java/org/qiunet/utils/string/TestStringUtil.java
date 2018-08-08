@@ -47,6 +47,9 @@ public class TestStringUtil extends BaseTest{
 
 		str = "　　﹏ℳ๓二ৡৢﺴ";
 		Assert.assertEquals("二", StringUtil.powerfulTrim(str));
+
+		str = "　　ۣۣ ۣۣ ۣۣ ۣۣ ۣۣ ۣۣ ";
+		Assert.assertEquals("", StringUtil.powerfulTrim(str));
 	}
 	@Test
 	public void testIsNum(){
