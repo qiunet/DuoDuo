@@ -28,9 +28,12 @@ public class DefaultSessionEvent implements ISessionEvent {
 	public void sessionReceived(ChannelHandlerContext ctx, HandlerType type, IRequest msg) {
 		ISession session = sessionManager.getSession(ctx.channel());
 		if (session == null) {
-			logger.error("Session is close in server. It is not accept any message. ");
-			ctx.close();
-			return;
+			this.sessionRegistered(ctx);
+			session = sessionManager.getSession(ctx.channel());
+//			 先这么试试. 看看搞一个无状态的长连接 有没有问题.
+//			logger.error("Session is close in server. It is not accept any message. ");
+//			ctx.close();
+//			return;
 		}
 		session.setLastPackageTimeStamp();
 	}
