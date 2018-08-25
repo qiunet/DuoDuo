@@ -89,7 +89,7 @@ public class BadWordFilter {
 	}
 	private static String [] arrays = {"", "*", "**", "***", "****", "*****"};
 	private String createStarCharByCount(int count) {
-		if (count <= arrays.length) return arrays[count];
+		if (count < arrays.length) return arrays[count];
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
