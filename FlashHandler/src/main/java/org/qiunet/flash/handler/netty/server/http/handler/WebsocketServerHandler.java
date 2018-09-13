@@ -43,7 +43,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 	@Override
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		try {
-			params.getSessionEvent().sessionRegistered(ctx);
+			params.getSessionEvent().sessionRegistered(ctx.channel());
 		}finally {
 			ThreadContextData.removeAll();
 		}
@@ -52,7 +52,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 	@Override
 	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
 		try {
-			params.getSessionEvent().sessionUnregistered(ctx);
+			params.getSessionEvent().sessionUnregistered(ctx.channel());
 		}finally {
 			ThreadContextData.removeAll();
 		}
@@ -150,7 +150,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		// 更新最后时间 方便去除很久没有心跳的channel
 
 		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params);
-		params.getSessionEvent().sessionReceived(ctx, HandlerType.WEB_SOCKET, context);
+		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.WEB_SOCKET, context);
 		if (ctx.channel().isActive()) {
 			acceptor.process(context);
 		}

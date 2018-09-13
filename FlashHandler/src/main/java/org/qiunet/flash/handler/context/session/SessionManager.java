@@ -85,6 +85,7 @@ public class SessionManager implements Runnable {
 	 * @param channel
 	 */
 	public void removeSession(Channel channel) {
+		if (channel == null) return;
 		this.sessions.remove(channel.id().asLongText());
 	}
 

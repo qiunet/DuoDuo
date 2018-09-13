@@ -1,14 +1,12 @@
 package org.qiunet.flash.handler.context.request.udp;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IUdpResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.context.session.SessionManager;
-import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParam;
+import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 
 import java.net.InetSocketAddress;
@@ -19,10 +17,10 @@ import java.net.InetSocketAddress;
  * @Date Create in 2018/7/30 14:53
  **/
 public abstract class AbstractUdpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IUdpRequestContext<RequestData>, IUdpResponse {
-	protected UdpBootstrapParam params;
+	protected UdpBootstrapParams params;
 	protected UdpChannel channel;
 
-	protected AbstractUdpRequestContext(MessageContent content, UdpChannel channel, UdpBootstrapParam params) {
+	protected AbstractUdpRequestContext(MessageContent content, UdpChannel channel, UdpBootstrapParams params) {
 		super(content, null);
 		this.channel = channel;
 		this.params = params;

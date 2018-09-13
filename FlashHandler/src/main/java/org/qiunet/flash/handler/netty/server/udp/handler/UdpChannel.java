@@ -1,9 +1,15 @@
 package org.qiunet.flash.handler.netty.server.udp.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
+import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import org.qiunet.flash.handler.context.session.SessionManager;
+import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
+import org.qiunet.utils.string.StringUtil;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -36,11 +42,11 @@ public class UdpChannel implements Channel {
 
 	/***
 	 * 发送消息
-	 * @param message
+	 * @param message 必须是bytebuf
 	 * @param importantMsg false的消息, 不需要等待回应. 发送后就取消掉了.
 	 */
 	public void sendMessage(Object message, boolean importantMsg) {
-
+		this.channel.writeAndFlush(new DatagramPacket((ByteBuf) message, this.sender));
 	}
 
 	public InetSocketAddress getSender() {
@@ -155,7 +161,7 @@ public class UdpChannel implements Channel {
 	@Override
 	public ChannelFuture close() {
 		UdpSenderManager.getInstance().removeChannel(this.sender);
-		return channel.close();
+		return null;
 	}
 
 	@Override
@@ -282,7 +288,7 @@ public class UdpChannel implements Channel {
 
 		@Override
 		public int compareTo(ChannelId o) {
-			return 0;
+			return o.asLongText().compareTo(this.asLongText());
 		}
 	}
 }
