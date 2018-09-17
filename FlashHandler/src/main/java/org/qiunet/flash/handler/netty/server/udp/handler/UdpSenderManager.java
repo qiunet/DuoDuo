@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.netty.server.udp.handler;
 
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.Channel;
@@ -13,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 class UdpSenderManager {
 	private ConcurrentHashMap<InetSocketAddress, UdpChannel> channels = new ConcurrentHashMap<>();
-
+	private Logger logger = LoggerFactory.getLogger(getClass());
 	private volatile static UdpSenderManager instance;
 
 	protected UdpBootstrapParams params;
@@ -37,11 +39,13 @@ class UdpSenderManager {
 
 	void addSender(InetSocketAddress sender, UdpChannel channel) {
 		params.getSessionEvent().sessionRegistered(channel);
+		logger.info("Sender ["+sender.toString()+"] was add");
 		this.channels.put(sender, channel);
 	}
 
 	void removeChannel(InetSocketAddress sender) {
 		params.getSessionEvent().sessionUnregistered(getUdpChannel(sender));
+		logger.info("Sender ["+sender.toString()+"] was removed");
 		this.channels.remove(sender);
 	}
 

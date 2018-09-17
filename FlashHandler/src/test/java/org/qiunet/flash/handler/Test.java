@@ -2,6 +2,7 @@ package org.qiunet.flash.handler;
 
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
+import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.interceptor.DefaultUdpInterceptor;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -19,6 +20,7 @@ public class Test {
 				UdpBootstrapParams.custom()
 						.setUdpInterceptor(new DefaultUdpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
+						.setSessionEvent(new DefaultSessionEvent())
 						.setPort(8888)
 						.setCrc(true)
 					.build()
