@@ -120,6 +120,9 @@ public class TestDateUtil  extends BaseTest{
 			quartz = "* * * * * 1,7";
 			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
 
+			quartz = "0 0 0,12 * * *";
+			Assert.assertTrue(DateUtil.anyCheckDate(quartz, DateUtil.stringToDate("2018-10-01 12:00:00")));
+
 			quartz = "* * * L * *";
 			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
 
