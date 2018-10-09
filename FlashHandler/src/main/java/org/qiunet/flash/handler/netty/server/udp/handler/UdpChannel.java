@@ -2,17 +2,16 @@ package org.qiunet.flash.handler.netty.server.udp.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
-import org.qiunet.flash.handler.context.session.SessionManager;
-import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
-import org.qiunet.utils.string.StringUtil;
+import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *
@@ -22,10 +21,15 @@ import java.net.SocketAddress;
 public class UdpChannel implements Channel {
 
 	private Channel channel;
-
+	private AtomicInteger idCreator; 	// 对每个udp包进行序号编号.
 	private InetSocketAddress sender;
+	private ConcurrentHashMap<Integer, UdpPackages> sendPackages;
+	private ConcurrentHashMap<Integer, UdpPackages> receivedPackages;
 
 	UdpChannel(Channel channel, InetSocketAddress sender) {
+		this.receivedPackages = new ConcurrentHashMap<>();
+		this.sendPackages = new ConcurrentHashMap<>();
+		this.idCreator = new AtomicInteger();
 		this.channel = channel;
 		this.sender = sender;
 
@@ -36,7 +40,7 @@ public class UdpChannel implements Channel {
 	 * 发送消息
 	 * @param message
 	 */
-	public void sendMessage(Object message) {
+	public void sendMessage(ByteBuf message) {
 		this.sendMessage(message, true);
 	}
 
@@ -45,12 +49,92 @@ public class UdpChannel implements Channel {
 	 * @param message 必须是bytebuf
 	 * @param importantMsg false的消息, 不需要等待回应. 发送后就取消掉了.
 	 */
-	public void sendMessage(Object message, boolean importantMsg) {
-		this.channel.writeAndFlush(new DatagramPacket((ByteBuf) message, this.sender));
+	public void sendMessage(ByteBuf message, boolean importantMsg) {
+		UdpPackages udpPackages = new UdpPackages(idCreator.incrementAndGet(), importantMsg, message);
+
+		for (int index = 0; index < udpPackages.byteArrs.size(); index++) {
+			this.sendRealMessage(udpPackages.composeRealMessage(index));
+		}
 	}
 
-	public InetSocketAddress getSender() {
-		return sender;
+	/**
+	 * 发送最终的消息.
+	 * 不再加任何封装
+	 * @param byteBuf
+	 */
+	private void sendRealMessage(ByteBuf byteBuf) {
+		this.channel.writeAndFlush(new DatagramPacket(byteBuf, this.sender));
+	}
+
+	/**
+	 * 会对接收到的udp包进行排序黏包 如果return null说明还不是完整的包.
+	 * @return
+	 */
+	public ByteBuf decodeMessage(DatagramPacket msg) {
+		UdpPackageHeader header = UdpPackageHeader.readUdpHeader(msg.content());
+		switch (header.getType()) {
+			case ACK:
+				this.handlerAck(header);
+				break;
+			case ASK:
+				this.handlerAsk(header);
+				break;
+			case NORMAL:
+				return this.decodeNormalMessage(header, msg.content());
+		}
+		return null;
+	}
+
+
+	/***
+	 * 处理对方的确认消息
+	 * @param header
+	 */
+	private void handlerAck(UdpPackageHeader header) {
+		UdpPackages packages = this.sendPackages.get(header.getId());
+		if (packages != null && header.getSubId() < packages.byteArrs.size()) {
+			packages.byteArrs.set(header.getSubId(), null);
+
+			for (byte[] bytes : packages.byteArrs) {
+				if (bytes != null) return;
+			}
+
+			this.sendPackages.remove(header.getId());
+		}
+	}
+	/***
+	 * 处理对方的索要消息要求
+	 * @param header
+	 */
+	private void handlerAsk(UdpPackageHeader header) {
+		UdpPackages packages = this.sendPackages.get(header.getId());
+		if (packages != null && header.getSubId() < packages.byteArrs.size()) {
+			this.sendRealMessage(packages.composeRealMessage(header.getSubId()));
+		}
+	}
+	/***
+	 * 解析消息内容
+	 * @param header
+	 * @param content
+	 * @return
+	 */
+	private ByteBuf decodeNormalMessage(UdpPackageHeader header, ByteBuf content) {
+		if (! this.receivedPackages.containsKey(header.getId())) {
+			synchronized (this) {
+				if (! this.receivedPackages.containsKey(header.getId())) {
+					this.receivedPackages.put(header.getId(), new UdpPackages(header.getSubCount()));
+				}
+			}
+		}
+		UdpPackages packages = this.receivedPackages.get(header.getId());
+		byte [] bytes = new byte[content.readableBytes()];
+		content.readBytes(bytes);
+
+		if (header.getNeedAck() == 1){
+			// 回复消息
+			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
+		}
+		return packages.addNewPartMessage(header, bytes);
 	}
 
 	@Override
@@ -207,12 +291,12 @@ public class UdpChannel implements Channel {
 
 	@Override
 	public ChannelFuture write(Object msg) {
-		return channel.write(msg);
+		return this.writeAndFlush(msg);
 	}
 
 	@Override
 	public ChannelFuture write(Object msg, ChannelPromise promise) {
-		return channel.write(msg, promise);
+		return this.writeAndFlush(msg, promise);
 	}
 
 	@Override
@@ -222,12 +306,13 @@ public class UdpChannel implements Channel {
 
 	@Override
 	public ChannelFuture writeAndFlush(Object msg, ChannelPromise promise) {
-		return channel.writeAndFlush(msg, promise);
+		this.sendMessage(((ByteBuf) msg));
+		return null;
 	}
 
 	@Override
 	public ChannelFuture writeAndFlush(Object msg) {
-		return channel.writeAndFlush(msg);
+		return this.writeAndFlush(msg, null);
 	}
 
 	@Override
@@ -269,6 +354,16 @@ public class UdpChannel implements Channel {
 	public int compareTo(Channel o) {
 		return channel.compareTo(o);
 	}
+
+	/**
+	 * 包的超时处理.
+	 * 如果是发送包.再次发送该包内容.
+	 * 如果是接收包. 要求对方重新传送指定的子包.
+	 */
+	void timeoutHandler(){
+
+	}
+
 
 	private class UdpChannelId implements ChannelId {
 		private String id;
