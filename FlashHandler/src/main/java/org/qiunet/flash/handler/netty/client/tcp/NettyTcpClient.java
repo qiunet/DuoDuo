@@ -70,15 +70,15 @@ public class NettyTcpClient implements ILongConnClient {
 		}
 	}
 
-	private class NettyClientHandler extends ChannelInboundHandlerAdapter {
+	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			channelHandlerContext = ctx;
 		}
 
 		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-			trigger.response(((MessageContent) msg));
+		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
+			trigger.response(msg);
 		}
 	}
 }
