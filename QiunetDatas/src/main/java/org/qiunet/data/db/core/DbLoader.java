@@ -25,12 +25,9 @@ import java.lang.reflect.Proxy;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
- class DbLoader {
+class DbLoader {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	/**mybatis 的配置文件名称**/
@@ -146,6 +143,7 @@ import java.util.Map;
 	 */
 	private SqlSessionFactory buildSqlSessionFactory(String prefix) throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setConnectionInitSqls(Arrays.asList("set names 'utf8mb4'"));
 		for (DatasourceAttr setting : datasourceSettings) {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(prefix, setting.name);
