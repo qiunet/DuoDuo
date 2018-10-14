@@ -47,7 +47,7 @@ public class ResponseMsgUtil {
 		if (logger.isInfoEnabled()) {
 			logger.info(message.toStr());
 		}
-		channel.sendMessage(message.encode(), importantMsg);
+		channel.sendMessage(message.encode().encodeToByteBuf(), importantMsg);
 	}
 
 	/***

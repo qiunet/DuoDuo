@@ -28,7 +28,7 @@ public class UdpPackages {
 	 * 使用包数. 构造一个udpPackages
 	 * @param packageCount
 	 */
-	public UdpPackages(int packageCount) {
+	public UdpPackages(int id, int packageCount) {
 		if (packageCount < 1) throw new IllegalArgumentException("packageCount can not less than 1");
 		this.dt = System.currentTimeMillis();
 		this.totalPackageCount = packageCount;

@@ -44,19 +44,11 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		UdpChannel channel = UdpSenderManager.getInstance().getUdpChannel(msg.sender());
 		if (channel == null) {
 			// 也会写入sessionManager
-			channel = new UdpChannel(ctx.channel(), msg.sender());
+			channel = new UdpChannel(ctx.channel(), msg.sender(), this.params.isCrc(), true);
 		}
 
-		ByteBuf byteBuf = channel.decodeMessage(msg);
-		if (byteBuf == null) return;
-
-
-		MessageContent content;
-		try {
-			content = decode(byteBuf);
-		}finally {
-			ReferenceCountUtil.release(byteBuf);
-		}
+		MessageContent content = channel.decodeMessage(msg);
+		if (content == null) return;
 
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
@@ -67,7 +59,6 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		IUdpRequestContext context = params.getAdapter().createUdpRequestContext(content, channel, handler, params);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.UDP, context);
 		acceptor.process(context);
-
 	}
 
 	@Override

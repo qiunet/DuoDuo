@@ -6,10 +6,18 @@ import io.netty.channel.*;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import io.netty.util.ReferenceCountUtil;
+import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,21 +27,34 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Date Create in 2018/7/20 17:38
  **/
 public class UdpChannel implements Channel {
-
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private boolean crc;
+	private boolean server;
 	private Channel channel;
 	private AtomicInteger idCreator; 	// 对每个udp包进行序号编号.
 	private InetSocketAddress sender;
 	private ConcurrentHashMap<Integer, UdpPackages> sendPackages;
 	private ConcurrentHashMap<Integer, UdpPackages> receivedPackages;
 
-	UdpChannel(Channel channel, InetSocketAddress sender) {
+	/**
+	 * 构造一个udpChannel
+	 * @param channel
+	 * @param sender
+	 * @param crc
+	 * @param server 是否服务端. 服务端构造需要添加到sessionManager
+	 */
+	public UdpChannel(Channel channel, InetSocketAddress sender, boolean crc, boolean server) {
 		this.receivedPackages = new ConcurrentHashMap<>();
 		this.sendPackages = new ConcurrentHashMap<>();
 		this.idCreator = new AtomicInteger();
 		this.channel = channel;
 		this.sender = sender;
+		this.server = server;
+		this.crc = crc;
 
-		UdpSenderManager.getInstance().addSender(sender, this);
+		if (server) {
+			UdpSenderManager.getInstance().addSender(sender, this);
+		}
 	}
 
 	/***
@@ -70,7 +91,7 @@ public class UdpChannel implements Channel {
 	 * 会对接收到的udp包进行排序黏包 如果return null说明还不是完整的包.
 	 * @return
 	 */
-	public ByteBuf decodeMessage(DatagramPacket msg) {
+	public MessageContent decodeMessage(DatagramPacket msg) {
 		UdpPackageHeader header = UdpPackageHeader.readUdpHeader(msg.content());
 		switch (header.getType()) {
 			case ACK:
@@ -118,11 +139,11 @@ public class UdpChannel implements Channel {
 	 * @param content
 	 * @return
 	 */
-	private ByteBuf decodeNormalMessage(UdpPackageHeader header, ByteBuf content) {
+	private MessageContent decodeNormalMessage(UdpPackageHeader header, ByteBuf content) {
 		if (! this.receivedPackages.containsKey(header.getId())) {
 			synchronized (this) {
 				if (! this.receivedPackages.containsKey(header.getId())) {
-					this.receivedPackages.put(header.getId(), new UdpPackages(header.getSubCount()));
+					this.receivedPackages.put(header.getId(), new UdpPackages(header.getId(), header.getSubCount()));
 				}
 			}
 		}
@@ -134,7 +155,50 @@ public class UdpChannel implements Channel {
 			// 回复消息
 			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
 		}
-		return packages.addNewPartMessage(header, bytes);
+		ByteBuf in = packages.addNewPartMessage(header, bytes);
+		if (in == null )return null;
+		// 不管解析结果如何. 都从received里面删除.
+		this.receivedPackages.remove(header.getId());
+
+		MessageContent messageContent;
+		try {
+			messageContent = this.decodeToMessageContent(in);
+		}finally {
+			ReferenceCountUtil.release(in);
+		}
+
+		if (messageContent == null) {
+			logger.info("UdpPackages id ["+header.getId()+"] Message is error . remove from packages!");
+			return null;
+		}
+
+		return messageContent;
+	}
+
+	private MessageContent decodeToMessageContent(ByteBuf in) {
+		if (! in.isReadable(ProtocolHeader.REQUEST_HEADER_LENGTH))  {
+			return null;
+		}
+
+		ProtocolHeader protocolHeader = new ProtocolHeader(in);
+		if (! protocolHeader.isMagicValid()) {
+			logger.error("Invalid message, magic is error! "+ Arrays.toString(protocolHeader.getMagic()));
+			return null;
+		}
+
+		if (protocolHeader.getLength() < 0  || ! in.isReadable(protocolHeader.getLength())) {
+			logger.error("Invalid message, length is error! length is : "+ protocolHeader.getLength());
+			return null;
+		}
+
+		byte [] bytes = new byte[protocolHeader.getLength()];
+		in.readBytes(bytes);
+
+		if (crc && ! protocolHeader.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+protocolHeader.getCrc());
+			return null;
+		}
+		return new MessageContent(protocolHeader.getProtocolId(), bytes);
 	}
 
 	@Override
@@ -244,7 +308,7 @@ public class UdpChannel implements Channel {
 
 	@Override
 	public ChannelFuture close() {
-		UdpSenderManager.getInstance().removeChannel(this.sender);
+		if (this.server)UdpSenderManager.getInstance().removeChannel(this.sender);
 		return null;
 	}
 
@@ -270,18 +334,18 @@ public class UdpChannel implements Channel {
 
 	@Override
 	public ChannelFuture disconnect(ChannelPromise promise) {
-		return channel.disconnect(promise);
+		return null;
 	}
 
 	@Override
 	public ChannelFuture close(ChannelPromise promise) {
-		UdpSenderManager.getInstance().removeChannel(this.sender);
-		return channel.close(promise);
+		if (this.server) UdpSenderManager.getInstance().removeChannel(this.sender);
+		return null;
 	}
 
 	@Override
 	public ChannelFuture deregister(ChannelPromise promise) {
-		return channel.deregister(promise);
+		return null;
 	}
 
 	@Override

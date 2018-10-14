@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.interceptor.UdpInterceptor;
 
@@ -39,7 +40,7 @@ public class UdpBootstrapParams extends AbstractBootstrapParam {
 
 		private UdpInterceptor udpInterceptor;
 
-		private ISessionEvent sessionEvent;
+		private ISessionEvent sessionEvent = new DefaultSessionEvent();
 
 		private Builder(){}
 
