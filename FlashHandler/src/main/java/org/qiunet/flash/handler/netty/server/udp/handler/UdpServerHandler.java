@@ -57,7 +57,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		}
 
 		IUdpRequestContext context = params.getAdapter().createUdpRequestContext(content, channel, handler, params);
-		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.UDP, context);
+		params.getSessionEvent().sessionReceived(channel, HandlerType.UDP, context);
 		acceptor.process(context);
 	}
 
