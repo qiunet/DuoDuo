@@ -72,6 +72,7 @@ public class UdpChannel implements Channel {
 	 */
 	public void sendMessage(ByteBuf message, boolean importantMsg) {
 		UdpPackages udpPackages = new UdpPackages(idCreator.incrementAndGet(), importantMsg, message);
+		this.sendPackages.put(udpPackages.getId(), udpPackages);
 
 		for (int index = 0; index < udpPackages.byteArrs.size(); index++) {
 			this.sendRealMessage(udpPackages.composeRealMessage(index));
