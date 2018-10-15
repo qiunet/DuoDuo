@@ -83,5 +83,10 @@ public class NettyUdpClient implements ILongConnClient {
 
 			trigger.response(content);
 		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+			logger.info("Exception", cause);
+		}
 	}
 }
