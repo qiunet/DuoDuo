@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.handler.proto.LoginProto;
 public class TestUdpBootStrap extends UdpBootStrap {
 	private String text;
 	@Test
-	public void testTcpString(){
+	public void testUdpString(){
 		text = "测试 [testTcpString]";
 		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
 		MessageContent messageContent  = new MessageContent(1008, bytes);
@@ -23,7 +23,7 @@ public class TestUdpBootStrap extends UdpBootStrap {
 	}
 
 	@Test
-	public void testTcpProtobuf(){
+	public void testUdpProtobuf(){
 		text = "test [testTcpProtobuf]";
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 		MessageContent content = new MessageContent(1009, request.toByteArray());
@@ -31,7 +31,7 @@ public class TestUdpBootStrap extends UdpBootStrap {
 	}
 
 	@Override
-	protected void responseTcpMessage(MessageContent data) {
+	protected void responseUdpMessage(MessageContent data) {
 		switch (data.getProtocolId()) {
 			case 2000:
 				Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));

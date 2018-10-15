@@ -73,11 +73,11 @@ public abstract class UdpBootStrap extends RequestHandlerScanner implements ILon
 
 	@Override
 	public void response(MessageContent data) {
-		this.responseTcpMessage(data);
+		this.responseUdpMessage(data);
 		LockSupport.unpark(currThread);
 	}
 
-	protected abstract void responseTcpMessage(MessageContent data);
+	protected abstract void responseUdpMessage(MessageContent data);
 
 	@AfterClass
 	public static void shutdown() throws InterruptedException {
