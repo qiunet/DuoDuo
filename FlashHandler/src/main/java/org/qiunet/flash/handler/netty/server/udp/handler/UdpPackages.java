@@ -89,4 +89,8 @@ public class UdpPackages {
 		byteBuf.writeBytes(this.byteArrs.get(index));
 		return byteBuf;
 	}
+
+	public int getId() {
+		return id;
+	}
 }
