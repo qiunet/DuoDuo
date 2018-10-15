@@ -66,10 +66,7 @@ public class Acceptor {
 			case HTTP:
 				iContext.handler();
 				break;
-			case WEB_SOCKET:
-				contextProcessor.addElement(iContext);
-				break;
-			case TCP:
+			default:
 				contextProcessor.addElement(iContext);
 				break;
 		}

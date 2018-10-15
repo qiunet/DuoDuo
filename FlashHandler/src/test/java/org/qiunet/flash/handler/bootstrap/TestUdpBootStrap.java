@@ -16,7 +16,7 @@ public class TestUdpBootStrap extends UdpBootStrap {
 	private String text;
 	@Test
 	public void testUdpString(){
-		text = "测试 [testTcpString]";
+		text = "测试 [testUdpString]";
 		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
 		MessageContent messageContent  = new MessageContent(1008, bytes);
 		this.udpClient.sendMessage(messageContent);
@@ -24,7 +24,7 @@ public class TestUdpBootStrap extends UdpBootStrap {
 
 	@Test
 	public void testUdpProtobuf(){
-		text = "test [testTcpProtobuf]";
+		text = "test [testUdpProtobuf]";
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 		MessageContent content = new MessageContent(1009, request.toByteArray());
 		this.udpClient.sendMessage(content);
