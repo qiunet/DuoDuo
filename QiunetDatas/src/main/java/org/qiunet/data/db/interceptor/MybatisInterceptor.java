@@ -11,6 +11,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class MybatisInterceptor implements Interceptor {
 			try {
 				logger.info(new StringBuilder().append(formatSql(configuration, boundSql)).append("\t耗时:[").append(diff).append("ms]").toString());
 			}catch (Exception e) {
-				logger.error("SQL打印异常: ", e);
+				logger.error("SQL["+boundSql.getSql()+"] PARAM ["+JsonUtil.toJsonString(boundSql.getParameterObject()) +"] 打印异常: ", e);
 			}
 		}
 	}
