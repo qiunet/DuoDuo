@@ -93,4 +93,20 @@ public class UdpPackages {
 	public int getId() {
 		return id;
 	}
+
+	public long getDt() {
+		return dt;
+	}
+
+	public int getResendCount() {
+		return resendCount;
+	}
+
+	public void retainSendCount(){
+		this.resendCount++;
+	}
+
+	public int getTotalPackageCount() {
+		return totalPackageCount;
+	}
 }

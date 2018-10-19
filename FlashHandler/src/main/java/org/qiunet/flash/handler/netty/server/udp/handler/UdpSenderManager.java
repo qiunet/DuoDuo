@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.netty.server.udp.handler;
 
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
+import org.qiunet.utils.timer.AsyncTimerTask;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,16 @@ class UdpSenderManager {
 
 	private UdpSenderManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
+			@Override
+			protected void asyncRun() {
+				logger.info("Size"+channels.size());
+				for (UdpChannel channel : channels.values()) {
+					// 处理channel里面package重传. 以及ask索要.
+					channel.timeoutHandler();
+				}
+			}
+		}, 1000, 500);
 		instance = this;
 	}
 

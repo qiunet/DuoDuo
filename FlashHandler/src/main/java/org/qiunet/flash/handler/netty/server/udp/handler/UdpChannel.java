@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -85,7 +87,18 @@ public class UdpChannel implements Channel {
 	 * @param byteBuf
 	 */
 	private void sendRealMessage(ByteBuf byteBuf) {
-		this.channel.writeAndFlush(new DatagramPacket(byteBuf, this.sender));
+		this.sendRealMessage(byteBuf, 1);
+	}
+	/**
+	 * 发送最终的消息. 发送多次. udp如果网络不好. 发送多次有利于客户端收取.
+	 * 不再加任何封装
+	 * @param byteBuf
+	 */
+	private void sendRealMessage(ByteBuf byteBuf, int count) {
+		if (count > 1) byteBuf.retain(count - 1);
+		for (int i = 1; i <= count; i++) {
+			this.channel.writeAndFlush(new DatagramPacket(byteBuf, this.sender));
+		}
 	}
 
 	/**
@@ -154,7 +167,7 @@ public class UdpChannel implements Channel {
 
 		if (header.getNeedAck() == 1){
 			// 回复消息
-			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
+//			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
 		}
 		ByteBuf in = packages.addNewPartMessage(header, bytes);
 		if (in == null )return null;
@@ -426,9 +439,37 @@ public class UdpChannel implements Channel {
 	 * 如果是接收包. 要求对方重新传送指定的子包.
 	 */
 	void timeoutHandler(){
+		long now = System.currentTimeMillis();
+		Iterator<Map.Entry<Integer,UdpPackages>> it = sendPackages.entrySet().iterator();
+		while(it.hasNext()){
+			UdpPackages packages = it.next().getValue();
+			if (now - packages.getDt() < 100) continue;
 
+			for (int i = 0; i < packages.byteArrs.size(); i++) {
+				if (packages.byteArrs.get(i) == null) continue;
+
+				packages.retainSendCount();
+				// 随着次数增加. 发送次数也增多. 保证到达可能性
+				this.sendRealMessage(packages.composeRealMessage(i), packages.getResendCount());
+			}
+			// 5次后. 删除. 免得一直有问题.
+			if(packages.getResendCount() >= 5) it.remove();
+		}
+
+		Iterator<Map.Entry<Integer,UdpPackages>> it2 = receivedPackages.entrySet().iterator();
+		while(it2.hasNext()){
+			UdpPackages packages = it2.next().getValue();
+			if (now - packages.getDt() < 100) continue;
+
+			for (int i = 0; i < packages.byteArrs.size(); i++) {
+				if (packages.byteArrs.get(i) == null) {
+					this.sendRealMessage(UdpMessageType.ASK.getMessage(packages.getId(), i));
+				}
+			}
+
+			if(now - packages.getDt() >= 2000) it2.remove();
+		}
 	}
-
 
 	private class UdpChannelId implements ChannelId {
 		private String id;
