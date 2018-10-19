@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.bootstrap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
@@ -24,22 +25,22 @@ public class TestMuchUdpRequest extends MuchUdpRequest {
 	public void muchRequest() throws InterruptedException {
 		long start = System.currentTimeMillis();
 		final int threadCount = 100;
+		int count = requestCount/threadCount;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
-					NettyUdpClient tcpClient = null;
-					try {
-						tcpClient = new NettyUdpClient(new InetSocketAddress(InetAddress.getByName(host), port), new Trigger(),true);
-					} catch (UnknownHostException e) {
-						e.printStackTrace();
-					}
-					int count = requestCount/threadCount;
+				NettyUdpClient tcpClient = null;
+				try {
+					tcpClient = new NettyUdpClient(new InetSocketAddress(InetAddress.getByName(host), port), new Trigger(Thread.currentThread().getName()),true);
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
 				for (int i = 0 ; i < count; i ++) {
-					String text = "test [testUdpProtobuf]: "+i;
+					String text = "count["+i+"] threadName:"+Thread.currentThread().getName();
 					LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 					MessageContent content = new MessageContent(1009, request.toByteArray());
 					tcpClient.sendMessage(content);
 				}
-			}).start();
+			}, String.valueOf(j)).start();
 		}
 
 		latch.await();
@@ -48,6 +49,12 @@ public class TestMuchUdpRequest extends MuchUdpRequest {
 	}
 
 	public class Trigger implements ILongConnResponseTrigger {
+		private String name;
+
+		public Trigger(String name) {
+			this.name = name;
+		}
+
 		@Override
 		public void response(MessageContent data) {
 			LoginProto.LoginResponse response = null;
@@ -56,7 +63,8 @@ public class TestMuchUdpRequest extends MuchUdpRequest {
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
-			System.out.println(response.getTestString());
+			// 对比推送对象是否是发送消息的发送者.
+			Assert.assertEquals(this.name, response.getTestString().split(":")[1].trim());
 			latch.countDown();
 		}
 	}
