@@ -167,7 +167,7 @@ public class UdpChannel implements Channel {
 
 		if (header.getNeedAck() == 1){
 			// 回复消息
-//			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
+			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
 		}
 		ByteBuf in = packages.addNewPartMessage(header, bytes);
 		if (in == null )return null;
