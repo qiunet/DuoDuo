@@ -41,11 +41,6 @@ class FacadeUdpRequest<RequestData> implements IUdpRequest<RequestData> {
 
 	@Override
 	public void udpResponse(int protocolId, Object o) {
-		this.udpResponse(protocolId, true, o);
-	}
-
-	@Override
-	public void udpResponse(int protocolId, boolean importtantMsg, Object o) {
-		this.context.udpResponse(protocolId, importtantMsg, o);
+		this.udpResponse(protocolId, o);
 	}
 }

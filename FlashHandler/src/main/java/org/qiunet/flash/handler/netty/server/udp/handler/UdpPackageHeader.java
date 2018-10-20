@@ -11,7 +11,7 @@ class UdpPackageHeader {
 	/**包头识别码*/
 	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 	// udpheader 占用长度
-	static final int UDPHEADER_LENGTH = 14;
+	static final int UDPHEADER_LENGTH = 13;
 	// 魔数
 	private byte[] magic;
 
@@ -27,17 +27,14 @@ class UdpPackageHeader {
 	// 包的分包数  对应构造 UdpPackages(int packageCount) 的构造参数 只有type 0(普通消息)有值 其它类型为0.
 	private short subCount;
 
-	// 是否需要确认 需要确认得告诉客户端 或者服务器 避免重传 只有type 0(普通消息)有值  其它类型为0.
-	private byte needAck;
 
 	private UdpPackageHeader() {}
 
-	public UdpPackageHeader(byte type, int id, short subId, short subCount, byte needAck) {
+	public UdpPackageHeader(byte type, int id, short subId, short subCount) {
 		this.type = type;
 		this.id = id;
 		this.subId = subId;
 		this.subCount = subCount;
-		this.needAck = needAck;
 	}
 
 	/**
@@ -53,7 +50,6 @@ class UdpPackageHeader {
 		header.id = bytebuf.readInt();
 		header.subId = bytebuf.readShort();
 		header.subCount = bytebuf.readShort();
-		header.needAck = bytebuf.readByte();
 		return header;
 	}
 
@@ -67,7 +63,6 @@ class UdpPackageHeader {
 		byteBuf.writeInt(this.id);
 		byteBuf.writeShort(this.subId);
 		byteBuf.writeShort(this.subCount);
-		byteBuf.writeByte(this.needAck);
 	}
 
 	public boolean magicValid(){
@@ -93,9 +88,5 @@ class UdpPackageHeader {
 
 	public short getSubCount() {
 		return subCount;
-	}
-
-	public byte getNeedAck() {
-		return needAck;
 	}
 }

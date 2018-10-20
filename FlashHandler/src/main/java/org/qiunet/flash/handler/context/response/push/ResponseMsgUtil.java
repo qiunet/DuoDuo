@@ -40,14 +40,13 @@ public class ResponseMsgUtil {
 	/***
 	 * 推送一个普通udp message 给指定的客户端
 	 * @param channel
-	 * @param importantMsg 是否是需要保证可靠性的消息. true 需要 false 不需要
 	 * @param message
 	 */
-	public static void responseUdpMessage(UdpChannel channel, boolean importantMsg, IMessage message) {
+	public static void responseUdpMessage(UdpChannel channel, IMessage message) {
 		if (logger.isInfoEnabled()) {
 			logger.info(message.toStr());
 		}
-		channel.sendMessage(message.encode().encodeToByteBuf(), importantMsg);
+		channel.sendMessage(message.encode().encodeToByteBuf());
 	}
 
 	/***

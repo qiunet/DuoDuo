@@ -19,8 +19,6 @@ public class UdpPackages {
 	private int id;
 	// 包生成时间 用来计算重传. 2秒后. 会要求再次重传某个包
 	private long dt;
-
-	private boolean importantMsg;
 	// 重传的次数.
 	private int resendCount;
 	// 当前包内有多少数据包.
@@ -45,10 +43,9 @@ public class UdpPackages {
 	 * 使用bytebuf 分包.
 	 * @param bytebuf
 	 */
-	public UdpPackages(int id, boolean importantMsg, ByteBuf bytebuf) {
+	public UdpPackages(int id, ByteBuf bytebuf) {
 		this.dt = System.currentTimeMillis();
 		this.byteArrs = new ArrayList<>();
-		this.importantMsg = importantMsg;
 		this.id = id;
 		do {
 			int readCount = Math.min(MAX_UDP_PACKAGE_BYTE_COUNTS, bytebuf.readableBytes());
@@ -87,7 +84,7 @@ public class UdpPackages {
 	public ByteBuf composeRealMessage(int index) {
 		byte[] bytes = this.byteArrs.get(index);
 		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(UdpPackageHeader.UDPHEADER_LENGTH + bytes.length);
-		UdpPackageHeader header = new UdpPackageHeader(UdpMessageType.NORMAL.getType(), this.id, (short)index, (short)this.totalPackageCount, (byte)(this.importantMsg ? 1 : 0));
+		UdpPackageHeader header = new UdpPackageHeader(UdpMessageType.NORMAL.getType(), this.id, (short)index, (short)this.totalPackageCount);
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
 		return byteBuf;

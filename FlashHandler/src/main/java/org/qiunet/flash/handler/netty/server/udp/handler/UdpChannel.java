@@ -59,22 +59,12 @@ public class UdpChannel implements Channel {
 			UdpSenderManager.getInstance().addSender(sender, this);
 		}
 	}
-
-	/***
-	 * 发送消息
-	 * @param message
-	 */
-	public void sendMessage(ByteBuf message) {
-		this.sendMessage(message, true);
-	}
-
 	/***
 	 * 发送消息
 	 * @param message 必须是bytebuf
-	 * @param importantMsg false的消息, 不需要等待回应. 发送后就取消掉了.
 	 */
-	public void sendMessage(ByteBuf message, boolean importantMsg) {
-		UdpPackages udpPackages = new UdpPackages(senderIdCreator.incrementAndGet(), importantMsg, message);
+	public void sendMessage(ByteBuf message) {
+		UdpPackages udpPackages = new UdpPackages(senderIdCreator.incrementAndGet(), message);
 		this.sendPackages.add(udpPackages);
 
 		this.triggerSendMessage();
@@ -194,10 +184,8 @@ public class UdpChannel implements Channel {
 			this.currReceivePackage = null;
 			this.receiveIdCreator.incrementAndGet();
 		}
-		if (header.getNeedAck() == 1){
-			// 等处理完上面的事情, 再回复消息 免得并发
-			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
-		}
+		// 等处理完上面的事情, 再回复消息 免得并发
+		this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
 		return messageContent;
 	}
 

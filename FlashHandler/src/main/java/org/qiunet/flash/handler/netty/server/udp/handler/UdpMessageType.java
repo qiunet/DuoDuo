@@ -29,7 +29,7 @@ public enum UdpMessageType {
 	}
 
 	public ByteBuf getMessage(int id, int subId) {
-		UdpPackageHeader header = new UdpPackageHeader(this.type, id, (short)subId, (short)0, (byte)0);
+		UdpPackageHeader header = new UdpPackageHeader(this.type, id, (short)subId, (short)0);
 		ByteBuf bytebuf = PooledBytebufFactory.getInstance().alloc(UdpPackageHeader.UDPHEADER_LENGTH);
 		header.writeToByteBuf(bytebuf);
 		return bytebuf;

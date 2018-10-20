@@ -32,14 +32,8 @@ public abstract class AbstractUdpRequestContext<RequestData, ResponseData> exten
 
 	@Override
 	public void udpResponse(int protocolId, Object data) {
-		this.udpResponse(protocolId, true, data);
+		ResponseMsgUtil.responseUdpMessage(channel, getResponseMessage(protocolId, (ResponseData) data));
 	}
-
-	@Override
-	public void udpResponse(int protocolId, boolean importtantMsg, Object data) {
-		ResponseMsgUtil.responseUdpMessage(channel, importtantMsg, getResponseMessage(protocolId, (ResponseData) data));
-	}
-
 	/***
 	 * 得到responseData的数组数据
 	 * @param responseData
