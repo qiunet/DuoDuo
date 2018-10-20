@@ -8,8 +8,12 @@ import io.netty.buffer.ByteBuf;
  * @Date Create in 2018/9/17 11:55
  **/
 class UdpPackageHeader {
+	/**包头识别码*/
+	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 	// udpheader 占用长度
-	static final int UDPHEADER_LENGTH = 10;
+	static final int UDPHEADER_LENGTH = 14;
+	// 魔数
+	private byte[] magic;
 
 	// 类型 0 普通消息. 就是udpHeader的消息. 1 超时消息索要消息  2. 确认消息
 	private byte type;
@@ -43,6 +47,8 @@ class UdpPackageHeader {
 	 */
 	static UdpPackageHeader readUdpHeader(ByteBuf bytebuf) {
 		UdpPackageHeader header = new UdpPackageHeader();
+		header.magic = new byte[MAGIC_CONTENTS.length];
+		bytebuf.readBytes(header.magic);
 		header.type = bytebuf.readByte();
 		header.id = bytebuf.readInt();
 		header.subId = bytebuf.readShort();
@@ -56,11 +62,21 @@ class UdpPackageHeader {
 	 * @param byteBuf
 	 */
 	void writeToByteBuf(ByteBuf byteBuf) {
+		byteBuf.writeBytes(MAGIC_CONTENTS);
 		byteBuf.writeByte(this.type);
 		byteBuf.writeInt(this.id);
 		byteBuf.writeShort(this.subId);
 		byteBuf.writeShort(this.subCount);
 		byteBuf.writeByte(this.needAck);
+	}
+
+	public boolean magicValid(){
+		for (int i = 0; i < MAGIC_CONTENTS.length; i++) {
+			if (this.magic[i] != MAGIC_CONTENTS[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public UdpMessageType getType() {

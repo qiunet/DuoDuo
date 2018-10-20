@@ -13,6 +13,9 @@ import java.util.ArrayList;
  * @Date Create in 2018/7/20 15:18
  **/
 public class UdpPackages {
+	// 最大的udp包单包byte数 国际标准 - ip包 - udp头 - 自定义header头
+	private static final int MAX_UDP_PACKAGE_BYTE_COUNTS = (576 - 20 - 8 - UdpPackageHeader.UDPHEADER_LENGTH);
+
 	private int id;
 	// 包生成时间 用来计算重传. 2秒后. 会要求再次重传某个包
 	private long dt;
@@ -48,7 +51,7 @@ public class UdpPackages {
 		this.importantMsg = importantMsg;
 		this.id = id;
 		do {
-			int readCount = Math.min(500, bytebuf.readableBytes());
+			int readCount = Math.min(MAX_UDP_PACKAGE_BYTE_COUNTS, bytebuf.readableBytes());
 			byte [] bytes = new byte[readCount];
 			bytebuf.readBytes(bytes);
 			this.byteArrs.add(bytes);

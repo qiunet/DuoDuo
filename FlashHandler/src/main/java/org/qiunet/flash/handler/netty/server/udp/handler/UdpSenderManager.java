@@ -27,13 +27,12 @@ class UdpSenderManager {
 		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
 			@Override
 			protected void asyncRun() {
-				logger.info("Size"+channels.size());
 				for (UdpChannel channel : channels.values()) {
 					// 处理channel里面package重传. 以及ask索要.
 					channel.timeoutHandler();
 				}
 			}
-		}, 1000, 500);
+		}, 1000, 200);
 		instance = this;
 	}
 
