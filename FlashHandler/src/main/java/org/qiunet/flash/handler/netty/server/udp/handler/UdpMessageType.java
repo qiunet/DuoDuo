@@ -15,13 +15,9 @@ public enum UdpMessageType {
 	 */
 	NORMAL(0),
 	/***
-	 * 索要某个包的消息.
+	 * 回应消息
 	 */
-	ASK(1),
-	/***
-	 *
-	 */
-	ACK(2);
+	ACK(1);
 	private byte type;
 
 	UdpMessageType(int type) {
