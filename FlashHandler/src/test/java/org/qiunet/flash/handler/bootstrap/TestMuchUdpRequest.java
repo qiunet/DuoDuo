@@ -48,7 +48,6 @@ public class TestMuchUdpRequest extends MuchUdpRequest {
 		long end = System.currentTimeMillis();
 		System.out.println("All Time is:["+(end - start)+"]ms");
 	}
-	private AtomicInteger atomicInteger = new AtomicInteger();
 	public class Trigger implements ILongConnResponseTrigger {
 		private String name;
 
@@ -64,7 +63,6 @@ public class TestMuchUdpRequest extends MuchUdpRequest {
 			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
-			System.out.println(atomicInteger.incrementAndGet());
 			// 对比推送对象是否是发送消息的发送者.
 			Assert.assertEquals(this.name, response.getTestString().split(":")[1].trim());
 			latch.countDown();
