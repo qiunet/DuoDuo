@@ -89,7 +89,7 @@ public class UdpPackages {
 		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(UdpPackageHeader.UDPHEADER_LENGTH + bytes.length);
 		UdpPackageHeader header = new UdpPackageHeader(UdpMessageType.NORMAL.getType(), this.id, (short)index, (short)this.totalPackageCount, (byte)(this.importantMsg ? 1 : 0));
 		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(this.byteArrs.get(index));
+		byteBuf.writeBytes(bytes);
 		return byteBuf;
 	}
 
