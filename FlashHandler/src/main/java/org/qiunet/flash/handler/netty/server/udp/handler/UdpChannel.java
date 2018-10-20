@@ -453,10 +453,9 @@ public class UdpChannel implements Channel {
 	void timeoutHandler(){
 		long now = System.currentTimeMillis();
 		UdpPackages sendPackage = this.currSendPackage;
-		UdpPackages receivePackage = this.currSendPackage;
 		if (sendPackage != null && now - sendPackage.getDt() > 200) {
 			sendPackage.retainSendCount();
-			logger.info("udp package id ["+sendPackage.getId()+"] was resend!");
+			logger.debug("udp package id ["+sendPackage.getId()+"] was resend!");
 			for (int i = 0; i < sendPackage.byteArrs.size(); i++) {
 				if (sendPackage.byteArrs.get(i) == null) continue;
 				// 随着次数增加. 发送次数也增多. 保证到达可能性
@@ -465,12 +464,16 @@ public class UdpChannel implements Channel {
 			// 5次后. 删除. 免得一直有问题.
 			if(sendPackage.getResendCount() >= 10) {
 				logger.error("Socket send package timeout");
+				this.currSendPackage = null;
+				this.triggerSendMessage();
 			}
 		}
 
-
-		if (receivePackage != null && now - receivePackage.getDt() >= 1500) {
+		if (currReceivePackage != null && now - currReceivePackage.getDt() >= 1500) {
 			logger.error("Socket receive package Timeout!");
+			// 重置状态. 重新开始.
+			this.currReceivePackage = null;
+			this.receiveIdCreator = null;
 		}
 	}
 
