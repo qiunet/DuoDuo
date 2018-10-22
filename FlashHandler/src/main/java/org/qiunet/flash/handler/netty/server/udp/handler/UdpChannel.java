@@ -140,15 +140,18 @@ public class UdpChannel implements Channel {
 	 */
 	private void handlerAck(UdpPackageHeader header) {
 		UdpPackages packages = this.currSendPackage.get();
-		if (packages != null && header.getSubId() < packages.byteArrs.size()) {
+		if (packages != null
+			&& header.getId() == packages.getId()
+			&& header.getSubId() < packages.byteArrs.size()) {
 			packages.byteArrs.set(header.getSubId(), null);
 
 			for (byte[] bytes : packages.byteArrs) {
 				if (bytes != null) return;
 			}
 
-			this.currSendPackage.compareAndSet(packages, null);
-			this.triggerSendMessage();
+			if (this.currSendPackage.compareAndSet(packages, null)) {
+				this.triggerSendMessage();
+			}
 		}
 	}
 	/***
@@ -160,6 +163,7 @@ public class UdpChannel implements Channel {
 	private MessageContent decodeNormalMessage(UdpPackageHeader header, ByteBuf content) {
 		if (this.receiveIdCreator != null && header.getId() != this.receiveIdCreator.get()) {
 			logger.debug("Decode id error, curr id["+this.receiveIdCreator.get()+"] header Id ["+header.getId()+"]");
+			this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
 			return null;
 		}
 
