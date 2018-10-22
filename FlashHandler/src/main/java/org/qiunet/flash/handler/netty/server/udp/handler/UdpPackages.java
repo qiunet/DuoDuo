@@ -90,6 +90,10 @@ public class UdpPackages {
 		return byteBuf;
 	}
 
+	public ArrayList<byte[]> getByteArrs() {
+		return byteArrs;
+	}
+
 	public int getId() {
 		return id;
 	}
