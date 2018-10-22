@@ -19,6 +19,7 @@ import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 /***
  *
@@ -36,9 +37,9 @@ public class UdpChannel implements Channel {
 	// 发送的包 缓冲区
 	private ConcurrentLinkedQueue<UdpPackages> sendPackages;
 	// 当前正接受的包
-	private UdpPackages currReceivePackage;
+	private AtomicReference<UdpPackages> currReceivePackage;
 	// 当前正发送的包
-	private UdpPackages currSendPackage;
+	private AtomicReference<UdpPackages> currSendPackage;
 
 	/**
 	 * 构造一个udpChannel
@@ -48,7 +49,9 @@ public class UdpChannel implements Channel {
 	 * @param server 是否服务端. 服务端构造需要添加到sessionManager
 	 */
 	public UdpChannel(Channel channel, InetSocketAddress sender, boolean crc, boolean server) {
+		this.currReceivePackage = new AtomicReference<>();
 		this.sendPackages = new ConcurrentLinkedQueue();
+		this.currSendPackage = new AtomicReference<>();
 		this.senderIdCreator = new AtomicInteger();
 		this.channel = channel;
 		this.sender = sender;
@@ -95,15 +98,19 @@ public class UdpChannel implements Channel {
 	 */
 	private synchronized void triggerSendMessage(){
 		// 当前有传送的. 不触发
-		if (this.currSendPackage != null) return;
-		// 当前列表为空. 不触发
-		this.currSendPackage = this.sendPackages.poll();
-		if (currSendPackage == null) return;
+		if (this.currSendPackage.get() != null) return;
+
+		// 重新比较 set. 如果还是空. 说明队列为空.
+		if( (! this.currSendPackage.compareAndSet(null, this.sendPackages.poll()))
+		 || this.currSendPackage.get() == null 	// 队里为空, 可能弹出的是null
+		){
+			return;
+		}
 
 		// 延迟计算的时间 从这里开始.
-		currSendPackage.dt = System.currentTimeMillis();
-		for (int index = 0; index < currSendPackage.byteArrs.size(); index++) {
-			this.sendRealMessage(currSendPackage.composeRealMessage(index));
+		currSendPackage.get().dt = System.currentTimeMillis();
+		for (int index = 0; index < currSendPackage.get().byteArrs.size(); index++) {
+			this.sendRealMessage(currSendPackage.get().composeRealMessage(index));
 		}
 	}
 	/**
@@ -132,7 +139,7 @@ public class UdpChannel implements Channel {
 	 * @param header
 	 */
 	private void handlerAck(UdpPackageHeader header) {
-		UdpPackages packages = this.currSendPackage;
+		UdpPackages packages = this.currSendPackage.get();
 		if (packages != null && header.getSubId() < packages.byteArrs.size()) {
 			packages.byteArrs.set(header.getSubId(), null);
 
@@ -140,7 +147,7 @@ public class UdpChannel implements Channel {
 				if (bytes != null) return;
 			}
 
-			this.currSendPackage = null;
+			this.currSendPackage.compareAndSet(packages, null);
 			this.triggerSendMessage();
 		}
 	}
@@ -152,23 +159,23 @@ public class UdpChannel implements Channel {
 	 */
 	private MessageContent decodeNormalMessage(UdpPackageHeader header, ByteBuf content) {
 		if (this.receiveIdCreator != null && header.getId() != this.receiveIdCreator.get()) {
-			logger.error("=============Decode id error, curr id["+this.receiveIdCreator.get()+"] header Id ["+header.getId()+"]=====================");
+			logger.debug("Decode id error, curr id["+this.receiveIdCreator.get()+"] header Id ["+header.getId()+"]");
 			return null;
 		}
-		if (this.currReceivePackage == null) {
-			synchronized (this){
-				if (this.currReceivePackage == null) {
-					if (this.receiveIdCreator == null )this.receiveIdCreator = new AtomicInteger(header.getId());
-					this.currReceivePackage = new UdpPackages(header.getId(), header.getSubCount());
-				}
+
+		if (this.currReceivePackage.get() == null) {
+			if (this.currReceivePackage.compareAndSet(null, new UdpPackages(header.getId(), header.getSubCount()))) {
+				if (this.receiveIdCreator == null) this.receiveIdCreator = new AtomicInteger(header.getId());
 			}
 		}
+
 		ByteBuf in = null;
-		if (this.currReceivePackage.byteArrs.get(header.getSubId()) == null) {
+		UdpPackages receivePackage = this.currReceivePackage.get();
+		if (receivePackage.byteArrs.get(header.getSubId()) == null) {
 			byte [] bytes = new byte[content.readableBytes()];
 			content.readBytes(bytes);
 
-			in = this.currReceivePackage.addNewPartMessage(header, bytes);
+			in = receivePackage.addNewPartMessage(header, bytes);
 		}
 		MessageContent messageContent = null;
 		if (in != null) {
@@ -183,8 +190,9 @@ public class UdpChannel implements Channel {
 				return null;
 			}
 			// 准备接受下一个包
-			this.currReceivePackage = null;
-			this.receiveIdCreator.incrementAndGet();
+			if (this.currReceivePackage.compareAndSet(receivePackage,null)) {
+				this.receiveIdCreator.incrementAndGet();
+			}
 		}
 		// 等处理完上面的事情, 再回复消息 免得并发
 		this.sendRealMessage(UdpMessageType.ACK.getMessage(header.getId(), header.getSubId()));
@@ -442,10 +450,12 @@ public class UdpChannel implements Channel {
 	 */
 	void timeoutHandler(){
 		long now = System.currentTimeMillis();
-		UdpPackages sendPackage = this.currSendPackage;
+		UdpPackages sendPackage = this.currSendPackage.get();
 		if (sendPackage != null && now - sendPackage.getDt() > 200) {
 			sendPackage.retainSendCount();
-			logger.debug("udp package id ["+sendPackage.getId()+"] was resend!");
+			if (logger.isDebugEnabled()) {
+				logger.debug("udp package id ["+sendPackage.getId()+"] was resend!");
+			}
 			for (int i = 0; i < sendPackage.byteArrs.size(); i++) {
 				if (sendPackage.byteArrs.get(i) == null) continue;
 				// 随着次数增加. 发送次数也增多. 保证到达可能性
@@ -454,16 +464,19 @@ public class UdpChannel implements Channel {
 			// 5次后. 删除. 免得一直有问题.
 			if(sendPackage.getResendCount() >= 10) {
 				logger.error("Socket send package timeout");
-				this.currSendPackage = null;
+				this.currSendPackage.compareAndSet(sendPackage, null);
 				this.triggerSendMessage();
 			}
 		}
 
-		if (currReceivePackage != null && now - currReceivePackage.getDt() >= 1500) {
+		UdpPackages receivePackage = this.currReceivePackage.get();
+		if (receivePackage != null && now - receivePackage.getDt() >= 1500) {
 			logger.error("Socket receive package Timeout!");
 			// 重置状态. 重新开始.
-			this.currReceivePackage = null;
-			this.receiveIdCreator = null;
+			boolean ret = this.currReceivePackage.compareAndSet(receivePackage, null);
+			if (ret) {
+				this.receiveIdCreator = null;
+			}
 		}
 	}
 
