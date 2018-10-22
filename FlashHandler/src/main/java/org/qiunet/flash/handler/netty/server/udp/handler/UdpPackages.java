@@ -18,7 +18,7 @@ public class UdpPackages {
 
 	private int id;
 	// 包生成时间 用来计算重传. 2秒后. 会要求再次重传某个包
-	private long dt;
+	long dt;
 	// 重传的次数.
 	private int resendCount;
 	// 当前包内有多少数据包.

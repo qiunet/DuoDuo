@@ -100,6 +100,8 @@ public class UdpChannel implements Channel {
 		this.currSendPackage = this.sendPackages.poll();
 		if (currSendPackage == null) return;
 
+		// 延迟计算的时间 从这里开始.
+		currSendPackage.dt = System.currentTimeMillis();
 		for (int index = 0; index < currSendPackage.byteArrs.size(); index++) {
 			this.sendRealMessage(currSendPackage.composeRealMessage(index));
 		}
