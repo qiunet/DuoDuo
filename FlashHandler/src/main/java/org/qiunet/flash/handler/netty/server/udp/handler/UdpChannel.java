@@ -164,8 +164,10 @@ public class UdpChannel implements Channel {
 		}
 
 		if (this.currReceivePackage.get() == null) {
-			if (this.currReceivePackage.compareAndSet(null, new UdpPackages(header.getId(), header.getSubCount()))) {
-				if (this.receiveIdCreator == null) this.receiveIdCreator = new AtomicInteger(header.getId());
+			synchronized (this) { // 同时到达的包 可能产生冲突. 会跳过这里, 先执行到下面的内容. 这里需要同步下.
+				if (this.currReceivePackage.compareAndSet(null, new UdpPackages(header.getId(), header.getSubCount()))) {
+					if (this.receiveIdCreator == null) this.receiveIdCreator = new AtomicInteger(header.getId());
+				}
 			}
 		}
 
