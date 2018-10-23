@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by qiunet.
@@ -26,7 +27,7 @@ public class NettyTcpClient implements ILongConnClient {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
-
+	private Thread currThread;
 	public NettyTcpClient(InetSocketAddress address, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
@@ -37,6 +38,8 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.handler(new NettyClientInitializer());
 		try {
 			ChannelFuture future = bootstrap.connect(address).sync();
+			currThread = Thread.currentThread();
+			LockSupport.park();
 			future.await();
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -74,6 +77,7 @@ public class NettyTcpClient implements ILongConnClient {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			channelHandlerContext = ctx;
+			LockSupport.unpark(currThread);
 		}
 
 		@Override

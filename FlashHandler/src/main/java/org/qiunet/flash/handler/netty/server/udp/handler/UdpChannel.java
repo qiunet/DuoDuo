@@ -493,8 +493,9 @@ public class UdpChannel implements Channel {
 			// 5次后. 删除. 免得一直有问题.
 			if(sendPackage.getResendCount() >= 10) {
 				logger.error("Socket send package timeout");
-				this.currSendPackage.compareAndSet(sendPackage, null);
-				this.triggerSendMessage();
+				if (this.currSendPackage.compareAndSet(sendPackage, null)) {
+					this.triggerSendMessage();
+				}
 			}
 		}
 
