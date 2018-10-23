@@ -12,10 +12,13 @@ import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.timer.AsyncTimerTask;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *
@@ -23,15 +26,14 @@ import java.net.InetSocketAddress;
  * @Date Create in 2018/10/9 10:25
  **/
 public class NettyUdpClient implements ILongConnClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-udp-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(0, new DefaultThreadFactory("netty-udp-client-event-loop-"));
+	private static AtomicInteger clientIdCreator = new AtomicInteger();
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 	private UdpChannel udpChannel;
-	private boolean crc;
 
 	public NettyUdpClient(InetSocketAddress address, ILongConnResponseTrigger trigger, boolean crc) {
-		this.crc = crc;
 		this.trigger = trigger;
 
 		Bootstrap bootstrap = new Bootstrap();
@@ -41,10 +43,17 @@ public class NettyUdpClient implements ILongConnClient {
 
 		try {
 			Channel channel = bootstrap.connect(address).sync().channel();
-			this.udpChannel = new UdpChannel(channel, address, crc, false);
+			this.udpChannel = new UdpChannel(channel, address, crc, clientIdCreator.incrementAndGet());
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+
+		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
+			@Override
+			protected void asyncRun() {
+				udpChannel.timeoutHandler();
+			}
+		}, 200, 200);
 	}
 
 	@Override

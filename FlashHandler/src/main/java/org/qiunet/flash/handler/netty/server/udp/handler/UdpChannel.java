@@ -42,13 +42,22 @@ public class UdpChannel implements Channel {
 	private AtomicReference<UdpPackages> currSendPackage;
 
 	/**
+	 * 服务器端构造
+	 * @param channel
+	 * @param sender
+	 * @param crc
+	 */
+	public UdpChannel(Channel channel, InetSocketAddress sender, boolean crc) {
+		this(channel, sender, crc, true, -1);
+	}
+	/**
 	 * 构造一个udpChannel
 	 * @param channel
 	 * @param sender
 	 * @param crc
 	 * @param server 是否服务端. 服务端构造需要添加到sessionManager
 	 */
-	public UdpChannel(Channel channel, InetSocketAddress sender, boolean crc, boolean server) {
+	private UdpChannel(Channel channel, InetSocketAddress sender, boolean crc, boolean server, int clientId) {
 		this.currReceivePackage = new AtomicReference<>();
 		this.sendPackages = new ConcurrentLinkedQueue();
 		this.currSendPackage = new AtomicReference<>();
@@ -58,9 +67,23 @@ public class UdpChannel implements Channel {
 		this.server = server;
 		this.crc = crc;
 
+		this.clientId = clientId;
 		if (server) {
 			UdpSenderManager.getInstance().addSender(sender, this);
 		}
+	}
+	private int clientId;
+
+	/***
+	 * 客户端构造
+	 * @param channel
+	 * @param sender
+	 * @param crc
+	 * @param clientId
+	 */
+	public UdpChannel(Channel channel, InetSocketAddress sender, boolean crc, int clientId) {
+		this(channel, sender, crc, false, clientId);
+
 	}
 	/***
 	 * 发送消息
@@ -454,7 +477,7 @@ public class UdpChannel implements Channel {
 	 * 如果是发送包.再次发送该包内容.
 	 * 如果是接收包. 要求对方重新传送指定的子包.
 	 */
-	void timeoutHandler(){
+	public void timeoutHandler(){
 		long now = System.currentTimeMillis();
 		UdpPackages sendPackage = this.currSendPackage.get();
 		if (sendPackage != null && now - sendPackage.getDt() > 200) {

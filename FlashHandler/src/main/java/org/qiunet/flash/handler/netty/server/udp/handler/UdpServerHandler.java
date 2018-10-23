@@ -44,7 +44,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		UdpChannel channel = UdpSenderManager.getInstance().getUdpChannel(msg.sender());
 		if (channel == null) {
 			// 也会写入sessionManager
-			channel = new UdpChannel(ctx.channel(), msg.sender(), this.params.isCrc(), true);
+			channel = new UdpChannel(ctx.channel(), msg.sender(), this.params.isCrc());
 		}
 
 		MessageContent content = channel.decodeMessage(msg);
