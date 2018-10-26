@@ -22,7 +22,7 @@ public class Entity extends SubVmElement<EntityVmElement> {
 
 	public void setName(String name) {
 		if (! name.endsWith("Po")) {
-			throw new IllegalArgumentException("entity name must end with Po");
+			throw new IllegalArgumentException("entity name ["+name+"] must end with Po");
 		}
 		super.name = name;
 	}
