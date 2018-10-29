@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Properties;
 
 public final class PropertiesUtil {
@@ -25,7 +26,13 @@ public final class PropertiesUtil {
 		InputStreamReader isr = null ;
 		InputStream fis = null;
 		try {
-			fis = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+			URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
+			if (url.getPath().contains(".jar!")) {
+				//jar包里面的文件. 只能用这种加载方式. 缺点是有缓存. 不能热加载设定
+				fis = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+			}else {
+				fis = new FileInputStream(url.getPath());
+			}
 			isr = new InputStreamReader(fis , "UTF-8");
 			tempProperties.load(isr);
 		} catch (Exception e) {
