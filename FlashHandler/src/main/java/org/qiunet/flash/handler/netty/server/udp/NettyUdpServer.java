@@ -6,7 +6,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
-import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParam;
+import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.udp.handler.UdpServerHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -22,11 +22,11 @@ import java.net.InetSocketAddress;
 public class NettyUdpServer  implements Runnable, INettyServer {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
-	private UdpBootstrapParam params;
+	private UdpBootstrapParams params;
 
 	private ChannelFuture channelFuture;
 
-	public NettyUdpServer(UdpBootstrapParam params) {
+	public NettyUdpServer(UdpBootstrapParams params) {
 		this.params = params;
 	}
 
@@ -40,7 +40,7 @@ public class NettyUdpServer  implements Runnable, INettyServer {
 		// buffer 能容纳10M的数据.
 		bootstrap.option(ChannelOption.SO_RCVBUF, 10 * 1024 * 1024);
 		bootstrap.channel(NioDatagramChannel.class);
-		bootstrap.handler(new UdpServerHandler());
+		bootstrap.handler(new UdpServerHandler(this.params));
 		try {
 			this.channelFuture = bootstrap.bind(params.getAddress());
 

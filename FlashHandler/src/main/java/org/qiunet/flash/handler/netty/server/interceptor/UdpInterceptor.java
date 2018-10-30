@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.interceptor;
 
 import org.qiunet.flash.handler.context.request.udp.IUdpRequest;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.flash.handler.handler.udp.IUdpHandler;
 
 /***
  *
@@ -15,5 +16,5 @@ public interface UdpInterceptor {
 	 * @param handler
 	 * @param request
 	 */
-	public void handler(ITcpHandler handler, IUdpRequest request);
+	void handler(IUdpHandler handler, IUdpRequest request);
 }

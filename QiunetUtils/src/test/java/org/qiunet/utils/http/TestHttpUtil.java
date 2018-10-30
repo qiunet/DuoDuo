@@ -26,7 +26,7 @@ public class TestHttpUtil extends BaseTest{
 	}
 	@Test
 	public void testHttpRequest(){
-		String url = "http://www.i8wan.com";
+		String url = "http://www.gameley.com";
 		String ret = HttpUtils.getInstance().httpRequest(url, HttpMethodEnum.GET , new HashMap<String,Object>(), new HashMap<String,Object>());
 		Assert.assertNotNull(ret);
 	}

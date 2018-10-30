@@ -5,10 +5,13 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
+import org.qiunet.flash.handler.context.request.udp.IUdpRequestContext;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 
 /**
  * Created by qiunet.
@@ -40,7 +43,14 @@ public interface IContextAdapter {
 	 * 得到一个tcp使用的context
 	 * @param content
 	 * @param channelContext
-	 * @return
+	de * @return
 	 */
 	ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params);
+	/**
+	 * 得到一个udp使用的context
+	 * @param content
+	 * @param udpChannel
+	 * @return
+	 */
+	IUdpRequestContext createUdpRequestContext(MessageContent content, UdpChannel udpChannel, IHandler handler, UdpBootstrapParams params);
 }

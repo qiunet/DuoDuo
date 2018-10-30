@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.context.request.IRequest;
@@ -11,22 +12,22 @@ import org.qiunet.flash.handler.context.request.IRequest;
 public interface ISessionEvent {
 	/***
 	 * session 激活
-	 * @param ctx
+	 * @param channel
 	 */
-	void sessionRegistered(ChannelHandlerContext ctx);
+	void sessionRegistered(Channel channel);
 
 
 	/***
 	 * session 失活
-	 * @param ctx
+	 * @param channel
 	 */
-	void sessionUnregistered(ChannelHandlerContext ctx);
+	void sessionUnregistered(Channel channel);
 
 	/***
 	 * 接收到消息
-	 * @param ctx
+	 * @param channel
 	 * @param type
 	 * @param msg
 	 */
-	void sessionReceived(ChannelHandlerContext ctx, HandlerType type, IRequest msg);
+	void sessionReceived(Channel channel, HandlerType type, IRequest msg);
 }

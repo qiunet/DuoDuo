@@ -14,5 +14,5 @@ public interface IUdpHandler<RequestData> extends IHandler<RequestData> {
 	 * @param context 请求的内容上下文
 	 * @throws Exception
 	 */
-	void haneler(IUdpRequest<RequestData> context)throws Exception;
+	void handler(IUdpRequest<RequestData> context)throws Exception;
 }

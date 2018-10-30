@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by qiunet.
@@ -24,9 +25,8 @@ import java.net.InetSocketAddress;
 public class NettyTcpClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
-
+	private Channel channel;
 	public NettyTcpClient(InetSocketAddress address, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
@@ -36,15 +36,14 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyClientInitializer());
 		try {
-			ChannelFuture future = bootstrap.connect(address).sync();
-			future.await();
+			this.channel = bootstrap.connect(address).sync().channel();
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
 	}
 	@Override
 	public void sendMessage(MessageContent content){
-		channelHandlerContext.channel().writeAndFlush(content);
+		channel.writeAndFlush(content);
 	}
 	@Override
 	public void close(){
@@ -53,7 +52,6 @@ public class NettyTcpClient implements ILongConnClient {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		channelHandlerContext.channel().close();
 	}
 
 	public static void shutdown(){
@@ -70,15 +68,14 @@ public class NettyTcpClient implements ILongConnClient {
 		}
 	}
 
-	private class NettyClientHandler extends ChannelInboundHandlerAdapter {
+	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			channelHandlerContext = ctx;
 		}
 
 		@Override
-		public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-			trigger.response(((MessageContent) msg));
+		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
+			trigger.response(msg);
 		}
 	}
 }

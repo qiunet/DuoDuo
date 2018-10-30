@@ -9,14 +9,14 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * 17/11/26
  */
 public class DefaultSession implements ISession {
-	protected ChannelHandlerContext ctx;
+	protected Channel channel;
 	protected int queueIndex;
 	protected String key;
 	protected long dt;
-	public  DefaultSession(ChannelHandlerContext ctx) {
-		this.ctx = ctx;
+	public  DefaultSession(Channel channel) {
+		this.channel = channel;
 		this.dt = System.currentTimeMillis();
-		this.key = ctx.channel().id().asLongText();
+		this.key = channel.id().asLongText();
 		this.resetQueueIndex();
 	}
 	@Override
@@ -36,7 +36,7 @@ public class DefaultSession implements ISession {
 
 	@Override
 	public Channel getChannel() {
-		return ctx.channel();
+		return channel;
 	}
 
 	@Override

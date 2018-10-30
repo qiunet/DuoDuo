@@ -22,7 +22,7 @@ public class Entity extends SubVmElement<EntityVmElement> {
 
 	public void setName(String name) {
 		if (! name.endsWith("Po")) {
-			throw new IllegalArgumentException("entity name must end with Po");
+			throw new IllegalArgumentException("entity name ["+name+"] must end with Po");
 		}
 		super.name = name;
 	}
@@ -142,6 +142,12 @@ public class Entity extends SubVmElement<EntityVmElement> {
 
 	@Override
 	public String getOutFilePath() {
+		if (isRedisList()) {
+			if (fields.size() < 3) {
+				throw new RuntimeException("Entity ["+getName()+"] is list entity, need more than 3 field!");
+			}
+		}
+
 		String path = packagePath.replace(".", File.separator);
 		if (!path.endsWith(File.separator)) path += File.separator;
 		return path;

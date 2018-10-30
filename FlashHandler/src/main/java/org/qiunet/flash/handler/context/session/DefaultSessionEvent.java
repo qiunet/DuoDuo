@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.context.request.IRequest;
@@ -15,25 +16,21 @@ public class DefaultSessionEvent implements ISessionEvent {
 	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	protected SessionManager sessionManager = SessionManager.getInstance();
 	@Override
-	public void sessionRegistered(ChannelHandlerContext ctx) {
-		sessionManager.addSession(new DefaultPlayerSession(ctx));
+	public void sessionRegistered(Channel channel) {
+		sessionManager.addSession(new DefaultPlayerSession(channel));
 	}
 
 	@Override
-	public void sessionUnregistered(ChannelHandlerContext ctx) {
-		sessionManager.removeSession(ctx.channel());
+	public void sessionUnregistered(Channel channel) {
+		sessionManager.removeSession(channel);
 	}
 
 	@Override
-	public void sessionReceived(ChannelHandlerContext ctx, HandlerType type, IRequest msg) {
-		ISession session = sessionManager.getSession(ctx.channel());
+	public void sessionReceived(Channel channel, HandlerType type, IRequest msg) {
+		ISession session = sessionManager.getSession(channel);
 		if (session == null) {
-			this.sessionRegistered(ctx);
-			session = sessionManager.getSession(ctx.channel());
-//			 先这么试试. 看看搞一个无状态的长连接 有没有问题.
-//			logger.error("Session is close in server. It is not accept any message. ");
-//			ctx.close();
-//			return;
+			this.sessionRegistered(channel);
+			session = sessionManager.getSession(channel);
 		}
 		session.setLastPackageTimeStamp();
 	}

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -9,12 +10,12 @@ import io.netty.channel.ChannelHandlerContext;
 public class DefaultPlayerSession extends DefaultSession implements IPlayerSession {
 	private int uid;
 
-	public DefaultPlayerSession(ChannelHandlerContext ctx) {
-		this(ctx, 0);
+	public DefaultPlayerSession(Channel channel) {
+		this(channel, 0);
 	}
 
-	public DefaultPlayerSession(ChannelHandlerContext ctx, int uid) {
-		super(ctx);
+	public DefaultPlayerSession(Channel channel, int uid) {
+		super(channel);
 		this.uid = uid;
 	}
 

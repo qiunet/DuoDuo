@@ -31,7 +31,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		try {
-			params.getSessionEvent().sessionUnregistered(ctx);
+			params.getSessionEvent().sessionUnregistered(ctx.channel());
 		}finally {
 			ThreadContextData.removeAll();
 		}
@@ -40,7 +40,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		try {
-			params.getSessionEvent().sessionRegistered(ctx);
+			params.getSessionEvent().sessionRegistered(ctx.channel());
 		}finally {
 			ThreadContextData.removeAll();
 		}
@@ -57,7 +57,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		ITcpRequestContext context = params.getAdapter().createTcpRequestContext(content, ctx, handler, params);
-		params.getSessionEvent().sessionReceived(ctx, HandlerType.TCP, context);
+		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.TCP, context);
 		if (ctx.channel().isActive()) {
 			acceptor.process(context);
 		}
