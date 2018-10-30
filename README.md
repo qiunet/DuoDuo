@@ -24,7 +24,7 @@
 ## 安装环境
 * jdk 1.8
 * maven 3.5
-* mariadb redis 两个必须都有.
+* Mysql(MariaDB) Redis 两个必须都有.
 * 推荐使用 IntelliJ IDEA(Eclipse 对module的使用感觉不是很好).
  
 ## install
