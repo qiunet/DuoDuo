@@ -148,7 +148,7 @@ class DbLoader {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(prefix, setting.name);
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
-				 val = DbProperties.getInstance().getInt(dbKey, (Integer) val);
+				val = DbProperties.getInstance().getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
 				boolean contain = DbProperties.getInstance().containKey(dbKey);
 				if (contain) val = DbProperties.getInstance().getBoolean(dbKey);
@@ -230,7 +230,7 @@ class DbLoader {
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
-				 return method.invoke(sqlSession, args);
+				return method.invoke(sqlSession, args);
 			}finally {
 				this.sqlSession.close();
 			}
