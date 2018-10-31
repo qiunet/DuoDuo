@@ -1,4 +1,4 @@
-package org.qiunet.utils.common;
+package org.qiunet.data.util;
 
 /**
  * @author qiunet
@@ -7,19 +7,19 @@ package org.qiunet.utils.common;
 public class BasePo {
 	private int uid;
 	private String nick;
-	
+
 	public int getUid() {
 		return uid;
 	}
-	
+
 	public void setUid(int uid) {
 		this.uid = uid;
 	}
-	
+
 	public String getNick() {
 		return nick;
 	}
-	
+
 	public void setNick(String nick) {
 		this.nick = nick;
 	}

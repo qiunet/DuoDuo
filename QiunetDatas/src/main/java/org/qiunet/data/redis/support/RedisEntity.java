@@ -2,7 +2,7 @@ package org.qiunet.data.redis.support;
 
 import org.qiunet.data.db.support.info.IEntityDbInfo;
 import org.qiunet.data.redis.support.info.IRedisEntity;
-import org.qiunet.utils.common.CommonUtil;
+import org.qiunet.data.util.DataUtil;
 
 import java.util.Map;
 
@@ -26,7 +26,7 @@ public abstract class RedisEntity implements IRedisEntity {
 	protected abstract String [] getFields();
 	@Override
 	public Map<String, String> getAllFeildsToHash() {
-		return CommonUtil.getMap(this, getFields());
+		return DataUtil.getMap(this, getFields());
 	}
 	@Override
 	public int getFieldCount() {

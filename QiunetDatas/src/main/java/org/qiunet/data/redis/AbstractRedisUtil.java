@@ -5,6 +5,7 @@ import org.qiunet.data.redis.base.MoreKeyRedisCommand;
 import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.data.redis.support.info.IRedisList;
 import org.qiunet.data.redis.support.info.IRedisEntity;
+import org.qiunet.data.util.DataUtil;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.StringData;
@@ -67,7 +68,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
 			protected Object expression(Jedis jedis, String key) throws Exception {
-				Map<String, String> map = CommonUtil.getMap(po, fields);
+				Map<String, String> map = DataUtil.getMap(po, fields);
 				jedis.hmset(key, map);
 				jedis.expire(key, NORMAL_LIFECYCLE);
 				return null;
@@ -114,7 +115,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 					}
 					map.put(obj.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);
 					jedis.expire(key, seconds);
-					return (T)CommonUtil.getObjFromMap(map, obj);
+					return DataUtil.getObjFromMap(map, obj);
 				}else{
 					jedis.expire(key, 0);
 				}
@@ -146,10 +147,10 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 			protected Object expression(Jedis jedis, String key)  throws Exception{
 				Map<String,String> map = new HashMap<String, String>();
 				Map<String,String> keyMap = null;
-				String keyName=null;
+				String keyName = null;
 				for(IRedisList po : list){
-					keyName=po.getSubKey();
-					keyMap=CommonUtil.getMap(po, keyName);
+					keyName = po.getSubKey();
+					keyMap = DataUtil.getMap(po, keyName);
 
 					map.put(String.valueOf(keyMap.get(keyName)), JsonUtil.toJsonString(po.getAllFeildsToHash()));
 				}
@@ -192,7 +193,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 
 				if(map != null && ! map.isEmpty()){
 					map.remove(PLACEHOLDER);
-					List<T> rt=new ArrayList();
+					List<T> rt = new ArrayList();
 					for(Map.Entry<String, String> entry:map.entrySet()){
 						T po = clazz.newInstance();
 						String fieldKey = entry.getKey();
@@ -209,7 +210,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 
 						mapFields.put(po.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);
 						mapFields.put(po.getSubKey() , fieldKey);
-						CommonUtil.getObjFromMap(mapFields, po);
+						DataUtil.getObjFromMap(mapFields, po);
 						rt.add(po);
 					}
 					jedis.expire(key, seconds);
@@ -242,7 +243,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 					Map<String, String> mapFields = JsonUtil.getGeneralObject(val, Map.class);
 					mapFields.put(po.getDbInfoKeyName(), StringUtil.split(key,"#")[1]);
 					mapFields.put( po.getSubKey() , subKey);
-					CommonUtil.getObjFromMap(mapFields, po);
+					DataUtil.getObjFromMap(mapFields, po);
 					jedis.expire(key, NORMAL_LIFECYCLE);
 				}
 				return po;
@@ -265,7 +266,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				String keys[] = new String[list.size()];
 				int index=0;
 				for(IRedisList po : list){
-					Map<String,String> keyMap = CommonUtil.getMap(po, po.getSubKey());
+					Map<String,String> keyMap = DataUtil.getMap(po, po.getSubKey());
 					keys[index++] = keyMap.get(po.getSubKey());
 				}
 				jedis.hdel(key, keys);

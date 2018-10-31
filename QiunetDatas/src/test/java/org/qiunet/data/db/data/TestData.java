@@ -75,6 +75,10 @@ public class TestData {
 		playerPo.setPlatform(platform);
 		PlayerVo vo = dataSupport.insertPo(playerPo);
 		Assert.assertTrue(vo != null);
+
+
+		dataSupport.atomicUpdateField(playerPo, PlayerPo.FILED_LEVEL, 5);
+		Assert.assertEquals(playerPo.getLevel(), 15);
 		ThreadContextData.removeAll();
 
 		PlayerVo playerVo = dataSupport.getVo(uid, platform);
@@ -236,6 +240,8 @@ public class TestData {
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 20 && qunxiuPo.getMaster() == 1200);
 
+		dataSupport.atomicUpdateField(qunxiuPo, qunxiuPo.FIELD_LEVEL, 2);
+		Assert.assertTrue(qunxiuPo.getLevel() == 22);
 		ThreadContextData.removeAll();
 
 		qunxiuPo.setName("temp");
