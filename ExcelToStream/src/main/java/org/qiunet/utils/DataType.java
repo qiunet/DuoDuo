@@ -12,6 +12,8 @@ public enum  DataType {
 	DATA_DOUBLE("double"),
 
 	DATA_INT("int"),
+
+	DATA_LONG("long"),
 	;
 
 	private String type;

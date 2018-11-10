@@ -45,6 +45,9 @@ public abstract class BaseXmlParse<vmelement extends VmElement> {
 	void parse(){
 		try {
 			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(xmlFile);
+			if (is == null) {
+				throw new NullPointerException("Can not find file ["+xmlFile+"], check resource is Mark as Resource Root or Test Resource Root");
+			}
 			this.digester.parse(is);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

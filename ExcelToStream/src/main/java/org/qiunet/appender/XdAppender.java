@@ -55,6 +55,9 @@ public class XdAppender implements Appender {
 				case DATA_STRING:
 					dos.writeUTF(val);
 					break;
+				case DATA_LONG:
+					dos.writeLong(Long.parseLong(val));
+					break;
 				default:
 					throw new IllegalArgumentException();
 			}
