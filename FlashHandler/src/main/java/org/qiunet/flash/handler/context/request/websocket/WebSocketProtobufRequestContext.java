@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.response.push.IMessage;
@@ -16,8 +17,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSocketRequestContext<RequestData, GeneratedMessageV3> {
 	private RequestData requestData;
-	public WebSocketProtobufRequestContext(MessageContent content, ChannelHandlerContext ctx, HttpBootstrapParams params) {
-		super(content, ctx, params);
+	public WebSocketProtobufRequestContext(MessageContent content, ChannelHandlerContext ctx, HttpBootstrapParams params, HttpHeaders headers) {
+		super(content, ctx, params, headers);
 	}
 	@Override
 	public RequestData getRequestData() {

@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
@@ -19,8 +20,11 @@ import java.net.InetSocketAddress;
  */
 abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  extends BaseRequestContext<RequestData> implements IWebSocketRequestContext<RequestData>, IResponse {
 	protected HttpBootstrapParams params;
-	protected AbstractWebSocketRequestContext(MessageContent content, ChannelHandlerContext ctx,HttpBootstrapParams params) {
+	protected HttpHeaders headers;
+
+	protected AbstractWebSocketRequestContext(MessageContent content, ChannelHandlerContext ctx,HttpBootstrapParams params, HttpHeaders headers) {
 		super(content, ctx);
+		this.headers = headers;
 		this.params = params;
 	}
 
@@ -46,10 +50,6 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
 	@Override
 	public String getRemoteAddress() {
-		String ip = "";
-		if (ctx.channel().remoteAddress() != null && ctx.channel().remoteAddress() instanceof InetSocketAddress) {
-			ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-		}
-		return ip;
+		return getRealIp(this.headers);
 	}
 }

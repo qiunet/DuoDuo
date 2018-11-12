@@ -18,9 +18,9 @@ public class DefaultHttpInterceptor implements HttpInterceptor {
 	@Override
 	public Object handler(IHttpHandler handler, IHttpRequest request) {
 		if (handler.getDataType() == DataType.STRING) {
-			logger.info("收到string请求 message: "+request.getRequestData());
+			logger.info("IP ["+request.getRemoteAddress()+"]收到string请求 message: "+request.getRequestData());
 		}else {
-			logger.info("收到protobuf请求 message: "+request.getRequestData());
+			logger.info("IP ["+request.getRemoteAddress()+"]收到protobuf请求 message: "+request.getRequestData());
 		}
 		try {
 			return handler.handler(request);

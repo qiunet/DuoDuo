@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
@@ -52,12 +53,12 @@ public class DefaultContextAdapter implements IContextAdapter {
 	}
 
 	@Override
-	public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params) {
+	public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers) {
 		switch (handler.getDataType()) {
 			case STRING:
-				return new WebSocketStringRequestContext(content, channelContext, params);
+				return new WebSocketStringRequestContext(content, channelContext, params, headers);
 			case PROTOBUF:
-				return new WebSocketProtobufRequestContext(content, channelContext, params);
+				return new WebSocketProtobufRequestContext(content, channelContext, params, headers);
 		}
 		return null;
 	}

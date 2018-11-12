@@ -16,7 +16,7 @@ public class DefaultWebSocketInterceptor implements WebSocketInterceptor {
 
 	@Override
 	public void handler(IWebSocketHandler handler, IWebSocketRequest request) {
-		logger.info("webSocket received message: "+request.getRequestData());
+		logger.info("IP ["+request.getRemoteAddress()+"]webSocket received message: "+request.getRequestData());
 		try {
 			handler.handler(request);
 		} catch (Exception e) {

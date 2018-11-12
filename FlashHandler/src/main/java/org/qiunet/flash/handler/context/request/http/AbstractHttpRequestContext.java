@@ -71,28 +71,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getRemoteAddress() {
-		String ip = getHttpHeader("HTTP_X_FORWARDED_FOR");
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			ip = getHttpHeader("x-forwarded-for");
-		}
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			ip = getHttpHeader("x-forwarded-for-pound");
-		}
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			ip = getHttpHeader("Proxy-Client-IP");
-		}
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			ip = getHttpHeader("WL-Proxy-Client-IP");
-		}
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			ip = getHttpHeader("HTTP_CLIENT_IP");
-		}
-		if (StringUtil.isEmpty(ip) || "unknown".equalsIgnoreCase(ip)) {
-			if (ctx.channel().remoteAddress() != null && ctx.channel().remoteAddress() instanceof InetSocketAddress) {
-				ip = ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
-			}
-		}
-		return ip;
+		return getRealIp(request.headers());
 	}
 
 	@Override

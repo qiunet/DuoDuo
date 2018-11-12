@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.request.websocket;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
@@ -16,8 +17,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class WebSocketStringRequestContext extends AbstractWebSocketRequestContext<String, String> {
 	private String requestData;
-	public WebSocketStringRequestContext(MessageContent content, ChannelHandlerContext ctx, HttpBootstrapParams params) {
-		super(content, ctx, params);
+	public WebSocketStringRequestContext(MessageContent content, ChannelHandlerContext ctx, HttpBootstrapParams params, HttpHeaders headers) {
+		super(content, ctx, params, headers);
 	}
 	@Override
 	public String getRequestData() {

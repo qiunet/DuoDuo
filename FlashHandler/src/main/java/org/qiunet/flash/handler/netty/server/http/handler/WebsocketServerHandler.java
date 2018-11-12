@@ -35,6 +35,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 	private WebSocketServerHandshaker handshaker;
 	private HttpBootstrapParams params;
+	private HttpHeaders headers;
 
 	public WebsocketServerHandler (HttpBootstrapParams params) {
 		this.params = params;
@@ -74,6 +75,9 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 			ctx.flush().channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
 			return;
 		}
+
+		this.headers = request.headers();
+
 		HttpHeaders headers = new DefaultHttpHeaders();
 		headers.set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
 		this.handshaker.handshake(ctx.channel(), request, headers, ctx.channel().newPromise());
@@ -149,7 +153,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		}
 		// 更新最后时间 方便去除很久没有心跳的channel
 
-		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params);
+		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params, headers);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.WEB_SOCKET, context);
 		if (ctx.channel().isActive()) {
 			acceptor.process(context);
