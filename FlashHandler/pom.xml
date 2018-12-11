@@ -44,6 +44,10 @@
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>Quartz</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>
