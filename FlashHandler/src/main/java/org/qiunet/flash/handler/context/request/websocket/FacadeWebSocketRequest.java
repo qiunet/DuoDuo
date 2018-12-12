@@ -40,6 +40,9 @@ class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<RequestDa
 
 	@Override
 	public void response(int protocolId, Object responseData) {
+		if (responseData == null){
+			throw new NullPointerException("ResponseData can not be null");
+		}
 		context.response(protocolId, responseData);
 	}
 }

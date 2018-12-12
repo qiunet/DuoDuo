@@ -41,6 +41,9 @@ class FacadeUdpRequest<RequestData> implements IUdpRequest<RequestData> {
 
 	@Override
 	public void udpResponse(int protocolId, Object o) {
+		if (o == null) {
+			throw new NullPointerException("ResponseData can not be null");
+		}
 		this.context.udpResponse(protocolId, o);
 	}
 }

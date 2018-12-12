@@ -91,6 +91,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public void response(ResponseData responseData) {
+		if (responseData == null){
+			throw new NullPointerException("ResponseData can not be null");
+		}
+
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
 		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
