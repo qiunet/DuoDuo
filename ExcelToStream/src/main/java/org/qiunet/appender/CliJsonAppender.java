@@ -15,8 +15,6 @@ public class CliJsonAppender implements Appender{
 
 	private String filePrefix;
 
-	private JSONObject fileRecord;
-
 	private JSONArray rowRecordArray;
 
 	private JSONObject rowRecord;
@@ -25,15 +23,16 @@ public class CliJsonAppender implements Appender{
 		this.filePrefix = filePrefix;
 		this.outFileParent = outFileParent;
 
-		this.fileRecord = new JSONObject();
 		this.rowRecordArray = new JSONArray();
 		this.rowRecord = new JSONObject();
 	}
 
 	@Override
 	public void rowRecordOver() {
-		this.rowRecordArray.add(this.rowRecord);
-		this.rowRecord = null;
+		if (! this.rowRecord.isEmpty()){
+			this.rowRecordArray.add(this.rowRecord);
+			this.rowRecord = null;
+		}
 	}
 
 	@Override
@@ -69,33 +68,33 @@ public class CliJsonAppender implements Appender{
 			System.out.println("CliJson continue sheet ["+sheetName+"]");
 			return;
 		}
-		this.fileRecord.put(sheetName, this.rowRecordArray);
+		if (! this.rowRecordArray.isEmpty()){
+			File outFile = new File(outFileParent);
+			if (! outFile.exists()) outFile.mkdirs();
+			outFile = new File(outFileParent, filePrefix+"_"+sheetName+".json");
+
+			FileOutputStream fos = null;
+			OutputStreamWriter writer = null;
+			try {
+				fos = new FileOutputStream(outFile);
+				writer = new OutputStreamWriter(fos, "UTF-8");
+				writer.write(rowRecordArray.toJSONString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally {
+				try {
+					if (writer != null)	writer.close();
+					if (fos != null)	fos.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		this.rowRecordArray = null;
 	}
 
 	@Override
 	public void fileOver() {
-		if (fileRecord.isEmpty()) return;
 
-		File outFile = new File(outFileParent);
-		outFile.mkdirs();
-		outFile = new File(outFileParent, filePrefix+".json");
-
-		FileOutputStream fos = null;
-		OutputStreamWriter writer = null;
-		try {
-			fos = new FileOutputStream(outFile);
-			writer = new OutputStreamWriter(fos, "UTF-8");
-			writer.write(fileRecord.toJSONString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				if (writer != null)	writer.close();
-				if (fos != null)	fos.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

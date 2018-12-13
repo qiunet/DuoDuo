@@ -66,8 +66,8 @@ public class ExcelToStream {
 	private void SheetToStream(Sheet sheet, AppenderAttachable attachable) throws Exception {
 		System.out.print("File:["+attachable.getFileName()+"] Sheet:["+sheet.getSheetName()+"]---------LASTROW:");
 			/*设定excel 行数据的规则
-			 * 第一行：说明	        		实际对应的row 为 0
-			 * 第四行：数据类型				实际对应的row 为 3
+			 * 第一行：说明	        		实际对应的row 为 0 加下划线_{en_name} 英文名表示需要的意思
+			 * 第二行：数据类型				    实际对应的row 为 1
 			 */
 		int rowNum = 0,columnNum = 0;
 		int lastRow = getSheetLastRow(sheet);
@@ -80,8 +80,7 @@ public class ExcelToStream {
 
 			int cellLength = getCellLength(sheet);
 			Row dateTypeRow = sheet.getRow(DATA_DEFINE_ROW-1);									//数据类型行
-//			Row cliFlagRow = sheet.getRow(DATA_DEFINE_ROW-2);									//cliFlag类型行
-//			Row dataNameRow = sheet.getRow(DATA_DEFINE_ROW-3);									//数据名称行
+			Row nameRow = sheet.getRow(0);														// 对字段的说明
 
 			for (rowNum = DATA_DEFINE_ROW; rowNum < lastRow; rowNum++) {
 				Row row = sheet.getRow(rowNum);
@@ -96,28 +95,13 @@ public class ExcelToStream {
 					if(c == null) c = row.createCell(columnNum);
 					c.setCellType(CellType.STRING);
 
+					String name = nameRow.getCell(columnNum).getStringCellValue();
 
 					String dataName = ""; // 名称
-					boolean cliFlag = false;     // 客户端的flag
-//					if (cliFlagRow != null ) {
-//						Cell flag = cliFlagRow.getCell(columnNum);
-//						if (flag != null) {
-//							flag.setCellType(CellType.STRING);
-//							if (flag.getStringCellValue() == null || "".equals(flag.getStringCellValue()))  flag.setCellValue("0");
-//
-//							cliFlag = Double.parseDouble(flag.getStringCellValue()) > 0;
-//						}
-//					}
-//
-//					if (dataNameRow != null) {
-//						Cell name = dataNameRow.getCell(columnNum);
-//						if (name != null) {
-//							name.setCellType(CellType.STRING);
-//							if (name.getStringCellValue() == null) name.setCellValue("");
-//
-//							dataName = name.getStringCellValue().trim();
-//						}
-//					}
+					boolean cliFlag = name.indexOf("_") > 0;     // 客户端的flag
+					if (cliFlag){
+						dataName = name.substring(name.indexOf("_")+1, name.length());
+					}
 
 					attachable.append(dateType, dataName, c.getStringCellValue().trim(), cliFlag);
 
@@ -139,8 +123,10 @@ public class ExcelToStream {
 			String fileNamePrefix = sourceFile.getName().substring(sourceFile.getName().indexOf("_")+1, sourceFile.getName().indexOf("."));
 			String parentPath = sourceFile.getParent();
 			String projectPath = FileUtil.returnPathFromProjectFile();
-//			projectPath += "clientJson";
+
+			String jsonConfigPath = projectPath + File.separator + ".json.config";
 			String configPath = projectPath+ File.separator+".xd.config";
+
 			if (! parentPath.equals(projectPath)) configPath += parentPath.substring(projectPath.length());
 
 			File dir = new File(configPath);
@@ -148,7 +134,7 @@ public class ExcelToStream {
 
 			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
 			appenderAttachable.addAppender(new XdAppender(configPath, fileNamePrefix));
-//			appenderAttachable.addAppender(new CliJsonAppender(projectPath, fileNamePrefix));
+			appenderAttachable.addAppender(new CliJsonAppender(jsonConfigPath, fileNamePrefix));
 
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ){
 				Sheet sheet = it.next();		//分页片
