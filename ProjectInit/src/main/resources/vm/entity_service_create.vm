@@ -135,12 +135,14 @@ public class ${allData.currData.name} {
 	}
 #if(!${allData.currData.list})
 	/***
-	* 根据字段修改对象
+	* 根据字段原子性修改数据
 	* @param vo
-	* @param fields
+	* @param fieldName 对应po里面有
+	* @param changeVal 可以正负变化
 	*/
-	public void updateWithFields(${allData.currData.voName} vo, UpdateFields fields) {
-		dataSupport.updateWithFields(vo.get${allData.currData.poName}(), fields);
+	public void atomicUpdateWithFields(${allData.currData.voName} vo, String fieldName, long changeVal) {
+		if (changeVal == 0) return;
+		dataSupport.atomicUpdateField(vo.get${allData.currData.poName}(), fieldName, changeVal);
 	}
 #end
 	/***
