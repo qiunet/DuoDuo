@@ -2,6 +2,7 @@ package ${allData.currData.packagePath};
 
 import ${allData.currData.classInfo};
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data.core.support.entityInfo.IField;
 #foreach(${field} in ${allData.currData.fields})
 #if(${field.type} == "Date")
 import java.util.Date;
@@ -13,15 +14,22 @@ import java.util.Date;
  */
 @Alias("${allData.currData.name}")
 public class ${allData.currData.name} extends ${allData.currData.entityType}#if(${allData.currData.redisList})<${allData.currData.subKeyType}>#end {
-### FIELD_
+	public enum FieldEnum implements IField {
 #foreach(${field} in ${allData.currData.fields})
-	public static final String FIELD_${field.name.toUpperCase()} = "${field.name}";
-#end
-	private static final String [] fields = {#foreach(${field} in ${allData.currData.fields})
 #if(${field.name} != ${allData.currData.dbInfoKey} && ${field.name} != ${allData.currData.subKey} )
-FIELD_${field.name.toUpperCase()} #if(${velocityCount} < (${allData.currData.fields.size()})),#end
+		${field.name.toUpperCase()}("${field.name}"),
 #end
-#end};
+#end
+		;
+		private String name;
+		FieldEnum(String name) {
+			this.name = name;
+		}
+		@Override
+		public String getName() {
+			return name;
+		}
+	}
 ### get set方法
 #foreach(${field} in ${allData.currData.fields})
 	private ${field.fieldDesc}
@@ -45,21 +53,21 @@ FIELD_${field.name.toUpperCase()} #if(${velocityCount} < (${allData.currData.fie
 	}
 #end
 	@Override
-	protected String[] getFields() {
-		return fields;
+	public IField[] getFields() {
+		return FieldEnum.values();
 	}
 	@Override
 	public String getDbInfoKeyName() {
-		return FIELD_${allData.currData.dbInfoKey.toUpperCase()};
+		return "${allData.currData.dbInfoKey}";
 	}
 #if(${allData.currData.redisList})
 	@Override
 	public String getSubKey() {
-		return FIELD_${allData.currData.subKey.toUpperCase()};
+		return "${allData.currData.subKey}";
 	}
 	@Override
 	public ${allData.currData.subKeyType} getSubId() {
-		return ${allData.currData.subKey};
+		return this.${allData.currData.subKey};
 	}
 #end
 }

@@ -7,9 +7,6 @@ import org.qiunet.data.enums.PlatformType;
 import java.util.Map;
 #end
 import ${allData.currData.entityDataSupportPackage};
-#if(!${allData.currData.list})
-import org.qiunet.data.core.support.update.UpdateFields;
-#end
 import ${allData.currData.infoClassPackage};
 import ${allData.currData.poPackage};
 import ${allData.currData.voPackage};
@@ -137,12 +134,12 @@ public class ${allData.currData.name} {
 	/***
 	* 根据字段原子性修改数据
 	* @param vo
-	* @param fieldName 对应po里面有
+	* @param field 对应po里面有
 	* @param changeVal 可以正负变化
 	*/
-	public void atomicUpdateWithFields(${allData.currData.voName} vo, String fieldName, long changeVal) {
+	public void atomicUpdateWithFields(${allData.currData.voName} vo, ${allData.currData.poName}.FieldEnum field, long changeVal) {
 		if (changeVal == 0) return;
-		dataSupport.atomicUpdateField(vo.get${allData.currData.poName}(), fieldName, changeVal);
+		dataSupport.atomicUpdateField(vo.get${allData.currData.poName}(), field, changeVal);
 	}
 #end
 	/***
