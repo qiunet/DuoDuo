@@ -56,6 +56,9 @@ public class CliJsonAppender implements Appender{
 			case DATA_INT:
 				this.rowRecord.put(name, Integer.parseInt(val));
 				break;
+			case DATA_LONG:
+				this.rowRecord.put(name, Long.parseLong(val));
+				break;
 			default:
 				throw new IllegalArgumentException();
 		}
