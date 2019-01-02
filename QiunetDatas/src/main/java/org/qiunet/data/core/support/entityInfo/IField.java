@@ -7,5 +7,5 @@ package org.qiunet.data.core.support.entityInfo;
  **/
 public interface IField {
 
-	String getFieldName();
+	String getName();
 }

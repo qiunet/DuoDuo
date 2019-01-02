@@ -18,7 +18,7 @@ public class EquipCopyPo extends EquipPo {
 			this.fieldName = fieldName;
 		}
 		@Override
-		public String getFieldName() {
+		public String getName() {
 			return fieldName;
 		}
 	}

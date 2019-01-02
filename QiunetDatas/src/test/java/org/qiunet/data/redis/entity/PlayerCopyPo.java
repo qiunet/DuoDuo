@@ -20,7 +20,7 @@ public class PlayerCopyPo extends PlayerPo {
 			this.fieldName = fieldName;
 		}
 		@Override
-		public String getFieldName() {
+		public String getName() {
 			return fieldName;
 		}
 	}

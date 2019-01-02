@@ -19,7 +19,7 @@ public class EquipPo extends PlatformRedisList {
 			this.fieldName = fieldName;
 		}
 		@Override
-		public String getFieldName() {
+		public String getName() {
 			return fieldName;
 		}
 	}

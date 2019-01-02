@@ -24,7 +24,7 @@ public class TestDataUtil {
 			this.fieldName = fieldName;
 		}
 		@Override
-		public String getFieldName() {
+		public String getName() {
 			return fieldName;
 		}
 	}

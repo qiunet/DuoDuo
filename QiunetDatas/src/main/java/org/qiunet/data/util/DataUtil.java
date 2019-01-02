@@ -32,7 +32,7 @@ public class DataUtil {
 		Map<String,String> map = new HashMap<>();
 		for(IField f : fields){
 			try {
-				Field field = getDeclaredField(obj, f.getFieldName());
+				Field field = getDeclaredField(obj, f.getName());
 				if (field == null) continue;
 
 				field.setAccessible(true);
@@ -149,7 +149,7 @@ public class DataUtil {
 			}
 			Map<String, Field> fieldMap = new HashMap<>();
 			for (Field f : rt)  {
-				if (Modifier.isFinal(f.getModifiers()) ) continue;
+				if (Modifier.isFinal(f.getModifiers()) || Modifier.isProtected(f.getModifiers())) continue;
 
 				fieldMap.put(f.getName(), f);
 			}

@@ -19,7 +19,7 @@ public class SysmsgPo extends RedisList{
 			this.fieldName = fieldName;
 		}
 		@Override
-		public String getFieldName() {
+		public String getName() {
 			return fieldName;
 		}
 	}

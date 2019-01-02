@@ -52,11 +52,11 @@ public class PlatformEntityDataSupport<DbInfoKey, PO extends IPlatFormRedisEntit
 	 */
 	public void atomicUpdateField(PO po, IField iField, long changeVal) {
 		Map<String, Field> fieldMap = DataUtil.getFieldsByClass(po.getClass());
-		if (! fieldMap.containsKey(iField.getFieldName())) {
+		if (! fieldMap.containsKey(iField.getName())) {
 			throw new NullPointerException("FieldName ["+iField+"] is not exist in class ["+po.getClass().getSimpleName()+"]");
 		}
 
-		Field field = fieldMap.get(iField.getFieldName());
+		Field field = fieldMap.get(iField.getName());
 		if (! (
 				field.getType() == int.class || field.getType() == Integer.class
 						|| field.getType() == long.class || field.getType() == Long.class
@@ -67,11 +67,11 @@ public class PlatformEntityDataSupport<DbInfoKey, PO extends IPlatFormRedisEntit
 		}
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		Long ret = entityInfo.getRedisUtil().returnJedisProxy().hincrBy(key, iField.getFieldName(), changeVal);
+		Long ret = entityInfo.getRedisUtil().returnJedisProxy().hincrBy(key, iField.getName(), changeVal);
 		entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), entityInfo.getDbInfoKey(po) +"_"+po.getPlatformName());
 
 		try {
-			Method method = DataUtil.getSetMethod(po, iField.getFieldName(), field.getType());
+			Method method = DataUtil.getSetMethod(po, iField.getName(), field.getType());
 			if (field.getType() == int.class || field.getType() == Integer.class) method.invoke(po, ret.intValue());
 			else if (field.getType() == short.class || field.getType() == Short.class) method.invoke(po, ret.shortValue());
 			else if (field.getType() == byte.class || field.getType() == Byte.class) method.invoke(po, ret.byteValue());
