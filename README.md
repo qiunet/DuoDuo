@@ -6,8 +6,15 @@
     Duoduo的原则是 理解后,融入自己的代码中. 所以有问题时候,
     能够在第一时间反应过来问题出在哪.
     
+## 名词解释
+* Po Persisent Object 持久化对象 负责跟存储层交互的对象
+* Vo View Object Mvc 中给视图提供数据支持的对象, 对Po的计算方法大部分在这个里面.
+* DataSupport 操作数据的类, 会自动搞定异步更新等问题
+* Service    处理业务的一些公用方法
+* Handler   处理请求的逻辑类. 一个请求一个handler
+* TestCase  对应handler的测试类  
 
-## 模块简介:
+## 模块简介
 | 	模块			|	简介					|
 |----------		|----------	|
 |[Quartz](Quartz/README.md) 			|	 定时调度	|
