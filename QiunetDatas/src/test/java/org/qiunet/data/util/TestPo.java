@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.db.support.info.IEntityDbInfo;
 import org.qiunet.data.redis.support.info.IRedisEntity;
 
@@ -50,6 +51,11 @@ public class TestPo extends BasePo implements IRedisEntity {
 	@Override
 	public String getDbInfoKeyName() {
 		return null;
+	}
+
+	@Override
+	public IField[] getFields() {
+		return new IField[0];
 	}
 
 	@Override

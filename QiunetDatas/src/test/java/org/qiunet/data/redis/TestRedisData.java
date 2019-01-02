@@ -86,8 +86,6 @@ public class TestRedisData {
 		Assert.assertEquals("qiunet,1;qiunet1,0", friendPo1.getFriend_descs());
 
 		friendPo.setFriend_descs("qiunet3");
-		Map<String, Object> updateMap = new HashMap<String, Object>();
-		updateMap.put(FriendPo.FIELD_FRIEND_DESCS, friendPo.getFriend_descs());
 
 		RedisDataUtil.getInstance().setObjectToHash(key, friendPo);
 

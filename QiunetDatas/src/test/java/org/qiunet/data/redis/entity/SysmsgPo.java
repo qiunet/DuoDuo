@@ -1,6 +1,7 @@
 package org.qiunet.data.redis.entity;
 
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.redis.support.RedisList;
 
 /**
@@ -9,13 +10,19 @@ import org.qiunet.data.redis.support.RedisList;
  */
 @Alias("SysmsgPo")
 public class SysmsgPo extends RedisList{
-
-	public static final String FIELD_ID = "id";
-	public static final String FIELD_UID = "uid";
-	public static final String FIELD_MSG = "msg";
-	public static final String FIELD_PARAM = "param";
-
-	private static final String [] fields = {FIELD_MSG, FIELD_PARAM};
+	public enum FieldEnum implements IField {
+		MSG("msg"),
+		PARAM("param"),
+		;
+		private String fieldName;
+		FieldEnum(String fieldName) {
+			this.fieldName = fieldName;
+		}
+		@Override
+		public String getFieldName() {
+			return fieldName;
+		}
+	}
 
 	private int id;
 	private int uid;
@@ -56,12 +63,12 @@ public class SysmsgPo extends RedisList{
 
 	@Override
 	public String getDbInfoKeyName() {
-		return FIELD_UID;
+		return "uid";
 	}
 
 	@Override
 	public String getSubKey() {
-		return FIELD_ID;
+		return "id";
 	}
 
 	@Override
@@ -70,7 +77,7 @@ public class SysmsgPo extends RedisList{
 	}
 
 	@Override
-	protected String[] getFields() {
-		return fields;
+	public IField[] getFields() {
+		return FieldEnum.values();
 	}
 }

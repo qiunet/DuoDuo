@@ -1,6 +1,7 @@
 package org.qiunet.data.redis.entity;
 
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.redis.support.PlatformRedisList;
 
 /**
@@ -9,12 +10,19 @@ import org.qiunet.data.redis.support.PlatformRedisList;
  */
 @Alias("equipPo")
 public class EquipPo extends PlatformRedisList {
-	public static final String FILED_ID = "id";
-	public static final String FILED_UID = "uid";
-	public static final String FILED_LEVEL = "level";
-	public static final String FILED_EXP = "exp";
-
-	private static final String [] fields = {FILED_EXP, FILED_LEVEL};
+	public enum FieldEnum implements IField {
+		EXP("exp"),
+		LEVEL("level"),
+		;
+		private String fieldName;
+		FieldEnum(String fieldName) {
+			this.fieldName = fieldName;
+		}
+		@Override
+		public String getFieldName() {
+			return fieldName;
+		}
+	}
 
 	private int id;
 	private int uid;
@@ -54,16 +62,16 @@ public class EquipPo extends PlatformRedisList {
 	}
 
 	@Override
-	protected String[] getFields() {
-		return fields;
+	public IField[] getFields() {
+		return FieldEnum.values();
 	}
 	@Override
 	public String getSubKey() {
-		return FILED_ID;
+		return "id";
 	}
 	@Override
 	public String getDbInfoKeyName() {
-		return FILED_UID;
+		return "uid";
 	}
 	@Override
 	public Integer getSubId() {

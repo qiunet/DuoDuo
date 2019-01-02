@@ -6,7 +6,6 @@ import org.qiunet.data.core.support.EntityDataSupport;
 import org.qiunet.data.core.support.EntityListDataSupport;
 import org.qiunet.data.core.support.PlatformEntityDataSupport;
 import org.qiunet.data.core.support.PlatformEntityListDataSupport;
-import org.qiunet.data.core.support.update.UpdateFields;
 import org.qiunet.data.db.data.equip.EquipEntityInfo;
 import org.qiunet.data.db.data.equip.EquipVo;
 import org.qiunet.data.db.data.friend.FriendEntityInfo;
@@ -77,7 +76,7 @@ public class TestData {
 		Assert.assertTrue(vo != null);
 
 
-		dataSupport.atomicUpdateField(playerPo, PlayerPo.FILED_LEVEL, 5);
+		dataSupport.atomicUpdateField(playerPo, PlayerPo.FieldEnum.LEVEL, 5);
 		Assert.assertEquals(playerPo.getLevel(), 15);
 		ThreadContextData.removeAll();
 
@@ -240,18 +239,12 @@ public class TestData {
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 20 && qunxiuPo.getMaster() == 1200);
 
-		dataSupport.atomicUpdateField(qunxiuPo, qunxiuPo.FIELD_LEVEL, 2);
+		dataSupport.atomicUpdateField(qunxiuPo, QunxiuPo.FieldEnum.LEVEL, 2);
 		Assert.assertTrue(qunxiuPo.getLevel() == 22);
 		ThreadContextData.removeAll();
 
-		qunxiuPo.setName("temp");
-		qunxiuPo.setLevel(10);
-		dataSupport.updateWithFields(qunxiuPo, UpdateFields.newBuild().append(QunxiuPo.FIELD_LEVEL));
-
-		ThreadContextData.removeAll();
-
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
-		Assert.assertTrue(qunxiuPo.getLevel() == 10 && ! "temp".equals(qunxiuPo.getName()));
+		Assert.assertTrue(qunxiuPo.getLevel() == 22);
 		dataSupport.expireCache(qunxiuPo);
 
 		dataSupport.deletePo(qunxiuPo);

@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.redis.support.info.IRedisEntity;
 import org.qiunet.utils.date.DateUtil;
 
@@ -23,15 +24,15 @@ public class DataUtil {
 	 * @param fields
 	 * @return
 	 */
-	public static <T extends IRedisEntity> Map<String,String> getMap(T obj, String... fields){
+	public static <T extends IRedisEntity> Map<String,String> getMap(T obj, IField... fields){
 		if (obj == null || fields == null || fields.length == 0) {
 			throw new NullPointerException("obj ["+ (obj == null ? null : obj.getClass().getName())+"] fields ["+(fields == null ? null : Arrays.toString(fields))+"] Error");
 		}
 
 		Map<String,String> map = new HashMap<>();
-		for(String fieldName : fields){
+		for(IField f : fields){
 			try {
-				Field field = getDeclaredField(obj, fieldName);
+				Field field = getDeclaredField(obj, f.getFieldName());
 				if (field == null) continue;
 
 				field.setAccessible(true);

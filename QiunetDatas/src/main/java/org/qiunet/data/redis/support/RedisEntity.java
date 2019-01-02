@@ -19,11 +19,6 @@ public abstract class RedisEntity implements IRedisEntity {
 	public void setEntityDbInfo(IEntityDbInfo entityDbInfo) {
 		this.entityDbInfo = entityDbInfo;
 	}
-	/***
-	 * 返回fields
-	 * @return 所有的field名称 除了 dbInfoKey 和subKey
-	 */
-	protected abstract String [] getFields();
 	@Override
 	public Map<String, String> getAllFeildsToHash() {
 		return DataUtil.getMap(this, getFields());

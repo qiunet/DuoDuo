@@ -1,7 +1,7 @@
 package org.qiunet.data.core.support;
 
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.core.support.entityInfo.IPlatformEntityInfo;
-import org.qiunet.data.core.support.update.UpdateFields;
 import org.qiunet.data.db.support.base.DbEntitySupport;
 import org.qiunet.data.db.support.base.IDbEntity;
 import org.qiunet.data.enums.PlatformType;
@@ -45,54 +45,33 @@ public class PlatformEntityDataSupport<DbInfoKey, PO extends IPlatFormRedisEntit
 		}
 	}
 	/**
-	 * update
-	 * @param po 需要更新的对象po
-	 */
-	public void updateWithFields(PO po, UpdateFields fields) {
-		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		po.setEntityDbInfo(entityInfo.getEntityDbInfo(po));
-		fields.remove(po.getDbInfoKeyName());
-		entityInfo.getRedisUtil().setObjectToHash(key, po, fields.toArray());
-
-		if (!entityInfo.needAsync() ) {
-			dbSupport.update(po, updateStatment);
-		}else {
-			entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), entityInfo.getDbInfoKey(po) +"_"+po.getPlatformName());
-		}
-	}
-
-	/**
 	 * 仅对数值类型的字段生效.
 	 * @param po
-	 * @param fieldName
+	 * @param iField
 	 * @param changeVal 变动的值. 可以正数 可以负数
 	 */
-	public void atomicUpdateField(PO po, String fieldName, long changeVal) {
+	public void atomicUpdateField(PO po, IField iField, long changeVal) {
 		Map<String, Field> fieldMap = DataUtil.getFieldsByClass(po.getClass());
-		if (! fieldMap.containsKey(fieldName)) {
-			throw new NullPointerException("FieldName ["+fieldName+"] is not exist in class ["+po.getClass().getSimpleName()+"]");
+		if (! fieldMap.containsKey(iField.getFieldName())) {
+			throw new NullPointerException("FieldName ["+iField+"] is not exist in class ["+po.getClass().getSimpleName()+"]");
 		}
 
-		Field field = fieldMap.get(fieldName);
+		Field field = fieldMap.get(iField.getFieldName());
 		if (! (
 				field.getType() == int.class || field.getType() == Integer.class
 						|| field.getType() == long.class || field.getType() == Long.class
 						|| field.getType() == short.class || field.getType() == Short.class
 						|| field.getType() == byte.class || field.getType() == Byte.class
 		)) {
-			throw new IllegalArgumentException("fieldName[" +fieldName+ "] is not Integer type");
-		}
-
-		if (fieldName.equals(po.getDbInfoKeyName())) {
-			throw new IllegalArgumentException("fieldName[" +fieldName+ "] is db info key. can not operation it.");
+			throw new IllegalArgumentException("fieldName[" +iField+ "] is not Integer type");
 		}
 
 		String key = entityInfo.getRedisKey(entityInfo.getDbInfoKey(po), po.getPlatform());
-		Long ret = entityInfo.getRedisUtil().returnJedisProxy().hincrBy(key, fieldName, changeVal);
+		Long ret = entityInfo.getRedisUtil().returnJedisProxy().hincrBy(key, iField.getFieldName(), changeVal);
 		entityInfo.getRedisUtil().returnJedisProxy().sadd(entityInfo.getAsyncKey(entityInfo.getDbInfoKey(po)), entityInfo.getDbInfoKey(po) +"_"+po.getPlatformName());
 
 		try {
-			Method method = DataUtil.getSetMethod(po, fieldName, field.getType());
+			Method method = DataUtil.getSetMethod(po, iField.getFieldName(), field.getType());
 			if (field.getType() == int.class || field.getType() == Integer.class) method.invoke(po, ret.intValue());
 			else if (field.getType() == short.class || field.getType() == Short.class) method.invoke(po, ret.shortValue());
 			else if (field.getType() == byte.class || field.getType() == Byte.class) method.invoke(po, ret.byteValue());

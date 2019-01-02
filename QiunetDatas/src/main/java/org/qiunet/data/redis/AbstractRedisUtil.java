@@ -1,6 +1,7 @@
 package org.qiunet.data.redis;
 
 import com.alibaba.fastjson.JSON;
+import org.qiunet.data.core.support.entityInfo.IField;
 import org.qiunet.data.redis.base.MoreKeyRedisCommand;
 import org.qiunet.data.redis.base.RedisCommand;
 import org.qiunet.data.redis.support.info.IRedisList;
@@ -64,7 +65,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 	 * @param po redisEntity对象
 	 * @param fields 需要保存的字段
 	 */
-	public void setObjectToHash(String key, final IRedisEntity po, final String ...fields){
+	public void setObjectToHash(String key, final IRedisEntity po, final IField...fields){
 		new RedisCommand<Object>(jedisPool, key) {
 			@Override
 			protected Object expression(Jedis jedis, String key) throws Exception {
@@ -106,10 +107,9 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				T obj = clazz.newInstance();
 				if(! map.isEmpty()){
 					if(! (obj instanceof IRedisList) && map.size() != obj.getFieldCount()) {
-						Field fields = clazz.getDeclaredField("fields");
-						fields.setAccessible(true);
-						String [] fieldStrs = (String[]) fields.get(obj);
-						logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFields"+JsonUtil.toJsonString(fieldStrs));
+
+						IField [] fields = obj.getFields();
+						logger.error("ObjFieldSizeError getObjectFromHash:"+ clazz.getSimpleName() +" Map:"+JSON.toJSONString(map) +" ObjFields"+JsonUtil.toJsonString(fields));
 //						jedis.expire(key, 0);
 //						return null;
 					}
@@ -149,10 +149,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				Map<String,String> keyMap = null;
 				String keyName = null;
 				for(IRedisList po : list){
-					keyName = po.getSubKey();
-					keyMap = DataUtil.getMap(po, keyName);
-
-					map.put(String.valueOf(keyMap.get(keyName)), JsonUtil.toJsonString(po.getAllFeildsToHash()));
+					map.put(String.valueOf(po.getSubId()), JsonUtil.toJsonString(po.getAllFeildsToHash()));
 				}
 				map.put(PLACEHOLDER, "");
 
@@ -199,10 +196,8 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 						String fieldKey = entry.getKey();
 						Map<String,String> mapFields = JsonUtil.getGeneralObject(entry.getValue(), Map.class);
 						if (mapFields.size() != po.getFieldCount()) {
-							Field fields = clazz.getDeclaredField("fields");
-							fields.setAccessible(true);
-							String[] fieldStrs = (String[]) fields.get(po);
-							logger.error("ListFieldSizeError getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"] ObjFields "+JsonUtil.toJsonString(fieldStrs));
+							IField [] fields = po.getFields();
+							logger.error("ListField Size Error getListFromHash ["+clazz.getSimpleName()+"]! Map["+entry.getValue()+"] ObjFields "+JsonUtil.toJsonString(fields));
 
 //							jedis.expire(key, 0);
 //							return null;
@@ -266,8 +261,7 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 				String keys[] = new String[list.size()];
 				int index=0;
 				for(IRedisList po : list){
-					Map<String,String> keyMap = DataUtil.getMap(po, po.getSubKey());
-					keys[index++] = keyMap.get(po.getSubKey());
+					keys[index++] = String.valueOf(po.getSubId());
 				}
 				jedis.hdel(key, keys);
 				return null;
