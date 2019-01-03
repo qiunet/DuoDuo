@@ -99,7 +99,7 @@ public class DbProperties extends LoaderProperties {
 	 * @param dbIndex db的库 index
 	 * @return 得到dbSource
 	 */
-	public String getDataSourceTypeByDbIndex(int dbIndex){
+	public String getDataSourceKeyByDbIndex(int dbIndex){
 		return String.valueOf(dbIndex / db_size_per_instance);
 	}
 	/**

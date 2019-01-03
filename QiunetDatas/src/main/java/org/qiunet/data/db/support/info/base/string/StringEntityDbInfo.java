@@ -25,6 +25,6 @@ public abstract class StringEntityDbInfo implements IEntityDbInfo {
 	}
 	@Override
 	public String getDbSourceKey() {
-		return DbProperties.getInstance().getDataSourceTypeByDbIndex(dbIndex);
+		return DbProperties.getInstance().getDataSourceKeyByDbIndex(dbIndex);
 	}
 }
