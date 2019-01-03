@@ -131,6 +131,13 @@ class DbLoader {
 			this.dataSources.put(name, factory);
 			sets.add(name);
 		}
+
+		int dbSourceCount = DbProperties.getInstance().getDbMaxCount() / DbProperties.getInstance().getDbSizePerInstance();
+		for (int i = 0; i < dbSourceCount; i++) {
+			if (! this.dataSources.containsKey(String.valueOf(i))){
+				throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
+			}
+		}
 	}
 	/**
 	 * 根据name 构建SqlSessionFactory
