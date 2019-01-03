@@ -11,16 +11,7 @@ import org.qiunet.data.redis.support.RedisEntity;
 @Alias("friendPo")
 public class FriendPo extends RedisEntity {
 	public enum FieldEnum implements IField {
-		FRIEND_DESCS("friend_descs"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		friend_descs
 	}
 	private int uid;
 	private String friend_descs;

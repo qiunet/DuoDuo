@@ -11,18 +11,9 @@ import org.qiunet.data.redis.support.PlatformRedisEntity;
 @Alias("playerPo")
 public class PlayerPo extends PlatformRedisEntity {
 	public enum FieldEnum implements IField {
-		LEVEL("level"),
-		EXP("exp"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
+		level,
+		exp
 		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
-	}
 	private int uid;
 	private int level;
 	private int exp;

@@ -14,22 +14,10 @@ import java.util.Date;
  */
 @Alias("${allData.currData.name}")
 public class ${allData.currData.name} extends ${allData.currData.entityType}#if(${allData.currData.redisList})<${allData.currData.subKeyType}>#end {
-	public enum FieldEnum implements IField {
-#foreach(${field} in ${allData.currData.fields})
+	public enum FieldEnum implements IField {#foreach(${field} in ${allData.currData.fields})
 #if(${field.name} != ${allData.currData.dbInfoKey} && ${field.name} != ${allData.currData.subKey} )
-		${field.name.toUpperCase()}("${field.name}"),
-#end
-#end
-		;
-		private String name;
-		FieldEnum(String name) {
-			this.name = name;
-		}
-		@Override
-		public String getName() {
-			return name;
-		}
-	}
+${field.name}#if(${velocityCount} < (${allData.currData.fields.size()})), #end#end#end}
+
 ### get set方法
 #foreach(${field} in ${allData.currData.fields})
 	private ${field.fieldDesc}

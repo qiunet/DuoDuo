@@ -11,17 +11,8 @@ import org.qiunet.data.redis.support.PlatformRedisList;
 @Alias("equipPo")
 public class EquipPo extends PlatformRedisList {
 	public enum FieldEnum implements IField {
-		EXP("exp"),
-		LEVEL("level"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		exp,
+		level
 	}
 
 	private int id;

@@ -9,18 +9,9 @@ import org.qiunet.data.core.support.entityInfo.IField;
  */
 public class EquipCopyPo extends EquipPo {
 	public enum FieldEnum implements IField {
-		EXP("exp"),
-		STAR("star"),
-		LEVEL("level"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		exp,
+		star,
+		level
 	}
 	private int star;
 	public int getStar() {

@@ -11,18 +11,9 @@ import java.util.Map;
  */
 public class PlayerCopyPo extends PlayerPo {
 	public enum FieldEnum implements IField {
-		LEVEL("level"),
-		NICK("nick"),
-		EXP("exp"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		level,
+		nick,
+		exp
 	}
 	private String nick = "";
 

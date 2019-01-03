@@ -10,23 +10,7 @@ import org.qiunet.data.redis.support.RedisEntity;
  */
 @Alias("GlobalTablePo")
 public class GlobalTablePo extends RedisEntity {
-	public static final String FIELD_ID = "id";
-	public static final String FIELD_NAME = "name";
-	public static final String [] fields = {FIELD_NAME};
-
-
-	public enum FieldEnum implements IField {
-		NAME("name"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
-	}
+	public enum FieldEnum implements IField { name }
 
 	private int id;
 	private String name;
@@ -49,7 +33,7 @@ public class GlobalTablePo extends RedisEntity {
 
 	@Override
 	public String getDbInfoKeyName() {
-		return FIELD_ID;
+		return "id";
 	}
 	@Override
 	public IField[] getFields() {

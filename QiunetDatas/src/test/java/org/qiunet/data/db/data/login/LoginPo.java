@@ -10,20 +10,7 @@ import org.qiunet.data.redis.support.RedisEntity;
  */
 @Alias("loginPo")
 public class LoginPo extends RedisEntity {
-	public enum FieldEnum implements IField {
-		UID("uid"),
-		TOKEN("token"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
-	}
-
+	public enum FieldEnum implements IField {uid, token,}
 
 	private String openid;
 	private int uid;

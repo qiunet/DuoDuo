@@ -11,19 +11,9 @@ import org.qiunet.data.redis.support.RedisList;
 @Alias("SysmsgPo")
 public class SysmsgPo extends RedisList{
 	public enum FieldEnum implements IField {
-		MSG("msg"),
-		PARAM("param"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		msg,
+		param
 	}
-
 	private int id;
 	private int uid;
 	private String msg;

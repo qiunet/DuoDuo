@@ -14,19 +14,10 @@ import java.util.Map;
  **/
 public class TestDataUtil {
 	public enum FieldEnum implements IField {
-		NICK("nick"),
-		REG_DT("regDt"),
-		EXP("exp"),
-		LEVEL("level"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		nick,
+		regDt,
+		exp,
+		level
 	}
 
 	@Test

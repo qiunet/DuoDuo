@@ -32,7 +32,7 @@ public class DataUtil {
 		Map<String,String> map = new HashMap<>();
 		for(IField f : fields){
 			try {
-				Field field = getDeclaredField(obj, f.getName());
+				Field field = getDeclaredField(obj, f.name());
 				if (field == null) continue;
 
 				field.setAccessible(true);

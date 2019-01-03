@@ -76,7 +76,7 @@ public class TestData {
 		Assert.assertTrue(vo != null);
 
 
-		dataSupport.atomicUpdateField(playerPo, PlayerPo.FieldEnum.LEVEL, 5);
+		dataSupport.atomicUpdateField(playerPo, PlayerPo.FieldEnum.level, 5);
 		Assert.assertEquals(playerPo.getLevel(), 15);
 		ThreadContextData.removeAll();
 
@@ -239,7 +239,7 @@ public class TestData {
 		qunxiuPo = dataSupport.getVo(qunxiuPo.getId());
 		Assert.assertTrue(qunxiuPo.getLevel() == 20 && qunxiuPo.getMaster() == 1200);
 
-		dataSupport.atomicUpdateField(qunxiuPo, QunxiuPo.FieldEnum.LEVEL, 2);
+		dataSupport.atomicUpdateField(qunxiuPo, QunxiuPo.FieldEnum.level, 2);
 		Assert.assertTrue(qunxiuPo.getLevel() == 22);
 		ThreadContextData.removeAll();
 

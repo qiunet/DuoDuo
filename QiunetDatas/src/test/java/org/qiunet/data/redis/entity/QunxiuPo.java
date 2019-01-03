@@ -11,18 +11,9 @@ import org.qiunet.data.redis.support.RedisEntity;
 public class QunxiuPo extends RedisEntity {
 
 	public enum FieldEnum implements IField {
-		MASTER("master"),
-		LEVEL("level"),
-		NAME("name"),
-		;
-		private String fieldName;
-		FieldEnum(String fieldName) {
-			this.fieldName = fieldName;
-		}
-		@Override
-		public String getName() {
-			return fieldName;
-		}
+		master,
+		level,
+		name
 	}
 
 	private int id;
