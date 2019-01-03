@@ -10,7 +10,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.data.db.util.DbProperties;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
@@ -37,8 +36,6 @@ class DbLoader {
 
 	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
 
-	// 全局的数据库配置名称数组
-	private static final String DATASOURCE_GLOBAL_NAME = "datasource_global_name";
 	// mybatis 配置文件的名称
 	private static final String MYBATIS_CONFIG_FILENAME = "mybatis_config_filename";
 
@@ -124,15 +121,15 @@ class DbLoader {
 	 * @throws Exception
 	 */
 	private void loaderDataSource() throws Exception {
-		for (int i = 0; i < DbProperties.getInstance().getDbMaxCount(); i += DbProperties.getInstance().getDbSizePerInstance()) {
-			String name = String.valueOf(i);
-			SqlSessionFactory factory = buildSqlSessionFactory(name);
-			this.dataSources.put(DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey(i), factory);
-		}
+		Set<String> sets = new HashSet<>();
+		for (Object key : DbProperties.getInstance().returnMap().keySet()) {
+			if (!key.toString().endsWith("driverClassName")) continue;
+			String name = StringUtil.split(key.toString(), ".")[1];
+			if (sets.contains(name)) continue;
 
-		String globalName = DbProperties.getInstance().getString(DATASOURCE_GLOBAL_NAME, "");
-		if (! StringUtil.isEmpty(globalName)) {
-			this.dataSources.put(DbSourceType.DATASOURCE_GLOBAL.getGlobalDbSourceKey(), buildSqlSessionFactory(globalName));
+			SqlSessionFactory factory = buildSqlSessionFactory(name);
+			this.dataSources.put(name, factory);
+			sets.add(name);
 		}
 	}
 	/**

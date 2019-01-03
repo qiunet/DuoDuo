@@ -1,6 +1,5 @@
 package org.qiunet.data.db.util;
 
-import org.qiunet.data.db.datasource.DbSourceType;
 import org.qiunet.utils.properties.LoaderProperties;
 
 import java.util.ArrayList;
@@ -101,7 +100,7 @@ public class DbProperties extends LoaderProperties {
 	 * @return 得到dbSource
 	 */
 	public String getDataSourceTypeByDbIndex(int dbIndex){
-		return DbSourceType.DATASOURCE_PLAYER.getPlayerDbSourceKey((dbIndex / db_size_per_instance));
+		return String.valueOf(dbIndex / db_size_per_instance);
 	}
 	/**
 	 * 返回库索引列表
