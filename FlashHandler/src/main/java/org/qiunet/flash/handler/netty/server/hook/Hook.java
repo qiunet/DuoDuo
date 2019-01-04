@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.netty.server.hook;
 /**
  * 钩子. 先判断shutdown
  * 再判断 reloadCfg
- * 最后判断 继承者的方法 {@link Hook#custom(String)}
+ * 最后判断 继承者的方法 {@link Hook#custom(String, String)}
  * Created by qiunet.
  * 17/11/22
  */

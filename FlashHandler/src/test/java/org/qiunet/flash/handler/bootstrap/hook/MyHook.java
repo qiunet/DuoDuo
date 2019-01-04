@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.bootstrap.hook;
 
 import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
+import org.qiunet.flash.handler.netty.server.hook.BaseHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -10,8 +11,7 @@ import org.slf4j.LoggerFactory;
  * Created by qiunet.
  * 17/11/22
  */
-public class MyHook implements Hook {
-	Logger qLogger = LoggerFactory.getLogger(LoggerType.DUODUO);
+public class MyHook extends BaseHook {
 
 	@Override
 	public String getReloadCfgMsg() {
@@ -39,18 +39,20 @@ public class MyHook implements Hook {
 
 	@Override
 	public void shutdown() {
-		qLogger.error("Called MyHook");
+		logger.error("Called MyHook");
 	}
 
 	@Override
-	public void custom(String msg, String ip) {
-		switch (msg) {
-			case "A":
-				qLogger.error("A msg called");
-				break;
-			case "B":
-				qLogger.error("B msg called");
-				break;
-		}
+	public Runnable returnCustomTask(String msg, String ip) {
+		return () -> {
+			switch (msg) {
+				case "A":
+					logger.error("A msg called");
+					break;
+				case "B":
+					logger.error("B msg called");
+					break;
+			}
+		};
 	}
 }
