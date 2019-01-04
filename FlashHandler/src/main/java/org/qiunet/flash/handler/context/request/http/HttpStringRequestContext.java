@@ -6,6 +6,7 @@ import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -37,6 +38,9 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	public boolean handler() {
 		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
 		String responseData = (String) params.getHttpInterceptor().handler((IHttpHandler) getHandler(), requestData);
+		if (requestData == null){
+			throw new NullPointerException("Response String can not be null!");
+		}
 		this.response(responseData);
 		return true;
 	}

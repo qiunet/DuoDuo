@@ -40,6 +40,9 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 	public boolean handler() {
 		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
 		ResponseData data = (ResponseData) params.getHttpInterceptor().handler((IHttpHandler)getHandler(), request);
+		if (data == null) {
+			throw new NullPointerException("Response Protobuf data can not be null!");
+		}
 		this.response(data);
 		return true;
 	}
