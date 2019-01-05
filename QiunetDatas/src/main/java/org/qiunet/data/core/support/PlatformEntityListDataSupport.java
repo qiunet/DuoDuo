@@ -1,13 +1,10 @@
 package org.qiunet.data.core.support;
 
-import javafx.application.Platform;
 import org.qiunet.data.core.support.entityInfo.IPlatformEntityListInfo;
 import org.qiunet.data.db.support.base.DbListSupport;
 import org.qiunet.data.db.support.base.IDbList;
-import org.qiunet.data.db.support.info.IEntityListDbInfo;
 import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.support.info.IPlatformRedisList;
-import org.qiunet.utils.data.CommonData;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
