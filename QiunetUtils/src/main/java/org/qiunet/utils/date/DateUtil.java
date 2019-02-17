@@ -2,6 +2,7 @@ package org.qiunet.utils.date;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.qiunet.utils.string.StringUtil;
 
 /**
  * 时间date相关的工具类
+ * 也可以使用DateTimeFormatter 但是使用线程变量已经可以解决问题. 就不再修改.
  * @author qiunet
  *
  */
@@ -48,6 +50,9 @@ public final class DateUtil {
 	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 	public static final long DAY_MS = 24 * 3600 * 1000;
 	public static final long WEEK_MS = 7L * DAY_MS;
+
+	/**外面直接使用 LocalDateTime.format() 可以搞定**/
+	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
 	/**
 	 * 日期转字符串 默认格式
@@ -229,5 +234,27 @@ public final class DateUtil {
 		return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
 				cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
 				cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
+	}
+
+	private static Map<String, DateTimeFormatter> dtfs = new HashMap(){
+		{
+			put(DEFAULT_DATE_TIME_FORMAT, DEFAULT_DATE_TIME_FORMATTER);
+		}
+	};
+
+	/**
+	 * 使用LocalDateTime格式化时间. 取到对应的 DateTimeFormatter
+	 * @param pattern
+	 * @return
+	 */
+	public static DateTimeFormatter returnFormatter(String pattern){
+		if (! dtfs.containsKey(pattern)) {
+			synchronized (DateUtil.class) {
+				if (! dtfs.containsKey(pattern)) {
+					dtfs.put(pattern, DateTimeFormatter.ofPattern(pattern));
+				}
+			}
+		}
+		return dtfs.get(pattern);
 	}
 }
