@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+
+import java.util.Arrays;
+
 /**
  * 请求的固定头
  * Created by qiunet.
@@ -90,12 +93,7 @@ public class ProtocolHeader {
 	 * @return
 	 */
 	public boolean isMagicValid(){
-		for (int i = 0; i < MAGIC_CONTENTS.length; i++) {
-			if (this.magic[i] != MAGIC_CONTENTS[i]) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.equals(this.magic, MAGIC_CONTENTS);
 	}
 	/**
 	 * 将当前header 写入 bytebuf

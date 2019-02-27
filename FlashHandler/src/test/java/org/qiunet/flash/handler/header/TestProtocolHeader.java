@@ -19,6 +19,7 @@ public class TestProtocolHeader {
 
 		ProtocolHeader header2 = new ProtocolHeader(byteBuf);
 		Assert.assertArrayEquals(header1.getMagic(), header2.getMagic());
+		Assert.assertTrue(header2.isMagicValid());
 		Assert.assertEquals(header1.getLength(), header2.getLength());
 		Assert.assertEquals(header1.getProtocolId(), header2.getProtocolId());
 		Assert.assertTrue(header2.crcIsValid(44664323L));
