@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
@@ -125,13 +126,12 @@ public class StringUtil {
 	 * @return
 	 */
 	public static <T> String arraysToString(T [] arrays , String start ,String end , int startIndex, int endIndex, String separator){
-		StringBuffer sb = new StringBuffer(start);
-		if(arrays == null || arrays.length == 0) return sb.append(end).toString();
+		StringJoiner joiner = new StringJoiner(separator, start, end);
 
 		for(int i = startIndex; i < endIndex; i++){
-			sb.append(objectToString(arrays[i])).append(separator);
+			joiner.add(objectToString(arrays[i]));
 		}
-		return sb.append(objectToString(arrays[endIndex])).append(end).toString();
+		return joiner.toString();
 	}
 
 	private static String objectToString(Object obj) {
