@@ -128,7 +128,7 @@ public class StringUtil {
 	public static <T> String arraysToString(T [] arrays , String start ,String end , int startIndex, int endIndex, String separator){
 		StringJoiner joiner = new StringJoiner(separator, start, end);
 
-		for(int i = startIndex; i < endIndex; i++){
+		for(int i = startIndex; i < endIndex+1; i++){
 			joiner.add(objectToString(arrays[i]));
 		}
 		return joiner.toString();
