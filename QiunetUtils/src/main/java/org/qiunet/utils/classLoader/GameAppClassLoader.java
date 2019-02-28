@@ -64,22 +64,13 @@ public class GameAppClassLoader extends URLClassLoader {
 		for (URL url : getURLs()) {
 			if (url.getPath().endsWith(realName)){
 				try {
-					return getClassDefineBytes(url);
+					return Files.readAllBytes(Paths.get(url.toURI()));
 				} catch (Exception e) {
 					throw new ClassNotFoundException("["+name+"] not found");
 				}
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * 返回指定的url的class byte数组
-	 * @param url
-	 * @return
-	 */
-	protected byte [] getClassDefineBytes(URL url) throws Exception {
-		return Files.readAllBytes(Paths.get(url.toURI()));
 	}
 	/**
 	 * 找到路径中的jar和class文件

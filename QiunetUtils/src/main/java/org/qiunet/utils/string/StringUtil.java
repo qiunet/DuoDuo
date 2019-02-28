@@ -23,7 +23,7 @@ public class StringUtil {
 	public static final Charset UTF8 = Charset.forName("UTF-8");
 
 	/**汉字的正则表达式*/
-	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5\uF900-\uFA2D]*)");
+	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5]*)");
 
 	/***
 	 * 判断是否是空字符串
@@ -128,7 +128,7 @@ public class StringUtil {
 	public static <T> String arraysToString(T [] arrays , String start ,String end , int startIndex, int endIndex, String separator){
 		StringJoiner joiner = new StringJoiner(separator, start, end);
 
-		for(int i = startIndex; i < endIndex+1; i++){
+		for(int i = startIndex; i <= endIndex; i++){
 			joiner.add(objectToString(arrays[i]));
 		}
 		return joiner.toString();
@@ -236,7 +236,7 @@ public class StringUtil {
 		return String.format("%04x", val).toUpperCase();
 	}
 
-	private static final String chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	private static final String chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	/**
 	 * 生成一定长度的随机字符串
@@ -289,5 +289,23 @@ public class StringUtil {
 			return true;
 		}
 		return false;
+	}
+
+	private static int start = Integer.valueOf("4e00", 16);
+	private static int end = Integer.valueOf("9fa5", 16);
+	/***
+	 * 计算中英文混合情况下的真实字数
+	 * 汉字 占长度 2
+	 * 字母 占长度 1
+	 * @param input
+	 * @return
+	 */
+	public static int getMixedStringLength(String input) {
+		int length = 0;
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			length += (c >= start && c <= end ? 2 : 1);
+		}
+		return length;
 	}
 }

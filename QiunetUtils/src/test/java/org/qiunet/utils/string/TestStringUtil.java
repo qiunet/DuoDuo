@@ -69,4 +69,10 @@ public class TestStringUtil extends BaseTest{
 		Object [] arr = new Object[]{"obj1", "obj2", strings};
 		Assert.assertEquals("obj1,obj2,[0, 1, 2, 3, 4, 5]", StringUtil.arraysToString(arr, ","));
 	}
+	@Test
+	public void testMixedStringLength(){
+		Assert.assertEquals(StringUtil.getMixedStringLength("a行b不行"), 8);
+		Assert.assertEquals(StringUtil.getMixedStringLength("abcdefg"), 7);
+		Assert.assertEquals(StringUtil.getMixedStringLength("嘻嘻嘻"), 6);
+	}
 }
