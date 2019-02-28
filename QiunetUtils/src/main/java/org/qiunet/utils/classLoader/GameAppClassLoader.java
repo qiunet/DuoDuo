@@ -60,7 +60,7 @@ public class GameAppClassLoader extends URLClassLoader {
 	 * @return
 	 */
 	protected byte [] getClassDefineBytes(String name) throws ClassNotFoundException {
-		String realName = name.replace('.',File.separatorChar) + ".class";
+		String realName = name.replace('.', '/') + ".class";
 		for (URL url : getURLs()) {
 			if (url.getPath().endsWith(realName)){
 				try {
