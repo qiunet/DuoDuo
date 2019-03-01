@@ -19,6 +19,6 @@ public abstract class UdpStringHandler extends BaseUdpHandler<String> {
 
 	@Override
 	public String parseRequestData(byte[] bytes) {
-		return new String(bytes, CharsetUtil.UTF_8);
+		return getDataType().parseBytes(bytes);
 	}
 }

@@ -18,6 +18,6 @@ public abstract class HttpStringHandler extends BaseHttpHandler<String, String> 
 
 	@Override
 	public String parseRequestData(byte[] bytes) {
-		return new String(bytes, CharsetUtil.UTF_8);
+		return getDataType().parseBytes(bytes);
 	}
 }

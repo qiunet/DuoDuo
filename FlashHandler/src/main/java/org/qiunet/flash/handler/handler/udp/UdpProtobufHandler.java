@@ -16,16 +16,8 @@ public abstract class UdpProtobufHandler<RequestData extends GeneratedMessageV3>
 		return DataType.PROTOBUF;
 	}
 
-	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) {
-		try {
-			if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
-
-			return (RequestData) method.invoke(null, bytes);
-		} catch (Exception e) {
-			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
-		}
-		return null;
+		return getDataType().parseBytes(bytes, getRequestClass());
 	}
 }

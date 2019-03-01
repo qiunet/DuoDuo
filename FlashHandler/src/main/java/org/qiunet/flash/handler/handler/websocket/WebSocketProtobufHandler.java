@@ -11,16 +11,9 @@ import java.lang.reflect.Method;
  * 17/7/21
  */
 public abstract class WebSocketProtobufHandler<RequestData extends GeneratedMessageV3> extends BaseWebSocketHandler<RequestData> {
-	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) {
-		try {
-			if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
-			return (RequestData) method.invoke(null, bytes);
-		} catch (Exception e) {
-			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
-		}
-		return null;
+		return getDataType().parseBytes(bytes, getRequestClass());
 	}
 
 	@Override

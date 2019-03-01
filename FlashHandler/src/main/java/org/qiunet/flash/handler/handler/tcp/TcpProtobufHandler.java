@@ -11,18 +11,10 @@ import java.lang.reflect.Method;
  * 17/7/21
  */
 public abstract class TcpProtobufHandler<RequestData> extends BaseTcpHandler<RequestData> {
-	private Method method;
+
 	@Override
 	public RequestData parseRequestData(byte[] bytes){
-		 {
-			try {
-				if (method == null ) method = getRequestClass().getMethod("parseFrom", byte[].class);
-				return (RequestData) method.invoke(null, bytes);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		 }
-		 return null;
+		 return getDataType().parseBytes(bytes, getRequestClass());
 	}
 
 	@Override
