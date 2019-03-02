@@ -6,7 +6,7 @@
 
 	<groupId>org.qiunet</groupId>
 	<artifactId>DuoDuo</artifactId>
-	<version>4.0-SNAPSHOT</version>
+	<version>5.0-SNAPSHOT</version>
 	<modules>
 		<module>QiunetUtils</module>
 		<module>QiunetDatas</module>
@@ -33,7 +33,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>4.0</modules.version>
+		<modules.version>5.0</modules.version>
 	</properties>
 
 	<distributionManagement>
