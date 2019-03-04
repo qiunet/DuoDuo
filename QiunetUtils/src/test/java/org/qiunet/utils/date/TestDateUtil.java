@@ -5,7 +5,6 @@ import org.qiunet.utils.base.BaseTest;
 import org.junit.Test;
 
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
@@ -81,59 +80,5 @@ public class TestDateUtil  extends BaseTest{
 
 		Assert.assertTrue(DateUtil.isSameDay(date1, date2));
 		Assert.assertTrue(DateUtil.isSameDay(date1, date3));
-	}
-	@Test
-	public void testAnyCheckDate(){
-		String quartz = "* * * * * *";
-		Assert.assertTrue(DateUtil.anyCheckDate(quartz, new Date()));
-
-		try {
-			Date dt = DateUtil.stringToDate("2016-05-16 23:59:00");
-			quartz = "0 * * * * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "1 * * * * *";
-			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "0 59 * * * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "* * 23 * * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "* * * 10-19 * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "0 4/5 * * * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "0 4-10/5 * * * *";
-			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "0 4-10 * * * *";
-			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
-
-
-			quartz = "* * * * 5,6,7 *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "* * * * * 1,7";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-
-			quartz = "0 0 0,12 * * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, DateUtil.stringToDate("2018-10-01 12:00:00")));
-
-			quartz = "* * * L * *";
-			Assert.assertFalse(DateUtil.anyCheckDate(quartz, dt));
-
-			dt = new Date();
-			Calendar cal = Calendar.getInstance();
-			int curr = cal.get(Calendar.DAY_OF_MONTH);
-			int max = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-			quartz = "* * * "+(max - curr)+"L * *";
-			Assert.assertTrue(DateUtil.anyCheckDate(quartz, dt));
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
 	}
 }

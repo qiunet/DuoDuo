@@ -1,7 +1,5 @@
 package org.qiunet.quartz;
 
-import org.qiunet.utils.date.CronExpressionData;
-
 import java.util.Date;
 
 class JobFacade {

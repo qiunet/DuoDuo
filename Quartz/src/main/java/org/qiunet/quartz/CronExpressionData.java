@@ -1,4 +1,4 @@
-package org.qiunet.utils.date;
+package org.qiunet.quartz;
 
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.string.StringUtil;

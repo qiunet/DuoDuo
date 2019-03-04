@@ -8,9 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.string.StringUtil;
-
 /**
  * 时间date相关的工具类
  * 也可以使用DateTimeFormatter 但是使用线程变量已经可以解决问题. 就不再修改.
@@ -126,17 +123,6 @@ public final class DateUtil {
 		long d2 = dateLast.getTime();
 
 		return d >= d1 && d < d2;
-	}
-
-	/**
-	 * 时间的格式验证
-	 * @param quartzStr
-	 * @param dt
-	 * @return
-	 */
-	public static  boolean anyCheckDate(String quartzStr,Date dt){
-		if(StringUtil.isEmpty(quartzStr))return false;
-		return new CronExpressionData(quartzStr).isValid(dt);
 	}
 
 	/**
