@@ -1,19 +1,42 @@
 package org.qiunet.utils;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 /**
  * 数据类型
  * Created by qiunet.
  * 17/10/30
  */
-public enum  DataType {
+public enum DataType {
 
-	DATA_STRING("string"),
+	DATA_STRING("string") {
+		@Override
+		public void writeData(DataOutputStream dos, String val) throws IOException {
+			dos.writeUTF(val);
+		}
+	},
 
-	DATA_DOUBLE("double"),
+	DATA_DOUBLE("double") {
+		@Override
+		public void writeData(DataOutputStream dos, String val) throws IOException {
+			dos.writeDouble(Double.parseDouble(val));
+		}
+	},
 
-	DATA_INT("int"),
+	DATA_INT("int") {
+		@Override
+		public void writeData(DataOutputStream dos, String val) throws IOException {
+			dos.writeInt(Integer.parseInt(val));
+		}
+	},
 
-	DATA_LONG("long"),
+	DATA_LONG("long") {
+		@Override
+		public void writeData(DataOutputStream dos, String val) throws IOException {
+			dos.writeLong(Long.parseLong(val));
+		}
+	},
 	;
 
 	private String type;
@@ -32,4 +55,12 @@ public enum  DataType {
 
 		return null;
 	}
+
+	/**
+	 * 写入数据到dataOutputStream
+	 * @param dos
+	 * @param val
+	 * @throws IOException
+	 */
+	public abstract void writeData(DataOutputStream dos, String val)throws IOException;
 }
