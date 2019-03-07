@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.acceptor;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.utils.asyncQuene.IndexAsyncQueueHandler;
 import org.qiunet.utils.hook.ShutdownHookThread;
+import org.qiunet.utils.system.OSUtil;
 
 /**
  * 整个的游戏入口, 处理TCP 和 HTTP过来的请求
@@ -14,7 +15,7 @@ import org.qiunet.utils.hook.ShutdownHookThread;
  */
 public class Acceptor {
 	/**使用几个线程来处理*/
-	private static final int THREAD_COUNT = Runtime.getRuntime().availableProcessors();
+	private static final int THREAD_COUNT = OSUtil.availableProcessors() *2;
 	/**线程的处理队列*/
 	private IndexAsyncQueueHandler<IRequestContext> contextProcessor;
 
