@@ -1,5 +1,6 @@
 package org.qiunet.utils.math;
 
+import java.lang.management.ManagementFactory;
 import java.util.Random;
 
 public class MathUtil {
@@ -7,7 +8,12 @@ public class MathUtil {
 	/**
 	 * 随机对象 随机因子使用空闲内存. 保证跟别的机器有差异.
 	 */
-	private static Random random = new Random(System.currentTimeMillis() + Runtime.getRuntime().freeMemory());
+	private static final Random random;
+	static {
+		long currFreeMemory = Runtime.getRuntime().freeMemory();
+		long currPid = Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
+		random = new Random(System.currentTimeMillis() +currFreeMemory + currPid);
+	}
 	public enum RandomType{
 		/** 前闭后开 [start,end) */
 		K,
