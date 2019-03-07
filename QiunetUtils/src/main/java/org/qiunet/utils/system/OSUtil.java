@@ -2,8 +2,8 @@ package org.qiunet.utils.system;
 
 import java.lang.management.ManagementFactory;
 
-public class SystemUtil {
-	private SystemUtil(){}
+public class OSUtil {
+	private OSUtil(){}
 
 	/***
 	 * 得到当前机器的内存数byte
