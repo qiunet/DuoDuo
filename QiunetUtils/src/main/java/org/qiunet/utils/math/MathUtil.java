@@ -5,9 +5,9 @@ import java.util.Random;
 public class MathUtil {
 	private MathUtil(){}
 	/**
-	 * 随机对象
+	 * 随机对象 随机因子使用空闲内存. 保证跟别的机器有差异.
 	 */
-	private static Random random = new Random(System.currentTimeMillis());
+	private static Random random = new Random(System.currentTimeMillis() + Runtime.getRuntime().freeMemory());
 	public enum RandomType{
 		/** 前闭后开 [start,end) */
 		K,
