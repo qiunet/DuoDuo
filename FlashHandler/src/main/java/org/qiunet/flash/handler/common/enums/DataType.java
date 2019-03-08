@@ -1,9 +1,10 @@
 package org.qiunet.flash.handler.common.enums;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Parser;
 import io.netty.util.CharsetUtil;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -25,23 +26,25 @@ public enum DataType {
 	 * protobuf
 	 */
 	PROTOBUF {
-		private ConcurrentHashMap<Class<?>, Method> class2Method = new ConcurrentHashMap<>(256);
+		private ConcurrentHashMap<Class<?>, Parser> class2Parse = new ConcurrentHashMap<>(256);
 		@Override
 		public <T> T parseBytes(byte[] bytes, Object... args) {
-			Method method = class2Method.get(args[0]);
-			if (method == null) {
+			Parser<T> parser = class2Parse.get(args[0]);
+			if (parser == null) {
 				try {
-					method = ((Class)args[0]).getMethod("parseFrom", byte[].class);
-					class2Method.putIfAbsent((Class<?>) args[0], method);
-				} catch (NoSuchMethodException e) {
+					Field field = ((Class)args[0]).getDeclaredField("PARSER");
+					field.setAccessible(true);
+					parser = (Parser) field.get(null);
+					class2Parse.putIfAbsent((Class<?>) args[0], parser);
+				} catch (NoSuchFieldException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
 					e.printStackTrace();
 				}
 			}
 			try {
-				return (T) method.invoke(null, bytes);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+				return parser.parseFrom(bytes);
+			} catch (InvalidProtocolBufferException e) {
 				e.printStackTrace();
 			}
 			return null;
