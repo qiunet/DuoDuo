@@ -2,7 +2,28 @@ package org.qiunet.flash.handler.common.enums;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Parser;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
+import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.http.HttpProtobufRequestContext;
+import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
+import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
+import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
+import org.qiunet.flash.handler.context.request.tcp.TcpProtobufRequestContext;
+import org.qiunet.flash.handler.context.request.tcp.TcpStringRequestContext;
+import org.qiunet.flash.handler.context.request.udp.IUdpRequestContext;
+import org.qiunet.flash.handler.context.request.udp.UdpProtobufRequestContext;
+import org.qiunet.flash.handler.context.request.udp.UdpStringRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.WebSocketProtobufRequestContext;
+import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequestContext;
+import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,6 +41,26 @@ public enum DataType {
 		@Override
 		public <T> T parseBytes(byte[] bytes, Object... args) {
 			return (T) new String(bytes, CharsetUtil.UTF_8);
+		}
+
+		@Override
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+			return new HttpStringRequestContext(content, channelContext, params, request);
+		}
+
+		@Override
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers) {
+			return new WebSocketStringRequestContext(content, channelContext, params, headers);
+		}
+
+		@Override
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
+			return new TcpStringRequestContext(content, channelContext, params);
+		}
+
+		@Override
+		public IUdpRequestContext createUdpRequestContext(MessageContent content, UdpChannel udpChannel, IHandler handler, UdpBootstrapParams params) {
+			return new UdpStringRequestContext(content, udpChannel, params);
 		}
 	},
 	/**
@@ -49,8 +90,58 @@ public enum DataType {
 			}
 			return null;
 		}
+
+		@Override
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+			return new HttpProtobufRequestContext(content, channelContext, params, request);
+		}
+
+		@Override
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers) {
+			return new WebSocketProtobufRequestContext(content, channelContext, params, headers);
+		}
+
+		@Override
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
+			return new TcpProtobufRequestContext(content, channelContext, params);
+		}
+
+		@Override
+		public IUdpRequestContext createUdpRequestContext(MessageContent content, UdpChannel udpChannel, IHandler handler, UdpBootstrapParams params) {
+			return new UdpProtobufRequestContext(content, udpChannel, params);
+		}
 	},
 	;
 
 	public abstract <T> T parseBytes(byte [] bytes, Object ... args);
+
+	/**
+	 * 得到一个http的context
+	 * @param content
+	 * @param channelContext
+	 * @param request
+	 * @return
+	 */
+	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request);
+	/**
+	 * 得到一个webSocket使用的context
+	 * @param content
+	 * @param channelContext
+	 * @return
+	 */
+	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers);
+	/**
+	 * 得到一个tcp使用的context
+	 * @param content
+	 * @param channelContext
+	de * @return
+	 */
+	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params);
+	/**
+	 * 得到一个udp使用的context
+	 * @param content
+	 * @param udpChannel
+	 * @return
+	 */
+	public abstract IUdpRequestContext createUdpRequestContext(MessageContent content, UdpChannel udpChannel, IHandler handler, UdpBootstrapParams params);
 }

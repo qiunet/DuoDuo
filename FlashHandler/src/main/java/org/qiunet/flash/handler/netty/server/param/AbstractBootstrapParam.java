@@ -1,7 +1,5 @@
 package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.context.header.IContextAdapter;
-import org.qiunet.flash.handler.context.header.DefaultContextAdapter;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
@@ -19,7 +17,6 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected SocketAddress address;
 
-	protected IContextAdapter adapter;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
@@ -40,10 +37,6 @@ public abstract class AbstractBootstrapParam {
 		return address;
 	}
 
-	public IContextAdapter getAdapter() {
-		return adapter;
-	}
-
 	public boolean isCrc() {
 		return crc;
 	}
@@ -55,9 +48,6 @@ public abstract class AbstractBootstrapParam {
 		protected SocketAddress address;
 		// 最大上行1M的长度(HTTP 同样有满足)
 		protected int maxReceivedLength = 1024 * 1024;
-
-		protected IContextAdapter adapter = new DefaultContextAdapter();
-
 
 		protected IClientErrorMessage errorMessage;
 
@@ -82,10 +72,6 @@ public abstract class AbstractBootstrapParam {
 			return (B)this;
 		}
 
-		public B setAdapter(IContextAdapter adapter) {
-			this.adapter = adapter;
-			return (B)this;
-		}
 		/**
 		 * 构造build
 		 * @return
@@ -96,7 +82,6 @@ public abstract class AbstractBootstrapParam {
 			p.maxReceivedLength = maxReceivedLength;
 			p.errorMessage = errorMessage;
 			p.address = address;
-			p.adapter = adapter;
 			p.crc = crc;
 			this.buildInner(p);
 			return p;

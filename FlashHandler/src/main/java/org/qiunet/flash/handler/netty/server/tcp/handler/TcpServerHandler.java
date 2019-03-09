@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -49,14 +50,14 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
-		IHandler handler = params.getAdapter().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound()).addListener(ChannelFutureListener.CLOSE);
 			ctx.close();
 			return;
 		}
 
-		ITcpRequestContext context = params.getAdapter().createTcpRequestContext(content, ctx, handler, params);
+		ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, params);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.TCP, context);
 		if (ctx.channel().isActive()) {
 			acceptor.process(context);

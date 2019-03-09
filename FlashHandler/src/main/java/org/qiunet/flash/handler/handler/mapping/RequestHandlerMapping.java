@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.handler.mapping;
 
+import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.exceptions.SingletonException;
@@ -48,6 +50,27 @@ public class RequestHandlerMapping {
 		return instance;
 	}
 
+	/**
+	 * 通过请求的MessageContent 得到一个Handler
+	 * @param content
+	 * @return
+	 */
+	public IHandler getHandler(MessageContent content) {
+		if (content.getProtocolId() > 0) {
+			if (! gameHandlers.containsKey(content.getProtocolId())) {
+				logger.error("Have not handler For ProtocolId ["+content.getProtocolId()+"]");
+			}
+			return gameHandlers.get(content.getProtocolId());
+		}
+
+
+		String uriPath = ((UriHttpMessageContent) content).getUriPath();
+		if (! uriPathHandlers.containsKey(uriPath)) {
+			logger.error("Have not handler For UriPath ["+uriPath+"]");
+		}
+		return uriPathHandlers.get(uriPath);
+
+	}
 	/**
 	 * 存一个handler对应mapping
 	 * @param protocolId
@@ -129,27 +152,5 @@ public class RequestHandlerMapping {
 		} catch (IllegalAccessException e) {
 			logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 		}
-	}
-	/**
-	 * 得到一个游戏的 handler
-	 * @param protocolId
-	 * @return
-	 */
-	public IHandler getGameHandler(int protocolId) {
-		if (! gameHandlers.containsKey(protocolId)) {
-			logger.error("Have not handler For ProtocolId ["+protocolId+"]");
-		}
-		return gameHandlers.get(protocolId);
-	}
-
-	/***
-	 * 得到一个非游戏的handler
-	 * @return
-	 */
-	public IHttpHandler getUriPathRequestHandler(String uriPath){
-		if (! uriPathHandlers.containsKey(uriPath)) {
-			logger.error("Have not handler For UriPath ["+uriPath+"]");
-		}
-		return uriPathHandlers.get(uriPath);
 	}
 }

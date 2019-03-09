@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -145,7 +146,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		MessageContent content = decode(ctx, msg);
 		if (content == null) return;
 
-		IHandler handler = params.getAdapter().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().getHandlerNotFound().encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
@@ -153,7 +154,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		}
 		// 更新最后时间 方便去除很久没有心跳的channel
 
-		IWebSocketRequestContext context = params.getAdapter().createWebSocketRequestContext(content, ctx, handler, params, headers);
+		IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, params, headers);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.WEB_SOCKET, context);
 		if (ctx.channel().isActive()) {
 			acceptor.process(context);

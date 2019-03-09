@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -111,13 +112,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
-		IHandler handler = params.getAdapter().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
 
-		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
 		acceptor.process(context);
 	}
 	/***
@@ -128,14 +129,14 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
 		MessageContent content = new UriHttpMessageContent(uriPath, bytes);
-		IHandler handler = params.getAdapter().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
 
-		IHttpRequestContext context = params.getAdapter().createHttpRequestContext(content, ctx, handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
 		acceptor.process(context);
 	}
 

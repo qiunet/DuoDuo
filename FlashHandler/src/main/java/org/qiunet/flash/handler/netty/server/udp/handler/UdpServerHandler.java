@@ -1,25 +1,19 @@
 package org.qiunet.flash.handler.netty.server.udp.handler;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
-import io.netty.util.ReferenceCountUtil;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.request.udp.IUdpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,13 +44,13 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		MessageContent content = channel.decodeMessage(msg);
 		if (content == null) return;
 
-		IHandler handler = params.getAdapter().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			channel.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode().encodeToByteBuf());
 			return;
 		}
 
-		IUdpRequestContext context = params.getAdapter().createUdpRequestContext(content, channel, handler, params);
+		IUdpRequestContext context = handler.getDataType().createUdpRequestContext(content, channel, handler, params);
 		params.getSessionEvent().sessionReceived(channel, HandlerType.UDP, context);
 		acceptor.process(context);
 	}

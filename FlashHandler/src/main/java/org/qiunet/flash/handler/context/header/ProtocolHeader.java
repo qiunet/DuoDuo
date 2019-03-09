@@ -105,4 +105,14 @@ public class ProtocolHeader {
 		out.writeInt(protocolId);
 		out.writeInt(crc);
 	}
+
+	@Override
+	public String toString() {
+		return "ProtocolHeader{" +
+				"magic=" + Arrays.toString(magic) +
+				", length=" + length +
+				", protocolId=" + protocolId +
+				", crc=" + crc +
+				'}';
+	}
 }
