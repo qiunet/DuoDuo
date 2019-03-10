@@ -21,7 +21,7 @@ public abstract class AbstractBootstrapParam {
 	 * 是否检验crc
 	 * 一般测试时候使用
 	 */
-	protected boolean crc;
+	protected boolean encryption;
 
 	protected int maxReceivedLength;
 
@@ -37,8 +37,8 @@ public abstract class AbstractBootstrapParam {
 		return address;
 	}
 
-	public boolean isCrc() {
-		return crc;
+	public boolean isEncryption() {
+		return encryption;
 	}
 
 	/***
@@ -51,7 +51,7 @@ public abstract class AbstractBootstrapParam {
 
 		protected IClientErrorMessage errorMessage;
 
-		protected boolean crc = true;
+		protected boolean encryption = true;
 
 		public B setErrorMessage(IClientErrorMessage errorMessage) {
 			this.errorMessage = errorMessage;
@@ -63,8 +63,8 @@ public abstract class AbstractBootstrapParam {
 			return (B) this;
 		}
 
-		public B setCrc(boolean crc) {
-			this.crc = crc;
+		public B setEncryption(boolean encryption) {
+			this.encryption = encryption;
 			return (B) this;
 		}
 		public B setPort(int port) {
@@ -82,7 +82,7 @@ public abstract class AbstractBootstrapParam {
 			p.maxReceivedLength = maxReceivedLength;
 			p.errorMessage = errorMessage;
 			p.address = address;
-			p.crc = crc;
+			p.encryption = encryption;
 			this.buildInner(p);
 			return p;
 		}

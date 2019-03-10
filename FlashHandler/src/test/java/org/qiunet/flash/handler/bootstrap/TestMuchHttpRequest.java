@@ -41,7 +41,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 							@Override
 							public void response(FullHttpResponse response) {
 								Assert.assertEquals(response.status() , HttpResponseStatus.OK);
-								response.content().readBytes(new byte[ProtocolHeader.REQUEST_HEADER_LENGTH]);
+								response.content().readBytes(new byte[new ProtocolHeader().getHeaderLength()]);
 								Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
 								ReferenceCountUtil.release(response);
 								latch.countDown();

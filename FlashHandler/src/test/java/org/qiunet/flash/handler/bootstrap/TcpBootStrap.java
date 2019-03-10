@@ -41,7 +41,7 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ILon
 						.setTcpInterceptor(new DefaultTcpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
 						.setPort(port)
-						.setCrc(true)
+						.setEncryption(true)
 						.build();
 				BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
 				LockSupport.unpark(currThread);

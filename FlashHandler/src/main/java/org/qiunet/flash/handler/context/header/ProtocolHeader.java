@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.util.Arrays;
 
@@ -9,96 +10,76 @@ import java.util.Arrays;
  * Created by qiunet.
  * 17/7/19
  */
-public class ProtocolHeader {
+public class ProtocolHeader implements IProtocolHeader {
 	/**包头识别码*/
 	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 
 
 	/**请求头固定长度*/
-	public static final int REQUEST_HEADER_LENGTH = 16;
+	private static final int REQUEST_HEADER_LENGTH = 16;
 	/**辨别 请求使用*/
 	private byte [] magic;
 	// 长度
 	private int length;
 	// 请求的 响应的协议 id
 	private int protocolId;
-	// crc code
+	// encryption code
 	private int crc;
 
 	/***
 	 * 构造函数
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
-	 * @param length 后面byte数组 长度
+	 * @param bytes 后面byte数组
 	 * @param protocolId 请求的id
-	 * @param crc crc 完整校验 (最后强转int 校验使用. int足够)
 	 */
-	public ProtocolHeader(int length, int protocolId, int crc) {
+	public ProtocolHeader(byte [] bytes, int protocolId) {
 		this.magic = MAGIC_CONTENTS;
-		this.crc = crc;
-		this.length = length;
+		this.crc = (int) CrcUtil.getCrc32Value(bytes);
+		this.length = bytes.length;
 		this.protocolId = protocolId;
 	}
 
-	/***
-	 * 直接使用bytebuf 读入一个header
-	 * @param in
-	 */
-	public ProtocolHeader(ByteBuf in) {
+	public ProtocolHeader() {
+	}
+
+
+	@Override
+	public IProtocolHeader parseHeader(ByteBuf in) {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
 		this.length = in.readInt();
 		this.protocolId = in.readInt();
 		this.crc = in.readInt();
-	}
-	/***
-	 * crc是否有效
-	 * @param crc
-	 * @return
-	 */
-	public boolean crcIsValid(long crc) {
-		return (int)crc == this.crc;
+		return this;
 	}
 
-	/**
-	 * 得到魔数
-	 * @return
-	 */
-	public byte[] getMagic() {
-		return magic;
-	}
-
-	/***
-	 * 后面的长度
-	 * @return
-	 */
+	@Override
 	public int getLength() {
 		return length;
 	}
 
-	public int getCrc() {
-		return crc;
+	@Override
+	public boolean encryptionValid(Object validData) {
+		return ((Long) validData).intValue() == this.crc;
 	}
 
-	/***
-	 * protocol 协议id
-	 * @return
-	 */
+	@Override
+	public int getHeaderLength() {
+		return REQUEST_HEADER_LENGTH;
+	}
+
+	@Override
 	public int getProtocolId() {
 		return protocolId;
 	}
 
-	/**
-	 * 检查包头是否是自己的包.
-	 * @return
-	 */
+	@Override
 	public boolean isMagicValid(){
 		return Arrays.equals(this.magic, MAGIC_CONTENTS);
 	}
-	/**
-	 * 将当前header 写入 bytebuf
-	 * @param out
-	 */
+
+	@Override
 	public  void writeToByteBuf(ByteBuf out) {
 		out.writeBytes(magic);
 		out.writeInt(length);
@@ -112,7 +93,7 @@ public class ProtocolHeader {
 				"magic=" + Arrays.toString(magic) +
 				", length=" + length +
 				", protocolId=" + protocolId +
-				", crc=" + crc +
+				", encryption=" + crc +
 				'}';
 	}
 }

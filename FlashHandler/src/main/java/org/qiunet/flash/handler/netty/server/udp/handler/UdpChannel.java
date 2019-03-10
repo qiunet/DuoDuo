@@ -8,6 +8,7 @@ import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -229,29 +230,30 @@ public class UdpChannel implements Channel {
 	}
 
 	private MessageContent decodeToMessageContent(ByteBuf in) {
-		if (! in.isReadable(ProtocolHeader.REQUEST_HEADER_LENGTH))  {
+		IProtocolHeader header = new ProtocolHeader();
+		if (! in.isReadable(header.getHeaderLength()))  {
 			return null;
 		}
 
-		ProtocolHeader protocolHeader = new ProtocolHeader(in);
-		if (! protocolHeader.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ Arrays.toString(protocolHeader.getMagic()));
+		header.parseHeader(in);
+		if (! header.isMagicValid()) {
+			logger.error("Invalid message, magic is error! "+ header);
 			return null;
 		}
 
-		if (protocolHeader.getLength() < 0  || ! in.isReadable(protocolHeader.getLength())) {
-			logger.error("Invalid message, length is error! length is : "+ protocolHeader.getLength());
+		if (header.getLength() < 0  || ! in.isReadable(header.getLength())) {
+			logger.error("Invalid message, length is error! length is : "+ header.getLength());
 			return null;
 		}
 
-		byte [] bytes = new byte[protocolHeader.getLength()];
+		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		if (crc && ! protocolHeader.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+protocolHeader.getCrc());
+		if (crc && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
 			return null;
 		}
-		return new MessageContent(protocolHeader.getProtocolId(), bytes);
+		return new MessageContent(header.getProtocolId(), bytes);
 	}
 
 	@Override

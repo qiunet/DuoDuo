@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
@@ -18,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.util.Arrays;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -95,19 +95,20 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
-		ProtocolHeader header = new ProtocolHeader(request.content());
+		IProtocolHeader header = new ProtocolHeader();
+		header.parseHeader(request.content());
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message magic! client is "+ Arrays.toString(header.getMagic()));
-			// crc 不对, 不被认证的请求
+			logger.error("Invalid message magic! client is "+ header);
+			// encryption 不对, 不被认证的请求
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}
 
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
-		if (params.isCrc() && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
-			// crc 不对, 不被认证的请求
+		if (params.isEncryption() && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
+			// encryption 不对, 不被认证的请求
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}

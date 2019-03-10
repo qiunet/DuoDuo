@@ -39,8 +39,8 @@ public class MessageContent {
 	 * @return
 	 */
 	public ByteBuf encodeToByteBuf(){
-		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + ProtocolHeader.REQUEST_HEADER_LENGTH);
-		ProtocolHeader header = new ProtocolHeader(bytes.length, protocolId, (int) CrcUtil.getCrc32Value(bytes));
+		ProtocolHeader header = new ProtocolHeader(bytes, protocolId);
+		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + header.getHeaderLength());
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
 		return byteBuf;

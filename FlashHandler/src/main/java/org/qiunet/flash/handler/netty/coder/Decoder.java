@@ -28,12 +28,13 @@ public class Decoder extends ByteToMessageDecoder {
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		if (! in.isReadable(ProtocolHeader.REQUEST_HEADER_LENGTH)) return;
+		ProtocolHeader header = new ProtocolHeader();
+		if (! in.isReadable(header.getHeaderLength())) return;
 		in.markReaderIndex();
 
-		ProtocolHeader header = new ProtocolHeader(in);
+		header.parseHeader(in);
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ Arrays.toString(header.getMagic()));
+			logger.error("Invalid message, magic is error! "+ header);
 			ctx.channel().close();
 			return;
 		}
@@ -51,8 +52,8 @@ public class Decoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		if (crc && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
+		if (crc && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
 			ctx.channel().close();
 			return;
 		}

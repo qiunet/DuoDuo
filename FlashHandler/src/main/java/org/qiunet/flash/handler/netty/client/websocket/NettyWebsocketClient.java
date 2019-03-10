@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketClientCompressionHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
@@ -133,7 +134,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 			}
 
 			BinaryWebSocketFrame webSocketFrame = ((BinaryWebSocketFrame) msg);
-			ProtocolHeader header = new ProtocolHeader(webSocketFrame.content());
+			IProtocolHeader header = new ProtocolHeader().parseHeader(webSocketFrame.content());
 			byte [] bytes = new byte[webSocketFrame.content().readableBytes()];
 			webSocketFrame.content().readBytes(bytes);
 			trigger.response(new MessageContent(header.getProtocolId() ,bytes));

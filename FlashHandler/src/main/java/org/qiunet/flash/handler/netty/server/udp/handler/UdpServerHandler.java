@@ -17,8 +17,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-
 
 /***
  *
@@ -38,7 +36,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		UdpChannel channel = UdpSenderManager.getInstance().getUdpChannel(msg.sender());
 		if (channel == null) {
 			// 也会写入sessionManager
-			channel = new UdpChannel(ctx.channel(), msg.sender(), this.params.isCrc());
+			channel = new UdpChannel(ctx.channel(), msg.sender(), this.params.isEncryption());
 		}
 
 		MessageContent content = channel.decodeMessage(msg);
@@ -67,10 +65,10 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 	 * @return
 	 */
 	private MessageContent decode(ByteBuf msg) {
-
-		ProtocolHeader header = new ProtocolHeader(msg);
+		ProtocolHeader header = new ProtocolHeader();
+		header.parseHeader(msg);
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ Arrays.toString(header.getMagic()));
+			logger.error("Invalid message, magic is error! "+ header);
 			return null;
 		}
 
@@ -82,8 +80,8 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 		byte [] bytes = new byte[header.getLength()];
 		msg.readBytes(bytes);
 
-		if (params.isCrc() && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
+		if (params.isEncryption() && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
 			return null;
 		}
 

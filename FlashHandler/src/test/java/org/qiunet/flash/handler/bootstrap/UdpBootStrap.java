@@ -8,16 +8,12 @@ import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
-import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.interceptor.DefaultUdpInterceptor;
-import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.udp.NettyUdpClient;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 
 import java.net.InetAddress;
@@ -45,7 +41,7 @@ public abstract class UdpBootStrap extends RequestHandlerScanner implements ILon
 						.setUdpInterceptor(new DefaultUdpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
 						.setPort(port)
-						.setCrc(true)
+						.setEncryption(true)
 						.build();
 				BootstrapServer server = BootstrapServer.createBootstrap(hook).udpListener(udpParams);
 				LockSupport.unpark(currThread);

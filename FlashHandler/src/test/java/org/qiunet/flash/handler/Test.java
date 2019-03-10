@@ -22,7 +22,7 @@ public class Test {
 						.setErrorMessage(new DefaultErrorMessage())
 						.setSessionEvent(new DefaultSessionEvent())
 						.setPort(8888)
-						.setCrc(true)
+						.setEncryption(true)
 					.build()
 		).await();
 	}

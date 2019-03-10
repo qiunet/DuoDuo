@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.websocketx.*;
 import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -23,8 +24,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 
 /**
  * Created by qiunet.
@@ -95,10 +94,9 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 	 * @return
 	 */
 	private MessageContent decode(ChannelHandlerContext ctx, WebSocketFrame msg) {
-
-		ProtocolHeader header = new ProtocolHeader(msg.content());
+		IProtocolHeader header = new ProtocolHeader().parseHeader(msg.content());
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ Arrays.toString(header.getMagic()));
+			logger.error("Invalid message, magic is error! "+ header);
 			ctx.channel().close();
 			return null;
 		}
@@ -112,8 +110,8 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		byte [] bytes = new byte[header.getLength()];
 		msg.content().readBytes(bytes);
 
-		if (params.isCrc() && ! header.crcIsValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message crc! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header.getCrc());
+		if (params.isEncryption() && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
 			ctx.channel().close();
 			return null;
 		}

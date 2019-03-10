@@ -5,11 +5,9 @@ import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
-import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.interceptor.DefaultUdpInterceptor;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 
 import java.util.concurrent.locks.LockSupport;
@@ -33,7 +31,7 @@ public abstract class MuchUdpRequest extends RequestHandlerScanner {
 						.setUdpInterceptor(new DefaultUdpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
 						.setPort(port)
-						.setCrc(true)
+						.setEncryption(true)
 						.build();
 				BootstrapServer server = BootstrapServer.createBootstrap(hook).udpListener(udpParams);
 				try {

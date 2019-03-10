@@ -81,7 +81,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader(httpResponse.content());
+				new ProtocolHeader().parseHeader(httpResponse.content());
 				byte [] bytes = new byte[httpResponse.content().readableBytes()];
 				httpResponse.content().readBytes(bytes);
 				LoginProto.LoginResponse loginResponse = null;
@@ -111,7 +111,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader(httpResponse.content());
+				new ProtocolHeader().parseHeader(httpResponse.content());
 				Assert.assertEquals(test, httpResponse.content().toString(CharsetUtil.UTF_8));
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
@@ -152,7 +152,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader(httpResponse.content());
+				new ProtocolHeader().parseHeader(httpResponse.content());
 				JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
 				Assert.assertEquals(test, response.getString("test"));
 				ReferenceCountUtil.release(httpResponse);
