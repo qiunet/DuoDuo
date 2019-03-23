@@ -5,9 +5,7 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
-import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
-import org.qiunet.flash.handler.netty.server.udp.NettyUdpServer;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -117,22 +115,6 @@ public class BootstrapServer {
 		httpThread.start();
 		return this;
 	}
-
-	/**
-	 * 启动http监听
-	 * @param params
-	 * @return
-	 */
-	public BootstrapServer udpListener(UdpBootstrapParams params) {
-		NettyUdpServer udpServer = new NettyUdpServer(params);
-		this.nettyServers.add(udpServer);
-
-		Thread udpThread = new Thread(udpServer, "BootstrapServer-Udp Address ["+params.getAddress().toString()+"]");
-		udpThread.setDaemon(true);
-		udpThread.start();
-		return this;
-	}
-
 	/**
 	 * 启动tcp监听
 	 * @param params

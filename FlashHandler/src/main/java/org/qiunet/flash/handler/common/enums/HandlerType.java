@@ -37,15 +37,6 @@ public enum HandlerType {
 			ProcessAcceptor.getInstance().process(context);
 		}
 	},
-	/***
-	 * 可靠的 UDP
-	 */
-	UDP {
-		@Override
-		public void processRequest(IRequestContext context) {
-			ProcessAcceptor.getInstance().process(context);
-		}
-	},
 	;
 
 	public abstract void processRequest(IRequestContext context);

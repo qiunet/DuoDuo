@@ -2,9 +2,6 @@ package org.qiunet.flash.handler.context.response.push;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.SessionManager;
-import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,18 +24,6 @@ public class ResponseMsgUtil {
 		}
 		channel.writeAndFlush(message.encode());
 	}
-	/***
-	 * 推送一个普通udp message 给指定的客户端
-	 * @param channel
-	 * @param message
-	 */
-	public static void responseUdpMessage(UdpChannel channel, IMessage message) {
-		if (logger.isInfoEnabled()) {
-			logger.info(message.toStr());
-		}
-		channel.sendMessage(message.encode().encodeToByteBuf());
-	}
-
 	/***
 	 * 推送一个Websocket message 给指定的客户端
 	 * @param channel
