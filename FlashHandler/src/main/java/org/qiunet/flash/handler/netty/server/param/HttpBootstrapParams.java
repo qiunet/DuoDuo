@@ -1,6 +1,4 @@
 package org.qiunet.flash.handler.netty.server.param;
-import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
-import org.qiunet.flash.handler.context.session.ISessionEvent;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 import org.qiunet.flash.handler.netty.server.interceptor.WebSocketInterceptor;
 
@@ -22,8 +20,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	private String websocketPath;
 
-	private ISessionEvent sessionEvent;
-
 	private HttpInterceptor httpInterceptor;
 
 	private WebSocketInterceptor webSocketInterceptor;
@@ -37,10 +33,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	public String getWebsocketPath() {
 		return websocketPath;
-	}
-
-	public ISessionEvent getSessionEvent() {
-		return sessionEvent;
 	}
 
 	public String getGameURIPath() {
@@ -71,19 +63,12 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		 */
 		private String websocketPath;
 
-		private ISessionEvent sessionEvent;
-
 		private HttpInterceptor httpInterceptor;
 
 		private WebSocketInterceptor webSocketInterceptor;
 
 		public Builder setWebSocketInterceptor(WebSocketInterceptor webSocketInterceptor) {
 			this.webSocketInterceptor = webSocketInterceptor;
-			return this;
-		}
-
-		public Builder setSessionEvent(ISessionEvent sessionEvent) {
-			this.sessionEvent = sessionEvent;
 			return this;
 		}
 
@@ -116,11 +101,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 				if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
 				params.webSocketInterceptor = this.webSocketInterceptor;
 				params.websocketPath = this.websocketPath;
-				if (this.sessionEvent == null) {
-					params.sessionEvent = new DefaultSessionEvent();
-				}else {
-					params.sessionEvent = this.sessionEvent;
-				}
 			}
 
 			params.gameURIPath = this.gameURIPath;

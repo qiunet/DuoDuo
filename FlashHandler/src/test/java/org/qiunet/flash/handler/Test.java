@@ -2,7 +2,6 @@ package org.qiunet.flash.handler;
 
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
-import org.qiunet.flash.handler.context.session.DefaultSessionEvent;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -20,8 +19,6 @@ public class Test {
 				TcpBootstrapParams.custom()
 						.setTcpInterceptor(new DefaultTcpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
-						.setReadIdleCheckSeconds(20)
-						.setSessionEvent(new DefaultSessionEvent())
 						.setPort(8888)
 						.setEncryption(true)
 					.build()

@@ -20,7 +20,6 @@ import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,24 +36,6 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 
 	public WebsocketServerHandler (HttpBootstrapParams params) {
 		this.params = params;
-	}
-
-	@Override
-	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-		try {
-			params.getSessionEvent().sessionRegistered(ctx.channel());
-		}finally {
-			ThreadContextData.removeAll();
-		}
-	}
-
-	@Override
-	public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
-		try {
-			params.getSessionEvent().sessionUnregistered(ctx.channel());
-		}finally {
-			ThreadContextData.removeAll();
-		}
 	}
 
 	/***
@@ -151,7 +132,6 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		// 更新最后时间 方便去除很久没有心跳的channel
 
 		IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, params, headers);
-		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.WEB_SOCKET, context);
 		if (ctx.channel().isActive()) {
 			handler.getHandlerType().processRequest(context);
 		}

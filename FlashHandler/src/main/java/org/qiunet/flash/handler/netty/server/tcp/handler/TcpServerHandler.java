@@ -3,14 +3,12 @@ package org.qiunet.flash.handler.netty.server.tcp.handler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +26,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		try {
-			params.getSessionEvent().sessionUnregistered(ctx.channel());
-		}finally {
-			ThreadContextData.removeAll();
-		}
-	}
-
-	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		try {
-			params.getSessionEvent().sessionRegistered(ctx.channel());
-		}finally {
-			ThreadContextData.removeAll();
-		}
-
-	}
-	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
@@ -56,7 +36,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, params);
-		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.TCP, context);
 		if (ctx.channel().isActive()) {
 			handler.getHandlerType().processRequest(context);
 		}
