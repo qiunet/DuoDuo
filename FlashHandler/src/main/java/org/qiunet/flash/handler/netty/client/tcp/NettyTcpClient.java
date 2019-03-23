@@ -8,15 +8,14 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
-import org.qiunet.flash.handler.netty.coder.Decoder;
-import org.qiunet.flash.handler.netty.coder.Encoder;
+import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
+import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by qiunet.
@@ -62,8 +61,8 @@ public class NettyTcpClient implements ILongConnClient {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
-			pipeline.addLast("Encoder", new Encoder());
-			pipeline.addLast("Decoder", new Decoder(1024*1024*2, true));
+			pipeline.addLast("TcpSocketEncoder", new TcpSocketEncoder());
+			pipeline.addLast("TcpSocketDecoder", new TcpSocketDecoder(1024*1024*2, true));
 			pipeline.addLast(new NettyClientHandler());
 		}
 	}

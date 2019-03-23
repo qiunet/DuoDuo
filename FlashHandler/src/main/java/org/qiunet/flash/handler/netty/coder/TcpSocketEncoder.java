@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * Created by qiunet.
  * 17/8/13
  */
-public class Encoder extends MessageToByteEncoder<MessageContent> {
+public class TcpSocketEncoder extends MessageToByteEncoder<MessageContent> {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {

@@ -18,11 +18,11 @@ import java.util.List;
  * Created by qiunet.
  * 17/8/13
  */
-public class Decoder extends ByteToMessageDecoder {
+public class TcpSocketDecoder extends ByteToMessageDecoder {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private int maxReceivedLength;
 	private boolean crc;
-	public Decoder(int maxReceivedLength, boolean needCrc) {
+	public TcpSocketDecoder(int maxReceivedLength, boolean needCrc) {
 		this.crc = needCrc;
 		this.maxReceivedLength = maxReceivedLength;
 	}
