@@ -10,7 +10,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -18,19 +17,17 @@ import java.util.List;
  * Created by qiunet.
  * 17/8/13
  */
-public class TcpSocketDecoder extends ByteToMessageDecoder {
+public class WebSocketDecoder extends ByteToMessageDecoder {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private int maxReceivedLength;
 	private boolean encryption;
-	public TcpSocketDecoder(int maxReceivedLength, boolean encryption) {
+	public WebSocketDecoder(int maxReceivedLength, boolean encryption) {
 		this.encryption = encryption;
 		this.maxReceivedLength = maxReceivedLength;
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		ProtocolHeader header = new ProtocolHeader();
-		if (! in.isReadable(header.getHeaderLength())) return;
-		in.markReaderIndex();
 
 		header.parseHeader(in);
 		if (! header.isMagicValid()) {
@@ -45,10 +42,6 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		if (! in.isReadable(header.getLength())) {
-			in.resetReaderIndex();
-			return;
-		}
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 

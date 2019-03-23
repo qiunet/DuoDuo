@@ -2,8 +2,12 @@ package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.websocketx.WebSocketFrameDecoder;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
@@ -11,6 +15,7 @@ import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -68,6 +73,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			} else if (params.getWebsocketPath() != null && params.getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
 				handlerWebSocketHandshark(ctx, request);
+				ctx.fireChannelRead(msg.retain());
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
@@ -83,8 +89,15 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * 处理升级握手信息
 	 */
 	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
-		WebsocketServerHandler websocketServerHandler = new WebsocketServerHandler(params);
-		websocketServerHandler.handlerWebSocketHandshark(ctx, request);
+		ChannelPipeline pipeline = ctx.pipeline();
+		pipeline.remove(this);
+
+		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, false, params.getMaxReceivedLength()));
+		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
+		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
+		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(request.headers(), params));
+		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
+//		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
 	}
 
 	/***
