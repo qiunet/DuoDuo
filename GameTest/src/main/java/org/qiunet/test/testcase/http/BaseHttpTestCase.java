@@ -34,7 +34,7 @@ abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot>
 			robot.brokeRobot("http status not 200");
 			return;
 		}
-		new ProtocolHeader(httpResponse.content());
+		new ProtocolHeader().parseHeader(httpResponse.content());
 		byte [] bytes = new byte[httpResponse.content().readableBytes()];
 		httpResponse.content().readBytes(bytes);
 		content = new MessageContent(0, bytes);

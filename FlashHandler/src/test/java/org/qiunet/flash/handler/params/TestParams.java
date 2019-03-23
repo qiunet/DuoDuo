@@ -20,11 +20,9 @@ public class TestParams {
 	public void testBootstrapParam() throws UnknownHostException {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
-				.setSsl(true)
 				.setHttpInterceptor(new DefaultHttpInterceptor())
 				.build();
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
-		Assert.assertEquals(true, params.isSsl());
 
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setPort(1315)

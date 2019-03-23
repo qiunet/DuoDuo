@@ -13,10 +13,6 @@ import org.qiunet.flash.handler.netty.server.interceptor.WebSocketInterceptor;
  */
 public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	/**
-	 * 使用ssl 模式
-	 */
-	private boolean ssl;
-	/**
 	 * 游戏的uriPath
 	 * http://localhost:8080/f?a=b&c=d 后面的/f
 	 */
@@ -41,10 +37,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	public String getWebsocketPath() {
 		return websocketPath;
-	}
-
-	public boolean isSsl() {
-		return ssl;
 	}
 
 	public ISessionEvent getSessionEvent() {
@@ -72,7 +64,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 * */
 	public static class Builder extends AbstractBootstrapParam.SuperBuilder<HttpBootstrapParams, Builder> {
 		private Builder(){}
-		private boolean ssl;
 		// 默认 /f
 		private String gameURIPath = "/f";
 		/***
@@ -98,11 +89,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		public Builder setWebsocketPath(String websocketPath) {
 			this.websocketPath = websocketPath;
-			return this;
-		}
-
-		public Builder setSsl(boolean ssl) {
-			this.ssl = ssl;
 			return this;
 		}
 
@@ -139,7 +125,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 			params.gameURIPath = this.gameURIPath;
 			params.httpInterceptor = this.httpInterceptor;
-			params.ssl = this.ssl;
 		}
 	}
 }

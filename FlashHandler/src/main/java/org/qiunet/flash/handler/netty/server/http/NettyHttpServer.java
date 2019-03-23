@@ -40,24 +40,16 @@ public class NettyHttpServer implements Runnable, INettyServer {
 		EventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("http-boss-event-loop-"));
 		EventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("http-worker-event-loop-"));
 		try {
-			// Configure SSL.
-			final SslContext sslCtx;
-			if (params.isSsl()) {
-				SelfSignedCertificate ssc = new SelfSignedCertificate();
-				sslCtx = SslContextBuilder.forServer(ssc.certificate(), ssc.privateKey()).build();
-			} else {
-				sslCtx = null;
-			}
+
 			ServerBootstrap bootstrap = new ServerBootstrap();
 			bootstrap.group(boss, worker);
 
 			bootstrap.channel(NioServerSocketChannel.class);
-			bootstrap.childHandler(new NettyHttpServerInitializer(sslCtx, params));
+			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
-			logger.error("[NettyHttpServer]  Http server is started by " +
-					(params.isSsl()? "HTTPS" : "http") + " mode on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
+			logger.error("[NettyHttpServer]  Http server is started on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
 			this.channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyHttpServer] Exception: ", e);

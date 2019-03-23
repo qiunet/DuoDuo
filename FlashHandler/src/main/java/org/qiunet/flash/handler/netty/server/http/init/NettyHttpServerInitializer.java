@@ -16,18 +16,13 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  * 17/11/11
  */
 public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel> {
-	private final SslContext sslCtx;
 	private HttpBootstrapParams params;
-	public NettyHttpServerInitializer(SslContext sslCtx, HttpBootstrapParams params) {
-		this.sslCtx = sslCtx;
+	public NettyHttpServerInitializer(HttpBootstrapParams params) {
 		this.params = params;
 	}
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline p = ch.pipeline();
-		if (sslCtx != null) {
-			p.addLast(sslCtx.newHandler(ch.alloc()));
-		}
 		p.addLast("HttpServerCodec" ,new HttpServerCodec());
 		p.addLast("HttpObjectAggregator", new HttpObjectAggregator(params.getMaxReceivedLength()));
 		p.addLast("HttpServerHandler", new HttpServerHandler(params));
