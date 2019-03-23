@@ -8,7 +8,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -38,7 +37,7 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 
 	@Override
 	public void response(int protocolId, Object data) {
-		ResponseMsgUtil.responseWebsocketMessage(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
+		getHandler().getHandlerType().writeAndFlush(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
 	}
 
 	@Override

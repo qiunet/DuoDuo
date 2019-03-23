@@ -2,8 +2,6 @@ package org.qiunet.flash.handler.handler.WebSocket;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
-import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.handler.websocket.WebSocketProtobufHandler;
 
@@ -16,6 +14,6 @@ public class LoginProtobufHandler extends WebSocketProtobufHandler<LoginProto.Lo
 
 	@Override
 	public void handler(IWebSocketRequest<LoginProto.LoginRequest> context) throws Exception {
-		ResponseMsgUtil.responseWebsocketMessage(context.channel(), new DefaultProtobufMessage(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build()));
+		context.response(2001, LoginProto.LoginResponse.newBuilder().setTestString(context.getRequestData().getTestString()).build());
 	}
 }

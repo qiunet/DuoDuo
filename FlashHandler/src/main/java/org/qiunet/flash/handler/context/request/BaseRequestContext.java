@@ -53,21 +53,21 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 			return ip;
 		}
 
-//		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
+		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
 
 		return ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
 	}

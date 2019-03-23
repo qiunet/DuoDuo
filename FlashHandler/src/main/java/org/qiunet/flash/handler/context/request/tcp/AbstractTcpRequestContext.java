@@ -6,7 +6,6 @@ import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -33,7 +32,7 @@ abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends Base
 
 	@Override
 	public void response(int protocolId, Object data) {
-		ResponseMsgUtil.responseTcpMessage(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
+		getHandler().getHandlerType().writeAndFlush(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
 	}
 	/***
 	 * 得到responseData的数组数据
