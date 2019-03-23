@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * @author qiunet
  *
  */
-public class AsyncQueueHandler<T extends QueueElement> {
+public class AsyncQueueHandler<T extends IQueueElement> {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	// 线程计数
 	private static final AtomicInteger threadNum = new AtomicInteger();
@@ -36,11 +36,11 @@ public class AsyncQueueHandler<T extends QueueElement> {
 	}
 
 
-	public static <T extends QueueElement> AsyncQueueHandler<T> create(String  threadName) {
+	public static <T extends IQueueElement> AsyncQueueHandler<T> create(String  threadName) {
 		return new AsyncQueueHandler(threadName);
 	}
 
-	public static <T extends QueueElement> AsyncQueueHandler<T> create() {
+	public static <T extends IQueueElement> AsyncQueueHandler<T> create() {
 		return new AsyncQueueHandler("AsyncQueueHandler-"+threadNum.incrementAndGet());
 	}
 

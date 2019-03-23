@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  */
 public class TestAsyncQueue extends BaseTest {
-	private static AsyncQueueHandler<QueueElement> testElementAsyncQueueHandler = AsyncQueueHandler.create();
+	private static AsyncQueueHandler<IQueueElement> testElementAsyncQueueHandler = AsyncQueueHandler.create();
 	@Test
 	public void testAsyncQueue() {
 		final AtomicInteger integer = new AtomicInteger(0);
@@ -23,7 +23,7 @@ public class TestAsyncQueue extends BaseTest {
 			new Thread(() -> {
 				for (int j = 0 ; j < loopCount; j++) {
 					integer.incrementAndGet();
-					testElementAsyncQueueHandler.addElement(new QueueElement(){
+					testElementAsyncQueueHandler.addElement(new IQueueElement(){
 						@Override
 						public boolean handler() {
 							latch.countDown();

@@ -4,7 +4,7 @@ package org.qiunet.utils.asyncQuene;
  * @author qiunet
  *
  */
-public interface QueueElement {
+public interface IQueueElement {
 	/**
 	 * 处理逻辑
 	 * @return
@@ -14,5 +14,7 @@ public interface QueueElement {
 	 * boolean 返回false 时候. 我会打印
 	 * @return
 	 */
-	 String toStr();
+	 default String toStr() {
+	 	return "";
+	 }
 }

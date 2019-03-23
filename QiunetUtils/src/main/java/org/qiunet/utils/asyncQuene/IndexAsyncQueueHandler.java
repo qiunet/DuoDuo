@@ -55,7 +55,7 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 	 * @param queueIndex
 	 * @param element
 	 */
-	public void addElement(int queueIndex, QueueElement element) {
+	public void addElement(int queueIndex, IQueueElement element) {
 		int realIndex = Math.abs(queueIndex % currThreadCount);
 		arrays[realIndex].addElement(element);
 	}

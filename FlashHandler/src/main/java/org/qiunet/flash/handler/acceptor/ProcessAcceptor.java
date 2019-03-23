@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.acceptor;
 
 import org.qiunet.utils.asyncQuene.IndexAsyncQueueHandler;
 import org.qiunet.utils.asyncQuene.IndexQueueElement;
-import org.qiunet.utils.asyncQuene.QueueElement;
+import org.qiunet.utils.asyncQuene.IQueueElement;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.system.OSUtil;
 
@@ -67,7 +67,7 @@ public class ProcessAcceptor {
 	 * @param queueIndex
 	 * @param element
 	 */
-	public void process(int queueIndex, QueueElement element) {
+	public void process(int queueIndex, IQueueElement element) {
 		contextProcessor.addElement(queueIndex, element);
 	}
 }

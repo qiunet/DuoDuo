@@ -1,7 +1,7 @@
 package org.qiunet.utils.asyncQuene;
 
 
-public class TestElement implements QueueElement {
+public class TestElement implements IQueueElement {
 	private String threadName;
 	public TestElement(String name){
 		this.threadName = name;
