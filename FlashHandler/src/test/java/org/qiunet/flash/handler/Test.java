@@ -20,6 +20,7 @@ public class Test {
 				TcpBootstrapParams.custom()
 						.setTcpInterceptor(new DefaultTcpInterceptor())
 						.setErrorMessage(new DefaultErrorMessage())
+						.setReadIdleCheckSeconds(20)
 						.setSessionEvent(new DefaultSessionEvent())
 						.setPort(8888)
 						.setEncryption(true)

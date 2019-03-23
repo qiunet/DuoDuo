@@ -16,7 +16,10 @@ public abstract class AbstractBootstrapParam {
 	 * 接收端口
 	 */
 	protected SocketAddress address;
-
+	/***
+	 * 读超时处理.默认300秒 (单位秒)
+	 */
+	protected int readIdleCheckSeconds;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
@@ -41,6 +44,10 @@ public abstract class AbstractBootstrapParam {
 		return encryption;
 	}
 
+	public int getReadIdleCheckSeconds() {
+		return readIdleCheckSeconds;
+	}
+
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
@@ -52,6 +59,11 @@ public abstract class AbstractBootstrapParam {
 		protected IClientErrorMessage errorMessage;
 
 		protected boolean encryption = true;
+
+		/***
+		 * 读超时处理.默认300秒 (单位秒)
+		 */
+		private int readIdleCheckSeconds = 300;
 
 		public B setErrorMessage(IClientErrorMessage errorMessage) {
 			this.errorMessage = errorMessage;
@@ -72,6 +84,11 @@ public abstract class AbstractBootstrapParam {
 			return (B)this;
 		}
 
+		public B setReadIdleCheckSeconds(int readIdleCheckSeconds) {
+			this.readIdleCheckSeconds = readIdleCheckSeconds;
+			return (B)this;
+		}
+
 		/**
 		 * 构造build
 		 * @return
@@ -81,6 +98,7 @@ public abstract class AbstractBootstrapParam {
 			P p = newParams();
 			p.maxReceivedLength = maxReceivedLength;
 			p.errorMessage = errorMessage;
+			p.readIdleCheckSeconds = readIdleCheckSeconds;
 			p.address = address;
 			p.encryption = encryption;
 			this.buildInner(p);

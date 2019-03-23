@@ -4,14 +4,11 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
 import io.netty.handler.ssl.SslContext;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
-import org.qiunet.flash.handler.netty.server.http.handler.WebsocketServerHandler;
+import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -34,5 +31,7 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
 		p.addLast("HttpServerCodec" ,new HttpServerCodec());
 		p.addLast("HttpObjectAggregator", new HttpObjectAggregator(params.getMaxReceivedLength()));
 		p.addLast("HttpServerHandler", new HttpServerHandler(params));
+		p.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
+		p.addLast(new NettyIdleCheckHandler());
 	}
 }
