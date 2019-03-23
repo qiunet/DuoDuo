@@ -17,12 +17,12 @@ public class DefaultSessionEvent implements ISessionEvent {
 	protected SessionManager sessionManager = SessionManager.getInstance();
 	@Override
 	public void sessionRegistered(Channel channel) {
-		sessionManager.addSession(new DefaultPlayerSession(channel));
+//		sessionManager.addSession(new DefaultPlayerSession(channel));
 	}
 
 	@Override
 	public void sessionUnregistered(Channel channel) {
-		sessionManager.removeSession(channel);
+//		sessionManager.removeSession(channel);
 	}
 
 	@Override
@@ -32,6 +32,5 @@ public class DefaultSessionEvent implements ISessionEvent {
 			this.sessionRegistered(channel);
 			session = sessionManager.getSession(channel);
 		}
-		session.setLastPackageTimeStamp();
 	}
 }

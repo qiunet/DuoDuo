@@ -4,6 +4,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +18,8 @@ public class NettyIdleCheckHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent && ((IdleStateEvent) evt).state() == IdleState.READER_IDLE) {
-			logger.info("[NettyIdleCheckHandler] Channel ["+ctx.channel().id()+"] close by idle check");
+			ISession session = SessionManager.getInstance().getSession(ctx.channel());
+			logger.info("[NettyIdleCheckHandler] Uid ["+(session == null ? 0 : session.getUid())+"] Channel ["+ctx.channel().id()+"] close by idle check");
 			ctx.channel().close();
 		}
 	}

@@ -10,7 +10,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.*;
-import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
@@ -31,7 +30,6 @@ import org.slf4j.LoggerFactory;
  */
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSocketFrame> {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private Acceptor acceptor = Acceptor.getInstance();
 
 	private WebSocketServerHandshaker handshaker;
 	private HttpBootstrapParams params;
@@ -155,7 +153,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<WebSock
 		IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, params, headers);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.WEB_SOCKET, context);
 		if (ctx.channel().isActive()) {
-			acceptor.process(context);
+			handler.getHandlerType().processRequest(context);
 		}
 	}
 

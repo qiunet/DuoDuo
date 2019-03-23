@@ -1,7 +1,8 @@
 package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.message.MessageContent;
+import io.netty.channel.ChannelFuture;
+import org.qiunet.flash.handler.context.response.push.IMessage;
 
 /**
  * session 的接口,
@@ -36,14 +37,19 @@ public interface ISession {
 	 * 得到存放map的唯一key
 	 * @return
 	 */
-	String getKey();
+	long getUid();
 	/**
-	 * 最后活跃的时间戳
-	 * @return
+	 * 调用sessionClose后的逻辑.
 	 */
-	long lastPackageTimeStamp();
+	void fireSessionClose();
 	/***
-	 * 最后的活跃时间
+	 * 对外写消息
+	 * @param message
 	 */
-	void setLastPackageTimeStamp();
+	ChannelFuture writeMessage(IMessage message);
+
+	/***
+	 * 添加待处理事情
+	 */
+	void addProcessMessage(IProcessMessage msg);
 }

@@ -247,7 +247,7 @@ public class BootstrapServer {
 							itr.remove();
 
 							if (key.isAcceptable()) {
-								logger.error("[HookListener]服务端: Acceptor Msg");
+								logger.error("[HookListener]服务端: ProcessAcceptor Msg");
 								ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
 								SocketChannel channel = serverSocketChannel.accept();
 

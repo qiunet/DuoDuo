@@ -48,7 +48,15 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 	 * @param element
 	 */
 	public void addElement(Element element) {
-		int realIndex = Math.abs(element.getQueueIndex() % currThreadCount);
+		this.addElement(element.getQueueIndex(), element);
+	}
+	/***
+	 * 添加一个QueueElement 和指定queueIndex 到队列
+	 * @param queueIndex
+	 * @param element
+	 */
+	public void addElement(int queueIndex, QueueElement element) {
+		int realIndex = Math.abs(queueIndex % currThreadCount);
 		arrays[realIndex].addElement(element);
 	}
 }

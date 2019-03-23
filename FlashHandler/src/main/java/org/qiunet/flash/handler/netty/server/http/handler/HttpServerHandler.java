@@ -4,7 +4,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
-import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
@@ -29,8 +28,6 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * 17/11/11
  */
 public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
-	private static final Acceptor acceptor = Acceptor.getInstance();
-
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	private HttpBootstrapParams params;
@@ -120,7 +117,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
-		acceptor.process(context);
+		handler.getHandlerType().processRequest(context);
 	}
 	/***
 	 * 处理其它请求
@@ -138,7 +135,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
-		acceptor.process(context);
+		handler.getHandlerType().processRequest(context);
 	}
 
 	/***

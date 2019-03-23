@@ -9,10 +9,9 @@ import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-
-import java.net.InetSocketAddress;
 
 /**
  * Created by qiunet.
@@ -30,7 +29,11 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 
 	@Override
 	public int getQueueIndex() {
-		return SessionManager.getInstance().getSession(ctx.channel()).getQueueIndex();
+		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		if (session != null) {
+			return session.getQueueIndex();
+		}
+		return channel().hashCode();
 	}
 
 	@Override

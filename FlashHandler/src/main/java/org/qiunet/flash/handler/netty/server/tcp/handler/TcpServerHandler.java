@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.netty.server.tcp.handler;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
@@ -22,7 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private Acceptor acceptor = Acceptor.getInstance();
 	private TcpBootstrapParams params;
 
 	public TcpServerHandler(TcpBootstrapParams params) {
@@ -60,7 +58,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, params);
 		params.getSessionEvent().sessionReceived(ctx.channel(), HandlerType.TCP, context);
 		if (ctx.channel().isActive()) {
-			acceptor.process(context);
+			handler.getHandlerType().processRequest(context);
 		}
 	}
 

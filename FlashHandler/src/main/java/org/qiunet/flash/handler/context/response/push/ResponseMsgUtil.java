@@ -18,16 +18,6 @@ public class ResponseMsgUtil {
 	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	/***
 	 * 推送一个普通socket message 给指定的客户端
-	 * @param channelLongId
-	 * @param message
-	 */
-	public static void responseTcpMessage(String channelLongId, IMessage message) {
-		ISession session = SessionManager.getInstance().getSession(channelLongId);
-		responseTcpMessage(session.getChannel(), message);
-	}
-
-	/***
-	 * 推送一个普通socket message 给指定的客户端
 	 * @param channel
 	 * @param message
 	 */
@@ -49,15 +39,6 @@ public class ResponseMsgUtil {
 		channel.sendMessage(message.encode().encodeToByteBuf());
 	}
 
-	/***
-	 * 推送一个Websocket message 给指定的客户端
-	 * @param channelLongId
-	 * @param message
-	 */
-	public static void responseWebsocketMessage(String channelLongId, IMessage message) {
-		ISession session = SessionManager.getInstance().getSession(channelLongId);
-		responseWebsocketMessage(session.getChannel(), message);
-	}
 	/***
 	 * 推送一个Websocket message 给指定的客户端
 	 * @param channel

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.socket.DatagramPacket;
-import org.qiunet.flash.handler.acceptor.Acceptor;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeader;
@@ -25,7 +24,6 @@ import org.slf4j.LoggerFactory;
  **/
 public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket> {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private Acceptor acceptor = Acceptor.getInstance();
 	private UdpBootstrapParams params;
 	public UdpServerHandler(UdpBootstrapParams params) {
 		UdpSenderManager.getInstance().params = params;
@@ -50,7 +48,7 @@ public class UdpServerHandler extends SimpleChannelInboundHandler<DatagramPacket
 
 		IUdpRequestContext context = handler.getDataType().createUdpRequestContext(content, channel, handler, params);
 		params.getSessionEvent().sessionReceived(channel, HandlerType.UDP, context);
-		acceptor.process(context);
+		handler.getHandlerType().processRequest(context);
 	}
 
 	@Override

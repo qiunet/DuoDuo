@@ -5,9 +5,11 @@ import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IUdpResponse;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.context.response.push.ResponseMsgUtil;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.netty.server.param.UdpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.udp.handler.UdpChannel;
+import org.qiunet.utils.math.MathUtil;
 
 import java.net.InetSocketAddress;
 
@@ -27,7 +29,11 @@ public abstract class AbstractUdpRequestContext<RequestData, ResponseData> exten
 	}
 	@Override
 	public int getQueueIndex() {
-		return SessionManager.getInstance().getSession(channel).getQueueIndex();
+		ISession session = SessionManager.getInstance().getSession(channel);
+		if (session != null)
+			return session.getQueueIndex();
+
+		return MathUtil.random(100);
 	}
 
 	@Override
