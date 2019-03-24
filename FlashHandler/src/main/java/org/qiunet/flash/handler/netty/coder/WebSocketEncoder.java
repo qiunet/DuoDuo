@@ -18,11 +18,11 @@ public class WebSocketEncoder extends MessageToByteEncoder<MessageContent> {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
 		ByteBuf srcMsg = msg.encodeToByteBuf();
-		BinaryWebSocketFrame frame = null;
 		try {
-			frame = new BinaryWebSocketFrame(srcMsg);
-			out.writeBytes(frame.content());
-		}finally {
+			ctx.write(new BinaryWebSocketFrame(srcMsg));
+		}catch (Exception e) {
+			throw e;
+		} finally {
 			srcMsg.release();
 		}
 	}

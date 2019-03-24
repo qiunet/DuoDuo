@@ -37,7 +37,7 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 
 	@Override
 	public void response(int protocolId, Object data) {
-		getHandler().getHandlerType().writeAndFlush(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
+		channel().writeAndFlush(getResponseMessage(protocolId, (ResponseData) data).encode());
 	}
 
 	@Override

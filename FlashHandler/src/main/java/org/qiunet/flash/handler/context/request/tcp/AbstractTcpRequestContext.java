@@ -32,7 +32,7 @@ abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends Base
 
 	@Override
 	public void response(int protocolId, Object data) {
-		getHandler().getHandlerType().writeAndFlush(ctx.channel(), getResponseMessage(protocolId, (ResponseData) data));
+		channel().writeAndFlush(getResponseMessage(protocolId, (ResponseData) data).encode());
 	}
 	/***
 	 * 得到responseData的数组数据

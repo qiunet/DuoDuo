@@ -39,7 +39,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().getHandlerNotFound().encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode()).addListener(ChannelFutureListener.CLOSE);
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			return;
 		}
@@ -53,7 +53,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("Exception : ", cause);
-		ctx.writeAndFlush(new BinaryWebSocketFrame(params.getErrorMessage().exception(cause).encode().encodeToByteBuf())).addListener(ChannelFutureListener.CLOSE);
+		ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
 		ctx.close();
 	}
 }

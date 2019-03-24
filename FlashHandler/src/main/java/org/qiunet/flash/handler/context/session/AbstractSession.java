@@ -47,7 +47,6 @@ public abstract class AbstractSession implements ISession {
 
 	@Override
 	public ChannelFuture writeMessage(IMessage message) {
-		channel.attr(ServerConstants.HANDLER_TYPE_KEY);
 		return channel.writeAndFlush(message.encode());
 	}
 

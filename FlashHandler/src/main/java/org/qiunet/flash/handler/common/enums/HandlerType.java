@@ -31,11 +31,6 @@ public enum HandlerType {
 		public void processRequest(IRequestContext context) {
 			ProcessAcceptor.getInstance().process(context);
 		}
-
-		@Override
-		public ChannelFuture writeAndFlush(Channel channel, IMessage message) {
-			return channel.writeAndFlush(message.encode());
-		}
 	},
 	/**
 	 * webSocket
@@ -45,11 +40,6 @@ public enum HandlerType {
 		public void processRequest(IRequestContext context) {
 			ProcessAcceptor.getInstance().process(context);
 		}
-
-		@Override
-		public ChannelFuture writeAndFlush(Channel channel, IMessage message) {
-			return channel.writeAndFlush(new BinaryWebSocketFrame(message.encode().encodeToByteBuf()));
-		}
 	},
 	;
 
@@ -58,13 +48,4 @@ public enum HandlerType {
 	 * @param context
 	 */
 	public abstract void processRequest(IRequestContext context);
-	/***
-	 * 推送消息
-	 * @param channel
-	 * @param message
-	 * @return
-	 */
-	public ChannelFuture writeAndFlush(Channel channel, IMessage message){
-		return null;
-	}
 }
