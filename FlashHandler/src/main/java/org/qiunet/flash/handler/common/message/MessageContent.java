@@ -40,7 +40,7 @@ public class MessageContent {
 	 */
 	public ByteBuf encodeToByteBuf(){
 		ProtocolHeader header = new ProtocolHeader(bytes, protocolId);
-		ByteBuf byteBuf = ByteBufAllocator.DEFAULT.directBuffer(bytes.length + header.getHeaderLength());
+		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + header.getHeaderLength());
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
 		return byteBuf;

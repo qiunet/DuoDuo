@@ -17,13 +17,11 @@ public class WebSocketEncoder extends MessageToByteEncoder<MessageContent> {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
-		ByteBuf srcMsg = msg.encodeToByteBuf();
 		try {
-			ctx.write(new BinaryWebSocketFrame(srcMsg));
+			// 这里不需要release ByteBuf WebSocketFrame 本身会帮你搞定.
+			ctx.write(new BinaryWebSocketFrame(msg.encodeToByteBuf()));
 		}catch (Exception e) {
 			throw e;
-		} finally {
-			srcMsg.release();
 		}
 	}
 }
