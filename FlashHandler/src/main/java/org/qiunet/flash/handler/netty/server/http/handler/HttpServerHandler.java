@@ -17,6 +17,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
+import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -93,11 +94,12 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		ChannelPipeline pipeline = ctx.pipeline();
 		pipeline.remove(this);
 
+		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
+		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, false, params.getMaxReceivedLength()));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(request.headers(), params));
-		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
 	}
 
