@@ -1,6 +1,5 @@
 package org.qiunet.data.db.dao;
 
-import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.entity.PlayerPo;
 
 /**
@@ -9,7 +8,7 @@ import org.qiunet.data.redis.entity.PlayerPo;
  */
 public interface PlayerDao {
 	
-	public PlayerPo getPlayerPo(int uid, PlatformType platformType);
+	public PlayerPo getPlayerPo(int uid);
 	
 	public void insertPlayerPo(PlayerPo playerPo);
 	

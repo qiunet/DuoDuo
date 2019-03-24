@@ -15,7 +15,6 @@ import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**

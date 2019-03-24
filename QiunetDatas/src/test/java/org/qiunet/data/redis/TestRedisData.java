@@ -3,14 +3,11 @@ package org.qiunet.data.redis;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.base.RedisDataUtil;
 import org.qiunet.data.redis.entity.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author qiunet
@@ -35,7 +32,6 @@ public class TestRedisData {
 		String key = "pP#1000#a";
 		PlayerPo playerPo = new PlayerPo();
 		playerPo.setUid(1000);
-		playerPo.setPlatform(PlatformType.ANDROID);
 		playerPo.setLevel(10);
 		playerPo.setExp(2000);
 		RedisDataUtil.getInstance().setObjectToHash(key, playerPo);
@@ -55,7 +51,6 @@ public class TestRedisData {
 			EquipPo equipPo = new EquipPo();
 			equipPo.setExp(10 + i);
 			equipPo.setUid(1000);
-			equipPo.setPlatform(PlatformType.ANDROID);
 			equipPo.setId(10000 + i);
 			equipPo.setLevel(20 + i);
 			equipList.add(equipPo);

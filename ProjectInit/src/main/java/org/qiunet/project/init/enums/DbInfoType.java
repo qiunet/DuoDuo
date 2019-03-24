@@ -2,8 +2,6 @@ package org.qiunet.project.init.enums;
 
 import org.qiunet.data.db.support.info.IEntityDbInfo;
 import org.qiunet.data.db.support.info.IEntityListDbInfo;
-import org.qiunet.data.db.support.info.IPlatformEntityDbInfo;
-import org.qiunet.data.db.support.info.IPlatformEntityListDbInfo;
 
 /**
  * @author qiunet
@@ -12,8 +10,6 @@ import org.qiunet.data.db.support.info.IPlatformEntityListDbInfo;
 public enum  DbInfoType {
 	IEntityDbInfo(IEntityDbInfo.class),
 	IEntityListDbInfo(IEntityListDbInfo.class),
-	IPlatformEntityDbInfo(IPlatformEntityDbInfo.class),
-	IPlatformEntityListDbInfo(IPlatformEntityListDbInfo.class),
 	;
 	private Class clazz;
 	DbInfoType(Class clazz) {

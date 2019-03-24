@@ -1,22 +1,18 @@
 package org.qiunet.data.db.data.player;
 
-import org.qiunet.data.core.support.entityInfo.IPlatformEntityInfo;
+import org.qiunet.data.core.support.entityInfo.IEntityInfo;
 import org.qiunet.data.db.support.info.IEntityDbInfo;
-import org.qiunet.data.db.support.info.IPlatformEntityDbInfo;
-import org.qiunet.data.db.support.info.uidinfo.UidPlatformEntityDbInfo;
-import org.qiunet.data.enums.PlatformType;
+import org.qiunet.data.db.support.info.uidinfo.UidEntityDbInfo;
 import org.qiunet.data.redis.AbstractRedisUtil;
 import org.qiunet.data.redis.base.RedisDataUtil;
 import org.qiunet.data.redis.entity.PlayerPo;
 import org.qiunet.data.redis.key.RedisKey;
 
-import java.util.Objects;
-
 /**
  * @author qiunet
  *         Created on 17/2/13 13:36.
  */
-public class PlayerEntityInfo implements IPlatformEntityInfo<Integer, PlayerPo, PlayerVo> {
+public class PlayerEntityInfo implements IEntityInfo<Integer, PlayerPo, PlayerVo> {
 	@Override
 	public String getNameSpace() {
 		return "player";
@@ -54,16 +50,16 @@ public class PlayerEntityInfo implements IPlatformEntityInfo<Integer, PlayerPo, 
 
 	@Override
 	public IEntityDbInfo getEntityDbInfo(PlayerPo playerPo) {
-		return getEntityDbInfo(playerPo.getUid(), playerPo.getPlatform());
+		return getEntityDbInfo(playerPo.getUid());
 	}
 
 	@Override
-	public IPlatformEntityDbInfo getEntityDbInfo(Integer dbInfoKey, PlatformType platform) {
-		return new UidPlatformEntityDbInfo(dbInfoKey, platform);
+	public IEntityDbInfo getEntityDbInfo(Integer dbInfoKey) {
+		return new UidEntityDbInfo(dbInfoKey);
 	}
 
 	@Override
-	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.PLAYER.getKeyByParams(dbInfoKey, platform);
+	public String getRedisKey(Object dbInfoKey) {
+		return RedisKey.PLAYER.getKeyByParams(dbInfoKey);
 	}
 }

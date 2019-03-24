@@ -1,8 +1,5 @@
 package ${allData.currData.packagePath};
 
-#if(${allData.currData.platform})
-import org.qiunet.data.enums.PlatformType;
-#end
 #if(${allData.currData.list})
 import java.util.Map;
 #end
@@ -51,16 +48,6 @@ public class ${allData.currData.name} {
 	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
 		return dataSupport.getVo(${allData.currData.dbInfoKeyName});
 	}
-#elseif(${allData.currData.entityDataSupportClass} == 'PlatformEntityDataSupport')
-	/**
-	* 获得一个vo的数据
-	*
-	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
-    * @param platform 平台信息
-	*/
-	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
-		return dataSupport.getVo(${allData.currData.dbInfoKeyName}, platform);
-	}
 #elseif(${allData.currData.entityDataSupportClass} == 'EntityListDataSupport')
 	/**
 	* 失效列表
@@ -86,32 +73,6 @@ public class ${allData.currData.name} {
 	*/
 	public Map<${allData.currData.subKeyType}, ${allData.currData.voName}> get${allData.currData.voName}Map(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
 		return dataSupport.getVoMap(${allData.currData.dbInfoKeyName});
-	}
-#elseif(${allData.currData.entityDataSupportClass} == 'PlatformEntityListDataSupport')
-	/**
-	* 失效列表
-	*
-	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
-	*/
-	public void expireList(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
-		dataSupport.expireCache(${allData.currData.dbInfoKeyName}, platform);
-	}
-	/***
-	* 得到一个列表里面的po对象
-	* @param ${allData.currData.dbInfoKeyName}
-	* @param ${allData.currData.subKeyName}
-	* @return
-	*/
-	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, ${allData.currData.subKeyType}  ${allData.currData.subKeyName}, PlatformType platform) {
-		return get${allData.currData.voName}Map(${allData.currData.dbInfoKeyName}, platform).get(${allData.currData.subKeyName});
-	}
-	/****
-	* 	得到map列表. key为subKey
-	* @param uid
-	* @return
-	*/
-	public Map<${allData.currData.subKeyType}, ${allData.currData.voName}> get${allData.currData.voName}Map(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, PlatformType platform) {
-		return dataSupport.getVoMap(${allData.currData.dbInfoKeyName}, platform);
 	}
 #end
 	/**

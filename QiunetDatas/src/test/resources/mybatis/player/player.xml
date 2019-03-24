@@ -3,23 +3,23 @@
 <mapper namespace="player">
     
     <select id="getPlayerPo" parameterType="dbInfo" resultType="PlayerPo">
-        select * from ${dbName}.player_${platformName} where uid = #{uid};
+        select * from ${dbName}.player where uid = #{uid};
     </select>
 
     <update id="updatePlayerPo" parameterType="dbInfo" >
-        update ${dbName}.player_${platformName} SET
+        update ${dbName}.player SET
         `level` = #{level},
         exp=${exp}
         where uid = #{uid};
     </update>
 
     <insert id="insertPlayerPo" parameterType="dbInfo" >
-        insert INTO ${dbName}.player_${platformName}
+        insert INTO ${dbName}.player
         (uid , `level`, exp)
         VALUES (
         #{uid}, #{level},   #{exp});
     </insert>
     <delete id="deletePlayerPo" parameterType="dbInfo" >
-        DELETE FROM  ${dbName}.player_${platformName}  WHERE uid = #{uid};
+        DELETE FROM  ${dbName}.player  WHERE uid = #{uid};
     </delete>
 </mapper>

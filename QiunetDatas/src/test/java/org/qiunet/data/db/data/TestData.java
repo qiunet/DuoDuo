@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.data.core.support.EntityDataSupport;
 import org.qiunet.data.core.support.EntityListDataSupport;
-import org.qiunet.data.core.support.PlatformEntityDataSupport;
-import org.qiunet.data.core.support.PlatformEntityListDataSupport;
 import org.qiunet.data.db.data.equip.EquipEntityInfo;
 import org.qiunet.data.db.data.equip.EquipVo;
 import org.qiunet.data.db.data.friend.FriendEntityInfo;
@@ -17,7 +15,6 @@ import org.qiunet.data.db.data.player.PlayerVo;
 import org.qiunet.data.db.data.qunxiu.QunxiuEntityInfo;
 import org.qiunet.data.db.data.sysmsg.SysmsgEntityInfo;
 import org.qiunet.data.db.data.sysmsg.SysmsgVo;
-import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.entity.*;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
@@ -61,17 +58,15 @@ public class TestData {
 	}
 
 	@Test
-	public void testPlatformEntityData(){
+	public void testPlayerData(){
 		PlayerEntityInfo entityInfo = new PlayerEntityInfo();
-		PlatformEntityDataSupport<Integer, PlayerPo, PlayerVo> dataSupport = new PlatformEntityDataSupport(entityInfo);
+		EntityDataSupport<Integer, PlayerPo, PlayerVo> dataSupport = new EntityDataSupport(entityInfo);
 
 		int uid = 1101;
-		PlatformType platform = PlatformType.IOS;
 		PlayerPo playerPo = new PlayerPo();
 		playerPo.setUid(uid);
 		playerPo.setExp(100);
 		playerPo.setLevel(10);
-		playerPo.setPlatform(platform);
 		PlayerVo vo = dataSupport.insertPo(playerPo);
 		Assert.assertTrue(vo != null);
 
@@ -80,7 +75,7 @@ public class TestData {
 		Assert.assertEquals(playerPo.getLevel(), 15);
 		ThreadContextData.removeAll();
 
-		PlayerVo playerVo = dataSupport.getVo(uid, platform);
+		PlayerVo playerVo = dataSupport.getVo(uid);
 		playerPo = playerVo.getPlayerPo();
 		Assert.assertTrue(playerVo != null && playerVo.getPlayerPo().getExp() == 100);
 		playerPo.setExp(1000);
@@ -88,11 +83,11 @@ public class TestData {
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
 
-		playerVo = dataSupport.getVo(uid, platform);
+		playerVo = dataSupport.getVo(uid);
 		Assert.assertTrue(playerVo != null && playerVo.getPlayerPo().getExp() == 1000);
 
 		dataSupport.deletePo(playerVo.getPlayerPo());
-		playerVo = dataSupport.getVo(uid, platform);
+		playerVo = dataSupport.getVo(uid);
 		Assert.assertNull(playerVo);
 	}
 
@@ -141,14 +136,12 @@ public class TestData {
 	}
 
 	@Test
-	public void testPlatformEntityListData(){
+	public void testEquipListData(){
 		int uid = 10001;
-		PlatformType platformType = PlatformType.ANDROID;
 
 		EquipEntityInfo equipEntityInfo = new EquipEntityInfo();
-		PlatformEntityListDataSupport<Integer, Integer, EquipPo, EquipVo> dataSupport = new PlatformEntityListDataSupport(equipEntityInfo);
+		EntityListDataSupport<Integer, Integer, EquipPo, EquipVo> dataSupport = new EntityListDataSupport(equipEntityInfo);
 		EquipPo equipPo1 = new EquipPo();
-		equipPo1.setPlatform(platformType);
 		equipPo1.setUid(uid);
 		equipPo1.setId(10004);
 		equipPo1.setExp(100);
@@ -157,14 +150,13 @@ public class TestData {
 
 		ThreadContextData.removeAll();
 		EquipPo equipPo2 = new EquipPo();
-		equipPo2.setPlatform(platformType);
 		equipPo2.setUid(uid);
 		equipPo2.setId(20004);
 		equipPo2.setExp(200);
 		equipPo2.setLevel(20);
 		dataSupport.insertPo(equipPo2);
 
-		Map<Integer, EquipVo> map = dataSupport.getVoMap(uid, platformType);
+		Map<Integer, EquipVo> map = dataSupport.getVoMap(uid);
 		Assert.assertTrue(map != null && map.size() == 2);
 
 		for (EquipVo vo : map.values()) {
@@ -174,7 +166,7 @@ public class TestData {
 		dataSupport.updateRedisDataToDatabase();
 		ThreadContextData.removeAll();
 
-		map = dataSupport.getVoMap(uid, platformType);
+		map = dataSupport.getVoMap(uid);
 		Iterator<Map.Entry<Integer,EquipVo>> it = map.entrySet().iterator();
 		while(it.hasNext()){
 			EquipVo vo = it.next().getValue();
@@ -185,7 +177,7 @@ public class TestData {
 		}
 
 		ThreadContextData.removeAll();
-		map = dataSupport.getVoMap(uid, platformType);
+		map = dataSupport.getVoMap(uid);
 		Assert.assertTrue(map == null || map.isEmpty());
 	}
 	@Test

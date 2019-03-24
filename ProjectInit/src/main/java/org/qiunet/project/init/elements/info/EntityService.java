@@ -84,10 +84,6 @@ public class EntityService {
 		return entity.getType().getDataSupportClass().getSimpleName();
 	}
 
-	public boolean isPlatform(){
-		return entity.isPlatformObj();
-	}
-
 	public boolean isList(){
 		return entity.isRedisList();
 	}

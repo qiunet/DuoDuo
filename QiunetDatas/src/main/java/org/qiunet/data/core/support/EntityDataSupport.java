@@ -123,7 +123,7 @@ public class EntityDataSupport<DbInfoKey, PO extends IRedisEntity, VO> extends B
 	}
 	/***
 	 * 得到vo
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
+	 * @param dbInfoKey 分库使用的key  一般uid
 	 * @return po的VO对象
 	 */
 	public VO getVo(DbInfoKey dbInfoKey){

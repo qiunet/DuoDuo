@@ -1,10 +1,9 @@
 package org.qiunet.data.db.data.equip;
 
-import org.qiunet.data.core.support.entityInfo.IPlatformEntityListInfo;
+import org.qiunet.data.core.support.entityInfo.IEntityListInfo;
 import org.qiunet.data.db.support.info.IEntityDbInfo;
-import org.qiunet.data.db.support.info.IPlatformEntityListDbInfo;
-import org.qiunet.data.db.support.info.uidinfo.UidPlatformEntityListDbInfo;
-import org.qiunet.data.enums.PlatformType;
+import org.qiunet.data.db.support.info.IEntityListDbInfo;
+import org.qiunet.data.db.support.info.uidinfo.UidEntityListDbInfo;
 import org.qiunet.data.redis.AbstractRedisUtil;
 import org.qiunet.data.redis.base.RedisDataUtil;
 import org.qiunet.data.redis.entity.EquipPo;
@@ -14,7 +13,7 @@ import org.qiunet.data.redis.key.RedisKey;
  * @author qiunet
  *         Created on 17/2/14 10:44.
  */
-public class EquipEntityInfo implements IPlatformEntityListInfo<Integer, Integer, EquipPo, EquipVo> {
+public class EquipEntityInfo implements IEntityListInfo<Integer, Integer, EquipPo, EquipVo> {
 	@Override
 	public String getNameSpace() {
 		return "equip";
@@ -52,12 +51,12 @@ public class EquipEntityInfo implements IPlatformEntityListInfo<Integer, Integer
 
 	@Override
 	public IEntityDbInfo getEntityDbInfo(EquipPo equipPo) {
-		return getEntityDbInfo(getDbInfoKey(equipPo), equipPo.getPlatform(), getSubKey(equipPo));
+		return getEntityDbInfo(getDbInfoKey(equipPo), getSubKey(equipPo));
 	}
 
 	@Override
-	public IPlatformEntityListDbInfo getEntityDbInfo(Integer dbInfoKey, PlatformType platform, Integer subId) {
-		return new UidPlatformEntityListDbInfo(dbInfoKey, platform, subId);
+	public IEntityListDbInfo getEntityDbInfo(Integer dbInfoKey, Integer subId) {
+		return new UidEntityListDbInfo(dbInfoKey, subId);
 	}
 
 	@Override
@@ -66,7 +65,7 @@ public class EquipEntityInfo implements IPlatformEntityListInfo<Integer, Integer
 	}
 
 	@Override
-	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.EQUIP.getKeyByParams(dbInfoKey, platform);
+	public String getRedisKey(Object dbInfoKey) {
+		return RedisKey.EQUIP.getKeyByParams(dbInfoKey);
 	}
 }

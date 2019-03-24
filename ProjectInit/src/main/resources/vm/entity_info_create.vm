@@ -17,9 +17,6 @@ import org.qiunet.data.db.support.info.IEntityDbInfo;
 #if(${entityDbInfoType.clazz.name} != "org.qiunet.data.db.support.info.IEntityDbInfo")
 import ${entityDbInfoType.clazz.name};
 #end
-#if(${entityObj.platformObj})
-import org.qiunet.data.enums.PlatformType;
-#end
 
 public class ${allData.currData.name} implements ${entityInfoType.toString()}<${entityObj.dbInfoKeyType}, #if(${entityObj.redisList})${entityObj.subKeyType}, #end${entityObj.name}, ${allData.currData.vo}> {
 
@@ -71,28 +68,14 @@ public class ${allData.currData.name} implements ${entityInfoType.toString()}<${
 #end
 	@Override
 	public IEntityDbInfo getEntityDbInfo(${entityObj.name} po) {
-#if(${entityObj.EntityType} == "PlatformRedisList")
-		return getEntityDbInfo(getDbInfoKey(po), po.getPlatform(), getSubKey(po));
-#elseif(${entityObj.EntityType} == "PlatformRedisEntity")
-		return getEntityDbInfo(getDbInfoKey(po), po.getPlatform());
-#elseif(${entityObj.EntityType} == "RedisList")
+#if(${entityObj.EntityType} == "RedisList")
 		return getEntityDbInfo(getDbInfoKey(po), getSubKey(po));
 #elseif(${entityObj.EntityType} == "RedisEntity")
 		return getEntityDbInfo(getDbInfoKey(po));
 #end
 	}
 
-#if(${entityObj.EntityType} == "PlatformRedisList")
-	@Override
-	public IPlatformEntityListDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, PlatformType platform, ${entityObj.subKeyType} subId) {
-		 return new ${allData.currData.dbinfo.name}(dbInfoKey, platform, subId);
-	}
-#elseif(${entityObj.EntityType} == "PlatformRedisEntity")
-	@Override
-	public IPlatformEntityDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, PlatformType platform) {
-		return new ${allData.currData.dbinfo.name}(dbInfoKey, platform);
-	}
-#elseif(${entityObj.EntityType} == "RedisList")
+#if(${entityObj.EntityType} == "RedisList")
 	@Override
 	public IEntityListDbInfo getEntityDbInfo(${entityObj.dbInfoKeyType} dbInfoKey, ${entityObj.subKeyType} subId) {
 		 return new ${allData.currData.dbinfo.name}(dbInfoKey, subId);
@@ -104,15 +87,9 @@ public class ${allData.currData.name} implements ${entityInfoType.toString()}<${
 	}
 #end
 
-#if(${entityObj.EntityType} == "PlatformRedisList" || ${entityObj.EntityType} == "PlatformRedisEntity" )
-	@Override
-	public String getRedisKey(Object dbInfoKey, PlatformType platform) {
-		return RedisKey.${allData.currData.NameSpace.toUpperCase()}.getKeyByParams(dbInfoKey, platform);
-	}
-#else
+
 	@Override
 	public String getRedisKey(Object dbInfoKey) {
 		return RedisKey.${allData.currData.NameSpace.toUpperCase()}.getKey(dbInfoKey);
 	}
-#end
 }

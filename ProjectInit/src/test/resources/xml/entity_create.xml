@@ -8,7 +8,7 @@
 		<!ATTLIST entity name ID #REQUIRED>
 		<!ATTLIST entity dbInfoKey NMTOKEN #REQUIRED>
 		<!ATTLIST entity packagePath NMTOKEN #REQUIRED>
-		<!ATTLIST entity entityType (PlatformRedisList|RedisList|RedisEntity|PlatformRedisEntity) #REQUIRED>
+		<!ATTLIST entity entityType (RedisList|RedisEntity) #REQUIRED>
 		<!ATTLIST entity subKey CDATA "">
 
 		<!ELEMENT constructor EMPTY>
@@ -23,7 +23,7 @@
 
 <base baseDir="src/test/java" vmfilePath="vm/entity_create.vm" filePostfix="java">
 
-	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="PlatformRedisEntity">
+	<entity name="PlayerPo" dbInfoKey="uid" packagePath="project.init.test.player.entity" entityType="RedisEntity">
 		<constructor constructorFields="uid,openid,token" />
 
 		<field name="uid" type="int" comment="uid " />
@@ -50,7 +50,7 @@
 		<field name="count" type="int" comment="物品数量"/>
 	</entity>
 
-	<entity name="EquipPo" dbInfoKey="uid" packagePath="project.init.test.equip.entity" entityType="PlatformRedisList" subKey="equip_id">
+	<entity name="EquipPo" dbInfoKey="uid" packagePath="project.init.test.equip.entity" entityType="RedisList" subKey="equip_id">
 		<field name="uid" type="int" comment="UId"/>
 		<field name="equip_id" type="String" comment="装备id"/>
 		<field name="exp" type="int" comment="经验"/>

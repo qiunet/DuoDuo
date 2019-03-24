@@ -2,10 +2,6 @@ package org.qiunet.project.init.enums;
 
 import org.qiunet.data.core.support.EntityDataSupport;
 import org.qiunet.data.core.support.EntityListDataSupport;
-import org.qiunet.data.core.support.PlatformEntityDataSupport;
-import org.qiunet.data.core.support.PlatformEntityListDataSupport;
-import org.qiunet.data.redis.support.PlatformRedisEntity;
-import org.qiunet.data.redis.support.PlatformRedisList;
 import org.qiunet.data.redis.support.RedisEntity;
 import org.qiunet.data.redis.support.RedisList;
 import org.qiunet.utils.exceptions.EnumParseException;
@@ -18,9 +14,7 @@ import org.qiunet.utils.exceptions.EnumParseException;
  */
 public enum  EntityType {
     RedisEntity(        EntityInfoType.IEntityInfo,             RedisEntity.class,          DbInfoType.IEntityDbInfo, 				EntityDataSupport.class),
-    PlatformRedisEntity(EntityInfoType.IPlatformEntityInfo,     PlatformRedisEntity.class,  DbInfoType.IPlatformEntityDbInfo, 		PlatformEntityDataSupport.class),
     RedisList(          EntityInfoType.IEntityListInfo,         RedisList.class,            DbInfoType.IEntityListDbInfo, 			EntityListDataSupport.class),
-    PlatformRedisList(  EntityInfoType.IPlatformEntityListInfo, PlatformRedisList.class,    DbInfoType.IPlatformEntityListDbInfo, 	PlatformEntityListDataSupport.class),
     ;
     private EntityInfoType infoType;
     private Class clazz;
@@ -49,19 +43,12 @@ public enum  EntityType {
 		return dataSupportClass;
 	}
 
-	/**
-     * 是否是平台类型
-     * @return true 是
-     */
-    public boolean isPlatformType(){
-        return this == PlatformRedisList || this == PlatformRedisEntity;
-    }
     /***
      * 是否是list类型
      * @return true 是
      */
     public boolean isListType(){
-        return this == RedisList || this == PlatformRedisList;
+        return this == RedisList;
     }
 
     /**

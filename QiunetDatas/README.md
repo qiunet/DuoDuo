@@ -73,9 +73,7 @@
 	所有的对数据的操作都叫 DataSupport.
 	下面分:
 		EntityDataSupport 			// 单个对象的操作
-		PlatformEntityDataSupport		// 有平台之分的对象操作.
 		EntityListDataSupport 			// list对象的操作  
-    	PlatformEntityListDataSupport		// 有平台之分的list对象操作
 	
 	特点:	
 	1. 通用的. 就是4个基本支持现有的开发数据模型.

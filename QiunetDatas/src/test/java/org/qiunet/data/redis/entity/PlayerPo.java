@@ -2,14 +2,14 @@ package org.qiunet.data.redis.entity;
 
 import org.apache.ibatis.type.Alias;
 import org.qiunet.data.core.support.entityInfo.IField;
-import org.qiunet.data.redis.support.PlatformRedisEntity;
+import org.qiunet.data.redis.support.RedisEntity;
 
 /**
  * @author qiunet
  *         Created on 17/1/5 08:41.
  */
 @Alias("playerPo")
-public class PlayerPo extends PlatformRedisEntity {
+public class PlayerPo extends RedisEntity {
 	public enum FieldEnum implements IField {
 		level,
 		exp

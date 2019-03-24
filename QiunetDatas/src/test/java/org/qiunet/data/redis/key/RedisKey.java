@@ -1,7 +1,6 @@
 package org.qiunet.data.redis.key;
 
 import org.qiunet.data.db.util.DbProperties;
-import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.base.IRedisKey;
 import org.qiunet.utils.string.StringUtil;
 

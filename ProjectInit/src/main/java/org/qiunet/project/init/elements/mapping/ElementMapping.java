@@ -68,9 +68,6 @@ public class ElementMapping extends SubVmElement<MappingVmElement> {
 			else sb.append(poref.toLowerCase());
 		}
 
-		if (entity.getType().isPlatformType()) {
-			sb.append("_${platformName}");
-		}
 		if(entity.getType().isListType() && isSplitTable()) {
 			sb.append("_${tbIndex}");
 		}

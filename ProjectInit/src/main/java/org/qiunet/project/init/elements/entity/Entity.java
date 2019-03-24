@@ -129,16 +129,10 @@ public class Entity extends SubVmElement<EntityVmElement> {
 	 * @return
 	 */
 	public boolean isRedisList(){
-		return entityType == EntityType.RedisList || entityType == EntityType.PlatformRedisList;
+		return entityType == EntityType.RedisList;
 	}
 
-	/***
-	 * 是否是 platform 对象
-	 * @return
-	 */
-	public boolean isPlatformObj(){
-		return entityType == EntityType.PlatformRedisList || entityType == EntityType.PlatformRedisEntity;
-	}
+
 
 	@Override
 	public String getOutFilePath() {

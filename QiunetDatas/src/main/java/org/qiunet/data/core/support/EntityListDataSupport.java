@@ -3,10 +3,7 @@ package org.qiunet.data.core.support;
 import org.qiunet.data.core.support.entityInfo.IEntityListInfo;
 import org.qiunet.data.db.support.base.DbListSupport;
 import org.qiunet.data.db.support.base.IDbList;
-import org.qiunet.data.db.support.info.IEntityListDbInfo;
-import org.qiunet.data.enums.PlatformType;
 import org.qiunet.data.redis.support.info.IRedisList;
-import org.qiunet.utils.data.CommonData;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
@@ -101,7 +98,7 @@ public class EntityListDataSupport<DbInfoKey, SubKey, PO extends IRedisList,VO> 
 	}
 	/**
 	 * 取到一个map
-	 * @param dbInfoKey 分库使用的key  一般uid 或者和platform配合使用
+	 * @param dbInfoKey 分库使用的key  一般uid
 	 * @return po的VO对象有序的map
 	 */
 	public Map<SubKey, VO> getVoMap(DbInfoKey dbInfoKey){

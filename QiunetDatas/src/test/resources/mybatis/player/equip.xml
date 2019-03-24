@@ -3,23 +3,23 @@
 <mapper namespace="equip">
 
     <select id="getEquipPos" parameterType="dbInfo" resultType="EquipPo">
-        select * from ${dbName}.equip_${platformName}_${tbIndex} where uid = #{uid};
+        select * from ${dbName}.equip_${tbIndex} where uid = #{uid};
     </select>
 
     <update id="updateEquipPo" parameterType="dbInfo" >
-        update ${dbName}.equip_${platformName}_${tbIndex} SET
+        update ${dbName}.equip_${tbIndex} SET
         `level` = #{level},
         exp=${exp}
         where uid = #{uid} and id = #{subId};
     </update>
 
     <insert id="insertEquipPo" parameterType="dbInfo" >
-        insert INTO ${dbName}.equip_${platformName}_${tbIndex}
+        insert INTO ${dbName}.equip_${tbIndex}
         (id, uid , `level`, exp)
         VALUES (
         #{id}, #{uid}, #{level},   #{exp});
     </insert>
     <delete id="deleteEquipPo" parameterType="dbInfo" >
-        DELETE FROM  ${dbName}.equip_${platformName}_${tbIndex}  WHERE  uid = #{uid} and id = #{subId};
+        DELETE FROM  ${dbName}.equip_${tbIndex}  WHERE  uid = #{uid} and id = #{subId};
     </delete>
 </mapper>
