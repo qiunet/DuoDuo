@@ -1,11 +1,18 @@
 package org.qiunet.utils.timer;
 
+import org.qiunet.utils.date.DateUtil;
+
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by qiunet.
  * 18/1/27
  */
 public class TimerTest {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		final long createTime = System.currentTimeMillis();
 
 		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
@@ -33,6 +40,16 @@ public class TimerTest {
 			}
 		}, 0, 100);
 
-		Thread.sleep(8000);
+
+		Future<String> future = TimerManager.getInstance().scheduleWithDeley(new DelayTask<String>() {
+			@Override
+			public String call() throws Exception {
+				System.out.println("========"+DateUtil.dateToString(new Date()));
+				Thread.sleep(5000);
+				return "SUCCESS";
+			}
+		}, 1, TimeUnit.SECONDS);
+
+		System.out.println(future.get()+ "========"+DateUtil.dateToString(new Date()));
 	}
 }

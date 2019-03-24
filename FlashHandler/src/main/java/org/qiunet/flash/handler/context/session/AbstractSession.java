@@ -5,6 +5,10 @@ import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.acceptor.ProcessAcceptor;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.timer.DelayTask;
+import org.qiunet.utils.timer.TimerManager;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by qiunet.
@@ -53,5 +57,13 @@ public abstract class AbstractSession implements ISession {
 	@Override
 	public void addProcessMessage(IProcessMessage msg) {
 		ProcessAcceptor.getInstance().process(this.getQueueIndex(), msg);
+	}
+
+	@Override
+	public void addProcessMessage(IProcessMessage msg, long delay, TimeUnit unit) {
+		TimerManager.getInstance().scheduleWithDeley(() -> {
+			addProcessMessage(msg);
+			return null;
+			}, delay, unit);
 	}
 }

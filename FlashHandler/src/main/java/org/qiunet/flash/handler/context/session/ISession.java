@@ -4,6 +4,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.response.push.IMessage;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * session 的接口,
  * Created by qiunet.
@@ -52,4 +54,9 @@ public interface ISession {
 	 * 添加待处理事情
 	 */
 	void addProcessMessage(IProcessMessage msg);
+
+	/***
+	 * 添加待处理事情 延迟处理
+	 */
+	void addProcessMessage(IProcessMessage msg, long delay, TimeUnit unit);
 }
