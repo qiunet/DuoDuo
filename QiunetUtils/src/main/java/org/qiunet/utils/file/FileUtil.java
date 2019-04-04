@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author qiunet
@@ -149,6 +152,62 @@ public class FileUtil {
 					logger.error("FileUtil Exception", e);
 				}
 		}
+	}
+
+	/****
+	 * 读取文件的最后{lastNum}行.
+	 * @param file
+	 * @param lastNum
+	 * @return
+	 */
+	public static List<String> tailFile(File file, int lastNum) {
+		List<String> result = new ArrayList<>();
+		if (file == null || lastNum <= 0 || file.isDirectory() || ! file.exists() || !file.canRead()) {
+			return result;
+		}
+
+		RandomAccessFile reader = null;
+		try {
+			reader = new RandomAccessFile(file, "r");
+			long length = reader.length();
+			if (length <= 0) {
+				return result;
+			}
+
+			int count = 0;
+			long pos = length - 1;
+			while (pos > 0) {
+				pos--;
+				reader.seek(pos);
+				if (reader.readByte() == '\n') {
+					String line = reader.readLine();
+					result.add(line);
+
+					count ++;
+					if (count >= lastNum) {
+						break;
+					}
+				}
+
+				if (pos == 0) {
+					reader.seek(0);
+					result.add(reader.readLine());
+				}
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+		}finally {
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+		if (! result.isEmpty()) {
+			Collections.reverse(result);
+		}
+		return result;
 	}
 	private FileUtil(){}
 }
