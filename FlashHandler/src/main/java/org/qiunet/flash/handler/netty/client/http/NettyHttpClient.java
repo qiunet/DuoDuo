@@ -50,6 +50,21 @@ public final class NettyHttpClient {
 	}
 
 	/***
+	 * 取到port
+	 * @param uri
+	 * @return
+	 */
+	private static int getPort(URI uri) {
+		if (uri.getPort() == -1) {
+			if ("https".equalsIgnoreCase(uri.getScheme())) {
+				return 443;
+			}else if ("http".equalsIgnoreCase(uri.getScheme())){
+				return 80;
+			}
+		}
+		return uri.getPort();
+	}
+	/***
 	 * 不阻塞的方式请求.
 	 * @param byteBuf
 	 * @param url
@@ -61,7 +76,7 @@ public final class NettyHttpClient {
 		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
-			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
+			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
 			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -78,7 +93,7 @@ public final class NettyHttpClient {
 		HttpClientHandler clientHandler = new HttpClientHandler(null);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, uri);
-			ChannelFuture future = b.connect(uri.getHost(), uri.getPort()).sync();
+			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
 			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
