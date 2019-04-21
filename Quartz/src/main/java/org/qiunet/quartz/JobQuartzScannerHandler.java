@@ -1,8 +1,5 @@
-package org.qiunet.flash.handler.common.annotation.support;
+package org.qiunet.quartz;
 
-import org.qiunet.quartz.BaseJob;
-import org.qiunet.quartz.IJob;
-import org.qiunet.quartz.QuartzSchedule;
 import org.qiunet.utils.classScanner.IScannerHandler;
 
 import java.lang.reflect.Constructor;
@@ -17,7 +14,7 @@ public class JobQuartzScannerHandler implements IScannerHandler {
 	@Override
 	public boolean matchClazz(Class clazz) {
 		return ! Modifier.isAbstract(clazz.getModifiers())
-				&& BaseJob.class.isAssignableFrom(clazz);
+				&& IJob.class.isAssignableFrom(clazz);
 	}
 
 	@Override

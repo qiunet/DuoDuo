@@ -8,6 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -20,7 +24,7 @@ import java.util.jar.JarFile;
  * @author qiunet
  *         Created on 17/1/23 18:22.
  */
-public class ScannerAllClassFile {
+public class ScannerAllClassFile implements IApplicationContext {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 	private Set<String> allclass = new HashSet(128, 0.85f);
 	/**扫描匹配项列表*/
@@ -152,5 +156,25 @@ public class ScannerAllClassFile {
 		}
 		this.allclass = null;
 
+	}
+
+	@Override
+	public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotation) {
+		return null;
+	}
+
+	@Override
+	public Set<Field> getFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
+		return null;
+	}
+
+	@Override
+	public List<String> getMethodParamNames(Method method) {
+		return null;
+	}
+
+	@Override
+	public List<String> getConstructorParamNames(Constructor constructor) {
+		return null;
 	}
 }
