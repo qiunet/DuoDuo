@@ -112,6 +112,9 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 			Constructor<Cfg> cfgConstructor = cfgClass.getDeclaredConstructor(DataInputStream.class);
 			cfgConstructor.setAccessible(true);
 			Cfg cfg = cfgConstructor.newInstance(dis);
+			if (cfgMap.containsKey(cfg.getKey())) {
+				throw new RuntimeException("Key ["+cfg.getKey()+"] is duplicate!");
+			}
 			cfgMap.put(cfg.getKey(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
@@ -162,6 +165,11 @@ public abstract class BaseGameCfgManager implements IGameCfgManager {
 				subMap = new SafeHashMap<>();
 				cfgMap.put(cfg.getKey(), subMap);
 			}
+
+			if (subMap.containsKey(cfg.getSubKey())) {
+				throw new RuntimeException("SubKey ["+cfg.getSubKey()+"] is duplicate!");
+			}
+
 			subMap.put(cfg.getSubKey(), cfg);
 		}
 		for (Map<SubKey, Cfg> subKeyCfgMap : cfgMap.values()) {
