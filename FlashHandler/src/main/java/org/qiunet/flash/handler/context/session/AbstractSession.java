@@ -66,4 +66,12 @@ public abstract class AbstractSession implements ISession {
 			return null;
 			}, delay, unit);
 	}
+
+	@Override
+	public void addProcessMessage(IProcessMessage msg, long timeMillis) {
+		TimerManager.getInstance().scheduleWithTimeMillis(() -> {
+			addProcessMessage(msg);
+			return null;
+		}, timeMillis);
+	}
 }

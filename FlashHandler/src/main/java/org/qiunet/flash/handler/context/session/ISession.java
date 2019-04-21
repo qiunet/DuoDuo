@@ -59,4 +59,9 @@ public interface ISession {
 	 * 添加待处理事情 延迟处理
 	 */
 	void addProcessMessage(IProcessMessage msg, long delay, TimeUnit unit);
+	/***
+	 * 添加待处理事情 指定时间执行
+	 * @param timeMillis 时间戳
+	 */
+	void addProcessMessage(IProcessMessage msg, long timeMillis);
 }
