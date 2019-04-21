@@ -1,15 +1,22 @@
 package org.qiunet.quartz.test;
 
-import org.qiunet.quartz.IJob;
+import org.qiunet.quartz.BaseJob;
 
-public class ArraySecondJob implements IJob {
+public class ArraySecondJob extends BaseJob {
+
 	@Override
-	public void doJob() {
-		System.out.println("ArraySecondJob called");
+	protected Boolean doWork() throws Exception {
+		logger.info("ArraySecondJob called");
+		return true;
+	}
+
+	@Override
+	protected boolean logExecInfo() {
+		return false;
 	}
 
 	@Override
 	public String cronExpression() {
-		return "0/3 * * * * *";
+		return "0/3 * * * * ?";
 	}
 }

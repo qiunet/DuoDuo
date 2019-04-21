@@ -1,20 +1,23 @@
 package org.qiunet.quartz;
 
-import org.qiunet.utils.asyncQuene.mutiThread.MultiAsyncQueueHandler;
-import org.qiunet.utils.hook.ShutdownHookThread;
-import org.qiunet.utils.timer.AsyncTimerTask;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.timer.DelayTask;
 import org.qiunet.utils.timer.TimerManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-public class QuartzSchedule extends AsyncTimerTask {
-	private MultiAsyncQueueHandler workers = new MultiAsyncQueueHandler("QuartzScheduleWorkers", 4, 50, 60, TimeUnit.SECONDS);
-	private List<JobFacade> jobs = new ArrayList(4);
+public class QuartzSchedule {
+	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+
 	private volatile static QuartzSchedule instance;
-
+	private List<JobFacade> jobs = new ArrayList<>(4);
 	private QuartzSchedule() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
@@ -36,26 +39,39 @@ public class QuartzSchedule extends AsyncTimerTask {
 	 * @param job
 	 */
 	public void addJob(IJob job) {
-		if (jobs.isEmpty()) {
-			/**5秒后 开始执行调度*/
-			TimerManager.getInstance().scheduleAtFixedRate(this, 3000, 1000);
-
-			ShutdownHookThread.getInstance().addShutdownHook( () ->  QuartzSchedule.getInstance().shutdown());
-		}
 		this.jobs.add(new JobFacade(job));
 	}
-	@Override
-	protected void asyncRun() {
-		Date dt = new Date();
-		for (JobFacade job : this.jobs) {
-			this.workers.addElement(new QuartzJob(dt, job));
+
+	private class JobFacade implements DelayTask<Boolean> {
+		private IJob job;
+
+		private Date fireTime;
+
+		private Future<Boolean> future;
+
+		private CronExpression expression;
+
+		public JobFacade(IJob job) {
+			this.job = job;
+			this.fireTime = new Date();
+			try {
+				this.expression = new CronExpression(job.cronExpression());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			this.doNextJob();
 		}
-	}
-	/***
-	 * 关停
-	 */
-	public void shutdown() {
-		this.workers.shutdownNow();
-		if (! jobs.isEmpty())this.cancel();
+
+		void doNextJob() {
+			Date nextDt = expression.getTimeAfter(this.fireTime);
+			this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
+		}
+
+		@Override
+		public Boolean call() throws Exception {
+			this.fireTime = new Date();
+			this.doNextJob();
+			return this.job.doJob();
+		}
 	}
 }

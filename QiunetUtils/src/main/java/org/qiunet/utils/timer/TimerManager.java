@@ -37,7 +37,7 @@ public class TimerManager {
 	 * 停闭
 	 */
 	public void shutdown(){
-		schedule.shutdownNow();
+		schedule.shutdown();
 	}
 	/***
 	 * 默认使用毫秒
@@ -59,5 +59,20 @@ public class TimerManager {
 	 */
 	public <T> Future<T> scheduleWithDeley(DelayTask<T> delayTask, long delay, TimeUnit unit) {
 		return schedule.schedule(delayTask, delay, unit);
+	}
+
+	/***
+	 * 在一个指定的时间点执行任务
+	 * @param delayTask
+	 * @param timeMillis
+	 * @param <T>
+	 * @return
+	 */
+	public <T> Future<T> scheduleWithTimeMillis(DelayTask<T> delayTask, long timeMillis) {
+		long now = System.currentTimeMillis();
+		if (timeMillis < now) {
+			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");
+		}
+		return scheduleWithDeley(delayTask, (timeMillis - now), TimeUnit.MILLISECONDS);
 	}
 }

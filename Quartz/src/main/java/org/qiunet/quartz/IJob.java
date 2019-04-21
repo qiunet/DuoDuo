@@ -8,7 +8,7 @@ public interface IJob {
 	/**
 	 * 执行
 	 */
-	void doJob();
+	Boolean doJob();
 	/****
 	 *  没有年这个选项. 因为没有用过
 	 *
@@ -18,8 +18,8 @@ public interface IJob {
 	 * 秒 分 0 - 59
 	 * 时 0 - 23
 	 * 日 1- 31
-	 * 月 1 - 12
-	 * 周 1- 7
+	 * 月 0 - 11
+	 * 周 1- 7 1位周日
 	 *
 	 * 每个格式可以支持
 	 * 指定	 	 0 * * * * * 每分钟执行
@@ -31,4 +31,14 @@ public interface IJob {
 	 * @return
 	 */
 	String cronExpression();
+	/***
+	 * 即使上一个没有执行完.
+	 * 下一个也会执行.
+	 *
+	 * 如果希望上一个没执行完. 后面的不执行. 就修改为false
+	 *
+	 * 还没有实现
+	 * @return
+	 */
+	default boolean multiExec(){return true;}
 }

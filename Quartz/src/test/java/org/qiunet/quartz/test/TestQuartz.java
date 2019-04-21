@@ -7,7 +7,7 @@ public class TestQuartz {
 	@Test
 	public void testQuartz() throws InterruptedException {
 		QuartzSchedule.getInstance().addJob(new SecondJob());
-		QuartzSchedule.getInstance().addJob(new ArraySecondJob());
+//		QuartzSchedule.getInstance().addJob(new ArraySecondJob());
 
 		Thread.sleep(100000);
 	}

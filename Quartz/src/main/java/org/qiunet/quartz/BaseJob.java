@@ -15,26 +15,26 @@ public abstract class BaseJob implements IJob {
 	 * 执行工作调度
 	 */
 	@Override
-	public void doJob(){
+	public Boolean doJob(){
 		long start = System.currentTimeMillis();
-		String execInfo = "";
 		try {
-			 execInfo = doWork();
+			 return doWork();
 		}catch (Exception e) {
 			logger.error("Job  ["+jobName+"] Exception ", e);
 		}
 		finally {
 			ThreadContextData.removeAll();
 			if (logExecInfo()) {
-				logger.info("Job ["+jobName+"] exec ["+(System.currentTimeMillis() - start)+"] ms execInfo:"+execInfo);
+				logger.info("Job ["+jobName+"] exec ["+(System.currentTimeMillis() - start)+"]");
 			}
 		}
+		return true;
 	}
 	/***
 	 * 调度
 	 * @return
 	 */
-	protected abstract String doWork() throws Exception;
+	protected abstract Boolean doWork() throws Exception;
 
 	/***
 	 * 是否打印execInfo信息
