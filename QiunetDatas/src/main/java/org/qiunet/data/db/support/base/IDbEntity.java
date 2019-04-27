@@ -9,9 +9,9 @@ import org.qiunet.data.db.support.info.IEntityDbInfo;
 public interface IDbEntity<PO extends IEntityDbInfo> extends IDbBase<PO> {
 	/**
 	 * 查询一个数据
-	 * @param selectStatment statment
+	 * @param selectStatement Statement
 	 * @param dbObjInfo dbInfo 的对象. 自己封装的也行
 	 * @return 返回单个对象
 	 */
-	public PO selectOne(String selectStatment, IEntityDbInfo dbObjInfo);
+	public PO selectOne(String selectStatement, IEntityDbInfo dbObjInfo);
 }

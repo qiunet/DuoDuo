@@ -12,9 +12,9 @@ import java.util.List;
 public interface IDbList<PO extends IEntityListDbInfo> extends IDbBase<PO> {
 	/**
 	 * 获取list
-	 * @param selectStatment 查询语句
+	 * @param selectStatement 查询语句
 	 * @param dbListObjInfo 分库使用信息
 	 * @return 返回list
 	 */
-	public List<PO> selectList(String selectStatment, IEntityListDbInfo dbListObjInfo);
+	public List<PO> selectList(String selectStatement, IEntityListDbInfo dbListObjInfo);
 }
