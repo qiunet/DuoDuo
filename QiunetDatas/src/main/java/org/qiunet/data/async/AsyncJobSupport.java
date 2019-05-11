@@ -4,12 +4,11 @@ import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.asyncQuene.mutiThread.DefaultExecutorRejectHandler;
-import org.qiunet.utils.timer.TimerManager;
+import org.qiunet.utils.math.MathUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.*;
 
@@ -20,12 +19,8 @@ import java.util.concurrent.*;
  */
 public class AsyncJobSupport {
 	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
-	private ExecutorService executor = new ThreadPoolExecutor(
+	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			10,
-			512,
-			60,
-			TimeUnit.SECONDS,
-			new LinkedBlockingQueue<Runnable>(1024),
 			new DefaultThreadFactory("AsyncJobSupport"),
 			new DefaultExecutorRejectHandler("AsyncJobSupport"));
 
@@ -48,45 +43,25 @@ public class AsyncJobSupport {
 	}
 
 	private Set<AsyncNode> nodes = new HashSet<>();
-
 	public void addNode(AsyncNode node) {
 		if (nodes.isEmpty()) {
-			ShutdownHookThread.getInstance().addShutdownHook( () -> AsyncJobSupport.getInstance().shutdown());
+			ShutdownHookThread.getInstance().addShutdownHook(() -> executor.shutdown());
 		}
 		this.nodes.add(node);
-	}
-
-	/***
-	 * 停止线程池
-	 */
-	public void shutdown(){
-		executor.shutdown();
 	}
 
 	/***
 	 * 异步更新到db
 	 */
 	public void asyncToDb(){
-		Iterator<AsyncNode> it = nodes.iterator();
-		while(it.hasNext()){
-			final AsyncNode node = it.next();
-			executor.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						// 必须try catch 否则导致线程停止
-						node.updateRedisDataToDatabase();
-					}catch (Exception e) {
-						logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
-					}
-				}
-			});
+		nodes.parallelStream().forEach(node -> executor.schedule(() -> {
 			try {
-				Thread.sleep(5);
-			} catch (InterruptedException e) {
+				// 必须try catch 否则导致线程停止
+				node.updateRedisDataToDatabase();
+			}catch (Exception e) {
 				logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 			}
-		}
+			// 会延迟一定时间执行 免得凑一块了.
+		}, MathUtil.random(0, 500), TimeUnit.MILLISECONDS));
 	}
-
 }
