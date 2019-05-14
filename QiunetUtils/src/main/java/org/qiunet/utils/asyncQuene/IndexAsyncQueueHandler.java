@@ -2,6 +2,8 @@ package org.qiunet.utils.asyncQuene;
 
 import org.qiunet.utils.hook.ShutdownHookThread;
 
+import java.util.stream.Stream;
+
 /**
  * 索引分配使用的哪个 AsyncQueueHandler
  * @author qiunet
@@ -33,16 +35,15 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 			this.arrays[i] = AsyncQueueHandler.create(threadPrefixName+i);
 		}
 
-		ShutdownHookThread.getInstance().addShutdownHook(() -> stop());
+		ShutdownHookThread.getInstance().addShutdownHook(() -> Stream.of(arrays).forEach(h -> h.shutdownNow()));
 	}
 
 	/**
-	 * 停止
+	 * 停止 但是会等待执行完成所有任务
 	 */
-	public void stop(){
-		for (AsyncQueueHandler handler : arrays) handler.shutdown();
+	public void shutdown(){
+		Stream.of(arrays).forEach(h -> h.shutdown());
 	}
-
 	/**
 	 * 添加一个QueueElement对象
 	 * @param element
