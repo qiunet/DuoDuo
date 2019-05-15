@@ -11,22 +11,22 @@ import java.util.List;
  */
 public class DbListSupport<PO extends IEntityListDbInfo> implements IDbList<PO>{
 	@Override
-	public int insert(PO po, String insertStatment) {
-		return DatabaseSupport.getInstance().insert(po.getDbSourceKey(), insertStatment, po);
+	public int insert(PO po, String insertStatement) {
+		return DatabaseSupport.getInstance().insert(po.getDbSourceKey(), insertStatement, po);
 	}
 
 	@Override
-	public void update(PO po, String updateStatment) {
-		DatabaseSupport.getInstance().update(po.getDbSourceKey(), updateStatment, po);
+	public void update(PO po, String updateStatement) {
+		DatabaseSupport.getInstance().update(po.getDbSourceKey(), updateStatement, po);
 	}
 
 	@Override
-	public void delete(PO po, String deleteStatment) {
-		DatabaseSupport.getInstance().delete(po.getDbSourceKey(), deleteStatment, po);
+	public void delete(PO po, String deleteStatement) {
+		DatabaseSupport.getInstance().delete(po.getDbSourceKey(), deleteStatement, po);
 	}
 
 	@Override
-	public List<PO> selectList(String selectStatment, IEntityListDbInfo dbListObjInfo) {
-		return DatabaseSupport.getInstance().selectList(dbListObjInfo.getDbSourceKey(), selectStatment, dbListObjInfo);
+	public List<PO> selectList(String selectStatement, IEntityListDbInfo dbListObjInfo) {
+		return DatabaseSupport.getInstance().selectList(dbListObjInfo.getDbSourceKey(), selectStatement, dbListObjInfo);
 	}
 }

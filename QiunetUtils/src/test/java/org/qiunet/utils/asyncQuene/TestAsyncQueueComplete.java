@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -14,21 +15,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestAsyncQueueComplete extends BaseTest {
 	private static AsyncQueueHandler<TestElement> testElementAsyncQueueHandler = AsyncQueueHandler.create();
 	@Test
-	public void testAsyncQueue() {
+	public void testAsyncQueue() throws InterruptedException {
 		final AtomicInteger integer = new AtomicInteger(0);
-		final int threadCount = 2, loopCount = 10;
+		final int threadCount = 2, loopCount = 5;
+		CountDownLatch latch = new CountDownLatch(threadCount * loopCount);
 		for(int i = 0 ; i < threadCount; i++){
 			new Thread(() -> {
 					for (int j = 0 ; j < loopCount; j++) {
 						integer.incrementAndGet();
 						TestElement element = new TestElement(j+"");
 						testElementAsyncQueueHandler.addElement(element);
+
+						latch.countDown();
 					}
 			}, "-thread-"+i).start();
 		}
-		testElementAsyncQueueHandler.completeAndShutdown();
+		latch.await();
 
-		Assert.assertTrue(integer.get() == threadCount * loopCount);
+		testElementAsyncQueueHandler.shutdown();
 		Assert.assertTrue(testElementAsyncQueueHandler.size() == 0);
 	}
 }

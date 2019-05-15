@@ -11,22 +11,22 @@ public interface IDbBase<Po extends IEntityDbInfo> {
 	/***
 	 * 插入
 	 * @param po 插入的po
-	 * @param insertStatment statment
+	 * @param insertStatement Statement
 	 * @return insert导致变动的数
 	 */
-	public int insert(Po po, String insertStatment);
+	public int insert(Po po, String insertStatement);
 	
 	/***
 	 * 更新
 	 * @param po 更新的po
-	 * @param updateStatment statment
+	 * @param updateStatement Statement
 	 */
-	public void update(Po po, String updateStatment);
+	public void update(Po po, String updateStatement);
 	
 	/**
 	 * 删除
 	 * @param po 删除的po
-	 * @param deleteStatment statment
+	 * @param deleteStatement Statement
 	 */ 
-	public void delete(Po po, String deleteStatment);
+	public void delete(Po po, String deleteStatement);
 }

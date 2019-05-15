@@ -26,7 +26,7 @@ public class TestMathUtilRandom {
 	public static Collection params(){
 		List<Object[]> ret = new ArrayList<>();
 		for (int i = 1 ; i <= 20; i++) {
-			ret.add(new Object[]{i, i*3});
+			ret.add(new Object[]{i, i*2});
 		}
 		return ret;
 	}
@@ -34,6 +34,7 @@ public class TestMathUtilRandom {
 	@Test
 	public void testRandom(){
 		int rand = MathUtil.random(randStart, randEnd);
+//		System.out.println(randStart +", "+ randEnd+ ", "+rand);
 		Assert.assertTrue(rand >= randStart && rand < randEnd);
 	}
 }

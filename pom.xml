@@ -16,6 +16,7 @@
 		<module>FlashHandler</module>
 		<module>LoggerSender</module>
 		<module>LoggerAcceptor</module>
+		<module>JavaAgent</module>
 		<module>Quartz</module>
 		<module>all</module>
 	</modules>
@@ -97,6 +98,11 @@
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>QiunetUtils</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>JavaAgent</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>

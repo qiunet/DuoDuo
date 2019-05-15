@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>DuoDuo</artifactId>
+		<groupId>org.qiunet</groupId>
+		<version>5.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>JavaAgent</artifactId>
+	<version>${modules.version}</version>
+
+	<build>
+		<finalName>QiunetJavaAgent</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Can-Set-Native_Method_Prefix>true</Can-Set-Native_Method_Prefix>
+							<Can-Retransform-Classes>true</Can-Retransform-Classes>
+							<Agent-Class>org.qiunet.agent.JavaAgent</Agent-Class>
+							<Can-Redefine-Classes>true</Can-Redefine-Classes>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

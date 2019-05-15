@@ -1,18 +1,8 @@
 package org.qiunet.utils.math;
-
-import org.qiunet.utils.system.OSUtil;
-
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtil {
 	private MathUtil(){}
-	/**
-	 * 随机对象 随机因子使用空闲内存. 保证跟别的机器有差异.
-	 */
-	private static final Random random;
-	static {
-		random = new Random(System.currentTimeMillis() + OSUtil.freeMemory() + OSUtil.pid());
-	}
 	public enum RandomType{
 		/** 前闭后开 [start,end) */
 		K,
@@ -37,7 +27,7 @@ public class MathUtil {
 		if(randomType==RandomType.B){
 			end++;
 		}
-		int rt = start+random.nextInt(end-start);
+		int rt = start+random(end-start);
 		return rt;
 	}
 	/**
@@ -55,7 +45,7 @@ public class MathUtil {
 	 * @return
 	 */
 	public static int random(int i){
-		return random(0, i);
+		return ThreadLocalRandom.current().nextInt(i);
 	}
 	/**
 	 * 随机一个float
@@ -63,7 +53,7 @@ public class MathUtil {
 	 * @return
 	 */
 	public static float random(float i){
-		return i * random.nextFloat();
+		return i * ThreadLocalRandom.current().nextFloat();
 	}
 
 	/***
