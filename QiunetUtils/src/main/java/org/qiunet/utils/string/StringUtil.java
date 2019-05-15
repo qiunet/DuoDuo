@@ -5,6 +5,7 @@ import org.qiunet.utils.math.MathUtil;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,20 +209,7 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String format(String s, Object... p) {
-		int n = p == null ? 0 : p.length;
-		int i = 0;
-		String t = new StringBuilder().append("{").append(i).append("}").toString();
-		int j = s.indexOf(t);
-		while(j >= 0) {
-			if (i < n)
-			{
-				s = s.replace(t, p[i].toString());
-			}
-			i++;
-			t = new StringBuilder().append("{").append(i).append("}").toString();
-			j = s.indexOf(t);
-		}
-		return s;
+		return MessageFormat.format(s, p);
 	}
 
 	public static String getIntHexVal(int val){

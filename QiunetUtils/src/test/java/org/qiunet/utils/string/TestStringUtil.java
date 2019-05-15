@@ -75,4 +75,9 @@ public class TestStringUtil extends BaseTest{
 		Assert.assertEquals(StringUtil.getMixedStringLength("abcdefg"), 7);
 		Assert.assertEquals(StringUtil.getMixedStringLength("嘻嘻嘻"), 6);
 	}
+
+	@Test
+	public void testFormat() {
+		Assert.assertEquals("我叫Qiunet", StringUtil.format("{0}叫{1}", "我", "Qiunet") );
+	}
 }
