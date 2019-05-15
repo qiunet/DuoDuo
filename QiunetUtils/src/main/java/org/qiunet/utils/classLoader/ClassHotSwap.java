@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Paths;
 
 /***
  * 对class 进行热替换
@@ -40,7 +41,10 @@ public final class ClassHotSwap {
 		String [] paths = StringUtil.split(classPath, SystemPropertyUtil.getPathSeparator());
 		String JavaAgentJarPath = null;
 		for (String path : paths) {
-			if (path.endsWith("QiunetJavaAgent.jar")) {
+			if (!path.endsWith(".jar")) continue;
+
+			String fileName = Paths.get(path).toFile().getName();
+			if (fileName.matches("JavaAgent.*jar")) {
 				JavaAgentJarPath = path;
 				break;
 			}

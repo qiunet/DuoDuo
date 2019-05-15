@@ -13,7 +13,6 @@
 	<version>${modules.version}</version>
 
 	<build>
-		<finalName>QiunetJavaAgent</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
