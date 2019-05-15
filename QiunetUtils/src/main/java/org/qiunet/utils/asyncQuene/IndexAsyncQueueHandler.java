@@ -35,14 +35,20 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 			this.arrays[i] = AsyncQueueHandler.create(threadPrefixName+i);
 		}
 
-		ShutdownHookThread.getInstance().addShutdownHook(() -> Stream.of(arrays).forEach(h -> h.shutdownNow()));
+		ShutdownHookThread.getInstance().addShutdownHook(() -> Stream.of(arrays).forEach(AsyncQueueHandler::shutdownNow));
 	}
 
 	/**
 	 * 停止 但是会等待执行完成所有任务
 	 */
 	public void shutdown(){
-		Stream.of(arrays).forEach(h -> h.shutdown());
+		Stream.of(arrays).forEach(AsyncQueueHandler::shutdown);
+	}
+	/**
+	 * 立即停止
+	 */
+	public void shutdownNow(){
+		Stream.of(arrays).forEach(AsyncQueueHandler::shutdownNow);
 	}
 	/**
 	 * 添加一个QueueElement对象

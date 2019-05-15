@@ -1,10 +1,13 @@
 package org.qiunet.flash.handler.acceptor;
 
+import org.qiunet.utils.asyncQuene.AsyncQueueHandler;
 import org.qiunet.utils.asyncQuene.IndexAsyncQueueHandler;
 import org.qiunet.utils.asyncQuene.IndexQueueElement;
 import org.qiunet.utils.asyncQuene.IQueueElement;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.system.OSUtil;
+
+import java.util.stream.Stream;
 
 /**
  * 一个有索引的异步队列. 可以根据索引
@@ -31,7 +34,7 @@ public class ProcessAcceptor {
 		if (threadCount < 1) throw new Error("ThreadCount can not less than 1 !");
 		this.contextProcessor = new IndexAsyncQueueHandler("Flash_Handler_Process_Acceptor_", threadCount);
 
-		ShutdownHookThread.getInstance().addShutdownHook(() -> this.shutdown());
+		ShutdownHookThread.getInstance().addShutdownHook(this::shutdownNow);
 		instance = this;
 	}
 
@@ -49,10 +52,17 @@ public class ProcessAcceptor {
 	}
 
 	/**
-	 * 停止所有的线程
+	 * 停止所有的线程 但是会执行完任务
 	 */
 	public void shutdown() {
-		contextProcessor.stop();
+		contextProcessor.shutdown();
+	}
+
+	/**
+	 * 立即停止所有的线程
+	 */
+	public void shutdownNow() {
+		contextProcessor.shutdownNow();
 	}
 	/**
 	 * 请求的处理
