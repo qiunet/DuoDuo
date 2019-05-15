@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class TestSlf4j {
 	@Test
 	public void test(){
-		Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+		Logger logger = LoggerType.DUODUO.getLogger();
 		logger.info("12345");
 	}
 }

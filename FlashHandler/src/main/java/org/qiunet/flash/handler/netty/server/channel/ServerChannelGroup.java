@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * 17/11/30
  */
 public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 	/***
 	 * 构造函数
 	 * @param name

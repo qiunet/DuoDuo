@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 abstract class BaseRedisUtil {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO_REDIS);
+	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
 	protected final String PLACEHOLDER = "PLACEHOLDER";
 	/***缓存一天*/

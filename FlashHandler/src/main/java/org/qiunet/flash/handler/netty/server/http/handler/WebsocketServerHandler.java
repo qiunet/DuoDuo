@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * 17/12/1
  */
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<MessageContent> {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	private HttpBootstrapParams params;
 	private HttpHeaders headers;

@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  * 17/7/21
  */
 public abstract class BaseHandler<RequestData> implements IHandler<RequestData> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 
 	private Class<RequestData> requestDataClass;
 	private int protocolId;

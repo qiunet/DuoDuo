@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private String result;
 	@Override
 	public String getMethodHandler(String url, Map<String, Object> params) {

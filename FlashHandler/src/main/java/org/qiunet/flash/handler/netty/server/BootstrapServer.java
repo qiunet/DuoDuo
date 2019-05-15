@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/21
  */
 public class BootstrapServer {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	private volatile static BootstrapServer instance;
 

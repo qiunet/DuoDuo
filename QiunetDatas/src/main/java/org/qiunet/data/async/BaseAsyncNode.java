@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *         Created on 17/2/21 09:44.
  */
 public abstract class BaseAsyncNode implements AsyncNode {
-	protected static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected static final Logger logger = LoggerType.DUODUO.getLogger();
 	@Override
 	public void updateRedisDataToDatabase() {
 		for (int dbIndex : DbProperties.getInstance().getDbIndexList()) {

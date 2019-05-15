@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 检查 如果超时 , 关闭channel
  */
 public class NettyIdleCheckHandler extends ChannelInboundHandlerAdapter {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static Logger logger = LoggerType.DUODUO.getLogger();
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent && ((IdleStateEvent) evt).state() == IdleState.READER_IDLE) {

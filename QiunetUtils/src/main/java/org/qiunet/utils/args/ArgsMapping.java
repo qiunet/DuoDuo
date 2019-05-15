@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class ArgsMapping extends KeyValueData<String,String> {
 
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	public ArgsMapping(String [] args) {
 		super(new HashMap<>());

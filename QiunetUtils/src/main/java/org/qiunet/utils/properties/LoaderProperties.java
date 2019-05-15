@@ -13,7 +13,7 @@ import java.util.Properties;
  * 加载properties 的工具类. 可以加载中文
  */
 public abstract class LoaderProperties extends KeyValueData<Object, Object> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 	protected String fileName;
 	/***
 	 * 要求相对 classpath的地址

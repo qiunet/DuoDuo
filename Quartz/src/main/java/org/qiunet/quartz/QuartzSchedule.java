@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class QuartzSchedule {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private volatile static QuartzSchedule instance;
 	private List<JobFacade> jobs = new ArrayList<>(4);

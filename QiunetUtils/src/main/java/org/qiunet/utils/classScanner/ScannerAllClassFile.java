@@ -25,7 +25,7 @@ import java.util.jar.JarFile;
  *         Created on 17/1/23 18:22.
  */
 public class ScannerAllClassFile implements IApplicationContext {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Set<String> allclass = new HashSet(128, 0.85f);
 	/**扫描匹配项列表*/
 	private List<IScannerHandler> scannerHanderList = new ArrayList<>();

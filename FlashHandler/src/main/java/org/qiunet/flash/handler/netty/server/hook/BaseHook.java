@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * @Date Create in 2019/1/4 10:47
  **/
 public abstract class BaseHook implements Hook {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 
 	private MultiAsyncQueueHandler queue;
 

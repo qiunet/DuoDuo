@@ -15,7 +15,7 @@ import java.util.Properties;
  *         Created on 16/12/21 07:52.
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Map<K, V> map = new HashMap<>();
 
 	/***

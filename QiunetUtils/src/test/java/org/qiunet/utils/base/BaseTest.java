@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseTest {
-	protected static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	@BeforeClass
 	public static void doInit(){

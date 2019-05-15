@@ -27,7 +27,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 class DbLoader {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/**mybatis 的配置文件名称**/
 	private static final String DEFAULT_MYBATIS_FILENAME = "mybatis/mybatis-config.xml";

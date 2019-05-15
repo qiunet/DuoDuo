@@ -14,7 +14,7 @@ import java.util.List;
  * @Date Create in 2018/5/31 12:04
  **/
 public class ShutdownHookThread {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private volatile static ShutdownHookThread instance;
 

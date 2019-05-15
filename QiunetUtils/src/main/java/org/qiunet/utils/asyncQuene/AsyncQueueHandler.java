@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class AsyncQueueHandler<T extends IQueueElement> {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 
 	private ThreadPoolExecutor executorService;
 

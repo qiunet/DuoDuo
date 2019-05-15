@@ -23,7 +23,7 @@ import java.net.InetSocketAddress;
  */
 public class NettyTcpClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ILongConnResponseTrigger trigger;
 	private Channel channel;
 	public NettyTcpClient(InetSocketAddress address, ILongConnResponseTrigger trigger) {

@@ -19,7 +19,7 @@ import java.util.List;
  * 17/8/13
  */
 public class TcpSocketDecoder extends ByteToMessageDecoder {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private int maxReceivedLength;
 	private boolean encryption;
 	public TcpSocketDecoder(int maxReceivedLength, boolean encryption) {

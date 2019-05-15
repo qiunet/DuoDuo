@@ -21,7 +21,7 @@ import java.net.InetSocketAddress;
  * 17/8/13
  */
 public final class NettyTcpServer implements Runnable, INettyServer {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private TcpBootstrapParams params;
 

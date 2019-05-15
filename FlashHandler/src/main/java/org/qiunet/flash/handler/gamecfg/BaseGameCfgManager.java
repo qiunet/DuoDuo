@@ -21,7 +21,7 @@ import java.util.*;
  * 17/7/16
  */
 public abstract class BaseGameCfgManager implements IGameCfgManager {
-	protected final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected final Logger logger = LoggerType.DUODUO.getLogger();
 	private String fileName;
 	protected DataInputStream dis;
 	private InputStream in;

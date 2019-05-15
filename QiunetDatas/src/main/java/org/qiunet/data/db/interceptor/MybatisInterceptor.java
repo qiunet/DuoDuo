@@ -25,7 +25,7 @@ import java.util.Properties;
 		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class })
 })
 public class MybatisInterceptor implements Interceptor {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO_SQL);
+	private Logger logger = LoggerType.DUODUO_SQL.getLogger();
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		if (! logger.isInfoEnabled()) return invocation.proceed();

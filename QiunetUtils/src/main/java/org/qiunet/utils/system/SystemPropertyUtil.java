@@ -26,7 +26,7 @@ import java.security.PrivilegedAction;
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
-    private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+    private static final Logger logger = LoggerType.DUODUO.getLogger();
 
     /**
      * Returns {@code true} if and only if the system property with the specified {@code key}

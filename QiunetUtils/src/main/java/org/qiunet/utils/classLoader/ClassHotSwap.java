@@ -21,7 +21,7 @@ import java.nio.file.Paths;
  * 对class 进行热替换
  */
 public final class ClassHotSwap {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static Logger logger = LoggerType.DUODUO.getLogger();
 	/***
 	 * 传入 class 所在的绝对地址路径
 	 * class 文件不需要有层级结构 直接在里面就ok

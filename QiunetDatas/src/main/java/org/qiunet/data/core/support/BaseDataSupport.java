@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *         Created on 17/2/10 18:18.
  */
 abstract class BaseDataSupport<PO extends IRedisEntity>  extends BaseAsyncNode {
-	protected final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/*** db的使用 */
 	protected IDbBase<PO> dbSupport;

@@ -24,7 +24,7 @@ import java.net.InetSocketAddress;
  * 17/11/11
  */
 public class NettyHttpServer implements Runnable, INettyServer {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ChannelFuture channelFuture;
 	private HttpBootstrapParams params;
 	/***

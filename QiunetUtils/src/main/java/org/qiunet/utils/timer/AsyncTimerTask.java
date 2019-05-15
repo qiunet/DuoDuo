@@ -12,7 +12,7 @@ import java.util.concurrent.ScheduledFuture;
  * 18/1/26
  */
 public abstract class AsyncTimerTask implements Runnable {
-	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledFuture future;
 
 	void setFuture(ScheduledFuture future) {

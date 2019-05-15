@@ -15,7 +15,7 @@ import java.util.List;
  *         Created on 17/2/17 18:02.
  */
 public class FileUtil {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * 移动文件
 	 * @param srcFile

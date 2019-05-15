@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 17/10/23
  */
 public class SessionManager{
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private static final AttributeKey<ISession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
 	/***
 	 * 所有的session

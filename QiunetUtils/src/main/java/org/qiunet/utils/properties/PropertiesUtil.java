@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.Properties;
 
 public final class PropertiesUtil {
-	private static Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private static Logger logger = LoggerType.DUODUO.getLogger();
 
 	/***
 	 * 加载一个properties

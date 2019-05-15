@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @param <T>
  */
 public abstract class BasicPool<T> implements Pool<T>  {
-	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	protected Logger logger = LoggerType.DUODUO.getLogger();
 	/**锁*/
 	private Lock lock;
 

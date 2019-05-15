@@ -18,7 +18,7 @@ import java.util.concurrent.*;
  *         Created on 17/2/11 08:04.
  */
 public class AsyncJobSupport {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			10,
 			new DefaultThreadFactory("AsyncJobSupport"),

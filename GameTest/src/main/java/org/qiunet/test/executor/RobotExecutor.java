@@ -19,7 +19,7 @@ import java.util.concurrent.*;
  * 17/11/24
  */
 public final class RobotExecutor {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ExecutorParams params;
 	/**
 	 * 测试所有

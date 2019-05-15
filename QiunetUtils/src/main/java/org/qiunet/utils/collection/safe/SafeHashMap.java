@@ -14,7 +14,7 @@ import java.util.Map;
  *         Created on 17/3/1 16:35.
  */
 public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * 一个只允许初始化一次的锁变量
 	 */

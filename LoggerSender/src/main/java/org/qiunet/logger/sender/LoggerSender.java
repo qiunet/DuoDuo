@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
  * 日志发送
  */
 public class LoggerSender {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private Charset charset = Charset.forName("UTF-8");
 

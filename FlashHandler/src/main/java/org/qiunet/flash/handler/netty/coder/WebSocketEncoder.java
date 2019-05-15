@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 17/8/13
  */
 public class WebSocketEncoder extends MessageToByteEncoder<MessageContent> {
-	private Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
 		try {
