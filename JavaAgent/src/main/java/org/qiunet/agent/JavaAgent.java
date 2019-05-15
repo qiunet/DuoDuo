@@ -72,7 +72,11 @@ public final class JavaAgent {
 		try {
 			ins.redefineClasses(classDefinitions.toArray(new ClassDefinition[classDefinitions.size()]));
 			for (ClassDefinition classDefinition : classDefinitions) {
-				logger("======热加载==["+classDefinition.getDefinitionClass().getName()+"]=成功===");
+				if (ins.isModifiableClass(classDefinition.getDefinitionClass())) {
+					logger("======热加载==["+classDefinition.getDefinitionClass().getName()+"]=成功===");
+				}else {
+					logger("======热加载==["+classDefinition.getDefinitionClass().getName()+"]=失败===");
+				}
 			}
 
 			files.forEach(File::delete);
