@@ -38,7 +38,7 @@ public final class JavaAgent {
 	}
 	private static void logger(String message, Throwable throwable) {
 		try {
-			method.invoke(logger, message, throwable);
+			emethod.invoke(logger, message, throwable);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
