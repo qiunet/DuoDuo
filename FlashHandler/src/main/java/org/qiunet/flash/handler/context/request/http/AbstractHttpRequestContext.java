@@ -108,7 +108,11 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
 				HTTP_1_1, OK,  content);
-		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS,"*");			//允许headers自定义
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS,"GET, POST");
+//		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_CREDENTIALS,"true");	//响应报头指示的请求的响应是否可以暴露于该页面。当true值返回时它可以被暴露
+
 		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
 		response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType());
 		if (keepAlive) {
