@@ -15,7 +15,6 @@ public class TestIndexAsyncQueue {
 		final IndexAsyncQueueHandler<IndexElement> indexAsyncQueueHandler = new IndexAsyncQueueHandler("");
 		final int threadCount = 5, loopCount = 11;
 		final CountDownLatch latch = new CountDownLatch(threadCount * loopCount);
-		boolean exception = false;
 		try {
 			for(int i = 0 ; i < threadCount; i++){
 				new Thread(() -> {
@@ -29,9 +28,8 @@ public class TestIndexAsyncQueue {
 			latch.await();
 		}catch (Exception e) {
 			e.printStackTrace();
-			exception = true;
 		}
-
-		Assert.assertFalse(exception);
+		indexAsyncQueueHandler.shutdown();
+		Assert.assertEquals(0, indexAsyncQueueHandler.size());
 	}
 }

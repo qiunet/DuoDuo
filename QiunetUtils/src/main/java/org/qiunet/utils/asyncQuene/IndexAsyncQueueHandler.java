@@ -51,6 +51,14 @@ public class IndexAsyncQueueHandler<Element extends IndexQueueElement> {
 	public void addElement(Element element) {
 		this.addElement(element.getQueueIndex(), element);
 	}
+
+	/***
+	 * 获得排队任务的数量
+	 * @return
+	 */
+	public int size(){
+		return Stream.of(arrays).mapToInt(AsyncQueueHandler::size).sum();
+	}
 	/***
 	 * 添加一个QueueElement 和指定queueIndex 到队列
 	 * @param queueIndex
