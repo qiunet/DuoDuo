@@ -1,10 +1,12 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
-import org.qiunet.utils.asyncQuene.mutiThread.MultiAsyncQueueHandler;
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /***
  *
@@ -14,25 +16,25 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseHook implements Hook {
 	protected Logger logger = LoggerType.DUODUO.getLogger();
 
-	private MultiAsyncQueueHandler queue;
+	private ExecutorService executorService;
 
 	protected BaseHook(){
-		this(new MultiAsyncQueueHandler("Hook-Queue"));
+		this(Executors.newCachedThreadPool(new DefaultThreadFactory("DefaultHook")));
 	}
 
-	protected BaseHook(MultiAsyncQueueHandler queue) {
+	protected BaseHook(ExecutorService queue) {
 		if (queue == null) {
-			throw new NullPointerException("queue can not be null");
+			throw new NullPointerException("executorService can not be null");
 		}
-		this.queue = queue;
+		this.executorService = queue;
 
 		ShutdownHookThread.getInstance().addShutdownHook(() ->
-			this.queue.shutdown()
+			this.executorService.shutdown()
 		);
 	}
 	@Override
 	public void custom(String msg, String ip) {
-		this.queue.addElement(this.returnCustomTask(msg, ip));
+		this.executorService.submit(this.returnCustomTask(msg, ip));
 	}
 	/**
 	 * 由继承类返回需要执行的任务 父类异步多线程执行.

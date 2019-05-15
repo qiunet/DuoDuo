@@ -3,10 +3,8 @@ package org.qiunet.data.async;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
-import org.qiunet.utils.asyncQuene.mutiThread.DefaultExecutorRejectHandler;
 import org.qiunet.utils.math.MathUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,8 +19,7 @@ public class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			10,
-			new DefaultThreadFactory("AsyncJobSupport"),
-			new DefaultExecutorRejectHandler("AsyncJobSupport"));
+			new DefaultThreadFactory("AsyncJobSupport"));
 
 	private volatile static AsyncJobSupport instance;
 

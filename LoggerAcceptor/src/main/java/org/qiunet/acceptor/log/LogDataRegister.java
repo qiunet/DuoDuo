@@ -1,7 +1,9 @@
 package org.qiunet.acceptor.log;
 
-import org.qiunet.utils.asyncQuene.mutiThread.MultiAsyncQueueHandler;
 
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 /***
@@ -9,13 +11,13 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class LogDataRegister {
 	private AtomicLong totalLogCount = new AtomicLong();
-	private final MultiAsyncQueueHandler multiAsyncQueueHandler;
+	private final ThreadPoolExecutor executorService;
 
 	private volatile static LogDataRegister instance;
 
 	private LogDataRegister() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		multiAsyncQueueHandler = new MultiAsyncQueueHandler("LogDataRegister");
+		executorService = new ThreadPoolExecutor(5, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new DefaultThreadFactory("LogDataRegister"));
 		instance = this;
 	}
 
@@ -37,7 +39,7 @@ public class LogDataRegister {
 	 */
 	public void addLogNode(LogData node) {
 		totalLogCount.incrementAndGet();
-		this.multiAsyncQueueHandler.addElement(node);
+		this.executorService.submit(node);
 	}
 
 	/**
@@ -47,11 +49,8 @@ public class LogDataRegister {
 	public long getTotalCount(){
 		return totalLogCount.get();
 	}
-	/***
-	 * 得到当前寄存器的日志数
-	 * @return
-	 */
+
 	public int size(){
-		return multiAsyncQueueHandler.size();
+		return executorService.getQueue().size();
 	}
 }
