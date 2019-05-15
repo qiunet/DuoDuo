@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 异步队列处理
@@ -15,6 +18,8 @@ import org.qiunet.utils.hook.ShutdownHookThread;
  *
  */
 public class AsyncQueueHandler<T extends IQueueElement> {
+	protected Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
+
 	private ThreadPoolExecutor executorService;
 
 	private AsyncQueueHandler(String threadName){
@@ -47,9 +52,12 @@ public class AsyncQueueHandler<T extends IQueueElement> {
 	public void shutdown() {
 		this.executorService.shutdown();
 		try {
-			this.executorService.awaitTermination(60, TimeUnit.SECONDS);
+			if (!this.executorService.awaitTermination(30, TimeUnit.SECONDS)){
+				this.shutdownNow();
+			}
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("shutdown timeout.", e);
+			this.shutdownNow();
 		}
 	}
 	/***
