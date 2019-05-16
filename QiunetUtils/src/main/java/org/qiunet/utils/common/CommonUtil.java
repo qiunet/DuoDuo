@@ -1,6 +1,7 @@
 package org.qiunet.utils.common;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -42,17 +43,9 @@ public class CommonUtil {
 	 * @return
 	 */
 	public static <T> List<T> getSubListPage(List<T> list, int skip , int count) {
-		if(list==null||list.isEmpty()){
+		if(list==null || list.isEmpty()){
 			return null;
 		}
-		int startIndex = skip;
-		int endIndex = skip+count;
-		if(startIndex>endIndex||startIndex>list.size()){
-			return null;
-		}
-		if(endIndex>list.size()){
-			endIndex = list.size();
-		}
-		return list.subList(startIndex, endIndex);
+		return list.stream().skip(skip).limit(count).collect(Collectors.toList());
 	}
 }

@@ -38,6 +38,8 @@ public class TestCommonUtil extends BaseTest {
 		// skip
 		List<Integer> subList = CommonUtil.getSubListPage(list, 1 , 4);
 
+		Assert.assertEquals(subList.size(), 4);
 		Assert.assertTrue(subList.get(0) == 1);
+		Assert.assertTrue(subList.get(subList.size() - 1) == 4);
 	}
 }
