@@ -1,6 +1,7 @@
 package org.qiunet.utils.common;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * 其它可以通用逻辑的工具类
@@ -18,14 +19,8 @@ public class CommonUtil {
 	 */
 	public static <T> boolean existInList(T element,T list[])
 	{
-		for(T t : list)
-		{
-			if(element.equals(t))
-			{
-				return true;
-			}
-		}
-		return false;
+		if (list == null || element == null) return false;
+		return Stream.of(list).anyMatch(l -> l.equals(element));
 	}
 	/**
 	 * 检查一个元素是否在集合中
@@ -36,15 +31,8 @@ public class CommonUtil {
 	 */
 	public static <T> boolean existInList(T element,Collection<T> list)
 	{
-		if(list.isEmpty()) return false;
-		for(T t : list)
-		{
-			if(element.equals(t))
-			{
-				return true;
-			}
-		}
-		return false;
+		if(list.isEmpty() || element == null) return false;
+		return list.stream().anyMatch(ele -> ele.equals(element));
 	}
 	/**
 	 * 截取某列表的部分数据
