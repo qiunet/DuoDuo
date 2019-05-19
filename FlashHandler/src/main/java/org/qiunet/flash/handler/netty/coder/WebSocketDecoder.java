@@ -4,11 +4,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		ProtocolHeader header = new ProtocolHeader();
+		DefaultProtocolHeader header = new DefaultProtocolHeader();
 
 		header.parseHeader(in);
 		if (! header.isMagicValid()) {

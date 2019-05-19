@@ -10,7 +10,7 @@ import java.util.Arrays;
  * Created by qiunet.
  * 17/7/19
  */
-public class ProtocolHeader implements IProtocolHeader {
+public class DefaultProtocolHeader implements IProtocolHeader {
 	/**包头识别码*/
 	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 
@@ -33,14 +33,14 @@ public class ProtocolHeader implements IProtocolHeader {
 	 * @param bytes 后面byte数组
 	 * @param protocolId 请求的id
 	 */
-	public ProtocolHeader(byte [] bytes, int protocolId) {
+	public DefaultProtocolHeader(byte [] bytes, int protocolId) {
 		this.magic = MAGIC_CONTENTS;
 		this.crc = (int) CrcUtil.getCrc32Value(bytes);
 		this.length = bytes.length;
 		this.protocolId = protocolId;
 	}
 
-	public ProtocolHeader() {
+	public DefaultProtocolHeader() {
 	}
 
 
@@ -89,7 +89,7 @@ public class ProtocolHeader implements IProtocolHeader {
 
 	@Override
 	public String toString() {
-		return "ProtocolHeader{" +
+		return "DefaultProtocolHeader{" +
 				"magic=" + Arrays.toString(magic) +
 				", length=" + length +
 				", protocolId=" + protocolId +

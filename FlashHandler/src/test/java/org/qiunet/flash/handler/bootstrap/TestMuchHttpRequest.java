@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.bootstrap;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
@@ -10,10 +8,9 @@ import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -41,7 +38,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 							@Override
 							public void response(FullHttpResponse response) {
 								Assert.assertEquals(response.status() , HttpResponseStatus.OK);
-								response.content().readBytes(new byte[new ProtocolHeader().getHeaderLength()]);
+								response.content().readBytes(new byte[new DefaultProtocolHeader().getHeaderLength()]);
 								Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
 								ReferenceCountUtil.release(response);
 								latch.countDown();

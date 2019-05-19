@@ -19,15 +19,13 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
-import org.qiunet.utils.http.DefaultHttpUtil;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.io.IOException;
@@ -81,7 +79,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader().parseHeader(httpResponse.content());
+				new DefaultProtocolHeader().parseHeader(httpResponse.content());
 				byte [] bytes = new byte[httpResponse.content().readableBytes()];
 				httpResponse.content().readBytes(bytes);
 				LoginProto.LoginResponse loginResponse = null;
@@ -111,7 +109,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader().parseHeader(httpResponse.content());
+				new DefaultProtocolHeader().parseHeader(httpResponse.content());
 				Assert.assertEquals(test, httpResponse.content().toString(CharsetUtil.UTF_8));
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
@@ -152,7 +150,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			public void response(FullHttpResponse httpResponse) {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new ProtocolHeader().parseHeader(httpResponse.content());
+				new DefaultProtocolHeader().parseHeader(httpResponse.content());
 				JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
 				Assert.assertEquals(test, response.getString("test"));
 				ReferenceCountUtil.release(httpResponse);
