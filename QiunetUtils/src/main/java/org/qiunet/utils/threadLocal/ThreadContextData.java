@@ -2,7 +2,6 @@ package org.qiunet.utils.threadLocal;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 /***
  * 利用线程变量存储些东西
  * @author qiunet
@@ -11,21 +10,13 @@ public class ThreadContextData {
 	private ThreadContextData(){}
 
 	/**servlet 请求 上下文*/
-	private static final ThreadLocal<Map<String,Object>> servletRequestContext;
-	static{
-		servletRequestContext = new ThreadLocal();
-	}
+	private static final ThreadLocal<Map<String,Object>> servletRequestContext =  new MyThreadLocal();
 	/**
 	 * 得到本地线程变量里面的数据
 	 * @return
 	 */
 	private static Map<String,Object> getThreadParamMap(){
-		Map<String,Object> paramsMapInThreadLocal = servletRequestContext.get();
-		if(paramsMapInThreadLocal == null){
-			paramsMapInThreadLocal = new HashMap(32);
-			servletRequestContext.set(paramsMapInThreadLocal);
-		}
-		return paramsMapInThreadLocal;
+		return servletRequestContext.get();
 	}
 
 	/**
@@ -68,5 +59,13 @@ public class ThreadContextData {
 	 */
 	public static void removeAll(){
 		servletRequestContext.remove();
+	}
+
+
+	private static class MyThreadLocal extends ThreadLocal<Map<String, Object>> {
+		@Override
+		protected Map<String, Object> initialValue() {
+			return new HashMap(32);
+		}
 	}
 }

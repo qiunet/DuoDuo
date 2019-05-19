@@ -7,9 +7,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * 用来加载自己指定的一些类
@@ -42,12 +41,8 @@ public class GameAppClassLoader extends URLClassLoader {
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> clazz = findLoadedClass(name);
 		if (clazz != null) return clazz;
-		boolean loader = false;
 
-		for (String allow : allowLoaderNames){
-			if ( loader = name.startsWith(allow)) break;
-		}
-		if (loader) {
+		if (Stream.of(this.allowLoaderNames).anyMatch(str ->name.startsWith(str))) {
 			byte [] bytes = getClassDefineBytes(name);
 			return defineClass(name, bytes, 0 , bytes.length);
 		}
