@@ -67,7 +67,10 @@ public class BadWordFilter {
 		Matcher m = NOT_CHINESE_REGEX.get().matcher(content);
 		String tempContent = m.replaceAll("");
 		String ret =  find(tempContent);
-		if (ret == null) ret = find(content);
+		if (ret == null
+			&& tempContent.length() != content.length())
+			ret = find(content);
+
 		return ret;
 	}
 	/**
