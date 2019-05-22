@@ -20,9 +20,6 @@ import java.util.regex.Pattern;
  */
 public class StringUtil {
 	private StringUtil(){}
-
-	public static final Charset UTF8 = Charset.forName("UTF-8");
-
 	/**汉字的正则表达式*/
 	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5]*)");
 

@@ -75,6 +75,13 @@ public class TestStringUtil extends BaseTest{
 		Assert.assertEquals(StringUtil.getMixedStringLength("abcdefg"), 7);
 		Assert.assertEquals(StringUtil.getMixedStringLength("嘻嘻嘻"), 6);
 	}
+	@Test
+	public void testChineseWord(){
+		Assert.assertEquals(true, StringUtil.regexChinese("我们"));
+		Assert.assertEquals(false, StringUtil.regexChinese("ab"));
+		Assert.assertEquals(false, StringUtil.regexChinese("126"));
+		Assert.assertEquals(false, StringUtil.regexChinese("^%^%#$"));
+	}
 
 	@Test
 	public void testFormat() {
