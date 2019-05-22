@@ -1,11 +1,8 @@
 package org.qiunet.flash.handler.common.message;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.Unpooled;
-import org.qiunet.flash.handler.context.header.ProtocolHeader;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 /**
  *  上下行消息的封装类.
@@ -39,7 +36,7 @@ public class MessageContent {
 	 * @return
 	 */
 	public ByteBuf encodeToByteBuf(){
-		ProtocolHeader header = new ProtocolHeader(bytes, protocolId);
+		DefaultProtocolHeader header = new DefaultProtocolHeader(bytes, protocolId);
 		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + header.getHeaderLength());
 		header.writeToByteBuf(byteBuf);
 		byteBuf.writeBytes(bytes);
