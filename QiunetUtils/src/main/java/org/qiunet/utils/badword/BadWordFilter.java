@@ -55,6 +55,21 @@ public class BadWordFilter {
 			}while (++index < badWord.length());
 		}
 	}
+	/**非汉字的正则表达式*/
+	private ThreadLocal<Pattern> NOT_CHINESE_REGEX = ThreadLocal.withInitial(() -> Pattern.compile("[^\u4E00-\u9FA5]*"));
+	/**
+	 * 屏蔽干扰字符. 比如习~近~平 仍然会被给出
+	 * 如有敏感词返回相关的词，否则返回null
+	 * @param content
+	 * @return
+	 */
+	public String powerFind(String content) {
+		Matcher m = NOT_CHINESE_REGEX.get().matcher(content);
+		String tempContent = m.replaceAll("");
+		String ret =  find(tempContent);
+		if (ret == null) ret = find(content);
+		return ret;
+	}
 	/**
 	 * 如有敏感词返回相关的词，否则返回null
 	 * @param str
@@ -69,14 +84,14 @@ public class BadWordFilter {
 			return null;
 		}
 
-		int index = 0,startIndex = 0;
+		int index = 0,startIndex = -1;
 		INode node = rootNode;
 		while (index < str.length()) {
 			if ((node = node.find(str.charAt(index))) != null) {
-				if (startIndex == 0) startIndex = index;
+				if (startIndex == -1) startIndex = index;
 				if (node.endChar()) return str.substring(startIndex, index+1);
 			}else {
-				startIndex = 0;
+				startIndex = -1;
 				if ((node = rootNode).find(str.charAt(index)) != null) continue;
 			}
 			index ++;
@@ -106,19 +121,19 @@ public class BadWordFilter {
 		}
 
 		char [] chars = str.toCharArray();
-		int index = 0,startIndex = 0;
+		int index = 0,startIndex = -1;
 		INode node = rootNode;
 		while (index < str.length()) {
 			if ((node = node.find(chars[index])) != null) {
-				if (startIndex == 0) startIndex = index;
+				if (startIndex == -1) startIndex = index;
 				if (node.endChar()) {
 					for (int i = startIndex; i <= index; i++) {
 						chars[i] = replaceChar;
 					}
-					startIndex = 0;
+					startIndex = -1;
 				}
 			}else {
-				startIndex = 0;
+				startIndex = -1;
 				if ((node = rootNode).find(str.charAt(index)) != null) continue;
 			}
 			index ++;
