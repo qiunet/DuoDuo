@@ -39,6 +39,8 @@ public class BadWordFilter {
 	public void loadBadWord(IBadWord badWords) {
 		rootNode = new RootNode();
 		for (String badWord : badWords.getBadWordList()) {
+			if (badWord.length() == 0) continue;
+
 			int index = 0;
 			INode node = rootNode;
 			do {
