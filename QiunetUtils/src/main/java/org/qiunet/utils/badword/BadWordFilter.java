@@ -71,11 +71,11 @@ public class BadWordFilter {
 		INode node = rootNode;
 		while (index < str.length()) {
 			if ((node = node.find(str.charAt(index))) != null) {
-				if (node.endChar()) return str.substring(startIndex, index+1);
 				if (startIndex == 0) startIndex = index;
+				if (node.endChar()) return str.substring(startIndex, index+1);
 			}else {
 				startIndex = 0;
-				node = rootNode;
+				if ((node = rootNode).find(str.charAt(index)) != null) continue;
 			}
 			index ++;
 		}
@@ -117,7 +117,7 @@ public class BadWordFilter {
 				}
 			}else {
 				startIndex = 0;
-				node = rootNode;
+				if ((node = rootNode).find(str.charAt(index)) != null) continue;
 			}
 			index ++;
 		}
