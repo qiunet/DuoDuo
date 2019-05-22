@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestBadWord {
 	@Test
 	public void testBadWord() {
-		BadWordFilter.getInstance().loadBadWord(new DefaultBadWord(new String[]{"王岐山", "毛泽东", "www.qq.com"}));
+		BadWordFilter.getInstance().loadBadWord(new DefaultBadWord(new String[]{"王岐山", "王玉刚", "毛泽东", "www.qq.com"}));
 
 		Assert.assertEquals("王岐山", BadWordFilter.getInstance().find("sss王岐山7--"));
 		Assert.assertEquals("ss王s***7我***--", BadWordFilter.getInstance().doFilter("ss王s王岐山7我毛泽东--"));

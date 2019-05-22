@@ -1,5 +1,7 @@
 package org.qiunet.utils.badword;
 
+import java.util.List;
+
 /***
  *
  * @Author qiunet
@@ -7,8 +9,8 @@ package org.qiunet.utils.badword;
  **/
 public interface IBadWord {
 	/***
-	 * 得到pattern string
+	 * 得到过滤字列表
 	 * @return
 	 */
-	String getPatternString();
+	List<String> getBadWordList();
 }

@@ -9,30 +9,18 @@ import java.util.List;
  * @Date Create in 2018/6/27 19:24
  **/
 public class DefaultBadWord implements IBadWord {
-
-	private String pattern;
+	private List<String> badWords;
 
 	public DefaultBadWord(List<String> badwords) {
-		StringBuilder sb = new StringBuilder();
-		for (String badword : badwords) {
-			sb.append(badword).append('|');
-		}
-		if(sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
-		this.pattern = sb.toString();
+		this.badWords = badwords;
 	}
 
 	public DefaultBadWord(String [] badwords) {
 		this(Arrays.asList(badwords));
 	}
 
-
-	public DefaultBadWord(String pattern) {
-		this.pattern = pattern;
-	}
-
-
 	@Override
-	public String getPatternString() {
-		return pattern;
+	public List<String> getBadWordList() {
+		return badWords;
 	}
 }
