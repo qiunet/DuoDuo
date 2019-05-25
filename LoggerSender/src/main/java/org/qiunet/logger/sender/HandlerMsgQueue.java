@@ -17,4 +17,8 @@ class HandlerMsgQueue {
 			message.send();
 		});
 	}
+
+	void shutdown(){
+		this.executorService.shutdown();
+	}
 }

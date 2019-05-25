@@ -23,8 +23,6 @@ public class LoggerSender {
 
 	private InetSocketAddress address;
 
-	private final Thread msgThread;
-
 	private short gameId;
 
 	private String secret;
@@ -42,10 +40,6 @@ public class LoggerSender {
 		}
 
 		ShutdownHookThread.getInstance().addShutdownHook(() -> stop());
-
-		this.msgThread = new Thread(handler , "LoggerSenderMsgQueueThread");
-		this.msgThread.setDaemon(true);
-		this.msgThread.start();
 	}
 
 	/***
@@ -59,7 +53,7 @@ public class LoggerSender {
 	 * 停止服务
 	 */
 	public void stop(){
-		this.handler.RUNNING = false;
+		this.handler.shutdown();
 	}
 
 	/***
