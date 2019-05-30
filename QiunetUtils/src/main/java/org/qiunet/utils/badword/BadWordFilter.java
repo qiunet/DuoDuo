@@ -1,5 +1,7 @@
 package org.qiunet.utils.badword;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
@@ -56,6 +58,7 @@ public class BadWordFilter {
 			}while (++index < badWord.length());
 		}
 	}
+	private static final String NOT_CHINESE_REGEX_STR = "[^\u4E00-\u9FA5]*?";
 	/**非汉字的正则表达式*/
 	private ThreadLocal<Pattern> NOT_CHINESE_REGEX = ThreadLocal.withInitial(() -> Pattern.compile("[^\u4E00-\u9FA5]*"));
 	/**
@@ -73,6 +76,31 @@ public class BadWordFilter {
 			ret = find(content);
 
 		return ret;
+	}
+
+	/***
+	 * 将content中的中文屏蔽字过滤. 即使中间有扰乱文字.
+	 * @param content
+	 * @return
+	 */
+	public String powerFilter(String content) {
+		return powerFilter(content, "****");
+	}
+
+	public String powerFilter(String content, String replaceString) {
+		Matcher m = NOT_CHINESE_REGEX.get().matcher(content);
+		String tempContent = m.replaceAll("");
+		String str;
+		while ((str = find(tempContent)) != null) {
+			StringJoiner joiner = new StringJoiner(NOT_CHINESE_REGEX_STR);
+			for (char c : str.toCharArray()) {
+				joiner.add(String.valueOf(c));
+			}
+			Matcher sm = Pattern.compile(joiner.toString()).matcher(content);
+			tempContent = tempContent.replaceAll(str, "");
+			content = sm.replaceAll(replaceString);
+		}
+		return content;
 	}
 	/**
 	 * 如有敏感词返回相关的词，否则返回null

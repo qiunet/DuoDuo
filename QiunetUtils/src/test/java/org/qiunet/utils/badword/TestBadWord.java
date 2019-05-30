@@ -19,6 +19,8 @@ public class TestBadWord {
 
 		Assert.assertEquals("柟", BadWordFilter.getInstance().find("sss王柟山7--"));
 		Assert.assertEquals("王岐山", BadWordFilter.getInstance().find("s王ss王岐山7--"));
+
+		Assert.assertEquals("ss王s****7我****--", BadWordFilter.getInstance().powerFilter("ss王s王s#岐&&山7我毛~泽~东--"));
 		Assert.assertEquals("ss王s***7我***--", BadWordFilter.getInstance().doFilter("ss王s王岐山7我毛泽东--"));
 		Assert.assertEquals("访问**********就行", BadWordFilter.getInstance().doFilter("访问www.qq.com就行"));
 	}

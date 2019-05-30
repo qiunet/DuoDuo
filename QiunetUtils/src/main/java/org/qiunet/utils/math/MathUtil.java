@@ -1,4 +1,5 @@
 package org.qiunet.utils.math;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtil {
@@ -89,5 +90,34 @@ public class MathUtil {
 	 */
 	public static String getBinaryVal(int val) {
 		return Integer.toBinaryString(val);
+	}
+
+	/***
+	 * 在list 里面根据权重随机个数据
+	 * @param list
+	 * @param <T>
+	 * @return
+	 */
+	public <T extends IWeightObj> T randByWeight(List<T> list) {
+		int totalRandNum = list.stream().mapToInt(IWeightObj::weight).sum();
+		return randByWeight(list, totalRandNum);
+	}
+
+	/***
+	 * 随机一个[0, totalRandNum)值 返回对应的对象.
+	 * @param list
+	 * @param totalRandNum 随机总权重.
+	 * @param <T>
+	 * @return
+	 */
+	public <T extends IWeightObj> T randByWeight(List<T> list, int totalRandNum) {
+		int rand = MathUtil.random(totalRandNum) ,start = 0;
+		for (T obj : list) {
+			if (rand >= start && rand < start+obj.weight()) {
+				return obj;
+			}
+			start += obj.weight();
+		}
+		return null;
 	}
 }
