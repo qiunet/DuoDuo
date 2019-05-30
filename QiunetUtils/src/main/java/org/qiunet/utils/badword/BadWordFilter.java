@@ -1,6 +1,7 @@
 package org.qiunet.utils.badword;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,16 +90,23 @@ public class BadWordFilter {
 
 		int index = 0,startIndex = -1;
 		INode node = rootNode;
+
 		while (index < str.length()) {
-			if ((node = node.find(str.charAt(index))) != null) {
+			INode fnode = node.find(str.charAt(index));
+			if(fnode != null){
+				node = fnode;
 				if (startIndex == -1) startIndex = index;
 				if (node.endChar()) return str.substring(startIndex, index+1);
-			}else {
+			}else{
 				startIndex = -1;
-				if ((node = rootNode).find(str.charAt(index)) != null) continue;
+				if(node instanceof CharNode){
+					node = rootNode;
+					continue;
+				}
 			}
 			index ++;
 		}
+
 		return null;
 	}
 	/**
