@@ -163,7 +163,9 @@ public class BadWordFilter {
 		int index = 0,startIndex = -1;
 		INode node = rootNode;
 		while (index < str.length()) {
-			if ((node = node.find(chars[index])) != null) {
+			INode node0 = node.find(chars[index]);
+			if (node0 != null) {
+				node = node0;
 				if (startIndex == -1) startIndex = index;
 				if (node.endChar()) {
 					for (int i = startIndex; i <= index; i++) {
@@ -173,7 +175,9 @@ public class BadWordFilter {
 				}
 			}else {
 				startIndex = -1;
-				if ((node = rootNode).find(str.charAt(index)) != null) continue;
+				if (node != rootNode &&
+					(node = rootNode).find(chars[index]) != null)
+					continue;
 			}
 			index ++;
 		}
