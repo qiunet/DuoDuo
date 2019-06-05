@@ -53,6 +53,11 @@
             <artifactId>QiunetUtils</artifactId>
         </dependency>
 		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>CfgReader</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>

@@ -10,6 +10,7 @@
 	<modules>
 		<module>QiunetUtils</module>
 		<module>QiunetDatas</module>
+		<module>CfgReader</module>
 		<module>GameTest</module>
 		<module>ExcelToStream</module>
 		<module>ProjectInit</module>
@@ -109,7 +110,12 @@
 				<groupId>org.qiunet</groupId>
 				<artifactId>Quartz</artifactId>
 				<version>${modules.version}</version>
-			</dependency>
+			</dependency><dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>CfgReader</artifactId>
+			<version>${modules.version}</version>
+		</dependency>
+
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>FlashHandler</artifactId>

@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.gamecfg;
+package org.qiunet.cfg.manager;
 
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.data.IKeyValueData;

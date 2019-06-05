@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.common.annotation;
+package org.qiunet.cfg.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.gamecfg;
+package org.qiunet.cfg.base;
 
 /**
  *

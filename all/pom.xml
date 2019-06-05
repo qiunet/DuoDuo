@@ -222,6 +222,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
+			<artifactId>CfgReader</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
 			<artifactId>Quartz</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>

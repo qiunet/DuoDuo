@@ -1,7 +1,7 @@
 package org.qiunet.test;
 
+import org.qiunet.cfg.manager.GameCfgManagers;
 import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
-import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
 import org.qiunet.test.TestCase.player.TestJsonPlayerInfo;

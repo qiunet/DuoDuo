@@ -1,8 +1,8 @@
-package org.qiunet.flash.handler.common.annotation.support;
+package org.qiunet.cfg.annotation.support;
 
-import org.qiunet.flash.handler.common.annotation.GameCfg;
-import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
-import org.qiunet.flash.handler.gamecfg.IGameCfgManager;
+import org.qiunet.cfg.annotation.GameCfg;
+import org.qiunet.cfg.base.IGameCfgManager;
+import org.qiunet.cfg.manager.GameCfgManagers;
 import org.qiunet.utils.classScanner.IScannerHandler;
 
 import java.lang.reflect.Constructor;

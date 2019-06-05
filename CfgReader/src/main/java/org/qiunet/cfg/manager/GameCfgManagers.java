@@ -1,10 +1,10 @@
-package org.qiunet.flash.handler.gamecfg;
+package org.qiunet.cfg.manager;
 
+import org.qiunet.cfg.base.IGameCfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;

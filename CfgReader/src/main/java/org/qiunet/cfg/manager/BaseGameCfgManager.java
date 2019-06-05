@@ -1,10 +1,13 @@
-package org.qiunet.flash.handler.gamecfg;
+package org.qiunet.cfg.manager;
 
+import org.qiunet.cfg.base.IGameCfgManager;
+import org.qiunet.cfg.base.INestListConfig;
+import org.qiunet.cfg.base.INestMapConfig;
+import org.qiunet.cfg.base.ISimpleMapConfig;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.Constructor;

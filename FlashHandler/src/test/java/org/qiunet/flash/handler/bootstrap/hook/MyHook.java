@@ -1,11 +1,7 @@
 package org.qiunet.flash.handler.bootstrap.hook;
 
-import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
+import org.qiunet.cfg.manager.GameCfgManagers;
 import org.qiunet.flash.handler.netty.server.hook.BaseHook;
-import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.

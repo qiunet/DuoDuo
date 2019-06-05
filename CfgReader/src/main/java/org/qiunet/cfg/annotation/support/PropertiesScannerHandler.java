@@ -1,7 +1,7 @@
-package org.qiunet.flash.handler.common.annotation.support;
+package org.qiunet.cfg.annotation.support;
 
-import org.qiunet.flash.handler.common.annotation.GameProperties;
-import org.qiunet.flash.handler.gamecfg.GameCfgManagers;
+import org.qiunet.cfg.annotation.GameProperties;
+import org.qiunet.cfg.manager.GameCfgManagers;
 import org.qiunet.utils.classScanner.IScannerHandler;
 import org.qiunet.utils.properties.LoaderProperties;
 
