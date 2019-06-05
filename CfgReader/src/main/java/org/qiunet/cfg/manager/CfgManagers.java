@@ -1,6 +1,6 @@
 package org.qiunet.cfg.manager;
 
-import org.qiunet.cfg.base.IGameCfgManager;
+import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.string.StringUtil;
@@ -15,23 +15,23 @@ import java.util.List;
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
-public class GameCfgManagers {
+public class CfgManagers {
 	private Logger qLogger = LoggerType.DUODUO.getLogger();
 
-	private static GameCfgManagers instance = new GameCfgManagers();
-	private List<GameSettingContainer<IGameCfgManager>> gameSettingList = new ArrayList<>();
-	private List<GameSettingContainer<LoaderProperties>> propertylist = new ArrayList<>();
+	private static CfgManagers instance = new CfgManagers();
+	private List<Container<ICfgManager>> gameSettingList = new ArrayList<>();
+	private List<Container<LoaderProperties>> propertylist = new ArrayList<>();
 
-	private GameCfgManagers(){
+	private CfgManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
 	}
 
-	public static GameCfgManagers getInstance(){
+	public static CfgManagers getInstance(){
 		if (instance == null) {
-			synchronized (GameCfgManagers.class){
-				new GameCfgManagers();
+			synchronized (CfgManagers.class){
+				new CfgManagers();
 			}
 		}
 		return instance;
@@ -64,8 +64,8 @@ public class GameCfgManagers {
 	 * @param manager
 	 * @param order
 	 */
-	public void addDataSettingManager(IGameCfgManager manager, int order) {
-		this.gameSettingList.add(new GameSettingContainer(manager, order));
+	public void addDataSettingManager(ICfgManager manager, int order) {
+		this.gameSettingList.add(new Container(manager, order));
 	}
 	/**
 	 * 添加 properties
@@ -73,13 +73,13 @@ public class GameCfgManagers {
 	 * @param order
 	 */
 	public void addPropertySetting(LoaderProperties properties, int order) {
-		this.propertylist.add(new GameSettingContainer(properties, order));
+		this.propertylist.add(new Container(properties, order));
 	}
 	/**
 	 * 加载property
 	 */
 	protected void loadPropertySetting() {
-		for (GameSettingContainer<? extends LoaderProperties> container : propertylist){
+		for (Container<? extends LoaderProperties> container : propertylist){
 			qLogger.info("Load Properties ["+ container.t.getClass().getSimpleName() +"]");
 			container.t.reload();
 		}
@@ -92,7 +92,7 @@ public class GameCfgManagers {
 	 */
 	protected List<String> loadDataSetting() throws  Exception{
 		List<String> failFileNames = new ArrayList<>(5);
-		for (GameSettingContainer<IGameCfgManager> container : gameSettingList) {
+		for (Container<ICfgManager> container : gameSettingList) {
 			String name = container.t.loadCfg();
 			qLogger.info("Load Game Config Manager["+ container.t.getClass().getSimpleName() +"]");
 
@@ -122,17 +122,17 @@ public class GameCfgManagers {
 	 * IGameSetting  的包装类 包含排序
 	 * @param <T>
 	 */
-	private static class GameSettingContainer<T> implements Comparable<GameSettingContainer<T>> {
+	private static class Container<T> implements Comparable<Container<T>> {
 		private T t;
 		private int order ;
 
-		public GameSettingContainer(T t , int order ){
+		public Container(T t , int order ){
 			this.order = order;
 			this.t = t;
 		}
 
 		@Override
-		public int compareTo(GameSettingContainer<T> o) {
+		public int compareTo(Container<T> o) {
 			return o.order - order;
 		}
 	}

@@ -5,7 +5,7 @@ package org.qiunet.cfg.base;
  * @author qiunet
  *         Created on 17/2/9 12:18.
  */
-public interface IGameCfgManager {
+public interface ICfgManager {
 	/**
 	 * 设定加载
 	 * @return

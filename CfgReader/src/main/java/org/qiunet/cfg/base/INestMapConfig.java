@@ -6,9 +6,9 @@ package org.qiunet.cfg.base;
  * Created by qiunet.
  * 17/6/3
  */
-public interface INestMapConfig<Key, SubKey> {
+public interface INestMapConfig<ID, SubId> {
 
-	public Key getKey();
+	public ID getId();
 
-	public SubKey getSubKey();
+	public SubId getSubId();
 }

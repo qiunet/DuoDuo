@@ -1,6 +1,6 @@
 package org.qiunet.test;
 
-import org.qiunet.cfg.manager.GameCfgManagers;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
@@ -42,7 +42,7 @@ public class Executor {
 					@Override
 					public void handler() {
 						try {
-							GameCfgManagers.getInstance().initSetting();
+							CfgManagers.getInstance().initSetting();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}

@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.bootstrap.hook;
 
-import org.qiunet.cfg.manager.GameCfgManagers;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.flash.handler.netty.server.hook.BaseHook;
 
 /**
@@ -17,7 +17,7 @@ public class MyHook extends BaseHook {
 	@Override
 	public void reloadCfg() {
 		try {
-			GameCfgManagers.getInstance().reloadSetting();
+			CfgManagers.getInstance().reloadSetting();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

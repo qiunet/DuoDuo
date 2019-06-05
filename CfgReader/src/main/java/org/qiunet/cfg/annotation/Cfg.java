@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface GameCfg {
+public @interface Cfg {
 	/***
 	 * order越大, 执行越靠前
 	 * @return
