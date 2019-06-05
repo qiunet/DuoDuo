@@ -142,16 +142,20 @@ abstract class BaseXdCfgManager implements ICfgManager {
 	 * @param cfgClass
 	 */
 	void checkCfgClass(Class cfgClass) {
-		for (Field field : cfgClass.getFields()) {
+		for (Field field : cfgClass.getDeclaredFields()) {
 			if (Modifier.isPublic(field.getModifiers())
 			|| Modifier.isFinal(field.getModifiers())
 			|| Modifier.isStatic(field.getModifiers())
 			|| Modifier.isTransient(field.getModifiers()))
 				continue;
 
+			boolean haveMethod = true;
 			try {
 				getSetMethod(cfgClass, field);
 			} catch (NoSuchMethodException e) {
+				haveMethod = false;
+			}
+			if (haveMethod) {
 				throw new RuntimeException("Cfg ["+cfgClass.getName()+"] field ["+field.getName()+"] can not define set method");
 			}
 		}
