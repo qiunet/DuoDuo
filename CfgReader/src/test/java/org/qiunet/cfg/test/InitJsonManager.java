@@ -13,9 +13,9 @@ import org.qiunet.cfg.manager.json.SimpleMapJsonCfgManager;
 public class InitJsonManager {
 
 	private static InitJsonManager instance;
-	private SimpleMapJsonCfgManager simpleMapJsonCfgManager;
-	private NestListJsonCfgManager nestListJsonCfgManager;
-	private NestMapJsonCfgManager nestMapJsonCfgManager;
+	private SimpleMapJsonCfgManager<Integer, InitCfg> simpleMapJsonCfgManager;
+	private NestListJsonCfgManager<Integer, Init3Cfg> nestListJsonCfgManager;
+	private NestMapJsonCfgManager<Integer, String, Init2Cfg> nestMapJsonCfgManager;
 
 	private InitJsonManager() {
 		load();
@@ -39,15 +39,15 @@ public class InitJsonManager {
 
 	}
 
-	public SimpleMapJsonCfgManager getSimpleMapJsonCfgManager() {
+	public SimpleMapJsonCfgManager<Integer, InitCfg> getSimpleMapJsonCfgManager() {
 		return simpleMapJsonCfgManager;
 	}
 
-	public NestListJsonCfgManager getNestListJsonCfgManager() {
+	public NestListJsonCfgManager<Integer, Init3Cfg> getNestListJsonCfgManager() {
 		return nestListJsonCfgManager;
 	}
 
-	public NestMapJsonCfgManager getNestMapJsonCfgManager() {
+	public NestMapJsonCfgManager<Integer, String, Init2Cfg> getNestMapJsonCfgManager() {
 		return nestMapJsonCfgManager;
 	}
 }

@@ -12,6 +12,8 @@ public class TestManager {
 
 	private NestListXdCfgManager<Integer, Init3Cfg> nestListInitManager = new NestListXdCfgManager<Integer, Init3Cfg>("config/init/init_data.xd"){};
 	private NestMapXdCfgManager<Integer, String, Init2Cfg> nestMapXdCfgManager = new NestMapXdCfgManager<Integer, String, Init2Cfg>("config/init/init_data.xd"){};
+
+
 	@Test
 	public void testSimpleMapInit(){
 		SimpleMapInitManager.getInstance().loadCfg();
@@ -58,7 +60,7 @@ public class TestManager {
 
 	@Test
 	public void testJsonInit() throws Exception{
-		InitCfg initCfg = (InitCfg) InitJsonManager.getInstance().getSimpleMapJsonCfgManager().getCfgById(1111);
+		InitCfg initCfg = InitJsonManager.getInstance().getSimpleMapJsonCfgManager().getCfgById(1111);
 		Assert.assertTrue(initCfg.getId() == 1111);
 		Assert.assertEquals(initCfg.getVal2(), 123456);
 		Assert.assertEquals(initCfg.getVal(), "1,2,3");
@@ -69,8 +71,7 @@ public class TestManager {
 
 
 
-
-		Init2Cfg init2Cfg = (Init2Cfg)InitJsonManager.getInstance().getNestMapJsonCfgManager().getCfgByIdAndSubId(2222, "3,4,5");
+		Init2Cfg init2Cfg = InitJsonManager.getInstance().getNestMapJsonCfgManager().getCfgByIdAndSubId(2222, "3,4,5");
 
 		Assert.assertTrue(InitJsonManager.getInstance().getNestMapJsonCfgManager().getCfgs().size() == 3);
 
@@ -81,7 +82,7 @@ public class TestManager {
 
 
 
-		List<Init3Cfg> initCfgs = (List<Init3Cfg>)InitJsonManager.getInstance().getNestListJsonCfgManager().getCfgListById(3333);
+		List<Init3Cfg> initCfgs = InitJsonManager.getInstance().getNestListJsonCfgManager().getCfgListById(3333);
 
 		Assert.assertTrue(initCfgs.size() == 1);
 		Assert.assertTrue(InitJsonManager.getInstance().getNestListJsonCfgManager().getCfgs().size() == 3);
