@@ -14,7 +14,7 @@ import org.qiunet.test.proto.LoginProto;
 public class LoginOnlineHandler extends WebSocketProtobufHandler<LoginOnlineProto.LoginOnlineRequest> {
 
 	@Override
-	public boolean needToken() {
+	public boolean needAuth() {
 		return true;
 	}
 
