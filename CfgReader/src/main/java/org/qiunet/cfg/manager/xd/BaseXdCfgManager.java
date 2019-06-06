@@ -112,31 +112,27 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 				|| Modifier.isStatic(field.getModifiers())
 				|| Modifier.isTransient(field.getModifiers()))
 				continue;
-
-			ICfgTypeConvert convert = returnConert(field.getType());
-			Object val = convert.returnObject(field.getName(), dis);
+			Object val;
+			Class<?> type = field.getType();
+			if (type == Integer.TYPE || type == Integer.class) val = dis.readInt();
+			else if (type == Boolean.TYPE || type == Boolean.class) val = dis.readInt() == 1;
+			else if (type == Long.TYPE || type == Long.class) val = dis.readLong();
+			else if (type == Double.TYPE || type == Double.class) val = dis.readDouble();
+			else if (type == String.class) val = dis.readUTF();
+			else {
+				ICfgTypeConvert convert = returnConert(type);
+				val = convert.returnObject(field.getName(), dis);
+			}
 			field.setAccessible(true);
 			field.set(cfg, val);
 		}
 		return cfg;
 	}
 	private ICfgTypeConvert returnConert(Class type) {
-		if (type == Integer.TYPE || type == Integer.class) return intConvert;
-		if (type == Boolean.TYPE || type == Boolean.class) return boolConvert;
-		if (type == Long.TYPE || type == Long.class) return longConvert;
-		if (type == Double.TYPE || type == Double.class) return doubleConvert;
-		if (type == String.class) return stringConvert;
-
 		ICfgTypeConvert cfgTypeConvert = CfgTypeConvertManager.getInstance().returnConvert(type);
 		if (cfgTypeConvert == null) {
 			throw new RuntimeException("not define convert for type ["+type.getName()+"]");
 		}
 		return cfgTypeConvert;
 	}
-	private static final ICfgTypeConvert intConvert = new CfgIntegerConvert();
-	private static final ICfgTypeConvert boolConvert = new CfgBooleanConvert();
-	private static final ICfgTypeConvert longConvert = new CfgLongConvert();
-	private static final ICfgTypeConvert doubleConvert = new CfgDoubleConvert();
-	private static final ICfgTypeConvert stringConvert = new CfgStringConvert();
-
 }
