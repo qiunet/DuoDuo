@@ -2,10 +2,15 @@ package org.qiunet.cfg.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.cfg.manager.xd.NestListXdCfgManager;
+import org.qiunet.cfg.manager.xd.NestMapXdCfgManager;
 
 import java.util.List;
 
 public class TestManager {
+
+	private NestListXdCfgManager<Integer, Init3Cfg> nestListInitManager = new NestListXdCfgManager<Integer, Init3Cfg>("config/init/init_data.xd"){};
+	private NestMapXdCfgManager<Integer, String, Init2Cfg> nestMapXdCfgManager = new NestMapXdCfgManager<Integer, String, Init2Cfg>("config/init/init_data.xd"){};
 	@Test
 	public void testSimpleMapInit(){
 		SimpleMapInitManager.getInstance().loadCfg();
@@ -22,10 +27,10 @@ public class TestManager {
 
 	@Test
 	public void testNestMapInit(){
-		NestMapInitManager.getInstance().loadCfg();
-		Init2Cfg initCfg = NestMapInitManager.getInstance().getCfgByIdAndSubId(2222, "3,4,5");
+		nestMapXdCfgManager.loadCfg();
+		Init2Cfg initCfg = nestMapXdCfgManager.getCfgByIdAndSubId(2222, "3,4,5");
 
-		Assert.assertTrue(NestMapInitManager.getInstance().getCfgs().size() == 3);
+		Assert.assertTrue(nestMapXdCfgManager.getCfgs().size() == 3);
 
 		Assert.assertTrue(initCfg.getId() == 2222);
 		Assert.assertEquals(initCfg.getVal2(), 123457);
@@ -35,11 +40,11 @@ public class TestManager {
 
 	@Test
 	public void testNestListInit(){
-		NestListInitManager.getInstance().loadCfg();
-		List<Init3Cfg> initCfgs = NestListInitManager.getInstance().getCfgListById(3333);
+		nestListInitManager.loadCfg();
+		List<Init3Cfg> initCfgs = nestListInitManager.getCfgListById(3333);
 
 		Assert.assertTrue(initCfgs.size() == 1);
-		Assert.assertTrue(NestListInitManager.getInstance().getCfgs().size() == 3);
+		Assert.assertTrue(nestListInitManager.getCfgs().size() == 3);
 
 		Init3Cfg initCfg = initCfgs.get(0);
 
