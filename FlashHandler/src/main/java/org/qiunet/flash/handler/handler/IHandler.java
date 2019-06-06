@@ -28,10 +28,10 @@ public interface IHandler<RequestData> {
 	 */
 	public int getProtocolID();
 	/**
-	 * 必须要sid 才能进入action
+	 * 必须要已经鉴权 才能进入handler
 	 * @return
 	 */
-	public boolean needToken();
+	public boolean needAuth();
 	/***
 	 * 得到requestData的class
 	 */

@@ -19,7 +19,7 @@ public abstract class BaseHandler<RequestData> implements IHandler<RequestData> 
 	}
 
 	@Override
-	public boolean needToken() {
+	public boolean needAuth() {
 		return true;
 	}
 

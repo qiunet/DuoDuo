@@ -24,7 +24,7 @@ public class LoginHandler extends HttpProtobufHandler<LoginProto.LoginRequest , 
 	}
 
 	@Override
-	public boolean needToken() {
+	public boolean needAuth() {
 		return false;
 	}
 }

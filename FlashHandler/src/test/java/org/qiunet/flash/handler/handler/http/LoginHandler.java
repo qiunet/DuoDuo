@@ -14,4 +14,9 @@ public class LoginHandler extends HttpStringHandler {
 		String str = request.getRequestData();
 		return str;
 	}
+
+	@Override
+	public boolean needAuth() {
+		return super.needAuth();
+	}
 }
