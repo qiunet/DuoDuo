@@ -4,6 +4,7 @@ import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.convert.ICfgTypeConvert;
 import org.qiunet.cfg.convert.xd.*;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
+import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -22,7 +23,7 @@ import java.net.URL;
  * Created by qiunet.
  * 17/7/16
  */
-abstract class BaseXdCfgManager implements ICfgManager {
+abstract class BaseXdCfgManager extends BaseCfgManager {
 	protected final Logger logger = LoggerType.DUODUO.getLogger();
 	private InputStream in;
 	protected String fileName;
@@ -137,42 +138,5 @@ abstract class BaseXdCfgManager implements ICfgManager {
 	private static final ICfgTypeConvert longConvert = new CfgLongConvert();
 	private static final ICfgTypeConvert doubleConvert = new CfgDoubleConvert();
 	private static final ICfgTypeConvert stringConvert = new CfgStringConvert();
-	/***
-	 * 检查cfg class 不能有set方法
-	 * @param cfgClass
-	 */
-	void checkCfgClass(Class cfgClass) {
-		for (Field field : cfgClass.getDeclaredFields()) {
-			if (Modifier.isPublic(field.getModifiers())
-			|| Modifier.isFinal(field.getModifiers())
-			|| Modifier.isStatic(field.getModifiers())
-			|| Modifier.isTransient(field.getModifiers()))
-				continue;
 
-			boolean haveMethod = true;
-			try {
-				getSetMethod(cfgClass, field);
-			} catch (NoSuchMethodException e) {
-				haveMethod = false;
-			}
-			if (haveMethod) {
-				throw new RuntimeException("Cfg ["+cfgClass.getName()+"] field ["+field.getName()+"] can not define set method");
-			}
-		}
-	}
-
-	/**
-	 * 得到对应的set方法
-	 * @param cfgClass
-	 * @param field
-	 * @return
-	 * @throws NoSuchMethodException
-	 */
-	private Method getSetMethod(Class cfgClass, Field field) throws NoSuchMethodException {
-		char [] chars = ("set"+field.getName()).toCharArray();
-		chars[3] -= 32;
-		String methodName = new String(chars);
-
-		return cfgClass.getMethod(methodName, field.getType());
-	}
 }
