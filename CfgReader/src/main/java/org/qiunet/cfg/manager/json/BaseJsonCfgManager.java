@@ -2,20 +2,7 @@ package org.qiunet.cfg.manager.json;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.qiunet.cfg.base.ICfgManager;
-import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.cfg.base.ISimpleMapConfig;
-import org.qiunet.cfg.convert.ICfgTypeConvert;
-import org.qiunet.cfg.convert.xd.CfgBooleanConvert;
-import org.qiunet.cfg.convert.xd.CfgDoubleConvert;
-import org.qiunet.cfg.convert.xd.CfgIntegerConvert;
-import org.qiunet.cfg.convert.xd.CfgLongConvert;
-import org.qiunet.cfg.convert.xd.CfgStringConvert;
-import org.qiunet.cfg.manager.CfgTypeConvertManager;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
-import org.qiunet.utils.collection.safe.SafeHashMap;
-import org.qiunet.utils.collection.safe.SafeList;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -23,11 +10,9 @@ import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zhengj

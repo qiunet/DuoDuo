@@ -1,8 +1,6 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.convert.ICfgTypeConvert;
-import org.qiunet.cfg.convert.xd.*;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
@@ -10,7 +8,6 @@ import org.slf4j.Logger;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 
