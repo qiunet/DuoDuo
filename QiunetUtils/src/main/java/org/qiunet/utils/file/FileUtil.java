@@ -210,4 +210,139 @@ public class FileUtil {
 		return result;
 	}
 	private FileUtil(){}
+
+
+	/**
+	 * 删除文件夹
+	 * folderPath文件夹完整绝对路径
+	 *
+	 * @param
+	 */
+	public static void delFolder(String folderPath) {
+		try {
+			delAllFile(folderPath); //删除完里面所有内容
+			String filePath = folderPath;
+			filePath = filePath.toString();
+			File myFilePath = new File(filePath);
+			myFilePath.delete(); //删除空文件夹
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 删除指定文件夹下所有文件
+	 * path文件夹完整绝对路径
+	 *
+	 * @param
+	 * @return
+	 */
+	public static boolean delAllFile(String path) {
+		boolean flag = false;
+		File file = new File(path);
+		if (!file.exists()) {
+			return flag;
+		}
+		if (!file.isDirectory()) {
+			return flag;
+		}
+		String[] tempList = file.list();
+		File temp = null;
+		for (int i = 0; i < tempList.length; i++) {
+			if (path.endsWith(File.separator)) {
+				temp = new File(path + tempList[i]);
+			} else {
+				temp = new File(path + File.separator + tempList[i]);
+			}
+			if (temp.isFile()) {
+				temp.delete();
+			}
+			if (temp.isDirectory()) {
+				delAllFile(path + "/" + tempList[i]);//先删除文件夹里面的文件
+				delFolder(path + "/" + tempList[i]);//再删除空文件夹
+				flag = true;
+			}
+		}
+		return flag;
+	}
+
+	/**
+	 * 删除文件
+	 *
+	 * @param filepath
+	 * @throws IOException
+	 */
+	public static void del(String filepath) throws IOException {
+		File f = new File(filepath);// 定义文件路径
+		if (f.exists() && f.isDirectory()) {// 判断是文件还是目录
+			if (f.listFiles().length == 0) {// 若目录下没有文件则直接删除
+				f.delete();
+			} else {// 若有则把文件放进数组，并判断是否有下级目录
+				File delFile[] = f.listFiles();
+				int i = f.listFiles().length;
+				for (int j = 0; j < i; j++) {
+					if (delFile[j].isDirectory()) {
+						del(delFile[j].getAbsolutePath());// 递归调用del方法并取得子目录路径
+					}
+					delFile[j].delete();// 删除文件
+				}
+			}
+		}
+	}
+
+	/**
+	 * 读取文件内容
+	 *
+	 * @param fileName
+	 * @return
+	 * @throws IOException
+	 */
+	public static String getFileContent(String fileName) throws IOException {
+		String content = "";
+		File versionFile = new File(fileName);
+		BufferedReader in = null;
+		StringBuffer sb = new StringBuffer();
+		String str = "";
+		try {
+			in = new BufferedReader(new FileReader(versionFile));
+			while ((str = in.readLine()) != null) {
+				if(sb.length() > 0){
+					sb.append("\n");
+				}
+				sb.append(str);
+			}
+			content = sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) in.close();
+		}
+		return content;
+	}
+
+	/**
+	 * 数据流-读二进制文件
+	 *
+	 * @param fileName
+	 * @return
+	 * @throws Exception
+	 */
+	public static DataInputStream getDataInputStream(String fileName) throws Exception {
+		InputStream in = null;
+//        ByteArrayInputStream bin = null;
+		DataInputStream dis = null;
+		try {
+			in = new FileInputStream(fileName);
+//            bin=new ByteArrayInputStream(in);
+			dis = new DataInputStream(in);
+			return dis;
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("读取版本文件:" + fileName + "失败.");
+			if (in != null) {
+				in.close();
+			}
+		}
+		return null;
+	}
 }
