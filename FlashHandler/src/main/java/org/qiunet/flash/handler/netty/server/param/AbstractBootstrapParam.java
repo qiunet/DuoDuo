@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
@@ -27,6 +29,12 @@ public abstract class AbstractBootstrapParam {
 	protected boolean encryption;
 
 	protected int maxReceivedLength;
+
+	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+
+	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
+		return protocolHeaderAdapter;
+	}
 
 	public IClientErrorMessage getErrorMessage() {
 		return errorMessage;
@@ -60,10 +68,16 @@ public abstract class AbstractBootstrapParam {
 
 		protected boolean encryption = true;
 
+		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
 		/***
 		 * 读超时处理.默认300秒 (单位秒)
 		 */
 		private int readIdleCheckSeconds = 300;
+
+		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
+			this.protocolHeaderAdapter = protocolHeaderAdapter;
+			return (B) this;
+		}
 
 		public B setErrorMessage(IClientErrorMessage errorMessage) {
 			this.errorMessage = errorMessage;
@@ -100,6 +114,7 @@ public abstract class AbstractBootstrapParam {
 			p.errorMessage = errorMessage;
 			p.readIdleCheckSeconds = readIdleCheckSeconds;
 			p.address = address;
+			p.protocolHeaderAdapter = protocolHeaderAdapter;
 			p.encryption = encryption;
 			this.buildInner(p);
 			return p;

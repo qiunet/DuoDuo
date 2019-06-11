@@ -25,17 +25,6 @@ public interface IProtocolHeader {
 	 * @return
 	 */
 	boolean isMagicValid();
-	/***
-	 * 得到头的长度. 应该是一个固定的值.
-	 * @return
-	 */
-	int getHeaderLength();
-
-	/***
-	 * 从bytebuf读取头内容
-	 * @param in
-	 */
-	IProtocolHeader parseHeader(ByteBuf in);
 	/**
 	 * 得到body的长度
 	 * @return

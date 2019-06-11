@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 
 import java.util.Arrays;
@@ -16,7 +17,7 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 
 
 	/**请求头固定长度*/
-	private static final int REQUEST_HEADER_LENGTH = 16;
+	public static final int REQUEST_HEADER_LENGTH = 16;
 	/**辨别 请求使用*/
 	private byte [] magic;
 	// 长度
@@ -30,28 +31,21 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	 * 构造函数
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
-	 * @param bytes 后面byte数组
-	 * @param protocolId 请求的id
+	 * @param content 后面byte数组
 	 */
-	public DefaultProtocolHeader(byte [] bytes, int protocolId) {
+	public DefaultProtocolHeader(MessageContent content) {
 		this.magic = MAGIC_CONTENTS;
-		this.crc = (int) CrcUtil.getCrc32Value(bytes);
-		this.length = bytes.length;
-		this.protocolId = protocolId;
+		this.crc = (int) CrcUtil.getCrc32Value(content.bytes());
+		this.length = content.bytes().length;
+		this.protocolId = content.getProtocolId();
 	}
 
-	public DefaultProtocolHeader() {
-	}
-
-
-	@Override
-	public IProtocolHeader parseHeader(ByteBuf in) {
+	public DefaultProtocolHeader(ByteBuf in) {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
 		this.length = in.readInt();
 		this.protocolId = in.readInt();
 		this.crc = in.readInt();
-		return this;
 	}
 
 	@Override
@@ -62,11 +56,6 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	@Override
 	public boolean encryptionValid(Object validData) {
 		return ((Long) validData).intValue() == this.crc;
-	}
-
-	@Override
-	public int getHeaderLength() {
-		return REQUEST_HEADER_LENGTH;
 	}
 
 	@Override

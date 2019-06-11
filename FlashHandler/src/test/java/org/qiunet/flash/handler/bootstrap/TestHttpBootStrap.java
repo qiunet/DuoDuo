@@ -24,12 +24,15 @@ import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
@@ -41,14 +44,12 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
-	public void testOtherHttpProtobuf() throws InvalidProtocolBufferException {
+	public void testOtherHttpProtobuf() {
 		final String test = "测试[testOtherHttpProtobuf]";
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(request.toByteArray());
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(byteBuf, "http://localhost:8080/protobufTest", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
+		NettyHttpClient.createDefault().sendRequest(new MessageContent(0, request.toByteArray()),
+			"http://localhost:8080/protobufTest", (adapter, httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
 				byte[] bytes = new byte[httpResponse.content().readableBytes()];
@@ -62,7 +63,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 				Assert.assertEquals(test, loginResponse.getTestString());
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
-			}
 		});
 		LockSupport.park();
 
@@ -74,24 +74,22 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
 		MessageContent content = new MessageContent(1001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
-				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+		NettyHttpClient.createDefault().sendRequest(content, "http://localhost:8080/f", (adapter, httpResponse) -> {
+			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new DefaultProtocolHeader().parseHeader(httpResponse.content());
-				byte [] bytes = new byte[httpResponse.content().readableBytes()];
-				httpResponse.content().readBytes(bytes);
-				LoginProto.LoginResponse loginResponse = null;
-				try {
-					loginResponse = LoginProto.LoginResponse.parseFrom(bytes);
-				} catch (InvalidProtocolBufferException e) {
-					e.printStackTrace();
-				}
-				Assert.assertEquals(test, loginResponse.getTestString());
-				ReferenceCountUtil.release(httpResponse);
-				LockSupport.unpark(currThread);
+			adapter.newHeader(httpResponse.content());
+			byte [] bytes = new byte[httpResponse.content().readableBytes()];
+			httpResponse.content().readBytes(bytes);
+			LoginProto.LoginResponse loginResponse = null;
+			try {
+				loginResponse = LoginProto.LoginResponse.parseFrom(bytes);
+			} catch (InvalidProtocolBufferException e) {
+				e.printStackTrace();
 			}
+			Assert.assertEquals(test, loginResponse.getTestString());
+			ReferenceCountUtil.release(httpResponse);
+			LockSupport.unpark(currThread);
+
 		});
 		LockSupport.park();
 	}
@@ -100,20 +98,17 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	 * 测试游戏http string的请求
 	 */
 	@Test
-	public void testHttpString() throws InvalidProtocolBufferException {
+	public void testHttpString() {
 		final String test = "测试[testHttpString]";
 		MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
-				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+		NettyHttpClient.createDefault().sendRequest(content, "http://localhost:8080/f", (adapter, response) -> {
+			Assert.assertEquals(response.status(), HttpResponseStatus.OK);
 
-				new DefaultProtocolHeader().parseHeader(httpResponse.content());
-				Assert.assertEquals(test, httpResponse.content().toString(CharsetUtil.UTF_8));
-				ReferenceCountUtil.release(httpResponse);
-				LockSupport.unpark(currThread);
-			}
+			adapter.newHeader(response.content());
+			Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
+			ReferenceCountUtil.release(response);
+			LockSupport.unpark(currThread);
 		});
 		LockSupport.park();
 
@@ -125,14 +120,13 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	public void testOtherHttpString(){
 		final String test = "测试[testOtherHttpString]";
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(Unpooled.wrappedBuffer(test.getBytes(CharsetUtil.UTF_8)), "Http://localhost:8080/back?a=b", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
+		NettyHttpClient.createDefault().sendRequest(new MessageContent(0, test.getBytes(CharsetUtil.UTF_8)),
+			"http://localhost:8080/back?a=b", (adapter, httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 				Assert.assertEquals(httpResponse.content().toString(CharsetUtil.UTF_8), test);
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
-			}
+
 		});
 		LockSupport.park();
 
@@ -145,17 +139,15 @@ public class TestHttpBootStrap extends HttpBootStrap {
 
 		MessageContent content = new MessageContent(1007, request.toString().getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
-				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+		NettyHttpClient.createDefault().sendRequest(content, "http://localhost:8080/f", (adapter, httpResponse) -> {
+			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-				new DefaultProtocolHeader().parseHeader(httpResponse.content());
-				JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
-				Assert.assertEquals(test, response.getString("test"));
-				ReferenceCountUtil.release(httpResponse);
-				LockSupport.unpark(currThread);
-			}
+			adapter.newHeader(httpResponse.content());
+			JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
+			Assert.assertEquals(test, response.getString("test"));
+			ReferenceCountUtil.release(httpResponse);
+			LockSupport.unpark(currThread);
+
 		});
 		LockSupport.park();
 
@@ -167,9 +159,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		jsonObject.put("test",test);
 		final Thread currThread = Thread.currentThread();
 
-		NettyHttpClient.sendRequest(Unpooled.wrappedBuffer(jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8)), "Http://localhost:8080/jsonUrl", new IHttpResponseTrigger() {
-			@Override
-			public void response(FullHttpResponse httpResponse) {
+		NettyHttpClient.createDefault().sendRequest(new MessageContent(0, jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8)),
+			"http://localhost:8080/jsonUrl", (adapter, httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 				String responseString = httpResponse.content().toString(CharsetUtil.UTF_8);
 				JsonResponse response = JsonResponse.parse(responseString);
@@ -177,7 +168,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 				Assert.assertEquals(response.get("test"), test);
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
-			}
 		});
 		LockSupport.park();
 	}

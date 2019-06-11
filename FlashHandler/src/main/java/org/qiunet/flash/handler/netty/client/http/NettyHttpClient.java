@@ -25,7 +25,12 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
@@ -39,14 +44,27 @@ import java.net.URI;
  * A simple HTTP client that prints out the content of the HTTP response to
  */
 public final class NettyHttpClient {
-	private static Logger logger = LoggerType.DUODUO.getLogger();
-	private static NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
+	private HttpClientParams clientParams;
+	private Logger logger = LoggerType.DUODUO.getLogger();
+	private NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
 	 * 需要关闭NioEventLoop
 	 */
-	public static void shutdown(){
+	public void shutdown(){
 		group.shutdownGracefully();
+	}
+
+	private NettyHttpClient(HttpClientParams params){
+		this.clientParams = params;
+	}
+
+	public static NettyHttpClient create(HttpClientParams params) {
+		return new NettyHttpClient(params);
+	}
+
+	public static NettyHttpClient createDefault() {
+		return new NettyHttpClient(HttpClientParams.custom().build());
 	}
 
 	/***
@@ -54,7 +72,7 @@ public final class NettyHttpClient {
 	 * @param uri
 	 * @return
 	 */
-	private static int getPort(URI uri) {
+	private int getPort(URI uri) {
 		if (uri.getPort() == -1) {
 			if ("https".equalsIgnoreCase(uri.getScheme())) {
 				return 443;
@@ -66,35 +84,45 @@ public final class NettyHttpClient {
 	}
 	/***
 	 * 不阻塞的方式请求.
-	 * @param byteBuf
-	 * @param url
+	 * @param content
 	 * @param trigger
 	 */
-	public static void sendRequest(ByteBuf byteBuf, String url, IHttpResponseTrigger trigger) {
-		URI uri = URI.create(url);
-
+	public void sendRequest(MessageContent content, String uriStr, IHttpResponseTrigger trigger) {
+		URI uri = URI.create(uriStr);
 		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
 		try {
-			Bootstrap b = createBootstrap(group, clientHandler, uri);
+			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
 			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
-			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
+
+			ByteBuf requestContent;
+			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
+			}else {
+				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
+			}
+			future.channel().writeAndFlush(buildRequest(requestContent, uri));
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
 	}
 	/***
 	 * 阻塞的方式请求
-	 * @param byteBuf
-	 * @param url
+	 * @param content
+	 * @param uri
 	 */
-	public static FullHttpResponse sendRequest(ByteBuf byteBuf, String url) {
-		URI uri = URI.create(url);
-
+	public FullHttpResponse sendRequest(MessageContent content, URI uri) {
 		HttpClientHandler clientHandler = new HttpClientHandler(null);
 		try {
-			Bootstrap b = createBootstrap(group, clientHandler, uri);
+			Bootstrap b = createBootstrap(group, clientHandler, clientParams, uri);
 			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
-			future.channel().writeAndFlush(buildRequest(byteBuf, uri));
+
+			ByteBuf requestContent;
+			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
+			}else {
+				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
+			}
+			future.channel().writeAndFlush(buildRequest(requestContent, uri));
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -128,7 +156,7 @@ public final class NettyHttpClient {
 	 * @return
 	 * @throws Exception
 	 */
-	private static Bootstrap createBootstrap(NioEventLoopGroup group, final HttpClientHandler clientHandler, URI uri) throws Exception {
+	private Bootstrap createBootstrap(NioEventLoopGroup group, final HttpClientHandler clientHandler, HttpClientParams params, URI uri) throws Exception {
 		final SslContext sslCtx;
 		if ("https".equalsIgnoreCase(uri.getScheme())) {
 			sslCtx = SslContextBuilder.forClient()
@@ -143,7 +171,7 @@ public final class NettyHttpClient {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						ChannelPipeline p = ch.pipeline();
-
+						ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 						if (sslCtx != null) {
 							p.addLast(sslCtx.newHandler(ch.alloc()));
 						}
@@ -158,7 +186,7 @@ public final class NettyHttpClient {
 	}
 
 
-	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+	private class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private IHttpResponseTrigger trigger;
 		private FullHttpResponse response;
 		HttpClientHandler(IHttpResponseTrigger trigger) {
@@ -171,7 +199,7 @@ public final class NettyHttpClient {
 				return;
 			}
 			this.response = ((FullHttpResponse) msg).copy();
-			if (trigger != null) this.trigger.response(response);
+			if (trigger != null) this.trigger.response(ChannelUtil.getProtolHeaderAdapter(ctx.channel()), response);
 			ctx.close();
 		}
 

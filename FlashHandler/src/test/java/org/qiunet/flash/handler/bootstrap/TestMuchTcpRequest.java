@@ -4,6 +4,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 
@@ -30,7 +31,11 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 				public void run() {
 					NettyTcpClient tcpClient = null;
 					try {
-						tcpClient = new NettyTcpClient(new InetSocketAddress(InetAddress.getByName(host), port), new Trigger());
+						tcpClient = new NettyTcpClient(
+							TcpClientParams.custom()
+								.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
+								.build()
+							, new Trigger());
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
 					}

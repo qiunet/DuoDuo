@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
@@ -21,7 +22,12 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	private String text;
 	@Test
 	public void testStringWebsocket() throws InterruptedException {
-		NettyWebsocketClient client = new NettyWebsocketClient(URI.create("ws://localhost:8080/ws"), new Trigger());
+		NettyWebsocketClient client = new NettyWebsocketClient(
+			WebSocketClientParams.custom()
+				.setAddress("localhost", 8080)
+				.setUriIPath("/ws")
+				.build()
+			, new Trigger());
 		text = "Hello world";
 		latch = new CountDownLatch(1);
 
@@ -35,7 +41,10 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	@Test
 	public void testProtobufWebSocket() throws InterruptedException {
 		text = "test [testProtobufWebSocket]";
-		NettyWebsocketClient client = new NettyWebsocketClient(URI.create("ws://localhost:8080/ws"), new Trigger());
+		NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
+			.setAddress("localhost", 8080)
+			.setUriIPath("/ws")
+			.build(), new Trigger());
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);

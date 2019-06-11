@@ -5,6 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -26,9 +29,8 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		DefaultProtocolHeader header = new DefaultProtocolHeader();
-
-		header.parseHeader(in);
+		IProtocolHeaderAdapter adapter = ChannelUtil.getProtolHeaderAdapter(ctx.channel());
+		IProtocolHeader header = adapter.newHeader(in);
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message, magic is error! "+ header);
 			ctx.channel().close();

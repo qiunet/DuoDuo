@@ -9,9 +9,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 
+import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -34,15 +36,13 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 						final String test = "[测试testHttpProtobuf]"+i;
 
 						MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
-						NettyHttpClient.sendRequest(content.encodeToByteBuf(), "http://localhost:8080/f" , new IHttpResponseTrigger() {
-							@Override
-							public void response(FullHttpResponse response) {
-								Assert.assertEquals(response.status() , HttpResponseStatus.OK);
-								response.content().readBytes(new byte[new DefaultProtocolHeader().getHeaderLength()]);
-								Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
-								ReferenceCountUtil.release(response);
-								latch.countDown();
-							}
+						NettyHttpClient.createDefault().sendRequest(content, "http://localhost:8080/f", (adapter, response) -> {
+							Assert.assertEquals(response.status() , HttpResponseStatus.OK);
+							adapter.newHeader(response.content());
+
+							Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
+							ReferenceCountUtil.release(response);
+							latch.countDown();
 						});
 					}
 				}

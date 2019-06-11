@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public class TcpSocketEncoder extends MessageToByteEncoder<MessageContent> {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
-		ByteBuf srcMsg = msg.encodeToByteBuf();
+		ByteBuf srcMsg = ChannelUtil.messageContentToByteBuf(msg, ctx.channel());
 		try {
 			out.writeBytes(srcMsg);
 		}finally {

@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
@@ -55,7 +56,9 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ILon
 	public void connect(){
 		currThread = Thread.currentThread();
 		try {
-			tcpClient = new NettyTcpClient(new InetSocketAddress(InetAddress.getByName(host), port), this);
+			tcpClient = new NettyTcpClient(TcpClientParams.custom()
+				.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
+				.build(), this);
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

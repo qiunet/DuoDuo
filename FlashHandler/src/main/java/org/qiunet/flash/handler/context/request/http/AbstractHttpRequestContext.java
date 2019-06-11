@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.*;
@@ -98,7 +99,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		ByteBuf content;
 		if (getUriPath() == params.getGameURIPath()) {
 			// 不是游戏业务. 不写业务头.
-			content = new MessageContent(messageContent.getProtocolId(), data).encodeToByteBuf();
+			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), ctx.channel());
 		}else {
 			content = PooledBytebufFactory.getInstance().alloc(data);
 		}

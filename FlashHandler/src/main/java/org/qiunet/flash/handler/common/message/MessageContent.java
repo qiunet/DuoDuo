@@ -27,19 +27,4 @@ public class MessageContent {
 	public byte [] bytes() {
 		return bytes;
 	}
-
-	/***
-	 * 把header信息也encode 进去. 返回bytebuf
-	 *
-	 * 业务不要调用这个方法.
-	 *
-	 * @return
-	 */
-	public ByteBuf encodeToByteBuf(){
-		DefaultProtocolHeader header = new DefaultProtocolHeader(bytes, protocolId);
-		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(bytes.length + header.getHeaderLength());
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(bytes);
-		return byteBuf;
-	}
 }

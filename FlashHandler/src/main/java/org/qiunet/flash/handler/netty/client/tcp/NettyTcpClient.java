@@ -7,9 +7,11 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -26,16 +28,16 @@ public class NettyTcpClient implements ILongConnClient {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ILongConnResponseTrigger trigger;
 	private Channel channel;
-	public NettyTcpClient(InetSocketAddress address, ILongConnResponseTrigger trigger) {
+	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.handler(new NettyClientInitializer());
+		bootstrap.handler(new NettyClientInitializer(params));
 		try {
-			this.channel = bootstrap.connect(address).sync().channel();
+			this.channel = bootstrap.connect(params.getAddress()).sync().channel();
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -58,9 +60,16 @@ public class NettyTcpClient implements ILongConnClient {
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
+		private TcpClientParams params;
+
+		public NettyClientInitializer(TcpClientParams params) {
+			this.params = params;
+		}
+
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
+			ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketEncoder());
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketDecoder(1024*1024*2, true));
 			pipeline.addLast(new NettyClientHandler());

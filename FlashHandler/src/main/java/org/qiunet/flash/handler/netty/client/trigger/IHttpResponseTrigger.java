@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.client.trigger;
 
 import io.netty.handler.codec.http.FullHttpResponse;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 
 /**
  * Created by qiunet.
@@ -11,5 +12,5 @@ public interface IHttpResponseTrigger {
 	 *
 	 * @param response
 	 */
-	public void response(FullHttpResponse response) ;
+	public void response(IProtocolHeaderAdapter adapter, FullHttpResponse response) ;
 }

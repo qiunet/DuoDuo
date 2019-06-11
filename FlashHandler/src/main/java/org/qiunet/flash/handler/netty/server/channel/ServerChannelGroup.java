@@ -71,7 +71,7 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 		if (logger.isInfoEnabled()) {
 			logger.info(message.toStr());
 		}
-		return super.writeAndFlush(new BinaryWebSocketFrame(message.encode().encodeToByteBuf()), matcher, false);
+		return super.writeAndFlush(message.encode(), matcher, false);
 	}
 
 	@Override

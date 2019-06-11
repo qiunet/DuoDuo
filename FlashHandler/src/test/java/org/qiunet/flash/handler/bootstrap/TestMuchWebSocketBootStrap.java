@@ -5,6 +5,7 @@ import io.netty.util.CharsetUtil;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
@@ -26,7 +27,10 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 			new Thread(new Runnable() {
 				@Override
 				public void run() {
-					NettyWebsocketClient client = new NettyWebsocketClient(URI.create("ws://localhost:8080/ws"), new Trigger());
+					NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
+						.setAddress("localhost", 8080)
+						.setUriIPath("/ws")
+						.build(), new Trigger());
 					for (int j = 0; j < requestCount; j++) {
 						String text = "testMuchWebSocket: "+j;
 						byte [] bytes = text.getBytes(CharsetUtil.UTF_8);

@@ -15,7 +15,10 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -32,7 +35,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 
-	public NettyWebsocketClient(URI uri, ILongConnResponseTrigger trigger) {
+	public NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 
 		Bootstrap bootstrap = new Bootstrap();
@@ -40,13 +43,13 @@ public class NettyWebsocketClient implements ILongConnClient {
 
 		NettyClientHandler handler = new NettyClientHandler(
 				WebSocketClientHandshakerFactory.newHandshaker(
-						uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders()));
+						params.getURI(), WebSocketVersion.V13, null, true, new DefaultHttpHeaders()));
 
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer(handler));
+		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer(handler, params));
 		try {
-			ChannelFuture future = bootstrap.connect(uri.getHost(), uri.getPort()).sync();
+			bootstrap.connect(params.getAddress()).sync();
 			handler.handshakeFuture().sync();
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -54,7 +57,8 @@ public class NettyWebsocketClient implements ILongConnClient {
 	}
 	@Override
 	public void sendMessage(MessageContent content){
-		channelHandlerContext.channel().writeAndFlush(new BinaryWebSocketFrame(content.encodeToByteBuf()));
+		BinaryWebSocketFrame frame = new BinaryWebSocketFrame(ChannelUtil.messageContentToByteBuf(content, channelHandlerContext.channel()));
+		channelHandlerContext.channel().writeAndFlush(frame);
 	}
 
 	@Override
@@ -70,11 +74,14 @@ public class NettyWebsocketClient implements ILongConnClient {
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 		private NettyClientHandler handler;
-		public NettyClientInitializer(NettyClientHandler handler) {
+		private WebSocketClientParams params;
+		public NettyClientInitializer(NettyClientHandler handler, WebSocketClientParams params) {
 			this.handler = handler;
+			this.params = params;
 		}
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
+			ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast(new HttpClientCodec(),
 					new HttpObjectAggregator(1024*1024*2),
@@ -133,7 +140,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 			}
 
 			BinaryWebSocketFrame webSocketFrame = ((BinaryWebSocketFrame) msg);
-			IProtocolHeader header = new DefaultProtocolHeader().parseHeader(webSocketFrame.content());
+			IProtocolHeader header = ChannelUtil.getProtolHeaderAdapter(ctx.channel()).newHeader(webSocketFrame.content());
 			byte [] bytes = new byte[webSocketFrame.content().readableBytes()];
 			webSocketFrame.content().readBytes(bytes);
 			trigger.response(new MessageContent(header.getProtocolId() ,bytes));
