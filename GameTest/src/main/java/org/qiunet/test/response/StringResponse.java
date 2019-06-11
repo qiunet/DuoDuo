@@ -1,6 +1,7 @@
 package org.qiunet.test.response;
 
 import io.netty.util.CharsetUtil;
+import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
@@ -11,6 +12,6 @@ import org.qiunet.test.robot.IRobot;
 public abstract class StringResponse<Robot extends IRobot> implements ILongConnResponse<String, Robot> {
 	@Override
 	public void response(Robot robot, MessageContent content) {
-		this.response(robot, new String(content.bytes(), CharsetUtil.UTF_8));
+		this.response(robot, (String) DataType.STRING.parseBytes(content.bytes()));
 	}
 }

@@ -1,5 +1,6 @@
 package org.qiunet.test.response;
 
+import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
@@ -27,18 +28,7 @@ public abstract class ProtobufResponse<ResponseData, Robot extends IRobot> imple
 	}
 	@Override
 	public void response(Robot robot, MessageContent content) {
-		ResponseData responseData = null;
-		try {
-			Method method = responseDataClass.getMethod("parseFrom", byte[].class);
-			responseData = (ResponseData) method.invoke(null, new Object[]{content.bytes()});
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
-
+		ResponseData responseData = DataType.PROTOBUF.parseBytes(content.bytes(), this.responseDataClass);
 		this.response(robot, responseData);
 	}
 }

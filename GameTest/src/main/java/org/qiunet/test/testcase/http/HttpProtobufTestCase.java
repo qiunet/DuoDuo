@@ -1,6 +1,7 @@
 package org.qiunet.test.testcase.http;
 
 import com.google.protobuf.GeneratedMessageV3;
+import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
 
@@ -37,17 +38,7 @@ public abstract class HttpProtobufTestCase<RequestData extends GeneratedMessageV
 
 	@Override
 	public void responseData(Robot robot, MessageContent content) {
-		ResponseData responseData = null;
-		try {
-			Method method = responseDataClass.getMethod("parseFrom", byte[].class);
-			responseData = (ResponseData) method.invoke(null, new Object[]{content.bytes()});
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		}
+		ResponseData responseData = DataType.PROTOBUF.parseBytes(content.bytes(), this.responseDataClass);
 		this.responseData(robot, responseData);
 	}
 }
