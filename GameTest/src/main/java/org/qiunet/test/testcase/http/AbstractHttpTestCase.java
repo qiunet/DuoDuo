@@ -15,6 +15,8 @@ abstract class AbstractHttpTestCase<RequestData, ResponseData, Robot extends IRo
 	 */
 	protected abstract IServer getServer();
 
+
+
 	@Override
 	public boolean cancelIfConditionMiss() {
 		return false;

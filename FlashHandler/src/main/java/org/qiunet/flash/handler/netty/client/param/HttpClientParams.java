@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.netty.client.param;
 
+import org.qiunet.flash.handler.common.enums.HandlerType;
+
 import java.net.InetSocketAddress;
+import java.net.URI;
 
 /**
  * 使用引导类 参数.
@@ -29,6 +32,27 @@ public class HttpClientParams extends AbstractClientParam {
 		return uriIPath;
 	}
 
+	public URI getURI(){
+		return getURI(this.uriIPath);
+	}
+
+	public URI getURI(String pathAndParam){
+		StringBuilder sb = new StringBuilder("http");
+		if (ssl) sb.append("s");
+		sb.append("://").append(address.getHostString());
+		if ((ssl && address.getPort() != 443)
+			|| (!ssl && address.getPort() != 80)) {
+			sb.append(":").append(address.getPort());
+		}
+		if (! pathAndParam.startsWith("/")) pathAndParam = "/" + pathAndParam;
+		sb.append(pathAndParam);
+		return URI.create(sb.toString());
+	}
+
+	@Override
+	public HandlerType getHandlerType() {
+		return HandlerType.HTTP;
+	}
 	/***
 	 * 得到
 	 * @return
@@ -36,12 +60,6 @@ public class HttpClientParams extends AbstractClientParam {
 	public static Builder custom(){
 		return new Builder();
 	}
-
-	@Override
-	public InetSocketAddress getAddress() {
-		throw new RuntimeException("Not specify address in HttpClientParams, Get it from Uri");
-	}
-
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */

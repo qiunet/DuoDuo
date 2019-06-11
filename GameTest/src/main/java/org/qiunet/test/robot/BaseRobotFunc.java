@@ -2,6 +2,9 @@ package org.qiunet.test.robot;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.param.AbstractClientParam;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
@@ -46,10 +49,10 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 		ILongConnClient connClient = null;
 		switch (server.getType()) {
 			case WEB_SOCKET:
-				connClient = new NettyWebsocketClient(server.uri(), trigger);
+				connClient = new NettyWebsocketClient(((WebSocketClientParams) server.getClientConfig()), trigger);
 				break;
 			case TCP:
-				connClient = new NettyTcpClient(new InetSocketAddress(server.uri().getHost(), server.uri().getPort()), trigger);
+				connClient = new NettyTcpClient((TcpClientParams) server.getClientConfig(), trigger);
 				break;
 			default:
 				throw new RuntimeException("Type ["+server.getType()+"] is not support");

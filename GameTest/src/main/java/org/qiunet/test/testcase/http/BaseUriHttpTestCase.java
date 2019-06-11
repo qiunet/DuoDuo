@@ -1,10 +1,10 @@
 package org.qiunet.test.testcase.http;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.robot.IRobot;
 
 /**
@@ -25,14 +25,8 @@ abstract class BaseUriHttpTestCase<RequestData, ResponseData, Robot extends IRob
 	protected  abstract byte[] buildRequest(Robot robot);
 	@Override
 	public void sendRequest(Robot robot) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getServer().uri().getScheme());
-		sb.append("://").append(getServer().uri().getAuthority());
-		if (! getUriPath().startsWith("/")) sb.append("/");
-		sb.append(getUriPath());
-
-		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(buildRequest(robot));
-		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(byteBuf , sb.toString());
+		FullHttpResponse httpResponse = NettyHttpClient.create(((HttpClientParams) getServer().getClientConfig()))
+			.sendRequest(new MessageContent(0, buildRequest(robot)), ((HttpClientParams) getServer().getClientConfig()).getURI(getUriPath()));
 		if (httpResponse == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;

@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.robot.IRobot;
 
 /**
@@ -21,7 +22,7 @@ abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot>
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
-		FullHttpResponse httpResponse = NettyHttpClient.sendRequest(content.encodeToByteBuf() , getServer().uri().toString());
+		FullHttpResponse httpResponse = NettyHttpClient.create((HttpClientParams) getServer().getClientConfig()).sendRequest(content , ((HttpClientParams) getServer().getClientConfig()).getURI());
 		if (httpResponse == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;
@@ -31,7 +32,7 @@ abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot>
 			robot.brokeRobot("http status not 200");
 			return;
 		}
-		new DefaultProtocolHeader().parseHeader(httpResponse.content());
+		getServer().getClientConfig().getProtocolHeaderAdapter().newHeader(httpResponse.content());
 		byte [] bytes = new byte[httpResponse.content().readableBytes()];
 		httpResponse.content().readBytes(bytes);
 		content = new MessageContent(0, bytes);

@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
+import org.qiunet.flash.handler.common.enums.HandlerType;
+
 import java.net.InetSocketAddress;
 import java.net.URI;
 
@@ -16,10 +18,7 @@ public final class WebSocketClientParams extends AbstractClientParam {
 	 * ws://localhost:8080/ws 后面的/ws
 	 */
 	private String uriIPath;
-	/***
-	 * 接收端口
-	 */
-	protected InetSocketAddress address;
+
 	/**
 	 * 是否使用ssl
 	 */
@@ -27,8 +26,9 @@ public final class WebSocketClientParams extends AbstractClientParam {
 
 	private WebSocketClientParams(){}
 
-	public InetSocketAddress getAddress() {
-		return address;
+	@Override
+	public HandlerType getHandlerType() {
+		return HandlerType.WEB_SOCKET;
 	}
 
 	public boolean isSsl() {
@@ -67,15 +67,6 @@ public final class WebSocketClientParams extends AbstractClientParam {
 		private String uriIPath = "/ws";
 
 		private boolean ssl = false;
-		protected InetSocketAddress address;
-
-		public WebSocketClientParams.Builder setAddress(InetSocketAddress address) {
-			this.address = address;
-			return this;
-		}
-		public WebSocketClientParams.Builder setAddress(String host, int port) {
-			return setAddress(new InetSocketAddress(host, port));
-		}
 
 		public Builder setSsl(boolean ssl) {
 			this.ssl = ssl;
@@ -94,9 +85,6 @@ public final class WebSocketClientParams extends AbstractClientParam {
 
 		@Override
 		protected void buildInner(WebSocketClientParams params) {
-			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
-
-			params.address = address;
 			params.uriIPath = uriIPath;
 		}
 	}

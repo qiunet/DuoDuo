@@ -12,7 +12,6 @@ import org.qiunet.test.server.interceptor.TestRoomInterceptor;
 import org.qiunet.test.server.type.ServerType;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -35,14 +34,14 @@ public final class ServerStartup {
 				BootstrapServer server = BootstrapServer.createBootstrap(hook);
 				server.httpListener(HttpBootstrapParams.custom()
 						.setHttpInterceptor(new TestLogicInterceptor())
-						.setPort(ServerType.HTTP_LOGIC.uri().getPort())
+						.setPort(ServerType.HTTP_LOGIC.port())
 						.setWebSocketInterceptor(new TestOnlineInterceptor())
 						.setErrorMessage(new ErrorHandler())
 						.setWebsocketPath("/ws")
 						.build());
 
 				server.tcpListener(TcpBootstrapParams.custom()
-						.setPort(ServerType.LC_ROOM.uri().getPort())
+						.setPort(ServerType.LC_ROOM.port())
 						.setTcpInterceptor(new TestRoomInterceptor())
 						.setErrorMessage(new ErrorHandler())
 						.build());

@@ -1,6 +1,10 @@
 package org.qiunet.test.server.type;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.IClientConfig;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.test.server.IServer;
 
 import java.net.URI;
@@ -11,18 +15,16 @@ import java.net.URI;
  */
 public enum ServerType implements IServer {
 	/**http 逻辑服*/
-	HTTP_LOGIC(URI.create("http://localhost:8080/f"), HandlerType.HTTP),
+	HTTP_LOGIC(HttpClientParams.custom().setAddress("localhost", 8080).setUriPath("/f").build()),
 	/**长链接 在线服*/
-	LC_ONLINE(URI.create("ws://localhost:8080/ws"), HandlerType.WEB_SOCKET),
+	LC_ONLINE(WebSocketClientParams.custom().setAddress("localhost", 8080).setUriIPath("/ws").build()),
 	/**长链接 房间服*/
-	LC_ROOM(URI.create("lc://localhost:8081"), HandlerType.TCP),
+	LC_ROOM(TcpClientParams.custom().setAddress("localhost", 8081).build()),
 	;
-	private URI uri;
-	private HandlerType type;
+	private IClientConfig config;
 
-	private ServerType(URI uri, HandlerType type) {
-		this.uri = uri;
-		this.type = type;
+	private ServerType(IClientConfig config) {
+		this.config = config;
 	}
 
 	@Override
@@ -31,12 +33,22 @@ public enum ServerType implements IServer {
 	}
 
 	@Override
-	public HandlerType getType() {
-		return type;
+	public String host() {
+		return config.getAddress().getHostName();
 	}
 
 	@Override
-	public URI uri() {
-		return uri;
+	public int port() {
+		return config.getAddress().getPort();
+	}
+
+	@Override
+	public HandlerType getType() {
+		return config.getHandlerType();
+	}
+
+	@Override
+	public IClientConfig getClientConfig() {
+		return config;
 	}
 }

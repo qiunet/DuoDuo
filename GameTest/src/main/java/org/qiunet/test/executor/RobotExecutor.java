@@ -73,9 +73,5 @@ public final class RobotExecutor {
 		}
 		logger.info("===============压测结束===============");
 		executor.shutdown();
-//
-		NettyWebsocketClient.shutdown();
-		NettyHttpClient.shutdown();
-		NettyTcpClient.shutdown();
 	}
 }

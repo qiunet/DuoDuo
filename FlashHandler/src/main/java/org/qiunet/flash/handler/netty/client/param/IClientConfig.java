@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.client.param;
 
+import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 
 import java.net.InetSocketAddress;
@@ -25,6 +26,9 @@ public interface IClientConfig {
 	 * @return
 	 */
 	boolean isEncryption();
-
-
+	/***
+	 * 得到处理类型
+	 * @return
+	 */
+	HandlerType getHandlerType();
 }

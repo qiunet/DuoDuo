@@ -10,6 +10,11 @@ import java.net.InetSocketAddress;
  * 17/11/22
  */
 public abstract class AbstractClientParam implements IClientConfig {
+	/***
+	 * 地址
+	 */
+	protected InetSocketAddress address;
+
 	protected boolean encryption;
 
 	protected int maxReceivedLength;
@@ -18,6 +23,11 @@ public abstract class AbstractClientParam implements IClientConfig {
 	@Override
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
+	}
+
+	@Override
+	public InetSocketAddress getAddress() {
+		return address;
 	}
 
 	@Override
@@ -38,6 +48,15 @@ public abstract class AbstractClientParam implements IClientConfig {
 		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
 
 		protected int maxReceivedLength = 1024 * 1024 * 8;
+		protected InetSocketAddress address;
+
+		public B setAddress(InetSocketAddress address) {
+			this.address = address;
+			return (B) this;
+		}
+		public B setAddress(String host, int port) {
+			return setAddress(new InetSocketAddress(host, port));
+		}
 
 		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
 			this.protocolHeaderAdapter = protocolHeaderAdapter;
@@ -54,9 +73,12 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @return
 		 */
 		public P build(){
+			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
+
 			P p = newParams();
 			p.protocolHeaderAdapter = protocolHeaderAdapter;
 			p.maxReceivedLength = maxReceivedLength;
+			p.address = address;
 			this.buildInner(p);
 			return p;
 		}
