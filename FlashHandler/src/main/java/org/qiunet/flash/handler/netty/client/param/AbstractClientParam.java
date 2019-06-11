@@ -10,12 +10,26 @@ import java.net.InetSocketAddress;
  * 17/11/22
  */
 public abstract class AbstractClientParam implements IClientConfig {
+	protected boolean encryption;
+
+	protected int maxReceivedLength;
 
 	protected IProtocolHeaderAdapter protocolHeaderAdapter;
 	@Override
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
 	}
+
+	@Override
+	public boolean isEncryption() {
+		return encryption;
+	}
+
+	@Override
+	public int getMaxReceivedLength() {
+		return maxReceivedLength;
+	}
+
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
@@ -23,8 +37,15 @@ public abstract class AbstractClientParam implements IClientConfig {
 
 		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
 
+		protected int maxReceivedLength = 1024 * 1024 * 8;
+
 		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
 			this.protocolHeaderAdapter = protocolHeaderAdapter;
+			return (B) this;
+		}
+
+		public B setMaxReceivedLength(int maxReceivedLength) {
+			this.maxReceivedLength = maxReceivedLength;
 			return (B) this;
 		}
 
@@ -35,6 +56,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 		public P build(){
 			P p = newParams();
 			p.protocolHeaderAdapter = protocolHeaderAdapter;
+			p.maxReceivedLength = maxReceivedLength;
 			this.buildInner(p);
 			return p;
 		}

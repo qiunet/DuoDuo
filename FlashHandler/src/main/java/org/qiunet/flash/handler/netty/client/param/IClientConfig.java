@@ -5,8 +5,26 @@ import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import java.net.InetSocketAddress;
 
 public interface IClientConfig {
-
+	/***
+	 * 获得处理Header对象
+	 * @return
+	 */
 	IProtocolHeaderAdapter getProtocolHeaderAdapter();
-
+	/***
+	 * 地址
+	 * @return
+	 */
 	InetSocketAddress getAddress();
+	/***
+	 * 最大的长度
+	 * @return
+	 */
+	int getMaxReceivedLength();
+	/***
+	 * 是否加密
+	 * @return
+	 */
+	boolean isEncryption();
+
+
 }

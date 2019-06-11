@@ -13,7 +13,7 @@ import java.net.URI;
 public final class WebSocketClientParams extends AbstractClientParam {
 	/**
 	 * 游戏的uriPath
-	 * http://localhost:8080/f?a=b&c=d 后面的/f
+	 * ws://localhost:8080/ws 后面的/ws
 	 */
 	private String uriIPath;
 	/***
