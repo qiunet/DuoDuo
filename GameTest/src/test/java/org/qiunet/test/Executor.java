@@ -36,16 +36,11 @@ public class Executor {
 		server.startup();
 		new RobotExecutor(ExecutorParams.custom()
 				// 全局扫描的一些东西
-				.addScannerHandler(new RequestScannerHandler())
-				.addScannerHandler(new ResponseScannerHandler())
-				.setInitializer(new IExecutorInitializer() {
-					@Override
-					public void handler() {
-						try {
-							CfgManagers.getInstance().initSetting();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				.setInitializer(() -> {
+					try {
+						CfgManagers.getInstance().initSetting();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				})
 				// 机器人工厂.  自己定义

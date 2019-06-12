@@ -2,26 +2,28 @@ package org.qiunet.cfg.annotation.support;
 
 import org.qiunet.cfg.annotation.Properties;
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.properties.LoaderProperties;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
  * @author qiunet
  *         Created on 17/2/9 15:43.
  */
-public class PropertiesScannerHandler implements IScannerHandler{
+public class PropertiesScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public boolean matchClazz(Class clazz) {
-		return ! Modifier.isAbstract(clazz.getModifiers())
-				&& LoaderProperties.class.isAssignableFrom(clazz);
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends LoaderProperties>> set = context.getSubTypesOf(LoaderProperties.class);
+		set.stream().filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+			.forEach(this::handler);
 	}
 
-	@Override
-	public void handler(Class<?> clazz) {
+	private void handler(Class<?> clazz) {
 		Properties setting = clazz.getAnnotation(Properties.class);
 		try {
 			Constructor<LoaderProperties> constructor = (Constructor<LoaderProperties>) clazz.getDeclaredConstructor(null);

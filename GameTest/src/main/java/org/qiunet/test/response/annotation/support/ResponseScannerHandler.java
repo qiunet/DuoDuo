@@ -1,27 +1,32 @@
 package org.qiunet.test.response.annotation.support;
 
-import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.Response;
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
  * 扫描requestHandler的一个类
  * @author qiunet
  *         Created on 17/3/3 16:42.
  */
-public class ResponseScannerHandler implements IScannerHandler {
-	@Override
-	public boolean matchClazz(Class clazz) {
-		return  ILongConnResponse.class.isAssignableFrom(clazz)
-				&& ! Modifier.isAbstract(clazz.getModifiers());
-	}
+public class ResponseScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public void handler(Class<?> clazz) {
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends ILongConnResponse>> set = context.getSubTypesOf(ILongConnResponse.class);
+		for (Class<? extends ILongConnResponse> clazz : set) {
+			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+
+			this.handler(clazz);
+		}
+	}
+
+	private void handler(Class<?> clazz) {
 		Response responseAnnotation = clazz.getAnnotation(Response.class);
 		if (responseAnnotation == null) throw new NullPointerException("class ["+clazz.getSimpleName()+"] not define ID");
 		try {

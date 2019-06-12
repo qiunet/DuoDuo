@@ -12,13 +12,7 @@ public class TestClassScanner extends BaseTest {
 	public  static String clazzName;
 	@Test
 	public void testClassScanner(){
-		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
-		scannerAllClassFile.addScannerHandler(new ActionScannerHandler());
-		try {
-			scannerAllClassFile.scanner();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+		ClassScanner.getInstance().scanner();
 		Assert.assertNotNull(clazzName);
 		if (clazzName != null) {
 			Assert.assertEquals("PlayerHandler", clazzName);

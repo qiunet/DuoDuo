@@ -2,16 +2,18 @@ package org.qiunet.cfg.annotation.support;
 
 import org.qiunet.cfg.convert.ICfgTypeConvert;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 
-public class CfgTypeConvertScannerHandler implements IScannerHandler {
-	@Override
-	public boolean matchClazz(Class clazz) {
-		return clazz.isAssignableFrom(ICfgTypeConvert.class);
-	}
+import java.lang.reflect.Modifier;
+import java.util.Set;
 
+public class CfgTypeConvertScannerHandler implements IApplicationContextAware {
 	@Override
-	public void handler(Class<?> clazz) {
-		CfgTypeConvertManager.getInstance().addConvertClass((Class<? extends ICfgTypeConvert>) clazz);
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends ICfgTypeConvert>> set = context.getSubTypesOf(ICfgTypeConvert.class);
+
+		set.stream().filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+			.forEach(clazz -> CfgTypeConvertManager.getInstance().addConvertClass(clazz));
 	}
 }

@@ -8,7 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXdCfgManager {
+public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXdCfgManager {
 	private Class<Cfg> cfgClass;
 
 	private Map<ID, Map<SubId, Cfg>> cfgs;

@@ -8,7 +8,6 @@ import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerScanner;
 import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
@@ -16,6 +15,7 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/25
  */
-public abstract class TcpBootStrap extends RequestHandlerScanner implements ILongConnResponseTrigger {
+public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	protected static String host = "localhost";
 	protected static int port = 8888;
 	protected static Hook hook = new MyHook();
@@ -34,6 +34,8 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ILon
 	private static Thread currThread;
 	@BeforeClass
 	public static void init(){
+		ClassScanner.getInstance().scanner();
+
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()

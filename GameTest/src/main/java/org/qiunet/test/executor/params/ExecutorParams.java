@@ -4,7 +4,6 @@ import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
-import org.qiunet.utils.classScanner.IScannerHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,13 +17,8 @@ public class ExecutorParams {
 	private List<Class<? extends ITestCase>> testCases;
 	private IRobotFactory robotFactory;
 	private IExecutorInitializer initializer;
-	private List<IScannerHandler> scannerHandlers;
 
 	private ExecutorParams (){}
-
-	public List<IScannerHandler> getScannerHandlers() {
-		return scannerHandlers;
-	}
 
 	public IExecutorInitializer getInitializer() {
 		return initializer;
@@ -46,7 +40,6 @@ public class ExecutorParams {
 		private Builder(){}
 		private IRobotFactory robotFactory;
 		private IExecutorInitializer initializer;
-		private List<IScannerHandler> scannerHandlers = new ArrayList<>(3);
 		private List<Class<? extends ITestCase>> testCases = new ArrayList<>(128);
 
 		public Builder setInitializer(IExecutorInitializer initializer) {
@@ -59,10 +52,6 @@ public class ExecutorParams {
 			return this;
 		}
 
-		public Builder addScannerHandler(IScannerHandler scannerHandler) {
-			this.scannerHandlers.add(scannerHandler);
-			return this;
-		}
 		public Builder setRobotFactory(IRobotFactory robotFactory) {
 			this.robotFactory = robotFactory;
 			return this;
@@ -76,12 +65,6 @@ public class ExecutorParams {
 			params.robotFactory = this.robotFactory;
 			params.initializer = this.initializer;
 			params.testCases = Collections.unmodifiableList(testCases);
-			boolean hasResponseScanner = false;
-			for (IScannerHandler scannerHandler : scannerHandlers) {
-				if (hasResponseScanner = scannerHandler instanceof ResponseScannerHandler) break;
-			}
-			if (!hasResponseScanner) this.addScannerHandler(new ResponseScannerHandler());
-			params.scannerHandlers = Collections.unmodifiableList(scannerHandlers);
 			return params;
 		}
 	}

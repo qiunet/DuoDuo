@@ -1,32 +1,32 @@
 package org.qiunet.quartz;
 
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
- * 启动时候.把manager 添加到GameSettingManagers
+ *
  * @author qiunet
  *         Created on 17/2/9 15:25.
  */
-public class JobQuartzScannerHandler implements IScannerHandler {
-	@Override
-	public boolean matchClazz(Class clazz) {
-		return ! Modifier.isAbstract(clazz.getModifiers())
-				&& IJob.class.isAssignableFrom(clazz);
-	}
+public class JobQuartzScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public void handler(Class<?> clazz) {
-		try {
-			Constructor<IJob> constructor = (Constructor<IJob>) clazz.getDeclaredConstructor();
-			constructor.setAccessible(true);
-			IJob job = constructor.newInstance();
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends IJob>> set = context.getSubTypesOf(IJob.class);
+		for (Class<? extends IJob> clazz : set) {
+			if (Modifier.isAbstract(clazz.getModifiers())) continue;
 
-			QuartzSchedule.getInstance().addJob(job);
-		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				QuartzSchedule.getInstance().addJob(clazz.newInstance());
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

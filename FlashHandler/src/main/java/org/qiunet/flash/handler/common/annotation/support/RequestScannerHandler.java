@@ -5,27 +5,31 @@ import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
  * 扫描requestHandler的一个类
  * @author qiunet
  *         Created on 17/3/3 16:42.
  */
-public class RequestScannerHandler implements IScannerHandler {
-	@Override
-	public boolean matchClazz(Class clazz) {
-		return (
-				clazz.getAnnotation(RequestHandler.class) != null
-			 || clazz.getAnnotation(UriPathHandler.class) != null
-				)
-				&& IHandler.class.isAssignableFrom(clazz);
-	}
+public class RequestScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public void handler(Class<?> clazz) {
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends IHandler>> set = context.getSubTypesOf(IHandler.class);
+		for (Class<? extends IHandler> aClass : set) {
+			if (Modifier.isAbstract(aClass.getModifiers())) continue;
+
+			this.handler(aClass);
+		}
+	}
+
+	private void handler(Class<?> clazz) {
 		RequestHandler requestHandler = clazz.getAnnotation(RequestHandler.class);
 		UriPathHandler otherRequestHandler = clazz.getAnnotation(UriPathHandler.class);
 		try {

@@ -1,16 +1,11 @@
 package org.qiunet.test.executor;
 
 
-import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
-import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.utils.classScanner.IScannerHandler;
-import org.qiunet.utils.classScanner.ScannerAllClassFile;
+import org.qiunet.utils.classScanner.ClassScanner;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
@@ -34,17 +29,9 @@ public final class RobotExecutor {
 
 	public RobotExecutor(ExecutorParams params){
 		this.params = params;
-		ScannerAllClassFile scannerAllClassFile = new ScannerAllClassFile();
+		// 已经默认集成了 org.qiunet
 		logger.error("-------测试初始化开始-------");
-		for (IScannerHandler scannerHandler : params.getScannerHandlers()) {
-			scannerAllClassFile.addScannerHandler(scannerHandler);
-		}
-		try {
-			scannerAllClassFile.scanner();
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		ClassScanner.getInstance().scanner();
 		logger.error("-------测试初始化结束-------");
 
 		if (params.getInitializer() != null) {

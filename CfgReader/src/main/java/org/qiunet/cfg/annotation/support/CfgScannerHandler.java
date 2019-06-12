@@ -1,27 +1,35 @@
 package org.qiunet.cfg.annotation.support;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.utils.classScanner.IScannerHandler;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 
 /**
  * 启动时候.把manager 添加到GameSettingManagers
  * @author qiunet
  *         Created on 17/2/9 15:25.
  */
-public class CfgScannerHandler implements IScannerHandler {
-	@Override
-	public boolean matchClazz(Class clazz) {
-		return ! Modifier.isAbstract(clazz.getModifiers())
-				&& ICfgManager.class.isAssignableFrom(clazz);
-	}
+public class CfgScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public void handler(Class<?> clazz) {
+	public void setApplicationContext(IApplicationContext context) {
+		Set<Class<? extends ICfgManager>> set = context.getSubTypesOf(ICfgManager.class);
+		for (Class<? extends ICfgManager> aClass : set) {
+			if (Modifier.isAbstract(aClass.getModifiers())) continue;
+
+			this.handler(aClass);
+		}
+	}
+
+
+	private void handler(Class<?> clazz) {
 		Cfg setting = clazz.getAnnotation(Cfg.class);
 		try {
 			Constructor<ICfgManager> constructor = (Constructor<ICfgManager>) clazz.getDeclaredConstructor();

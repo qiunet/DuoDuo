@@ -15,7 +15,7 @@ import java.util.Map;
  * Time: 15:45.
  * To change this template use File | Settings | File Templates.
  */
-public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<ID>> extends BaseJsonCfgManager {
+public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<ID>> extends BaseJsonCfgManager {
 	private Class<Cfg> cfgClass;
 
 	private Map<ID, Cfg> cfgMap;
