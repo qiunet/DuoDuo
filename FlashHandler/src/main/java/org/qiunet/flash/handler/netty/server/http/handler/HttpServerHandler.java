@@ -75,7 +75,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			} else if (params.getWebsocketPath() != null && params.getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
 				handlerWebSocketHandshark(ctx, request);
-				ctx.fireChannelRead(msg.retain());
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
@@ -92,7 +91,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
 		ChannelPipeline pipeline = ctx.pipeline();
-		pipeline.remove(this);
 
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
@@ -101,6 +99,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(request.headers(), params));
 		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
+
+		ctx.fireChannelRead(request.retain());
+		pipeline.remove(this);
 	}
 
 	/***
