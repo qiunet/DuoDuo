@@ -80,7 +80,7 @@ public class StringData {
  				}else if(Enum.class.isAssignableFrom(c)){
  					return obj.toString();
  				}else if(c == Date.class){
- 					return getDate((Date)obj);
+ 					return getDate(((Date)obj).getTime());
  				}else if(Map.class.isAssignableFrom(c)){
  					return getMapVal((Map)obj);
  				}else if(Entry.class.isAssignableFrom(c)){
@@ -114,8 +114,8 @@ public class StringData {
 		return sb;
 	}
 
-	private String getDate(Date date){
-		return DateUtil.dateToString(date);
+	private String getDate(long millis){
+		return DateUtil.dateToString(millis);
 	}
 
 	private StringBuilder getArrayString(Object obj){

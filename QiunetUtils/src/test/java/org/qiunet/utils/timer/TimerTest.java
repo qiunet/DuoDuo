@@ -44,12 +44,12 @@ public class TimerTest {
 		Future<String> future = TimerManager.getInstance().scheduleWithDeley(new DelayTask<String>() {
 			@Override
 			public String call() throws Exception {
-				System.out.println("========"+DateUtil.dateToString(new Date()));
+				System.out.println("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 				Thread.sleep(5000);
 				return "SUCCESS";
 			}
 		}, 1, TimeUnit.SECONDS);
 
-		System.out.println(future.get()+ "========"+DateUtil.dateToString(new Date()));
+		System.out.println(future.get()+ "========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 	}
 }

@@ -47,8 +47,8 @@ public class TestDateUtil  extends BaseTest{
 			new Thread(
 					() -> {
 						for (int i1 = 0; i1 < 10; i1++) {
-							Assert.assertEquals(DateUtil.dateToString(dt1), val1);
-							Assert.assertEquals(DateUtil.dateToString(dt2), val2);
+							Assert.assertEquals(DateUtil.dateToString(time1), val1);
+							Assert.assertEquals(DateUtil.dateToString(time2), val2);
 
 							try {
 								Assert.assertEquals(DateUtil.stringToDate(val1).getTime(), time1);
