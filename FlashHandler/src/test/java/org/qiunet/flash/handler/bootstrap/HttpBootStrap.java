@@ -23,20 +23,17 @@ public class HttpBootStrap extends RequestHandlerScanner {
 	@BeforeClass
 	public static void init() {
 		currThread = Thread.currentThread();
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-						.setWebSocketInterceptor(new DefaultWebSocketInterceptor())
-						.setHttpInterceptor(new DefaultHttpInterceptor())
-						.setErrorMessage(new DefaultErrorMessage())
-						.setWebsocketPath("/ws")
-						.setPort(8080)
-						.build();
-				BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
-				LockSupport.unpark(currThread);
-				server.await();
-			}
+		Thread thread = new Thread(() -> {
+			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
+					.setWebSocketInterceptor(new DefaultWebSocketInterceptor())
+					.setHttpInterceptor(new DefaultHttpInterceptor())
+					.setErrorMessage(new DefaultErrorMessage())
+					.setWebsocketPath("/ws")
+					.setPort(8080)
+					.build();
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
+			LockSupport.unpark(currThread);
+			server.await();
 		});
 		thread.start();
 		LockSupport.park();

@@ -10,7 +10,6 @@ import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
-import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
 /**

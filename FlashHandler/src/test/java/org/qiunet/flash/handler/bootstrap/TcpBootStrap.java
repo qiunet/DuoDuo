@@ -35,19 +35,16 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ILon
 	@BeforeClass
 	public static void init(){
 		currThread = Thread.currentThread();
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-						.setTcpInterceptor(new DefaultTcpInterceptor())
-						.setErrorMessage(new DefaultErrorMessage())
-						.setPort(port)
-						.setEncryption(true)
-						.build();
-				BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
-				LockSupport.unpark(currThread);
-				server.await();
-			}
+		Thread thread = new Thread(() -> {
+			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
+					.setTcpInterceptor(new DefaultTcpInterceptor())
+					.setErrorMessage(new DefaultErrorMessage())
+					.setPort(port)
+					.setEncryption(true)
+					.build();
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
+			LockSupport.unpark(currThread);
+			server.await();
 		});
 		thread.start();
 		LockSupport.park();
@@ -79,7 +76,7 @@ public abstract class TcpBootStrap extends RequestHandlerScanner implements ILon
 	protected abstract void responseTcpMessage(MessageContent data);
 
 	@AfterClass
-	public static void shutdown() throws InterruptedException {
+	public static void shutdown() {
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}
 }

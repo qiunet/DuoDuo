@@ -9,7 +9,6 @@ import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 
-import java.net.URI;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -24,19 +23,16 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 	public void testMuchWebSocket() throws InterruptedException {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
-						.setAddress("localhost", 8080)
-						.setUriIPath("/ws")
-						.build(), new Trigger());
-					for (int j = 0; j < requestCount; j++) {
-						String text = "testMuchWebSocket: "+j;
-						byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
-						MessageContent content = new MessageContent(1005, bytes);
-						client.sendMessage(content);
-					}
+			new Thread(() -> {
+				NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
+					.setAddress("localhost", 8080)
+					.setUriIPath("/ws")
+					.build(), new Trigger());
+				for (int j = 0; j < requestCount; j++) {
+					String text = "testMuchWebSocket: "+j;
+					byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
+					MessageContent content = new MessageContent(1005, bytes);
+					client.sendMessage(content);
 				}
 			}).start();
 		}

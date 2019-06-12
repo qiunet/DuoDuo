@@ -26,26 +26,24 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 		long start = System.currentTimeMillis();
 		final int threadCount = 100;
 		for (int j = 0; j < threadCount; j++) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					NettyTcpClient tcpClient = null;
-					try {
-						tcpClient = new NettyTcpClient(
-							TcpClientParams.custom()
-								.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
-								.build()
-							, new Trigger());
-					} catch (UnknownHostException e) {
-						e.printStackTrace();
-					}
-					int count = requestCount/threadCount;
+			new Thread(() -> {
+				NettyTcpClient tcpClient = null;
+				try {
+					tcpClient = new NettyTcpClient(
+						TcpClientParams.custom()
+							.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
+							.build()
+						, new Trigger());
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+				int count = requestCount/threadCount;
+
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
 					LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 					MessageContent content = new MessageContent(1004, request.toByteArray());
 					tcpClient.sendMessage(content);
-				}
 				}
 			}).start();
 		}

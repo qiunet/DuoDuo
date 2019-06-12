@@ -24,30 +24,27 @@ public abstract class MuchTcpRequest extends RequestHandlerScanner {
 	@BeforeClass
 	public static void init(){
 		currThread = Thread.currentThread();
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-						.setTcpInterceptor(new DefaultTcpInterceptor())
-						.setErrorMessage(new DefaultErrorMessage())
-						.setPort(port)
-						.build();
-				BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				LockSupport.unpark(currThread);
-				server.await();
+		Thread thread = new Thread(() -> {
+			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
+					.setTcpInterceptor(new DefaultTcpInterceptor())
+					.setErrorMessage(new DefaultErrorMessage())
+					.setPort(port)
+					.build();
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
+			LockSupport.unpark(currThread);
+			server.await();
 		});
 		thread.start();
 		LockSupport.park();
 	}
 
 	@AfterClass
-	public static void shutdown() throws InterruptedException {
+	public static void shutdown() {
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}
 }

@@ -2,9 +2,6 @@ package org.qiunet.flash.handler.bootstrap;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.protobuf.InvalidProtocolBufferException;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
@@ -19,20 +16,16 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
@@ -133,7 +126,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 
 	}
 	@Test
-	public void testHttpJson() throws InvalidProtocolBufferException {
+	public void testHttpJson()  {
 		final String test = "测试[testHttpJson]";
 		final JsonRequest request = new JsonRequest();
 		request.addAttribute("test", test);
