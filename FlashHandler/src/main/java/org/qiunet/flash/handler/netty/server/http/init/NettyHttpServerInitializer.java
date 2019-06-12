@@ -28,5 +28,6 @@ public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel
 		p.addLast("HttpServerCodec" ,new HttpServerCodec());
 		p.addLast("HttpObjectAggregator", new HttpObjectAggregator(params.getMaxReceivedLength()));
 		p.addLast("HttpServerHandler", new HttpServerHandler(params));
+		p.addLast(new NettyIdleCheckHandler());
 	}
 }

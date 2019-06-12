@@ -24,6 +24,7 @@ import java.util.concurrent.CountDownLatch;
 public class TestMuchHttpRequest extends HttpBootStrap {
 	private int requestCount = 10000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
+	private HttpClientParams params = HttpClientParams.custom().setAddress("localhost", 8080).build();
 	@Test
 	public void muchRequest() throws InvalidProtocolBufferException, InterruptedException {
 		long start = System.currentTimeMillis();
@@ -36,7 +37,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 						final String test = "[测试testHttpProtobuf]"+i;
 
 						MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
-						NettyHttpClient.createDefault().sendRequest(content, "http://localhost:8080/f", (adapter, response) -> {
+						NettyHttpClient.create(params).sendRequest(content, "http://localhost:8080/f", (adapter, response) -> {
 							Assert.assertEquals(response.status() , HttpResponseStatus.OK);
 							adapter.newHeader(response.content());
 

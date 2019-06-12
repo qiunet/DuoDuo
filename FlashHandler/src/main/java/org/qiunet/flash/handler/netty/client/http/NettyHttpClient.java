@@ -62,11 +62,6 @@ public final class NettyHttpClient {
 	public static NettyHttpClient create(HttpClientParams params) {
 		return new NettyHttpClient(params);
 	}
-
-	public static NettyHttpClient createDefault() {
-		return new NettyHttpClient(HttpClientParams.custom().build());
-	}
-
 	/***
 	 * 取到port
 	 * @param uri
@@ -87,8 +82,8 @@ public final class NettyHttpClient {
 	 * @param content
 	 * @param trigger
 	 */
-	public void sendRequest(MessageContent content, String uriStr, IHttpResponseTrigger trigger) {
-		URI uri = URI.create(uriStr);
+	public void sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
+		URI uri = clientParams.getURI(pathAndQuery);
 		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
@@ -110,7 +105,8 @@ public final class NettyHttpClient {
 	 * @param content
 	 * @param uri
 	 */
-	public FullHttpResponse sendRequest(MessageContent content, URI uri) {
+	public FullHttpResponse sendRequest(MessageContent content, String pathAndQuery) {
+		URI uri = clientParams.getURI(pathAndQuery);
 		HttpClientHandler clientHandler = new HttpClientHandler(null);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, clientParams, uri);
