@@ -25,12 +25,13 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 		long start = System.currentTimeMillis();
 		final int threadCount = 20;
 		for (int j = 0; j < threadCount; j++) {
+			NettyHttpClient httpClient = NettyHttpClient.create(params);
 			new Thread(() -> {
 				for (int i = 0; i < requestCount/threadCount; i++) {
 					final String test = "[测试testHttpProtobuf]"+i;
 
 					MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
-					NettyHttpClient.create(params).sendRequest(content, "/f", (adapter, response) -> {
+					httpClient.sendRequest(content, "/f", (adapter, response) -> {
 						Assert.assertEquals(response.status() , HttpResponseStatus.OK);
 						adapter.newHeader(response.content());
 
