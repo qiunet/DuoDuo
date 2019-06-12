@@ -3,10 +3,7 @@ package org.qiunet.utils.date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 时间date相关的工具类
@@ -24,6 +21,10 @@ public final class DateUtil {
 		return System.currentTimeMillis()/1000;
 	}
 
+	public static long currentTimeMillis() {
+		return System.currentTimeMillis();
+	}
+
 	private static SimpleDateFormat returnSdf(String format) {
 		Map<String, SimpleDateFormat> map = simpleDataFormatThreadLocal.get();
 		if (map == null) {
@@ -33,6 +34,7 @@ public final class DateUtil {
 		SimpleDateFormat sdf = map.get(format);
 		if (sdf == null) {
 			sdf = new SimpleDateFormat(format);
+			sdf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
 			map.put(format, sdf);
 		}
 		return sdf;
@@ -45,7 +47,9 @@ public final class DateUtil {
 	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
 	/** 时分秒的 */
 	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+
 	public static final long DAY_MS = 24 * 3600 * 1000;
+
 	public static final long WEEK_MS = 7L * DAY_MS;
 
 	/**外面直接使用 LocalDateTime.format() 可以搞定**/
@@ -54,9 +58,13 @@ public final class DateUtil {
 	/**
 	 * 日期转字符串 默认格式
 	 *
-	 * @param date
+	 * @param millis
 	 * @return
 	 */
+	public static String dateToString(long millis) {
+		return dateToString(millis, DEFAULT_DATE_TIME_FORMAT);
+	}
+
 	public static String dateToString(Date date) {
 		if(date == null) return "";
 		return dateToString(date, DEFAULT_DATE_TIME_FORMAT);
@@ -64,10 +72,13 @@ public final class DateUtil {
 	/**
 	 * 日期转字符串 指定格式
 	 *
-	 * @param date
+	 * @param millis
 	 * @param format
 	 * @return
 	 */
+	public static String dateToString(long millis, String format) {
+		return returnSdf(format).format(millis);
+	}
 	public static String dateToString(Date date, String format) {
 		return returnSdf(format).format(date);
 	}
