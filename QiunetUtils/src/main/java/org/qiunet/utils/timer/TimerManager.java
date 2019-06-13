@@ -2,6 +2,7 @@ package org.qiunet.utils.timer;
 
 
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.hook.ShutdownHookThread;
 
 import java.util.concurrent.*;
@@ -69,7 +70,7 @@ public class TimerManager {
 	 * @return
 	 */
 	public <T> Future<T> scheduleWithTimeMillis(DelayTask<T> delayTask, long timeMillis) {
-		long now = System.currentTimeMillis();
+		long now = DateUtil.currentTimeMillis();
 		if (timeMillis < now) {
 			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");
 		}

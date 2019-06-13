@@ -78,7 +78,6 @@ public class DataUtil {
 
 		if(o == null) throw new NullPointerException(field.getName() +" mapping fields is null~");
 
-		if(o instanceof Date) return DateUtil.dateToString((Date)o);
 		return o.toString();
 	}
 	/**

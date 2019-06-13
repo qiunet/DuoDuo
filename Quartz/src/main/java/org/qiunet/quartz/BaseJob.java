@@ -1,5 +1,6 @@
 package org.qiunet.quartz;
 
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public abstract class BaseJob implements IJob {
 	 */
 	@Override
 	public Boolean doJob(){
-		long start = System.currentTimeMillis();
+		long start = DateUtil.currentTimeMillis();
 		try {
 			 return doWork();
 		}catch (Exception e) {
@@ -25,7 +26,7 @@ public abstract class BaseJob implements IJob {
 		finally {
 			ThreadContextData.removeAll();
 			if (logExecInfo()) {
-				logger.info("Job ["+jobName+"] exec ["+(System.currentTimeMillis() - start)+"]");
+				logger.info("Job ["+jobName+"] exec ["+(DateUtil.currentTimeMillis() - start)+"]");
 			}
 		}
 		return true;

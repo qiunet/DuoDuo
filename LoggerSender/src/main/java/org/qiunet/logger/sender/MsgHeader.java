@@ -1,6 +1,7 @@
 package org.qiunet.logger.sender;
 
 import io.netty.buffer.ByteBuf;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.encryptAndDecrypt.MD5Util;
 
 import java.nio.ByteBuffer;
@@ -41,7 +42,7 @@ public class MsgHeader {
 	 * @param buffer
 	 */
 	public static void completeMessageHeader(ByteBuffer buffer, short gameId, String secret, short length) {
-		int dt = (int) (System.currentTimeMillis()/1000);
+		int dt = (int) (DateUtil.currentTimeMillis()/1000);
 		buffer.putShort(gameId);
 		buffer.putInt(dt);
 		buffer.putShort(length);

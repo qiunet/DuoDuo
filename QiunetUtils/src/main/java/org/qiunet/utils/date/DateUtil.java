@@ -2,7 +2,14 @@ package org.qiunet.utils.date;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 /**
@@ -13,32 +20,42 @@ import java.util.*;
  */
 public final class DateUtil {
 	private static final ThreadLocal<Map<String, SimpleDateFormat>> simpleDataFormatThreadLocal = new ThreadLocal<>();
+	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
+	private static long offsetMillis = 0;
 	/***
 	 * 当前的秒
 	 * @return
 	 */
 	public static long currSeconds(){
-		return System.currentTimeMillis()/1000;
+		return DateUtil.currentTimeMillis()/1000;
+	}
+	/**
+	 * 得到当前的 Instant
+	 * @return
+	 */
+	public static Instant currentInstant() {
+		return Instant.ofEpochMilli(currentTimeMillis());
+	}
+
+	public static LocalDateTime currentLocalDateTime() {
+		return LocalDateTime.ofInstant(currentInstant(), defaultZoneId);
+	}
+
+	public static ZoneId getDefaultZoneId(){
+		return defaultZoneId;
 	}
 
 	public static long currentTimeMillis() {
-		return System.currentTimeMillis();
+		return System.currentTimeMillis() + offsetMillis;
+	}
+	/***
+	 * 对全局时间偏移做调整
+	 * @param offsetMillis
+	 */
+	public static void setOffsetMillis(long offsetMillis) {
+		DateUtil.offsetMillis = offsetMillis;
 	}
 
-	private static SimpleDateFormat returnSdf(String format) {
-		Map<String, SimpleDateFormat> map = simpleDataFormatThreadLocal.get();
-		if (map == null) {
-			map = new HashMap<>();
-			simpleDataFormatThreadLocal.set(map);
-		}
-		SimpleDateFormat sdf = map.get(format);
-		if (sdf == null) {
-			sdf = new SimpleDateFormat(format);
-			sdf.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
-			map.put(format, sdf);
-		}
-		return sdf;
-	}
 	private DateUtil(){}
 
 	/**默认的时间格式(日期 时间)*/
@@ -65,9 +82,23 @@ public final class DateUtil {
 		return dateToString(millis, DEFAULT_DATE_TIME_FORMAT);
 	}
 
-	public static String dateToString(Date date) {
-		if(date == null) return "";
-		return dateToString(date, DEFAULT_DATE_TIME_FORMAT);
+	/***
+	 * 格式化为 yyyy-MM-dd HH:mm:ss
+	 * @param date
+	 * @return
+	 */
+	public static String dateToString(LocalDateTime date) {
+		return DEFAULT_DATE_TIME_FORMATTER.format(date);
+	}
+
+	//获取指定日期的毫秒
+	public static long getMilliByTime(LocalDateTime time) {
+		return time.atZone(getDefaultZoneId()).toInstant().toEpochMilli();
+	}
+
+	//获取指定日期的秒
+	public static long getSecondsByTime(LocalDateTime time) {
+		return time.atZone(getDefaultZoneId()).toInstant().getEpochSecond();
 	}
 	/**
 	 * 日期转字符串 指定格式
@@ -77,10 +108,11 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static String dateToString(long millis, String format) {
-		return returnSdf(format).format(millis);
+		return returnFormatter(format).format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), defaultZoneId));
 	}
-	public static String dateToString(Date date, String format) {
-		return returnSdf(format).format(date);
+
+	public static String dateToString(LocalDateTime date, String format) {
+		return returnFormatter(format).format(date);
 	}
 	/**
 	 * 字符串转日期 按指定格式
@@ -89,8 +121,8 @@ public final class DateUtil {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static Date stringToDate(String stringValue,String format) throws ParseException{
-		return returnSdf(format).parse(stringValue);
+	public static LocalDateTime stringToDate(String stringValue,String format){
+		return LocalDateTime.parse(stringValue,  returnFormatter(format));
 	}
 	/**
 	 * 字符串转日期 按默认格式
@@ -98,8 +130,8 @@ public final class DateUtil {
 	 * @return
 	 * @throws ParseException
 	 */
-	public static Date stringToDate(String stringValue) throws ParseException{
-		return stringToDate(stringValue,DEFAULT_DATE_TIME_FORMAT);
+	public static LocalDateTime stringToDate(String stringValue){
+		return stringToDate(stringValue, DEFAULT_DATE_TIME_FORMAT);
 	}
 	/**
 	 * 获取当前日期是本周的周几
@@ -128,10 +160,12 @@ public final class DateUtil {
 	 * @param dateLast
 	 * @return
 	 */
-	public static boolean isBetweenDays(Date date,Date dateBefore,Date dateLast){
-		long d = date.getTime();
-		long d1 = dateBefore.getTime();
-		long d2 = dateLast.getTime();
+	public static boolean isBetweenDays(LocalDateTime date,
+										LocalDateTime dateBefore,
+										LocalDateTime dateLast){
+		long d = getMilliByTime(date);
+		long d1 = getMilliByTime(dateBefore);
+		long d2 = getMilliByTime(dateLast);
 
 		return d >= d1 && d < d2;
 	}
@@ -142,8 +176,8 @@ public final class DateUtil {
 	 * @param days 天数
 	 * @return
 	 */
-	public static Date addDays(Date dt, int days) {
-		return dateAdjust(dt, days, Calendar.DAY_OF_MONTH);
+	public static LocalDateTime addDays(LocalDateTime dt, int days) {
+		return dt.plusDays(days);
 	}
 
 	/***
@@ -152,8 +186,8 @@ public final class DateUtil {
 	 * @param hours
 	 * @return
 	 */
-	public static Date addHours(Date dt, int hours) {
-		return dateAdjust(dt, hours, Calendar.HOUR_OF_DAY);
+	public static LocalDateTime addHours(LocalDateTime dt, int hours) {
+		return dt.plusHours(hours);
 	}
 
 	/***
@@ -162,8 +196,8 @@ public final class DateUtil {
 	 * @param minutes
 	 * @return
 	 */
-	public static Date addMinutes(Date dt, int minutes) {
-		return dateAdjust(dt, minutes, Calendar.MINUTE);
+	public static LocalDateTime addMinutes(LocalDateTime dt, int minutes) {
+		return dt.plusMinutes(minutes);
 	}
 
 	/***
@@ -172,8 +206,8 @@ public final class DateUtil {
 	 * @param months
 	 * @return
 	 */
-	public static Date addMonths(Date dt, int months) {
-		return dateAdjust(dt, months, Calendar.MONTH);
+	public static LocalDateTime addMonths(LocalDateTime dt, int months) {
+		return dt.plusMonths(months);
 	}
 	/***
 	 * 指定时间  加减 秒
@@ -181,8 +215,8 @@ public final class DateUtil {
 	 * @param seconds
 	 * @return
 	 */
-	public static Date addSeconds(Date dt, int seconds) {
-		return dateAdjust(dt, seconds, Calendar.SECOND);
+	public static LocalDateTime addSeconds(LocalDateTime dt, int seconds) {
+		return dt.plusSeconds(seconds);
 	}
 	/***
 	 * 指定时间  加减 毫秒
@@ -190,47 +224,30 @@ public final class DateUtil {
 	 * @param milliSeconds
 	 * @return
 	 */
-	public static Date addMilliseconds(Date dt, int milliSeconds) {
-		return dateAdjust(dt, milliSeconds, Calendar.MILLISECOND);
+	public static LocalDateTime addMilliseconds(LocalDateTime dt, int milliSeconds) {
+		return dt.plus(milliSeconds, ChronoUnit.MILLIS);
 	}
-
-	private static Date dateAdjust(Date dt, int count, int field) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(dt);
-		calendar.add(field, count);
-		return calendar.getTime();
-	}
-	/**
-	 *获取两个日期相差的秒数
+	/***
+	 * 判断是否是同一天
+	 * @param ld1
+	 * @param ld2
 	 * @return
-     */
-	public static Long getDiffSecond(Date endDate){
-		Date current = new Date();
-		return getDiffSecond(current, endDate);
+	 */
+	public static boolean isSameDay(LocalDateTime ld1, LocalDateTime ld2) {
+		return  ld1.getYear() == ld2.getYear() &&
+			ld1.getDayOfYear() == ld2.getDayOfYear();
 	}
-
-	public static Long getDiffSecond(Date beginDate, Date endDate){
-		return (endDate.getTime() - beginDate.getTime())/1000;
-	}
-
 	/***
 	 * 判断是否是同一天
 	 * @param d1
 	 * @param d2
 	 * @return
 	 */
-	public static boolean isSameDay(Date d1, Date d2) {
-		if (d1 == null || d2 == null) {
-			throw new IllegalArgumentException("The date must not be null");
-		}
+	public static boolean isSameDay(long d1, long d2) {
+		LocalDateTime ld1 = LocalDateTime.ofInstant(Instant.ofEpochMilli(d1), defaultZoneId);
+		LocalDateTime ld2 = LocalDateTime.ofInstant(Instant.ofEpochMilli(d2), defaultZoneId);
 
-		final Calendar cal1 = Calendar.getInstance();
-		cal1.setTime(d1);
-		final Calendar cal2 = Calendar.getInstance();
-		cal2.setTime(d2);
-		return (cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
-				cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-				cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR));
+		return isSameDay(ld1, ld2);
 	}
 
 	private static Map<String, DateTimeFormatter> dtfs = new HashMap(){

@@ -61,8 +61,6 @@ public class MybatisInterceptor implements Interceptor {
 		String val = null;
 		if (obj instanceof String) {
 			val = "'" + obj.toString() + "'";
-		} else if (obj instanceof Date) {
-			val = "'" + DateUtil.dateToString(((Date) obj)) + "'";
 		} else {
 			val = obj == null ? "" : obj.toString();
 		}

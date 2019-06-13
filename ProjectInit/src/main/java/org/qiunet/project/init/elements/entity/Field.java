@@ -40,9 +40,6 @@ public class Field {
 			case "boolean":
 			case "Boolean":
 				return null == defaultVal ? null : defaultVal;
-			case "Date":
-				if ("now".equals(defaultVal)) return "new Date()";
-				return null == defaultVal ? "new Date(0)" : "new Date("+ DateUtil.stringToDate(defaultVal).getTime()+"L)";
 			default:
 				throw new IllegalArgumentException("not support type for ["+type+"]");
 		}

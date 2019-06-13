@@ -30,7 +30,6 @@
 		
 		field 默认值:
 			int  long  默认值没有指定情况为0
-			Date 没有指定情况为 new Date(0)
 			boolean 没有指定为 false
 			String  没有指定为为 "" 	 	
 	

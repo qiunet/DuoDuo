@@ -1,5 +1,6 @@
 package org.qiunet.quartz;
 
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.DelayTask;
 import org.qiunet.utils.timer.TimerManager;
@@ -7,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +48,7 @@ public class QuartzSchedule {
 	private class JobFacade implements DelayTask<Boolean> {
 		private IJob job;
 
-		private Date fireTime;
+		private LocalDateTime fireTime;
 
 		private Future<Boolean> future;
 
@@ -53,7 +56,7 @@ public class QuartzSchedule {
 
 		public JobFacade(IJob job) {
 			this.job = job;
-			this.fireTime = new Date();
+			this.fireTime = DateUtil.currentLocalDateTime();
 			try {
 				this.expression = new CronExpression(job.cronExpression());
 			} catch (ParseException e) {
@@ -63,13 +66,13 @@ public class QuartzSchedule {
 		}
 
 		void doNextJob() {
-			Date nextDt = expression.getTimeAfter(this.fireTime);
+			Date nextDt = expression.getTimeAfter(new Date(DateUtil.getMilliByTime(this.fireTime)));
 			this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
 		}
 
 		@Override
 		public Boolean call() throws Exception {
-			this.fireTime = new Date();
+			this.fireTime = DateUtil.currentLocalDateTime();
 			this.doNextJob();
 			return this.job.doJob();
 		}
