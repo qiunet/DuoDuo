@@ -11,6 +11,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 时间date相关的工具类
@@ -50,10 +51,10 @@ public final class DateUtil {
 	}
 	/***
 	 * 对全局时间偏移做调整
-	 * @param offsetMillis
+	 * @param offsetValue
 	 */
-	public static void setOffsetMillis(long offsetMillis) {
-		DateUtil.offsetMillis = offsetMillis;
+	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
+		DateUtil.offsetMillis = unit.toMillis(offsetValue);
 	}
 
 	private DateUtil(){}
