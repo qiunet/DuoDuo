@@ -5,18 +5,16 @@ import org.qiunet.frame.base.JframeManager;
 import org.qiunet.utils.ExcelToStream;
 import org.qiunet.utils.FileUtil;
 
-import java.awt.BorderLayout;
+import java.awt.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.File;
-import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.util.*;
 
 public class MainFrame extends BaseJFrame {
@@ -279,7 +277,7 @@ public class MainFrame extends BaseJFrame {
 
 			if (jFileChooser.showOpenDialog(JframeManager.getInstance().getJframe(MainFrame.class)) == JFileChooser.APPROVE_OPTION){
 				System.out.println(jFileChooser.getSelectedFile().getAbsolutePath());
-				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile().getAbsolutePath());
+				FileUtil.writeToProjectFile(jFileChooser.getSelectedFile());
 				JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
 			}
 		}
@@ -308,15 +306,32 @@ public class MainFrame extends BaseJFrame {
 	}
 
 
-	class TreePopMenuListener implements MouseListener {
-		public void mouseClicked(MouseEvent e) {
-		}
+	class TreePopMenuListener extends MouseAdapter {
+
 		public void mousePressed(MouseEvent e) {
+
+
 			TreePath path = jTree.getPathForLocation(e.getX(), e.getY());
 			if (path == null) return;
 
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 			FileNode fileNode = (FileNode) node.getUserObject();
+			if (e.getModifiers() == 16 && e.getClickCount() == 2) {
+				// 左键
+				this.openFile(fileNode);
+			} else if (e.isMetaDown()) {
+				// 右键
+				this.showMenu(fileNode, e, path);
+			}
+		}
+		private void openFile(FileNode fileNode){
+			try {
+				Desktop.getDesktop().open(fileNode.file);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		private void showMenu(FileNode fileNode, MouseEvent e, TreePath path){
 			if (! fileNode.getFile().isDirectory()) {
 				if (fileNode.getFile().getName().endsWith(".xlsx") || fileNode.getFile().getName().endsWith(".xls")) {
 					jTree.setSelectionPath(path);
@@ -328,12 +343,6 @@ public class MainFrame extends BaseJFrame {
 					dirPopupMenu.show(jTree, e.getX(), e.getY());
 				}
 			}
-		}
-		public void mouseReleased(MouseEvent e) {
-		}
-		public void mouseEntered(MouseEvent e) {
-		}
-		public void mouseExited(MouseEvent e) {
 		}
 	}
 }
