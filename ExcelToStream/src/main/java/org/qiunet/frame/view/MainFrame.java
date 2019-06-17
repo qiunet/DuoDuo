@@ -220,9 +220,9 @@ public class MainFrame extends BaseJFrame {
 		}
 	}
 
-	private Set<String> expandFileName = new HashSet<String>();
+	private Set<String> expandFileName = new HashSet<>();
 
-	private static final Set<String> postfixs = new HashSet<String>(Arrays.asList(new String[]{"xlsx","xls","xd","json"}));
+	private static final Set<String> postfixs = new HashSet(Arrays.asList(new String[]{"xlsx","xls","xd","json"}));
 
 	/**
 	 * 校验文件的后缀名
@@ -236,7 +236,7 @@ public class MainFrame extends BaseJFrame {
 
 		if (file.isFile()) {
 			if (file.getName().contains(".")) {
-				String postfix = file.getName().substring(file.getName().indexOf(".")+1, file.getName().length());
+				String postfix = file.getName().substring(file.getName().indexOf(".")+1);
 				if (! postfixs.contains(postfix)) return false;
 			}
 		}
