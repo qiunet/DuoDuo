@@ -13,6 +13,7 @@ class ListenerManager0 implements IApplicationContextAware {
 	private static ListenerManager0 instance;
 	private Map<Class<? extends IEventData>, List<Wrapper>> methods;
 	private ListenerManager0(){
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
 	}
 
