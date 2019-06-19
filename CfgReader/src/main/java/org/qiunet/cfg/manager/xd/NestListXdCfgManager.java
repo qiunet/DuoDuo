@@ -61,11 +61,7 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 		for (int i = 0; i < num; i++) {
 			Cfg cfg = generalCfg(cfgClass);
 
-			List<Cfg> subList = cfgMap.get(cfg.getId());
-			if (subList == null) {
-				subList = new SafeList<>();
-				cfgMap.put(cfg.getId(), subList);
-			}
+			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {

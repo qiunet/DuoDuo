@@ -62,11 +62,7 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 		SafeHashMap<Key, Map<SubKey, Cfg>> cfgMap = new SafeHashMap<>();
 		List<Cfg> cfgs = getSimpleListCfg("", cfgClass);
 		for (Cfg cfg : cfgs) {
-			Map<SubKey, Cfg> subMap = cfgMap.get(cfg.getId());
-			if (subMap == null) {
-				subMap = new SafeHashMap<>();
-				cfgMap.put(cfg.getId(), subMap);
-			}
+			Map<SubKey, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeHashMap<>());
 			subMap.put(cfg.getSubId(), cfg);
 		}
 		for (Map<SubKey, Cfg> subKeyCfgMap : cfgMap.values()) {
