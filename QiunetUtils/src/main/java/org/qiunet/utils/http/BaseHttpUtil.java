@@ -11,34 +11,36 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
+abstract class BaseHttpUtil {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
-	private String result;
-	@Override
-	public String getMethodHandler(String url, Map<String, Object> params) {
+	protected static RequestConfig REQUESTCONFIG = RequestConfig.custom()
+		.setSocketTimeout(6000)
+		.setConnectTimeout(6000)
+		.build();
+
+	 static String getMethodHandler(String url, Map<String, Object> params) {
 		StringBuilder sb = new StringBuilder(url);
 		if(params != null && !params.isEmpty()){
 			if(sb.indexOf("?") != -1) sb.append("&");
-			else 	sb.append("?");
-			for(Entry<String, Object> en : params.entrySet())
-				sb.append(en.getKey()).append('=').append(en.getValue()).append("&");
+			 else sb.append("?");
 
+			for(Entry<String, Object> en : params.entrySet()) {
+				sb.append(en.getKey()).append('=').append(en.getValue()).append("&");
+			}
 			if(sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString();
 	}
 
-	@Override
-	public String cookieHandler(Map<String, Object> cookies, Charset charset) throws Exception {
+	 static String cookieHandler(Map<String, Object> cookies, Charset charset) throws Exception {
 		if(cookies == null || cookies.isEmpty()) return "";
 
 		StringBuilder sb = new StringBuilder();
@@ -52,17 +54,16 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	 * URL编码 (符合FRC1738规范)
 	 * @param input
 	 */
-	public static String encodeUrl(String input, Charset charset) throws Exception {
+	 static String encodeUrl(String input, Charset charset) throws Exception {
 		try {
 			return URLEncoder.encode(input, charset.toString());
 		} catch (UnsupportedEncodingException e) {
-			logger.error("[DefaultHttpRequestHandler] Exception: ", e);
+			logger.error("[BaseHttpUtil] Exception: ", e);
 		}
 		return "";
 	}
 
-	@Override
-	public HttpEntity postMethodHandler(Map<String, Object> params) {
+	 static HttpEntity postMethodHandler(Map<String, Object> params) {
 		if(params != null){
 			List<NameValuePair> paramList = new ArrayList<>(params.size());
 			for(Entry<String, Object> en : params.entrySet()){
@@ -73,23 +74,13 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 		return null;
 	}
 
-	@Override
-	public void errorHandler(Map<String, Object> params,Map<String, Object> cookies,int httpStatus , String url) {
+	 static void errorHandler(Map<String, Object> params,Map<String, Object> cookies,int httpStatus , String url) {
+	 	errorHandler(params, cookies, httpStatus, url, null);
+	 }
+	static void errorHandler(Map<String, Object> params,Map<String, Object> cookies,int httpStatus , String url, Throwable throwable) {
 		logger.error("httpstatus: ["+httpStatus+"] URL ["+url+"]");
 		logger.error("params : ["+JsonUtil.toJsonString(params)+"]");
 		logger.error("cookies : ["+JsonUtil.toJsonString(cookies)+"]");
-	}
-
-	@Override
-	public void handlerResult(HttpResponse response, Charset charset) {
-		try {
-			this.result = EntityUtils.toString(response.getEntity(), charset.toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	@Override
-	public String returnResult() {
-		return result;
+		if (throwable != null) logger.error("Exception", throwable);
 	}
 }

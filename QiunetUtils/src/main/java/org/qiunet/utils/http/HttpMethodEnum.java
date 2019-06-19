@@ -1,10 +1,16 @@
 package org.qiunet.utils.http;
 
-import org.apache.http.HttpRequest;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.message.BasicNameValuePair;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,20 +20,35 @@ import java.util.Map;
 public enum HttpMethodEnum {
 	GET {
 		@Override
-		public HttpUriRequest createRequest(String url, Map<String, Object> params, HttpRequestHandler handler) {
-			return new HttpGet(handler.getMethodHandler(url, params));
+		public HttpUriRequest createRequest(String url, Map<String, Object> params, Map<String, Object> cookies) {
+			HttpUriRequest request = new HttpGet(BaseHttpUtil.getMethodHandler(url, params));
+			if(cookies != null && !cookies.isEmpty()){
+				try {
+					request.setHeader("Cookie", BaseHttpUtil.cookieHandler(cookies, StandardCharsets.UTF_8));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return request;
 		}
 	},
 	POST{
 		@Override
-		public HttpUriRequest createRequest(String url, Map<String, Object> params, HttpRequestHandler handler) {
+		public HttpUriRequest createRequest(String url, Map<String, Object> params, Map<String, Object> cookies) {
 			HttpPost request = new HttpPost(url);
 			if(params != null && !params.isEmpty()){
-				request.setEntity(handler.postMethodHandler(params));
+				request.setEntity(BaseHttpUtil.postMethodHandler(params));
+			}
+			if(cookies != null && !cookies.isEmpty()){
+				try {
+					request.setHeader("Cookie", BaseHttpUtil.cookieHandler(cookies, StandardCharsets.UTF_8));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			return request;
 		}
 	};
 
-	public abstract HttpUriRequest createRequest(String url, Map<String, Object> params, HttpRequestHandler requestHandler);
+	public abstract HttpUriRequest createRequest(String url, Map<String, Object> params, Map<String, Object> cookies);
 }
