@@ -45,5 +45,5 @@ public interface IApplicationContext {
 	 * <p>depends on ResourcesScanner configured
 	 * <pre>Set<String> xmls = reflections.getResources(".*\\.xml");</pre>
 	 */
-	 Set<String> getResources(final Pattern pattern);
+	Set<String> getResources(final Pattern pattern);
 }
