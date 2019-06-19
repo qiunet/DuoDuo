@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public final class DateUtil {
-	private static final ThreadLocal<Map<String, SimpleDateFormat>> simpleDataFormatThreadLocal = new ThreadLocal<>();
 	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
 	private static long offsetMillis = 0;
 	/***
@@ -120,7 +119,6 @@ public final class DateUtil {
 	 * @param stringValue
 	 * @param format
 	 * @return
-	 * @throws ParseException
 	 */
 	public static LocalDateTime stringToDate(String stringValue,String format){
 		return LocalDateTime.parse(stringValue,  returnFormatter(format));
@@ -129,7 +127,6 @@ public final class DateUtil {
 	 * 字符串转日期 按默认格式
 	 * @param stringValue
 	 * @return
-	 * @throws ParseException
 	 */
 	public static LocalDateTime stringToDate(String stringValue){
 		return stringToDate(stringValue, DEFAULT_DATE_TIME_FORMAT);

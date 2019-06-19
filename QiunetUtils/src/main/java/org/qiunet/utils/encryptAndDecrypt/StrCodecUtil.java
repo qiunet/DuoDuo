@@ -1,6 +1,6 @@
 package org.qiunet.utils.encryptAndDecrypt;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 对字符串进行编码解码
@@ -18,13 +18,9 @@ public class StrCodecUtil {
 		if (data == null)
 			return "";
 		StringBuilder encryptData = new StringBuilder(128);
-		try {
-			byte [] bytes = data.getBytes("UTF-8");
-			for(byte b : bytes){
-				encryptData.append(String.format("%02x", b));
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		byte [] bytes = data.getBytes(StandardCharsets.UTF_8);
+		for(byte b : bytes){
+			encryptData.append(String.format("%02x", b));
 		}
 		return encryptData.toString();
 	}
@@ -47,12 +43,7 @@ public class StrCodecUtil {
 			bytes[i/2] = ((byte)s);
 			i += segementLen;
 		}
-		
-		try {
-			return new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return "";
+
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 }
