@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.qiunet.utils.enums.CharsetEnum;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
@@ -39,7 +38,7 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	}
 
 	@Override
-	public String cookieHandler(Map<String, Object> cookies, CharsetEnum charset) throws Exception {
+	public String cookieHandler(Map<String, Object> cookies, Charset charset) throws Exception {
 		if(cookies == null || cookies.isEmpty()) return "";
 
 		StringBuilder sb = new StringBuilder();
@@ -53,7 +52,7 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	 * URL编码 (符合FRC1738规范)
 	 * @param input
 	 */
-	public static String encodeUrl(String input, CharsetEnum charset) throws Exception {
+	public static String encodeUrl(String input, Charset charset) throws Exception {
 		try {
 			return URLEncoder.encode(input, charset.toString());
 		} catch (UnsupportedEncodingException e) {
@@ -63,14 +62,13 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	}
 
 	@Override
-	public HttpEntity postMethodHandler(Map<String, Object> params) throws UnsupportedEncodingException {
+	public HttpEntity postMethodHandler(Map<String, Object> params) {
 		if(params != null){
-			List<NameValuePair> paramList = new ArrayList<NameValuePair>(params.size());
+			List<NameValuePair> paramList = new ArrayList<>(params.size());
 			for(Entry<String, Object> en : params.entrySet()){
 				paramList.add(new BasicNameValuePair(en.getKey(), String.valueOf(en.getValue())));
 			}
-			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList, Charset.forName("UTF-8"));
-			return entity;
+			return new UrlEncodedFormEntity(paramList, StandardCharsets.UTF_8);
 		}
 		return null;
 	}
@@ -83,7 +81,7 @@ public class DefaultHttpRequestHandler implements HttpRequestHandler<String> {
 	}
 
 	@Override
-	public void handlerResult(HttpResponse response, CharsetEnum charset) {
+	public void handlerResult(HttpResponse response, Charset charset) {
 		try {
 			this.result = EntityUtils.toString(response.getEntity(), charset.toString());
 		} catch (IOException e) {
