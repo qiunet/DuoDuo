@@ -27,7 +27,7 @@ public class ShellUtil {
 			e.printStackTrace();
 		}
 
-		Preconditions.checkArgument(process != null, "process is null");
+		Preconditions.checkNotNull(process, "process is null");
 		try (
 			InputStreamReader ir=new InputStreamReader(process.getInputStream());
 			LineNumberReader input = new LineNumberReader (ir);
