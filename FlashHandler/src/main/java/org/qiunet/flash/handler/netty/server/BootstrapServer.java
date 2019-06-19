@@ -1,11 +1,13 @@
 package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
+import org.qiunet.flash.handler.netty.server.listener.ServerShutdownEventData;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
+import org.qiunet.utils.listener.ListenerManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -145,6 +147,8 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
+		ListenerManager.getInstance().fireEventHandler(new ServerShutdownEventData());
+
 		if (hook != null) {
 			hook.shutdown();
 		}

@@ -2,11 +2,14 @@ package org.qiunet.utils.classScanner;
 
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
+import org.reflections.scanners.*;
+import org.reflections.scanners.Scanner;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -16,6 +19,7 @@ import java.util.regex.Pattern;
  *         Created on 17/1/23 18:22.
  */
 public final class ClassScanner implements IApplicationContext {
+	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
 
@@ -23,7 +27,7 @@ public final class ClassScanner implements IApplicationContext {
 
 	private ClassScanner() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		this.reflections = new Reflections("org.qiunet");
+		this.reflections = new Reflections("org.qiunet", scanners);
 		instance = this;
 	}
 
@@ -41,15 +45,15 @@ public final class ClassScanner implements IApplicationContext {
 
 	public void scanner(String ... packetPrefix){
 		if (packetPrefix != null && packetPrefix.length > 0) {
-			this.reflections.merge(new Reflections(packetPrefix));
+			this.reflections.merge(new Reflections(packetPrefix, scanners));
 		}
 		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
 		for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
 			try {
-				aClass.newInstance().setApplicationContext(this);
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+				Constructor<? extends IApplicationContextAware> constructor = aClass.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				constructor.newInstance().setApplicationContext(this);
+			} catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
 		}
@@ -71,22 +75,7 @@ public final class ClassScanner implements IApplicationContext {
 	}
 
 	@Override
-	public List<String> getMethodParamNames(Method method) {
-		return reflections.getMethodParamNames(method);
-	}
-
-	@Override
-	public List<String> getConstructorParamNames(Constructor constructor) {
-		return reflections.getConstructorParamNames(constructor);
-	}
-
-	@Override
 	public Set<Method> getMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
 		return reflections.getMethodsAnnotatedWith(annotation);
-	}
-
-	@Override
-	public Set<String> getResources(Pattern pattern) {
-		return reflections.getResources(pattern);
 	}
 }
