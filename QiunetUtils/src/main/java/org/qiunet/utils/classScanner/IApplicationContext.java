@@ -28,22 +28,9 @@ public interface IApplicationContext {
 	 * <p/>depends on FieldAnnotationsScanner configured
 	 */
 	Set<Field> getFieldsAnnotatedWith(final Class<? extends Annotation> annotation);
-	/** get parameter names of given {@code method}
-	 * <p>depends on MethodParameterNamesScanner configured
-	 */
-	List<String> getMethodParamNames(Method method);
-	/** get parameter names of given {@code constructor}
-	 * <p>depends on MethodParameterNamesScanner configured
-	 */
-	List<String> getConstructorParamNames(Constructor constructor);
 	/**
 	 * get all methods annotated with a given annotation
 	 * <p/>depends on MethodAnnotationsScanner configured
 	 */
 	Set<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation);
-	/** get resources relative paths where simple name (key) matches given regular expression
-	 * <p>depends on ResourcesScanner configured
-	 * <pre>Set<String> xmls = reflections.getResources(".*\\.xml");</pre>
-	 */
-	Set<String> getResources(final Pattern pattern);
 }
