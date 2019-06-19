@@ -2,6 +2,8 @@ package org.qiunet.utils.listener;
 
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ListenerManager0 implements IApplicationContextAware {
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private static ListenerManager0 instance;
 	private Map<Class<? extends IEventData>, List<Wrapper>> methods;
 	private ListenerManager0(){
@@ -28,7 +31,7 @@ class ListenerManager0 implements IApplicationContextAware {
 				try {
 					return new Wrapper(m.getDeclaringClass().newInstance(), m);
 				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("ListenerManager", e);
 				}
 				return null; })
 			.filter(Objects::nonNull)
@@ -75,10 +78,8 @@ class ListenerManager0 implements IApplicationContextAware {
 		void fireEventHandler(IEventData data) {
 			try {
 				method.invoke(caller, data);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				logger.error("ListenerManager", e);
 			}
 		}
 	}
