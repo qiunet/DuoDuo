@@ -29,7 +29,7 @@ class ListenerManager0 implements IApplicationContextAware {
 		methods = context.getMethodsAnnotatedWith(EventHandler.class)
 			.parallelStream().map(m -> {
 				try {
-					return new Wrapper(m.getDeclaringClass().newInstance(), m);
+					return new Wrapper((IEventListener) m.getDeclaringClass().newInstance(), m);
 				} catch (InstantiationException | IllegalAccessException e) {
 					logger.error("ListenerManager", e);
 				}
@@ -51,16 +51,16 @@ class ListenerManager0 implements IApplicationContextAware {
 	}
 
 	private class Wrapper {
-		private Object caller;
+		private IEventListener caller;
 		private Method method;
 		private Class<? extends IEventData> dataClass;
 
-		public Wrapper(Object caller, Method method) {
+		public Wrapper(IEventListener caller, Method method) {
 			this.caller = caller;
 			this.method = method;
 		}
 
-		private Wrapper(Class<? extends IEventData> dataClass, Object caller, Method method) {
+		private Wrapper(Class<? extends IEventData> dataClass, IEventListener caller, Method method) {
 			this.caller = caller;
 			this.method = method;
 			this.dataClass = dataClass;
@@ -76,11 +76,7 @@ class ListenerManager0 implements IApplicationContextAware {
 		}
 
 		void fireEventHandler(IEventData data) {
-			try {
-				method.invoke(caller, data);
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				logger.error("ListenerManager", e);
-			}
+			caller.eventHandler(data);
 		}
 	}
 }
