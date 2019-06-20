@@ -55,13 +55,12 @@ public class FileUtil {
 	 * @param newPath
 	 */
 	public static void copy(File oldFile, String newPath) {
-		if (oldFile.exists()) {
-			try (FileOutputStream fs = new FileOutputStream(newPath)) {
-				byte [] bytes = Files.readAllBytes(oldFile.toPath());
-				fs.write(bytes, 0, bytes.length);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		if (! oldFile.exists() || !oldFile.isFile()) throw new IllegalArgumentException("file ["+oldFile.getAbsolutePath()+"] is not exist or is not a file!");
+
+		try (FileOutputStream fs = new FileOutputStream(newPath)) {
+			fs.write(Files.readAllBytes(oldFile.toPath()));
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
