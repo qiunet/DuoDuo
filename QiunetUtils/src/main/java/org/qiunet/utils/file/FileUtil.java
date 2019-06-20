@@ -56,13 +56,9 @@ public class FileUtil {
 	 */
 	public static void copy(File oldFile, String newPath) {
 		if (oldFile.exists()) {
-			int byteRead;
-			try (InputStream inStream = new FileInputStream(oldFile);
-				 FileOutputStream fs = new FileOutputStream(newPath)) {
-				byte[] buffer = new byte[1444];
-				while ((byteRead = inStream.read(buffer)) != -1) {
-					fs.write(buffer, 0, byteRead);
-				}
+			try (FileOutputStream fs = new FileOutputStream(newPath)) {
+				byte [] bytes = Files.readAllBytes(oldFile.toPath());
+				fs.write(bytes, 0, bytes.length);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

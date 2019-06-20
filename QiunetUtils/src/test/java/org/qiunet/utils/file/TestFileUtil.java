@@ -44,8 +44,9 @@ public class TestFileUtil {
 	}
 	@Test
 	public void appendToFile() throws IOException {
-		File file = new File(System.getProperty("user.dir")+"/temp", "Test.txt");
-//		FileUtil.deleteFile(file);
+		File file = new File(System.getProperty("user.dir"), "Test.txt");
+		File file1 = new File(System.getProperty("user.dir"), "Test1.txt");
+		FileUtil.deleteFile(file);
 		for (int i = 0; i < 5; i++) {
 			FileUtil.appendToFile(file, "中Ha"+i);
 		}
@@ -58,11 +59,14 @@ public class TestFileUtil {
 
 		long startPos = FileUtil.getFileLength(file);
 
-		Assert.assertEquals(FileUtil.getFileContent(file), "中Ha0\n" +
-																	"中Ha1\n" +
-																	"中Ha2\n" +
-																	"中Ha3\n" +
-																	"中Ha4\n");
+		FileUtil.copy(file, file1.getAbsolutePath());
+		Assert.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
+			"中Ha1\n" +
+			"中Ha2\n" +
+			"中Ha3\n" +
+			"中Ha4\n");
+
+		FileUtil.deleteFile(file1);
 
 		FileUtil.appendToFile(file, "中Ha5");
 
