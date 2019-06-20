@@ -74,11 +74,11 @@ public class FileUtil {
 
 	/***
 	 * 写东西到文件去
-	 * @param filePath
+	 * @param file
 	 * @param msg
 	 */
-	public static void appendToFile(String filePath, String msg , boolean append){
-		writeStringToFile(new File(filePath), msg, StandardCharsets.UTF_8, append, "\n");
+	public static void appendToFile(File file, String msg){
+		writeStringToFile(file, msg, StandardCharsets.UTF_8, true, "\n");
 	}
 
 	/***
@@ -124,7 +124,8 @@ public class FileUtil {
 	 * @param lastNum
 	 * @return
 	 */
-	public static List<String> tailFile(File file, int startPos, int lastNum) {
+	public static List<String> tailFile(File file, long startPos, int lastNum) {
+		if (startPos > 0) startPos--;
 		List<String> result = new ArrayList<>();
 		if (file == null || lastNum <= 0 || file.isDirectory() || ! file.exists() || !file.canRead()) {
 			return result;

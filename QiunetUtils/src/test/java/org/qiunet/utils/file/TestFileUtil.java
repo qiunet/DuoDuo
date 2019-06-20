@@ -47,6 +47,7 @@ public class TestFileUtil {
 	@Test
 	public void appendToFile() throws IOException {
 		File file = new File(System.getProperty("user.dir"), "Test.txt");
+		FileUtil.delAllFile(file);
 		for (int i = 0; i < 5; i++) {
 			FileUtil.writeStringToFile(file, "中Ha"+i, StandardCharsets.UTF_8, true, "\n");
 		}
@@ -57,11 +58,19 @@ public class TestFileUtil {
 			Assert.assertEquals(list.get(i), "中Ha"+i);
 		}
 
+		long startPos = FileUtil.getFileLength(file);
+
 		Assert.assertEquals(FileUtil.getFileContent(file), "中Ha0\n" +
 																	"中Ha1\n" +
 																	"中Ha2\n" +
 																	"中Ha3\n" +
 																	"中Ha4\n");
+
+		FileUtil.appendToFile(file, "中Ha5");
+
+		list = FileUtil.tailFile(file, startPos, 10);
+		Assert.assertEquals(1, list.size());
+		Assert.assertEquals("中Ha5", list.get(0));
 
 		Assert.assertTrue(file.exists());
 		FileUtil.delAllFile(file);
