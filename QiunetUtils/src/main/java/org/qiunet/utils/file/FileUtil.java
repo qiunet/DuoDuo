@@ -80,7 +80,14 @@ public class FileUtil {
 	public static void appendToFile(File file, String msg){
 		writeStringToFile(file, msg, StandardCharsets.UTF_8, true, "\n");
 	}
-
+	/***
+	 * 使用content构造一个新文件
+	 * @param file
+	 * @param content
+	 */
+	public static void createFileWithContent(File file, String content){
+		writeStringToFile(file, content, StandardCharsets.UTF_8, false, "");
+	}
 	/***
 	 * 写入数据到文件
 	 * @param file 文件

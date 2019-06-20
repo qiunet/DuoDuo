@@ -8,6 +8,8 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
+
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -48,8 +50,8 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 	 * @param fileName
 	 * @return
 	 */
-	protected String getRealPath(String fileName) {
-		return getClass().getClassLoader().getResource(fileName).getPath();
+	protected File getFile(String fileName) {
+		return new File(getClass().getClassLoader().getResource(fileName).getFile());
 	}
 
 	/**
@@ -63,7 +65,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
 		String json = null;
 		try {
-			json = FileUtil.getFileContent(getRealPath(fileName));
+			json = FileUtil.getFileContent(getFile(fileName));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

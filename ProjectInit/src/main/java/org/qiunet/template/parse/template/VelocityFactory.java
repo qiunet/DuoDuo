@@ -11,6 +11,7 @@ import org.qiunet.utils.file.FileUtil;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
@@ -63,6 +64,6 @@ public class VelocityFactory {
 		template.merge(context, writer);
 
 		File file = new File(outputFileName);
-		FileUtil.writeStringToFile(file , writer.toString() ,Constants.CHAR_ENCODING, false);
+		FileUtil.createFileWithContent(file , writer.toString());
 	}
 }
