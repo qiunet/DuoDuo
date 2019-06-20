@@ -60,7 +60,7 @@ public class FileUtil {
 		try (FileOutputStream fs = new FileOutputStream(newPath)) {
 			fs.write(Files.readAllBytes(oldFile.toPath()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception" , e);
 		}
 	}
 
@@ -135,18 +135,13 @@ public class FileUtil {
 			long pos = length - 1;
 			while (pos-- > startPos) {
 				reader.seek(pos);
-				if (reader.readByte() == '\n') {
+				if (pos == 0 || reader.readByte() == '\n') {
 					result.add(StandardCharsets.UTF_8.decode(StandardCharsets.ISO_8859_1.encode(reader.readLine())).toString());
 					if (++count >= lastNum) break;
 				}
-
-				if (pos == 0) {
-					reader.seek(0);
-					result.add(StandardCharsets.UTF_8.decode(StandardCharsets.ISO_8859_1.encode(reader.readLine())).toString());
-				}
 			}
 		}catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Exception" , e);
 		}
 
 		if (! result.isEmpty()) {
@@ -169,7 +164,7 @@ public class FileUtil {
 		try (RandomAccessFile reader = new RandomAccessFile(file, "r")) {
 			return reader.length();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Exception" , e);
 		}
 		return 0;
 	}

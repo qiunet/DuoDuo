@@ -66,6 +66,13 @@ public class TestFileUtil {
 			"中Ha3\n" +
 			"中Ha4\n");
 
+		FileUtil.createFileWithContent(file1, FileUtil.getFileContent(file1));
+		Assert.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
+			"中Ha1\n" +
+			"中Ha2\n" +
+			"中Ha3\n" +
+			"中Ha4\n");
+
 		FileUtil.deleteFile(file1);
 
 		FileUtil.appendToFile(file, "中Ha5");
