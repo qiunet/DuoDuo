@@ -123,16 +123,13 @@ public class FileUtil {
 	public static List<String> tailFile(File file, long startPos, int lastNum) {
 		if (startPos > 0) startPos--;
 		List<String> result = new ArrayList<>();
-		if (file == null || lastNum <= 0 || file.isDirectory() || ! file.exists() || !file.canRead()) {
+		long length, pos;
+		if ((length = getFileLength(file)) <= 0 || startPos < 0) {
 			return result;
 		}
-
+		pos = length - 1;
+		int count = 0;
 		try (RandomAccessFile reader = new RandomAccessFile(file, "r")) {
-			long length = reader.length();
-			if (length <= 0) return result;
-
-			int count = 0;
-			long pos = length - 1;
 			while (pos-- > startPos) {
 				reader.seek(pos);
 				if (pos == 0 || reader.readByte() == '\n') {
@@ -161,12 +158,7 @@ public class FileUtil {
 		if (file == null || file.isDirectory() || !file.exists() || !file.canRead()) {
 			return 0;
 		}
-		try (RandomAccessFile reader = new RandomAccessFile(file, "r")) {
-			return reader.length();
-		} catch (IOException e) {
-			logger.error("Exception" , e);
-		}
-		return 0;
+		return file.length();
 	}
 
 	private FileUtil(){}
