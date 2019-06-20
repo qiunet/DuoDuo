@@ -2,7 +2,6 @@ package org.qiunet.utils.file;
 
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -11,7 +10,6 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author qiunet
@@ -26,7 +24,7 @@ public class FileUtil {
 	 * @return
 	 */
 	public static boolean move(File srcFile, String destPath) {
-		// Destination directory
+		// srcFile File (or directory) to be moved
 		File dir = new File(destPath);
 		// move file to new directory
 		return srcFile.renameTo(new File(dir, srcFile.getName()));
@@ -39,7 +37,6 @@ public class FileUtil {
 	 * @return 成功与否
 	 */
 	public static boolean move(String srcFile, String destPath) {
-		// File (or directory) to be moved
 		return move(new File(srcFile), destPath);
 	}
 
@@ -82,6 +79,7 @@ public class FileUtil {
 	}
 	/***
 	 * 使用content构造一个新文件
+	 * 如果已经有该文件. 将被覆盖.
 	 * @param file
 	 * @param content
 	 */
@@ -96,17 +94,13 @@ public class FileUtil {
 	 * @param append 是否append
 	 */
 	public static void writeStringToFile(final File file, final String data, final Charset charset, final boolean append, String endChar){
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				logger.error("File '" + file + "' exists but is a directory");
-				return;
-			}
-		} else {
-			final File parent = file.getParentFile();
-			if (!parent.mkdirs() && !parent.isDirectory()) {
-				logger.error("Directory '" + parent + "' could not be created");
-				return;
-			}
+		if (file.isDirectory()) {
+			logger.error("File '" + file + "' exists but is a directory");
+			return;
+		}
+		if (! file.exists() && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+			logger.error("Directory '" + file.getParent() + "' could not be created");
+			return;
 		}
 
 		try (FileOutputStream output = new FileOutputStream(file, append)){
@@ -192,7 +186,7 @@ public class FileUtil {
 	 * @param f
 	 * @throws IOException
 	 */
-	public static void delAllFile(File f) {
+	public static void deleteFile(File f) {
 		if (! f.exists()) return;
 
 		if (f.isFile()) {
@@ -204,7 +198,7 @@ public class FileUtil {
 		if(files == null) return;
 
 		for (File file : files) {
-			delAllFile(file);
+			deleteFile(file);
 		}
 		f.delete();
 	}
@@ -217,7 +211,7 @@ public class FileUtil {
 	 * @throws IOException
 	 */
 	public static String getFileContent(File file) throws IOException {
-		if (! file.exists()) return null;
+		if (! file.exists() || !file.isFile()) return null;
 
 		byte[] bytes = Files.readAllBytes(file.toPath());
 		return new String(bytes, StandardCharsets.UTF_8);

@@ -1,12 +1,10 @@
 package org.qiunet.utils.file;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -46,10 +44,10 @@ public class TestFileUtil {
 	}
 	@Test
 	public void appendToFile() throws IOException {
-		File file = new File(System.getProperty("user.dir"), "Test.txt");
-		FileUtil.delAllFile(file);
+		File file = new File(System.getProperty("user.dir")+"/temp", "Test.txt");
+//		FileUtil.deleteFile(file);
 		for (int i = 0; i < 5; i++) {
-			FileUtil.writeStringToFile(file, "中Ha"+i, StandardCharsets.UTF_8, true, "\n");
+			FileUtil.appendToFile(file, "中Ha"+i);
 		}
 
 		List<String> list = FileUtil.tailFile(file, 10);
@@ -73,7 +71,7 @@ public class TestFileUtil {
 		Assert.assertEquals("中Ha5", list.get(0));
 
 		Assert.assertTrue(file.exists());
-		FileUtil.delAllFile(file);
+		FileUtil.deleteFile(file);
 		Assert.assertTrue(! file.exists());
 	}
 }
