@@ -2,6 +2,8 @@ package org.qiunet.cfg.manager.json;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.qiunet.cfg.annotation.Cfg;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
@@ -27,6 +29,8 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 	private String fileName;
 
 	protected BaseJsonCfgManager(String fileName) {
+		Cfg annotation = getClass().getAnnotation(Cfg.class);
+		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
 		this.fileName = fileName;
 	}
 

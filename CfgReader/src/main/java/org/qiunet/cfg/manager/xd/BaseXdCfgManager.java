@@ -1,6 +1,8 @@
 package org.qiunet.cfg.manager.xd;
 
+import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.convert.ICfgTypeConvert;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
@@ -27,6 +29,8 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 	protected DataInputStream dis;
 
 	protected BaseXdCfgManager(String fileName) {
+		Cfg annotation = getClass().getAnnotation(Cfg.class);
+		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
 		this.fileName = fileName;
 	}
 	/**

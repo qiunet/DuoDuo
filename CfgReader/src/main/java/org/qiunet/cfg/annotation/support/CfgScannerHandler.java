@@ -32,16 +32,12 @@ public class CfgScannerHandler implements IApplicationContextAware {
 	private void handler(Class<? extends ICfgManager> clazz) {
 		Cfg setting = clazz.getAnnotation(Cfg.class);
 		try {
-			// 匿名内部类需要自己调用loadCfg
-			if (clazz.getConstructors().length == 0) return;
-
 			Constructor<? extends ICfgManager> constructor = clazz.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			ICfgManager manager = constructor.newInstance();
 
 			CfgManagers.getInstance().addDataSettingManager(manager , setting == null ? 0 : setting.order());
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }
