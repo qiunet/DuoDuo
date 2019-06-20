@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @author qiunet
@@ -42,8 +44,27 @@ public class TestFileUtil {
 		Assert.assertTrue(file.exists());
 		file.delete();
 	}
-	@Ignore
+	@Test
 	public void appendToFile() throws IOException {
-		FileUtil.writeStringToFile(new File("/Users/qiunet/desktop/xxx.txt"), "haha", "Utf-8", true);
+		File file = new File(System.getProperty("user.dir"), "Test.txt");
+		for (int i = 0; i < 5; i++) {
+			FileUtil.writeStringToFile(file, "中Ha"+i, StandardCharsets.UTF_8, true, "\n");
+		}
+
+		List<String> list = FileUtil.tailFile(file, 10);
+		Assert.assertEquals(5, list.size());
+		for (int i = 0; i < list.size(); i++) {
+			Assert.assertEquals(list.get(i), "中Ha"+i);
+		}
+
+		Assert.assertEquals(FileUtil.getFileContent(file), "中Ha0\n" +
+																	"中Ha1\n" +
+																	"中Ha2\n" +
+																	"中Ha3\n" +
+																	"中Ha4\n");
+
+		Assert.assertTrue(file.exists());
+		FileUtil.delAllFile(file);
+		Assert.assertTrue(! file.exists());
 	}
 }
