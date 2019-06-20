@@ -35,20 +35,9 @@ public class CfgTypeConvertManager {
 	 * @param clazz
 	 */
 	public void addConvertClass(Class<? extends ICfgTypeConvert> clazz) {
-		Type[] types = clazz.getGenericInterfaces();
-		Class<?> handlerClass = null;
-		for (Type type : types) {
-			if (type instanceof ParameterizedTypeImpl
-				&& ((ParameterizedTypeImpl) type).getRawType() == ICfgTypeConvert.class){
-				handlerClass = (Class<?>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
-			}
-		}
-
-		if (handlerClass == null) {
-			throw new RuntimeException("["+clazz.getName()+"] 必须实现ICfgTypeConvert接口, 并且有对应的泛型数据.");
-		}
 		try {
-			this.convertMap.put(handlerClass, clazz.newInstance());
+			ICfgTypeConvert cfgTypeConvert = clazz.newInstance();
+			this.convertMap.put(cfgTypeConvert.getObjClazz(), cfgTypeConvert);
 		} catch (Exception e) {
 			logger.error("初始化Convert {}失败!", clazz.getName());
 		}
