@@ -11,5 +11,7 @@ public class TestEvent1Service implements IEventListener {
 	public void eventHandler(IEventData eventData) {
 		Assert.assertEquals(Test1EventData.class,
 			eventData.getClass());
+
+		TestListener.test1Count.incrementAndGet();
 	}
 }

@@ -27,7 +27,9 @@ class ListenerManager0 implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
 		methods = context.getMethodsAnnotatedWith(EventHandler.class)
-			.parallelStream().map(m -> {
+			.parallelStream()
+			.filter(m -> IEventListener.class.isAssignableFrom(m.getDeclaringClass()))
+			.map(m -> {
 				try {
 					return new Wrapper((IEventListener) m.getDeclaringClass().newInstance(), m);
 				} catch (InstantiationException | IllegalAccessException e) {
