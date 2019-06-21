@@ -17,7 +17,7 @@ public class TestListener {
 
 	@Test
 	public void listener(){
-		ListenerManager.fireEventHandler(new Test1EventData());
+		new Test1EventData().fireEventHandler();
 		ListenerManager.fireEventHandler(new Test2EventData());
 
 		Assert.assertEquals(2, test1Count.get());
