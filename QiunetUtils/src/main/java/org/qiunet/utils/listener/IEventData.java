@@ -7,7 +7,7 @@ package org.qiunet.utils.listener;
  */
 public interface IEventData {
 	/***
-	 * 触发时间处理
+	 * 触发事件处理
 	 */
 	default void fireEventHandler() {
 		ListenerManager.fireEventHandler(this);
