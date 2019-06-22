@@ -147,7 +147,7 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
-		ListenerManager.getInstance().fireEventHandler(new ServerShutdownEventData());
+		ListenerManager.fireEventHandler(new ServerShutdownEventData());
 
 		if (hook != null) {
 			hook.shutdown();
