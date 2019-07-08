@@ -9,10 +9,6 @@ import java.lang.annotation.Target;
 
 /**
  * 用于注解需要进行数据初始化而执行的方法，其实也可以用来做其他事情，只是如果数据库没有数据的时候会执行被注解的方法而已。
- *
- * @author 艾小天
- * @email :wongtp@outlook.com
- * @date ：2017年12月27日 下午9:07:49
  */
 //表示注解加在方法等
 @Target(ElementType.METHOD)

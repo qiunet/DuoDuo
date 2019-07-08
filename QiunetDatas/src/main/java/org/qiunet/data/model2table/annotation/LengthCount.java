@@ -10,9 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * 针对数据库类型加注解，用来标记该类型需要设置几个长度 例如： datetime/不需要设置 ,varchar(1)/需要1个, double(5,2)/需要两个
- *<p>默认长度1，即1的时候不需要设置</p>
- * @author sunchenbin
- * @version 2016年6月23日 下午6:13:15
+ * <p>默认长度1，即1的时候不需要设置</p>
  */
 // 该注解用于方法声明
 @Target(ElementType.FIELD)

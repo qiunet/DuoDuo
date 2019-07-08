@@ -22,79 +22,8 @@ import java.util.Set;
 
 /**
  * 通过包名获取class
- *
- * @author sunchenbin
- * @version 2016年6月23日 下午5:55:18
  */
 public class ClassTools {
-
-	public static Set<Class<?>> scanClasses(String packName) {
-		List<String> pathList = new ArrayList<>();
-		String basePack = packName.replace(".", "\\");
-		String[] subPack = basePack.split("\\*\\*");
-		String classPath = getClassPath();
-		int classPathLength = classPath.length();
-
-		if(basePack.startsWith("**")) {
-			basePack = basePack.substring(3);
-		}else if (basePack.contains("**")) {
-			basePack = basePack.substring(0, basePack.indexOf("**"));
-		}
-
-		Path path = Paths.get(classPath + basePack);
-		getPath(path, pathList);
-		// 第一个class类的集合
-		Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
-		List<String> removePathList = new ArrayList<>();
-		for (String content : pathList) {
-			boolean flag = true;
-			//用于判断当前文件系统中的路径是否匹配配置文件中的路径
-			for (int i = 0; i < subPack.length; i++) {
-				if (!content.contains(subPack[i])
-						|| (i > 0 && content.indexOf(subPack[i]) < content.indexOf(subPack[i-1]))
-						|| (!content.endsWith(subPack[subPack.length - 1]) && !subPack[subPack.length - 1].endsWith("\\"))) {
-					flag = false;
-					removePathList.add(content);
-					//pathList.remove(content);//遍历集合的时候不应该对集合进行删除
-					break;
-				}
-			}
-			if (flag) {
-				// 获取此包的目录 建立一个File
-				File dir = new File(content);
-				// 如果存在 就获取包下的所有文件
-				File[] dirfiles = dir.listFiles(new FileFilter() {
-					// 自定义过滤规则 如果可以循环(包含子目录) 或则是以.class结尾的文件(编译好的java类文件)
-					public boolean accept(File file) {
-						return (file.getName().endsWith(".class"));
-					}
-				});
-				// 循环所有文件
-				for (File file : dirfiles) {
-					// 如果是java类文件 去掉后面的.class 只留下类名
-					String className = file.getName().substring(0, file.getName().length() - 6);
-					try{
-						// 添加到集合中去
-						// classes.add(Class.forName(packageName + '.' + className));
-						// 经过回复同学的提醒，这里用forName有一些不好，会触发static方法，没有使用classLoader的load干净
-						Class<?> clas = Thread.currentThread().getContextClassLoader().loadClass(content.substring(classPathLength).replace("\\", ".") + '.' + className);
-						Table table = clas.getAnnotation(Table.class);
-						// 没有 @Table 打注解不需要创建变
-						if (null == table) {
-							continue;
-						}
-						classes.add(clas);
-					}catch (ClassNotFoundException e) {
-						// log.error("添加用户自定义视图类错误 找不到此类的.class文件");
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-		pathList.removeAll(removePathList);
-		ConfigLoder.setModelPack(pathList);//把model的路径放到配置类中，用于加载用来初始化数据的类；放到ConfigLoder的目的只是为了方便传参而已
-		return classes;
-	}
 
 	/**
 	 * 过去需要初始化数据的 class ，也就是配置文件中和 model 相同路径的并且有用@InitData 注解的方法的类

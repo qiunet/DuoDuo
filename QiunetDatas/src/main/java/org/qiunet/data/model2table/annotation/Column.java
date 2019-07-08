@@ -10,8 +10,6 @@ import java.lang.annotation.Target;
 /**
  * 建表的必备注解
  *
- * @author sunchenbin
- * @version 2016年6月23日 下午6:12:48
  */
 // 该注解用于方法声明
 @Target(ElementType.FIELD)

@@ -10,9 +10,6 @@ import java.lang.annotation.Target;
 
 /**
  * 创建表时的表名
- *
- * @author sunchenbin
- * @version 2016年6月23日 下午6:13:37
  */
 //表示注解加在接口、类、枚举等
 @Target(ElementType.TYPE)

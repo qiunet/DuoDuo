@@ -14,9 +14,6 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
- * @author 艾小天
- * @email :wongtp@outlook.com
- * @date ：2017年12月26日 下午7:59:19
  *
  */
 public class InitDataServiceImpl implements InitDataService {

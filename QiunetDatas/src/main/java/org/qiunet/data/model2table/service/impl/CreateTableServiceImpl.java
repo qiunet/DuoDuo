@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author 艾小天
- * @email :wongtp@outlook.com
- * @date ：2017年12月22日 上午10:03:32
+ *
  */
 public class CreateTableServiceImpl implements CreateTableService {
 

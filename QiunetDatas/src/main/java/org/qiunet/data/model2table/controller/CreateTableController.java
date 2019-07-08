@@ -10,15 +10,12 @@ import org.qiunet.data.model2table.config.ConfigLoder;
 import org.qiunet.data.model2table.constants.MySqlTypeConstant;
 import org.qiunet.data.model2table.service.CreateTableService;
 import org.qiunet.data.model2table.service.InitDataService;
-import org.qiunet.data.model2table.service.ModelService;
 import org.qiunet.data.model2table.service.impl.CreateTableServiceImpl;
 import org.qiunet.data.model2table.service.impl.InitDataServiceImpl;
-import org.qiunet.data.model2table.service.impl.ModelServiceImpl;
 import org.qiunet.data.model2table.utils.ClassTools;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -44,9 +41,6 @@ public class CreateTableController {
 
 	@Resource
 	private InitDataService initDataService = new InitDataServiceImpl();
-
-	@Resource
-	private ModelService modelService = new ModelServiceImpl();
 
 	private String tableAuto;
 
