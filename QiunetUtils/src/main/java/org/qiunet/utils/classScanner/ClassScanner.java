@@ -7,12 +7,10 @@ import org.reflections.scanners.Scanner;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * @author qiunet
@@ -77,5 +75,36 @@ public final class ClassScanner implements IApplicationContext {
 	@Override
 	public Set<Method> getMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
 		return reflections.getMethodsAnnotatedWith(annotation);
+	}
+
+	@Override
+	public Object getInstanceOfClass(Class clazz, Object... params) {
+		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
+			.filter(f -> Modifier.isStatic(f.getModifiers()))
+			.filter(f -> f.getType() == clazz)
+			.findFirst();
+
+		if (first.isPresent()) {
+			Field field = first.get();
+			field.setAccessible(true);
+			try {
+				return field.get(null);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+		}else {
+			Class<?> [] clazzes = new Class[params.length];
+			for (int i = 0; i < params.length; i++) {
+				clazzes[i] = params[i].getClass();
+			}
+			try {
+				Constructor constructor = clazz.getDeclaredConstructor(clazzes);
+				constructor.setAccessible(true);
+				return constructor.newInstance(params);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		throw new NullPointerException("can not get instance for class ["+clazz.getName()+"]");
 	}
 }

@@ -1,5 +1,9 @@
 package org.qiunet.cfg.convert;
 
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+
+import java.lang.reflect.Type;
+
 /***
  * 按照cfg的Field顺序从上往下赋值 必须有默认空构造函数
  * 对文件里面的类型  读取  转换
@@ -19,4 +23,23 @@ public interface ICfgTypeConvert<Obj, Input> {
 	 * @return
 	 */
 	Obj returnObject(String fieldName, Input input) throws Exception;
+	/***
+	 * 得到Obj的Class
+	 * @return
+	 */
+	default Class<Obj> getObjClazz(){
+		Type[] types = getClass().getGenericInterfaces();
+		Class<Obj> handlerClass = null;
+		for (Type type : types) {
+			if (type instanceof ParameterizedTypeImpl
+				&& ((ParameterizedTypeImpl) type).getRawType() == ICfgTypeConvert.class){
+				handlerClass = (Class<Obj>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[0];
+			}
+		}
+
+		if (handlerClass == null) {
+			throw new RuntimeException("["+getClass().getName()+"] 必须实现ICfgTypeConvert接口, 并且有对应的泛型数据.");
+		}
+		return handlerClass;
+	}
 }

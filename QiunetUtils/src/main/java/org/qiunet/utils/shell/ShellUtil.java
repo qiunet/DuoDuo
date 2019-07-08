@@ -1,9 +1,12 @@
 package org.qiunet.utils.shell;
 
+import com.google.common.base.Preconditions;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.StringJoiner;
 
 public class ShellUtil {
 	private ShellUtil(){}
@@ -16,51 +19,37 @@ public class ShellUtil {
 		if(! "/".equals(File.separator)) return "";
 
 		shell[0] = shell[0].replace("~", System.getProperty("user.home"));
-
-		StringBuilder sb = new StringBuilder();
-
+		StringJoiner sb = new StringJoiner("\n");
 		Process process = null;
 		try {
 			process = Runtime.getRuntime().exec(shell);
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		InputStreamReader ir=new InputStreamReader(process.getInputStream());
-		LineNumberReader input = new LineNumberReader (ir);
-		String line;
-		try {
+
+		Preconditions.checkNotNull(process, "process is null");
+		try (
+			InputStreamReader ir=new InputStreamReader(process.getInputStream());
+			LineNumberReader input = new LineNumberReader (ir);
+			InputStreamReader irError = new InputStreamReader(process.getErrorStream());
+			LineNumberReader inputError = new LineNumberReader(irError)
+		){
+			String line;
 			while ((line = input.readLine ()) != null){
-				sb.append(line).append("\n");
+				sb.add(line);
 			}
 
-			ir = new InputStreamReader(process.getErrorStream());
-			input = new LineNumberReader(ir);
-	       	StringBuilder sbError = new StringBuilder();
-			while((line=input.readLine())!=null){
-				sbError.append(line).append("\n");
+	       	StringJoiner sbError = new StringJoiner("\n");
+			while((line = inputError.readLine())!=null){
+				sbError.add(line);
 			}
 	       	if(sbError.length() > 0){
-	       		sb.append("脚本错误输出:\n");
-	       		sb.append(sbError);
+	       		sb.add("脚本错误输出:");
+	       		sb.add(sbError.toString());
 	       	}
-
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
-			if(input != null)
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			if(ir != null)
-				try {
-					ir.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 		}
-
 		return sb.toString();
 	}
 

@@ -54,12 +54,7 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 		int num = loadXdFileToDataInputStream();
 		for (int i = 0; i < num; i++) {
 			Cfg cfg = generalCfg(cfgClass);
-
-			Map<SubId, Cfg> subMap = cfgMap.get(cfg.getId());
-			if (subMap == null) {
-				subMap = new SafeHashMap<>();
-				cfgMap.put(cfg.getId(), subMap);
-			}
+			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeHashMap<>());
 
 			if (subMap.containsKey(cfg.getSubId())) {
 				throw new RuntimeException("SubId ["+cfg.getSubId()+"] is duplicate!");

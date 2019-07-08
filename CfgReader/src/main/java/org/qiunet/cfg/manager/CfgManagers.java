@@ -6,9 +6,7 @@ import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * 总管 游戏设定加载
@@ -59,13 +57,17 @@ public class CfgManagers {
 		return failFileNames;
 	}
 
+	private Set<Class<? extends ICfgManager>> cfgClasses = new HashSet<>();
 	/**
 	 * 添加 Manager
 	 * @param manager
 	 * @param order
 	 */
 	public void addDataSettingManager(ICfgManager manager, int order) {
-		this.gameSettingList.add(new Container(manager, order));
+		if (cfgClasses.contains(manager.getClass())) return;
+
+		this.gameSettingList.add(new Container<>(manager, order));
+		cfgClasses.add(manager.getClass());
 	}
 	/**
 	 * 添加 properties
@@ -73,7 +75,7 @@ public class CfgManagers {
 	 * @param order
 	 */
 	public void addPropertySetting(LoaderProperties properties, int order) {
-		this.propertylist.add(new Container(properties, order));
+		this.propertylist.add(new Container<>(properties, order));
 	}
 	/**
 	 * 加载property

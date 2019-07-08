@@ -12,27 +12,24 @@ import java.util.Set;
 /**
  * 扫描requestHandler的一个类
  * @author qiunet
- *         Created on 17/3/3 16:42.
+ * Created on 17/3/3 16:42.
  */
 public class ResponseScannerHandler implements IApplicationContextAware {
-
+	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
-		Set<Class<? extends ILongConnResponse>> set = context.getSubTypesOf(ILongConnResponse.class);
-		for (Class<? extends ILongConnResponse> clazz : set) {
-			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+		this.context  = context;
 
-			this.handler(clazz);
-		}
+		context.getSubTypesOf(ILongConnResponse.class).stream()
+			.filter(c -> ! Modifier.isAbstract(c.getModifiers()))
+			.forEach(this::handler);
 	}
 
 	private void handler(Class<?> clazz) {
 		Response responseAnnotation = clazz.getAnnotation(Response.class);
 		if (responseAnnotation == null) throw new NullPointerException("class ["+clazz.getSimpleName()+"] not define ID");
 		try {
-			Constructor<ILongConnResponse> constructor = (Constructor<ILongConnResponse>) clazz.getConstructor(null);
-			if (!constructor.isAccessible()) constructor.setAccessible(true);
-			ILongConnResponse response = constructor.newInstance();
+			ILongConnResponse response = (ILongConnResponse) context.getInstanceOfClass(clazz);
 			if (response != null) {
 				ResponseMapping.getInstance().addResponse(responseAnnotation.ID(), response);
 			}

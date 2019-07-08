@@ -1,6 +1,8 @@
 package org.qiunet.cfg.manager.xd;
 
+import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.convert.ICfgTypeConvert;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
@@ -27,6 +29,8 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 	protected DataInputStream dis;
 
 	protected BaseXdCfgManager(String fileName) {
+		Cfg annotation = getClass().getAnnotation(Cfg.class);
+		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
 		this.fileName = fileName;
 	}
 	/**
@@ -117,7 +121,7 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			else if (type == Double.TYPE || type == Double.class) val = dis.readDouble();
 			else if (type == String.class) val = dis.readUTF();
 			else {
-				ICfgTypeConvert convert = returnConert(type);
+				ICfgTypeConvert convert = returnConvert(type);
 				val = convert.returnObject(field.getName(), dis);
 			}
 			field.setAccessible(true);
@@ -125,7 +129,7 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 		}
 		return cfg;
 	}
-	private ICfgTypeConvert returnConert(Class type) {
+	private ICfgTypeConvert returnConvert(Class type) {
 		ICfgTypeConvert cfgTypeConvert = CfgTypeConvertManager.getInstance().returnConvert(type);
 		if (cfgTypeConvert == null) {
 			throw new RuntimeException("not define convert for type ["+type.getName()+"]");

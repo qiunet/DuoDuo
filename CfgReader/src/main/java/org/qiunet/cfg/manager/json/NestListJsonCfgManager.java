@@ -61,11 +61,7 @@ public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID
 		SafeHashMap<Key, List<Cfg>> cfgMap = new SafeHashMap<>();
 		List<Cfg> cfgs = getSimpleListCfg("", cfgClass);
 		for (Cfg cfg : cfgs) {
-			List<Cfg> subList = cfgMap.get(cfg.getId());
-			if (subList == null) {
-				subList = new SafeList<>();
-				cfgMap.put(cfg.getId(), subList);
-			}
+			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {

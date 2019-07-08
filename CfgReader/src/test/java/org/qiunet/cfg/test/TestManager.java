@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.cfg.manager.xd.NestListXdCfgManager;
 import org.qiunet.cfg.manager.xd.NestMapXdCfgManager;
+import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,20 @@ public class TestManager {
 		Assert.assertTrue(initCfg.getId() == 1111);
 		Assert.assertEquals(initCfg.getVal2(), 123456);
 		Assert.assertEquals(initCfg.getVal(), "1,2,3");
+		Assert.assertTrue(initCfg.getVal3() > 1.09d && initCfg.getVal3() < 1.11d);
+	}
+
+	@Test
+	public void testSimpleMapWithReward(){
+		ClassScanner.getInstance().scanner();
+		SimpleMapWithRewardManager.getInstance().loadCfg();
+		InitWithRewardCfg initCfg = SimpleMapWithRewardManager.getInstance().getCfgById(1111);
+
+		Assert.assertTrue(SimpleMapWithRewardManager.getInstance().getCfgs().size() == 3);
+
+		Assert.assertTrue(initCfg.getId() == 1111);
+		Assert.assertEquals(initCfg.getVal2(), 123456);
+		Assert.assertEquals(initCfg.getReward().size(), 3);
 		Assert.assertTrue(initCfg.getVal3() > 1.09d && initCfg.getVal3() < 1.11d);
 	}
 

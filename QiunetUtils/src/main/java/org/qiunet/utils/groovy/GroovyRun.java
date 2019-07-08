@@ -52,12 +52,10 @@ public class GroovyRun<T> implements IGroovyRun<T> {
         GroovyObject groovyObject = null;
         try {
             groovyObject = scriptClass.newInstance();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException e) {
             e.printStackTrace();
         }
-        return groovyObject;
+		return groovyObject;
     }
 
     @Override

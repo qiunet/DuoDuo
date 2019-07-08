@@ -17,9 +17,11 @@ import java.util.Set;
  *         Created on 17/2/9 15:25.
  */
 public class CfgScannerHandler implements IApplicationContextAware {
-
+	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
+		this.context = context;
+
 		Set<Class<? extends ICfgManager>> set = context.getSubTypesOf(ICfgManager.class);
 		for (Class<? extends ICfgManager> aClass : set) {
 			if (Modifier.isAbstract(aClass.getModifiers())) continue;
@@ -29,16 +31,13 @@ public class CfgScannerHandler implements IApplicationContextAware {
 	}
 
 
-	private void handler(Class<?> clazz) {
+	private void handler(Class<? extends ICfgManager> clazz) {
 		Cfg setting = clazz.getAnnotation(Cfg.class);
 		try {
-			Constructor<ICfgManager> constructor = (Constructor<ICfgManager>) clazz.getDeclaredConstructor();
-			constructor.setAccessible(true);
-			ICfgManager manager = constructor.newInstance();
+			ICfgManager manager = (ICfgManager) context.getInstanceOfClass(clazz);
 
 			CfgManagers.getInstance().addDataSettingManager(manager , setting == null ? 0 : setting.order());
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }
