@@ -18,15 +18,11 @@ public class JobQuartzScannerHandler implements IApplicationContextAware {
 	public void setApplicationContext(IApplicationContext context) {
 		Set<Class<? extends IJob>> set = context.getSubTypesOf(IJob.class);
 		for (Class<? extends IJob> clazz : set) {
-			if (Modifier.isAbstract(clazz.getModifiers())) continue;
+			if (Modifier.isAbstract(clazz.getModifiers()) ||
+				CommonCronJob.class == clazz
+			) continue;
 
-			try {
-				QuartzSchedule.getInstance().addJob(clazz.newInstance());
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
+			QuartzSchedule.getInstance().addJob((IJob) context.getInstanceOfClass(clazz));
 		}
 	}
 }
