@@ -23,7 +23,7 @@ public @interface CronSchedule {
 	 * 打印执行信息
 	 * @return
 	 */
-	boolean logExecInfo() default true;
+	boolean logExecInfo() default false;
 }
 
 

@@ -14,8 +14,14 @@ public class TestQuartz {
 	}
 
 
-	@CronSchedule("1/5 * * * * ?")
+	@CronSchedule("0/5 * * * * ?")
 	private void cron() {
 		LoggerType.DUODUO.info("i-m cron called");
+	}
+
+
+	@CronSchedule("* * * * * ?")
+	private void secondsCron() {
+		LoggerType.DUODUO.info("i-m seconds called");
 	}
 }

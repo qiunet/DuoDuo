@@ -20,6 +20,8 @@ public class CommonCronJob extends BaseJob {
 		this.caller = caller;
 
 		this.workMethod.setAccessible(true);
+
+		super.jobName = workMethod.getName();
 	}
 
 	@Override
