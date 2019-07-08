@@ -10,7 +10,7 @@ public class TestQuartz {
 	@Test
 	public void testCron() throws InterruptedException {
 		ClassScanner.getInstance().scanner();
-		Thread.sleep(100000);
+		Thread.sleep(10000);
 	}
 
 

@@ -38,7 +38,7 @@ public class TimerManager {
 	 * 停闭
 	 */
 	public void shutdown(){
-		schedule.shutdown();
+		schedule.shutdownNow();
 	}
 	/***
 	 * 默认使用毫秒
