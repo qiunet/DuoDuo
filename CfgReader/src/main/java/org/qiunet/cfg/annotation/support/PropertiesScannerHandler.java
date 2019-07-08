@@ -15,9 +15,11 @@ import java.util.Set;
  *         Created on 17/2/9 15:43.
  */
 public class PropertiesScannerHandler implements IApplicationContextAware {
-
+	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
+		this.context = context;
+
 		Set<Class<? extends LoaderProperties>> set = context.getSubTypesOf(LoaderProperties.class);
 		set.stream().filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 			.forEach(this::handler);
@@ -26,9 +28,7 @@ public class PropertiesScannerHandler implements IApplicationContextAware {
 	private void handler(Class<?> clazz) {
 		Properties setting = clazz.getAnnotation(Properties.class);
 		try {
-			Constructor<LoaderProperties> constructor = (Constructor<LoaderProperties>) clazz.getDeclaredConstructor(null);
-			if (!constructor.isAccessible()) constructor.setAccessible(true);
-			LoaderProperties properties = constructor.newInstance();
+			LoaderProperties properties = (LoaderProperties) context.getInstanceOfClass(clazz);
 			CfgManagers.getInstance().addPropertySetting(properties , setting == null ? 0 : setting.order());
 		} catch (Exception e) {
 			e.printStackTrace();

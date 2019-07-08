@@ -33,4 +33,11 @@ public interface IApplicationContext {
 	 * <p/>depends on MethodAnnotationsScanner configured
 	 */
 	Set<Method> getMethodsAnnotatedWith(final Class<? extends Annotation> annotation);
+	/***
+	 * 返回class的对象
+	 * 可以是自身持有对象的单例 没有就new 一个.
+	 * @param clazz
+	 * @return
+	 */
+	Object getInstanceOfClass(Class clazz, Object ... params);
 }

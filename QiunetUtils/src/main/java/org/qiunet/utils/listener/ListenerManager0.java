@@ -38,14 +38,7 @@ class ListenerManager0 implements IApplicationContextAware {
 
 		methods = annotated.stream()
 			.filter(m -> IEventListener.class.isAssignableFrom(m.getDeclaringClass()))
-			.map(m -> {
-				try {
-					return new Wrapper((IEventListener) m.getDeclaringClass().newInstance(), m);
-				} catch (InstantiationException | IllegalAccessException e) {
-					logger.error("ListenerManager", e);
-				}
-				return null; })
-			.filter(Objects::nonNull)
+			.map(m ->new Wrapper((IEventListener) context.getInstanceOfClass(m.getDeclaringClass()), m))
 			.flatMap(Wrapper::flatMap)
 			.collect(Collectors.groupingBy(Wrapper::getDataClass, sortList));
 	}

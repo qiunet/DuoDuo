@@ -18,24 +18,20 @@ import java.util.Set;
  *         Created on 17/3/3 16:42.
  */
 public class RequestScannerHandler implements IApplicationContextAware {
-
+	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
-		Set<Class<? extends IHandler>> set = context.getSubTypesOf(IHandler.class);
-		for (Class<? extends IHandler> aClass : set) {
-			if (Modifier.isAbstract(aClass.getModifiers())) continue;
-
-			this.handler(aClass);
-		}
+		this.context = context;
+		context.getSubTypesOf(IHandler.class).stream()
+			.filter(c -> !Modifier.isAbstract(c.getModifiers()))
+			.forEach(this::handler);
 	}
 
 	private void handler(Class<?> clazz) {
 		RequestHandler requestHandler = clazz.getAnnotation(RequestHandler.class);
 		UriPathHandler otherRequestHandler = clazz.getAnnotation(UriPathHandler.class);
 		try {
-			Constructor<IHandler> constructor = (Constructor<IHandler>) clazz.getConstructor(null);
-			if (!constructor.isAccessible()) constructor.setAccessible(true);
-			IHandler handler = constructor.newInstance();
+			IHandler handler = (IHandler) context.getInstanceOfClass(clazz);
 			if (requestHandler != null) {
 				RequestHandlerMapping.getInstance().addHandler(requestHandler.ID(), handler);
 			}else {
