@@ -19,7 +19,7 @@ public class TimerManager {
 
 	private TimerManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		ShutdownHookThread.getInstance().addShutdownHook( () -> this.shutdown());
+		ShutdownHookThread.getInstance().addShutdownHook(this::shutdown);
 		instance = this;
 	}
 
