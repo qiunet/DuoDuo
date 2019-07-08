@@ -29,7 +29,7 @@ public class DatabaseSupport {
 		}
 		return instance;
 	}
-	private SqlSession getSqlSession(String dbSourceKey) {
+	public SqlSession getSqlSession(String dbSourceKey) {
 		return dbLoader.getSqlSession(dbSourceKey);
 	}
 	/**

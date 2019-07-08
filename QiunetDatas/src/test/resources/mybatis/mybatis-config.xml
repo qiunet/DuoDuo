@@ -45,5 +45,7 @@
         <mapper resource="mybatis/player/qunxiu.xml" />
 
         <mapper resource="mybatis/global/global_table.xml" />
+
+		<mapper resource="mybatis/model2table/CreateTable-mapper.xml" />
     </mappers>
 </configuration>
