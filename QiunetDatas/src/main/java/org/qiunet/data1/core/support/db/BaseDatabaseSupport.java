@@ -11,35 +11,9 @@ import java.util.Map;
  * @author qiunet
  *         Created on 17/1/23 09:41.
  */
-public class DatabaseSupport {
-	private volatile static Map<String, DatabaseSupport> instances = new HashMap<>(128);
-	private static final DatabaseSupport defaultSupport = new DatabaseSupport(null);
-	private DatabaseSupport(String dbSourceKey) {
-		this.dbSourceKey = dbSourceKey;
-	}
-	private static final DbLoader dbLoader = DbLoader.getInstance();
-	private String dbSourceKey;
-	/**
-	 * 根据dbSourceKey 取到执行的DatabaseSupport
-	 * @param dbSourceKey
-	 * @return
-	 */
-	public static DatabaseSupport getInstance(String dbSourceKey) {
-		return instances.computeIfAbsent(dbSourceKey, DatabaseSupport::new);
-	}
-
-	public static DatabaseSupport defaultInstance(){
-		return defaultSupport;
-	}
-
-	private SqlSession getSqlSession() {
-		if (dbSourceKey == null) {
-//			map 限制了. key 不可能为null
-			return dbLoader.getDefaultSqlSession();
-		}
-
-		return dbLoader.getSqlSession(dbSourceKey);
-	}
+abstract class BaseDatabaseSupport {
+	static final DbLoader dbLoader = DbLoader.getInstance();
+	abstract SqlSession getSqlSession();
 	/**
 	 * 删除记录
 	 * @param Statement  Statement

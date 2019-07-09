@@ -13,4 +13,19 @@ public interface IEntity<Key> {
 	 * @return
 	 */
 	Key getKey();
+
+	/***
+	 * 更新
+	 */
+	void update();
+
+	/**
+	 * 删除
+	 */
+	void delete();
+
+	/**
+	 * 插入
+	 */
+	void insert();
 }
