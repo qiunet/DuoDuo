@@ -18,25 +18,25 @@ public class ItemPo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "id", isUnsigned = true, type = MySqlTypeConstant.BIGINT, length = 64, isKey = true, isNull = false, comment = "字典表ID")
+	@Column(isUnsigned = true, isKey = true, isNull = false, comment = "字典表ID")
 	private Long id;
 
-	@Column(name = "parentId", isUnsigned = true, type = MySqlTypeConstant.BIGINT, length = 64, isNull = true, comment = "父级ID")
+	@Column(isUnsigned = true, comment = "父级ID")
 	private Long parentId;
 
-	@Column(name = "path", type = MySqlTypeConstant.VARCHAR, length = 100, isUnique = true, comment = "树路径")
+	@Column(isUnique = true, comment = "树路径")
 	private String path;
 
-	@Column(name = "dictName", type = MySqlTypeConstant.VARCHAR, length = 100, comment = "字典名称")
+	@Column(comment = "字典名称")
 	private String dictName;
 
-	@Column(name = "code", type = MySqlTypeConstant.VARCHAR, length = 20, comment = "字典编码")
+	@Column(length = 20, comment = "字典编码")
 	private String code;
 
-	@Column(name = "orderNo", type = MySqlTypeConstant.INT, length = 5, comment = "排序号")
+	@Column(length = 5, comment = "排序号")
 	private Integer	orderNo;
 
-	@Column(name = "hasChildren", type = MySqlTypeConstant.TINYINT, length = 1, comment = "有子节点，0否，1是")
+	@Column(comment = "有子节点，0否，1是")
 	private boolean	hasChildren;
 
 

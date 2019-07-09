@@ -417,9 +417,9 @@ public class CreateTableController {
 				// 根据注解类型返回方法的指定类型注解
 				Column column = field.getAnnotation(Column.class);
 				CreateTableParam param = new CreateTableParam();
-				param.setFieldName(column.name());
-				param.setFieldType(column.type().toLowerCase());
-				param.setFieldLength(column.length());
+				param.setFieldName(field.getName());
+				param.setFieldType(MySqlTypeConstant.parse(field.getType()));
+				param.setFieldLength(MySqlTypeConstant.getLength(field.getType(),column.length()));
 				param.setFieldDecimalLength(column.decimalLength());
 				// 主键或唯一键时设置必须不为null
 				if (column.isKey() || column.isUnique()) {
@@ -431,7 +431,7 @@ public class CreateTableController {
 				param.setFieldIsAutoIncrement(column.isAutoIncrement());
 				param.setFieldDefaultValue(column.defaultValue());
 				param.setFieldIsUnique(column.isUnique());
-				int length = (Integer) mySqlTypeAndLengthMap.get(column.type().toLowerCase());
+				int length = (Integer) mySqlTypeAndLengthMap.get(MySqlTypeConstant.parse(field.getType()));
 				param.setFileTypeLength(length);
 				param.setFieldComment(column.comment());
 				param.setFieldIsUnsigned(column.isUnsigned());

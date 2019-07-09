@@ -3,6 +3,8 @@ package org.qiunet.data.model2table.constants;
 
 import org.qiunet.data.model2table.annotation.LengthCount;
 
+import java.util.Date;
+
 /**
  * 用于配置Mysql数据库中类型，并且该类型需要设置几个长度
  * 这里配置多少个类型决定了，创建表能使用多少类型
@@ -46,4 +48,41 @@ public class MySqlTypeConstant {
 	@LengthCount
 	public static final String TINYINT = "tinyint";
 
+	/**
+	 * 根据属性类型,转换一个mysql类型
+	 * @param type
+	 * @return
+	 */
+	public static String parse(Class<?> type){
+
+		if (type == Integer.TYPE || type == Integer.class) return INT;
+		if (type == Boolean.TYPE || type == Boolean.class) return TINYINT;
+		if (type == Long.TYPE || type == Long.class) return BIGINT;
+		if (type == Double.TYPE || type == Double.class) return DOUBLE;
+		if (type == String.class) return VARCHAR;
+		if (type == Date.class) return DATETIME;
+
+		throw new RuntimeException("mysql po2table not define convert for type ["+type.getName()+"]");
+	}
+
+	/**
+	 * 根据属性类型, 取他的长度
+	 * @param type
+	 * @param length
+	 * @return
+	 */
+	public static int getLength(Class<?> type, int length){
+		//0是默认值, 根据类型, 修改默认值
+		if(length == 0){
+			if (type == Integer.TYPE || type == Integer.class) return 10;
+			if (type == Boolean.TYPE || type == Boolean.class) return 1;
+			if (type == Long.TYPE || type == Long.class) return 64;
+			if (type == Double.TYPE || type == Double.class) return 64;
+			if (type == String.class) return 255;
+			if (type == Date.class) return 10;
+		}else{
+			return length;
+		}
+		return 0;
+	}
 }
