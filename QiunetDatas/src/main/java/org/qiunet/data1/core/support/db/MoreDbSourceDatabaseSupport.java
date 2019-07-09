@@ -9,7 +9,7 @@ import java.util.Map;
  * 多个数据库源的方式
  */
 public final class MoreDbSourceDatabaseSupport extends BaseDatabaseSupport {
-	private volatile static Map<String, BaseDatabaseSupport> instances = new HashMap<>(128);
+	private volatile static Map<String, IDatabaseSupport> instances = new HashMap<>(128);
 	private MoreDbSourceDatabaseSupport(String dbSourceKey) {
 		this.dbSourceKey = dbSourceKey;
 	}
@@ -20,7 +20,7 @@ public final class MoreDbSourceDatabaseSupport extends BaseDatabaseSupport {
 	 * @param dbSourceKey
 	 * @return
 	 */
-	public static BaseDatabaseSupport getInstance(String dbSourceKey) {
+	public static IDatabaseSupport getInstance(String dbSourceKey) {
 		return instances.computeIfAbsent(dbSourceKey, MoreDbSourceDatabaseSupport::new);
 	}
 

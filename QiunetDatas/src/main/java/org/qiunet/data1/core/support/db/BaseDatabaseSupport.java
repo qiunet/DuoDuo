@@ -11,7 +11,7 @@ import java.util.Map;
  * @author qiunet
  *         Created on 17/1/23 09:41.
  */
-abstract class BaseDatabaseSupport {
+abstract class BaseDatabaseSupport implements IDatabaseSupport {
 	static final DbLoader dbLoader = DbLoader.getInstance();
 	abstract SqlSession getSqlSession();
 	/**

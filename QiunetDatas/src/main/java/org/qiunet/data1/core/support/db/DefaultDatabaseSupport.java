@@ -6,7 +6,7 @@ import org.apache.ibatis.session.SqlSession;
  * 单个数据库源的方式
  */
 public final class DefaultDatabaseSupport extends BaseDatabaseSupport {
-	private static final DefaultDatabaseSupport instance = new DefaultDatabaseSupport();
+	private static final IDatabaseSupport instance = new DefaultDatabaseSupport();
 	private DefaultDatabaseSupport() {
 		if (instance != null) {
 			throw new RuntimeException("Instance Duplication!");
@@ -16,7 +16,7 @@ public final class DefaultDatabaseSupport extends BaseDatabaseSupport {
 	 * 根据dbSourceKey 取到执行的DatabaseSupport
 	 * @return
 	 */
-	public static BaseDatabaseSupport getInstance() {
+	public static IDatabaseSupport getInstance() {
 		return instance;
 	}
 
