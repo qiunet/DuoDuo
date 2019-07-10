@@ -157,4 +157,30 @@ public class DataUtil {
 		}
 		return fieldsCache.get(clazz);
 	}
+
+
+
+	/***
+	 * 取到poName 对应的nameSpace
+	 * @param poName
+	 * @return
+	 */
+	public static String getNameSpace(String poName) {
+		if (poName.endsWith("Po")) {
+			return poName.substring(0, poName.length() - 2).toLowerCase();
+		}
+		return poName;
+	}
+
+	/***
+	 * 得到表名 保留驼峰.
+	 * @param poName
+	 * @return
+	 */
+	public static String getDefaultTableName(String poName) {
+		if (poName.endsWith("Po")) {
+			return poName.substring(0, poName.length() - 2);
+		}
+		return poName;
+	}
 }

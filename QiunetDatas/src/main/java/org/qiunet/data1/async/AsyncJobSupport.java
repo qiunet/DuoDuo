@@ -1,6 +1,7 @@
 package org.qiunet.data1.async;
 
 import org.qiunet.data1.async.IAsyncNode;
+import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * Created on 17/2/11 08:04.
  */
-public class AsyncJobSupport {
+ class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			10,
@@ -37,13 +38,14 @@ public class AsyncJobSupport {
 	}
 
 	private Set<IAsyncNode> nodes = new HashSet<>();
-	public void addNode(IAsyncNode node) {
+	void addNode(IAsyncNode node) {
 		this.nodes.add(node);
 	}
 	/***
 	 * 异步更新到db
 	 */
-	public void asyncToDb(){
+	@CronSchedule("10 0/3 * * * ?")
+	private void asyncToDb(){
 		nodes.parallelStream().forEach(node -> executor.schedule(() -> {
 			try {
 				// 必须try catch 否则导致线程停止

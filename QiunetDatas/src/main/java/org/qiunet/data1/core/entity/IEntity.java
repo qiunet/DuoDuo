@@ -15,6 +15,11 @@ public interface IEntity<Key> {
 	Key getKey();
 
 	/***
+	 * 主键的字段名
+	 * @return
+	 */
+	String getKeyFieldName();
+	/***
 	 * 更新
 	 */
 	void update();

@@ -10,4 +10,11 @@ public interface IAsyncNode {
 	 * 更新到db
 	 */
 	void syncToDatabase();
+
+	/**
+	 * 添加到AsyncJobSupport
+	 */
+	default void addToAsyncJob() {
+		AsyncJobSupport.getInstance().addNode(this);
+	}
 }
