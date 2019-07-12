@@ -10,7 +10,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.qiunet.data.db.util.DbProperties;
+import org.qiunet.data1.redis.constants.RedisDbConstants;
+import org.qiunet.data1.util.DbProperties;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -26,6 +27,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 class DbLoader {
+	private DbProperties dbProperties = DbProperties.getInstance();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/**mybatis 的配置文件名称**/
@@ -81,8 +83,8 @@ class DbLoader {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 
 		try {
-			if (DbProperties.getInstance().containKey(MYBATIS_CONFIG_FILENAME)) {
-				mybatisConfigFileName = DbProperties.getInstance().getString(MYBATIS_CONFIG_FILENAME);
+			if (dbProperties.containKey(MYBATIS_CONFIG_FILENAME)) {
+				mybatisConfigFileName = dbProperties.getString(MYBATIS_CONFIG_FILENAME);
 			}
 			this.loaderDataSource();
 
@@ -121,7 +123,7 @@ class DbLoader {
 	 */
 	private void loaderDataSource() throws Exception {
 		Set<String> sets = new HashSet<>();
-		for (Object key : DbProperties.getInstance().returnMap().keySet()) {
+		for (Object key : dbProperties.returnMap().keySet()) {
 			if (!key.toString().endsWith("driverClassName")) continue;
 			String name = StringUtil.split(key.toString(), ".")[1];
 			if (sets.contains(name)) continue;
@@ -131,10 +133,12 @@ class DbLoader {
 			sets.add(name);
 		}
 
-		int dbSourceCount = DbProperties.getInstance().getDbMaxCount() / DbProperties.getInstance().getDbSizePerInstance();
-		for (int i = 0; i < dbSourceCount; i++) {
-			if (! this.dataSources.containsKey(String.valueOf(i))){
-				throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
+		if (dbProperties.containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / dbProperties.getInt(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
+			for (int i = 0; i < dbSourceCount; i++) {
+				if (! this.dataSources.containsKey(String.valueOf(i))){
+					throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
+				}
 			}
 		}
 	}
@@ -151,12 +155,12 @@ class DbLoader {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(prefix, setting.name);
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
-				val = DbProperties.getInstance().getInt(dbKey, (Integer) val);
+				val = dbProperties.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
-				boolean contain = DbProperties.getInstance().containKey(dbKey);
-				if (contain) val = DbProperties.getInstance().getBoolean(dbKey);
+				boolean contain = dbProperties.containKey(dbKey);
+				if (contain) val = dbProperties.getBoolean(dbKey);
 			}else if(val.getClass() == String.class){
-				val = DbProperties.getInstance().getString(dbKey, (String) val);
+				val = dbProperties.getString(dbKey, (String) val);
 			}
 
 			Method method = BasicDataSource.class.getDeclaredMethod(setting.methodName, setting.clazz);

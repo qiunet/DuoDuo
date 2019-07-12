@@ -2,24 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="player">
     
-    <select id="getPlayerPo" parameterType="dbInfo" resultType="PlayerPo">
-        select * from ${dbName}.player where uid = #{uid};
+    <select id="selectPlayerPo" parameterType="dbInfo" resultType="PlayerPo">
+        select * from player where uid = #{uid};
     </select>
 
-    <update id="updatePlayerPo" parameterType="dbInfo" >
-        update ${dbName}.player SET
+    <update id="updatePlayerPo" parameterType="PlayerPo" >
+        update player SET
         `level` = #{level},
         exp=${exp}
         where uid = #{uid};
     </update>
 
-    <insert id="insertPlayerPo" parameterType="dbInfo" >
-        insert INTO ${dbName}.player
+    <insert id="insertPlayerPo" parameterType="PlayerPo" >
+        insert INTO player
         (uid , `level`, exp)
         VALUES (
         #{uid}, #{level},   #{exp});
     </insert>
-    <delete id="deletePlayerPo" parameterType="dbInfo" >
-        DELETE FROM  ${dbName}.player  WHERE uid = #{uid};
+    <delete id="deletePlayerPo" parameterType="PlayerPo" >
+        DELETE FROM  player  WHERE uid = #{uid};
     </delete>
 </mapper>

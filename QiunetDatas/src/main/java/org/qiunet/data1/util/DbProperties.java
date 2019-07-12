@@ -12,7 +12,7 @@ public class DbProperties extends LoaderProperties {
 	 * 要求相对 classpath的地址
 	 */
 	private DbProperties() {
-		super("db.properties");
+		super("db1.properties");
 	}
 	public String getDbName(){
 		return getString("db_name");

@@ -10,6 +10,8 @@ public class DbDataSupport<Key, Po extends IDbEntity<Key>> extends BaseDbDataSup
 
 	public Po getPo(Key key) {
 		Map<String, Object> map = SelectMap.create().put(defaultPo.getKeyFieldName(), key);
-		return DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+		Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+		po.setDataSupport(this);
+		return po;
 	}
 }
