@@ -40,6 +40,11 @@ class DbLoader {
 	// mybatis 配置文件的名称
 	private static final String MYBATIS_CONFIG_FILENAME = "mybatis_config_filename";
 
+	/***
+	 * Db模式和Cache单数据库模式下, 默认的数据库源. 如果没有. 会取第一个(认为配置里也就一个).
+	 */
+	private static final String DEFAULT_DATABASE_SOURCE = "default_database_source";
+
 	private String mybatisConfigFileName = DEFAULT_MYBATIS_FILENAME;
 
 	/**需要设定的连接池属性. 以及默认值**/
@@ -226,7 +231,11 @@ class DbLoader {
 			throw new NullPointerException("default config size must be 1!");
 		}
 		if (defaultSqlSessionFactory == null) {
-			this.defaultSqlSessionFactory = new ArrayList<>(dataSources.values()).get(0);
+			if (dbProperties.containKey(DEFAULT_DATABASE_SOURCE)) {
+				this.defaultSqlSessionFactory = dataSources.get(dbProperties.getString(DEFAULT_DATABASE_SOURCE));
+			}else {
+				this.defaultSqlSessionFactory = new ArrayList<>(dataSources.values()).get(0);
+			}
 		}
 		return defaultSqlSessionFactory;
 	}
