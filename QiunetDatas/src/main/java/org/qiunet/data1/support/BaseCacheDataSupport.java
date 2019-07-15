@@ -33,7 +33,7 @@ class BaseCacheDataSupport<Po extends ICacheEntity> extends BaseDataSupport<Po> 
 					break;
 				case DELETE:
 					DefaultDatabaseSupport.getInstance().delete(insertStatement, po);
-					cache.invalidate(getCacheKey(po.getKey()));
+					cache.invalidate(getCacheKey(po.key()));
 					break;
 				case UPDATE:
 					if (po.atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
@@ -56,7 +56,7 @@ class BaseCacheDataSupport<Po extends ICacheEntity> extends BaseDataSupport<Po> 
 			return DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
 		}
 		if (po.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
-			syncKeyQueue.add(getCacheKey(po.getKey()));
+			syncKeyQueue.add(getCacheKey(po.key()));
 		}
 		return 0;
 	}
@@ -71,7 +71,7 @@ class BaseCacheDataSupport<Po extends ICacheEntity> extends BaseDataSupport<Po> 
 		}
 
 		if (po.atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
-			syncKeyQueue.add(getCacheKey(po.getKey()));
+			syncKeyQueue.add(getCacheKey(po.key()));
 		}
 		return 0;
 	}
@@ -88,7 +88,7 @@ class BaseCacheDataSupport<Po extends ICacheEntity> extends BaseDataSupport<Po> 
 		}
 
 		if (po.atomicSetEntityStatus(EntityStatus.DELETE)) {
-			syncKeyQueue.add(getCacheKey(po.getKey()));
+			syncKeyQueue.add(getCacheKey(po.key()));
 		}
 		return 0;
 	}

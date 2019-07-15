@@ -37,5 +37,6 @@
 
 	<mappers>
         <mapper resource="mybatis/player.xml" />
+        <mapper resource="mybatis/item.xml" />
     </mappers>
 </configuration>

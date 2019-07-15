@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="item">
+    
+    <select id="selectItemPo" parameterType="map" resultType="ItemPo">
+        select * from item where uid = #{uid};
+    </select>
+
+    <update id="updateItemPo" parameterType="ItemPo" >
+        update item SET
+        `count` = ${count}
+        where `uid` = #{uid} and `item_id` = #{item_id};
+    </update>
+
+    <insert id="insertItemPo" parameterType="ItemPo" >
+        insert INTO item
+        (`uid` , `item_id`, `count`)
+        VALUES (
+        #{uid}, #{item_id}, #{count});
+    </insert>
+    <delete id="deleteItemPo" parameterType="ItemPo" >
+        DELETE FROM  item  WHERE `uid` = #{uid} and `item_id` = #{item_id} ;
+    </delete>
+</mapper>

@@ -23,7 +23,7 @@ public interface IRedisEntity<Key> extends IEntity<Key> {
 	 * @return
 	 */
 	default int getDbIndex(){
-		return redisDbInfo().getDbIndexByKey(getKey());
+		return redisDbInfo().getDbIndexByKey(key());
 	}
 	/**
 	 * 根据dbIndex 得到是用哪个数据库源的key

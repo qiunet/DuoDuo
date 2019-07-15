@@ -1,7 +1,5 @@
 package org.qiunet.data1.core.entity;
 
-import org.qiunet.data1.support.IDataSupport;
-
 /***
  * 主键对应一条数据的对象.
  * 一 对 一
@@ -14,13 +12,13 @@ public interface IEntity<Key> {
 	 * 或者工会id等
 	 * @return
 	 */
-	Key getKey();
+	Key key();
 
 	/***
 	 * 主键的字段名
 	 * @return
 	 */
-	String getKeyFieldName();
+	String keyFieldName();
 	/***
 	 * 更新
 	 */

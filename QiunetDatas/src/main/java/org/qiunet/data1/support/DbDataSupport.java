@@ -13,7 +13,7 @@ public class DbDataSupport<Key, Po extends IDbEntity<Key>> extends BaseDbDataSup
 	}
 
 	public Po getPo(Key key) {
-		Map<String, Object> map = SelectMap.create().put(defaultPo.getKeyFieldName(), key);
+		Map<String, Object> map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 		return DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 	}
 }

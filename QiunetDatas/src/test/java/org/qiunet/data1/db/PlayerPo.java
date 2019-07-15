@@ -43,12 +43,12 @@ public class PlayerPo extends DbEntity<Long> {
 	}
 
 	@Override
-	public Long getKey() {
+	public Long key() {
 		return uid;
 	}
 
 	@Override
-	public String getKeyFieldName() {
+	public String keyFieldName() {
 		return "uid";
 	}
 }

@@ -7,7 +7,7 @@ import org.qiunet.data1.db.entity.IDbEntityList;
 import java.util.List;
 
 public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey>> extends BaseDbDataSupport<Po> {
-	protected DbDataListSupport(Class<Po> poClass) {
+	public DbDataListSupport(Class<Po> poClass) {
 		super(poClass);
 	}
 
@@ -17,7 +17,7 @@ public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey
 	 * @return
 	 */
 	public List<Po> getPoList(Key key) {
-		SelectMap map = SelectMap.create().put(defaultPo.getKeyFieldName(), key);
+		SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 		return DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 	}
 }

@@ -16,6 +16,6 @@ public interface IRedisEntityList<Key, SubKey> extends IEntityList<Key, SubKey>,
 	 * @return
 	 */
 	default int getTbIndex(){
-		return redisListDbInfo().getTbIndexByKey(getKey());
+		return redisListDbInfo().getTbIndexByKey(key());
 	}
 }
