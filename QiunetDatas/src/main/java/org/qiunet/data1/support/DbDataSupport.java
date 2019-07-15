@@ -8,10 +8,14 @@ import java.util.Map;
 
 public class DbDataSupport<Key, Po extends IDbEntity<Key>> extends BaseDbDataSupport<Po> {
 
+	public DbDataSupport(Class<Po> poClass) {
+		super(poClass);
+	}
+
 	public Po getPo(Key key) {
 		Map<String, Object> map = SelectMap.create().put(defaultPo.getKeyFieldName(), key);
 		Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
-		po.setDataSupport(this);
+		if (po != null) po.setDataSupport(this);
 		return po;
 	}
 }

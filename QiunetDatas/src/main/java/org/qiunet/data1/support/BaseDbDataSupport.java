@@ -4,7 +4,11 @@ import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data1.db.entity.IDbEntity;
 
  class BaseDbDataSupport<Po extends IDbEntity> extends BaseDataSupport<Po> {
-	@Override
+	 protected BaseDbDataSupport(Class<Po> poClass) {
+		 super(poClass);
+	 }
+
+	 @Override
 	public void syncToDatabase() {
 		// 不是异步. 不需要实现
 	}
@@ -15,6 +19,7 @@ import org.qiunet.data1.db.entity.IDbEntity;
 	 * @return
 	 */
 	public int insert(Po po) {
+		if (po != null) po.setDataSupport(this);
 		return DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
 	}
 

@@ -1,6 +1,7 @@
-package org.qiunet.data1.db.entity;
+package org.qiunet.data1.db;
 
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data1.db.entity.DbEntity;
 
 @Alias("PlayerPo")
 public class PlayerPo extends DbEntity<Long> {

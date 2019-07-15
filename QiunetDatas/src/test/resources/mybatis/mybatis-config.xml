@@ -28,8 +28,7 @@
     <!--<typeAliases>不需要指定了,  默认的完全够用. </typeAliases>-->
     <typeAliases>
         <typeAlias alias="dbInfo" type="org.qiunet.data.db.support.info.IEntityDbInfo" />
-        <package name="org.qiunet.data.redis.entity" />
-        <package name="org.qiunet.data.db.data.login" />
+        <package name="org.qiunet.data1" />
     </typeAliases>
 
 	<plugins>
@@ -37,15 +36,6 @@
 	</plugins>
 
 	<mappers>
-        <mapper resource="mybatis/player/player.xml" />
-        <mapper resource="mybatis/player/friend.xml" />
-        <mapper resource="mybatis/player/sysmsg.xml" />
-        <mapper resource="mybatis/player/equip.xml" />
-        <mapper resource="mybatis/player/login.xml" />
-        <mapper resource="mybatis/player/qunxiu.xml" />
-
-        <mapper resource="mybatis/global/global_table.xml" />
-
-		<mapper resource="mybatis/model2table/CreateTable-mapper.xml" />
+        <mapper resource="mybatis/player.xml" />
     </mappers>
 </configuration>

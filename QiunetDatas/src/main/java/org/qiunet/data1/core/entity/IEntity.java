@@ -35,9 +35,4 @@ public interface IEntity<Key> {
 	 * 删除
 	 */
 	void delete();
-
-	/**
-	 * 插入
-	 */
-	void insert();
 }

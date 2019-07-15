@@ -19,9 +19,4 @@ public abstract class DbEntity<Key> implements IDbEntity<Key> {
 	public void delete() {
 		this.dataSupport.delete(this);
 	}
-
-	@Override
-	public void insert() {
-		this.dataSupport.insert(this);
-	}
 }

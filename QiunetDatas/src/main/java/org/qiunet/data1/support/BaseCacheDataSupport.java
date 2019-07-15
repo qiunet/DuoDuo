@@ -14,6 +14,11 @@ class BaseCacheDataSupport<Po extends ICacheEntity> extends BaseDataSupport<Po> 
 	protected LocalCache<String, Po> cache = new LocalCache<>();
 	/***有同步需求的 key*/
 	protected CopyOnWriteArraySet<String> syncKeyQueue = new CopyOnWriteArraySet<>();
+
+	protected BaseCacheDataSupport(Class<Po> poClass) {
+		super(poClass);
+	}
+
 	@Override
 	public void syncToDatabase() {
 		if (! async) return;

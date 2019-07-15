@@ -11,6 +11,7 @@ import java.util.StringJoiner;
  * 基础的DataSupport
  */
  abstract class BaseDataSupport<Po extends IEntity> implements IDataSupport<Po>,IAsyncNode {
+ 	private Class<Po> poClass;
 	/** 默认的一个Po 查询一些Key  subKey名称*/
  	protected Po defaultPo;
 	/**	po的名称. 用来组装 statement */
@@ -23,9 +24,10 @@ import java.util.StringJoiner;
 	protected String deleteStatement;
 	protected String selectStatement;
 
-	protected BaseDataSupport(){
+	protected BaseDataSupport(Class<Po> poClass){
+		this.poClass = poClass;
 		try {
-			this.init();
+			this.init(poClass);
 		} catch (IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +37,7 @@ import java.util.StringJoiner;
 		this.selectStatement = nameSpace+".select"+poName;
 		this.insertStatement = nameSpace+".insert"+poName;
 		this.updateStatement = nameSpace+".update"+poName;
-		this.selectStatement = nameSpace+".delete"+poName;
+		this.deleteStatement = nameSpace+".delete"+poName;
 
 		this.addToAsyncJob();
 	}
@@ -44,21 +46,9 @@ import java.util.StringJoiner;
 	 * 得到po的名称. 用来组装 statement
 	 * @return
 	 */
-	private void init() throws IllegalAccessException, InstantiationException {
-		Class clazz = getClass();
-		do {
-			if (clazz != BaseDataSupport.class) {
-				clazz = clazz.getSuperclass();
-				continue;
-			}
-
-			Class<Po> typeClass = (Class<Po>) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-			this.defaultPo = typeClass.newInstance();
-			this.poName = typeClass.getSimpleName();
-			return;
-		}while (clazz != Object.class);
-
-		throw new RuntimeException("class ["+getClass().getName()+"] is not extends BaseDataSupport. can not get PoName");
+	private void init(Class<Po> poClass) throws IllegalAccessException, InstantiationException {
+		this.defaultPo = poClass.newInstance();
+		this.poName = poClass.getSimpleName();
 	}
 
 	/***
