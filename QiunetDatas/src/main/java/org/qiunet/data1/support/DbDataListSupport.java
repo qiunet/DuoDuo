@@ -18,8 +18,6 @@ public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey
 	 */
 	public List<Po> getPoList(Key key) {
 		SelectMap map = SelectMap.create().put(defaultPo.getKeyFieldName(), key);
-		List<Po> poList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
-		if (poList != null) poList.forEach(po -> po.setDataSupport(this));
-		return poList;
+		return DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 	}
 }

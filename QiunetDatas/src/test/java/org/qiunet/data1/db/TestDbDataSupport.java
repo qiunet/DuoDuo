@@ -17,7 +17,7 @@ public class TestDbDataSupport {
 		playerPo.setName("秋阳1");
 		playerPo.setLevel(10);
 		playerPo.setUid(uid);
-		dataSupport.insert(playerPo);
+		playerPo.insert();
 
 		playerPo.setName(name);
 		playerPo.setLevel(100);

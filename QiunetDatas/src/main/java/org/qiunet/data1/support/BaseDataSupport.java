@@ -4,7 +4,6 @@ import org.qiunet.data1.async.IAsyncNode;
 import org.qiunet.data1.core.entity.IEntity;
 import org.qiunet.data1.util.DataUtil;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.StringJoiner;
 
 /**
@@ -25,6 +24,7 @@ import java.util.StringJoiner;
 	protected String selectStatement;
 
 	protected BaseDataSupport(Class<Po> poClass){
+		DataSupportMapping.addMapping(poClass, this);
 		this.poClass = poClass;
 		try {
 			this.init(poClass);

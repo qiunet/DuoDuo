@@ -19,7 +19,6 @@ import org.qiunet.data1.db.entity.IDbEntity;
 	 * @return
 	 */
 	public int insert(Po po) {
-		if (po != null) po.setDataSupport(this);
 		return DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
 	}
 

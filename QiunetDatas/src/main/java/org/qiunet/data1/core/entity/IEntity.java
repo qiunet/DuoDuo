@@ -9,11 +9,6 @@ import org.qiunet.data1.support.IDataSupport;
  */
 public interface IEntity<Key> {
 	/***
-	 *
-	 * @param dataSupport
-	 */
-	void setDataSupport(IDataSupport dataSupport);
-	/***
 	 * 得到Entity的主键
 	 * 一般是uid  openId
 	 * 或者工会id等
@@ -35,4 +30,9 @@ public interface IEntity<Key> {
 	 * 删除
 	 */
 	void delete();
+
+	/**
+	 * 插入
+	 */
+	void insert();
 }
