@@ -9,10 +9,10 @@ import org.qiunet.data1.db.entity.IDbEntity;
  */
 public interface ICacheEntity<Key> extends IDbEntity<Key> {
 	/**
-	 * 原子性更新状态
+	 * 更新状态
 	 * @param status
 	 */
-	boolean atomicSetEntityStatus(EntityStatus status);
+	void updateEntityStatus(EntityStatus status);
 	/**
 	 * 必须符合预期, 才会插入.
 	 * 比如执行INSERT后, 必须是INSERT状态改回NORMAL

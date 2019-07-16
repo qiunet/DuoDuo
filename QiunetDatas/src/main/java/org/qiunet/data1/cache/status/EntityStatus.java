@@ -27,5 +27,9 @@ public enum  EntityStatus {
 	 * 当前待删除状态.
 	 */
 	DELETE,
+	/***
+	 * 删除状态 缓存清除时候判断DELETE.
+	 */
+	DELETED,
 	;
 }

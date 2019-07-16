@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="item">
+    
+    <select id="selectGuildMemberPo" parameterType="map" resultType="GuildMemberPo">
+        select * from guild_member where guildId = #{guildId};
+    </select>
+
+    <update id="updateGuildMemberPo" parameterType="GuildMemberPo" >
+        update guild_member SET
+        `job` = ${job}
+        where `guildId` = #{guildId} and `memberId` = #{memberId};
+    </update>
+
+    <insert id="insertGuildMemberPo" parameterType="GuildMemberPo" >
+        insert INTO item
+        (`guildId` , `memberId`, `job`)
+        VALUES (
+        #{guildId}, #{memberId}, #{job});
+    </insert>
+    <delete id="deleteGuildMemberPo" parameterType="GuildMemberPo" >
+        DELETE FROM  guild_member  WHERE `guildId` = #{guildId} and `memberId` = #{memberId} ;
+    </delete>
+</mapper>
