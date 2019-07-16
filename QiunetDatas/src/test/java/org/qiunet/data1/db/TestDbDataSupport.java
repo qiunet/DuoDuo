@@ -2,17 +2,16 @@ package org.qiunet.data1.db;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.data1.db.entity.DbEntity;
 import org.qiunet.data1.support.DbDataListSupport;
 import org.qiunet.data1.support.DbDataSupport;
 
-import java.util.List;
+import java.util.Map;
 
 public class TestDbDataSupport {
 
-	private static DbDataSupport<Long, PlayerPo> dataSupport = new DbDataSupport<>(PlayerPo.class);
+	private static DbDataSupport<Long, PlayerPo, PlayerVo> dataSupport = new DbDataSupport<>(PlayerPo.class, PlayerVo::new);
 
-	private static DbDataListSupport<Long, Integer, ItemPo> dataListSupport = new DbDataListSupport<>(ItemPo.class);
+	private static DbDataListSupport<Long, Integer, ItemPo, ItemVo> dataListSupport = new DbDataListSupport<>(ItemPo.class, ItemVo::new);
 	private long uid = 10000;
 
 	@Test
@@ -29,13 +28,14 @@ public class TestDbDataSupport {
 		playerPo.setLevel(100);
 		playerPo.update();
 
-		playerPo = dataSupport.getPo(uid);
-		Assert.assertEquals(playerPo.getName(), name);
-		Assert.assertEquals(playerPo.getLevel(), 100);
+		PlayerVo vo = dataSupport.getVo(uid);
+		Assert.assertEquals(vo.getPlayerPo().getName(), name);
+		Assert.assertEquals(vo.getPlayerPo().getLevel(), 100);
 
-		playerPo.delete();
-		playerPo = dataSupport.getPo(uid);
-		Assert.assertNull(playerPo);
+		vo.getPlayerPo().delete();
+
+		vo = dataSupport.getVo(uid);
+		Assert.assertNull(vo);
 	}
 
 	@Test
@@ -53,27 +53,27 @@ public class TestDbDataSupport {
 		itemPo2.setCount(2);
 		itemPo2.insert();
 
-		List<ItemPo> poList = dataListSupport.getPoList(uid);
-		Assert.assertEquals(poList.size(), 2);
+		Map<Integer, ItemVo> voMap = dataListSupport.getVoMap(uid);
+		Assert.assertEquals(voMap.size(), 2);
 
-		for (ItemPo itemPo : poList) {
-			Assert.assertTrue(itemPo.getItem_id() >= 1 && itemPo.getItem_id() <= 2);
-			Assert.assertEquals(itemPo.getCount(), itemPo.getItem_id());
+		for (ItemVo vo : voMap.values()) {
+			Assert.assertTrue(vo.getItemPo().getItem_id() >= 1 && vo.getItemPo().getItem_id() <= 2);
+			Assert.assertEquals(vo.getItemPo().getCount(), vo.getItemPo().getItem_id());
 		}
 
 		itemPo2.setCount(3);
 		itemPo2.update();
 
-		poList = dataListSupport.getPoList(uid);
-		poList.forEach(po -> {
-			if (po.getItem_id() == 2){
-				Assert.assertEquals(3, po.getCount());
+		voMap = dataListSupport.getVoMap(uid);
+		voMap.values().forEach(po -> {
+			if (po.getItemPo().getItem_id() == 2){
+				Assert.assertEquals(3, po.getItemPo().getCount());
 			}
 		});
 
-		poList.forEach(ItemPo::delete);
+		voMap.values().forEach(vo -> vo.getItemPo().delete());
 
-		poList = dataListSupport.getPoList(uid);
-		Assert.assertTrue(poList.isEmpty());
+		voMap = dataListSupport.getVoMap(uid);
+		Assert.assertTrue(voMap.isEmpty());
 	}
 }

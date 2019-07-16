@@ -3,9 +3,9 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data1.db.entity.IDbEntity;
 
- class BaseDbDataSupport<Po extends IDbEntity> extends BaseDataSupport<Po> {
-	 protected BaseDbDataSupport(Class<Po> poClass) {
-		 super(poClass);
+ class BaseDbDataSupport<Po extends IDbEntity, Vo> extends BaseDataSupport<Po, Vo> {
+	 protected BaseDbDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
+		 super(poClass, supplier);
 	 }
 
 	 @Override

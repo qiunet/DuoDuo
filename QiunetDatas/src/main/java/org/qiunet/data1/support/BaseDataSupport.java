@@ -3,14 +3,18 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.async.IAsyncNode;
 import org.qiunet.data1.core.entity.IEntity;
 import org.qiunet.data1.util.DataUtil;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.util.StringJoiner;
 
 /**
  * 基础的DataSupport
  */
- abstract class BaseDataSupport<Po extends IEntity> implements IDataSupport<Po>,IAsyncNode {
- 	private Class<Po> poClass;
+ abstract class BaseDataSupport<Po extends IEntity, Vo> implements IDataSupport<Po>,IAsyncNode {
+ 	protected static final Logger logger = LoggerType.DUODUO.getLogger();
+	protected VoSupplier<Po , Vo> supplier;
+	protected Class<Po> poClass;
 	/** 默认的一个Po 查询一些Key  subKey名称*/
  	protected Po defaultPo;
 	/**	po的名称. 用来组装 statement */
@@ -23,9 +27,10 @@ import java.util.StringJoiner;
 	protected String deleteStatement;
 	protected String selectStatement;
 
-	protected BaseDataSupport(Class<Po> poClass){
+	protected BaseDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier){
 		DataSupportMapping.addMapping(poClass, this);
 		this.poClass = poClass;
+		this.supplier = supplier;
 		try {
 			this.init(poClass);
 		} catch (IllegalAccessException | InstantiationException e) {
