@@ -87,6 +87,7 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo> extends BaseDat
 		if (po.atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
 			syncKeyQueue.add(this.syncQueueKey(po));
 		}
+		// update 可能update在其它状态的po 所以不需要error打印.
 		return 0;
 	}
 

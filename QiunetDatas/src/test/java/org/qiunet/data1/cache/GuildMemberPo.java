@@ -50,6 +50,6 @@ public class GuildMemberPo extends CacheEntityList<Long, Long> {
 
 	@Override
 	public String keyFieldName() {
-		return "memberId";
+		return "guildId";
 	}
 }
