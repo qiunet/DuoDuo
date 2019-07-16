@@ -30,9 +30,9 @@ public class TestCacheDataSupport {
 
 		GuildVo guildVo = dataSupport.getVo(guildId);
 		Assert.assertNotNull(guildVo);
-		guildVo.getGuildPo().insert();
+		guildVo.getPo().insert();
 
-		guildVo.getGuildPo().delete();
+		guildVo.getPo().delete();
 		dataSupport.syncToDatabase();
 	}
 
@@ -56,8 +56,8 @@ public class TestCacheDataSupport {
 		Assert.assertEquals(voMap.size(), 2);
 
 		for (GuildMemberVo vo : voMap.values()) {
-			Assert.assertTrue(vo.getGuildMemberPo().getJob() >= 1 && vo.getGuildMemberPo().getJob() <= 2);
-			Assert.assertEquals(vo.getGuildMemberPo().getJob(), vo.getGuildMemberPo().getMemberId());
+			Assert.assertTrue(vo.getPo().getJob() >= 1 && vo.getPo().getJob() <= 2);
+			Assert.assertEquals(vo.getPo().getJob(), vo.getPo().getMemberId());
 		}
 
 		memberPo2.setJob(3);
@@ -68,12 +68,12 @@ public class TestCacheDataSupport {
 
 		voMap = dataListSupport.getVoMap(guildId);
 		voMap.values().forEach(po -> {
-			if (po.getGuildMemberPo().getMemberId() == 2){
-				Assert.assertEquals(3, po.getGuildMemberPo().getJob());
+			if (po.getPo().getMemberId() == 2){
+				Assert.assertEquals(3, po.getPo().getJob());
 			}
 		});
 
-		voMap.values().forEach(vo -> vo.getGuildMemberPo().delete());
+		voMap.values().forEach(vo -> vo.getPo().delete());
 
 		dataListSupport.syncToDatabase();
 

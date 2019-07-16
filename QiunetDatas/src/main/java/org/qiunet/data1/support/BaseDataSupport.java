@@ -6,12 +6,11 @@ import org.qiunet.data1.util.DataUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.util.StringJoiner;
 
 /**
  * 基础的DataSupport
  */
- abstract class BaseDataSupport<Po extends IEntity, Vo> implements IDataSupport<Po>,IAsyncNode {
+ abstract class BaseDataSupport<Po extends IEntity, Vo extends IEntityVo<Po>> implements IDataSupport<Po>,IAsyncNode {
  	protected static final Logger logger = LoggerType.DUODUO.getLogger();
 	protected VoSupplier<Po , Vo> supplier;
 	protected Class<Po> poClass;

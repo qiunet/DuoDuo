@@ -6,7 +6,7 @@ import org.qiunet.data1.db.entity.IDbEntity;
 
 import java.util.Map;
 
-public class DbDataSupport<Key, Po extends IDbEntity<Key>, Vo> extends BaseDbDataSupport<Po, Vo> {
+public class DbDataSupport<Key, Po extends IDbEntity<Key>, Vo extends IEntityVo<Po>> extends BaseDbDataSupport<Po, Vo> {
 	public DbDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
 		super(poClass, supplier);
 

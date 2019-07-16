@@ -6,12 +6,10 @@ import org.qiunet.data1.cache.status.EntityStatus;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data1.util.DbProperties;
 
-import java.util.Iterator;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.CopyOnWriteArraySet;
 
-abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo> extends BaseDataSupport<Po, Vo> {
+abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityVo<Po>> extends BaseDataSupport<Po, Vo> {
 	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
 	/***有同步需求的 key*/
 	protected ConcurrentSkipListSet<String> syncKeyQueue = new ConcurrentSkipListSet<>();

@@ -8,7 +8,7 @@ import org.qiunet.data1.core.entity.IEntity;
  * @param <Vo>
  */
 @FunctionalInterface
-public interface VoSupplier<Po extends IEntity, Vo> {
+public interface VoSupplier<Po extends IEntity, Vo extends IEntityVo<Po>> {
 	/**
 	 * po得到一个Vo
 	 * @param po

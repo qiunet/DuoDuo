@@ -1,6 +1,8 @@
 package org.qiunet.data1.db;
 
-public class PlayerVo {
+import org.qiunet.data1.support.IEntityVo;
+
+public class PlayerVo implements IEntityVo<PlayerPo> {
 
 	private PlayerPo playerPo;
 
@@ -8,7 +10,8 @@ public class PlayerVo {
 		this.playerPo = playerPo;
 	}
 
-	public PlayerPo getPlayerPo() {
+	@Override
+	public PlayerPo getPo() {
 		return playerPo;
 	}
 }

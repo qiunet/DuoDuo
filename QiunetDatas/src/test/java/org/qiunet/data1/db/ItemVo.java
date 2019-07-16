@@ -1,14 +1,16 @@
 package org.qiunet.data1.db;
 
-public class ItemVo {
+import org.qiunet.data1.support.IEntityVo;
+
+public class ItemVo implements IEntityVo<ItemPo> {
 
 	private ItemPo itemPo;
 
 	public ItemVo(ItemPo itemPo) {
 		this.itemPo = itemPo;
 	}
-
-	public ItemPo getItemPo() {
+	@Override
+	public ItemPo getPo() {
 		return itemPo;
 	}
 }

@@ -29,10 +29,10 @@ public class TestDbDataSupport {
 		playerPo.update();
 
 		PlayerVo vo = dataSupport.getVo(uid);
-		Assert.assertEquals(vo.getPlayerPo().getName(), name);
-		Assert.assertEquals(vo.getPlayerPo().getLevel(), 100);
+		Assert.assertEquals(vo.getPo().getName(), name);
+		Assert.assertEquals(vo.getPo().getLevel(), 100);
 
-		vo.getPlayerPo().delete();
+		vo.getPo().delete();
 
 		vo = dataSupport.getVo(uid);
 		Assert.assertNull(vo);
@@ -57,8 +57,8 @@ public class TestDbDataSupport {
 		Assert.assertEquals(voMap.size(), 2);
 
 		for (ItemVo vo : voMap.values()) {
-			Assert.assertTrue(vo.getItemPo().getItem_id() >= 1 && vo.getItemPo().getItem_id() <= 2);
-			Assert.assertEquals(vo.getItemPo().getCount(), vo.getItemPo().getItem_id());
+			Assert.assertTrue(vo.getPo().getItem_id() >= 1 && vo.getPo().getItem_id() <= 2);
+			Assert.assertEquals(vo.getPo().getCount(), vo.getPo().getItem_id());
 		}
 
 		itemPo2.setCount(3);
@@ -66,12 +66,12 @@ public class TestDbDataSupport {
 
 		voMap = dataListSupport.getVoMap(uid);
 		voMap.values().forEach(po -> {
-			if (po.getItemPo().getItem_id() == 2){
-				Assert.assertEquals(3, po.getItemPo().getCount());
+			if (po.getPo().getItem_id() == 2){
+				Assert.assertEquals(3, po.getPo().getCount());
 			}
 		});
 
-		voMap.values().forEach(vo -> vo.getItemPo().delete());
+		voMap.values().forEach(vo -> vo.getPo().delete());
 
 		voMap = dataListSupport.getVoMap(uid);
 		Assert.assertTrue(voMap.isEmpty());

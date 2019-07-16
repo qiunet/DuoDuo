@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey>, Vo> extends BaseCacheDataSupport<Po, Vo> {
+public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
 	private LocalCache<String, Map<String, Po>> cache = new LocalCache<>();
 

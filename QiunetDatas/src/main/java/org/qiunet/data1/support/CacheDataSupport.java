@@ -7,7 +7,7 @@ import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
 
-public class CacheDataSupport<Key, Po extends ICacheEntity<Key>, Vo> extends BaseCacheDataSupport<Po, Vo> {
+public class CacheDataSupport<Key, Po extends ICacheEntity<Key>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
 	private LocalCache<String, Po> cache = new LocalCache<>();
 
