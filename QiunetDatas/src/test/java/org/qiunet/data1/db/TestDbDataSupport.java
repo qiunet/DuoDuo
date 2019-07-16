@@ -26,13 +26,13 @@ public class TestDbDataSupport {
 
 		playerVo.getPo().setName(name);
 		playerVo.getPo().setLevel(100);
-		playerVo.getPo().update();
+		playerVo.update();
 
 		PlayerVo vo = dataSupport.getVo(uid);
 		Assert.assertEquals(vo.getPo().getName(), name);
 		Assert.assertEquals(vo.getPo().getLevel(), 100);
 
-		vo.getPo().delete();
+		vo.delete();
 
 		vo = dataSupport.getVo(uid);
 		Assert.assertNull(vo);
@@ -62,7 +62,7 @@ public class TestDbDataSupport {
 		}
 
 		vo2.getPo().setCount(3);
-		vo2.getPo().update();
+		vo2.update();
 
 		voMap = dataListSupport.getVoMap(uid);
 		voMap.values().forEach(po -> {
@@ -71,7 +71,7 @@ public class TestDbDataSupport {
 			}
 		});
 
-		voMap.values().forEach(vo -> vo.getPo().delete());
+		voMap.values().forEach(ItemVo::delete);
 
 		voMap = dataListSupport.getVoMap(uid);
 		Assert.assertTrue(voMap.isEmpty());

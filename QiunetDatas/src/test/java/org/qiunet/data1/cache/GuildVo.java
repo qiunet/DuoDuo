@@ -12,4 +12,14 @@ public class GuildVo implements IEntityVo<GuildPo> {
 	public GuildPo getPo() {
 		return guildPo;
 	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+	@Override
+	public void deserialize() {
+
+	}
 }

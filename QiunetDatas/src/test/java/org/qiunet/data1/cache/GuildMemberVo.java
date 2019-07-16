@@ -13,4 +13,14 @@ public class GuildMemberVo implements IEntityVo<GuildMemberPo> {
 	public GuildMemberPo getPo() {
 		return guildMemberPo;
 	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+	@Override
+	public void deserialize() {
+
+	}
 }

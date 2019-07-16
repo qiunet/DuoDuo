@@ -14,4 +14,14 @@ public class PlayerVo implements IEntityVo<PlayerPo> {
 	public PlayerPo getPo() {
 		return playerPo;
 	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+	@Override
+	public void deserialize() {
+
+	}
 }

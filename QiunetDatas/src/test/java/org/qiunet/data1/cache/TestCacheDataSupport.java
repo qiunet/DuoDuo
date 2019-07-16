@@ -23,7 +23,7 @@ public class TestCacheDataSupport {
 		dataSupport.syncToDatabase();
 
 		guildVo.getPo().setName("公会");
-		guildVo.getPo().update();
+		guildVo.update();
 		guildVo.getPo().insert();
 		dataSupport.syncToDatabase();
 
@@ -32,7 +32,7 @@ public class TestCacheDataSupport {
 		Assert.assertNotNull(guildVo);
 		guildVo.getPo().insert();
 
-		guildVo.getPo().delete();
+		guildVo.delete();
 		dataSupport.syncToDatabase();
 	}
 
@@ -61,7 +61,7 @@ public class TestCacheDataSupport {
 		}
 
 		vo2.getPo().setJob(3);
-		vo2.getPo().update();
+		vo2.update();
 		dataListSupport.syncToDatabase();
 
 		dataListSupport.invalidate(guildId);
@@ -73,7 +73,7 @@ public class TestCacheDataSupport {
 			}
 		});
 
-		voMap.values().forEach(vo -> vo.getPo().delete());
+		voMap.values().forEach(GuildMemberVo::delete);
 
 		dataListSupport.syncToDatabase();
 

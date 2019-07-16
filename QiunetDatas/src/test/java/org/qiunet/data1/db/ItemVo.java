@@ -13,4 +13,14 @@ public class ItemVo implements IEntityVo<ItemPo> {
 	public ItemPo getPo() {
 		return itemPo;
 	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+	@Override
+	public void deserialize() {
+
+	}
 }
