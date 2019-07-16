@@ -58,20 +58,23 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	 * @param po
 	 * @return
 	 */
-	public int insert(Po po) {
+	@Override
+	public Vo insert(Po po) {
+		Vo vo = supplier.get(po);
 		if (! async) {
-			return DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
+			DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
+			return vo;
 		}
 
 		if (po.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
 			syncKeyQueue.add(this.syncQueueKey(po));
-			this.addToCache(po);
+			this.addToCache(vo);
 		} else {
 			logger.error("entity status ["+po.entityStatus()+"] is error. Not executor insert!");
 		}
-		return 0;
+		return vo;
 	}
-	protected abstract void addToCache(Po po);
+	protected abstract void addToCache(Vo vo);
 	/***
 	 * 更新
 	 * @param po

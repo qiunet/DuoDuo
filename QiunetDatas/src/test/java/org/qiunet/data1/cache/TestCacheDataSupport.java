@@ -19,16 +19,16 @@ public class TestCacheDataSupport {
 		guildPo.setGuildId(guildId);
 		guildPo.setName("公会1");
 		guildPo.setLevel(10);
-		guildPo.insert();
+		GuildVo guildVo = guildPo.insert();
 		dataSupport.syncToDatabase();
 
-		guildPo.setName("公会");
-		guildPo.update();
-		guildPo.insert();
+		guildVo.getPo().setName("公会");
+		guildVo.getPo().update();
+		guildVo.getPo().insert();
 		dataSupport.syncToDatabase();
 
 
-		GuildVo guildVo = dataSupport.getVo(guildId);
+		guildVo = dataSupport.getVo(guildId);
 		Assert.assertNotNull(guildVo);
 		guildVo.getPo().insert();
 
@@ -42,13 +42,13 @@ public class TestCacheDataSupport {
 		memberPo1.setGuildId(guildId);
 		memberPo1.setMemberId(1);
 		memberPo1.setJob(1);
-		memberPo1.insert();
+		GuildMemberVo vo1 = memberPo1.insert();
 
 		GuildMemberPo memberPo2 = new GuildMemberPo();
 		memberPo2.setGuildId(guildId);
 		memberPo2.setMemberId(2);
 		memberPo2.setJob(2);
-		memberPo2.insert();
+		GuildMemberVo vo2 = memberPo2.insert();
 
 		dataListSupport.syncToDatabase();
 
@@ -60,8 +60,8 @@ public class TestCacheDataSupport {
 			Assert.assertEquals(vo.getPo().getJob(), vo.getPo().getMemberId());
 		}
 
-		memberPo2.setJob(3);
-		memberPo2.update();
+		vo2.getPo().setJob(3);
+		vo2.getPo().update();
 		dataListSupport.syncToDatabase();
 
 		dataListSupport.invalidate(guildId);

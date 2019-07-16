@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
+public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey, Vo>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
 	private LocalCache<String, Map<String, Vo>> cache = new LocalCache<>();
 
@@ -22,14 +22,14 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 	}
 
 	@Override
-	protected void addToCache(Po po) {
-		String key = String.valueOf(po.key());
+	protected void addToCache(Vo vo) {
+		String key = String.valueOf(vo.getPo().key());
 		Map<String, Vo> map = cache.get(key);
 		if (map == null) {
 			throw new NullPointerException("Insert to cache, but map is not exist!");
 		}
 
-		map.putIfAbsent(String.valueOf(po.subKey()), supplier.get(po));
+		map.putIfAbsent(String.valueOf(vo.getPo().subKey()), vo);
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 
 
 	@Override
-	public int insert(Po po) {
+	public Vo insert(Po po) {
 		// 先加载所有的数据到缓存
 		getVoMap(po.key());
 

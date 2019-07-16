@@ -7,7 +7,7 @@ import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
 
-public class CacheDataSupport<Key, Po extends ICacheEntity<Key>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
+public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
 	private LocalCache<String, Vo> cache = new LocalCache<>();
 
@@ -40,9 +40,9 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key>, Vo extends IEnt
 	}
 
 	@Override
-	protected void addToCache(Po po) {
-		String cacheKey = getCacheKey(po.key());
-		this.cache.put(cacheKey, supplier.get(po));
+	protected void addToCache(Vo vo) {
+		String cacheKey = getCacheKey(vo.getPo().key());
+		this.cache.put(cacheKey, vo);
 	}
 
 	/***

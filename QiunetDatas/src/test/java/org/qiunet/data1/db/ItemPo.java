@@ -4,7 +4,7 @@ import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.db.entity.DbEntityList;
 
 @Alias("ItemPo")
-public class ItemPo extends DbEntityList<Long, Integer> {
+public class ItemPo extends DbEntityList<Long, Integer, ItemVo> {
 	private long uid;
 	private int item_id;
 	private int count;

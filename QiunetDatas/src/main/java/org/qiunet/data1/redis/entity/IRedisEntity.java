@@ -2,10 +2,11 @@ package org.qiunet.data1.redis.entity;
 
 import org.qiunet.data1.redis.constants.RedisDbConstants;
 import org.qiunet.data1.redis.info.IRedisDbInfo;
+import org.qiunet.data1.support.IEntityVo;
 import org.qiunet.data1.util.DbProperties;
 import org.qiunet.data1.core.entity.IEntity;
 
-public interface IRedisEntity<Key> extends IEntity<Key> {
+public interface IRedisEntity<Key, Vo extends IEntityVo> extends IEntity<Key, Vo> {
 	/***
 	 * 得到redis的dbInfo
 	 * @return

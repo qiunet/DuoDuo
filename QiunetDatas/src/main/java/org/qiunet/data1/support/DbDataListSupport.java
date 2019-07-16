@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey>, Vo extends IEntityVo<Po>> extends BaseDbDataSupport<Po, Vo> {
+public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey, Vo>, Vo extends IEntityVo<Po>> extends BaseDbDataSupport<Po, Vo> {
 	public DbDataListSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
 		super(poClass, supplier);
 	}

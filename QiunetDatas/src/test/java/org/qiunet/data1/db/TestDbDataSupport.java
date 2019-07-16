@@ -22,11 +22,11 @@ public class TestDbDataSupport {
 		playerPo.setName("秋阳1");
 		playerPo.setLevel(10);
 		playerPo.setUid(uid);
-		playerPo.insert();
+		PlayerVo playerVo = playerPo.insert();
 
-		playerPo.setName(name);
-		playerPo.setLevel(100);
-		playerPo.update();
+		playerVo.getPo().setName(name);
+		playerVo.getPo().setLevel(100);
+		playerVo.getPo().update();
 
 		PlayerVo vo = dataSupport.getVo(uid);
 		Assert.assertEquals(vo.getPo().getName(), name);
@@ -45,13 +45,13 @@ public class TestDbDataSupport {
 		itemPo1.setUid(uid);
 		itemPo1.setItem_id(1);
 		itemPo1.setCount(1);
-		itemPo1.insert();
+		ItemVo vo1 = itemPo1.insert();
 
 		ItemPo itemPo2 = new ItemPo();
 		itemPo2.setUid(uid);
 		itemPo2.setItem_id(2);
 		itemPo2.setCount(2);
-		itemPo2.insert();
+		ItemVo vo2 = itemPo2.insert();
 
 		Map<Integer, ItemVo> voMap = dataListSupport.getVoMap(uid);
 		Assert.assertEquals(voMap.size(), 2);
@@ -61,8 +61,8 @@ public class TestDbDataSupport {
 			Assert.assertEquals(vo.getPo().getCount(), vo.getPo().getItem_id());
 		}
 
-		itemPo2.setCount(3);
-		itemPo2.update();
+		vo2.getPo().setCount(3);
+		vo2.getPo().update();
 
 		voMap = dataListSupport.getVoMap(uid);
 		voMap.values().forEach(po -> {

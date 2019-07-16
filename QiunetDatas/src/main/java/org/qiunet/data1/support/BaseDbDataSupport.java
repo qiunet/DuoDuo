@@ -13,15 +13,6 @@ import org.qiunet.data1.db.entity.IDbEntity;
 		// 不是异步. 不需要实现
 	}
 
-	/**
-	 * 插入
-	 * @param po
-	 * @return
-	 */
-	public int insert(Po po) {
-		return DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
-	}
-
 	/***
 	 * 更新
 	 * @param po
@@ -31,7 +22,13 @@ import org.qiunet.data1.db.entity.IDbEntity;
 		return DefaultDatabaseSupport.getInstance().update(updateStatement, po);
 	}
 
-	/**
+	 @Override
+	 public Vo insert(Po po) {
+		 DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
+		 return supplier.get(po);
+	 }
+
+	 /**
 	 * 删除
 	 * @param po
 	 */

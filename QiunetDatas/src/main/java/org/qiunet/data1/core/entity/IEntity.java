@@ -1,11 +1,13 @@
 package org.qiunet.data1.core.entity;
 
+import org.qiunet.data1.support.IEntityVo;
+
 /***
  * 主键对应一条数据的对象.
  * 一 对 一
  * @param <Key>
  */
-public interface IEntity<Key> {
+public interface IEntity<Key, Vo extends IEntityVo> {
 	/***
 	 * 得到Entity的主键
 	 * 一般是uid  openId
@@ -32,5 +34,5 @@ public interface IEntity<Key> {
 	/**
 	 * 插入
 	 */
-	void insert();
+	Vo insert();
 }
