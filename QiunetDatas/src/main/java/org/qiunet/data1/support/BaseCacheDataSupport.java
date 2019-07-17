@@ -65,6 +65,8 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 		Vo vo = supplier.get(po);
 		if (! async) {
 			DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
+			po.updateEntityStatus(EntityStatus.NORMAL);
+			this.addToCache(vo);
 			return vo;
 		}
 
@@ -89,13 +91,13 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	 */
 	@Override
 	public void update(Po po) {
+		if (po.entityStatus() == EntityStatus.INIT) {
+			throw new RuntimeException("Entity must insert first!");
+		}
+
 		if (! async) {
 			DefaultDatabaseSupport.getInstance().update(updateStatement, po);
 			return;
-		}
-
-		if (po.entityStatus() == EntityStatus.INIT) {
-			throw new RuntimeException("Entity must insert first!");
 		}
 
 		if (po.atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
@@ -119,15 +121,15 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 			throw new RuntimeException("Delete entity ["+poClass.getName()+"] double times!");
 		}
 
-		if (! async) {
-			po.updateEntityStatus(EntityStatus.DELETE);
-			DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
-			return;
-		}
 		// 直接删除缓存. 异步更新时候, 不校验状态
 		this.invalidateCache(po);
 		po.updateEntityStatus(EntityStatus.DELETE);
-		syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.DELETE));
+
+		if (! async) {
+			DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
+		}else {
+			syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.DELETE));
+		}
 	}
 
 	/**

@@ -42,9 +42,9 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 			Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 			if (po == null) return null;
 
+			po.updateEntityStatus(EntityStatus.NORMAL);
 			vo = cache.putIfAbsent(key, supplier.get(po));
 		}
-		vo.getPo().updateEntityStatus(EntityStatus.NORMAL);
 		return vo;
 	}
 }

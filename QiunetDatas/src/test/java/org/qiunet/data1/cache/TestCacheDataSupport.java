@@ -24,16 +24,19 @@ public class TestCacheDataSupport {
 
 		guildVo.getPo().setName("公会");
 		guildVo.update();
-		guildVo.getPo().insert();
+//		guildVo.getPo().insert();
 		dataSupport.syncToDatabase();
 
 
 		guildVo = dataSupport.getVo(guildId);
 		Assert.assertNotNull(guildVo);
-		guildVo.getPo().insert();
+//		guildVo.getPo().insert();
 
 		guildVo.delete();
 		dataSupport.syncToDatabase();
+
+		guildVo = dataSupport.getVo(guildId);
+		Assert.assertNull(guildVo);
 	}
 
 	/**
