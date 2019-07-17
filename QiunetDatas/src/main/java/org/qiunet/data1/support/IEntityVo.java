@@ -14,12 +14,12 @@ public interface IEntityVo<Po extends IEntity> {
 	Po getPo();
 
 	/**
-	 * 序列化
+	 * 序列化数据到po
 	 */
 	void serialize();
 
 	/**
-	 * 反序列化
+	 * 从po反序列化数据到vo
 	 */
 	void deserialize();
 	/**
