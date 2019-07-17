@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey, Vo>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
-	private LocalCache<String, Map<String, Vo>> cache = new LocalCache<>();
+	private LocalCache<Key, Map<SubKey, Vo>> cache = new LocalCache<>();
 
 	public CacheDataListSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
 		super(poClass, supplier);
@@ -23,32 +23,15 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 
 	@Override
 	protected void addToCache(Vo vo) {
-		String key = String.valueOf(vo.getPo().key());
-		Map<String, Vo> map = cache.get(key);
+		Map<SubKey, Vo> map = cache.get(vo.getPo().key());
 		if (map == null) {
 			throw new NullPointerException("Insert to cache, but map is not exist!");
 		}
 
-		Vo newVo = map.putIfAbsent(String.valueOf(vo.getPo().subKey()), vo);
+		Vo newVo = map.putIfAbsent(vo.getPo().subKey(), vo);
 		if (newVo!= null && newVo != vo) {
 			throw new RuntimeException("vo exist, and status is ["+newVo.getPo().entityStatus()+"]");
 		}
-	}
-
-	@Override
-	protected String syncQueueKey(Po po) {
-		return getCacheKey(po.key(), po.subKey());
-	}
-
-	@Override
-	protected Po getCachePo(String syncQueueKey) {
-		String [] keys = StringUtil.split(syncQueueKey, "#");
-		Map<String, Vo> poMap = cache.get(keys[0]);
-		if (poMap == null || ! poMap.containsKey(keys[1])) {
-			logger.error("Class ["+poClass.getName()+"]SyncQueueKey ["+syncQueueKey+"] is not exist!");
-			return null;
-		}
-		return poMap.get(keys[1]).getPo();
 	}
 
 	/***
@@ -58,16 +41,14 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 	 */
 	public Map<SubKey, Vo> getVoMap(Key key) {
 		try {
-			Map<String, Vo> voMap = cache.get(String.valueOf(key), () -> {
+			return cache.get(key, () -> {
 				SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 				List<Po> poList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 
 				return poList.parallelStream()
 					.peek(po -> po.updateEntityStatus(EntityStatus.NORMAL))
-					.collect(Collectors.toMap(po -> String.valueOf(po.subKey()), po -> supplier.get(po)));
+					.collect(Collectors.toConcurrentMap(Po::subKey, po -> supplier.get(po)));
 			});
-
-			return voMap.values().parallelStream().collect(Collectors.toConcurrentMap(vo -> vo.getPo().subKey(), vo -> vo));
 		} catch (ExecutionException e) {
 			logger.error("GetPo Key ["+key+"] Exception: ", e);
 		}
@@ -76,12 +57,8 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 
 	@Override
 	protected void invalidateCache(Po po) {
-		if (po.entityStatus() == EntityStatus.DELETED) {
-			Map<String, Vo> map = cache.get(String.valueOf(po.key()));
-			map.remove(String.valueOf(po.subKey()));
-		} else {
-			logger.error("invalidateCache is error. status ["+po.entityStatus()+"] is not DELETE");
-		}
+		Map<SubKey, Vo> map = cache.get(po.key());
+		map.remove(po.subKey());
 	}
 
 	/***
@@ -89,7 +66,7 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 	 * @param key
 	 */
 	public void invalidate(Key key) {
-		cache.invalidate(String.valueOf(key));
+		cache.invalidate(key);
 	}
 
 

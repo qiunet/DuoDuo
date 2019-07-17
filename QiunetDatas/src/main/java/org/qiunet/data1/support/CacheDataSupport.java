@@ -9,40 +9,21 @@ import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
 public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
 	/**保存的cache*/
-	private LocalCache<String, Vo> cache = new LocalCache<>();
+	private LocalCache<Key, Vo> cache = new LocalCache<>();
 
 	public CacheDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
 		super(poClass, supplier);
 	}
 
-	@Override
-	protected String syncQueueKey(Po po) {
-		return getCacheKey(po.key());
-	}
-
-	@Override
-	protected Po getCachePo(String syncQueueKey) {
-		Vo vo = cache.get(syncQueueKey);
-		if (vo == null) {
-			logger.error("Class ["+poClass.getName()+"] SyncQueueKey ["+syncQueueKey+"] is not exist!");
-			return null;
-		}
-		return vo.getPo();
-	}
 
 	@Override
 	protected void invalidateCache(Po po) {
-		if (po.entityStatus() == EntityStatus.DELETED) {
-			cache.invalidate(getCacheKey(po.key()));
-		} else {
-			logger.error("invalidateCache is error. status ["+po.entityStatus()+"] is not DELETE");
-		}
+		cache.invalidate(po.key());
 	}
 
 	@Override
 	protected void addToCache(Vo vo) {
-		String cacheKey = getCacheKey(vo.getPo().key());
-		Vo newVo = this.cache.putIfAbsent(cacheKey, vo);
+		Vo newVo = this.cache.putIfAbsent(vo.getPo().key(), vo);
 		if (newVo!= null && newVo != vo) {
 			throw new RuntimeException("vo exist, and status is ["+newVo.getPo().entityStatus()+"]");
 		}
@@ -54,15 +35,14 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 	 * @return
 	 */
 	public Vo getVo(Key key) {
-		String cacheKey = getCacheKey(key);
-		Vo vo = cache.get(cacheKey);
+		Vo vo = cache.get(key);
 		if (vo == null) {
 			SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 
 			Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 			if (po == null) return null;
 
-			vo = cache.putIfAbsent(cacheKey, supplier.get(po));
+			vo = cache.putIfAbsent(key, supplier.get(po));
 		}
 		vo.getPo().updateEntityStatus(EntityStatus.NORMAL);
 		return vo;

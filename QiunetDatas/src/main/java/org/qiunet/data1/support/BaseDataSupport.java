@@ -54,17 +54,4 @@ import org.slf4j.Logger;
 		this.defaultPo = poClass.newInstance();
 		this.poName = poClass.getSimpleName();
 	}
-//
-//	/***
-//	 * 返回缓存的key
-//	 * @return
-//	 */
-//	protected String getCacheKey(Object... keys){
-//		StringJoiner sj = new StringJoiner("#");
-//		sj.add(nameSpace);
-//		for (Object key : keys) {
-//			sj.add(String.valueOf(key));
-//		}
-//		return sj.toString();
-//	}
 }
