@@ -42,7 +42,10 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 	@Override
 	protected void addToCache(Vo vo) {
 		String cacheKey = getCacheKey(vo.getPo().key());
-		this.cache.put(cacheKey, vo);
+		Vo newVo = this.cache.putIfAbsent(cacheKey, vo);
+		if (newVo!= null && newVo != vo) {
+			throw new RuntimeException("vo exist, and status is ["+newVo.getPo().entityStatus()+"]");
+		}
 	}
 
 	/***

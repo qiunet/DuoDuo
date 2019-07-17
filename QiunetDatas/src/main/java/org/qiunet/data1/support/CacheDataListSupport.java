@@ -29,7 +29,10 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 			throw new NullPointerException("Insert to cache, but map is not exist!");
 		}
 
-		map.putIfAbsent(String.valueOf(vo.getPo().subKey()), vo);
+		Vo newVo = map.putIfAbsent(String.valueOf(vo.getPo().subKey()), vo);
+		if (newVo!= null && newVo != vo) {
+			throw new RuntimeException("vo exist, and status is ["+newVo.getPo().entityStatus()+"]");
+		}
 	}
 
 	@Override
