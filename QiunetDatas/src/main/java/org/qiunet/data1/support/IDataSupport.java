@@ -6,7 +6,7 @@ public interface IDataSupport<Po extends IEntity, Vo> {
 
 	Vo insert(Po po);
 
-	int delete(Po po);
+	void delete(Po po);
 
-	int update(Po po);
+	void update(Po po);
 }

@@ -36,6 +36,34 @@ public class TestCacheDataSupport {
 		dataSupport.syncToDatabase();
 	}
 
+	/**
+	 * delete 两次
+	 * 测试这个会抛出异常
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testEntityException() {
+		GuildMemberPo memberPo1 = new GuildMemberPo();
+		memberPo1.setGuildId(guildId);
+		memberPo1.setMemberId(1);
+		memberPo1.setJob(1);
+		GuildMemberVo vo1 = memberPo1.insert();
+		vo1.delete();
+		vo1.delete();
+	}
+
+	/**
+	 * 没有insert 就update
+	 * 测试这个会抛出异常
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testEntityUpdateException() {
+		GuildMemberPo memberPo1 = new GuildMemberPo();
+		memberPo1.setGuildId(guildId);
+		memberPo1.setMemberId(1);
+		memberPo1.setJob(1);
+		memberPo1.update();
+	}
+
 	@Test
 	public void testEntityList(){
 		GuildMemberPo memberPo1 = new GuildMemberPo();
@@ -43,6 +71,13 @@ public class TestCacheDataSupport {
 		memberPo1.setMemberId(1);
 		memberPo1.setJob(1);
 		GuildMemberVo vo1 = memberPo1.insert();
+		vo1.delete();
+
+		memberPo1 = new GuildMemberPo();
+		memberPo1.setGuildId(guildId);
+		memberPo1.setMemberId(1);
+		memberPo1.setJob(1);
+		vo1 = memberPo1.insert();
 
 		GuildMemberPo memberPo2 = new GuildMemberPo();
 		memberPo2.setGuildId(guildId);

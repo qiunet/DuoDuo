@@ -18,8 +18,8 @@ import org.qiunet.data1.db.entity.IDbEntity;
 	 * @param po
 	 * @return
 	 */
-	public int update(Po po) {
-		return DefaultDatabaseSupport.getInstance().update(updateStatement, po);
+	public void update(Po po) {
+		DefaultDatabaseSupport.getInstance().update(updateStatement, po);
 	}
 
 	 @Override
@@ -32,8 +32,8 @@ import org.qiunet.data1.db.entity.IDbEntity;
 	 * 删除
 	 * @param po
 	 */
-	public int delete(Po po) {
-		return DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
+	public void delete(Po po) {
+		DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
 	}
 
 }

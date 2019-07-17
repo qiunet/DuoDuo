@@ -27,6 +27,11 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 		SyncEntityElement element;
 		while ((element = syncKeyQueue.poll()) != null) {
 			Po po = element.po;
+			if (element.operate != EntityOperate.DELETE
+				&& po.entityStatus() == EntityStatus.DELETE) {
+				// 队列后面有delete 操作. 留给delete 操作就行.
+				continue;
+			}
 			switch (element.operate) {
 				case INSERT:
 					if (po.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
@@ -82,10 +87,13 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	 * @param po
 	 * @return
 	 */
-	public int update(Po po) {
+	@Override
+	public void update(Po po) {
 		if (! async) {
-			return DefaultDatabaseSupport.getInstance().update(updateStatement, po);
+			DefaultDatabaseSupport.getInstance().update(updateStatement, po);
+			return;
 		}
+
 		if (po.entityStatus() == EntityStatus.INIT) {
 			throw new RuntimeException("Entity must insert first!");
 		}
@@ -94,26 +102,32 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 			syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.UPDATE));
 		}
 		// update 可能update在其它状态的po 所以不需要error打印.
-		// insert update 和 delete 状态都不需要操作了,
-		return 0;
+		// insert update 和 delete 状态都不需要操作了
 	}
 
 	/**
 	 * 删除
 	 * @param po
 	 */
-	public int delete(Po po) {
-		if (po.entityStatus() == EntityStatus.INIT) return 0;
+	@Override
+	public void delete(Po po) {
+		if (po.entityStatus() == EntityStatus.INIT) {
+			return;
+		}
+
+		if (po.entityStatus() == EntityStatus.DELETE) {
+			throw new RuntimeException("Delete entity ["+poClass.getName()+"] double times!");
+		}
 
 		if (! async) {
-			return DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
+			po.updateEntityStatus(EntityStatus.DELETE);
+			DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
+			return;
 		}
 		// 直接删除缓存. 异步更新时候, 不校验状态
 		this.invalidateCache(po);
-
-		if (po.entityStatus() == EntityStatus.INIT) return 0;
+		po.updateEntityStatus(EntityStatus.DELETE);
 		syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.DELETE));
-		return 0;
 	}
 
 	/**

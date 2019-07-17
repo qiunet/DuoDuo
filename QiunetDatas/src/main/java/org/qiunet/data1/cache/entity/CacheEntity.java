@@ -8,8 +8,9 @@ import org.qiunet.data1.support.IEntityVo;
 import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class CacheEntity<Key,Vo extends IEntityVo> implements ICacheEntity<Key, Vo> {
-	private IDataSupport<CacheEntity, Vo> dataSupport;
-	private AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
+	private transient IDataSupport<CacheEntity, Vo> dataSupport;
+	private transient AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
+
 	public CacheEntity() {
 		this.dataSupport = DataSupportMapping.getMapping(getClass());
 	}
