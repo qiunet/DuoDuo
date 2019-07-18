@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
  class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
-			10,
+			8,
 			new DefaultThreadFactory("AsyncJobSupport"));
 
 	private volatile static AsyncJobSupport instance = new AsyncJobSupport();

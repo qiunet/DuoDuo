@@ -6,7 +6,7 @@ public class ItemVo implements IEntityVo<ItemPo> {
 
 	private ItemPo itemPo;
 
-	public ItemVo(ItemPo itemPo) {
+	ItemVo(ItemPo itemPo) {
 		this.itemPo = itemPo;
 	}
 	@Override

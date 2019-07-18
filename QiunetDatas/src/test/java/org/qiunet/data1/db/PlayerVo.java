@@ -6,7 +6,7 @@ public class PlayerVo implements IEntityVo<PlayerPo> {
 
 	private PlayerPo playerPo;
 
-	public PlayerVo(PlayerPo playerPo) {
+	PlayerVo(PlayerPo playerPo) {
 		this.playerPo = playerPo;
 	}
 

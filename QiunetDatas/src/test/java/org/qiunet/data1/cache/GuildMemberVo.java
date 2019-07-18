@@ -6,7 +6,7 @@ public class GuildMemberVo implements IEntityVo<GuildMemberPo> {
 
 	private GuildMemberPo guildMemberPo;
 
-	public GuildMemberVo(GuildMemberPo guildMemberPo) {
+	GuildMemberVo(GuildMemberPo guildMemberPo) {
 		this.guildMemberPo = guildMemberPo;
 	}
 	@Override

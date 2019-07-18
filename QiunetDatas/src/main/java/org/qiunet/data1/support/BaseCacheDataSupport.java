@@ -63,18 +63,17 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	@Override
 	public Vo insert(Po po) {
 		Vo vo = supplier.get(po);
-		if (! async) {
-			DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
-			po.updateEntityStatus(EntityStatus.NORMAL);
-			this.addToCache(vo);
-			return vo;
-		}
 
 		if (po.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
-			syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.INSERT));
+			if (! async) {
+				DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
+				po.updateEntityStatus(EntityStatus.NORMAL);
+			}else {
+				syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.INSERT));
+			}
 			this.addToCache(vo);
 		} else {
-			logger.error("entity ["+poClass.getName()+"] status ["+po.entityStatus()+"] is error. Not executor insert!");
+			throw new RuntimeException("entity ["+poClass.getName()+"] status ["+po.entityStatus()+"] is error. Not executor insert!");
 		}
 		return vo;
 	}
@@ -114,7 +113,7 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	@Override
 	public void delete(Po po) {
 		if (po.entityStatus() == EntityStatus.INIT) {
-			return;
+			throw new RuntimeException("Delete entity ["+poClass.getName()+"] It's not insert, Can't delete!");
 		}
 
 		if (po.entityStatus() == EntityStatus.DELETE) {

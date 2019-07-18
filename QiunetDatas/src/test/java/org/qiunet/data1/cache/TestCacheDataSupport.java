@@ -55,6 +55,20 @@ public class TestCacheDataSupport {
 	}
 
 	/**
+	 * 两次insert
+	 * 测试这个会抛出异常
+	 */
+	@Test(expected = RuntimeException.class)
+	public void testEntityInsertException() {
+		GuildMemberPo memberPo1 = new GuildMemberPo();
+		memberPo1.setGuildId(guildId);
+		memberPo1.setMemberId(1);
+		memberPo1.setJob(1);
+		memberPo1.insert();
+		memberPo1.delete();
+		memberPo1.insert();
+	}
+	/**
 	 * 没有insert 就update
 	 * 测试这个会抛出异常
 	 */
