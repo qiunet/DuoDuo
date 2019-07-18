@@ -3,8 +3,8 @@ package org.qiunet.data1.db;
 import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.db.entity.DbEntityList;
 
-@Alias("ItemPo")
-public class ItemPo extends DbEntityList<Long, Integer, ItemBo> {
+@Alias("ItemDo")
+public class ItemDo extends DbEntityList<Long, Integer, ItemBo> {
 	private long uid;
 	private int item_id;
 	private int count;

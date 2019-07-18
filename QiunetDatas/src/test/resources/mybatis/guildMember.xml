@@ -2,23 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="guildmember">
     
-    <select id="selectGuildMemberPo" parameterType="map" resultType="GuildMemberPo">
+    <select id="selectGuildMemberDo" parameterType="map" resultType="GuildMemberDo">
         select * from guild_member where guildId = #{guildId};
     </select>
 
-    <update id="updateGuildMemberPo" parameterType="GuildMemberPo" >
+    <update id="updateGuildMemberDo" parameterType="GuildMemberDo" >
         update guild_member SET
         `job` = ${job}
         where `guildId` = #{guildId} and `memberId` = #{memberId};
     </update>
 
-    <insert id="insertGuildMemberPo" parameterType="GuildMemberPo" >
+    <insert id="insertGuildMemberDo" parameterType="GuildMemberDo" >
         insert INTO guild_member
         (`guildId` , `memberId`, `job`)
         VALUES (
         #{guildId}, #{memberId}, #{job});
     </insert>
-    <delete id="deleteGuildMemberPo" parameterType="GuildMemberPo" >
+    <delete id="deleteGuildMemberDo" parameterType="GuildMemberDo" >
         DELETE FROM  guild_member  WHERE `guildId` = #{guildId} and `memberId` = #{memberId} ;
     </delete>
 </mapper>

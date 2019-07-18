@@ -5,14 +5,14 @@ import org.qiunet.data1.core.entity.IEntity;
 /***
  *
  * Bo( Business Object ) 的接口
- * @param <Po>
+ * @param <Do>
  */
-public interface IEntityBo<Po extends IEntity> {
+public interface IEntityBo<Do extends IEntity> {
 	/**
-	 * 得到Bo
+	 * 得到Do
 	 * @return
 	 */
-	Po getPo();
+	Do getDo();
 
 	/**
 	 * 序列化数据到Do
@@ -28,13 +28,13 @@ public interface IEntityBo<Po extends IEntity> {
 	 */
 	default void update() {
 		this.serialize();
-		getPo().update();
+		getDo().update();
 	}
 
 	/**
 	 * 删除
 	 */
 	default void delete() {
-		getPo().delete();
+		getDo().delete();
 	}
 }

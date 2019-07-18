@@ -12,24 +12,24 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
-public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Po>> extends BaseCacheDataSupport<Po, Bo> {
+public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
 	/**保存的cache*/
 	private LocalCache<Key, Map<SubKey, Bo>> cache = new LocalCache<>();
 
-	public CacheDataListSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
-		super(poClass, supplier);
+	public CacheDataListSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+		super(doClass, supplier);
 	}
 
 	@Override
 	protected void addToCache(Bo bo) {
-		Map<SubKey, Bo> map = cache.get(bo.getPo().key());
+		Map<SubKey, Bo> map = cache.get(bo.getDo().key());
 		if (map == null) {
 			throw new NullPointerException("Insert to cache, but map is not exist!");
 		}
 
-		Bo newBo = map.putIfAbsent(bo.getPo().subKey(), bo);
+		Bo newBo = map.putIfAbsent(bo.getDo().subKey(), bo);
 		if (newBo != null && newBo != bo) {
-			throw new RuntimeException("bo exist, and status is ["+ newBo.getPo().entityStatus()+"]");
+			throw new RuntimeException("bo exist, and status is ["+ newBo.getDo().entityStatus()+"]");
 		}
 	}
 
@@ -41,23 +41,23 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		try {
 			return cache.get(key, () -> {
-				SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
-				List<Po> poList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
+				SelectMap map = SelectMap.create().put(defaultDo.keyFieldName(), key);
+				List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 
-				return poList.parallelStream()
-					.peek(po -> po.updateEntityStatus(EntityStatus.NORMAL))
-					.collect(Collectors.toConcurrentMap(Po::subKey, po -> supplier.get(po)));
+				return doList.parallelStream()
+					.peek(aDo -> aDo.updateEntityStatus(EntityStatus.NORMAL))
+					.collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 			});
 		} catch (ExecutionException e) {
-			logger.error("GetPo Key ["+key+"] Exception: ", e);
+			logger.error("GetBo Key ["+key+"] Exception: ", e);
 		}
 		return null;
 	}
 
 	@Override
-	protected void invalidateCache(Po po) {
-		Map<SubKey, Bo> map = cache.get(po.key());
-		map.remove(po.subKey());
+	protected void invalidateCache(Do aDo) {
+		Map<SubKey, Bo> map = cache.get(aDo.key());
+		map.remove(aDo.subKey());
 	}
 
 	/***
@@ -70,10 +70,10 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 
 
 	@Override
-	public Bo insert(Po po) {
+	public Bo insert(Do aDo) {
 		// 先加载所有的数据到缓存
-		getBoMap(po.key());
+		getBoMap(aDo.key());
 
-		return super.insert(po);
+		return super.insert(aDo);
 	}
 }

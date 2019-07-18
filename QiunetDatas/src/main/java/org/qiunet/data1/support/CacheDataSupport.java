@@ -7,43 +7,43 @@ import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
 
-public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Po>> extends BaseCacheDataSupport<Po, Bo> {
+public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
 	/**保存的cache*/
 	private LocalCache<Key, Bo> cache = new LocalCache<>();
 
-	public CacheDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
-		super(poClass, supplier);
+	public CacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+		super(doClass, supplier);
 	}
 
 
 	@Override
-	protected void invalidateCache(Po po) {
-		cache.invalidate(po.key());
+	protected void invalidateCache(Do aDo) {
+		cache.invalidate(aDo.key());
 	}
 
 	@Override
 	protected void addToCache(Bo bo) {
-		Bo newBo = this.cache.putIfAbsent(bo.getPo().key(), bo);
+		Bo newBo = this.cache.putIfAbsent(bo.getDo().key(), bo);
 		if (newBo != null && newBo != bo) {
-			throw new RuntimeException("bo exist, and status is ["+ newBo.getPo().entityStatus()+"]");
+			throw new RuntimeException("bo exist, and status is ["+ newBo.getDo().entityStatus()+"]");
 		}
 	}
 
 	/***
-	 * 对外提供Po对象
+	 * 对外提供Bo对象
 	 * @param key
 	 * @return
 	 */
 	public Bo getBo(Key key) {
 		Bo bo = cache.get(key);
 		if (bo == null) {
-			SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
+			SelectMap map = SelectMap.create().put(defaultDo.keyFieldName(), key);
 
-			Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
-			if (po == null) return null;
+			Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+			if (aDo == null) return null;
 
-			po.updateEntityStatus(EntityStatus.NORMAL);
-			bo = cache.putIfAbsent(key, supplier.get(po));
+			aDo.updateEntityStatus(EntityStatus.NORMAL);
+			bo = cache.putIfAbsent(key, supplier.get(aDo));
 		}
 		return bo;
 	}

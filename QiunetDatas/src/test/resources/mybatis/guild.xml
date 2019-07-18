@@ -2,24 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="guild">
     
-    <select id="selectGuildPo" parameterType="map" resultType="GuildPo">
+    <select id="selectGuildDo" parameterType="map" resultType="GuildDo">
         select * from guild where guildId = #{guildId};
     </select>
 
-    <update id="updateGuildPo" parameterType="GuildPo" >
+    <update id="updateGuildDo" parameterType="GuildDo" >
         update guild SET
         `level` = #{level},
         `name` = #{name}
         where guildId = #{guildId};
     </update>
 
-    <insert id="insertGuildPo" parameterType="GuildPo" >
+    <insert id="insertGuildDo" parameterType="GuildDo" >
         insert INTO guild
         (guildId , `name`, `level`)
         VALUES (
         #{guildId}, #{name}, #{level});
     </insert>
-    <delete id="deleteGuildPo" parameterType="GuildPo" >
+    <delete id="deleteGuildDo" parameterType="GuildDo" >
         DELETE FROM  guild  WHERE guildId = #{guildId};
     </delete>
 </mapper>

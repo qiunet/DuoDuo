@@ -2,11 +2,11 @@ package org.qiunet.data1.support;
 
 import org.qiunet.data1.core.entity.IEntity;
 
-public interface IDataSupport<Po extends IEntity, Bo> {
+public interface IDataSupport<Do extends IEntity, Bo> {
 
-	Bo insert(Po po);
+	Bo insert(Do aDo);
 
-	void delete(Po po);
+	void delete(Do aDo);
 
-	void update(Po po);
+	void update(Do aDo);
 }

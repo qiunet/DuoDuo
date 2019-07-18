@@ -2,15 +2,15 @@ package org.qiunet.data1.cache;
 
 import org.qiunet.data1.support.IEntityBo;
 
-public class GuildBo implements IEntityBo<GuildPo> {
-	private GuildPo guildPo;
+public class GuildBo implements IEntityBo<GuildDo> {
+	private GuildDo guildDo;
 
-	GuildBo(GuildPo guildPo) {
-		this.guildPo = guildPo;
+	GuildBo(GuildDo guildDo) {
+		this.guildDo = guildDo;
 	}
 	@Override
-	public GuildPo getPo() {
-		return guildPo;
+	public GuildDo getDo() {
+		return guildDo;
 	}
 
 	@Override

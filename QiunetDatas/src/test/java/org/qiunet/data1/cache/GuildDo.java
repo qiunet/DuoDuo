@@ -3,8 +3,8 @@ package org.qiunet.data1.cache;
 import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.cache.entity.CacheEntity;
 
-@Alias("GuildPo")
-public class GuildPo extends CacheEntity<Long, GuildBo> {
+@Alias("GuildDo")
+public class GuildDo extends CacheEntity<Long, GuildBo> {
 	private long guildId;
 	private String name;
 	private int level;

@@ -8,21 +8,21 @@ import org.qiunet.data1.support.CacheDataSupport;
 import java.util.Map;
 
 public class TestCacheDataSupport {
-	private static CacheDataSupport<Long, GuildPo, GuildBo> dataSupport = new CacheDataSupport<>(GuildPo.class, GuildBo::new);
+	private static CacheDataSupport<Long, GuildDo, GuildBo> dataSupport = new CacheDataSupport<>(GuildDo.class, GuildBo::new);
 
-	private static CacheDataListSupport<Long, Long, GuildMemberPo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberPo.class, GuildMemberBo::new);
+	private static CacheDataListSupport<Long, Long, GuildMemberDo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberDo.class, GuildMemberBo::new);
 	private long guildId = 100000;
 
 	@Test
 	public void testEntity(){
-		GuildPo guildPo = new GuildPo();
-		guildPo.setGuildId(guildId);
-		guildPo.setName("公会1");
-		guildPo.setLevel(10);
-		GuildBo guildBo = guildPo.insert();
+		GuildDo guildDo = new GuildDo();
+		guildDo.setGuildId(guildId);
+		guildDo.setName("公会1");
+		guildDo.setLevel(10);
+		GuildBo guildBo = guildDo.insert();
 		dataSupport.syncToDatabase();
 
-		guildBo.getPo().setName("公会");
+		guildBo.getDo().setName("公会");
 		guildBo.update();
 		dataSupport.syncToDatabase();
 
@@ -43,11 +43,11 @@ public class TestCacheDataSupport {
 	 */
 	@Test(expected = RuntimeException.class)
 	public void testEntityException() {
-		GuildMemberPo memberPo1 = new GuildMemberPo();
-		memberPo1.setGuildId(guildId);
-		memberPo1.setMemberId(1);
-		memberPo1.setJob(1);
-		GuildMemberBo bo1 = memberPo1.insert();
+		GuildMemberDo memberDo1 = new GuildMemberDo();
+		memberDo1.setGuildId(guildId);
+		memberDo1.setMemberId(1);
+		memberDo1.setJob(1);
+		GuildMemberBo bo1 = memberDo1.insert();
 		bo1.delete();
 		bo1.delete();
 	}
@@ -58,13 +58,13 @@ public class TestCacheDataSupport {
 	 */
 	@Test(expected = RuntimeException.class)
 	public void testEntityInsertException() {
-		GuildMemberPo memberPo1 = new GuildMemberPo();
-		memberPo1.setGuildId(guildId);
-		memberPo1.setMemberId(1);
-		memberPo1.setJob(1);
-		memberPo1.insert();
-		memberPo1.delete();
-		memberPo1.insert();
+		GuildMemberDo memberDo1 = new GuildMemberDo();
+		memberDo1.setGuildId(guildId);
+		memberDo1.setMemberId(1);
+		memberDo1.setJob(1);
+		memberDo1.insert();
+		memberDo1.delete();
+		memberDo1.insert();
 	}
 	/**
 	 * 没有insert 就update
@@ -72,33 +72,33 @@ public class TestCacheDataSupport {
 	 */
 	@Test(expected = RuntimeException.class)
 	public void testEntityUpdateException() {
-		GuildMemberPo memberPo1 = new GuildMemberPo();
-		memberPo1.setGuildId(guildId);
-		memberPo1.setMemberId(1);
-		memberPo1.setJob(1);
-		memberPo1.update();
+		GuildMemberDo memberDo1 = new GuildMemberDo();
+		memberDo1.setGuildId(guildId);
+		memberDo1.setMemberId(1);
+		memberDo1.setJob(1);
+		memberDo1.update();
 	}
 
 	@Test
 	public void testEntityList(){
-		GuildMemberPo memberPo1 = new GuildMemberPo();
-		memberPo1.setGuildId(guildId);
-		memberPo1.setMemberId(1);
-		memberPo1.setJob(1);
-		GuildMemberBo bo1 = memberPo1.insert();
+		GuildMemberDo memberDo1 = new GuildMemberDo();
+		memberDo1.setGuildId(guildId);
+		memberDo1.setMemberId(1);
+		memberDo1.setJob(1);
+		GuildMemberBo bo1 = memberDo1.insert();
 		bo1.delete();
 
-		memberPo1 = new GuildMemberPo();
-		memberPo1.setGuildId(guildId);
-		memberPo1.setMemberId(1);
-		memberPo1.setJob(1);
-		bo1 = memberPo1.insert();
+		memberDo1 = new GuildMemberDo();
+		memberDo1.setGuildId(guildId);
+		memberDo1.setMemberId(1);
+		memberDo1.setJob(1);
+		bo1 = memberDo1.insert();
 
-		GuildMemberPo memberPo2 = new GuildMemberPo();
-		memberPo2.setGuildId(guildId);
-		memberPo2.setMemberId(2);
-		memberPo2.setJob(2);
-		GuildMemberBo bo2 = memberPo2.insert();
+		GuildMemberDo memberDo2 = new GuildMemberDo();
+		memberDo2.setGuildId(guildId);
+		memberDo2.setMemberId(2);
+		memberDo2.setJob(2);
+		GuildMemberBo bo2 = memberDo2.insert();
 
 		dataListSupport.syncToDatabase();
 
@@ -106,11 +106,11 @@ public class TestCacheDataSupport {
 		Assert.assertEquals(boMap.size(), 2);
 
 		for (GuildMemberBo bo : boMap.values()) {
-			Assert.assertTrue(bo.getPo().getJob() >= 1 && bo.getPo().getJob() <= 2);
-			Assert.assertEquals(bo.getPo().getJob(), bo.getPo().getMemberId());
+			Assert.assertTrue(bo.getDo().getJob() >= 1 && bo.getDo().getJob() <= 2);
+			Assert.assertEquals(bo.getDo().getJob(), bo.getDo().getMemberId());
 		}
 
-		bo2.getPo().setJob(3);
+		bo2.getDo().setJob(3);
 		bo2.update();
 		dataListSupport.syncToDatabase();
 
@@ -118,8 +118,8 @@ public class TestCacheDataSupport {
 
 		boMap = dataListSupport.getBoMap(guildId);
 		boMap.values().forEach(po -> {
-			if (po.getPo().getMemberId() == 2){
-				Assert.assertEquals(3, po.getPo().getJob());
+			if (po.getDo().getMemberId() == 2){
+				Assert.assertEquals(3, po.getDo().getJob());
 			}
 		});
 

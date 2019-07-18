@@ -6,17 +6,17 @@ import org.qiunet.data1.db.entity.IDbEntity;
 
 import java.util.Map;
 
-public class DbDataSupport<Key, Po extends IDbEntity<Key, Bo>, Bo extends IEntityBo<Po>> extends BaseDbDataSupport<Po, Bo> {
-	public DbDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
-		super(poClass, supplier);
+public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseDbDataSupport<Do, Bo> {
+	public DbDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+		super(doClass, supplier);
 
 	}
 
 	public Bo getBo(Key key) {
-		Map<String, Object> map = SelectMap.create().put(defaultPo.keyFieldName(), key);
-		Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
-		if (po == null) return null;
+		Map<String, Object> map = SelectMap.create().put(defaultDo.keyFieldName(), key);
+		Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+		if (aDo == null) return null;
 
-		return supplier.get(po);
+		return supplier.get(aDo);
 	}
 }

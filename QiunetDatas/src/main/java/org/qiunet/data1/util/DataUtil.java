@@ -161,15 +161,15 @@ public class DataUtil {
 
 
 	/***
-	 * 取到poName 对应的nameSpace
-	 * @param poName
+	 * 取到doName 对应的nameSpace
+	 * @param doName
 	 * @return
 	 */
-	public static String getNameSpace(String poName) {
-		if (poName.endsWith("Po")) {
-			return poName.substring(0, poName.length() - 2).toLowerCase();
+	public static String getNameSpace(String doName) {
+		if (doName.endsWith("Do")) {
+			return doName.substring(0, doName.length() - 2).toLowerCase();
 		}
-		return poName;
+		return doName;
 	}
 
 	/***

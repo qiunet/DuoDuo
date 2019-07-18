@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="player">
     
-    <select id="selectPlayerPo" parameterType="map" resultType="PlayerPo">
+    <select id="selectPlayerDo" parameterType="map" resultType="PlayerDo">
         select * from player where uid = #{uid};
     </select>
 
-    <update id="updatePlayerPo" parameterType="PlayerPo" >
+    <update id="updatePlayerDo" parameterType="PlayerDo" >
         update player SET
         `level` = #{level},
         `name` = #{name},
@@ -14,13 +14,13 @@
         where uid = #{uid};
     </update>
 
-    <insert id="insertPlayerPo" parameterType="PlayerPo" >
+    <insert id="insertPlayerDo" parameterType="PlayerDo" >
         insert INTO player
         (uid , `name`, `level`, exp)
         VALUES (
         #{uid}, #{name}, #{level},  #{exp});
     </insert>
-    <delete id="deletePlayerPo" parameterType="PlayerPo" >
+    <delete id="deletePlayerDo" parameterType="PlayerDo" >
         DELETE FROM  player  WHERE uid = #{uid};
     </delete>
 </mapper>

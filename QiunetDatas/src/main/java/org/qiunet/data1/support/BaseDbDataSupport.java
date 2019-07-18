@@ -3,9 +3,9 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data1.db.entity.IDbEntity;
 
- class BaseDbDataSupport<Po extends IDbEntity, Bo extends IEntityBo<Po>> extends BaseDataSupport<Po, Bo> {
-	 protected BaseDbDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
-		 super(poClass, supplier);
+ class BaseDbDataSupport<Do extends IDbEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
+	 protected BaseDbDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+		 super(doClass, supplier);
 	 }
 
 	 @Override
@@ -15,25 +15,25 @@ import org.qiunet.data1.db.entity.IDbEntity;
 
 	/***
 	 * 更新
-	 * @param po
+	 * @param aDo
 	 * @return
 	 */
-	public void update(Po po) {
-		DefaultDatabaseSupport.getInstance().update(updateStatement, po);
+	public void update(Do aDo) {
+		DefaultDatabaseSupport.getInstance().update(updateStatement, aDo);
 	}
 
 	 @Override
-	 public Bo insert(Po po) {
-		 DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
-		 return supplier.get(po);
+	 public Bo insert(Do aDo) {
+		 DefaultDatabaseSupport.getInstance().insert(insertStatement, aDo);
+		 return supplier.get(aDo);
 	 }
 
 	 /**
 	 * 删除
-	 * @param po
+	 * @param aDo
 	 */
-	public void delete(Po po) {
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, po);
+	public void delete(Do aDo) {
+		DefaultDatabaseSupport.getInstance().delete(deleteStatement, aDo);
 	}
 
 }

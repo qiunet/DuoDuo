@@ -2,16 +2,16 @@ package org.qiunet.data1.db;
 
 import org.qiunet.data1.support.IEntityBo;
 
-public class ItemBo implements IEntityBo<ItemPo> {
+public class ItemBo implements IEntityBo<ItemDo> {
 
-	private ItemPo itemPo;
+	private ItemDo itemDo;
 
-	ItemBo(ItemPo itemPo) {
-		this.itemPo = itemPo;
+	ItemBo(ItemDo itemDo) {
+		this.itemDo = itemDo;
 	}
 	@Override
-	public ItemPo getPo() {
-		return itemPo;
+	public ItemDo getDo() {
+		return itemDo;
 	}
 
 	@Override

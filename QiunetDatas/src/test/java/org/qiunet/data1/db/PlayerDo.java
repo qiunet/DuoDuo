@@ -3,8 +3,8 @@ package org.qiunet.data1.db;
 import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.db.entity.DbEntity;
 
-@Alias("PlayerPo")
-public class PlayerPo extends DbEntity<Long, PlayerBo> {
+@Alias("PlayerDo")
+public class PlayerDo extends DbEntity<Long, PlayerBo> {
 	private long uid;
 	private String name;
 	private int level;

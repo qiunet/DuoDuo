@@ -4,15 +4,15 @@ import org.qiunet.data1.core.entity.IEntity;
 
 /***
  * Bo的外部构造器
- * @param <Po>
+ * @param <Do>
  * @param <Bo>
  */
 @FunctionalInterface
-public interface BoSupplier<Po extends IEntity, Bo extends IEntityBo<Po>> {
+public interface BoSupplier<Do extends IEntity, Bo extends IEntityBo<Do>> {
 	/**
-	 * po得到一个Bo
-	 * @param po
+	 * Do得到一个Bo
+	 * @param aDo
 	 * @return
 	 */
-	Bo get(Po po);
+	Bo get(Do aDo);
 }

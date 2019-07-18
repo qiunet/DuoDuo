@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Po>> extends BaseDbDataSupport<Po, Bo> {
-	public DbDataListSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
-		super(poClass, supplier);
+public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseDbDataSupport<Do, Bo> {
+	public DbDataListSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+		super(doClass, supplier);
 	}
 
 	/***
@@ -20,10 +20,10 @@ public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey
 	 * @return
 	 */
 	public Map<SubKey, Bo> getBoMap(Key key) {
-		SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
-		List<Po> poList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
-		if (poList == null) return Collections.emptyMap();
+		SelectMap map = SelectMap.create().put(defaultDo.keyFieldName(), key);
+		List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
+		if (doList == null) return Collections.emptyMap();
 
-		return poList.parallelStream().collect(Collectors.toMap(Po::subKey, po -> supplier.get(po)));
+		return doList.parallelStream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
 	}
 }

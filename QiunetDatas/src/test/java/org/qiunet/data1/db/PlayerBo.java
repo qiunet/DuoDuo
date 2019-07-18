@@ -2,17 +2,17 @@ package org.qiunet.data1.db;
 
 import org.qiunet.data1.support.IEntityBo;
 
-public class PlayerBo implements IEntityBo<PlayerPo> {
+public class PlayerBo implements IEntityBo<PlayerDo> {
 
-	private PlayerPo playerPo;
+	private PlayerDo playerDo;
 
-	PlayerBo(PlayerPo playerPo) {
-		this.playerPo = playerPo;
+	PlayerBo(PlayerDo playerDo) {
+		this.playerDo = playerDo;
 	}
 
 	@Override
-	public PlayerPo getPo() {
-		return playerPo;
+	public PlayerDo getDo() {
+		return playerDo;
 	}
 
 	@Override
