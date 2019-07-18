@@ -47,4 +47,12 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 		}
 		return vo;
 	}
+
+	/***
+	 * 对指定key的缓存失效
+	 * @param keys
+	 */
+	public void invalidate(Key... keys) {
+		cache.invalidateAll(keys);
+	}
 }

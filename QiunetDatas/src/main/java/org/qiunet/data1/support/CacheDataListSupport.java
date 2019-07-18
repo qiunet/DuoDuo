@@ -62,11 +62,11 @@ public class CacheDataListSupport<Key, SubKey, Po extends ICacheEntityList<Key, 
 	}
 
 	/***
-	 * 失效
-	 * @param key
+	 * 对指定key的缓存失效
+	 * @param keys
 	 */
-	public void invalidate(Key key) {
-		cache.invalidate(key);
+	public void invalidate(Key... keys) {
+		cache.invalidateAll(keys);
 	}
 
 
