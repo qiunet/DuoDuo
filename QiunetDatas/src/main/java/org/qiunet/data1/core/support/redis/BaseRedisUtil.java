@@ -68,17 +68,15 @@ abstract class BaseRedisUtil {
 	}
 
 	private class JedisTemp implements InvocationHandler {
-		private Jedis jedis;
 		private boolean log;
 
 
-		JedisTemp(Jedis jedis, boolean log) {
-			this.jedis = jedis;
+		JedisTemp(boolean log) {
 			this.log = log;
 		}
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			try {
+			try (Jedis jedis = jedisPool.getResource()){
 				long startDt = System.currentTimeMillis();
 
 				Object object = method.invoke(jedis, args);
@@ -92,8 +90,6 @@ abstract class BaseRedisUtil {
 					logger.info(sb.toString());
 				}
 				return object;
-			}finally {
-				this.jedis.close();
 			}
 		}
 	}
@@ -112,8 +108,7 @@ abstract class BaseRedisUtil {
 	 * @return
 	 */
 	public JedisCommands returnJedisProxy(boolean log) {
-		Jedis jedis = jedisPool.getResource();
-		InvocationHandler handler = new JedisTemp(jedis, log);
-		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), jedis.getClass().getInterfaces(), handler);
+		InvocationHandler handler = new JedisTemp(log);
+		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
 	}
 }

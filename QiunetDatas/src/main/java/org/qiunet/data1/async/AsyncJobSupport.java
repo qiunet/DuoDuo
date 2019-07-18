@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * Created on 17/2/11 08:04.
  */
- class AsyncJobSupport {
+ public class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			8,
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 	private AsyncJobSupport() {
 		instance = this;
 		ShutdownHookThread.getInstance().addShutdownHook(() -> {
-			asyncToDb();
+			asyncToDb(0, TimeUnit.SECONDS);
 			executor.shutdown();
 		});
 	}
@@ -44,8 +44,7 @@ import java.util.concurrent.TimeUnit;
 	/***
 	 * 异步更新到db
 	 */
-	@CronSchedule("10 0/3 * * * ?")
-	private void asyncToDb(){
+	public void asyncToDb(int maxDelay, TimeUnit unit){
 		nodes.parallelStream().forEach(node -> executor.schedule(() -> {
 			try {
 				// 必须try catch 否则导致线程停止
@@ -54,6 +53,6 @@ import java.util.concurrent.TimeUnit;
 				logger.error("["+getClass().getSimpleName()+"] Exception: ", e);
 			}
 			// 会延迟一定时间执行 免得凑一块了.
-		}, MathUtil.random(0, 300), TimeUnit.MILLISECONDS));
+		}, MathUtil.random(0, (int) unit.toMillis(maxDelay)), TimeUnit.MILLISECONDS));
 	}
 }
