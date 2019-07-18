@@ -31,6 +31,6 @@ public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo
 	@JSONField(serialize= false, deserialize = false)
 	default String getDbSourceKey(){
 		return String.valueOf(getDbIndex()
-			/ RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
+			/ RedisDbConstants.DB_SIZE_PER_INSTANCE);
 	}
 }

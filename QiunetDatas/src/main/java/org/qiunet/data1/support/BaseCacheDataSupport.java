@@ -48,7 +48,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 					}
 					break;
 				case DELETE:
-					DefaultDatabaseSupport.getInstance().delete(deleteStatement, aDo);
+					this.deleteDoFromDb(aDo);
 					break;
 				default:
 					throw new RuntimeException("Db Sync Not Support status: [" + aDo.entityStatus() + "]");
@@ -125,7 +125,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		aDo.updateEntityStatus(EntityStatus.DELETE);
 
 		if (! async) {
-			DefaultDatabaseSupport.getInstance().delete(deleteStatement, aDo);
+			this.deleteDoFromDb(aDo);
 		}else {
 			syncKeyQueue.add(this.syncQueueElement(aDo, EntityOperate.DELETE));
 		}
@@ -144,6 +144,12 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	 * @param aDo
 	 */
 	protected abstract void invalidateCache(Do aDo);
+
+	/***
+	 * 从数据库删除do
+	 * @param aDo
+	 */
+	protected abstract void deleteDoFromDb(Do aDo);
 	/**
 	 * 队列的对象
 	 */

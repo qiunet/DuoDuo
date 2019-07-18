@@ -20,7 +20,7 @@
         VALUES (
         #{uid}, #{name}, #{level},  #{exp});
     </insert>
-    <delete id="deletePlayerDo" parameterType="PlayerDo" >
+    <delete id="deletePlayerDo" parameterType="map" >
         DELETE FROM  player  WHERE uid = #{uid};
     </delete>
 </mapper>

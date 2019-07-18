@@ -19,7 +19,7 @@
         VALUES (
         #{guildId}, #{name}, #{level});
     </insert>
-    <delete id="deleteGuildDo" parameterType="GuildDo" >
+    <delete id="deleteGuildDo" parameterType="map" >
         DELETE FROM  guild  WHERE guildId = #{guildId};
     </delete>
 </mapper>

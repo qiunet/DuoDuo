@@ -2,7 +2,7 @@ package org.qiunet.data1.support;
 
 import org.qiunet.data1.cache.entity.ICacheEntity;
 import org.qiunet.data1.cache.status.EntityStatus;
-import org.qiunet.data1.core.select.SelectMap;
+import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
@@ -22,6 +22,12 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	}
 
 	@Override
+	protected void deleteDoFromDb(Do aDo) {
+		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key());
+		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+	}
+
+	@Override
 	protected void addToCache(Bo bo) {
 		Bo newBo = this.cache.putIfAbsent(bo.getDo().key(), bo);
 		if (newBo != null && newBo != bo) {
@@ -37,7 +43,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	public Bo getBo(Key key) {
 		Bo bo = cache.get(key);
 		if (bo == null) {
-			SelectMap map = SelectMap.create().put(defaultDo.keyFieldName(), key);
+			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
 
 			Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 			if (aDo == null) return null;

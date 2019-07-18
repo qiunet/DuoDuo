@@ -7,15 +7,15 @@ import java.util.HashMap;
  *
  *
  */
-public class SelectMap extends HashMap<String, Object> {
+public class DbParamMap extends HashMap<String, Object> {
 
-	private SelectMap(){
+	private DbParamMap(){
 		super(4);
 	}
-	public static SelectMap create(){
-		return new SelectMap();
+	public static DbParamMap create(){
+		return new DbParamMap();
 	}
-	public SelectMap put(String key, Object val) {
+	public DbParamMap put(String key, Object val) {
 		super.put(key, val);
 		return this;
 	}

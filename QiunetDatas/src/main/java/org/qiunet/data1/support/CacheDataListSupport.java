@@ -2,7 +2,7 @@ package org.qiunet.data1.support;
 
 import org.qiunet.data1.cache.entity.ICacheEntityList;
 import org.qiunet.data1.cache.status.EntityStatus;
-import org.qiunet.data1.core.select.SelectMap;
+import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
@@ -41,7 +41,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		try {
 			return cache.get(key, () -> {
-				SelectMap map = SelectMap.create().put(defaultDo.keyFieldName(), key);
+				DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
 				List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 
 				return doList.parallelStream()
@@ -58,6 +58,12 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	protected void invalidateCache(Do aDo) {
 		Map<SubKey, Bo> map = cache.get(aDo.key());
 		map.remove(aDo.subKey());
+	}
+
+	@Override
+	protected void deleteDoFromDb(Do aDo) {
+		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key()).put(defaultDo.subKeyFieldName(), aDo.subKey());
+		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
 	}
 
 	/***
