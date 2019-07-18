@@ -1,12 +1,12 @@
 package org.qiunet.data1.db.entity;
 
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
 /***
  *
  * @param <Key>
  * @param <SubKey>
  */
-public abstract class DbEntityList<Key, SubKey, Vo extends IEntityVo> extends DbEntity<Key, Vo> implements IDbEntityList<Key, SubKey, Vo> {
+public abstract class DbEntityList<Key, SubKey, Bo extends IEntityBo> extends DbEntity<Key, Bo> implements IDbEntityList<Key, SubKey, Bo> {
 
 }

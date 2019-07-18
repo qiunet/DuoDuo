@@ -1,12 +1,12 @@
 package org.qiunet.data1.db;
 
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public class PlayerVo implements IEntityVo<PlayerPo> {
+public class PlayerBo implements IEntityBo<PlayerPo> {
 
 	private PlayerPo playerPo;
 
-	PlayerVo(PlayerPo playerPo) {
+	PlayerBo(PlayerPo playerPo) {
 		this.playerPo = playerPo;
 	}
 

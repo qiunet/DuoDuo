@@ -4,7 +4,7 @@ import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.cache.entity.CacheEntity;
 
 @Alias("GuildPo")
-public class GuildPo extends CacheEntity<Long, GuildVo> {
+public class GuildPo extends CacheEntity<Long, GuildBo> {
 	private long guildId;
 	private String name;
 	private int level;

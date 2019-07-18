@@ -3,9 +3,9 @@ package org.qiunet.data1.redis.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.qiunet.data1.core.entity.IEntityList;
 import org.qiunet.data1.redis.constants.RedisDbConstants;
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public interface IRedisEntityList<Key, SubKey, Vo extends IEntityVo> extends IEntityList<Key, SubKey, Vo>, IRedisEntity<Key, Vo> {
+public interface IRedisEntityList<Key, SubKey, Bo extends IEntityBo> extends IEntityList<Key, SubKey, Bo>, IRedisEntity<Key, Bo> {
 	/**
 	 * 如果分表的话.
 	 * 得到 tbIndex

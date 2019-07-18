@@ -4,7 +4,7 @@ import org.apache.ibatis.type.Alias;
 import org.qiunet.data1.db.entity.DbEntity;
 
 @Alias("PlayerPo")
-public class PlayerPo extends DbEntity<Long, PlayerVo> {
+public class PlayerPo extends DbEntity<Long, PlayerBo> {
 	private long uid;
 	private String name;
 	private int level;

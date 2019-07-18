@@ -1,12 +1,12 @@
 package org.qiunet.data1.cache;
 
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public class GuildMemberVo implements IEntityVo<GuildMemberPo> {
+public class GuildMemberBo implements IEntityBo<GuildMemberPo> {
 
 	private GuildMemberPo guildMemberPo;
 
-	GuildMemberVo(GuildMemberPo guildMemberPo) {
+	GuildMemberBo(GuildMemberPo guildMemberPo) {
 		this.guildMemberPo = guildMemberPo;
 	}
 	@Override

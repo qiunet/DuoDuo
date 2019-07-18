@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 /**
  * 基础的DataSupport
  */
- abstract class BaseDataSupport<Po extends IEntity, Vo extends IEntityVo<Po>> implements IDataSupport<Po, Vo>,IAsyncNode {
+ abstract class BaseDataSupport<Po extends IEntity, Bo extends IEntityBo<Po>> implements IDataSupport<Po, Bo>,IAsyncNode {
  	protected static final Logger logger = LoggerType.DUODUO.getLogger();
-	protected VoSupplier<Po , Vo> supplier;
+	protected BoSupplier<Po , Bo> supplier;
 	protected Class<Po> poClass;
 	/** 默认的一个Po 查询一些Key  subKey名称*/
  	protected Po defaultPo;
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 	protected String deleteStatement;
 	protected String selectStatement;
 
-	protected BaseDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier){
+	protected BaseDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier){
 		DataSupportMapping.addMapping(poClass, this);
 		this.poClass = poClass;
 		this.supplier = supplier;

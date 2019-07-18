@@ -3,16 +3,16 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.core.entity.IEntity;
 
 /***
- * Vo的外部构造器
+ * Bo的外部构造器
  * @param <Po>
- * @param <Vo>
+ * @param <Bo>
  */
 @FunctionalInterface
-public interface VoSupplier<Po extends IEntity, Vo extends IEntityVo<Po>> {
+public interface BoSupplier<Po extends IEntity, Bo extends IEntityBo<Po>> {
 	/**
-	 * po得到一个Vo
+	 * po得到一个Bo
 	 * @param po
 	 * @return
 	 */
-	Vo get(Po po);
+	Bo get(Po po);
 }

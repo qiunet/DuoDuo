@@ -2,17 +2,17 @@ package org.qiunet.data1.db.entity;
 
 import org.qiunet.data1.support.DataSupportMapping;
 import org.qiunet.data1.support.IDataSupport;
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public abstract class DbEntity<Key, Vo extends IEntityVo> implements IDbEntity<Key, Vo> {
-	private IDataSupport<DbEntity, Vo> dataSupport;
+public abstract class DbEntity<Key, Bo extends IEntityBo> implements IDbEntity<Key, Bo> {
+	private IDataSupport<DbEntity, Bo> dataSupport;
 
 	public DbEntity() {
 		this.dataSupport = DataSupportMapping.getMapping(getClass());
 	}
 
 	@Override
-	public Vo insert() {
+	public Bo insert() {
 		return this.dataSupport.insert(this);
 	}
 

@@ -3,23 +3,24 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.core.entity.IEntity;
 
 /***
- * Vo的接口
+ *
+ * Bo( Business Object ) 的接口
  * @param <Po>
  */
-public interface IEntityVo<Po extends IEntity> {
+public interface IEntityBo<Po extends IEntity> {
 	/**
-	 * 得到vo
+	 * 得到Bo
 	 * @return
 	 */
 	Po getPo();
 
 	/**
-	 * 序列化数据到po
+	 * 序列化数据到Do
 	 */
 	void serialize();
 
 	/**
-	 * 从po反序列化数据到vo
+	 * 从po反序列化数据到Bo
 	 */
 	void deserialize();
 	/**

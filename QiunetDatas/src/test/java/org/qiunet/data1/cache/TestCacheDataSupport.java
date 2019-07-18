@@ -8,9 +8,9 @@ import org.qiunet.data1.support.CacheDataSupport;
 import java.util.Map;
 
 public class TestCacheDataSupport {
-	private static CacheDataSupport<Long, GuildPo, GuildVo> dataSupport = new CacheDataSupport<>(GuildPo.class, GuildVo::new);
+	private static CacheDataSupport<Long, GuildPo, GuildBo> dataSupport = new CacheDataSupport<>(GuildPo.class, GuildBo::new);
 
-	private static CacheDataListSupport<Long, Long, GuildMemberPo, GuildMemberVo> dataListSupport = new CacheDataListSupport<>(GuildMemberPo.class, GuildMemberVo::new);
+	private static CacheDataListSupport<Long, Long, GuildMemberPo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberPo.class, GuildMemberBo::new);
 	private long guildId = 100000;
 
 	@Test
@@ -19,24 +19,22 @@ public class TestCacheDataSupport {
 		guildPo.setGuildId(guildId);
 		guildPo.setName("公会1");
 		guildPo.setLevel(10);
-		GuildVo guildVo = guildPo.insert();
+		GuildBo guildBo = guildPo.insert();
 		dataSupport.syncToDatabase();
 
-		guildVo.getPo().setName("公会");
-		guildVo.update();
-//		guildVo.getPo().insert();
+		guildBo.getPo().setName("公会");
+		guildBo.update();
 		dataSupport.syncToDatabase();
 
 
-		guildVo = dataSupport.getVo(guildId);
-		Assert.assertNotNull(guildVo);
-//		guildVo.getPo().insert();
+		guildBo = dataSupport.getBo(guildId);
+		Assert.assertNotNull(guildBo);
 
-		guildVo.delete();
+		guildBo.delete();
 		dataSupport.syncToDatabase();
 
-		guildVo = dataSupport.getVo(guildId);
-		Assert.assertNull(guildVo);
+		guildBo = dataSupport.getBo(guildId);
+		Assert.assertNull(guildBo);
 	}
 
 	/**
@@ -49,9 +47,9 @@ public class TestCacheDataSupport {
 		memberPo1.setGuildId(guildId);
 		memberPo1.setMemberId(1);
 		memberPo1.setJob(1);
-		GuildMemberVo vo1 = memberPo1.insert();
-		vo1.delete();
-		vo1.delete();
+		GuildMemberBo bo1 = memberPo1.insert();
+		bo1.delete();
+		bo1.delete();
 	}
 
 	/**
@@ -87,49 +85,49 @@ public class TestCacheDataSupport {
 		memberPo1.setGuildId(guildId);
 		memberPo1.setMemberId(1);
 		memberPo1.setJob(1);
-		GuildMemberVo vo1 = memberPo1.insert();
-		vo1.delete();
+		GuildMemberBo bo1 = memberPo1.insert();
+		bo1.delete();
 
 		memberPo1 = new GuildMemberPo();
 		memberPo1.setGuildId(guildId);
 		memberPo1.setMemberId(1);
 		memberPo1.setJob(1);
-		vo1 = memberPo1.insert();
+		bo1 = memberPo1.insert();
 
 		GuildMemberPo memberPo2 = new GuildMemberPo();
 		memberPo2.setGuildId(guildId);
 		memberPo2.setMemberId(2);
 		memberPo2.setJob(2);
-		GuildMemberVo vo2 = memberPo2.insert();
+		GuildMemberBo bo2 = memberPo2.insert();
 
 		dataListSupport.syncToDatabase();
 
-		Map<Long, GuildMemberVo> voMap = dataListSupport.getVoMap(guildId);
-		Assert.assertEquals(voMap.size(), 2);
+		Map<Long, GuildMemberBo> boMap = dataListSupport.getBoMap(guildId);
+		Assert.assertEquals(boMap.size(), 2);
 
-		for (GuildMemberVo vo : voMap.values()) {
-			Assert.assertTrue(vo.getPo().getJob() >= 1 && vo.getPo().getJob() <= 2);
-			Assert.assertEquals(vo.getPo().getJob(), vo.getPo().getMemberId());
+		for (GuildMemberBo bo : boMap.values()) {
+			Assert.assertTrue(bo.getPo().getJob() >= 1 && bo.getPo().getJob() <= 2);
+			Assert.assertEquals(bo.getPo().getJob(), bo.getPo().getMemberId());
 		}
 
-		vo2.getPo().setJob(3);
-		vo2.update();
+		bo2.getPo().setJob(3);
+		bo2.update();
 		dataListSupport.syncToDatabase();
 
 		dataListSupport.invalidate(guildId);
 
-		voMap = dataListSupport.getVoMap(guildId);
-		voMap.values().forEach(po -> {
+		boMap = dataListSupport.getBoMap(guildId);
+		boMap.values().forEach(po -> {
 			if (po.getPo().getMemberId() == 2){
 				Assert.assertEquals(3, po.getPo().getJob());
 			}
 		});
 
-		voMap.values().forEach(GuildMemberVo::delete);
+		boMap.values().forEach(GuildMemberBo::delete);
 
 		dataListSupport.syncToDatabase();
 
-		voMap = dataListSupport.getVoMap(guildId);
-		Assert.assertTrue(voMap.isEmpty());
+		boMap = dataListSupport.getBoMap(guildId);
+		Assert.assertTrue(boMap.isEmpty());
 	}
 }

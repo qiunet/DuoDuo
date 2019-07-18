@@ -1,7 +1,7 @@
 package org.qiunet.data1.cache.entity;
 
 import org.qiunet.data1.core.entity.IEntityList;
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public interface ICacheEntityList<Key, SubKey, Vo extends IEntityVo> extends ICacheEntity<Key, Vo>, IEntityList<Key, SubKey, Vo> {
+public interface ICacheEntityList<Key, SubKey, Bo extends IEntityBo> extends ICacheEntity<Key, Bo>, IEntityList<Key, SubKey, Bo> {
 }

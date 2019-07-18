@@ -3,8 +3,8 @@ package org.qiunet.data1.support;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data1.db.entity.IDbEntity;
 
- class BaseDbDataSupport<Po extends IDbEntity, Vo extends IEntityVo<Po>> extends BaseDataSupport<Po, Vo> {
-	 protected BaseDbDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
+ class BaseDbDataSupport<Po extends IDbEntity, Bo extends IEntityBo<Po>> extends BaseDataSupport<Po, Bo> {
+	 protected BaseDbDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
 		 super(poClass, supplier);
 	 }
 
@@ -23,7 +23,7 @@ import org.qiunet.data1.db.entity.IDbEntity;
 	}
 
 	 @Override
-	 public Vo insert(Po po) {
+	 public Bo insert(Po po) {
 		 DefaultDatabaseSupport.getInstance().insert(insertStatement, po);
 		 return supplier.get(po);
 	 }

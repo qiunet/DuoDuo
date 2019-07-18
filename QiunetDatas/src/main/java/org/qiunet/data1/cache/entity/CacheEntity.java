@@ -3,12 +3,12 @@ package org.qiunet.data1.cache.entity;
 import org.qiunet.data1.cache.status.EntityStatus;
 import org.qiunet.data1.support.DataSupportMapping;
 import org.qiunet.data1.support.IDataSupport;
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public abstract class CacheEntity<Key,Vo extends IEntityVo> implements ICacheEntity<Key, Vo> {
-	private transient volatile IDataSupport<CacheEntity, Vo> dataSupport;
+public abstract class CacheEntity<Key, Bo extends IEntityBo<? extends CacheEntity>> implements ICacheEntity<Key, Bo> {
+	private transient volatile IDataSupport<CacheEntity, Bo> dataSupport;
 	private transient volatile AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
 
 	public CacheEntity() {
@@ -41,7 +41,7 @@ public abstract class CacheEntity<Key,Vo extends IEntityVo> implements ICacheEnt
 	}
 
 	@Override
-	public Vo insert() {
+	public Bo insert() {
 		return dataSupport.insert(this);
 	}
 }

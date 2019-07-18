@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey, Vo>, Vo extends IEntityVo<Po>> extends BaseDbDataSupport<Po, Vo> {
-	public DbDataListSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
+public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Po>> extends BaseDbDataSupport<Po, Bo> {
+	public DbDataListSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
 		super(poClass, supplier);
 	}
 
@@ -19,7 +19,7 @@ public class DbDataListSupport<Key, SubKey, Po extends IDbEntityList<Key, SubKey
 	 * @param key
 	 * @return
 	 */
-	public Map<SubKey, Vo> getVoMap(Key key) {
+	public Map<SubKey, Bo> getBoMap(Key key) {
 		SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 		List<Po> poList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 		if (poList == null) return Collections.emptyMap();

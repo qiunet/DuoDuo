@@ -7,11 +7,11 @@ import org.qiunet.data1.core.support.cache.LocalCache;
 import org.qiunet.data1.core.support.db.DefaultDatabaseSupport;
 
 
-public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends IEntityVo<Po>> extends BaseCacheDataSupport<Po, Vo> {
+public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Po>> extends BaseCacheDataSupport<Po, Bo> {
 	/**保存的cache*/
-	private LocalCache<Key, Vo> cache = new LocalCache<>();
+	private LocalCache<Key, Bo> cache = new LocalCache<>();
 
-	public CacheDataSupport(Class<Po> poClass, VoSupplier<Po, Vo> supplier) {
+	public CacheDataSupport(Class<Po> poClass, BoSupplier<Po, Bo> supplier) {
 		super(poClass, supplier);
 	}
 
@@ -22,10 +22,10 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 	}
 
 	@Override
-	protected void addToCache(Vo vo) {
-		Vo newVo = this.cache.putIfAbsent(vo.getPo().key(), vo);
-		if (newVo!= null && newVo != vo) {
-			throw new RuntimeException("vo exist, and status is ["+newVo.getPo().entityStatus()+"]");
+	protected void addToCache(Bo bo) {
+		Bo newBo = this.cache.putIfAbsent(bo.getPo().key(), bo);
+		if (newBo != null && newBo != bo) {
+			throw new RuntimeException("bo exist, and status is ["+ newBo.getPo().entityStatus()+"]");
 		}
 	}
 
@@ -34,18 +34,18 @@ public class CacheDataSupport<Key, Po extends ICacheEntity<Key, Vo>, Vo extends 
 	 * @param key
 	 * @return
 	 */
-	public Vo getVo(Key key) {
-		Vo vo = cache.get(key);
-		if (vo == null) {
+	public Bo getBo(Key key) {
+		Bo bo = cache.get(key);
+		if (bo == null) {
 			SelectMap map = SelectMap.create().put(defaultPo.keyFieldName(), key);
 
 			Po po = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 			if (po == null) return null;
 
 			po.updateEntityStatus(EntityStatus.NORMAL);
-			vo = cache.putIfAbsent(key, supplier.get(po));
+			bo = cache.putIfAbsent(key, supplier.get(po));
 		}
-		return vo;
+		return bo;
 	}
 
 	/***

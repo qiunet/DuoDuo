@@ -2,11 +2,11 @@ package org.qiunet.data1.redis.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import org.qiunet.data1.redis.constants.RedisDbConstants;
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 import org.qiunet.data1.util.DbProperties;
 import org.qiunet.data1.core.entity.IEntity;
 
-public interface IRedisEntity<Key, Vo extends IEntityVo> extends IEntity<Key, Vo> {
+public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo> {
 	/***
 	 * 得到dbName
 	 * @return dbName 在sql表前面的

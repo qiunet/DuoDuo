@@ -1,8 +1,8 @@
 package org.qiunet.data1.redis.entity;
 
-import org.qiunet.data1.support.IEntityVo;
+import org.qiunet.data1.support.IEntityBo;
 
-public abstract class RedisEntity<Key, Vo extends IEntityVo> implements IRedisEntity<Key, Vo> {
+public abstract class RedisEntity<Key, Bo extends IEntityBo> implements IRedisEntity<Key, Bo> {
 
 
 	@Override
@@ -16,7 +16,7 @@ public abstract class RedisEntity<Key, Vo extends IEntityVo> implements IRedisEn
 	}
 
 	@Override
-	public Vo insert() {
+	public Bo insert() {
 		return null;
 	}
 }

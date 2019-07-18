@@ -8,7 +8,7 @@ import org.qiunet.data1.util.DbProperties;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityVo<Po>> extends BaseDataSupport<Po, Vo> {
+abstract class BaseCacheDataSupport<Po extends ICacheEntity, Bo extends IEntityBo<Po>> extends BaseDataSupport<Po, Bo> {
 	/***对Entity 的操作 **/
 	private enum  EntityOperate {INSERT, UPDATE, DELETE}
 
@@ -16,7 +16,7 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	/***有同步需求的 key*/
 	protected ConcurrentLinkedQueue<SyncEntityElement> syncKeyQueue = new ConcurrentLinkedQueue<>();
 
-	protected BaseCacheDataSupport(Class<Po> poClass, VoSupplier<Po ,Vo> supplier) {
+	protected BaseCacheDataSupport(Class<Po> poClass, BoSupplier<Po , Bo> supplier) {
 		super(poClass, supplier);
 	}
 
@@ -61,8 +61,8 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 	 * @return
 	 */
 	@Override
-	public Vo insert(Po po) {
-		Vo vo = supplier.get(po);
+	public Bo insert(Po po) {
+		Bo bo = supplier.get(po);
 
 		if (po.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
 			if (! async) {
@@ -71,18 +71,18 @@ abstract class BaseCacheDataSupport<Po extends ICacheEntity, Vo extends IEntityV
 			}else {
 				syncKeyQueue.add(this.syncQueueElement(po, EntityOperate.INSERT));
 			}
-			this.addToCache(vo);
+			this.addToCache(bo);
 		} else {
 			throw new RuntimeException("entity ["+poClass.getName()+"] status ["+po.entityStatus()+"] is error. Not executor insert!");
 		}
-		return vo;
+		return bo;
 	}
 
 	/**
 	 * 由子类插入缓存中
-	 * @param vo
+	 * @param bo
 	 */
-	protected abstract void addToCache(Vo vo);
+	protected abstract void addToCache(Bo bo);
 	/***
 	 * 更新
 	 * @param po
