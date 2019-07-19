@@ -122,6 +122,12 @@ abstract class BaseRedisUtil {
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
 	}
 
+	/***
+	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
+	 * @param caller
+	 * @param <T>
+	 * @return
+	 */
 	public <T> T execCommands(IRedisCaller<T> caller) {
 		try (Jedis jedis = jedisPool.getResource()){
 			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());

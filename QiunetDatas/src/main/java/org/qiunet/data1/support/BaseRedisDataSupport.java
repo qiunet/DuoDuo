@@ -132,7 +132,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * 返回jedis 之后好统一是否需要日志.
 	 * @return
 	 */protected JedisCommands returnJedis(){
-		return redisUtil.returnJedis(false);
+		return redisUtil.returnJedis();
 	}
 	@Override
 	public void update(Do aDo) {
