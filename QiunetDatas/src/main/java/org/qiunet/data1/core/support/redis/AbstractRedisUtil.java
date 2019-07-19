@@ -1,16 +1,7 @@
 package org.qiunet.data1.core.support.redis;
 
-import org.qiunet.data1.redis.entity.IRedisEntity;
-import org.qiunet.data1.redis.entity.IRedisEntityList;
-import org.qiunet.data1.support.IEntityBo;
 import org.qiunet.utils.data.IKeyValueData;
-import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.string.StringUtil;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -32,10 +23,10 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 	 * @return
 	 */
 	public long redisLock(String key){
-		try (Jedis jedis = jedisPool.getResource()){
+		return execCommands(jedis -> {
 			long ret = jedis.incr(key);
 			jedis.expire(key, 3);
 			return ret;
-		}
+		});
 	}
 }

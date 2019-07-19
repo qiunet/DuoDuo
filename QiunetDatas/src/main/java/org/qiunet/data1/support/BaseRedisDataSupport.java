@@ -8,7 +8,6 @@ import org.qiunet.data1.redis.entity.IRedisEntity;
 import org.qiunet.data1.util.DbProperties;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.StringJoiner;
@@ -176,16 +175,19 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	}
 
 	private void sendDataObjToRedis(String redisKey, Do aDo) {
-		try (Jedis jedis = redisUtil.newJedisResource()) {
+		redisUtil.execCommands(jedis -> {
 			jedis.set(redisKey, JsonUtil.toJsonString(aDo));
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
-		}
+			return null;
+		});
 	}
 
 	private Do returnDataObjByRedisKey(String redisKey) {
-		String json = returnJedis().get(redisKey);
-		if (StringUtil.isEmpty(json)) return null;
+		return redisUtil.execCommands(jedis -> {
+			String json = jedis.get(redisKey);
+			if (StringUtil.isEmpty(json)) return null;
 
-		return JsonUtil.getGeneralObject(json, doClass);
+			return JsonUtil.getGeneralObject(json, doClass);
+		});
 	}
 }

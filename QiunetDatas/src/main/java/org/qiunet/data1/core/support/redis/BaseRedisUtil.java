@@ -12,6 +12,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -20,7 +21,7 @@ abstract class BaseRedisUtil {
 
 	protected final String PLACEHOLDER = "PLACEHOLDER";
 	/** 数据源 */
-	protected JedisPool jedisPool;
+	private JedisPool jedisPool;
 
 	protected String redisName;
 	/***
@@ -64,31 +65,42 @@ abstract class BaseRedisUtil {
 		// 返回类似: redis.{redisName}.host 的字符串
 		return "redis."+redisName+"."+originConfigKey;
 	}
+	private Object execCommand(Method method, Object[] args, Jedis jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
+		long startDt = System.currentTimeMillis();
+		Object object = method.invoke(jedis, args);
+		if (log && logger.isInfoEnabled()){
+			long endDt = System.currentTimeMillis();
 
-	private class JedisTemp implements InvocationHandler {
+			StringBuilder sb = new StringBuilder();
+			sb.append("RedisCommand [").append(String.format("%-18s", method.getName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(args[0]).append("] ");
+			if (args.length > 1) sb.append("\t PARAMS ").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append("  ");
+			if (object != null) sb.append("\t RESULT [").append(JsonUtil.toJsonString(object)).append("]");
+			logger.info(sb.toString());
+		}
+		return object;
+	}
+	private class ClosableJedisProxy implements InvocationHandler {
 		private boolean log;
-
-
-		JedisTemp(boolean log) {
+		ClosableJedisProxy(boolean log) {
 			this.log = log;
 		}
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try (Jedis jedis = jedisPool.getResource()){
-				long startDt = System.currentTimeMillis();
-
-				Object object = method.invoke(jedis, args);
-
-				if (log && logger.isInfoEnabled()){
-					long endDt = System.currentTimeMillis();
-					StringBuilder sb = new StringBuilder();
-					sb.append("RedisCommand [").append(String.format("%-18s", method.getName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(args[0]).append("] ");
-					if (args.length > 1) sb.append("\t PARAMS ").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append("  ");
-					if (object != null) sb.append("\t RESULT [").append(JsonUtil.toJsonString(object)).append("]");
-					logger.info(sb.toString());
-				}
-				return object;
+				return execCommand(method, args, jedis, log);
 			}
+		}
+	}
+	private class NormalJedisProxy implements InvocationHandler {
+		private boolean log;
+		private Jedis jedis;
+		NormalJedisProxy(Jedis jedis, boolean log) {
+			this.log = log;
+			this.jedis = jedis;
+		}
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			return execCommand(method, args, jedis, log);
 		}
 	}
 	/***
@@ -106,11 +118,16 @@ abstract class BaseRedisUtil {
 	 * @return
 	 */
 	public JedisCommands returnJedisProxy(boolean log) {
-		InvocationHandler handler = new JedisTemp(log);
+		InvocationHandler handler = new ClosableJedisProxy(log);
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
 	}
 
-	public Jedis newJedisResource(){
-		return jedisPool.getResource();
+	public <T> T execCommands(IRedisCaller<T> caller) {
+		try (Jedis jedis = jedisPool.getResource()){
+			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());
+			JedisCommands jj = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
+			T ret = caller.call(jj);
+			return ret;
+		}
 	}
 }

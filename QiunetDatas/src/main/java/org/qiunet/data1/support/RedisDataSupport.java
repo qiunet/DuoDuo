@@ -7,7 +7,6 @@ import org.qiunet.data1.redis.entity.IRedisEntity;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
-import redis.clients.jedis.Jedis;
 
 public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 
@@ -23,13 +22,13 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 	private Do getDataObjectJson(String key) {
 		String redisKey = getRedisKey(doName, key);
 
-		try (Jedis jedis = redisUtil.newJedisResource()) {
+		return redisUtil.execCommands(jedis -> {
 			String ret = jedis.get(redisKey);
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 
 			if (StringUtil.isEmpty(ret)) return null;
 			return JsonUtil.getGeneralObject(ret, doClass);
-		}
+		});
 	}
 
 	/***

@@ -6,9 +6,18 @@ import org.junit.Test;
 public class TestRedis {
 	@Test
 	public void testGetSet(){
-		RedisDataUtil.getInstance().set("qiu", "yang");
+		RedisDataUtil.returnJedis().set("qiu", "yang");
 
-		String qiuVal = RedisDataUtil.getInstance().get("qiu");
+		String qiuVal = RedisDataUtil.returnJedis().get("qiu");
 		Assert.assertEquals(qiuVal, "yang");
+	}
+	@Test
+	public void execCommands(){
+		String str = RedisDataUtil.getInstance().execCommands(jedis -> {
+			String qiuVal = jedis.get("qiu");
+			jedis.expire("qiu", 100000);
+			return qiuVal;
+		});
+		Assert.assertEquals("yang", str);
 	}
 }
