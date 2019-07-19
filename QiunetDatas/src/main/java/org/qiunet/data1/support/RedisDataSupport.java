@@ -23,9 +23,9 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 	private Do getDataObjectJson(String redisKey) {
 		return redisUtil.execCommands(jedis -> {
 			String ret = jedis.get(redisKey);
-			jedis.expire(redisKey, NORMAL_LIFECYCLE);
-
 			if (StringUtil.isEmpty(ret)) return null;
+
+			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 			return JsonUtil.getGeneralObject(ret, doClass);
 		});
 	}
