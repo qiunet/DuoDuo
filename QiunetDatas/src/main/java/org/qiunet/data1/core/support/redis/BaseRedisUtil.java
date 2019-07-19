@@ -51,7 +51,7 @@ abstract class BaseRedisUtil {
 
 		this.jedisPool = new JedisPool(poolConfig, host, port, timeout, password, db, null);
 
-		ShutdownHookThread.getInstance().addShutdownHook(() -> {
+		ShutdownHookThread.getInstance().addLast(() -> {
 			// 添加关闭.
 			this.jedisPool.close();
 		});
