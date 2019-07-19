@@ -6,7 +6,7 @@ import org.junit.Test;
 public class TestRedis {
 	@Test
 	public void testGetSet(){
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10000; i++) {
 			RedisDataUtil.jedis().set("qiu", "yang");
 			String qiuVal = RedisDataUtil.jedis().get("qiu");
 			Assert.assertEquals(qiuVal, "yang");
@@ -14,11 +14,13 @@ public class TestRedis {
 	}
 	@Test
 	public void execCommands(){
-		String str = RedisDataUtil.getInstance().execCommands(jedis -> {
-			String qiuVal = jedis.get("qiu");
-			jedis.expire("qiu", 100000);
-			return qiuVal;
-		});
-		Assert.assertEquals("yang", str);
+		for (int i = 0; i < 10000; i++) {
+			String str = RedisDataUtil.getInstance().execCommands(jedis -> {
+				String qiuVal = jedis.get("qiu");
+				jedis.expire("qiu", 100000);
+				return qiuVal;
+			});
+			Assert.assertEquals("yang", str);
+		}
 	}
 }
