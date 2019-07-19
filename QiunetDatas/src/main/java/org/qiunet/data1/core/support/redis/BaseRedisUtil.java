@@ -19,8 +19,6 @@ abstract class BaseRedisUtil {
 	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
 	protected final String PLACEHOLDER = "PLACEHOLDER";
-	/***缓存一天*/
-	protected final int NORMAL_LIFECYCLE=86400;
 	/** 数据源 */
 	protected JedisPool jedisPool;
 
@@ -110,5 +108,9 @@ abstract class BaseRedisUtil {
 	public JedisCommands returnJedisProxy(boolean log) {
 		InvocationHandler handler = new JedisTemp(log);
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
+	}
+
+	public Jedis newJedisResource(){
+		return jedisPool.getResource();
 	}
 }
