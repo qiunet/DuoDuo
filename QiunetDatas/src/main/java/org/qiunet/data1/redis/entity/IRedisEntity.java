@@ -1,7 +1,7 @@
 package org.qiunet.data1.redis.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import org.qiunet.data1.redis.constants.RedisDbConstants;
+import org.qiunet.data1.redis.util.DbUtil;
 import org.qiunet.data1.support.IEntityBo;
 import org.qiunet.data1.core.entity.IEntity;
 
@@ -12,7 +12,7 @@ public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo
 	 */
 	@JSONField(serialize= false, deserialize = false)
 	default String getDbName(){
-		return RedisDbConstants.DB_NAME_PREFIX + getDbIndex();
+		return DbUtil.getDbName(key());
 	}
 	/**
 	 * 得到dbIndex
@@ -22,7 +22,7 @@ public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo
 	 */
 	@JSONField(serialize= false, deserialize = false)
 	default int getDbIndex(){
-		return (Math.abs(key().hashCode()) % RedisDbConstants.MAX_DB_COUNT);
+		return DbUtil.getDbIndex(key());
 	}
 	/**
 	 * 根据dbIndex 得到是用哪个数据库源的key
@@ -30,7 +30,6 @@ public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo
 	 */
 	@JSONField(serialize= false, deserialize = false)
 	default String getDbSourceKey(){
-		return String.valueOf(getDbIndex()
-			/ RedisDbConstants.DB_SIZE_PER_INSTANCE);
+		return DbUtil.getDbSourceKey(key());
 	}
 }

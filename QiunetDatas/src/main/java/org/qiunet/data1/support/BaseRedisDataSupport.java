@@ -19,7 +19,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	private enum RedisSyncSetKey {
 		DELETE, INSERT, UPDATE;
 		public String getSyncSetKeyName(String doName){
-			return name() + "#" + doName;
+			return name() + "#SYNC_SET#" + doName;
 		}
 		private static RedisSyncSetKey [] values = values();
 	}
@@ -35,7 +35,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 
 	BaseRedisDataSupport(AbstractRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
-
+		this.redisUtil = redisUtil;
 		this.redisDeleteSyncSetKey = RedisSyncSetKey.DELETE.getSyncSetKeyName(doName);
 		this.redisInsertSyncSetKey = RedisSyncSetKey.INSERT.getSyncSetKeyName(doName);
 		this.redisUpdateSyncSetKey = RedisSyncSetKey.UPDATE.getSyncSetKeyName(doName);
@@ -85,7 +85,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public Bo insert(Do aDo) {
 		this.setDataObjectToRedis(aDo);
-		if (!async) {
+		if (async) {
 			returnJedis().sadd(redisInsertSyncSetKey, buildSyncParams(aDo));
 		}else {
 			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
@@ -137,7 +137,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public void update(Do aDo) {
 		this.setDataObjectToRedis(aDo);
-		if (!async) {
+		if (async) {
 			returnJedis().sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
 		} else {
 			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);

@@ -3,19 +3,19 @@
 <mapper namespace="player">
     
     <select id="selectPlayerDo" parameterType="map" resultType="PlayerDo">
-        select * from player where uid = #{uid};
+        SELECT * FROM player WHERE uid = #{uid};
     </select>
 
     <update id="updatePlayerDo" parameterType="PlayerDo" >
-        update player SET
+        UPDATE player SET
         `level` = #{level},
         `name` = #{name},
         `exp` = ${exp}
-        where uid = #{uid};
+        WHERE uid = #{uid};
     </update>
 
     <insert id="insertPlayerDo" parameterType="PlayerDo" >
-        insert INTO player
+        INSERT INTO player
         (uid , `name`, `level`, exp)
         VALUES (
         #{uid}, #{name}, #{level},  #{exp});

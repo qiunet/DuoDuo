@@ -72,9 +72,15 @@ abstract class BaseRedisUtil {
 			long endDt = System.currentTimeMillis();
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("RedisCommand [").append(String.format("%-18s", method.getName())).append("] ").append(String.format("%3s", (endDt-startDt))).append("ms KEY [").append(args[0]).append("] ");
-			if (args.length > 1) sb.append("\t PARAMS ").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append("  ");
-			if (object != null) sb.append("\t RESULT [").append(JsonUtil.toJsonString(object)).append("]");
+			sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt))).append("ms Key[").append(args[0]).append("] ");
+			if (args.length > 1) sb.append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append(" ");
+			sb.append("\tResult[");
+			if (object == null) {
+				sb.append("null");
+			}else {
+				sb.append(JsonUtil.toJsonString(object));
+			}
+			sb.append("]");
 			logger.info(sb.toString());
 		}
 		return object;

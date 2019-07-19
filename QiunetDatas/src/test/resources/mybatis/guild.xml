@@ -3,18 +3,18 @@
 <mapper namespace="guild">
     
     <select id="selectGuildDo" parameterType="map" resultType="GuildDo">
-        select * from guild where guildId = #{guildId};
+        SELECT * FROM guild WHERE guildId = #{guildId};
     </select>
 
     <update id="updateGuildDo" parameterType="GuildDo" >
-        update guild SET
+        UPDATE guild SET
         `level` = #{level},
         `name` = #{name}
-        where guildId = #{guildId};
+        WHERE guildId = #{guildId};
     </update>
 
     <insert id="insertGuildDo" parameterType="GuildDo" >
-        insert INTO guild
+        INSERT INTO guild
         (guildId , `name`, `level`)
         VALUES (
         #{guildId}, #{name}, #{level});

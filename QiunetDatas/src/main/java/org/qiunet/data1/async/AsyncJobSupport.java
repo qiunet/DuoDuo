@@ -27,10 +27,7 @@ import java.util.concurrent.TimeUnit;
 	private volatile static AsyncJobSupport instance = new AsyncJobSupport();
 	private AsyncJobSupport() {
 		instance = this;
-		ShutdownHookThread.getInstance().addShutdownHook(() -> {
-			asyncToDb(0, TimeUnit.SECONDS);
-			executor.shutdown();
-		});
+		ShutdownHookThread.getInstance().addShutdownHook(() -> executor.shutdown());
 	}
 
 	public static AsyncJobSupport getInstance() {

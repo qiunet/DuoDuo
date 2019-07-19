@@ -3,22 +3,22 @@
 <mapper namespace="item">
     
     <select id="selectItemDo" parameterType="map" resultType="ItemDo">
-        select * from item where uid = #{uid};
+        SELECT * FROM item WHERE uid = #{uid};
     </select>
 
     <update id="updateItemDo" parameterType="ItemDo" >
-        update item SET
+        UPDATE item SET
         `count` = ${count}
-        where `uid` = #{uid} and `item_id` = #{item_id};
+        WHERE `uid` = #{uid} AND `item_id` = #{item_id};
     </update>
 
     <insert id="insertItemDo" parameterType="ItemDo" >
-        insert INTO item
+        INSERT INTO item
         (`uid` , `item_id`, `count`)
         VALUES (
         #{uid}, #{item_id}, #{count});
     </insert>
     <delete id="deleteItemDo" parameterType="map" >
-        DELETE FROM  item  WHERE `uid` = #{uid} and `item_id` = #{item_id} ;
+        DELETE FROM  item  WHERE `uid` = #{uid} AND `item_id` = #{item_id} ;
     </delete>
 </mapper>

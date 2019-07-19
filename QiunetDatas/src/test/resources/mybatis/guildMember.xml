@@ -3,22 +3,22 @@
 <mapper namespace="guildmember">
     
     <select id="selectGuildMemberDo" parameterType="map" resultType="GuildMemberDo">
-        select * from guild_member where guildId = #{guildId};
+        SELECT * FROM guild_member WHERE guildId = #{guildId};
     </select>
 
     <update id="updateGuildMemberDo" parameterType="GuildMemberDo" >
-        update guild_member SET
+        UPDATE guild_member SET
         `job` = ${job}
-        where `guildId` = #{guildId} and `memberId` = #{memberId};
+        WHERE `guildId` = #{guildId} AND `memberId` = #{memberId};
     </update>
 
     <insert id="insertGuildMemberDo" parameterType="GuildMemberDo" >
-        insert INTO guild_member
+        INSERT INTO guild_member
         (`guildId` , `memberId`, `job`)
         VALUES (
         #{guildId}, #{memberId}, #{job});
     </insert>
     <delete id="deleteGuildMemberDo" parameterType="map" >
-        DELETE FROM  guild_member  WHERE `guildId` = #{guildId} and `memberId` = #{memberId} ;
+        DELETE FROM  guild_member  WHERE `guildId` = #{guildId} AND `memberId` = #{memberId} ;
     </delete>
 </mapper>

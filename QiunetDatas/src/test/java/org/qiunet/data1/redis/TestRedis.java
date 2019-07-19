@@ -6,10 +6,11 @@ import org.junit.Test;
 public class TestRedis {
 	@Test
 	public void testGetSet(){
-		RedisDataUtil.jedis().set("qiu", "yang");
-
-		String qiuVal = RedisDataUtil.jedis().get("qiu");
-		Assert.assertEquals(qiuVal, "yang");
+		for (int i = 0; i < 100; i++) {
+			RedisDataUtil.jedis().set("qiu", "yang");
+			String qiuVal = RedisDataUtil.jedis().get("qiu");
+			Assert.assertEquals(qiuVal, "yang");
+		}
 	}
 	@Test
 	public void execCommands(){

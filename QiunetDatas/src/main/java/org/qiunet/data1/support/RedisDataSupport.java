@@ -4,6 +4,7 @@ import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data1.core.support.redis.AbstractRedisUtil;
 import org.qiunet.data1.redis.entity.IRedisEntity;
+import org.qiunet.data1.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -16,12 +17,10 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 
 	/***
 	 * 获取到do的json
-	 * @param key
+	 * @param redisKey
 	 * @return
 	 */
-	private Do getDataObjectJson(String key) {
-		String redisKey = getRedisKey(doName, key);
-
+	private Do getDataObjectJson(String redisKey) {
 		return redisUtil.execCommands(jedis -> {
 			String ret = jedis.get(redisKey);
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
@@ -67,8 +66,13 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 
 	@Override
 	protected void expireDo(Do aDo) {
-		String redisKey = getRedisKey(doName, aDo.key());
+		expire(aDo.key());
+	}
+
+	public void expire(Key key) {
+		String redisKey = getRedisKey(doName, key);
 		returnJedis().expire(redisKey, 0);
+		ThreadContextData.removeKey(redisKey);
 	}
 
 	@Override
@@ -85,6 +89,26 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 
 		String redisKey = getRedisKey(doName, aDo.key());
 		ThreadContextData.put(redisKey, bo);
+		return bo;
+	}
+
+	public Bo getBo(Key key) {
+		String redisKey = getRedisKey(doName, key);
+		Bo bo = ThreadContextData.get(redisKey);
+		if (bo != null) return bo;
+
+		Do aDo = getDataObjectJson(redisKey);
+		if (aDo == null) {
+			String dbSourceKey = DbUtil.getDbSourceKey(key);
+			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key)
+				.put("dbName", DbUtil.getDbName(key));
+			aDo = MoreDbSourceDatabaseSupport.getInstance(dbSourceKey).selectOne(selectStatement, map);
+			if (aDo == null) return null;
+
+			bo = supplier.get(aDo);
+			this.setDataObjectJson(aDo);
+			ThreadContextData.put(redisKey, bo);
+		}
 		return bo;
 	}
 }
