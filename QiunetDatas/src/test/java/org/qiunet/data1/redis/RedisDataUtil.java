@@ -15,12 +15,12 @@ public class RedisDataUtil extends AbstractRedisUtil {
 		return instance;
 	}
 
-	public static JedisCommands returnJedis(){
-		return instance.returnJedisProxy();
+	public static JedisCommands jedis(){
+		return instance.returnJedis();
 	}
 
-	public static JedisCommands returnJedis(boolean log){
-		return instance.returnJedisProxy(log);
+	public static JedisCommands jedis(boolean log){
+		return instance.returnJedis(log);
 	}
 
 	public static <T> T executorCommands(IRedisCaller<T> caller) {

@@ -108,8 +108,8 @@ abstract class BaseRedisUtil {
 	 * 使用完. 会自己close
 	 * @return
 	 */
-	public JedisCommands returnJedisProxy() {
-		return returnJedisProxy(true);
+	public JedisCommands returnJedis() {
+		return returnJedis(true);
 	}
 	/***
 	 * 返回jedis代理
@@ -117,7 +117,7 @@ abstract class BaseRedisUtil {
 	 * @param log true 打印日志 false 不打印日志
 	 * @return
 	 */
-	public JedisCommands returnJedisProxy(boolean log) {
+	public JedisCommands returnJedis(boolean log) {
 		InvocationHandler handler = new ClosableJedisProxy(log);
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
 	}

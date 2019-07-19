@@ -6,9 +6,9 @@ import org.junit.Test;
 public class TestRedis {
 	@Test
 	public void testGetSet(){
-		RedisDataUtil.returnJedis().set("qiu", "yang");
+		RedisDataUtil.jedis().set("qiu", "yang");
 
-		String qiuVal = RedisDataUtil.returnJedis().get("qiu");
+		String qiuVal = RedisDataUtil.jedis().get("qiu");
 		Assert.assertEquals(qiuVal, "yang");
 	}
 	@Test
