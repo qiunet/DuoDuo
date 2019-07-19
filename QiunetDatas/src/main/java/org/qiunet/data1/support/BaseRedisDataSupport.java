@@ -10,6 +10,8 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.JedisCommands;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
@@ -45,6 +47,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	public void syncToDatabase() {
 		if (!async) return;
 
+		Set<String> errorSyncParams = new HashSet<>();
 		for (RedisSyncSetKey syncSetKey : RedisSyncSetKey.values) {
 			String syncSetKeyName = syncSetKey.getSyncSetKeyName(doName);
 			String syncParams;
@@ -69,8 +72,13 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 					}
 				}catch (Exception e) {
 					logger.error("Sync to Database Exception: ", e);
-					returnJedis().sadd(syncSetKeyName, syncParams);
+					errorSyncParams.add(syncParams);
 				}
+			}
+
+			if (!errorSyncParams.isEmpty()) {
+				returnJedis().sadd(syncSetKeyName, errorSyncParams.toArray(new String[0]));
+				errorSyncParams.clear();
 			}
 		}
 	}
@@ -103,12 +111,12 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 
 		String syncKey = buildSyncParams(aDo);
 		this.returnJedis().srem(redisUpdateSyncSetKey, syncKey);
-		Long insert = this.returnJedis().srem(redisInsertSyncSetKey, syncKey);
-		if (insert > 0) {
-			// 说明都没有插入数据库
-			return;
-		}
-
+		this.returnJedis().srem(redisInsertSyncSetKey, syncKey);
+//		if (insert > 0) {
+//			// 说明都没有插入数据库
+//			 但是前面有insert失败的情况. delete 会使情况恢复正常
+//			return;
+//		}
 		this.expireDo(aDo);
 		this.sendDataObjToRedis(buildDeleteRedisKey(buildSyncParams(aDo)), aDo);
 		this.returnJedis().sadd(redisDeleteSyncSetKey, syncKey);

@@ -2,6 +2,7 @@ package org.qiunet.data1.redis;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.data1.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data1.support.RedisDataSupport;
 
 public class TestRedisDataSupport {
@@ -36,5 +37,20 @@ public class TestRedisDataSupport {
 		dataSupport.syncToDatabase();
 		bo = dataSupport.getBo(uid);
 		Assert.assertNull(bo);
+	}
+	@Test
+	public void testDuplicateInsert(){
+		VipDo vipDo = new VipDo();
+		vipDo.setUid(uid);
+		vipDo.setLevel(10);
+		vipDo.setExp(1000);
+
+		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("insertVipDo", vipDo);
+
+		vipDo.insert();
+		dataSupport.syncToDatabase();
+
+		vipDo.delete();
+		dataSupport.syncToDatabase();
 	}
 }
