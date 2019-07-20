@@ -46,7 +46,16 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public void syncToDatabase() {
 		if (!async) return;
-
+		/***
+		 * 同步的过程中会出现异常
+		 *
+		 * 1 . insert 出现异常(duplicate 字段范围 超时), update 不会守影响. insert 会每次同步都进行. 直到出现delete, 会清除insert 的同步状态.
+		 * 2 . update 出现异常(字段范围不对 超时) , update Redis和玩家不会受影响. 直到出现delete 会清除update状态.
+		 * 3 . delete 出现异常(超时), 会一直尝试delete, 直到下次insert 时候, 会尝试直接delete一次, 然后清除状态.
+		 *
+		 * 所有的操作, 需要先保证redis 的数据是准确的.
+		 * 所有的异常必须在24小时内处理, 否则可能出现数据丢失的情况.
+		 */
 		Set<String> errorSyncParams = new HashSet<>();
 		for (RedisSyncSetKey syncSetKey : RedisSyncSetKey.values) {
 			String syncSetKeyName = syncSetKey.getSyncSetKeyName(doName);
@@ -59,11 +68,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
 							break;
 						case DELETE:
-							String deleteRedisKey = buildDeleteRedisKey(syncParams);
-							aDo = returnDataObjByRedisKey(deleteRedisKey);
-							this.deleteFromDb(aDo);
-							// 不会读到deleted key 可以不删除. 万一有异常. 还能往回get出来.
-							// returnJedis().del(deleteRedisKey);
+							this.deleteBySyncParams(syncParams);
 							break;
 						case INSERT:
 							aDo = getDoBySyncParams(syncParams);
@@ -82,7 +87,13 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			}
 		}
 	}
-
+	private void deleteBySyncParams(String syncParams) {
+		String deleteRedisKey = buildDeleteRedisKey(syncParams);
+		Do aDo = returnDataObjByRedisKey(deleteRedisKey);
+		this.deleteFromDb(aDo);
+		// 不会读到deleted key 可以不删除. 万一有异常. 还能往回get出来.
+		// returnJedis().del(deleteRedisKey);
+	}
 	/**
 	 * 由syncParams 得到 Do 子类实现
 	 * @param syncParams
@@ -94,7 +105,18 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	public Bo insert(Do aDo) {
 		this.setDataObjectToRedis(aDo);
 		if (async) {
-			returnJedis().sadd(redisInsertSyncSetKey, buildSyncParams(aDo));
+			String syncParams = buildSyncParams(aDo);
+			Long rem = returnJedis().srem(redisDeleteSyncSetKey, syncParams);
+			if (rem != null && rem > 0){
+				try {
+					// insert 前先执行之前的delete操作.
+					this.deleteBySyncParams(syncParams);
+				}catch (Exception e) {
+					logger.error("Delete Exception", e);
+				}
+			}
+
+			returnJedis().sadd(redisInsertSyncSetKey, syncParams);
 		}else {
 			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
 		}

@@ -22,6 +22,9 @@ abstract class BaseDatabaseSupport implements IDatabaseSupport {
 	 */
 	public int delete(String Statement, Object obj) {
 		int rt = getSqlSession().delete(Statement, obj);
+//		if (rt == 0) {
+//			throw new RuntimeException("测试Redis删除抛异常用, 完事注释");
+//		}
 		return rt;
 	}
 	/**

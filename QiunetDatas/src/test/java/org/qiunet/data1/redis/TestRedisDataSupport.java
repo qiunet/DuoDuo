@@ -2,6 +2,7 @@ package org.qiunet.data1.redis;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data1.support.RedisDataSupport;
 
@@ -52,5 +53,49 @@ public class TestRedisDataSupport {
 
 		vipDo.delete();
 		dataSupport.syncToDatabase();
+		dataSupport.expire(uid);
+
+		VipBo vipBo = dataSupport.getBo(uid);
+		Assert.assertNull(vipBo);
+	}
+
+	/***
+	 * 测试异步删除抛异常的情况
+	 *
+	 * 操作步骤:
+	 * {@link org.qiunet.data1.core.support.db.BaseDatabaseSupport#delete(String, Object)} 取消注释
+	 * 执行测试方法
+	 */
+	@Test
+	public void testDeleteException (){
+		VipDo vipDo = new VipDo();
+		vipDo.setUid(uid);
+		vipDo.setLevel(10);
+		vipDo.setExp(1000);
+		vipDo.insert();
+		dataSupport.syncToDatabase();
+
+		DbParamMap map = DbParamMap.create().put(vipDo.keyFieldName(), vipDo.key())
+			.put("dbName", vipDo.getDbName());
+		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("deleteVipDo", map);
+
+		vipDo.delete();
+		dataSupport.syncToDatabase();
+
+		vipDo = new VipDo();
+		vipDo.setUid(uid);
+		vipDo.setLevel(8);
+		vipDo.setExp(100);
+		vipDo.insert();
+		dataSupport.syncToDatabase();
+
+		vipDo.delete();
+		dataSupport.syncToDatabase();
+
+		dataSupport.expire(uid);
+
+		VipBo vipBo = dataSupport.getBo(uid);
+		Assert.assertNull(vipBo);
+
 	}
 }
