@@ -1,13 +1,13 @@
--- MySQL dump 10.13  Distrib 5.7.16, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 8.0.16, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: test_0
+-- Host: 127.0.0.1    Database: qiunet_db
 -- ------------------------------------------------------
--- Server version	5.7.16
+-- Server version	8.0.16
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
+ SET NAMES utf8mb4 ;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -16,181 +16,99 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `test_0`
+-- Table structure for table `guild`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `test_0` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
-USE `test_0`;
-
---
--- Table structure for table `equip_a_0`
---
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table login
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `login`;
-
-CREATE TABLE `login` (
-  `openid` varchar(255) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `token` varchar(45) NOT NULL,
-  PRIMARY KEY (`openid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table player
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `player`;
-
-CREATE TABLE `player` (
-  `uid` int(11) NOT NULL,
-  `exp` int(11) NOT NULL DEFAULT 0,
-  `level` int(11) NOT NULL,
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table qunxiu
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `qunxiu`;
-
-CREATE TABLE `qunxiu` (
-  `id` int(11) NOT NULL,
-  `master` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `level` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table sysmsg_0
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sysmsg_0`;
-
-CREATE TABLE `sysmsg_0` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) DEFAULT NULL,
-  `msg` varchar(45) NOT NULL,
-  `param` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`,`msg`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
---
--- Current Database: `test_1`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `test_1` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
-USE `test_1`;
-
---
--- Table structure for table `equip_a_0`
---
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table login
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `login`;
-
-CREATE TABLE `login` (
-  `openid` varchar(255) NOT NULL,
-  `uid` int(11) NOT NULL,
-  `token` varchar(45) NOT NULL,
-  PRIMARY KEY (`openid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table player
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `player`;
-
-CREATE TABLE `player` (
-  `uid` int(11) NOT NULL,
-  `exp` int(11) NOT NULL DEFAULT 0,
-  `level` int(11) NOT NULL,
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table qunxiu
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `qunxiu`;
-
-CREATE TABLE `qunxiu` (
-  `id` int(11) NOT NULL,
-  `master` varchar(45) NOT NULL,
-  `name` varchar(45) NOT NULL,
-  `level` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
-# Dump of table sysmsg_0
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `sysmsg_0`;
-
-CREATE TABLE `sysmsg_0` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `uid` int(11) DEFAULT NULL,
-  `msg` varchar(45) NOT NULL,
-  `param` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`,`msg`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-
---
--- Current Database: `test_global`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `test_global` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
-
-USE `test_global`;
-
---
--- Table structure for table `global_table`
---
-
-DROP TABLE IF EXISTS `global_table`;
+DROP TABLE IF EXISTS `guild`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `global_table` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `guild` (
+  `guildId` bigint(20) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `level` int(11) DEFAULT NULL,
+  PRIMARY KEY (`guildId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `global_table`
+-- Dumping data for table `guild`
 --
 
-LOCK TABLES `global_table` WRITE;
-/*!40000 ALTER TABLE `global_table` DISABLE KEYS */;
-/*!40000 ALTER TABLE `global_table` ENABLE KEYS */;
+LOCK TABLES `guild` WRITE;
+/*!40000 ALTER TABLE `guild` DISABLE KEYS */;
+/*!40000 ALTER TABLE `guild` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `guild_member`
+--
+
+DROP TABLE IF EXISTS `guild_member`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `guild_member` (
+  `guildId` bigint(20) NOT NULL,
+  `memberId` bigint(20) NOT NULL,
+  `job` int(11) DEFAULT NULL,
+  PRIMARY KEY (`guildId`,`memberId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `guild_member`
+--
+
+LOCK TABLES `guild_member` WRITE;
+/*!40000 ALTER TABLE `guild_member` DISABLE KEYS */;
+/*!40000 ALTER TABLE `guild_member` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `item`
+--
+
+DROP TABLE IF EXISTS `item`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `item` (
+  `uid` bigint(20) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `count` int(11) DEFAULT NULL,
+  PRIMARY KEY (`uid`,`item_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `item`
+--
+
+LOCK TABLES `item` WRITE;
+/*!40000 ALTER TABLE `item` DISABLE KEYS */;
+/*!40000 ALTER TABLE `item` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `player`
+--
+
+DROP TABLE IF EXISTS `player`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `player` (
+  `uid` bigint(20) DEFAULT NULL,
+  `name` tinytext,
+  `level` int(11) DEFAULT NULL,
+  `exp` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `player`
+--
+
+LOCK TABLES `player` WRITE;
+/*!40000 ALTER TABLE `player` DISABLE KEYS */;
+/*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -202,4 +120,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-02-28  3:05:59
+-- Dump completed on 2019-07-17 16:41:15

@@ -13,7 +13,7 @@
 		<module>CfgReader</module>
 		<module>GameTest</module>
 		<module>ExcelToStream</module>
-		<module>ProjectInit</module>
+<!--		<module>ProjectInit</module>-->
 		<module>FlashHandler</module>
 		<module>LoggerSender</module>
 		<module>LoggerAcceptor</module>
@@ -213,7 +213,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.2.47</version>
+				<version>1.2.58</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.velocity</groupId>

@@ -45,11 +45,18 @@ public class ShutdownHookThread {
 		hook.closes.addFirst(closeHook);
 	}
 	/***
+	 * 添加 到最后
+	 * @param closeHook
+	 */
+	public void addLast(IShutdownCloseHook closeHook) {
+		hook.closes.addLast(closeHook);
+	}
+	/***
 	 * 添加
 	 * @param closeHook
 	 */
 	public void addShutdownHook(IShutdownCloseHook closeHook) {
-		hook.closes.add(closeHook);
+		this.addFirst(closeHook);
 	}
 
 	/***
