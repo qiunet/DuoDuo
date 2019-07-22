@@ -1,4 +1,4 @@
-package org.qiunet.data1.redis;
+package org.qiunet.data1.redis.util;
 
 import org.junit.Assert;
 import org.junit.Test;

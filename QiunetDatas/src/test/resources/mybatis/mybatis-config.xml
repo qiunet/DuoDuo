@@ -39,6 +39,7 @@
         <mapper resource="mybatis/guildMember.xml" />
         <mapper resource="mybatis/player.xml" />
         <mapper resource="mybatis/guild.xml" />
+        <mapper resource="mybatis/equip.xml" />
         <mapper resource="mybatis/item.xml" />
         <mapper resource="mybatis/vip.xml" />
     </mappers>

@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data1.redis.util.RedisDataUtil;
 import org.qiunet.data1.support.RedisDataSupport;
 
 public class TestRedisDataSupport {

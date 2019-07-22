@@ -1,4 +1,4 @@
-package org.qiunet.data1.redis;
+package org.qiunet.data1.redis.util;
 
 import org.qiunet.data1.core.support.redis.AbstractRedisUtil;
 import org.qiunet.data1.core.support.redis.IRedisCaller;
