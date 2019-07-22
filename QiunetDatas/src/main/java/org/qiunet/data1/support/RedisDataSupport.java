@@ -65,7 +65,7 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 	}
 
 	@Override
-	protected void expireDo(Do aDo) {
+	protected void delFromRedis(Do aDo) {
 		expire(aDo.key());
 	}
 

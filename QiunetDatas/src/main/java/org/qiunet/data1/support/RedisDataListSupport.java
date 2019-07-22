@@ -5,6 +5,7 @@ import org.qiunet.data1.core.select.DbParamMap;
 import org.qiunet.data1.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data1.core.support.redis.AbstractRedisUtil;
 import org.qiunet.data1.redis.entity.IRedisEntityList;
+import org.qiunet.data1.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -52,9 +53,9 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	}
 
 	@Override
-	protected void expireDo(Do aDo) {
+	protected void delFromRedis(Do aDo) {
 		String redisKey = getRedisKey(doName, aDo.key());
-		returnJedis().expire(redisKey, 0);
+		returnJedis().hdel(redisKey, String.valueOf(aDo.subKey()));
 	}
 
 	private Do returnDoFromRedis(String redisKey, String subKey) {
@@ -67,12 +68,18 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	private List<Do> returnDoListFromRedis(String redisKey) {
 		return redisUtil.execCommands(jedis -> {
 			List<String> hvals = jedis.hvals(redisKey);
-			if (hvals == null) return null;
-
 			return hvals.parallelStream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
 		});
 	}
 
+
+	private void setListToRedis(String redisKey, List<Do> doList) {
+		redisUtil.execCommands(jedis -> {
+			doList.forEach(aDo -> jedis.hset(redisKey, String.valueOf(aDo.subKey()), JsonUtil.toJsonString(aDo)));
+			jedis.expire(redisKey, NORMAL_LIFECYCLE);
+			return null;
+		});
+	}
 	/***
 	 * 得到bo的map
 	 * @param key
@@ -85,7 +92,16 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 		if (map != null) return map;
 
 		List<Do> doList = returnDoListFromRedis(redisKey);
-		if (doList == null) {
+		if (doList.isEmpty()) {
+			DbParamMap paramMap = DbParamMap.create(defaultDo.keyFieldName(), key);
+			doList = MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key)).selectList(selectStatement, paramMap);
+
+			if (! doList.isEmpty()) {
+				this.setListToRedis(redisKey, doList);
+			}
+		}
+
+		if (doList.isEmpty()) {
 			map = new ConcurrentHashMap<>();
 		}else {
 			map = doList.parallelStream().collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
@@ -108,13 +124,21 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 
 	@Override
 	public void delete(Do aDo) {
-		super.delete(aDo);
-
 		String redisKey = getRedisKey(doName, aDo.key());
 		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
 		Preconditions.checkNotNull(map);
 		map.remove(aDo.subKey());
+		super.delete(aDo);
+	}
 
-		returnJedis().hdel(redisKey, String.valueOf(aDo.subKey()));
+	/***
+	 * 失效缓存
+	 * @param key
+	 */
+	public void expire(Key key) {
+		String redisKey = getRedisKey(doName, key);
+		ThreadContextData.removeKey(redisKey);
+
+		returnJedis().expire(redisKey, 0);
 	}
 }

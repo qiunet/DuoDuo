@@ -126,7 +126,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public void delete(Do aDo) {
 		if (!async) {
-			this.expireDo(aDo);
+			this.delFromRedis(aDo);
 			this.deleteFromDb(aDo);
 			return;
 		}
@@ -139,7 +139,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 //			 但是前面有insert失败的情况. delete 会使情况恢复正常
 //			return;
 //		}
-		this.expireDo(aDo);
+		this.delFromRedis(aDo);
 		this.sendDataObjToRedis(buildDeleteRedisKey(buildSyncParams(aDo)), aDo);
 		this.returnJedis().sadd(redisDeleteSyncSetKey, syncKey);
 	}
@@ -191,7 +191,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * 因为需要区分 是否是list
 	 * @param aDo
 	 */
-	protected abstract void expireDo(Do aDo);
+	protected abstract void delFromRedis(Do aDo);
 	/***
 	 * 获得redis key
 	 * @param keys

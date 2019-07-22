@@ -65,7 +65,7 @@ abstract class BaseRedisUtil {
 		// 返回类似: redis.{redisName}.host 的字符串
 		return "redis."+redisName+"."+originConfigKey;
 	}
-	private Object execCommand(Method method, Object[] args, Jedis jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
+	private Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
 		long startDt = System.currentTimeMillis();
 		Object object = method.invoke(jedis, args);
 		if (log && logger.isInfoEnabled()){
@@ -99,8 +99,8 @@ abstract class BaseRedisUtil {
 	}
 	private class NormalJedisProxy implements InvocationHandler {
 		private boolean log;
-		private Jedis jedis;
-		NormalJedisProxy(Jedis jedis, boolean log) {
+		private JedisCommands jedis;
+		NormalJedisProxy(JedisCommands jedis, boolean log) {
 			this.log = log;
 			this.jedis = jedis;
 		}
@@ -125,7 +125,7 @@ abstract class BaseRedisUtil {
 	 */
 	public JedisCommands returnJedis(boolean log) {
 		InvocationHandler handler = new ClosableJedisProxy(log);
-		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
+		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 	}
 
 	/***
@@ -137,9 +137,10 @@ abstract class BaseRedisUtil {
 	public <T> T execCommands(IRedisCaller<T> caller) {
 		try (Jedis jedis = jedisPool.getResource()){
 			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());
-			JedisCommands jj = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), Jedis.class.getInterfaces(), handler);
+			JedisCommands jj = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 			T ret = caller.call(jj);
 			return ret;
 		}
 	}
+	private Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
 }

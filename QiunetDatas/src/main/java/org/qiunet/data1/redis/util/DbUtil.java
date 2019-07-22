@@ -16,4 +16,9 @@ public final class DbUtil {
 		return String.valueOf(getDbIndex(key)
 			/ RedisDbConstants.DB_SIZE_PER_INSTANCE);
 	}
+
+	public static int getTbIndex(Object key) {
+		return (Math.abs(key.hashCode()) / RedisDbConstants.MAX_DB_COUNT)
+			% RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT;
+	}
 }
