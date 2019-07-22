@@ -2,7 +2,7 @@ package org.qiunet.data1.support;
 
 import org.qiunet.data1.async.IAsyncNode;
 import org.qiunet.data1.core.entity.IEntity;
-import org.qiunet.data1.util.DataUtil;
+import org.qiunet.data1.redis.util.DbUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 		} catch (IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
 		}
-		this.nameSpace = DataUtil.getNameSpace(doName);
+		this.nameSpace = DbUtil.getNameSpace(doName);
 
 		// select 区分 entity 和 list 在子类处理.
 		this.selectStatement = nameSpace+".select"+ doName;
