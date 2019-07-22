@@ -27,12 +27,11 @@
 
     <!--<typeAliases>不需要指定了,  默认的完全够用. </typeAliases>-->
     <typeAliases>
-        <typeAlias alias="dbInfo" type="org.qiunet.data.db.support.info.IEntityDbInfo" />
-        <package name="org.qiunet.data1" />
+        <package name="org.qiunet.data" />
     </typeAliases>
 
 	<plugins>
-		<plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor"></plugin>
+		<plugin interceptor="org.qiunet.data.core.support.db.plugins.MybatisInterceptor"></plugin>
 	</plugins>
 
 	<mappers>
