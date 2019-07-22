@@ -227,7 +227,7 @@ class DbLoader {
 	 * @return
 	 */
 	private SqlSessionFactory getDefaultSqlSessionFactory(){
-		if (this.dataSources.size() != 1) {
+		if (! dbProperties.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
 			throw new NullPointerException("default config size must be 1!");
 		}
 		if (defaultSqlSessionFactory == null) {
