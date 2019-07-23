@@ -18,15 +18,11 @@ public abstract class AbstractRedisUtil extends BaseRedisUtil {
 		super(jedisPool);
 	}
 	/**
-	 * 频繁请求访问控制
+	 * Redis 锁.
 	 * @param key
 	 * @return
 	 */
-	public long redisLock(String key){
-		return execCommands(jedis -> {
-			long ret = jedis.incr(key);
-			jedis.expire(key, 3);
-			return ret;
-		});
+	public RedisLock redisLock(String key){
+		return new RedisLock(this, key);
 	}
 }

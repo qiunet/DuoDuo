@@ -2,6 +2,8 @@ package org.qiunet.data.redis.util;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.data.core.support.redis.AbstractRedisUtil;
+import org.qiunet.data.core.support.redis.RedisLock;
 
 public class TestRedis {
 	@Test
@@ -21,6 +23,15 @@ public class TestRedis {
 				return qiuVal;
 			});
 			Assert.assertEquals("yang", str);
+		}
+	}
+
+	@Test
+	public void testLock(){
+		try (RedisLock lock = RedisDataUtil.getInstance().redisLock("qiuyang")){
+			if (lock.lock()){
+				Assert.assertFalse(lock.lock());
+			}
 		}
 	}
 }
