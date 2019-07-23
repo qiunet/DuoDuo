@@ -4,11 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
-import org.qiunet.data.redis.util.PoolRedisDataUtil;
+import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
 
 public class TestRedisDataSupport {
-	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport = new RedisDataSupport<>(PoolRedisDataUtil.getInstance(), VipDo.class, VipBo::new);
+	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
 
 	private long uid = 10000;
 	@Test

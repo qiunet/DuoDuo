@@ -2,13 +2,13 @@ package org.qiunet.data.redis;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.data.redis.util.PoolRedisDataUtil;
+import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
 
 import java.util.Map;
 
 public class TestRedisDataListSupport {
-	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport = new RedisDataListSupport<>(PoolRedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
+	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
 
 	private long uid = 100000;
 	@Test

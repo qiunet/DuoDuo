@@ -1,9 +1,9 @@
 package org.qiunet.data.support;
 
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.core.support.redis.AbstractPoolRedisUtil;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -11,7 +11,7 @@ import org.qiunet.utils.threadLocal.ThreadContextData;
 
 public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 
-	public RedisDataSupport(AbstractPoolRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+	public RedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);
 	}
 

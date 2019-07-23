@@ -5,13 +5,13 @@ import org.qiunet.data.core.support.redis.IRedisCaller;
 import org.qiunet.data.util.DbProperties;
 import redis.clients.jedis.JedisCommands;
 
-public class PoolRedisDataUtil extends AbstractPoolRedisUtil {
-	private static final PoolRedisDataUtil instance = new PoolRedisDataUtil();
-	private PoolRedisDataUtil() {
+public class RedisDataUtil extends AbstractPoolRedisUtil {
+	private static final RedisDataUtil instance = new RedisDataUtil();
+	private RedisDataUtil() {
 		super(DbProperties.getInstance(), "data");
 	}
 
-	public static PoolRedisDataUtil getInstance() {
+	public static RedisDataUtil getInstance() {
 		return instance;
 	}
 
