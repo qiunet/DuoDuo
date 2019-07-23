@@ -19,6 +19,12 @@ public interface IRedisUtil {
 	 */
 	JedisCommands returnJedis(boolean log);
 	/***
+	 * 得到redis的Lock
+	 * @param key
+	 * @return
+	 */
+	RedisLock redisLock(String key);
+	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close 默认打印日志
 	 * @return

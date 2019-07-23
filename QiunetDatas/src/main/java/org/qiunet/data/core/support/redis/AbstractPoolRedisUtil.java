@@ -22,6 +22,7 @@ public abstract class AbstractPoolRedisUtil extends BasePoolRedisUtil {
 	 * @param key
 	 * @return
 	 */
+	@Override
 	public RedisLock redisLock(String key){
 		return new RedisLock(this, key);
 	}
