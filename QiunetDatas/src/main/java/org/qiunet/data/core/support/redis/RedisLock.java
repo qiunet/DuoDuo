@@ -62,14 +62,14 @@ public class RedisLock implements AutoCloseable {
 	 * 在finally里面调用
 	 */
 	public void unlock() {
-		this.close();
-	}
-
-	@Override
-	public void close() {
 		if (this.future != null) {
 			this.future.cancel(true);
 			redisUtil.returnJedis().expire(key, 0);
 		}
+	}
+
+	@Override
+	public void close() {
+		this.unlock();
 	}
 }
