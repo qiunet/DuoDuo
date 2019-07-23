@@ -9,12 +9,12 @@ import redis.clients.jedis.JedisPool;
  * @author qiunet
  *         Created on 16/12/28 08:28.
  */
-public abstract class AbstractRedisUtil extends BaseRedisUtil {
-	protected AbstractRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
+public abstract class AbstractPoolRedisUtil extends BasePoolRedisUtil {
+	protected AbstractPoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
 		super(redisProperties, redisName);
 	}
 
-	protected AbstractRedisUtil(JedisPool jedisPool) {
+	protected AbstractPoolRedisUtil(JedisPool jedisPool) {
 		super(jedisPool);
 	}
 	/**

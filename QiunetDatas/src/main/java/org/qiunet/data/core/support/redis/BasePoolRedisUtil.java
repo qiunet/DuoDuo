@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-abstract class BaseRedisUtil {
+abstract class BasePoolRedisUtil implements IRedisUtil {
 	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
 	protected final String PLACEHOLDER = "PLACEHOLDER";
@@ -29,7 +29,7 @@ abstract class BaseRedisUtil {
 	 * @param redisProperties
 	 * @param redisName
 	 */
-	protected BaseRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
+	protected BasePoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
 		this.redisName = redisName;
 
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
@@ -57,7 +57,7 @@ abstract class BaseRedisUtil {
 		});
 	}
 
-	protected BaseRedisUtil(JedisPool jedisPool) {
+	protected BasePoolRedisUtil(JedisPool jedisPool) {
 		this.jedisPool = jedisPool;
 	}
 
@@ -114,6 +114,7 @@ abstract class BaseRedisUtil {
 	 * 使用完. 会自己close
 	 * @return
 	 */
+	@Override
 	public JedisCommands returnJedis() {
 		return returnJedis(true);
 	}
@@ -123,6 +124,7 @@ abstract class BaseRedisUtil {
 	 * @param log true 打印日志 false 不打印日志
 	 * @return
 	 */
+	@Override
 	public JedisCommands returnJedis(boolean log) {
 		InvocationHandler handler = new ClosableJedisProxy(log);
 		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
@@ -134,6 +136,7 @@ abstract class BaseRedisUtil {
 	 * @param <T>
 	 * @return
 	 */
+	@Override
 	public <T> T execCommands(IRedisCaller<T> caller) {
 		try (Jedis jedis = jedisPool.getResource()){
 			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());

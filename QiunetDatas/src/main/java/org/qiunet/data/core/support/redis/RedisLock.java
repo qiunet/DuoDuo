@@ -30,9 +30,9 @@ public class RedisLock implements AutoCloseable {
 	private String key;
 	private boolean locked;
 	private Future<Void> future;
-	private AbstractRedisUtil redisUtil;
+	private IRedisUtil redisUtil;
 
-	RedisLock(AbstractRedisUtil redisUtil, String key) {
+	RedisLock(IRedisUtil redisUtil, String key) {
 		this.redisUtil = redisUtil;
 		this.key = key;
 	}

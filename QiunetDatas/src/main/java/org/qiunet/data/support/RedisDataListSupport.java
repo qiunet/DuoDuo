@@ -3,7 +3,7 @@ package org.qiunet.data.support;
 import com.google.common.base.Preconditions;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
-import org.qiunet.data.core.support.redis.AbstractRedisUtil;
+import org.qiunet.data.core.support.redis.AbstractPoolRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntityList;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 
-	public RedisDataListSupport(AbstractRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+	public RedisDataListSupport(AbstractPoolRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);
 	}
 

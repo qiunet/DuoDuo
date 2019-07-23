@@ -1,17 +1,17 @@
 package org.qiunet.data.redis.util;
 
-import org.qiunet.data.core.support.redis.AbstractRedisUtil;
+import org.qiunet.data.core.support.redis.AbstractPoolRedisUtil;
 import org.qiunet.data.core.support.redis.IRedisCaller;
 import org.qiunet.data.util.DbProperties;
 import redis.clients.jedis.JedisCommands;
 
-public class RedisDataUtil extends AbstractRedisUtil {
-	private static final RedisDataUtil instance = new RedisDataUtil();
-	private RedisDataUtil() {
+public class PoolRedisDataUtil extends AbstractPoolRedisUtil {
+	private static final PoolRedisDataUtil instance = new PoolRedisDataUtil();
+	private PoolRedisDataUtil() {
 		super(DbProperties.getInstance(), "data");
 	}
 
-	public static RedisDataUtil getInstance() {
+	public static PoolRedisDataUtil getInstance() {
 		return instance;
 	}
 

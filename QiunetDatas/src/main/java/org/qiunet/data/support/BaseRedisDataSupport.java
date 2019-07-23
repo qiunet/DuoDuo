@@ -4,7 +4,7 @@ package org.qiunet.data.support;
 import org.qiunet.data.async.SyncType;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.redis.entity.IRedisEntity;
-import org.qiunet.data.core.support.redis.AbstractRedisUtil;
+import org.qiunet.data.core.support.redis.AbstractPoolRedisUtil;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -33,9 +33,9 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	private String redisUpdateSyncSetKey;
 
 	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
-	protected AbstractRedisUtil redisUtil;
+	protected AbstractPoolRedisUtil redisUtil;
 
-	BaseRedisDataSupport(AbstractRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
+	BaseRedisDataSupport(AbstractPoolRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		this.redisUtil = redisUtil;
 		this.redisDeleteSyncSetKey = RedisSyncSetKey.DELETE.getSyncSetKeyName(doName);
