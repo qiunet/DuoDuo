@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.16, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: qiunet_db
+-- Host: 127.0.0.1    Database: qiunet_0
 -- ------------------------------------------------------
 -- Server version	8.0.16
 
@@ -14,6 +14,70 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `qiunet_0`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `qiunet_0` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `qiunet_0`;
+
+--
+-- Table structure for table `equip`
+--
+
+DROP TABLE IF EXISTS `equip`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `equip` (
+  `uid` bigint(20) NOT NULL,
+  `equip_id` int(11) NOT NULL,
+  `level` int(11) DEFAULT NULL,
+  PRIMARY KEY (`uid`,`equip_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `equip`
+--
+
+LOCK TABLES `equip` WRITE;
+/*!40000 ALTER TABLE `equip` DISABLE KEYS */;
+/*!40000 ALTER TABLE `equip` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vip`
+--
+
+DROP TABLE IF EXISTS `vip`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `vip` (
+  `uid` bigint(20) NOT NULL,
+  `level` int(11) DEFAULT NULL,
+  `exp` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vip`
+--
+
+LOCK TABLES `vip` WRITE;
+/*!40000 ALTER TABLE `vip` DISABLE KEYS */;
+/*!40000 ALTER TABLE `vip` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Current Database: `qiunet_db`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `qiunet_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+
+USE `qiunet_db`;
 
 --
 -- Table structure for table `guild`
@@ -120,4 +184,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-17 16:41:15
+-- Dump completed on 2019-07-24 14:48:44
