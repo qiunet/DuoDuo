@@ -1,11 +1,11 @@
 package org.qiunet.data.redis.util;
 
-import org.qiunet.data.core.support.redis.AbstractPoolRedisUtil;
+import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
 import org.qiunet.data.core.support.redis.IRedisCaller;
 import org.qiunet.data.util.DbProperties;
 import redis.clients.jedis.JedisCommands;
 
-public class RedisDataUtil extends AbstractPoolRedisUtil {
+public class RedisDataUtil extends BasePoolRedisUtil {
 	private static final RedisDataUtil instance = new RedisDataUtil();
 	private RedisDataUtil() {
 		super(DbProperties.getInstance(), "data");

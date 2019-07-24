@@ -16,14 +16,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-abstract class BasePoolRedisUtil implements IRedisUtil {
-	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
-
-	protected final String PLACEHOLDER = "PLACEHOLDER";
+public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisUtil {
+	private static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
 	/** 数据源 */
 	private JedisPool jedisPool;
-
-	protected String redisName;
 	/***
 	 * 构造redisUtil 需要的JedisPool
 	 * @param redisProperties
@@ -65,26 +61,7 @@ abstract class BasePoolRedisUtil implements IRedisUtil {
 		// 返回类似: redis.{redisName}.host 的字符串
 		return "redis."+redisName+"."+originConfigKey;
 	}
-	private Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
-		long startDt = System.currentTimeMillis();
-		Object object = method.invoke(jedis, args);
-		if (log && logger.isInfoEnabled()){
-			long endDt = System.currentTimeMillis();
 
-			StringBuilder sb = new StringBuilder();
-			sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt))).append("ms Key[").append(args[0]).append("] ");
-			if (args.length > 1) sb.append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append(" ");
-			sb.append("\tResult[");
-			if (object == null) {
-				sb.append("null");
-			}else {
-				sb.append(JsonUtil.toJsonString(object));
-			}
-			sb.append("]");
-			logger.info(sb.toString());
-		}
-		return object;
-	}
 	private class ClosableJedisProxy implements InvocationHandler {
 		private boolean log;
 		ClosableJedisProxy(boolean log) {
@@ -145,5 +122,5 @@ abstract class BasePoolRedisUtil implements IRedisUtil {
 			return ret;
 		}
 	}
-	private Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
+
 }
