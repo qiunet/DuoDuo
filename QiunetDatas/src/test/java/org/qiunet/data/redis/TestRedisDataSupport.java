@@ -99,4 +99,17 @@ public class TestRedisDataSupport {
 		Assert.assertNull(vipBo);
 
 	}
+
+	@Test
+	public void testRedisHit(){
+		long uid = 100000000;
+
+		VipBo bo = dataSupport.getBo(uid);
+		Assert.assertNull(bo);
+
+		for (int i = 0; i < 3; i++) {
+			bo = dataSupport.getBo(uid);
+			Assert.assertNull(bo);
+		}
+	}
 }

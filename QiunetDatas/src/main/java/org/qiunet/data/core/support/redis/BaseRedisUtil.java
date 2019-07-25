@@ -12,8 +12,6 @@ import java.lang.reflect.Method;
 public abstract class BaseRedisUtil implements IRedisUtil {
 	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
-	protected final String PLACEHOLDER = "PLACEHOLDER";
-
 	protected String redisName;
 	/**
 	 * Redis 锁.

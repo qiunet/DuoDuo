@@ -9,21 +9,29 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
-public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+	/**防止缓存击穿的 NULL*/
+	private Do NULL;
+
+	private final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);
+		this.NULL = defaultDo;
 	}
 
 	/***
 	 * 获取到do的json
 	 * @param redisKey
+	 * @param defHit 是否需要防止击穿
 	 * @return
 	 */
-	private Do getDataObjectJson(String redisKey) {
+	private Do getDataObjectJson(String redisKey, boolean defHit) {
 		return redisUtil.execCommands(jedis -> {
 			String ret = jedis.get(redisKey);
 			if (StringUtil.isEmpty(ret)) return null;
+
+			if (PLACE_HOLDER.equals(ret)) return defHit ? NULL: null;
 
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 			return JsonUtil.getGeneralObject(ret, doClass);
@@ -44,7 +52,7 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 	@Override
 	protected Do getDoBySyncParams(String syncParams) {
 		String redisKey = getRedisKey(doName, syncParams);
-		return getDataObjectJson(redisKey);
+		return getDataObjectJson(redisKey, false);
 	}
 
 	@Override
@@ -97,13 +105,18 @@ public class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends 
 		Bo bo = ThreadContextData.get(redisKey);
 		if (bo != null) return bo;
 
-		Do aDo = getDataObjectJson(redisKey);
+		Do aDo = getDataObjectJson(redisKey, true);
+		if (aDo == NULL) return null;
+
 		if (aDo == null) {
 			String dbSourceKey = DbUtil.getDbSourceKey(key);
 			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key)
 				.put("dbName", DbUtil.getDbName(key));
 			aDo = MoreDbSourceDatabaseSupport.getInstance(dbSourceKey).selectOne(selectStatement, map);
-			if (aDo == null) return null;
+			if (aDo == null) {
+				returnJedis().set(redisKey, PLACE_HOLDER, "nx", "ex", NORMAL_LIFECYCLE);
+				return null;
+			}
 
 			bo = supplier.get(aDo);
 			this.setDataObjectJson(aDo);
