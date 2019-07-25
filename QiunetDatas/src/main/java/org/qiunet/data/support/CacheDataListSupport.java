@@ -12,6 +12,14 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+/***
+ *  List 的结构本身是防止缓存击穿的.
+ *  没有数据, 会在缓存放一个空的Map
+ * @param <Key>
+ * @param <SubKey>
+ * @param <Do>
+ * @param <Bo>
+ */
 public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
 	/**保存的cache*/
 	private LocalCache<Key, Map<SubKey, Bo>> cache = new LocalCache<>();
