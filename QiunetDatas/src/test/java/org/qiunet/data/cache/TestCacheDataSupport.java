@@ -52,6 +52,32 @@ public class TestCacheDataSupport {
 		bo1.delete();
 	}
 
+	@Test
+	public void testCacheEntityHit(){
+		long guildId = 1000000;
+		GuildBo bo = dataSupport.getBo(guildId);
+		Assert.assertNull(bo);
+		for (int i = 0; i < 10; i++) {
+			bo = dataSupport.getBo(guildId);
+			Assert.assertNull(bo);
+		}
+		GuildDo guildDo = new GuildDo();
+		guildDo.setGuildId(guildId);
+		guildDo.setName("公会1");
+		guildDo.setLevel(10);
+		GuildBo bo1 = guildDo.insert();
+		dataSupport.syncToDatabase();
+
+		bo = dataSupport.getBo(guildId);
+		Assert.assertNotNull(bo);
+		Assert.assertEquals(bo, bo1);
+
+		bo1.delete();
+		dataSupport.syncToDatabase();
+		bo = dataSupport.getBo(guildId);
+		Assert.assertNull(bo);
+	}
+
 	/**
 	 * 两次insert
 	 * 测试这个会抛出异常

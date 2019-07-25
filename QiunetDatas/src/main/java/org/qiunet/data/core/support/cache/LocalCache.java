@@ -2,6 +2,7 @@ package org.qiunet.data.core.support.cache;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
 
 import java.util.Arrays;
 import java.util.List;
@@ -66,6 +67,25 @@ public class LocalCache<Key, Val> {
 		return localCache.asMap().putIfAbsent(key, val);
 	}
 
+	/***
+	 * Replace
+	 * @param key
+	 * @param oldValue
+	 * @param newValue
+	 * @return
+	 */
+	public boolean replace(Key key, Val oldValue, Val newValue){
+		return this.localCache.asMap().replace(key, oldValue, newValue);
+	}
+
+	/**
+	 * Is present key
+	 * @param key
+	 * @return
+	 */
+	public boolean containKey(Key key) {
+		return this.localCache.asMap().containsKey(key);
+	}
 	/**
 	 * 对某个key 失效
 	 * @param key
@@ -90,5 +110,21 @@ public class LocalCache<Key, Val> {
 	 */
 	public void invalidateAll(Key ... keys) {
 		invalidateAll(Arrays.asList(keys));
+	}
+
+	/***
+	 * size
+	 * @return
+	 */
+	public long size() {
+		return this.localCache.size();
+	}
+
+	/***
+	 * 各种统计数据
+	 * @return
+	 */
+	public CacheStats stats(){
+		return this.localCache.stats();
 	}
 }
