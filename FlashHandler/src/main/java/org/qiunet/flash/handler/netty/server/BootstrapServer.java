@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.listener.ListenerManager;
+import org.qiunet.utils.listener.event_data.ServerStartEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -139,6 +140,8 @@ public class BootstrapServer {
 	 * 阻塞线程 最后调用阻塞当前线程
 	 */
 	public void await(){
+		ServerStartEventData.fireStartEventHandler();
+
 		awaitThread = Thread.currentThread();
 		LockSupport.park();
 	}
