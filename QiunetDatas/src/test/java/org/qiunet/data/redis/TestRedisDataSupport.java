@@ -6,10 +6,16 @@ import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
+import org.qiunet.utils.threadLocal.ThreadContextData;
 
 public class TestRedisDataSupport {
 	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
 
+	public void expire(long uid) {
+		String redisKey = "VipDo#"+uid;
+		RedisDataUtil.jedis().expire(redisKey, 0);
+		ThreadContextData.removeKey(redisKey);
+	}
 	private long uid = 10000;
 	@Test
 	public void testEntity(){
@@ -20,7 +26,7 @@ public class TestRedisDataSupport {
 
 		vipDo.insert();
 		dataSupport.syncToDatabase();
-		dataSupport.expire(uid);
+		this.expire(uid);
 
 		VipBo bo = dataSupport.getBo(uid);
 		Assert.assertEquals(bo.getDo().getUid(), uid);
@@ -31,7 +37,7 @@ public class TestRedisDataSupport {
 		bo.update();
 		dataSupport.syncToDatabase();
 
-		dataSupport.expire(uid);
+		this.expire(uid);
 		bo = dataSupport.getBo(uid);
 		Assert.assertEquals(bo.getDo().getExp(), 100);
 
@@ -54,7 +60,7 @@ public class TestRedisDataSupport {
 
 		vipDo.delete();
 		dataSupport.syncToDatabase();
-		dataSupport.expire(uid);
+		this.expire(uid);
 
 		VipBo vipBo = dataSupport.getBo(uid);
 		Assert.assertNull(vipBo);
@@ -93,7 +99,7 @@ public class TestRedisDataSupport {
 		vipDo.delete();
 		dataSupport.syncToDatabase();
 
-		dataSupport.expire(uid);
+		this.expire(uid);
 
 		VipBo vipBo = dataSupport.getBo(uid);
 		Assert.assertNull(vipBo);

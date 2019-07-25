@@ -65,6 +65,10 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 					switch (syncSetKey) {
 						case UPDATE:
 							Do aDo = getDoBySyncParams(syncParams);
+							if (aDo == null) {
+								logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
+								continue;
+							}
 							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
 							break;
 						case DELETE:
@@ -72,6 +76,10 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 							break;
 						case INSERT:
 							aDo = getDoBySyncParams(syncParams);
+							if (aDo == null) {
+								logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
+								continue;
+							}
 							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
 							break;
 					}

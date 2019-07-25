@@ -74,11 +74,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 
 	@Override
 	protected void delFromRedis(Do aDo) {
-		expire(aDo.key());
-	}
-
-	public void expire(Key key) {
-		String redisKey = getRedisKey(doName, key);
+		String redisKey = getRedisKey(doName, aDo.key());
 		returnJedis().expire(redisKey, 0);
 		ThreadContextData.removeKey(redisKey);
 	}
