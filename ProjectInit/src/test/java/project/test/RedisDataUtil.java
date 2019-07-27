@@ -1,10 +1,10 @@
 package project.test;
 
-import org.qiunet.data.redis.AbstractRedisUtil;
+import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
+import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.utils.data.KeyValueData;
-import redis.clients.jedis.JedisPool;
 
-public class RedisDataUtil extends AbstractRedisUtil {
+public class RedisDataUtil extends BasePoolRedisUtil {
 
 	/**
 	 */
@@ -12,7 +12,7 @@ public class RedisDataUtil extends AbstractRedisUtil {
 		super(new KeyValueData<>(), "data");
 	}
 
-	public static AbstractRedisUtil getInstance(){
+	public static IRedisUtil getInstance(){
 		return null;
 	}
 }

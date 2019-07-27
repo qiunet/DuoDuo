@@ -13,7 +13,7 @@
 		<module>CfgReader</module>
 		<module>GameTest</module>
 		<module>ExcelToStream</module>
-<!--		<module>ProjectInit</module>-->
+		<module>ProjectInit</module>
 		<module>FlashHandler</module>
 		<module>LoggerSender</module>
 		<module>LoggerAcceptor</module>
