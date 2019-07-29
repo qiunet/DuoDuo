@@ -2,7 +2,7 @@
 <entity key="uid"
 		name="PlayerDo"
 		type="RedisEntity"
-		redis="project.test.PoolRedisDataUtil"
+		redis="project.test.RedisDataUtil"
 		xmlns="https://github.com/qiunet/Entity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="https://github.com/qiunet/Entity"
@@ -10,10 +10,10 @@
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
 	<constructor>
-		<constructor_arg>uid1</constructor_arg>
+		<constructor_arg field="xxx" />
 	</constructor>
 	<constructor>
-		<constructor_arg>uid</constructor_arg>
-		<constructor_arg>level</constructor_arg>
+		<constructor_arg field="uid" />
+		<constructor_arg field="level" />
 	</constructor>
 </entity>
