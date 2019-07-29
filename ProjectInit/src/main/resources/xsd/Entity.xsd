@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="https://github.com/qiunet/entity"
-           xmlns:en="https://github.com/qiunet/entity"
+           targetNamespace="https://github.com/qiunet/Entity"
+           xmlns:en="https://github.com/qiunet/Entity"
            elementFormDefault="qualified"
 >
     <xs:simpleType name="EntityType">
         <xs:restriction base="xs:string" >
             <xs:enumeration value="DbEntity"  />
-            <xs:enumeration value="DbEntityList" />
             <xs:enumeration value="CacheEntity" />
-            <xs:enumeration value="CacheEntityList" />
             <xs:enumeration value="RedisEntity" />
-            <xs:enumeration value="RedisEntityList" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -29,36 +26,37 @@
         <xs:attribute name="comment" type="xs:string" />
     </xs:complexType>
 
+    <xs:simpleType name="NamePattern">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z]{2,20}Do" />
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:element name="entity">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="en:FieldDesc" />
-                <xs:element name="constructors" minOccurs="0">
+                <xs:element name="constructor" minOccurs="0" maxOccurs="5">
+                    <xs:annotation>
+                        <xs:documentation>
+                            <![CDATA[最多5个构造函数]]>
+                        </xs:documentation>
+                    </xs:annotation>
                     <xs:complexType>
                         <xs:sequence>
-                            <xs:element name="constructor" maxOccurs="unbounded">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="constructor_arg" type="xs:string"></xs:element>
-                                    </xs:sequence>
-                                </xs:complexType>
-                            </xs:element>
+                            <xs:element name="constructor_arg" type="xs:string" maxOccurs="unbounded" />
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
-            <xs:attribute name="name" type="xs:string" use="required" />
+            <xs:attribute name="name" type="en:NamePattern" use="required" />
             <xs:attribute name="type" type="EntityType" use="required" />
             <xs:attribute name="key" type="xs:string" use="required" />
             <xs:attribute name="redis" type="xs:string"/>
-            <xs:key name="fieldName">
-                <xs:selector xpath="en:./field" />
-                <xs:field xpath="@name" />
-            </xs:key>
-            <xs:keyref name="constructorArgs" refer="fieldName">
-                <xs:selector xpath="en:./constructors/constructor/constructor_arg" />
-                <xs:field xpath="@value" />
-            </xs:keyref>
         </xs:complexType>
+        <xs:unique name="FieldNameUnique">
+            <xs:selector xpath="en:field"/>
+            <xs:field xpath="@name"/>
+        </xs:unique>
     </xs:element>
 </xs:schema>

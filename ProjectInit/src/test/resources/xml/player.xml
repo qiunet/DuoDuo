@@ -3,13 +3,17 @@
 		name="PlayerDo"
 		type="RedisEntity"
 		redis="project.test.PoolRedisDataUtil"
-		xmlns="https://github.com/qiunet/entity"
+		xmlns="https://github.com/qiunet/Entity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="https://github.com/qiunet/entity Entity.xsd"
+		xsi:schemaLocation="https://github.com/qiunet/Entity"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
-	<constructors>
-
-	</constructors>
+	<constructor>
+		<constructor_arg>uid1</constructor_arg>
+	</constructor>
+	<constructor>
+		<constructor_arg>uid</constructor_arg>
+		<constructor_arg>level</constructor_arg>
+	</constructor>
 </entity>
