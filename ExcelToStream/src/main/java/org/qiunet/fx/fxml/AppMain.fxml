@@ -16,19 +16,19 @@
           <content>
             <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
               <children>
-                <Pane prefHeight="84.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <AnchorPane prefHeight="84.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                   <children>
                     <Label layoutX="9.0" layoutY="6.0" prefHeight="22.240234375" prefWidth="87.0" text="Excel路径：">
                       <font>
                         <Font size="14.0" fx:id="x1" />
                       </font>
                     </Label>
-                    <ChoiceBox layoutX="82.0" layoutY="8.0" prefWidth="335.0">
+                    <ChoiceBox fx:id="excelPaths" layoutX="82.0" layoutY="8.0" prefWidth="335.0">
                       <items>
                         <FXCollections fx:factory="observableArrayList" />
                       </items>
                     </ChoiceBox>
-                    <Button layoutX="427.0" layoutY="10.0" mnemonicParsing="false" text="选择" />
+                    <Button layoutX="427.0" layoutY="10.0" mnemonicParsing="false" text="选择" onAction="#openExcelFile" />
                     <Button layoutX="483.0" layoutY="10.0" mnemonicParsing="false" text="移除" />
                     <Button layoutX="536.0" layoutY="10.0" mnemonicParsing="false" text="刷新缓存" />
                     <Button layoutX="616.0" layoutY="10.0" mnemonicParsing="false" text="更新" />
@@ -41,10 +41,10 @@
                     <RadioButton fx:id="searchItem" layoutX="491.0" layoutY="56.0" mnemonicParsing="false" text="只搜道具" />
                     <CheckBox fx:id="blurryCheck" layoutX="570.0" layoutY="56.0" mnemonicParsing="false" text="模糊搜索" />
                     <Button layoutX="656.0" layoutY="52.0" mnemonicParsing="false" onAction="#searchBtn" prefWidth="55.0" text="开始" />
-                    <Separator layoutX="0.0" layoutY="41.0" minWidth="-1.0" prefWidth="834.0" />
-                    <Separator layoutX="0.0" layoutY="79.0" prefWidth="834.0" />
+                    <Separator layoutX="0.0" layoutY="41.0"  prefWidth="834.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                    <Separator layoutX="0.0" layoutY="79.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   </children>
-                </Pane>
+                </AnchorPane>
               </children>
             </AnchorPane>
           </content>

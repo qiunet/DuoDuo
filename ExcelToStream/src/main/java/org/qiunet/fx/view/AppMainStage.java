@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.qiunet.fx.AppMain;
+import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.fx.controller.BaseController;
 import org.qiunet.utils.ExecutorServiceUtil;
 
@@ -25,6 +26,11 @@ public class AppMainStage extends Application {
 		primaryStage.setMinHeight(400);
 		primaryStage.setMinWidth(600);
 		primaryStage.show();
+
+		ExecutorServiceUtil.getInstance().submit(()->{
+			ConfigManager.getInstance();
+		});
+
 		BaseController controller = loader.getController();
 		controller.init(primaryStage);
 		//关闭监听
