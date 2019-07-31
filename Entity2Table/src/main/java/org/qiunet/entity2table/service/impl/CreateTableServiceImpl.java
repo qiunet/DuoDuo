@@ -1,6 +1,7 @@
 package org.qiunet.entity2table.service.impl;
 
 import org.qiunet.entity2table.command.Columns;
+import org.qiunet.entity2table.controller.CreateTableController;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
@@ -17,6 +18,25 @@ import java.util.Map;
 public class CreateTableServiceImpl implements CreateTableService {
 
 	private static final String sqlPath = "org.qiunet.entity2table.service.CreateTableService.";
+
+	private volatile static CreateTableServiceImpl instance;
+
+	private CreateTableServiceImpl() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		instance = this;
+	}
+
+	public static CreateTableServiceImpl getInstance() {
+		if (instance == null) {
+			synchronized (CreateTableServiceImpl.class) {
+				if (instance == null)
+				{
+					new CreateTableServiceImpl();
+				}
+			}
+		}
+		return instance;
+	}
 
 	@Override
 	public void createTable(Map<String, List<Object>> tableMap, String tableComment) {

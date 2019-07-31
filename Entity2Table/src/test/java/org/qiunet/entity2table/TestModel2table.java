@@ -16,7 +16,6 @@ public class TestModel2table {
 	}
 
 	public static void main(String[] args) {
-		CreateTableController createTableController = new CreateTableController();
-		createTableController.start();
+		CreateTableController.getInstance().start();
 	}
 }

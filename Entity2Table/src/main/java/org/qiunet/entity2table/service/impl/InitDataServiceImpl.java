@@ -19,6 +19,25 @@ public class InitDataServiceImpl implements InitDataService {
 
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
+	private volatile static InitDataServiceImpl instance;
+
+	private InitDataServiceImpl() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		instance = this;
+	}
+
+	public static InitDataServiceImpl getInstance() {
+		if (instance == null) {
+			synchronized (CreateTableServiceImpl.class) {
+				if (instance == null)
+				{
+					new InitDataServiceImpl();
+				}
+			}
+		}
+		return instance;
+	}
+
 	@Override
 	public void initData() {
 		logger.info("\n=========开始初始化数据=======");

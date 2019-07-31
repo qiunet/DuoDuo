@@ -34,18 +34,38 @@ public class CreateTableController {
 
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
-	@Resource
-	private CreateTableService createTableService = new CreateTableServiceImpl();
+//	@Resource
+	private CreateTableService createTableService = CreateTableServiceImpl.getInstance();
 
-	@Resource
-	private InitDataService initDataService = new InitDataServiceImpl();
+//	@Resource
+	private InitDataService initDataService = InitDataServiceImpl.getInstance();
 
 	private String tableAuto;
 
+	private volatile static CreateTableController instance;
+
+	private CreateTableController() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		instance = this;
+	}
+
+	public static CreateTableController getInstance() {
+		if (instance == null) {
+			synchronized (CreateTableController.class) {
+				if (instance == null)
+				{
+					new CreateTableController();
+				}
+			}
+		}
+		return instance;
+	}
+
+
 	/**
 	 * 这个注释的作用是,让服务器再加载servlet的时候调用一次, 调用时刻是构造函数之后, init函数之前
+	 * @PostConstruct
 	 */
-	@PostConstruct
 	public void start() {
 		tableAuto = ConfigLoder.getProperty("mybatis.model.tableAuto");
 		// 不做任何事情
