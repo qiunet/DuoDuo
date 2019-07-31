@@ -17,27 +17,35 @@ public class AppMainStage extends Application {
 
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource(AppMain.fxml_path + "AppMain.fxml"));
-		Parent root = loader.load();
-		Scene scene = new Scene(root, 600, 400);
-		primaryStage.setTitle("game_tool");
-		primaryStage.setScene(scene);
-		primaryStage.setMinHeight(400);
-		primaryStage.setMinWidth(600);
-		primaryStage.show();
+	public void start(Stage primaryStage) {
+		try {
 
-		ExecutorServiceUtil.getInstance().submit(()->{
-			ConfigManager.getInstance();
-		});
 
-		BaseController controller = loader.getController();
-		controller.init(primaryStage);
-		//关闭监听
-		primaryStage.setOnCloseRequest((event) -> {
-			System.out.println("关闭监听");
+			FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource(AppMain.fxml_path + "AppMain.fxml"));
+			Parent root = loader.load();
+			Scene scene = new Scene(root, 600, 400);
+			primaryStage.setTitle("game_tool");
+			primaryStage.setScene(scene);
+			primaryStage.setMinHeight(400);
+			primaryStage.setMinWidth(600);
+			primaryStage.show();
+
+			ExecutorServiceUtil.getInstance().submit(() -> {
+				ConfigManager.getInstance();
+			});
+
+			BaseController controller = loader.getController();
+			controller.init(primaryStage);
+			//关闭监听
+			primaryStage.setOnCloseRequest((event) -> {
+				System.out.println("关闭监听");
+				ExecutorServiceUtil.getInstance().shutdown();
+			});
+		} catch (Exception e) {
 			ExecutorServiceUtil.getInstance().shutdown();
-		});
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	public static void run(String[] args) {

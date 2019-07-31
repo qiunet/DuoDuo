@@ -10,7 +10,8 @@ public class FileUtil {
 	private static final String loadWorkHomeName = ".xdProject";
 	private static final String loadWorkFileName = ".xd.project";
 
-	private static File returnWorkFile(){
+
+	public static File returnWorkFile(){
 		Path path = Paths.get(System.getProperty("user.home") , loadWorkHomeName, loadWorkFileName);
 		File file = path.toFile();
 		if (! file.getParentFile().exists()) {
@@ -18,6 +19,7 @@ public class FileUtil {
 		}
 		return file;
 	}
+
 	/**
 	 *
 	 * @param dir

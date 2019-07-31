@@ -1,20 +1,24 @@
 package org.qiunet.fx.common;
 
-import org.qiunet.utils.properties.PropertiesUtil;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.qiunet.utils.FileUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 public class ConfigManager {
 	private volatile static ConfigManager instance;
-	public static final String fileName = "config.properties";
 	public static final String def_regex = ";";
 	private Map<Object, Object> map;
 
+	private static  final Logger logger=LoggerType.DUODUO.getLogger();
+
 	public static final String excel_path_array_key = "excel_path_array";
 	public static final String last_check_excel_key = "last_check_excel";
+
 	private Set<String> excel_path_array;
 
 
@@ -35,9 +39,10 @@ public class ConfigManager {
 	}
 
 	private ConfigManager() {
-		map = PropertiesUtil.loadProperties(fileName).returnMap();
-		loadExcel_path_array();
+		Properties properties = FileUtil.loadProperties(FileUtil.returnWorkFile());
+		map = properties;
 		instance = this;
+		loadExcel_path_array();
 	}
 
 	public static ConfigManager getInstance() {
@@ -61,12 +66,7 @@ public class ConfigManager {
 		Properties tempProperties = new Properties();
 		OutputStream out = null;
 		try {
-			URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
-			if (url.getPath().contains(".jar!")) {
-				out = new FileOutputStream(fileName);
-			} else {
-				out = new FileOutputStream(url.getPath());
-			}
+			out = new FileOutputStream(FileUtil.returnWorkFile());
 			map.put(key, val);
 			tempProperties.putAll(map);
 			tempProperties.store(out, null);
@@ -74,12 +74,12 @@ public class ConfigManager {
 				loadExcel_path_array();
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("写入数据出错!",ExceptionUtils.getStackTrace(e));
 		} finally {
 			try {
 				if (out != null) out.close();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("关闭资源出错!",ExceptionUtils.getStackTrace(e));
 			}
 		}
 		return false;
@@ -103,17 +103,4 @@ public class ConfigManager {
 		}
 		return sb.toString();
 	}
-
-	public File newFile(String fileName) {
-		try {
-			File file = new File(fileName);
-			if (!file.exists())
-				file.createNewFile();
-			return file;
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-		return null;
-	}
-
 }
