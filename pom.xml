@@ -19,6 +19,7 @@
 		<module>LoggerAcceptor</module>
 		<module>JavaAgent</module>
 		<module>Quartz</module>
+		<module>Entity2Table</module>
 		<module>all</module>
 	</modules>
 
@@ -139,6 +140,11 @@
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>LoggerSender</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>Model2Table</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
