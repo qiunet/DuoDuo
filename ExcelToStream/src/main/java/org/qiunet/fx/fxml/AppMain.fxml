@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="512.0" prefWidth="1103.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
+  <children>
+    <TabPane fx:id="tabPane" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <tabs>
+        <Tab text="配置">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+              <children>
+                <Pane prefHeight="84.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <Label layoutX="9.0" layoutY="6.0" prefHeight="22.240234375" prefWidth="87.0" text="Excel路径：">
+                      <font>
+                        <Font size="14.0" fx:id="x1" />
+                      </font>
+                    </Label>
+                    <ChoiceBox layoutX="82.0" layoutY="8.0" prefWidth="335.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList" />
+                      </items>
+                    </ChoiceBox>
+                    <Button layoutX="427.0" layoutY="10.0" mnemonicParsing="false" text="选择" />
+                    <Button layoutX="483.0" layoutY="10.0" mnemonicParsing="false" text="移除" />
+                    <Button layoutX="536.0" layoutY="10.0" mnemonicParsing="false" text="刷新缓存" />
+                    <Button layoutX="616.0" layoutY="10.0" mnemonicParsing="false" text="更新" />
+                    <Button layoutX="671.0" layoutY="10.0" mnemonicParsing="false" text="提交" />
+                    <Button layoutX="781.0" layoutY="10.0" mnemonicParsing="false" text="打开" />
+                    <Button layoutX="725.0" layoutY="10.0" mnemonicParsing="false" text="清理" />
+                    <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" font="$x1" layoutX="14.0" layoutY="55.0" prefWidth="68.0" text="查找：" textOverrun="LEADING_ELLIPSIS" />
+                    <TextField fx:id="searchText" layoutX="82.0" layoutY="53.0" prefWidth="335.0" promptText="excel名字" />
+                    <RadioButton fx:id="searchAll" layoutX="427.0" layoutY="56.0" mnemonicParsing="false" text="搜全部" />
+                    <RadioButton fx:id="searchItem" layoutX="491.0" layoutY="56.0" mnemonicParsing="false" text="只搜道具" />
+                    <CheckBox fx:id="blurryCheck" layoutX="570.0" layoutY="56.0" mnemonicParsing="false" text="模糊搜索" />
+                    <Button layoutX="656.0" layoutY="52.0" mnemonicParsing="false" onAction="#searchBtn" prefWidth="55.0" text="开始" />
+                    <Separator layoutX="0.0" layoutY="41.0" minWidth="-1.0" prefWidth="834.0" />
+                    <Separator layoutX="0.0" layoutY="79.0" prefWidth="834.0" />
+                  </children>
+                </Pane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="无标题选项卡 2">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
+</AnchorPane>

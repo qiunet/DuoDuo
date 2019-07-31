@@ -1,7 +1,6 @@
 package org.qiunet.utils;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
