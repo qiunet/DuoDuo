@@ -27,14 +27,20 @@ public class ConfigManager {
 	}
 
 	public Set<String> getExcel_path_array() {
-
 		return excel_path_array;
+	}
+
+	public  boolean isHasPath(String path){
+		if(excel_path_array==null) return  false;
+		return  excel_path_array.contains(path);
 	}
 
 	public void loadExcel_path_array() {
 		String str = (String) map.getOrDefault(excel_path_array_key, "");
 		if (!StringUtil.isEmpty(str)) {
 			excel_path_array = new HashSet<>(Arrays.asList(str.split(def_regex)));
+		}else {
+			excel_path_array=new HashSet<>();
 		}
 	}
 

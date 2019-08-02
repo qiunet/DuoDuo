@@ -26,8 +26,8 @@ public class AppMainStage extends Application {
 			Scene scene = new Scene(root, 600, 400);
 			primaryStage.setTitle("game_tool");
 			primaryStage.setScene(scene);
-			primaryStage.setMinHeight(400);
-			primaryStage.setMinWidth(600);
+			primaryStage.setMinHeight(600);
+			primaryStage.setMinWidth(900);
 			primaryStage.show();
 
 			ExecutorServiceUtil.getInstance().submit(() -> {

@@ -1,20 +1,23 @@
 package org.qiunet.fx.controller;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.qiunet.fx.bean.TableData;
 import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.utils.ExecutorServiceUtil;
+import org.qiunet.utils.FileUtil;
+import org.qiunet.utils.FxUIUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * created by wgw on 2019/7/28
@@ -24,7 +27,6 @@ public class AppMainController extends BaseController {
 	private Stage stage;
 	@FXML
 	private TabPane tabPane;
-
 	@FXML
 	private RadioButton searchAll;
 	@FXML
@@ -37,6 +39,22 @@ public class AppMainController extends BaseController {
 	private ChoiceBox<String> excelPaths;
 
 	private final ToggleGroup searchGroup = new ToggleGroup();
+	//excel列表的缓存
+	private Map<String, ObservableList<TableData>> tabDataCache = new HashMap<>();
+
+	//信息输出
+	@FXML
+	private TextArea msgContent;
+
+	/**
+	 * 表格数据
+	 */
+	@FXML
+	private TableView<TableData> table;
+	@FXML
+	private TableColumn<TableData, String> tab_name;
+	@FXML
+	private TableColumn<TableData, Boolean> tab_check;
 
 	@Override
 	public void init(Object... objs) {
@@ -48,17 +66,86 @@ public class AppMainController extends BaseController {
 		intiExcelPaths();
 	}
 
+	//加载表格数据
+	public ObservableList<TableData> loadTableData(String filePath) {
+		if (StringUtil.isEmpty(filePath))
+			return FXCollections.observableArrayList();
+		ObservableList<TableData> list = tabDataCache.get(filePath);
+		if (list == null) {
+			list = FXCollections.observableArrayList();
+			List<File> pathList = FileUtil.getExcelArrays(filePath);
+
+			if (!pathList.isEmpty()) {
+				for (File file : pathList) {
+					list.add(new TableData(file));
+				}
+			}
+			tabDataCache.put(filePath, list);
+		}
+		return tabDataCache.get(filePath);
+	}
+
+	//显示列表
+	public void showTableData(final ObservableList<TableData> list) {
+		FxUIUtil.addUITask(() -> {
+			tab_name.setCellValueFactory(cell -> cell.getValue().nameProperty());
+			tab_check.setCellValueFactory(cell -> cell.getValue().checkProperty());
+			tab_check.setCellFactory((col) -> {
+				TableCell<TableData, Boolean> cell = new TableCell<TableData, Boolean>() {
+					@Override
+					public void updateItem(Boolean item, boolean empty) {
+						super.updateItem(item, empty);
+						this.setText(null);
+						this.setGraphic(null);
+						if (!empty) {
+							CheckBox checkBox = new CheckBox();
+							if (item != null)
+								checkBox.setSelected(item);
+							this.setGraphic(checkBox);
+							checkBox.selectedProperty().addListener((obVal, oldVal, newVal) -> {
+								TableData tableData = this.getTableView().getItems().get(getIndex());
+								tableData.setCheck(checkBox.isSelected());
+							});
+						}
+					}
+				};
+				return cell;
+			});
+			table.setItems(list);
+		});
+	}
+
+	/**
+	 * 获取选中的列表
+	 *
+	 * @return
+	 */
+	public List<String> getCheckExcelPaths() {
+		ObservableList<TableData> list = table.getItems();
+		if (list == null || list.isEmpty())
+			return Collections.emptyList();
+		return list.stream().filter(data -> data.isCheck()).map(data -> data.getName()).collect(Collectors.toList());
+	}
+
+	/***/
 	public void intiExcelPaths() {
 		Set<String> set = ConfigManager.getInstance().getExcel_path_array();
 		if (set != null && !set.isEmpty())
 			excelPaths.getItems().addAll(set);
 		String last_excel = ConfigManager.getInstance().getLast_check_excel();
-		if (!StringUtil.isEmpty(last_excel))
+		if (!StringUtil.isEmpty(last_excel)) {
 			excelPaths.getSelectionModel().select(last_excel);
+			showTableData(loadTableData(last_excel));
+		}
 		//下拉选择框事件监听
 		excelPaths.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
+			if (oldValue.equals(newValue))
+				return;
 			String path = excelPaths.getItems().get(excelPaths.getSelectionModel().getSelectedIndex());
-			ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
+			ExecutorServiceUtil.getInstance().submit(() -> {
+				ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
+			});
+			showTableData(loadTableData(path));
 		}));
 	}
 
@@ -100,13 +187,88 @@ public class AppMainController extends BaseController {
 		File checkFile = chooser.showDialog(stage);
 		if (checkFile != null) {
 			final String path = checkFile.getAbsolutePath();
-			excelPaths.getItems().add(path);
-			excelPaths.getSelectionModel().select(path);
+			final boolean has = ConfigManager.getInstance().isHasPath(path);
+			if (!has) {
+				excelPaths.getItems().add(path);
+				excelPaths.getSelectionModel().select(path);
+			}
 			ExecutorServiceUtil.getInstance().submit(() -> {
-				ConfigManager.getInstance().write(ConfigManager.excel_path_array_key, path, true);
+				if (!has)
+					ConfigManager.getInstance().write(ConfigManager.excel_path_array_key, path, true);
 				ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
+				showTableData(loadTableData(path));
 			});
 		}
+	}
+
+	/**
+	 * btn 事件
+	 */
+	public void btnEvent(final ActionEvent event) {
+		if (!(event.getSource() instanceof Button)) {
+			FxUIUtil.openAlert(Alert.AlertType.ERROR, "控件类型错误", "错误提示");
+			return;
+		}
+		Button btn = (Button) event.getSource();
+		BtnEvent btnEvent = BtnEvent.getBtnEvent(btn.getId());
+		switch (btnEvent) {
+			case svn_update: {
+				//TODO 更新操作
+				break;
+			}
+			case svn_commit: {
+				//TODO 提交操作
+				break;
+			}
+			case clean: {
+				//TODO 清除操作
+				break;
+			}
+			case remove: {
+				//TODO 移除操作
+				break;
+			}
+			case reloadCache: {
+				//TODO 刷新缓存
+				break;
+			}
+			case open: {
+				//TODO 打开
+				break;
+			}
+			default: {
+				FxUIUtil.openAlert(Alert.AlertType.ERROR, "未知操作类型! " + btnEvent.name(), "错误提示");
+				break;
+			}
+		}
+	}
+
+	public enum BtnEvent {
+		svn_update("svn_update"),//svn 更新操作
+		svn_commit("svn_commit"),//svn 提交操作
+		remove("remove"),//移除
+		reloadCache("reloadCache"),//刷新缓存
+		open("open"),//打开
+		clean("clean"),//清除
+		;
+		private String id;
+
+		BtnEvent(String id) {
+			this.id = id;
+		}
+
+		private static Map<String, BtnEvent> cache;
+
+		public static BtnEvent getBtnEvent(String id) {
+			if (cache == null) {
+				cache = new HashMap<>();
+				for (BtnEvent svnEvent : values()) {
+					cache.put(svnEvent.id, svnEvent);
+				}
+			}
+			return cache.get(id);
+		}
+
 	}
 
 	public enum SearchType {
