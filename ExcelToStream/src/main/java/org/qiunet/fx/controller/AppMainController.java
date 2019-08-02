@@ -168,7 +168,7 @@ public class AppMainController extends BaseController {
 	/**
 	 * 搜索事件
 	 */
-	public void searchBtn() {
+	public void search() {
 		SearchType searchType = null;
 		if (searchGroup.getSelectedToggle() != null && searchGroup.getSelectedToggle() instanceof RadioButton) {
 			searchType = SearchType.getSearchType(((RadioButton) searchGroup.getSelectedToggle()).getId());
@@ -207,6 +207,10 @@ public class AppMainController extends BaseController {
 		BtnEvent btnEvent = BtnEvent.getBtnEvent(btn.getId());
 		String msg = null;
 		switch (btnEvent) {
+			case search: {
+				search();
+				break;
+			}
 			case svn_update: {
 				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true);
 				break;
@@ -233,14 +237,14 @@ public class AppMainController extends BaseController {
 			}
 			case openOutPath: {
 				final String path = openDirectoryChooser("选择输出路径");
-				if(!StringUtil.isEmpty(path))
+				if (!StringUtil.isEmpty(path))
 					outPath.setText(path);
 				break;
 			}
 			case openExcelPath: {
 				final String path = openDirectoryChooser("选择excel路径");
 				final boolean has = ConfigManager.getInstance().isHasPath(path);
-				if(!StringUtil.isEmpty(path)){
+				if (!StringUtil.isEmpty(path)) {
 					if (!has) {
 						excelPaths.getItems().add(path);
 						excelPaths.getSelectionModel().select(path);
@@ -273,6 +277,7 @@ public class AppMainController extends BaseController {
 		clean("clean"),//清除
 		openOutPath("openOutPath"),//打开输出路径
 		openExcelPath("openExcelPath"),//选择excel路径
+		search("search"),//搜索事件
 		;
 		private String id;
 
