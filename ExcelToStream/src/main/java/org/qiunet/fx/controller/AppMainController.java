@@ -13,6 +13,7 @@ import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.utils.ExecutorServiceUtil;
 import org.qiunet.utils.FileUtil;
 import org.qiunet.utils.FxUIUtil;
+import org.qiunet.utils.SvnUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
@@ -211,13 +212,14 @@ public class AppMainController extends BaseController {
 		}
 		Button btn = (Button) event.getSource();
 		BtnEvent btnEvent = BtnEvent.getBtnEvent(btn.getId());
+		String msg = null;
 		switch (btnEvent) {
 			case svn_update: {
-				//TODO 更新操作
+				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true);
 				break;
 			}
 			case svn_commit: {
-				//TODO 提交操作
+				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false);
 				break;
 			}
 			case clean: {
@@ -241,6 +243,8 @@ public class AppMainController extends BaseController {
 				break;
 			}
 		}
+		if(!StringUtil.isEmpty(msg))
+			FxUIUtil.sendMsgToTextInput(msgContent,msg,true);
 	}
 
 	public enum BtnEvent {

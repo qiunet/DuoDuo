@@ -56,7 +56,9 @@
 					<execution>
 						<id>copy</id>
 						<phase>package</phase>
-						<goals><goal>copy-dependencies</goal></goals>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/ExcelToData_lib</outputDirectory>
 							<!-- excludeTransitive:是否不包含间接依赖包，比如我们依赖A，但是A又依赖了B，我们是否也要把B打进去 默认不打-->

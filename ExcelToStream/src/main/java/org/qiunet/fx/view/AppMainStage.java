@@ -10,17 +10,14 @@ import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.fx.controller.BaseController;
 import org.qiunet.utils.ExecutorServiceUtil;
 
+
 /**
  * created by wgw on 2019/7/28
  */
 public class AppMainStage extends Application {
-
-
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-
-
 			FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource(AppMain.fxml_path + "AppMain.fxml"));
 			Parent root = loader.load();
 			Scene scene = new Scene(root, 600, 400);
@@ -29,7 +26,6 @@ public class AppMainStage extends Application {
 			primaryStage.setMinHeight(600);
 			primaryStage.setMinWidth(900);
 			primaryStage.show();
-
 			ExecutorServiceUtil.getInstance().submit(() -> {
 				ConfigManager.getInstance();
 			});
@@ -38,7 +34,6 @@ public class AppMainStage extends Application {
 			controller.init(primaryStage);
 			//关闭监听
 			primaryStage.setOnCloseRequest((event) -> {
-				System.out.println("关闭监听");
 				ExecutorServiceUtil.getInstance().shutdown();
 			});
 		} catch (Exception e) {

@@ -9,7 +9,6 @@ public class AppMain {
 	public static final String fxml_path = "/org/qiunet/fx/fxml/";
 
 	public static void main(String[] args) {
-
 		AppMainStage.run(args);
 	}
 }
