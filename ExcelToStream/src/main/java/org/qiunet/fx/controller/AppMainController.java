@@ -46,6 +46,8 @@ public class AppMainController extends BaseController {
 	//信息输出
 	@FXML
 	private TextArea msgContent;
+	@FXML
+	private TextField outPath;
 
 	/**
 	 * 表格数据
@@ -179,27 +181,18 @@ public class AppMainController extends BaseController {
 	/**
 	 * 选择excel路径
 	 */
-	public void openExcelFile() {
+	public String openDirectoryChooser(String title) {
 		DirectoryChooser chooser = new DirectoryChooser();
 		File defFile = new File(System.getProperty("user.dir"));
 		if (defFile != null && defFile.isDirectory())
 			chooser.setInitialDirectory(defFile);
-		chooser.setTitle("选择excel路径");
+		chooser.setTitle(title);
 		File checkFile = chooser.showDialog(stage);
 		if (checkFile != null) {
 			final String path = checkFile.getAbsolutePath();
-			final boolean has = ConfigManager.getInstance().isHasPath(path);
-			if (!has) {
-				excelPaths.getItems().add(path);
-				excelPaths.getSelectionModel().select(path);
-			}
-			ExecutorServiceUtil.getInstance().submit(() -> {
-				if (!has)
-					ConfigManager.getInstance().write(ConfigManager.excel_path_array_key, path, true);
-				ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
-				showTableData(loadTableData(path));
-			});
+			return path;
 		}
+		return null;
 	}
 
 	/**
@@ -238,13 +231,37 @@ public class AppMainController extends BaseController {
 				//TODO 打开
 				break;
 			}
+			case openOutPath: {
+				final String path = openDirectoryChooser("选择输出路径");
+				if(!StringUtil.isEmpty(path))
+					outPath.setText(path);
+				break;
+			}
+			case openExcelPath: {
+				final String path = openDirectoryChooser("选择excel路径");
+				final boolean has = ConfigManager.getInstance().isHasPath(path);
+				if(!StringUtil.isEmpty(path)){
+					if (!has) {
+						excelPaths.getItems().add(path);
+						excelPaths.getSelectionModel().select(path);
+					}
+					ExecutorServiceUtil.getInstance().submit(() -> {
+						if (!has)
+							ConfigManager.getInstance().write(ConfigManager.excel_path_array_key, path, true);
+						ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
+						showTableData(loadTableData(path));
+					});
+				}
+
+				break;
+			}
 			default: {
 				FxUIUtil.openAlert(Alert.AlertType.ERROR, "未知操作类型! " + btnEvent.name(), "错误提示");
 				break;
 			}
 		}
-		if(!StringUtil.isEmpty(msg))
-			FxUIUtil.sendMsgToTextInput(msgContent,msg,true);
+		if (!StringUtil.isEmpty(msg))
+			FxUIUtil.sendMsgToTextInput(msgContent, msg, true);
 	}
 
 	public enum BtnEvent {
@@ -254,6 +271,8 @@ public class AppMainController extends BaseController {
 		reloadCache("reloadCache"),//刷新缓存
 		open("open"),//打开
 		clean("clean"),//清除
+		openOutPath("openOutPath"),//打开输出路径
+		openExcelPath("openExcelPath"),//选择excel路径
 		;
 		private String id;
 

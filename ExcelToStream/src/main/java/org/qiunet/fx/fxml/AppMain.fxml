@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.collections.*?>
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane maxHeight="600.0" maxWidth="900.0" prefHeight="545.0" prefWidth="1070.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
   <children>
     <TabPane fx:id="tabPane" prefHeight="530.0" prefWidth="1042.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
@@ -24,7 +28,7 @@
                         <FXCollections fx:factory="observableArrayList" />
                       </items>
                     </ChoiceBox>
-                    <Button layoutX="427.0" layoutY="10.0" mnemonicParsing="false" onAction="#openExcelFile" text="选择" />
+                    <Button fx:id="openExcelPath" layoutX="427.0" layoutY="10.0" mnemonicParsing="false"  text="选择" onAction="#btnEvent" />
                     <Button fx:id="remove" layoutX="483.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="移除" />
                     <Button fx:id="reloadCache" layoutX="536.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="刷新缓存" />
                     <Button fx:id="svn_update" layoutX="616.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="更新" />
@@ -56,11 +60,18 @@
                     <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="70.0" />
                     <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="417.0">
                       <children>
-                        <TextArea fx:id="msgContent"  editable="false" prefHeight="378.0" prefWidth="309.0" text="版本：v1.0&#10;系统信息输出&#10;" visible="true" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TextArea fx:id="msgContent" editable="false" prefHeight="378.0" prefWidth="309.0" text="版本：v1.0&#10;系统信息输出&#10;" visible="true" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                       </children>
                     </AnchorPane>
                   </items>
                 </SplitPane>
+                <AnchorPane prefHeight="36.0" prefWidth="872.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <children>
+                    <Label font="$x1" layoutX="7.0" layoutY="7.0" prefHeight="22.240234375" prefWidth="87.0" text="输出路径：" textOverrun="CLIP" />
+                    <TextField fx:id="outPath" disable="true" layoutX="72.0" layoutY="7.0" prefWidth="355.0" />
+                    <Button fx:id="openOutPath" layoutX="436.0" layoutY="7.0" mnemonicParsing="false" text="选择" onAction="#btnEvent" />
+                  </children>
+                </AnchorPane>
               </children>
             </AnchorPane>
           </content>
