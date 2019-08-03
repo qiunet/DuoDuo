@@ -3,7 +3,6 @@ package org.qiunet.utils;
 import javafx.scene.control.Alert;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.shell.ShellUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
@@ -18,9 +17,7 @@ public class SvnUtil {
 		if (StringUtil.isEmpty(path))
 			return "路径不能为null!";
 		String shell = splicing(command, path, close);
-		if (OSType.WINDOWS.is(osType))
-			return execShell(shell);
-		return ShellUtil.execShell(shell);
+		return execSvn(shell);
 	}
 
 	private static String splicing(SvnCommand command, String path, boolean close) {
@@ -32,12 +29,12 @@ public class SvnUtil {
 					sb.append(" /closeonend:2");
 				break;
 			}
-			case MAC_OS: {
+			case MAC_OS:
+			case LINUX:{
+				sb.append("svn ").append(command.name()).append(" ").append(path);
 				break;
 			}
-			case LINUX: {
-				break;
-			}
+
 		}
 		return sb.toString();
 	}
@@ -69,18 +66,18 @@ public class SvnUtil {
 	}
 
 
-	public static String execShell(String shell) {
+	public static String execSvn(String svn) {
 		try {
-			Process process = Runtime.getRuntime().exec(shell);
+			Process process = Runtime.getRuntime().exec(svn);
 			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "Error");
 			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "Output");
 			new Thread(errorGobbler).start();
 			new Thread(outputGobbler).start();
 			process.waitFor();
 			process.destroy();
-			return "执行svn[" + shell + "]命令成功！\n";
+			return "执行svn[" + svn + "]命令成功！\n";
 		} catch (Exception e) {
-			String error="执行svn命令出错！" + shell + "\n" + e.getMessage()+"\n";
+			String error="执行svn命令出错！" + svn + "\n" + e.getMessage()+"\n";
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, error, "错误");
 			return error;
 		}
