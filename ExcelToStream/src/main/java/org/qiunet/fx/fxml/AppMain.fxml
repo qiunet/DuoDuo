@@ -8,116 +8,101 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="600.0" maxWidth="900.0" prefHeight="545.0" prefWidth="1070.0" xmlns:fx="http://javafx.com/fxml/1"
-            xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
-    <children>
-        <TabPane fx:id="tabPane" prefHeight="530.0" prefWidth="1042.0" tabClosingPolicy="UNAVAILABLE"
-                 AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0"
-                 AnchorPane.topAnchor="0.0">
-            <tabs>
-                <Tab text="配置">
-                    <content>
-                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="1043.0">
-                            <children>
-                                <AnchorPane prefHeight="84.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0"
-                                            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                        <Label layoutX="9.0" layoutY="6.0" prefHeight="22.240234375" prefWidth="87.0"
-                                               text="Excel路径：" textOverrun="CLIP">
-                                            <font>
-                                                <Font size="14.0" fx:id="x1"/>
-                                            </font>
-                                        </Label>
-                                        <ChoiceBox fx:id="excelPaths" layoutX="82.0" layoutY="8.0" prefWidth="335.0">
-                                            <items>
-                                                <FXCollections fx:factory="observableArrayList"/>
-                                            </items>
-                                        </ChoiceBox>
-                                        <Button fx:id="openExcelPath" layoutX="427.0" layoutY="10.0"
-                                                mnemonicParsing="false" text="选择" onAction="#btnEvent"/>
-                                        <Button fx:id="remove" layoutX="483.0" layoutY="10.0" mnemonicParsing="false"
-                                                onAction="#btnEvent" text="移除"/>
-                                        <Button fx:id="reloadCache" layoutX="536.0" layoutY="10.0"
-                                                mnemonicParsing="false" onAction="#btnEvent" text="刷新缓存"/>
-                                        <Button fx:id="svn_update" layoutX="616.0" layoutY="10.0"
-                                                mnemonicParsing="false" onAction="#btnEvent" text="更新"/>
-                                        <Button fx:id="svn_commit" layoutX="671.0" layoutY="10.0"
-                                                mnemonicParsing="false" onAction="#btnEvent" text="提交"/>
-                                        <Button fx:id="open" layoutX="781.0" layoutY="10.0" mnemonicParsing="false"
-                                                onAction="#btnEvent" text="打开"/>
-                                        <Button fx:id="clean" layoutX="725.0" layoutY="10.0" mnemonicParsing="false"
-                                                onAction="#btnEvent" text="清理"/>
-                                        <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" font="$x1" layoutX="14.0"
-                                               layoutY="55.0" prefWidth="68.0" text="查找："
-                                               textOverrun="LEADING_ELLIPSIS"/>
-                                        <TextField fx:id="searchText" layoutX="82.0" layoutY="53.0" prefWidth="335.0"
-                                                   promptText="excel名字"/>
-                                        <RadioButton fx:id="searchAll" layoutX="427.0" layoutY="56.0"
-                                                     mnemonicParsing="false" text="搜全部"/>
-                                        <RadioButton fx:id="searchItem" layoutX="491.0" layoutY="56.0"
-                                                     mnemonicParsing="false" text="只搜道具"/>
-                                        <CheckBox fx:id="blurryCheck" layoutX="570.0" layoutY="56.0"
-                                                  mnemonicParsing="false" text="模糊搜索"/>
-                                        <Button fx:id="search" layoutX="656.0" layoutY="52.0" mnemonicParsing="false"
-                                                onAction="#search" prefWidth="55.0" text="开始"/>
-                                        <Separator layoutY="41.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0"
-                                                   AnchorPane.rightAnchor="0.0"/>
-                                        <Separator layoutY="79.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0"
-                                                   AnchorPane.rightAnchor="0.0"/>
-                                    </children>
-                                </AnchorPane>
-                                <SplitPane focusTraversable="true" prefHeight="380.0" prefWidth="1043.0"
-                                           AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="0.0"
-                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
-                                    <items>
-                                        <AnchorPane maxWidth="350.0" minWidth="350.0" prefHeight="377.0"
-                                                    prefWidth="416.0">
-                                            <children>
-                                                <TableView fx:id="table" prefHeight="378.0" prefWidth="350.0"
-                                                           AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                                           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <columns>
-                                                        <TableColumn prefWidth="50.0" text="选中" fx:id="tab_check"/>
-                                                        <TableColumn prefWidth="300.0" text="名称" fx:id="tab_name"/>
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </AnchorPane>
-                                        <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0"
-                                                    prefWidth="70.0"/>
-                                        <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0"
-                                                    prefWidth="417.0">
-                                            <children>
-                                                <TextArea fx:id="msgContent" editable="false" prefHeight="378.0"
-                                                          prefWidth="309.0" text="版本：v1.0&#10;系统信息输出&#10;"
-                                                          visible="true" wrapText="true" AnchorPane.bottomAnchor="0.0"
-                                                          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                                          AnchorPane.topAnchor="0.0"/>
-                                            </children>
-                                        </AnchorPane>
-                                    </items>
-                                </SplitPane>
-                                <AnchorPane prefHeight="36.0" prefWidth="872.0" AnchorPane.bottomAnchor="0.0"
-                                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                    <children>
-                                        <Label font="$x1" layoutX="7.0" layoutY="7.0" prefHeight="22.240234375"
-                                               prefWidth="87.0" text="输出路径：" textOverrun="CLIP"/>
-                                        <TextField fx:id="outPath" disable="true" layoutX="72.0" layoutY="7.0"
-                                                   prefWidth="355.0"/>
-                                        <Button fx:id="openOutPath" layoutX="436.0" layoutY="7.0"
-                                                mnemonicParsing="false" text="选择" onAction="#btnEvent"/>
-                                    </children>
-                                </AnchorPane>
-                            </children>
+<AnchorPane maxHeight="600.0" maxWidth="900.0" prefHeight="545.0" prefWidth="1070.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
+  <children>
+    <TabPane fx:id="tabPane" prefHeight="530.0" prefWidth="1042.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
+      <tabs>
+        <Tab text="配置">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="1043.0">
+              <children>
+                <AnchorPane prefHeight="84.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <children>
+                    <Label layoutX="9.0" layoutY="6.0" prefHeight="22.240234375" prefWidth="87.0" text="Excel路径：" textOverrun="CLIP">
+                      <font>
+                        <Font size="14.0" fx:id="x1" />
+                      </font>
+                    </Label>
+                    <ChoiceBox fx:id="excelPaths" layoutX="82.0" layoutY="8.0" prefWidth="335.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList" />
+                      </items>
+                    </ChoiceBox>
+                    <Button fx:id="openExcelPath" layoutX="427.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="选择" />
+                    <Button fx:id="remove" layoutX="483.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="移除" />
+                    <Button fx:id="reloadCache" layoutX="536.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="刷新缓存" />
+                    <Button fx:id="svn_update" layoutX="616.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="更新" />
+                    <Button fx:id="svn_commit" layoutX="671.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="提交" />
+                    <Button fx:id="open" layoutX="781.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="打开" />
+                    <Button fx:id="clean" layoutX="725.0" layoutY="10.0" mnemonicParsing="false" onAction="#btnEvent" text="清理" />
+                    <Label alignment="BOTTOM_RIGHT" contentDisplay="RIGHT" font="$x1" layoutX="14.0" layoutY="55.0" prefWidth="68.0" text="查找：" textOverrun="LEADING_ELLIPSIS" />
+                    <TextField fx:id="searchText" layoutX="82.0" layoutY="53.0" prefWidth="335.0" promptText="excel名字" />
+                    <RadioButton fx:id="searchAll" layoutX="427.0" layoutY="56.0" mnemonicParsing="false" text="搜全部" />
+                    <RadioButton fx:id="searchItem" layoutX="491.0" layoutY="56.0" mnemonicParsing="false" text="只搜道具" />
+                    <CheckBox fx:id="blurryCheck" layoutX="570.0" layoutY="56.0" mnemonicParsing="false" text="模糊搜索" />
+                    <Button fx:id="search" layoutX="656.0" layoutY="52.0" mnemonicParsing="false" onAction="#search" prefWidth="55.0" text="开始" />
+                    <Separator layoutY="41.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                    <Separator layoutY="79.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  </children>
+                </AnchorPane>
+                <SplitPane dividerPositions="0.4632183908045977, 0.7" focusTraversable="true" prefHeight="324.0" prefWidth="872.0" AnchorPane.bottomAnchor="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
+                  <items>
+                    <AnchorPane maxWidth="400.0" minWidth="400.0" prefHeight="377.0" prefWidth="416.0">
+                      <children>
+                        <TableView fx:id="table" prefHeight="286.0" prefWidth="400.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <columns>
+                            <TableColumn prefWidth="50.0" text="选中" fx:id="tab_check" />
+                            <TableColumn prefWidth="350.0" text="名称" fx:id="tab_name" />
+                          </columns>
+                        </TableView>
+                        <AnchorPane prefHeight="36.0" prefWidth="350.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                          <children>
+                            <CheckBox fx:id="checkAll" layoutX="22.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="全选" />
+                            <Label font="$x1" layoutX="188.0" layoutY="6.0" text="总数：" />
+                            <Label fx:id="allCount" font="$x1" layoutX="226.0" layoutY="6.0" prefWidth="40.0" text="999" />
+                            <Label font="$x1" layoutX="266.0" layoutY="5.0" text="选中：" />
+                            <Label fx:id="checkCount" font="$x1" layoutX="304.0" layoutY="5.0" prefWidth="40.0" text="999" />
+                          </children>
                         </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab text="无标题选项卡 2">
-                    <content>
-                        <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                    </content>
-                </Tab>
-            </tabs>
-        </TabPane>
-    </children>
+                      </children>
+                    </AnchorPane>
+                    <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="70.0" />
+                    <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="417.0">
+                      <children>
+                        <TextArea fx:id="msgContent" editable="false" prefHeight="378.0" prefWidth="309.0" text="版本：v1.0&#10;系统信息输出&#10;" visible="true" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                      </children>
+                    </AnchorPane>
+                  </items>
+                </SplitPane>
+                <AnchorPane prefHeight="92.0" prefWidth="872.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                  <children>
+                    <Label font="$x1" layoutX="7.0" layoutY="7.0" prefHeight="22.240234375" prefWidth="87.0" text="输出路径：" textOverrun="CLIP" />
+                    <Button fx:id="openOutPath" layoutX="436.0" layoutY="9.0" mnemonicParsing="false" onAction="#btnEvent" text="选择" />
+                    <CheckBox fx:id="checkJson" font="$x1" layoutX="80.0" layoutY="47.0" mnemonicParsing="false" selected="true" text="json" />
+                    <CheckBox fx:id="checkXML" font="$x1" layoutX="146.0" layoutY="49.0" minHeight="16.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="55.0" selected="true" text="XML" />
+                    <CheckBox fx:id="checkXD" font="$x1" layoutX="222.0" layoutY="47.0" mnemonicParsing="false" selected="true" text="xd" />
+                    <Button fx:id="out_svn_update" layoutX="488.0" layoutY="9.0" mnemonicParsing="false" onAction="#btnEvent" text="更新" />
+                    <Button fx:id="out_svn_commit" layoutX="543.0" layoutY="8.0" mnemonicParsing="false" onAction="#btnEvent" text="提交" />
+                    <Label font="$x1" layoutX="7.0" layoutY="46.0" prefHeight="22.240234375" prefWidth="87.0" text="输出格式：" textOverrun="CLIP" />
+                    <ChoiceBox fx:id="outPaths" layoutX="75.0" layoutY="8.0" prefWidth="335.0">
+                      <items>
+                        <FXCollections fx:factory="observableArrayList" />
+                      </items>
+                    </ChoiceBox>
+                    <Button fx:id="exportAll" layoutX="599.0" layoutY="8.0" mnemonicParsing="false" onAction="#btnEvent" text="导出全部" />
+                    <Button fx:id="exportCheck" layoutX="679.0" layoutY="7.0" mnemonicParsing="false" onAction="#btnEvent" text="导出选中" />
+                  </children>
+                </AnchorPane>
+              </children>
+            </AnchorPane>
+          </content>
+        </Tab>
+        <Tab text="无标题选项卡 2">
+          <content>
+            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+          </content>
+        </Tab>
+      </tabs>
+    </TabPane>
+  </children>
 </AnchorPane>

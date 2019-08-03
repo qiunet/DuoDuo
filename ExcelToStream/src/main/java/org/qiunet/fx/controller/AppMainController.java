@@ -47,7 +47,7 @@ public class AppMainController extends BaseController {
 	@FXML
 	private TextArea msgContent;
 	@FXML
-	private TextField outPath;
+	private ChoiceBox<String> outPaths;
 
 	/**
 	 * 表格数据
@@ -59,6 +59,19 @@ public class AppMainController extends BaseController {
 	@FXML
 	private TableColumn<TableData, Boolean> tab_check;
 
+	@FXML
+	private CheckBox checkJson;
+	@FXML
+	private CheckBox checkXML;
+	@FXML
+	private CheckBox checkXD;
+	@FXML
+	private CheckBox checkAll;
+	@FXML
+	private Label allCount;
+	@FXML
+	private Label checkCount;
+
 	@Override
 	public void init(Object... objs) {
 		if (objs.length > 0 && objs[0] instanceof Stage)
@@ -66,7 +79,22 @@ public class AppMainController extends BaseController {
 		/**初始化单选框*/
 		initToggleGroup();
 		/**初始化下拉选择框*/
-		intiExcelPaths();
+		intiChoiceBox();
+
+		checkBoxListener();
+	}
+
+	public void checkBoxListener() {
+		checkAll.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			table.getItems().stream().forEach(tableData -> tableData.setCheck(newValue));
+			setCount();
+		});
+
+	}
+
+	public void setCount() {
+		allCount.setText(table.getItems().size()+"");
+		checkCount.setText(getCheckExcelPaths().size()+"");
 	}
 
 	//加载表格数据
@@ -108,6 +136,7 @@ public class AppMainController extends BaseController {
 							checkBox.selectedProperty().addListener((obVal, oldVal, newVal) -> {
 								TableData tableData = this.getTableView().getItems().get(getIndex());
 								tableData.setCheck(checkBox.isSelected());
+								setCount();
 							});
 						}
 					}
@@ -115,6 +144,7 @@ public class AppMainController extends BaseController {
 				return cell;
 			});
 			table.setItems(list);
+			setCount();
 		});
 	}
 
@@ -131,7 +161,8 @@ public class AppMainController extends BaseController {
 	}
 
 	/***/
-	public void intiExcelPaths() {
+	public void intiChoiceBox() {
+		Map<String, String> outPathMap = ConfigManager.getInstance().getOut_path();
 		Set<String> set = ConfigManager.getInstance().getExcel_path_array();
 		if (set != null && !set.isEmpty())
 			excelPaths.getItems().addAll(set);
@@ -145,11 +176,36 @@ public class AppMainController extends BaseController {
 			if (oldValue.equals(newValue))
 				return;
 			String path = excelPaths.getItems().get(excelPaths.getSelectionModel().getSelectedIndex());
+			boolean isOutHas = outPathMap.containsKey(path);
+			if (isOutHas) {
+				outPaths.getSelectionModel().select(outPathMap.get(path));
+			}
 			ExecutorServiceUtil.getInstance().submit(() -> {
 				ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
 			});
 			showTableData(loadTableData(path));
 		}));
+
+
+		if (outPathMap != null && !outPathMap.isEmpty()) {
+			outPaths.getItems().addAll(outPathMap.values());
+			if (!StringUtil.isEmpty(last_excel) && !StringUtil.isEmpty(outPathMap.get(last_excel)))
+				outPaths.getSelectionModel().select(outPathMap.get(last_excel));
+		}
+
+		outPaths.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+			if (oldValue.equals(newValue))
+				return;
+			final String path = outPaths.getItems().get(outPaths.getSelectionModel().getSelectedIndex());
+			ExecutorServiceUtil.getInstance().submit(() -> {
+				ConfigManager.getInstance().writeOutPath(getChoiceSelect(excelPaths), path);
+			});
+		});
+
+	}
+
+	public <T> T getChoiceSelect(ChoiceBox<T> choiceBox) {
+		return choiceBox.getItems().get(choiceBox.getSelectionModel().getSelectedIndex());
 	}
 
 	public void initToggleGroup() {
@@ -179,7 +235,7 @@ public class AppMainController extends BaseController {
 	}
 
 	/**
-	 * 选择excel路径
+	 * 选择文件夹路径
 	 */
 	public String openDirectoryChooser(String title) {
 		DirectoryChooser chooser = new DirectoryChooser();
@@ -206,6 +262,12 @@ public class AppMainController extends BaseController {
 		Button btn = (Button) event.getSource();
 		BtnEvent btnEvent = BtnEvent.getBtnEvent(btn.getId());
 		String msg = null;
+		if (btnEvent == null) {
+			msg = "没有对应的事件处理器 id=" + btn.getId();
+			FxUIUtil.openAlert(Alert.AlertType.ERROR, msg, "错误提示");
+			FxUIUtil.sendMsgToTextInput(msgContent, msg, true);
+			return;
+		}
 		switch (btnEvent) {
 			case search: {
 				search();
@@ -237,8 +299,16 @@ public class AppMainController extends BaseController {
 			}
 			case openOutPath: {
 				final String path = openDirectoryChooser("选择输出路径");
-				if (!StringUtil.isEmpty(path))
-					outPath.setText(path);
+				if (!StringUtil.isEmpty(path)) {
+					if (!outPaths.getItems().contains(path)) {
+						outPaths.getItems().add(path);
+						outPaths.getSelectionModel().select(path);
+					}
+					ExecutorServiceUtil.getInstance().submit(() -> {
+						ConfigManager.getInstance().writeOutPath(getChoiceSelect(excelPaths), path);
+					});
+				}
+
 				break;
 			}
 			case openExcelPath: {
@@ -257,6 +327,32 @@ public class AppMainController extends BaseController {
 					});
 				}
 
+				break;
+			}
+			case out_svn_commit: {
+				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false);
+				break;
+			}
+			case out_svn_update: {
+				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true);
+				break;
+			}
+			case exportAll: {
+				String excelPath = getChoiceSelect(excelPaths);
+				String outPath = getChoiceSelect(outPaths);
+				boolean json = checkJson.isSelected();
+				boolean xml = checkXML.isSelected();
+				boolean xd = checkXD.isSelected();
+				//TODO 执行导出方法
+				break;
+			}
+			case exportCheck: {
+				String outPath = getChoiceSelect(outPaths);
+				boolean json = checkJson.isSelected();
+				boolean xml = checkXML.isSelected();
+				boolean xd = checkXD.isSelected();
+				List<String> checkExcelPaths = getCheckExcelPaths();
+				//TODO 执行导出方法
 				break;
 			}
 			default: {
@@ -278,6 +374,10 @@ public class AppMainController extends BaseController {
 		openOutPath("openOutPath"),//打开输出路径
 		openExcelPath("openExcelPath"),//选择excel路径
 		search("search"),//搜索事件
+		out_svn_update("out_svn_update"),//更新输出的svn
+		out_svn_commit("out_svn_commit"),//提交输出的svn
+		exportAll("exportAll"),//导出全部
+		exportCheck("exportCheck"),//导出选中
 		;
 		private String id;
 
