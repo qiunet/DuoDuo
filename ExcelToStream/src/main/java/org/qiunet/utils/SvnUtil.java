@@ -1,6 +1,7 @@
 package org.qiunet.utils;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.TextInputControl;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -13,14 +14,19 @@ public class SvnUtil {
 	private static Logger logger = LoggerType.DUODUO.getLogger();
 	private static OSType osType = OSType.getOSType(SystemPropertyUtil.getOsName());
 
-	public static String svnEvent(SvnCommand command, String path, boolean close) {
-		if (StringUtil.isEmpty(path))
-			return "路径不能为null!";
-		String shell = splicing(command, path, close);
-		return execSvn(shell);
+	public static void svnEvent(SvnCommand command, String path, boolean close, TextInputControl input,String log) {
+		if (StringUtil.isEmpty(path)) {
+			FxUIUtil.sendMsgToTextInput(input, "路径不能为null!\n", true);
+			return;
+		}
+		if (!OSType.WINDOWS.is(osType) && SvnCommand.commit == command) {
+			execSvn(splicing(SvnCommand.add, path, close,log), input);
+		}
+		String shell = splicing(command, path, close,log);
+		execSvn(shell, input);
 	}
 
-	private static String splicing(SvnCommand command, String path, boolean close) {
+	private static String splicing(SvnCommand command, String path, boolean close,String log) {
 		StringBuilder sb = new StringBuilder();
 		switch (osType) {
 			case WINDOWS: {
@@ -30,8 +36,10 @@ public class SvnUtil {
 				break;
 			}
 			case MAC_OS:
-			case LINUX:{
+			case LINUX: {
 				sb.append("svn ").append(command.name()).append(" ").append(path);
+				if (SvnCommand.add == command) sb.append(" --no-ignore --force ");
+				if (SvnCommand.commit == command) sb.append(" -m ").append(log);
 				break;
 			}
 
@@ -42,7 +50,7 @@ public class SvnUtil {
 	public enum SvnCommand {
 		commit,//提交
 		update,//更新
-		;
+		add,;
 	}
 
 	public enum OSType {
@@ -66,18 +74,18 @@ public class SvnUtil {
 	}
 
 
-	public static String execSvn(String svn) {
+	public static String execSvn(String svn, TextInputControl input) {
 		try {
 			Process process = Runtime.getRuntime().exec(svn);
-			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "Error");
-			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "Output");
+			StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "Error", input);
+			StreamGobbler outputGobbler = new StreamGobbler(process.getInputStream(), "Output", input);
 			new Thread(errorGobbler).start();
 			new Thread(outputGobbler).start();
 			process.waitFor();
 			process.destroy();
 			return "执行svn[" + svn + "]命令成功！\n";
 		} catch (Exception e) {
-			String error="执行svn命令出错！" + svn + "\n" + e.getMessage()+"\n";
+			String error = "执行svn命令出错！" + svn + "\n" + e.getMessage() + "\n";
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, error, "错误");
 			return error;
 		}
@@ -88,10 +96,12 @@ public class SvnUtil {
 	private static class StreamGobbler implements Runnable {
 		InputStream is;
 		String type;
+		TextInputControl input;
 
-		public StreamGobbler(InputStream is, String type) {
+		public StreamGobbler(InputStream is, String type, TextInputControl input) {
 			this.is = is;
 			this.type = type;
+			this.input = input;
 		}
 
 		@Override
@@ -106,6 +116,9 @@ public class SvnUtil {
 				while ((line = br.readLine()) != null) {
 					if (type.equals("Error")) {
 						sb.append(line);
+						FxUIUtil.sendMsgToTextInput(input, line, true);
+					} else {
+						FxUIUtil.sendMsgToTextInput(input, line, true);
 					}
 				}
 				if (!StringUtil.isEmpty(sb.toString())) {

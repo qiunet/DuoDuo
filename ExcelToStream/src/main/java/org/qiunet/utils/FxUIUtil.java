@@ -37,7 +37,10 @@ public class FxUIUtil {
 			return;
 		}
 		addUITask(() -> {
-			if (append) input.appendText(msg);
+			if (append) {
+				input.appendText(msg);
+				input.appendText("\n");
+			}
 			else input.setText(msg);
 
 		});

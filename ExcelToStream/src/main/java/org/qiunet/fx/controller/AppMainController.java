@@ -93,8 +93,8 @@ public class AppMainController extends BaseController {
 	}
 
 	public void setCount() {
-		allCount.setText(table.getItems().size()+"");
-		checkCount.setText(getCheckExcelPaths().size()+"");
+		allCount.setText(table.getItems().size() + "");
+		checkCount.setText(getCheckExcelPaths().size() + "");
 	}
 
 	//加载表格数据
@@ -274,11 +274,11 @@ public class AppMainController extends BaseController {
 				break;
 			}
 			case svn_update: {
-				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true);
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true, msgContent,"");
 				break;
 			}
 			case svn_commit: {
-				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false);
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false, msgContent,"log");
 				break;
 			}
 			case clean: {
@@ -330,11 +330,11 @@ public class AppMainController extends BaseController {
 				break;
 			}
 			case out_svn_commit: {
-				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false);
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false, msgContent,"log");
 				break;
 			}
 			case out_svn_update: {
-				msg = SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true);
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true, msgContent,"log");
 				break;
 			}
 			case exportAll: {
