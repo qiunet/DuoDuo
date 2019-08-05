@@ -205,6 +205,8 @@ public class AppMainController extends BaseController {
 	}
 
 	public <T> T getChoiceSelect(ChoiceBox<T> choiceBox) {
+		if (choiceBox.getSelectionModel().getSelectedIndex() < 0)
+			return null;
 		return choiceBox.getItems().get(choiceBox.getSelectionModel().getSelectedIndex());
 	}
 
@@ -274,11 +276,11 @@ public class AppMainController extends BaseController {
 				break;
 			}
 			case svn_update: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true, msgContent,"");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true, msgContent, "");
 				break;
 			}
 			case svn_commit: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false, msgContent, "log");
 				break;
 			}
 			case clean: {
@@ -330,11 +332,11 @@ public class AppMainController extends BaseController {
 				break;
 			}
 			case out_svn_commit: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false, msgContent, "log");
 				break;
 			}
 			case out_svn_update: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true, msgContent, "log");
 				break;
 			}
 			case exportAll: {
