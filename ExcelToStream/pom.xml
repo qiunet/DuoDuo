@@ -56,7 +56,9 @@
 					<execution>
 						<id>copy</id>
 						<phase>package</phase>
-						<goals><goal>copy-dependencies</goal></goals>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/ExcelToData_lib</outputDirectory>
 							<!-- excludeTransitive:是否不包含间接依赖包，比如我们依赖A，但是A又依赖了B，我们是否也要把B打进去 默认不打-->
@@ -68,6 +70,14 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.fxml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 	<dependencies>
 		<dependency>
@@ -93,6 +103,15 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 	</dependencies>
 </project>
