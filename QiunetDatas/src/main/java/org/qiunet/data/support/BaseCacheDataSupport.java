@@ -69,7 +69,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 				DefaultDatabaseSupport.getInstance().insert(insertStatement, aDo);
 				aDo.updateEntityStatus(EntityStatus.NORMAL);
 			}else {
-				syncKeyQueue.add(this.syncQueueElement(aDo, EntityOperate.INSERT));
+				syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.INSERT));
 			}
 			this.addToCache(bo);
 		} else {
@@ -100,7 +100,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		}
 
 		if (aDo.atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
-			syncKeyQueue.add(this.syncQueueElement(aDo, EntityOperate.UPDATE));
+			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.UPDATE));
 		}
 		// update 可能update在其它状态的po 所以不需要error打印.
 		// insert update 和 delete 状态都不需要操作了
@@ -127,18 +127,10 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		if (! async) {
 			this.deleteDoFromDb(aDo);
 		}else {
-			syncKeyQueue.add(this.syncQueueElement(aDo, EntityOperate.DELETE));
+			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.DELETE));
 		}
 	}
 
-	/**
-	 * 获得同步队列的key
-	 * @param aDo
-	 * @return
-	 */
-	private SyncEntityElement syncQueueElement(Do aDo, EntityOperate operate){
-		return new SyncEntityElement(aDo, operate);
-	}
 	/***
 	 * 对某个对象失效
 	 * @param aDo
