@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		   targetNamespace="https://github.com/qiunet/RedisEntity"
-		   xmlns:entity="https://github.com/qiunet/RedisEntity"
+		   targetNamespace="https://github.com/qiunet/DuoDuo/RedisEntity"
+		   xmlns:entity="https://github.com/qiunet/DuoDuo/RedisEntity"
 		   elementFormDefault="qualified"
 >
 	<xs:simpleType name="field_type">

@@ -2,9 +2,9 @@
 <redis_entity key="uid"
 		name="VipDo"
 	    redis="org.qiunet.project.init.redis.RedisDataUtil"
-		xmlns="https://github.com/qiunet/RedisEntity"
+		xmlns="https://github.com/qiunet/DuoDuo/RedisEntity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="https://github.com/qiunet/RedisEntity"
+		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/RedisEntity"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		   targetNamespace="https://github.com/qiunet/CacheEntity"
-		   xmlns:entity="https://github.com/qiunet/CacheEntity"
+		   targetNamespace="https://github.com/qiunet/DuoDuo/CacheEntity"
+		   xmlns:entity="https://github.com/qiunet/DuoDuo/CacheEntity"
 		   elementFormDefault="qualified"
 >
 	<xs:simpleType name="field_type">

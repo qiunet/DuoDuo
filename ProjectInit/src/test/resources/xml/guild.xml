@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cache_entity key="guildId"
 		   name="GuildDo"
-		   xmlns="https://github.com/qiunet/CacheEntity"
+		   xmlns="https://github.com/qiunet/DuoDuo/CacheEntity"
 		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		   xsi:schemaLocation="https://github.com/qiunet/CacheEntity"
+		   xsi:schemaLocation="https://github.com/qiunet/DuoDuo/CacheEntity"
 >
 	<field name="guildId" type="long" comment="公会id" />
 	<field name="name" type="String" comment="公会名称" />
