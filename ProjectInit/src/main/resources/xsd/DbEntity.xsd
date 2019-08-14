@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		   targetNamespace="https://github.com/qiunet/Entity"
-		   xmlns:entity="https://github.com/qiunet/Entity"
+		   targetNamespace="https://github.com/qiunet/DbEntity"
+		   xmlns:entity="https://github.com/qiunet/DbEntity"
 		   elementFormDefault="qualified"
 >
-	<xs:simpleType name="FieldType">
+	<xs:simpleType name="field_type">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="String" />
 			<xs:enumeration value="int" />
@@ -12,13 +12,13 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:complexType name="FieldContent">
+	<xs:complexType name="field_content">
 		<xs:attribute name="name" type="xs:NCName" use="required" />
-		<xs:attribute name="type" type="entity:FieldType" use="required" />
+		<xs:attribute name="type" type="entity:field_type" use="required" />
 		<xs:attribute name="comment" type="xs:string" />
 	</xs:complexType>
 
-	<xs:complexType name="ConstructorAttribute">
+	<xs:complexType name="constructor_attribute">
 		<xs:attribute name="field" type="xs:string" use="required" />
 	</xs:complexType>
 
@@ -29,18 +29,16 @@
 	</xs:simpleType>
 
 
-	<xs:complexType name="EntityContent">
+	<xs:complexType name="entity_content">
 		<xs:sequence>
-			<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="entity:FieldContent" />
+			<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="entity:field_content" />
 			<xs:element name="constructor" minOccurs="0" maxOccurs="5">
 				<xs:annotation>
-					<xs:documentation>
-						<![CDATA[最多5个构造函数]]>
-					</xs:documentation>
+					<xs:documentation>最多5个构造函数</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="constructor_arg" type="entity:ConstructorAttribute" maxOccurs="unbounded" />
+						<xs:element name="constructor_arg" type="entity:constructor_attribute" maxOccurs="unbounded" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -49,21 +47,34 @@
 		<xs:attribute name="key" type="xs:string" use="required" />
 	</xs:complexType>
 
-	<xs:element name="entity" type="entity:EntityContent">
-		<xs:unique name="FieldNameUnique">
+	<xs:element name="db_entity" type="entity:entity_content">
+		<xs:annotation>
+			<xs:documentation>field 的 name字段必须唯一不重复 </xs:documentation>
+		</xs:annotation>
+		<xs:unique name="field_name_unique">
 			<xs:selector xpath="entity:field"/>
 			<xs:field xpath="@name"/>
 		</xs:unique>
 
-		<xs:keyref name="ConstructorArgsRef" refer="entity:FieldNameKey">
+		<xs:keyref name="constructor_arg的field字段" refer="entity:key_of_field_name">
+			<xs:annotation>
+				<xs:documentation>对 constructor 的 constructor-arg 的 field 属性进行约束</xs:documentation>
+			</xs:annotation>
 			<xs:selector xpath="entity:constructor/entity:constructor_arg" />
 			<xs:field xpath="@field" />
 		</xs:keyref>
-		<xs:keyref name="entity_key" refer="entity:FieldNameKey">
+		<xs:keyref name="entity的key字段" refer="entity:key_of_field_name">
+			<xs:annotation>
+				<xs:documentation>对 entity 的 key属性进行约束</xs:documentation>
+			</xs:annotation>
 			<xs:selector xpath="." />
 			<xs:field xpath="@key" />
 		</xs:keyref>
-		<xs:key name="FieldNameKey">
+
+		<xs:key name="key_of_field_name">
+			<xs:annotation>
+				<xs:documentation>讲field的name作为id, 以便其它地方引用</xs:documentation>
+			</xs:annotation>
 			<xs:selector xpath="entity:field"/>
 			<xs:field xpath="@name"/>
 		</xs:key>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity key="uid"
-		name="PlayerDo"
-		xmlns="https://github.com/qiunet/Entity"
+<db_entity key="uid"
+		name="zlayerDo"
+		xmlns="https://github.com/qiunet/DbEntity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="https://github.com/qiunet/Entity"
+		xsi:schemaLocation="https://github.com/qiunet/DbEntity"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
@@ -14,4 +14,4 @@
 		<constructor_arg field="uid" />
 		<constructor_arg field="level" />
 	</constructor>
-</entity>
+</db_entity>

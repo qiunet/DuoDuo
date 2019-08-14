@@ -1,6 +1,5 @@
 package org.qiunet.project.init.xsd;
 
-import org.apache.commons.digester.Digester;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -20,7 +19,7 @@ public class TestValidXsd {
 	@Test
 	public void vliadXMLWithXsd() throws SAXException, IOException {
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		URL url = Thread.currentThread().getContextClassLoader().getResource("xsd/Entity.xsd");
+		URL url = Thread.currentThread().getContextClassLoader().getResource("xsd/DbEntity.xsd");
 
 		Assert.assertNotNull(url);
 
