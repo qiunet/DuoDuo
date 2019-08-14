@@ -59,7 +59,10 @@
 			<xs:selector xpath="entity:constructor/entity:constructor_arg" />
 			<xs:field xpath="@field" />
 		</xs:keyref>
-		
+		<xs:keyref name="entity_key" refer="entity:FieldNameKey">
+			<xs:selector xpath="." />
+			<xs:field xpath="@key" />
+		</xs:keyref>
 		<xs:key name="FieldNameKey">
 			<xs:selector xpath="entity:field"/>
 			<xs:field xpath="@name"/>
