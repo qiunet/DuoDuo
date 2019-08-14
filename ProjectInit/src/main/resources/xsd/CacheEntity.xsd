@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		   targetNamespace="https://github.com/qiunet/DbEntity"
-		   xmlns:entity="https://github.com/qiunet/DbEntity"
+		   targetNamespace="https://github.com/qiunet/CacheEntity"
+		   xmlns:entity="https://github.com/qiunet/CacheEntity"
 		   elementFormDefault="qualified"
 >
 	<xs:simpleType name="field_type">
@@ -47,7 +47,7 @@
 		<xs:attribute name="key" type="xs:string" use="required" />
 	</xs:complexType>
 
-	<xs:element name="db_entity" type="entity:entity_content">
+	<xs:element name="cache_entity" type="entity:entity_content">
 		<xs:annotation>
 			<xs:documentation>field 的 name字段必须唯一不重复 </xs:documentation>
 		</xs:annotation>
