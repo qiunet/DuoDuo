@@ -1,11 +1,18 @@
 package org.qiunet.project.init.enums;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -56,15 +63,34 @@ public enum  EntityType {
 	 * 校验对应的xml
 	 * @param is
 	 */
-	public void validate(InputStream is) {
+	public void validate(InputStream is) throws IOException, SAXException {
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		URL url = Thread.currentThread().getContextClassLoader().getResource("xsd/"+xsdName);
 		assert url != null;
+		Schema schema = factory.newSchema(url);
+		schema.newValidator().validate(new StreamSource(is));
+	}
+
+	private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	public static EntityType parse(File xmlFile) {
+		if (! xmlFile.isFile() || ! xmlFile.getName().endsWith(".xml")) {
+			throw new RuntimeException("file ["+xmlFile.getAbsolutePath()+"] is not xml File");
+		}
+		String rootElementName = null;
 		try {
-			Schema schema = factory.newSchema(url);
-			schema.newValidator().validate(new StreamSource(is));
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(xmlFile);
+			Element element = document.getDocumentElement();
+			rootElementName = element.getNodeName();
+
+			for (EntityType type : values()) {
+				if (type.getXmlRootElementName().equals(rootElementName)) {
+					return type;
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		throw new RuntimeException("file ["+xmlFile.getAbsolutePath()+"] start with ["+rootElementName+"] is not entity xml File");
 	}
 }
