@@ -56,9 +56,10 @@
 		</xs:unique>
 
 		<xs:keyref name="ConstructorArgsRef" refer="entity:FieldNameKey">
-			<xs:selector xpath="entity:constructor/constructor_arg" />
+			<xs:selector xpath="entity:constructor/entity:constructor_arg" />
 			<xs:field xpath="@field" />
 		</xs:keyref>
+		
 		<xs:key name="FieldNameKey">
 			<xs:selector xpath="entity:field"/>
 			<xs:field xpath="@name"/>
