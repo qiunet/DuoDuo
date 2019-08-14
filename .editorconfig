@@ -13,9 +13,6 @@ end_of_line = lf
 insert_final_newline = true
 ## 删除尾行的空格
 trim_trailing_whitespace = true
-
-
-[*.{java,js,md,xml}]
 ## 缩进使用tab
 indent_style = tab
 
