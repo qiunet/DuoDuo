@@ -53,13 +53,20 @@ public class MySqlTypeConstant {
 	 * @param type
 	 * @return
 	 */
-	public static String parse(Class<?> type){
+	public static String parse(Class<?> type, int length){
 
 		if (type == Integer.TYPE || type == Integer.class) return INT;
 		if (type == Boolean.TYPE || type == Boolean.class) return TINYINT;
 		if (type == Long.TYPE || type == Long.class) return BIGINT;
 		if (type == Double.TYPE || type == Double.class) return DOUBLE;
-		if (type == String.class) return VARCHAR;
+		if (type == String.class) {
+			if(length <= 255){
+				return VARCHAR;
+			}else{
+				return TEXT;
+			}
+		}
+
 		if (type == Date.class) return DATETIME;
 
 		throw new RuntimeException("mysql po2table not define convert for type ["+type.getName()+"]");
