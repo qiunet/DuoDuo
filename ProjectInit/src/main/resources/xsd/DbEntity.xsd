@@ -1,57 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema xmlns:entity="https://github.com/qiunet/DuoDuo/DbEntity"
+		   xmlns:base="https://github.com/qiunet/DuoDuo/Base"
+		   xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		   targetNamespace="https://github.com/qiunet/DuoDuo/DbEntity"
-		   xmlns:entity="https://github.com/qiunet/DuoDuo/DbEntity"
 		   elementFormDefault="qualified"
 >
-	<xs:simpleType name="field_type">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="String" />
-			<xs:enumeration value="int" />
-			<xs:enumeration value="long" />
-		</xs:restriction>
-	</xs:simpleType>
+	<xs:import namespace="https://github.com/qiunet/DuoDuo/Base" schemaLocation="Base.xsd" />
 
-	<xs:complexType name="field_content">
-		<xs:attribute name="name" type="xs:NCName" use="required" />
-		<xs:attribute name="type" type="entity:field_type" use="required" />
-		<xs:attribute name="comment" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="constructor_attribute">
-		<xs:attribute name="field" type="xs:string" use="required" />
-	</xs:complexType>
-
-	<xs:simpleType name="NamePattern">
-		<xs:restriction base="xs:string">
-			<xs:pattern value="[a-zA-Z]{2,20}Do" />
-		</xs:restriction>
-	</xs:simpleType>
-
-
-	<xs:complexType name="entity_content">
+	<xs:complexType name="constructor_content">
 		<xs:sequence>
-			<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="entity:field_content" />
-			<xs:element name="constructor" minOccurs="0" maxOccurs="5">
-				<xs:annotation>
-					<xs:documentation>最多5个构造函数</xs:documentation>
-				</xs:annotation>
+			<xs:element name="constructor_arg" maxOccurs="unbounded" >
 				<xs:complexType>
-					<xs:sequence>
-						<xs:element name="constructor_arg" type="entity:constructor_attribute" maxOccurs="unbounded" />
-					</xs:sequence>
+					<xs:attribute name="field" type="xs:string" use="required" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="name" type="entity:NamePattern" use="required" />
-		<xs:attribute name="key" type="xs:string" use="required" />
 	</xs:complexType>
 
-	<xs:element name="db_entity" type="entity:entity_content">
-		<xs:annotation>
-			<xs:documentation>field 的 name字段必须唯一不重复 </xs:documentation>
-		</xs:annotation>
+	<xs:element name="db_entity">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="base:field_content" />
+				<xs:element name="constructor" minOccurs="0" maxOccurs="5" type="entity:constructor_content"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="base:NamePattern" use="required" />
+			<xs:attribute name="key" type="xs:string" use="required" />
+		</xs:complexType>
+
 		<xs:unique name="field_name_unique">
+			<xs:annotation>
+				<xs:documentation>field 的 name字段必须唯一不重复 </xs:documentation>
+			</xs:annotation>
 			<xs:selector xpath="entity:field"/>
 			<xs:field xpath="@name"/>
 		</xs:unique>
