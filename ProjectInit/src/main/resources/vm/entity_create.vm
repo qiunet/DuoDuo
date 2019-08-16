@@ -1,61 +1,36 @@
-package ${allData.currData.packagePath};
+package ${entity.entityPackage};
 
-import ${allData.currData.classInfo};
 import org.apache.ibatis.type.Alias;
-import org.qiunet.data.core.support.entityInfo.IField;
-#foreach(${field} in ${allData.currData.fields})
-#if(${field.type} == "Date")
-import java.util.Date;
-#break
-#end
-#end
+import ${entity.EntityClass.name()};
+
 /**
- * 对象为自动创建
- */
-@Alias("${allData.currData.name}")
-public class ${allData.currData.name} extends ${allData.currData.entityType}#if(${allData.currData.redisList})<${allData.currData.subKeyType}>#end {
-	public enum FieldEnum implements IField {#foreach(${field} in ${allData.currData.fields})
-#if(${field.name} != ${allData.currData.dbInfoKey} && ${field.name} != ${allData.currData.subKey} )
-${field.name}#if(${velocityCount} < (${allData.currData.fields.size()})), #end#end#end}
+* 对象为自动创建 不要修改
+*/
+@Alias("${entity.DoName}")
+public class ${entity.DoName} extends ${entity.EntityClass.simpleName()}<${entity.keyType}, ${entity.BoName}> {
+
+#foreach(${field} in ${entity.fieldDefines})
+
+private ${field.type} ${entity.name};
+#end
 
 ### get set方法
-#foreach(${field} in ${allData.currData.fields})
-	private ${field.fieldDesc}
+#foreach(${field} in ${entity.fieldDefines} )
+public ${field.type} get#firstUpperCase(${field.name})() {
+return ${field.name};
+}
+public void set#firstUpperCase(${field.name})(${field.type} ${field.name}) {
+this.${field.name} = ${field.name};
+}
 #end
-	/**默认的构造函数**/
-	public ${allData.currData.name}(){}
-#foreach(${constructor} in ${allData.currData.constructors})
-	public ${allData.currData.name}(#foreach(${field} in ${constructor.fields})
-	${field.type} ${field.name}#if(${velocityCount} < (${constructor.fields.size()})),#end
-#end){
-	#foreach(${field} in ${constructor.fields})
-		this.${field.name} = ${field.name};
-	#end}
-#end
-#foreach(${field} in ${allData.currData.fields} )
-	public ${field.type} get#firstUpperCase(${field.name})() {
-		return ${field.name};
-	}
-	public void set#firstUpperCase(${field.name})(${field.type} ${field.name}) {
-		this.${field.name} = ${field.name};
-	}
-#end
-	@Override
-	public IField[] getFields() {
-		return FieldEnum.values();
-	}
-	@Override
-	public String getDbInfoKeyName() {
-		return "${allData.currData.dbInfoKey}";
-	}
-#if(${allData.currData.redisList})
-	@Override
-	public String getSubKey() {
-		return "${allData.currData.subKey}";
-	}
-	@Override
-	public ${allData.currData.subKeyType} getSubId() {
-		return this.${allData.currData.subKey};
-	}
-#end
+
+@Override
+public ${entity.keyType} key() {
+return ${entity.keyName};
+}
+
+@Override
+public String keyFieldName() {
+return "${entity.keyName}";
+}
 }

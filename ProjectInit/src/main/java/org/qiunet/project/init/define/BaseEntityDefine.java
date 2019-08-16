@@ -1,7 +1,11 @@
 package org.qiunet.project.init.define;
 
+import org.qiunet.data.core.entity.IEntity;
+import org.qiunet.project.init.enums.EntityType;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /***
  *
@@ -9,7 +13,7 @@ import java.util.List;
  * qiunet
  * 2019-08-14 22:31
  ***/
-public class BaseEntityDefine implements IEntityDefine {
+public abstract class BaseEntityDefine implements IEntityDefine {
 	/***
 	 * 对象的类名
 	 */
@@ -34,6 +38,24 @@ public class BaseEntityDefine implements IEntityDefine {
 	 * 所有的构造函数定义
 	 */
 	private List<ConstructorDefine> constructorDefines = new ArrayList<>();
+
+	private EntityType entityType;
+	private Class<? extends IEntity> entityClass;
+
+	protected BaseEntityDefine(EntityType entityType, Class<? extends IEntity> entityClass) {
+		this.entityType = entityType;
+		this.entityClass = entityClass;
+	}
+
+	public Class<? extends IEntity> getEntityClass() {
+		return entityClass;
+	}
+
+	@Override
+	public EntityType getType() {
+		return entityType;
+	}
+
 	@Override
 	public String getDoName() {
 		return name;
@@ -42,6 +64,11 @@ public class BaseEntityDefine implements IEntityDefine {
 	@Override
 	public String getBoName() {
 		return name.replace("Do", "Bo");
+	}
+
+	@Override
+	public String getEntityPackage() {
+		return packageName+".entity";
 	}
 
 	@Override
@@ -93,5 +120,29 @@ public class BaseEntityDefine implements IEntityDefine {
 
 	public void setPackageName(String packageName) {
 		this.packageName = packageName;
+	}
+
+	@Override
+	public String getKeyName() {
+		Optional<FieldDefine> keyField = fieldDefines.stream().filter(f -> f.getName().equals(key)).findFirst();
+		FieldDefine fieldDefine = keyField.orElseThrow(() -> new NullPointerException("DoName ["+name+"] have not a field named ["+key+"]"));
+		return fieldDefine.getName();
+	}
+
+	@Override
+	public String getKeyType() {
+		Optional<FieldDefine> keyField = fieldDefines.stream().filter(f -> f.getName().equals(key)).findFirst();
+		FieldDefine fieldDefine = keyField.orElseThrow(() -> new NullPointerException("DoName ["+name+"] have not a field named ["+key+"]"));
+
+		switch (fieldDefine.getType()) {
+			case "int":
+				return "Integer";
+			case "long":
+				return "Long";
+			case "String":
+				return "String";
+			default:
+				throw new IllegalArgumentException("not support key type "+fieldDefine.getType());
+		}
 	}
 }
