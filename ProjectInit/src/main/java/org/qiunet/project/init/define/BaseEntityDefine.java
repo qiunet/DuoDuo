@@ -10,12 +10,29 @@ import java.util.List;
  * 2019-08-14 22:31
  ***/
 public class BaseEntityDefine implements IEntityDefine {
+	/***
+	 * 对象的类名
+	 */
 	private String name;
-
+	/***
+	 * 主键
+	 */
 	private String key;
-
+	/***
+	 * 包名相对于userDir的路径
+	 */
+	private String baseDir;
+	/***
+	 * 包名 路径
+	 */
+	private String packageName;
+	/***
+	 * 所有的字段定义
+	 */
 	private List<FieldDefine> fieldDefines = new ArrayList<>();
-
+	/***
+	 * 所有的构造函数定义
+	 */
 	private List<ConstructorDefine> constructorDefines = new ArrayList<>();
 	@Override
 	public String getDoName() {
@@ -60,5 +77,21 @@ public class BaseEntityDefine implements IEntityDefine {
 	public void addConstructor(ConstructorDefine constructorDefine){
 		this.constructorDefines.add(constructorDefine);
 		constructorDefine.init(this);
+	}
+
+	public String getBaseDir() {
+		return baseDir;
+	}
+
+	public void setBaseDir(String baseDir) {
+		this.baseDir = baseDir;
+	}
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	public void setPackageName(String packageName) {
+		this.packageName = packageName;
 	}
 }
