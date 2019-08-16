@@ -59,5 +59,6 @@ public class BaseEntityDefine implements IEntityDefine {
 
 	public void addConstructor(ConstructorDefine constructorDefine){
 		this.constructorDefines.add(constructorDefine);
+		constructorDefine.init(this);
 	}
 }

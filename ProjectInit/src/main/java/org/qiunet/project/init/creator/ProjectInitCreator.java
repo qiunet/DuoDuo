@@ -3,11 +3,8 @@ package org.qiunet.project.init.creator;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.xml.sax.SAXParseException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -41,12 +38,7 @@ public final class ProjectInitCreator {
 
 		for (File file : xmlDirectory.listFiles()) {
 			EntityType entityType = EntityType.parse(file);
-
-			try {
-				entityType.validate(new FileInputStream(file));
-			}catch (Exception e) {
-				logger.error("file ["+file.getName()+"] create exception:", e);
-			}
+			new DefineCreator(entityType, file).parse();
 		}
 	}
 }

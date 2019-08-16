@@ -1,5 +1,6 @@
 package org.qiunet.project.init.define;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -15,7 +16,7 @@ public class ConstructorDefine {
 	/***
 	 * 构造需要的字段
 	 */
-	private List<String> fields;
+	private List<String> fields = new ArrayList<>();
 
 	private IEntityDefine entityDefine;
 

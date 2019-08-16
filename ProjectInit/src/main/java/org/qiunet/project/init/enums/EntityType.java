@@ -1,5 +1,7 @@
 package org.qiunet.project.init.enums;
 
+import org.apache.commons.digester.Digester;
+import org.qiunet.project.init.define.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -25,17 +27,56 @@ import java.net.URL;
  */
 public enum  EntityType {
 
-	DB_ENTITY("DbEntity.xsd"),
+	DB_ENTITY("DbEntity.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
+			this.addObjectCreate(digester, "db_entity", DbEntityDefine.class, "setEntityDefine");
+			this.addObjectCreate(digester, "db_entity/field", FieldDefine.class, "addField");
+			this.addObjectCreate(digester, "db_entity/constructor", ConstructorDefine.class, "addConstructor");
+			this.addObjectCreate(digester, "db_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+		}
+	},
 
-	CACHE_ENTITY("CacheEntity.xsd"),
+	CACHE_ENTITY("CacheEntity.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
+			this.addObjectCreate(digester, "cache_entity", CacheEntityDefine.class, "setEntityDefine");
+			this.addObjectCreate(digester, "cache_entity/field", FieldDefine.class, "addField");
+			this.addObjectCreate(digester, "cache_entity/constructor", ConstructorDefine.class, "addConstructor");
+			this.addObjectCreate(digester, "cache_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+		}
+	},
 
-	REDIS_ENTITY("RedisEntity.xsd"),
+	REDIS_ENTITY("RedisEntity.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
+			this.addObjectCreate(digester, "redis_entity", RedisEntityDefine.class, "setEntityDefine");
+			this.addObjectCreate(digester, "redis_entity/field", FieldDefine.class, "addField");
+			this.addObjectCreate(digester, "redis_entity/constructor", ConstructorDefine.class, "addConstructor");
+			this.addObjectCreate(digester, "redis_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+		}
+	},
 
-	DB_ENTITY_LIST("DbEntityList.xsd"),
+	DB_ENTITY_LIST("DbEntityList.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
 
-	CACHE_ENTITY_LIST("CacheEntityList.xsd"),
+		}
+	},
 
-	REDIS_ENTITY_LIST("RedisEntityList.xsd"),
+	CACHE_ENTITY_LIST("CacheEntityList.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
+
+		}
+	},
+
+	REDIS_ENTITY_LIST("RedisEntityList.xsd") {
+		@Override
+		public void initDigester(Digester digester) {
+
+		}
+	},
 	;
 	private String xsdName;
 
@@ -50,7 +91,11 @@ public enum  EntityType {
 	public boolean isList(){
 		return name().endsWith("LIST");
 	}
-
+	/***
+	 * 初始化 digester
+	 * @param digester
+	 */
+	public abstract void initDigester(Digester digester);
 	/***
 	 * 返回xml的root element的name
 	 * @return
@@ -92,5 +137,17 @@ public enum  EntityType {
 			e.printStackTrace();
 		}
 		throw new RuntimeException("file ["+xmlFile.getAbsolutePath()+"] start with ["+rootElementName+"] is not entity xml File");
+	}
+
+	/**
+	 * 对digester处理
+	 * @param pattern xml 路径内容
+	 * @param clazz 对应的class
+	 * @param setNext 往上层路径传入的方法
+	 */
+	protected void addObjectCreate(Digester digester,String pattern, Class<?> clazz, String setNext) {
+		digester.addObjectCreate(pattern, clazz);
+		digester.addSetProperties(pattern);
+		digester.addSetNext(pattern,setNext);
 	}
 }
