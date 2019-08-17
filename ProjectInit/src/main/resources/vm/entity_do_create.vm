@@ -1,0 +1,36 @@
+package ${entity.entityPackage};
+
+import org.apache.ibatis.type.Alias;
+import ${entity.entityClass.name};
+
+/**
+* 对象为自动创建 不要修改
+*/
+@Alias("${entity.DoName}")
+public class ${entity.DoName} extends ${entity.EntityClass.simpleName}<${entity.keyType}, ${entity.BoName}> {
+#foreach(${field} in ${entity.fieldDefines})
+
+	private ${field.type} ${field.name};
+#end
+### get set方法
+#foreach(${field} in ${entity.fieldDefines} )
+
+	public ${field.type} get#firstUpperCase(${field.name})() {
+		return ${field.name};
+	}
+
+	public void set#firstUpperCase(${field.name})(${field.type} ${field.name}) {
+		this.${field.name} = ${field.name};
+	}
+#end
+
+	@Override
+	public ${entity.keyType} key() {
+		return ${entity.keyName};
+	}
+
+	@Override
+	public String keyFieldName() {
+		return "${entity.keyName}";
+	}
+}

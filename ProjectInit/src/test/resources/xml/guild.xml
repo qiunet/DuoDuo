@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cache_entity key="guildId"
 			  name="GuildDo"
-			  baseDir="src/main/java"
+			  baseDir="src/test/java"
 			  packageName="org.qiunet.project.init.test.guild"
 			  xmlns="https://github.com/qiunet/DuoDuo/CacheEntity"
 			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -24,4 +24,16 @@
 			<xs:pattern value="[a-zA-Z]{2,20}Do" />
 		</xs:restriction>
 	</xs:simpleType>
+
+	<xs:simpleType name="PathPattern">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([a-z]+\/)+[a-z]+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ClassAndPackagePattern">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="([a-zA-Z]+\.)+[a-zA-Z]+" />
+		</xs:restriction>
+	</xs:simpleType>
 </xs:schema>

@@ -3,6 +3,7 @@ package org.qiunet.project.init.creator;
 import org.apache.commons.digester.Digester;
 import org.qiunet.project.init.define.IEntityDefine;
 import org.qiunet.project.init.enums.EntityType;
+import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.xml.sax.SAXException;
@@ -10,6 +11,8 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /***
  *
@@ -48,6 +51,17 @@ public class EntityCreator {
 			digester.parse(file);
 		} catch (IOException | SAXException e) {
 			logger.error("Digester parse error:" , e);
+		}
+
+		// 输出 DoEntity
+		Path outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getDoName()+".java");
+		VelocityFactory.getInstance().parseOutFile("vm/entity_do_create.vm", outputFileName.toString(), this.entityDefine);
+
+		// 输出 DoEntity
+		outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getBoName()+".java");
+		File boFile = outputFileName.toFile();
+		if (!boFile.exists()) {
+			VelocityFactory.getInstance().parseOutFile("vm/entity_bo_create.vm", outputFileName.toString(), this.entityDefine);
 		}
 	}
 

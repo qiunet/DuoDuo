@@ -1,0 +1,25 @@
+package ${entity.entityPackage};
+
+import org.qiunet.data.support.IEntityBo;
+
+public class ${entity.boName} implements IEntityBo<${entity.doName}>{
+	private ${entity.doName} aDo;
+
+	${entity.boName} (${entity.doName} aDo) {
+		this.aDo = aDo;
+	}
+
+	public ${entity.doName} getDo(){
+		return aDo;
+	}
+
+	@Override
+	public void serialize() {
+
+	}
+
+	@Override
+	public void deserialize() {
+
+	}
+}

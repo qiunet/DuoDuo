@@ -2,7 +2,12 @@ package org.qiunet.project.init.define;
 
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.project.init.enums.EntityType;
+import org.qiunet.utils.system.SystemPropertyUtil;
 
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,5 +149,18 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 			default:
 				throw new IllegalArgumentException("not support key type "+fieldDefine.getType());
 		}
+	}
+
+	@Override
+	public Path outputPath() {
+		File localUserDir = null;
+		try {
+			Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("").toURI());
+			localUserDir = path.toFile().getParentFile().getParentFile();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return Paths.get(localUserDir.getAbsolutePath(), baseDir,
+			packageName.replaceAll("\\.", SystemPropertyUtil.getFileSeparator()));
 	}
 }

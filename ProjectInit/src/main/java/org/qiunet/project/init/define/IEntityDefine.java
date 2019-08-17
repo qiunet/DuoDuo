@@ -11,7 +11,7 @@ import java.util.List;
  * qiunet
  * 2019-08-14 20:34
  ***/
-public interface IEntityDefine {
+public interface IEntityDefine extends ITemplateObjectDefine {
 	/***
 	 * 获得类型
 	 * @return
