@@ -1,4 +1,4 @@
-package org.qiunet.entity2table.annotation;
+package org.qiunet.data.core.support.db;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

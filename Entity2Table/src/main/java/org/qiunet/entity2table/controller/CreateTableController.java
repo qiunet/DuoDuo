@@ -1,6 +1,6 @@
 package org.qiunet.entity2table.controller;
 
-import org.qiunet.entity2table.annotation.Column;
+import org.qiunet.data.core.support.db.Column;
 import org.qiunet.entity2table.annotation.LengthCount;
 import org.qiunet.entity2table.annotation.Table;
 import org.qiunet.entity2table.command.Columns;
@@ -16,8 +16,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;

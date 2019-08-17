@@ -114,6 +114,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
+				<artifactId>Entity2Table</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
 				<artifactId>CfgReader</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
