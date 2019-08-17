@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * Created by qiunet on 4/8/17.
@@ -23,6 +24,7 @@ public final class ProjectInitCreator {
 	public static void create(String xmlDirectory) {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(xmlDirectory);
 		try {
+			assert url != null;
 			create(new File(url.toURI()));
 		} catch (URISyntaxException e) {
 			logger.error("xml directory ["+xmlDirectory+"] create exception:", e);
@@ -36,9 +38,9 @@ public final class ProjectInitCreator {
 			throw new RuntimeException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
 		}
 
-		for (File file : xmlDirectory.listFiles()) {
+		for (File file : Objects.requireNonNull(xmlDirectory.listFiles())) {
 			EntityType entityType = EntityType.parse(file);
-			new DefineCreator(entityType, file).parse();
+			new EntityCreator(entityType, file).parse();
 		}
 	}
 }

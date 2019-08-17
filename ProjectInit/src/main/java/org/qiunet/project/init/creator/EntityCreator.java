@@ -17,7 +17,7 @@ import java.io.IOException;
  * qiunet
  * 2019-08-16 11:56
  ***/
-public class DefineCreator {
+public class EntityCreator {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private EntityType entityType;
 
@@ -25,7 +25,7 @@ public class DefineCreator {
 
 	private IEntityDefine entityDefine;
 
-	DefineCreator(EntityType entityType, File file) {
+	EntityCreator(EntityType entityType, File file) {
 		this.entityType = entityType;
 		this.file = file;
 	}
