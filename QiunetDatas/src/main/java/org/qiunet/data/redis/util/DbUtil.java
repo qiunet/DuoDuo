@@ -39,9 +39,22 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static String getDefaultTableName(String doName) {
-		if (doName.endsWith("Do")) {
-			return doName.substring(0, doName.length() - 2);
+		if (! doName.endsWith("Do")) {
+			throw new IllegalArgumentException("Do must end with Do");
 		}
-		return doName;
+		String str = doName.substring(0, doName.length() - 2);
+		int index = 0;
+		StringBuilder sb = new StringBuilder();
+		while (index < str.length()) {
+			char c = str.charAt(index);
+			if (c >= 'A' && c <= 'Z'){
+				if (index > 0) sb.append('_');
+				sb.append((char)(c + 32));
+			} else {
+				sb.append(c);
+			}
+			index++;
+		}
+		return sb.toString();
 	}
 }
