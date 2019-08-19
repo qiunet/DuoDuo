@@ -1,6 +1,7 @@
 package org.qiunet.project.init.enums;
 
 import org.apache.commons.digester.Digester;
+import org.qiunet.data.support.*;
 import org.qiunet.project.init.define.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -27,7 +28,7 @@ import java.net.URL;
  */
 public enum  EntityType {
 
-	DB_ENTITY("DbEntity.xsd") {
+	DB_ENTITY("DbEntity.xsd", DbDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 			this.addObjectCreate(digester, "db_entity", DbEntityDefine.class, "setEntityDefine");
@@ -37,7 +38,7 @@ public enum  EntityType {
 		}
 	},
 
-	CACHE_ENTITY("CacheEntity.xsd") {
+	CACHE_ENTITY("CacheEntity.xsd", CacheDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 			this.addObjectCreate(digester, "cache_entity", CacheEntityDefine.class, "setEntityDefine");
@@ -47,7 +48,7 @@ public enum  EntityType {
 		}
 	},
 
-	REDIS_ENTITY("RedisEntity.xsd") {
+	REDIS_ENTITY("RedisEntity.xsd", RedisDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 			this.addObjectCreate(digester, "redis_entity", RedisEntityDefine.class, "setEntityDefine");
@@ -57,21 +58,21 @@ public enum  EntityType {
 		}
 	},
 
-	DB_ENTITY_LIST("DbEntityList.xsd") {
+	DB_ENTITY_LIST("DbEntityList.xsd", DbDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 
 		}
 	},
 
-	CACHE_ENTITY_LIST("CacheEntityList.xsd") {
+	CACHE_ENTITY_LIST("CacheEntityList.xsd", CacheDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 
 		}
 	},
 
-	REDIS_ENTITY_LIST("RedisEntityList.xsd") {
+	REDIS_ENTITY_LIST("RedisEntityList.xsd", RedisDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
 
@@ -79,8 +80,9 @@ public enum  EntityType {
 	},
 	;
 	private String xsdName;
-
-	EntityType(String xsdName) {
+	private Class<? extends IDataSupport> dataSupportClass;
+	EntityType(String xsdName, Class<? extends IDataSupport> dataSupportClass) {
+		this.dataSupportClass = dataSupportClass;
 		this.xsdName = xsdName;
 	}
 
@@ -149,5 +151,9 @@ public enum  EntityType {
 		digester.addObjectCreate(pattern, clazz);
 		digester.addSetProperties(pattern);
 		digester.addSetNext(pattern,setNext);
+	}
+
+	public Class<? extends IDataSupport> getDataSupportClass() {
+		return dataSupportClass;
 	}
 }

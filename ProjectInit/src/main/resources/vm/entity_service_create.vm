@@ -1,113 +1,40 @@
-package ${allData.currData.packagePath};
+#set($entity=${entity})
+package ${entity.packageName};
 
-#if(${allData.currData.list})
+import ${entity.type.DataSupportClass.name};
+#if(${entity.type.list})
 import java.util.Map;
 #end
-import ${allData.currData.entityDataSupportPackage};
-import ${allData.currData.infoClassPackage};
-import ${allData.currData.poPackage};
-import ${allData.currData.voPackage};
 
-/**
-* Created by qiunet.
-*/
-public class ${allData.currData.name} {
-	private volatile static ${allData.currData.name} instance;
-	private ${allData.currData.infoClassName} entityInfo = new ${allData.currData.infoClassName}();
-	private ${allData.currData.entityDataSupportClass}<${allData.currData.dbInfoKeyType}, #if(${allData.currData.list})${allData.currData.subKeyType},#end ${allData.currData.poName}, ${allData.currData.voName}> dataSupport;
+import ${entity.entityPackage}.${entity.boName};
+import ${entity.entityPackage}.${entity.doName};
 
-	private ${allData.currData.name}() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+public class ${entity.serviceName} {
+	private volatile static ${entity.serviceName} instance = new ${entity.serviceName}();
+#if(${entity.type} == 'CACHE_ENTITY')
+	private static CacheDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new CacheDataSupport<>(${entity.doName}.class, ${entity.boName}::new);
+#elseif(${entity.type} == 'DB_ENTITY')
+	private static DbDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new DbDataSupport<>(${entity.doName}.class, ${entity.boName}::new);
+#elseif(${entity.type} == 'REDIS_ENTITY')
+	private static RedisDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new RedisDataSupport<>(${entity.redis}.getInstance(), ${entity.doName}.class, ${entity.boName}::new);
+#end
 
-		dataSupport = new ${allData.currData.entityDataSupportClass}(entityInfo);
-		instance = this;
+	private ${entity.serviceName} () {
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 	}
 
-	public static ${allData.currData.name} getInstance() {
-		if (instance == null) {
-			synchronized (${allData.currData.name}.class) {
-				if (instance == null) {
-					new ${allData.currData.name}();
-				}
-			}
-		}
+	public static ${entity.serviceName} getInstance() {
 		return instance;
 	}
-#if(!${allData.currData.list})
-	public void expirePo(${allData.currData.poName} po) {
-		dataSupport.expireCache(po);
-	}
-#end
-### get方法大不同
-#if(${allData.currData.entityDataSupportClass} == 'EntityDataSupport')
-	/**
-	* 获得一个vo的数据
-	*
-	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
-	*/
-	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
-		return dataSupport.getVo(${allData.currData.dbInfoKeyName});
-	}
-#elseif(${allData.currData.entityDataSupportClass} == 'EntityListDataSupport')
-	/**
-	* 失效列表
-	*
-	* @param ${allData.currData.dbInfoKeyName} dbInfoKey
-	*/
-	public void expireList(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
-		dataSupport.expireCache(${allData.currData.dbInfoKeyName});
-	}
+
 	/***
-	* 得到一个列表里面的po对象
-	* @param ${allData.currData.dbInfoKeyName}
-	* @param ${allData.currData.subKeyName}
-	* @return
+	* 获得一个 ${entity.boName} 对象
+	* @param ${entity.keyName} 获取对象的主键
+	* @return ${entity.boName} 对象
 	*/
-	public ${allData.currData.voName} get${allData.currData.voName}(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}, ${allData.currData.subKeyType}  ${allData.currData.subKeyName} ) {
-		return get${allData.currData.voName}Map(${allData.currData.dbInfoKeyName}).get(${allData.currData.subKeyName});
-	}
-	/****
-	* 	得到map列表. key为subKey
-	* @param uid
-	* @return
-	*/
-	public Map<${allData.currData.subKeyType}, ${allData.currData.voName}> get${allData.currData.voName}Map(${allData.currData.dbInfoKeyType} ${allData.currData.dbInfoKeyName}) {
-		return dataSupport.getVoMap(${allData.currData.dbInfoKeyName});
-	}
-#end
-	/**
-	* 插入一个po的数据
-	*
-	* @param po po数据
-	*/
-	public ${allData.currData.voName} insert${allData.currData.poName}(${allData.currData.poName} po) {
-		return this.dataSupport.insertPo(po);
-	}
-	/**
-	* 更新数据
-	*
-	* @param vo
-	*/
-	public void update${allData.currData.voName}(${allData.currData.voName} vo) {
-		dataSupport.updatePo(vo.get${allData.currData.poName}());
-	}
-#if(!${allData.currData.list})
-	/***
-	* 根据字段原子性修改数据
-	* @param vo
-	* @param field 对应po里面有
-	* @param changeVal 可以正负变化
-	*/
-	public void atomicUpdateWithFields(${allData.currData.voName} vo, ${allData.currData.poName}.FieldEnum field, long changeVal) {
-		if (changeVal == 0) return;
-		dataSupport.atomicUpdateField(vo.get${allData.currData.poName}(), field, changeVal);
-	}
-#end
-	/***
-	* 删除一个 po
-	* @param vo
-	*/
-	public void delete${allData.currData.poName}(${allData.currData.voName} vo) {
-		dataSupport.deletePo(vo.get${allData.currData.poName}());
+	public ${entity.boName} get${entity.boName}(${entity.keyType} ${entity.keyName}) {
+		return dataSupport.getBo(${entity.keyName});
 	}
 }

@@ -72,6 +72,11 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 	}
 
 	@Override
+	public String getServiceName() {
+		return name.replace("Do", "Service");
+	}
+
+	@Override
 	public String getEntityPackage() {
 		return packageName+".entity";
 	}

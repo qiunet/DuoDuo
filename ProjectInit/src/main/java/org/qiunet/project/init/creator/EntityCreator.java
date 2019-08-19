@@ -63,6 +63,13 @@ public class EntityCreator {
 		if (!boFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_bo_create.vm", outputFileName.toString(), this.entityDefine);
 		}
+
+		// 输出 Service
+		outputFileName = Paths.get(entityDefine.outputPath().toString(), entityDefine.getServiceName()+".java");
+		File serviceFile = outputFileName.toFile();
+		if (!serviceFile.exists()) {
+			VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", outputFileName.toString(), this.entityDefine);
+		}
 	}
 
 

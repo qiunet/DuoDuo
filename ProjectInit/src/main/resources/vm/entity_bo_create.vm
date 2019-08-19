@@ -5,7 +5,7 @@ import org.qiunet.data.support.IEntityBo;
 public class ${entity.boName} implements IEntityBo<${entity.doName}>{
 	private ${entity.doName} aDo;
 
-	${entity.boName} (${entity.doName} aDo) {
+	public ${entity.boName} (${entity.doName} aDo) {
 		this.aDo = aDo;
 	}
 

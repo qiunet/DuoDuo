@@ -38,7 +38,11 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	String getDoName();
-
+	/***
+	 * 得到service的类名
+	 * @return
+	 */
+	String getServiceName();
 	/***
 	 * 得到bo 类名
 	 * @return
