@@ -2,7 +2,7 @@ package org.qiunet.entity2table.controller;
 
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.entity2table.annotation.LengthCount;
-import org.qiunet.entity2table.annotation.Table;
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.CreateTableParam;
 import org.qiunet.entity2table.config.ConfigLoder;

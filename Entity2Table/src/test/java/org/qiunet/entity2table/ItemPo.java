@@ -1,7 +1,7 @@
 package org.qiunet.entity2table;
 
 import org.qiunet.data.core.support.db.Column;
-import org.qiunet.entity2table.annotation.Table;
+import org.qiunet.data.core.support.db.Table;
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
