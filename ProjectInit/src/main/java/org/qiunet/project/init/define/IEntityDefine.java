@@ -13,6 +13,17 @@ import java.util.List;
  ***/
 public interface IEntityDefine extends ITemplateObjectDefine {
 	/***
+	 * 得到表名称
+	 * @return
+	 */
+	String getTableName();
+
+	/***
+	 * 得到 mybatis 的namespace
+	 * @return
+	 */
+	String getNameSpace();
+	/***
 	 * 获得类型
 	 * @return
 	 */
@@ -64,4 +75,27 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	List<FieldDefine> getFieldDefines();
+	/***
+	 * 得到数据库查询语句
+	 * @return
+	 */
+	String getSelectSql();
+
+	/**
+	 * 得到数据库插入语句
+	 * @return
+	 */
+	String getInsertSql();
+
+	/***
+	 * 得到数据库更新语句
+	 * @return
+	 */
+	String getUpdateSql();
+
+	/***
+	 * 得到数据库删除语句
+	 * @return
+	 */
+	String getDeleteSql();
 }

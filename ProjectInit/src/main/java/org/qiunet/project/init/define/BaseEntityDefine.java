@@ -1,7 +1,9 @@
 package org.qiunet.project.init.define;
 
 import org.qiunet.data.core.entity.IEntity;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.project.init.enums.EntityType;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
 
 import java.io.File;
@@ -35,6 +37,10 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 	 * 包名 路径
 	 */
 	private String packageName;
+	/***
+	 * 表名
+	 */
+	private String tableName;
 	/***
 	 * 所有的字段定义
 	 */
@@ -167,5 +173,42 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 		}
 		return Paths.get(localUserDir.getAbsolutePath(), baseDir,
 			packageName.replaceAll("\\.", "/"));
+	}
+
+	@Override
+	public String getNameSpace() {
+		return DbUtil.getNameSpace(this.name);
+	}
+
+	@Override
+	public String getTableName() {
+		if (StringUtil.isEmpty(tableName)) {
+			this.tableName = DbUtil.getDefaultTableName(this.name);
+		}
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	@Override
+	public String getDeleteSql() {
+		return null;
+	}
+
+	@Override
+	public String getInsertSql() {
+		return null;
+	}
+
+	@Override
+	public String getSelectSql() {
+		return null;
+	}
+
+	@Override
+	public String getUpdateSql() {
+		return null;
 	}
 }

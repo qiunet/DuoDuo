@@ -42,11 +42,10 @@ public final class DbUtil {
 		if (! doName.endsWith("Do")) {
 			throw new IllegalArgumentException("Do must end with Do");
 		}
-		String str = doName.substring(0, doName.length() - 2);
 		int index = 0;
 		StringBuilder sb = new StringBuilder();
-		while (index < str.length()) {
-			char c = str.charAt(index);
+		while (index < doName.length() - 2) {
+			char c = doName.charAt(index);
 			if (c >= 'A' && c <= 'Z'){
 				if (index > 0) sb.append('_');
 				sb.append((char)(c + 32));

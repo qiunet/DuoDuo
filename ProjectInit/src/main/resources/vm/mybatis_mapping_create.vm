@@ -1,23 +1,21 @@
-#set($entityObj = ${entity.subVmElement(${allData.currData.poref})})
-#set($entityType = ${entityObj.type})
-#set($entityInfoType = ${entityType.InfoType})
+#set($entity=${entity})
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="${allData.currData.NameSpace}">
+<mapper namespace="${entity.nameSpace}">
 
-	<select id="${allData.currData.SelectStatment}" parameterType="dbInfo" resultType="${allData.currData.poref}">
-		${allData.currData.SelectSql}
+	<select id="select${entity.doName}" parameterType="map" resultType="${entity.doName}">
+		${entity.SelectSql}
 	</select>
 
-	<update id="${allData.currData.UpdateStatment}" parameterType="dbInfo" >
-		${allData.currData.UpdateSql}
+	<update id="update${entity.doName}" parameterType="${entity.doName}" >
+		${entity.UpdateSql}
 	</update>
 
-	<insert id="${allData.currData.InsertStatment}" parameterType="dbInfo" >
-		${allData.currData.InsertSql}
+	<insert id="insert${entity.doName}" parameterType="${entity.doName}" >
+		${entity.insertSql}
 	</insert>
 
-	<delete id="${allData.currData.DeleteStatment}" parameterType="dbInfo" >
-		${allData.currData.DeleteSql}
+	<delete id="delete${entity.doName}" parameterType="map" >
+		${entity.deleteSql}
 	</delete>
 </mapper>
