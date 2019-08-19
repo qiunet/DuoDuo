@@ -23,7 +23,8 @@
 				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="fileName" type="xs:NCName" default="mybatis-config.xml" />
-			<xs:attribute name="baseDir" type="base:NamePattern" default="src/main/resources/mybatis" />
+			<xs:attribute name="baseDir" type="base:PathPattern" default="src/main/resources" />
+			<xs:attribute name="configDir" type="xs:NCName" default="mybatis" />
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

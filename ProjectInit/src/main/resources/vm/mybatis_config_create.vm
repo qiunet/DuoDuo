@@ -26,10 +26,9 @@
 		<setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
 	</settings>
 	<typeAliases>
-		<typeAlias alias="dbInfo" type="org.qiunet.data.db.support.info.IEntityDbInfo" />
-		#foreach(${entity} in ${entityList})
-	<package name="${entity.packagePath}" />
-		#end
+#foreach(${entity} in ${entityList})
+		<package name="${entity.packagePath}" />
+#end
 	</typeAliases>
     <plugins>
         <plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor" />

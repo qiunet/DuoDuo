@@ -34,7 +34,7 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 	/***
 	 * 包名相对于userDir的路径
 	 */
-	private String baseDir;
+	private String baseDir = "src/main/java";
 	/***
 	 * 包名 路径
 	 */

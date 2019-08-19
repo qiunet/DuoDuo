@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mybatis_config
-	 		  baseDir="src/test/resources/mybatis"
+<mybatis_config baseDir="src/test/resources"
 	          xmlns="https://github.com/qiunet/DuoDuo/MybatisConfig"
 			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 			  xsi:schemaLocation="https://github.com/qiunet/DuoDuo/MybatisConfig"

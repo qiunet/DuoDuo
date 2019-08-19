@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -70,7 +71,7 @@ public final class ProjectInitCreator {
 			if (mybatisConfigFileName.equals(file.getName())) continue;
 
 			EntityType entityType = EntityType.parse(file);
-			EntityCreator entityCreator = new EntityCreator(entityType, file, mybatisConfig.getBaseDir());
+			EntityCreator entityCreator = new EntityCreator(entityType, file, Paths.get(mybatisConfig.getBaseDir(), mybatisConfig.getConfigDir()).toString());
 			entityCreator.parse();
 
 			mybatisConfig.addExtraFile(entityCreator.getEntityDefine().getNameSpace());

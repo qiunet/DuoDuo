@@ -1,5 +1,6 @@
 package org.qiunet.project.init.define.mybatis;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,8 @@ import java.util.List;
  ***/
 public class MybatisConfigDefine {
 	private String fileName = "mybatis-config.xml";
-	private String baseDir = "src/main/resources/mybatis";
+	private String baseDir = "src/main/resources";
+	private String configDir = "mybatis";
 
 	private List<String> files = new ArrayList<>();
 
@@ -37,6 +39,14 @@ public class MybatisConfigDefine {
 
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
+	}
+
+	public String getConfigDir() {
+		return configDir;
+	}
+
+	public void setConfigDir(String configDir) {
+		this.configDir = configDir;
 	}
 
 	public List<String> getFiles() {
