@@ -28,7 +28,10 @@ public class EntityCreator {
 
 	private IEntityDefine entityDefine;
 
-	EntityCreator(EntityType entityType, File file) {
+	private String mybatisConfigPath;
+
+	EntityCreator(EntityType entityType, File file, String mybatisConfigPath) {
+		this.mybatisConfigPath = mybatisConfigPath;
 		this.entityType = entityType;
 		this.file = file;
 	}
@@ -72,6 +75,9 @@ public class EntityCreator {
 		}
 	}
 
+	public IEntityDefine getEntityDefine() {
+		return entityDefine;
+	}
 
 	public void setEntityDefine(IEntityDefine entityDefine) {
 		this.entityDefine = entityDefine;
