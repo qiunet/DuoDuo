@@ -33,7 +33,7 @@
 #end
 	</typeAliases>
     <plugins>
-        <plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor" />
+        <plugin interceptor="org.qiunet.data.core.support.db.plugins.MybatisInterceptor" />
     </plugins>
 	<mappers>
 #foreach(${extra} in ${extraFiles})

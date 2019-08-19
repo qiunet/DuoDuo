@@ -75,7 +75,7 @@ public final class ProjectInitCreator {
 			EntityCreator entityCreator = new EntityCreator(entityType, file, Paths.get(mybatisConfig.getBaseDir(), mybatisConfig.getConfigDir()).toString());
 			entityCreator.parse();
 
-			mybatisConfig.addExtraFile(entityCreator.getEntityDefine().getNameSpace());
+			mybatisConfig.addExtraFile(entityCreator.getEntityDefine().getNameSpace()+".xml");
 			mybatisConfig.addAliasPackage(entityCreator.getEntityDefine().getPackageName());
 		}
 

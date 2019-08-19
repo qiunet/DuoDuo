@@ -189,7 +189,7 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 
 	@Override
 	public String getDeleteSql() {
-		return "DELETE FROM " + realTableName() + " " + buildWhereCondition();
+		return "DELETE FROM " + realTableName() + " " + buildWhereCondition()+";";
 	}
 
 	@Override
@@ -205,7 +205,7 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 
 	@Override
 	public String getSelectSql() {
-		return "SELECT * FROM " + realTableName() + " " + buildWhereCondition();
+		return "SELECT * FROM " + realTableName() + " " + buildWhereCondition()+";";
 	}
 
 	@Override
@@ -214,11 +214,13 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 		sb.append(realTableName()).append(" SET ");
 		for (int i = 0; i < fieldDefines.size(); i++) {
 			FieldDefine define = fieldDefines.get(i);
+			if (define.getName().equals(key)) continue;
+
 			sb.append("`").append(define.getName()).append("` = #{")
 				.append(define.getName()).append("}");
 			if (i < fieldDefines.size() - 1) sb.append(", ");
 		}
-		sb.append(" ").append(buildWhereCondition());
+		sb.append(" ").append(buildWhereCondition()).append(";");
 		return sb.toString();
 	}
 
