@@ -131,7 +131,7 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 	public void setBaseDir(String baseDir) {
 		this.baseDir = baseDir;
 	}
-
+	@Override
 	public String getPackageName() {
 		return packageName;
 	}

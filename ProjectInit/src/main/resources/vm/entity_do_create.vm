@@ -1,33 +1,35 @@
-package ${entity.entityPackage};
+package ${define.entityPackage};
 
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.core.support.db.Column;
 import org.apache.ibatis.type.Alias;
-import ${entity.entityClass.name};
+import ${define.entityClass.name};
 
 /**
 * 对象为自动创建 不要修改
 */
-@Alias("${entity.DoName}")
-public class ${entity.DoName} extends ${entity.EntityClass.simpleName}<${entity.keyType}, ${entity.BoName}> {
-#foreach(${field} in ${entity.fieldDefines})
-	@Column(comment = "${field.comment}"#if(${field.name} == ${entity.key}), isKey = true#end#if(${field.length} > 0), length = ${field.length}#end)
+@Alias("${define.DoName}")
+@Table(name = "${define.tableName}")
+public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}, ${define.BoName}> {
+#foreach(${field} in ${define.fieldDefines})
+	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key}), isKey = true#end#if(${field.length} > 0), length = ${field.length}#end)
 	private ${field.type} ${field.name};
 #end
 ### constructor
 
-#if(${entity.ConstructorDefines.isEmpty()})
+#if(${define.ConstructorDefines.isEmpty()})
 	/**默认的构造函数**/
-	public ${entity.DoName}(){}
+	public ${define.DoName}(){}
 #end
-#foreach(${constructorDefine} in ${entity.ConstructorDefines})
-	public ${entity.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${velocityCount} < (${constructorDefine.fields.size()})),#end#end){
+#foreach(${constructorDefine} in ${define.ConstructorDefines})
+	public ${define.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${velocityCount} < (${constructorDefine.fields.size()})),#end#end){
 	#foreach(${field} in ${constructorDefine.fields})
 	this.${field.name} = ${field.name};
 	#end
 }
 #end
 ### get set方法
-#foreach(${field} in ${entity.fieldDefines} )
+#foreach(${field} in ${define.fieldDefines} )
 
 	public ${field.type} get#firstUpperCase(${field.name})() {
 		return ${field.name};
@@ -39,12 +41,12 @@ public class ${entity.DoName} extends ${entity.EntityClass.simpleName}<${entity.
 #end
 
 	@Override
-	public ${entity.keyType} key() {
-		return ${entity.keyName};
+	public ${define.keyType} key() {
+		return ${define.keyName};
 	}
 
 	@Override
 	public String keyFieldName() {
-		return "${entity.keyName}";
+		return "${define.keyName}";
 	}
 }

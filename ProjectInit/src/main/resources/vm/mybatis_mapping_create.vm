@@ -1,21 +1,21 @@
-#set($entity=${entity})
+#set($define=${define})
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="${entity.nameSpace}">
+<mapper namespace="${define.nameSpace}">
 
-	<select id="select${entity.doName}" parameterType="map" resultType="${entity.doName}">
-		${entity.SelectSql}
+	<select id="select${define.doName}" parameterType="map" resultType="${define.doName}">
+		${define.SelectSql}
 	</select>
 
-	<update id="update${entity.doName}" parameterType="${entity.doName}" >
-		${entity.UpdateSql}
+	<update id="update${define.doName}" parameterType="${define.doName}" >
+		${define.UpdateSql}
 	</update>
 
-	<insert id="insert${entity.doName}" parameterType="${entity.doName}" >
-		${entity.insertSql}
+	<insert id="insert${define.doName}" parameterType="${define.doName}" >
+		${define.insertSql}
 	</insert>
 
-	<delete id="delete${entity.doName}" parameterType="map" >
-		${entity.deleteSql}
+	<delete id="delete${define.doName}" parameterType="map" >
+		${define.deleteSql}
 	</delete>
 </mapper>

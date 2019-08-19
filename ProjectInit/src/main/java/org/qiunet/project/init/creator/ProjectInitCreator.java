@@ -4,6 +4,7 @@ import org.apache.commons.digester.Digester;
 import org.qiunet.project.init.define.mybatis.MybatisConfigDefine;
 import org.qiunet.project.init.define.mybatis.MybatisExtraDefine;
 import org.qiunet.project.init.enums.EntityType;
+import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.DigesterUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -75,7 +76,12 @@ public final class ProjectInitCreator {
 			entityCreator.parse();
 
 			mybatisConfig.addExtraFile(entityCreator.getEntityDefine().getNameSpace());
+			mybatisConfig.addAliasPackage(entityCreator.getEntityDefine().getPackageName());
 		}
+
+		// mybatis-config.xml 的输出
+		String configPath = Paths.get(mybatisConfig.outputPath().toString(), mybatisConfig.getFileName()).toString();
+		VelocityFactory.getInstance().parseOutFile("vm/mybatis_config_create.vm", configPath, mybatisConfig);
 	}
 
 

@@ -1,4 +1,6 @@
-#set($entityList=${allData.allEntity})
+#set($define=${define})
+#set($aliasPackages=${define.AliasPackages})
+#set($extraFiles=${define.files})
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration
 		PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
@@ -26,19 +28,16 @@
 		<setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString"/>
 	</settings>
 	<typeAliases>
-#foreach(${entity} in ${entityList})
-		<package name="${entity.packagePath}" />
+#foreach(${packageName} in ${aliasPackages})
+		<package name="${packageName}" />
 #end
 	</typeAliases>
     <plugins>
         <plugin interceptor="org.qiunet.data.db.interceptor.MybatisInterceptor" />
     </plugins>
 	<mappers>
-        #foreach(${extraXml} in ${allData.currData.extraConfigs})
-        <mapper resource="${allData.currData.path}/${extraXml.name}" />
-        #end
-        #foreach(${entity} in ${entityList})
-        <mapper resource="${allData.currData.path}/${entity.getConfigFileName(${entity.name})}.xml" />
-        #end
+#foreach(${extra} in ${extraFiles})
+        <mapper resource="${define.configDir}/${extra}" />
+#end
     </mappers>
 </configuration>

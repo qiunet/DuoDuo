@@ -1,40 +1,40 @@
-#set($entity=${entity})
-package ${entity.packageName};
+#set($define=${define})
+package ${define.packageName};
 
-import ${entity.type.DataSupportClass.name};
-#if(${entity.type.list})
+import ${define.type.DataSupportClass.name};
+#if(${define.type.list})
 import java.util.Map;
 #end
 
-import ${entity.entityPackage}.${entity.boName};
-import ${entity.entityPackage}.${entity.doName};
+import ${define.entityPackage}.${define.boName};
+import ${define.entityPackage}.${define.doName};
 
-public class ${entity.serviceName} {
-	private volatile static ${entity.serviceName} instance = new ${entity.serviceName}();
-#if(${entity.type} == 'CACHE_ENTITY')
-	private static CacheDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new CacheDataSupport<>(${entity.doName}.class, ${entity.boName}::new);
-#elseif(${entity.type} == 'DB_ENTITY')
-	private static DbDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new DbDataSupport<>(${entity.doName}.class, ${entity.boName}::new);
-#elseif(${entity.type} == 'REDIS_ENTITY')
-	private static RedisDataSupport<${entity.keyType}, ${entity.doName}, ${entity.boName}> dataSupport = new RedisDataSupport<>(${entity.redis}.getInstance(), ${entity.doName}.class, ${entity.boName}::new);
+public class ${define.serviceName} {
+	private volatile static ${define.serviceName} instance = new ${define.serviceName}();
+#if(${define.type} == 'CACHE_ENTITY')
+	private static CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
+#elseif(${define.type} == 'DB_ENTITY')
+	private static DbDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataSupport<>(${define.doName}.class, ${define.boName}::new);
+#elseif(${define.type} == 'REDIS_ENTITY')
+	private static RedisDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
 #end
 
-	private ${entity.serviceName} () {
+	private ${define.serviceName} () {
 		if (instance != null) {
 			throw new RuntimeException("Instance Duplication!");
 		}
 	}
 
-	public static ${entity.serviceName} getInstance() {
+	public static ${define.serviceName} getInstance() {
 		return instance;
 	}
 
 	/***
-	* 获得一个 ${entity.boName} 对象
-	* @param ${entity.keyName} 获取对象的主键
-	* @return ${entity.boName} 对象
+	* 获得一个 ${define.boName} 对象
+	* @param ${define.keyName} 获取对象的主键
+	* @return ${define.boName} 对象
 	*/
-	public ${entity.boName} get${entity.boName}(${entity.keyType} ${entity.keyName}) {
-		return dataSupport.getBo(${entity.keyName});
+	public ${define.boName} get${define.boName}(${define.keyType} ${define.keyName}) {
+		return dataSupport.getBo(${define.keyName});
 	}
 }

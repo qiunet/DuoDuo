@@ -1,15 +1,15 @@
-package ${entity.entityPackage};
+package ${define.entityPackage};
 
 import org.qiunet.data.support.IEntityBo;
 
-public class ${entity.boName} implements IEntityBo<${entity.doName}>{
-	private ${entity.doName} aDo;
+public class ${define.boName} implements IEntityBo<${define.doName}>{
+	private ${define.doName} aDo;
 
-	public ${entity.boName} (${entity.doName} aDo) {
+	public ${define.boName} (${define.doName} aDo) {
 		this.aDo = aDo;
 	}
 
-	public ${entity.doName} getDo(){
+	public ${define.doName} getDo(){
 		return aDo;
 	}
 

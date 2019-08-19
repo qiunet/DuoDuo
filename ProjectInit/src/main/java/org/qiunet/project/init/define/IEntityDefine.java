@@ -23,6 +23,12 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	String getNameSpace();
+
+	/***
+	 * 得到配置的packageName
+	 * @return
+	 */
+	String getPackageName();
 	/***
 	 * 获得类型
 	 * @return
