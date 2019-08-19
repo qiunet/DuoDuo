@@ -161,6 +161,6 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 			e.printStackTrace();
 		}
 		return Paths.get(localUserDir.getAbsolutePath(), baseDir,
-			packageName.replaceAll("\\.", SystemPropertyUtil.getFileSeparator()));
+			packageName.replaceAll("\\.", "/"));
 	}
 }

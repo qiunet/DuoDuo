@@ -56,11 +56,6 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 */
 	String getEntityPackage();
 	/***
-	 * 得到import信息
-	 * @return
-	 */
-	List<String> getImportInfos();
-	/***
 	 * 得到字段的定义
 	 * @return
 	 */
