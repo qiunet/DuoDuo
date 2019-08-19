@@ -12,6 +12,17 @@ import org.qiunet.project.init.enums.EntityType;
  ***/
 public class CacheEntityDefine extends BaseEntityDefine {
 
+
+	@Override
+	protected String realTableName() {
+		return getTableName();
+	}
+
+	@Override
+	protected String buildWhereCondition() {
+		return "WHERE " + getKey() + " = #{" + getKey()+ "}";
+	}
+
 	public CacheEntityDefine() {
 		super(EntityType.CACHE_ENTITY, CacheEntity.class);
 	}

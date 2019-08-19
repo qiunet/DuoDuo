@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema  xmlns="https://github.com/qiunet/DuoDuo/MybatisConfig"
 			xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:base="https://github.com/qiunet/DuoDuo/Base"
 			targetNamespace="https://github.com/qiunet/DuoDuo/MybatisConfig"
 			elementFormDefault="qualified"
 >
+	<xs:import namespace="https://github.com/qiunet/DuoDuo/Base" schemaLocation="Base.xsd" />
+
 	<xs:element name="mybatis_config" >
 		<xs:complexType>
 			<xs:sequence>
@@ -19,8 +22,8 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="fileName" default="mybatis-config.xml" />
-			<xs:attribute name="baseDir" default="src/main/resources/mybatis" />
+			<xs:attribute name="fileName" type="xs:NCName" default="mybatis-config.xml" />
+			<xs:attribute name="baseDir" type="base:NamePattern" default="src/main/resources/mybatis" />
 		</xs:complexType>
 	</xs:element>
 </xs:schema>

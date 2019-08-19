@@ -3,6 +3,7 @@ package org.qiunet.project.init.define;
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.project.init.enums.EntityType;
+import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
 
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /***
  *
@@ -164,14 +166,7 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 
 	@Override
 	public Path outputPath() {
-		File localUserDir = null;
-		try {
-			Path path = Paths.get(Thread.currentThread().getContextClassLoader().getResource("").toURI());
-			localUserDir = path.toFile().getParentFile().getParentFile();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		return Paths.get(localUserDir.getAbsolutePath(), baseDir,
+		return Paths.get(InitProjectUtil.getRealUserDir().getAbsolutePath(), baseDir,
 			packageName.replaceAll("\\.", "/"));
 	}
 
@@ -194,21 +189,49 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 
 	@Override
 	public String getDeleteSql() {
-		return null;
+		return "DELETE FROM " + realTableName() + " " + buildWhereCondition();
 	}
 
 	@Override
 	public String getInsertSql() {
-		return null;
+		StringBuilder sb = new StringBuilder("INSERT INTO ");
+		sb.append(realTableName()).append(" (")
+		.append(fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("`, `", "`", "`")))
+		.append(") VALUES (")
+		.append(fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("}, #{", "#{", "}")))
+		.append(");");
+		return sb.toString();
 	}
 
 	@Override
 	public String getSelectSql() {
-		return null;
+		return "SELECT * FROM " + realTableName() + " " + buildWhereCondition();
 	}
 
 	@Override
 	public String getUpdateSql() {
-		return null;
+		StringBuilder sb = new StringBuilder("UPDATE ");
+		sb.append(realTableName()).append(" SET ");
+		for (int i = 0; i < fieldDefines.size(); i++) {
+			FieldDefine define = fieldDefines.get(i);
+			sb.append("`").append(define.getName()).append("` = #{")
+				.append(define.getName()).append("}");
+			if (i < fieldDefines.size() - 1) sb.append(", ");
+		}
+		sb.append(" ").append(buildWhereCondition());
+		return sb.toString();
 	}
+
+	/**
+	 * 真实的 表名
+	 * 包含 库信息 分表信息等
+	 * @return
+	 */
+	protected abstract String realTableName();
+	/**
+	 * 搞定where condition
+	 * @return
+	 */
+	protected abstract String buildWhereCondition();
+
 }

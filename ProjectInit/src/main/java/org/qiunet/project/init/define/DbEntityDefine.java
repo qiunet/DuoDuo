@@ -11,6 +11,16 @@ import org.qiunet.project.init.enums.EntityType;
  ***/
 public class DbEntityDefine extends BaseEntityDefine {
 
+	@Override
+	protected String realTableName() {
+		return getTableName();
+	}
+
+	@Override
+	protected String buildWhereCondition() {
+		return "WHERE " + getKey() + " = #{" + getKey()+ "}";
+	}
+
 	public DbEntityDefine() {
 		super(EntityType.DB_ENTITY, DbEntity.class);
 	}

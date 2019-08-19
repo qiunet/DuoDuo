@@ -4,6 +4,7 @@ import org.apache.commons.digester.Digester;
 import org.qiunet.project.init.define.IEntityDefine;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
+import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.xml.sax.SAXException;
@@ -73,6 +74,10 @@ public class EntityCreator {
 		if (!serviceFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", outputFileName.toString(), this.entityDefine);
 		}
+
+		// 输出 mybatis 的mapping xml
+		outputFileName = Paths.get(InitProjectUtil.getRealUserDir().getAbsolutePath(), mybatisConfigPath, entityDefine.getNameSpace()+".xml");
+		VelocityFactory.getInstance().parseOutFile("vm/mybatis_mapping_create.vm", outputFileName.toString(), this.entityDefine);
 	}
 
 	public IEntityDefine getEntityDefine() {
