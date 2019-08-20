@@ -10,6 +10,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -47,13 +48,8 @@ public final class ClassScanner implements IApplicationContext {
 		}
 		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
 		for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
-			try {
-				Constructor<? extends IApplicationContextAware> constructor = aClass.getDeclaredConstructor();
-				constructor.setAccessible(true);
-				constructor.newInstance().setApplicationContext(this);
-			} catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
-				e.printStackTrace();
-			}
+			IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
+			instance.setApplicationContext(this);
 		}
 	}
 
@@ -88,23 +84,32 @@ public final class ClassScanner implements IApplicationContext {
 			Field field = first.get();
 			field.setAccessible(true);
 			try {
-				return field.get(null);
+				Object ret = field.get(null);
+				if (ret != null) return ret;
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
-		}else {
-			Class<?> [] clazzes = new Class[params.length];
-			for (int i = 0; i < params.length; i++) {
-				clazzes[i] = params[i].getClass();
-			}
+		}
+		Class<?> [] clazzes = new Class[params.length];
+		for (int i = 0; i < params.length; i++) {
+			clazzes[i] = params[i].getClass();
+		}
+
+		Constructor[] constructors = clazz.getDeclaredConstructors();
+		for (Constructor constructor : constructors) {
+			if (constructor.getParameterCount() != clazzes.length) continue;
+
+			boolean allMatch = IntStream.range(0, clazzes.length).mapToObj(i -> clazzes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
+			if (! allMatch) continue;
+
+			constructor.setAccessible(true);
 			try {
-				Constructor constructor = clazz.getDeclaredConstructor(clazzes);
-				constructor.setAccessible(true);
 				return constructor.newInstance(params);
-			} catch (Exception e) {
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}
+
 		throw new NullPointerException("can not get instance for class ["+clazz.getName()+"]");
 	}
 }
