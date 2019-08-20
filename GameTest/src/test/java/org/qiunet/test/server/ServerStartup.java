@@ -95,7 +95,7 @@ public final class ServerStartup {
 		}
 
 		@Override
-		public void custom(String msg, String ip) {
+		public void custom(String msg) {
 
 		}
 	}

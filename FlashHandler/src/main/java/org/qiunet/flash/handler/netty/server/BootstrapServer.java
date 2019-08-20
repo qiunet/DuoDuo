@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
@@ -187,7 +188,7 @@ public class BootstrapServer {
 				serverSocketChannel.configureBlocking(false);
 				this.selector = Selector.open();
 
-				serverSocketChannel.socket().bind(new InetSocketAddress(this.hook.getHookPort()));
+				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
 				this.RUNNING = false;
@@ -201,24 +202,18 @@ public class BootstrapServer {
 		 * @param byteBuffer
 		 * @throws IOException
 		 */
-		private boolean handlerMsg(ByteBuffer byteBuffer, SocketChannel channel) throws IOException {
+		private boolean handlerMsg(ByteBuffer byteBuffer) {
 			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
-			String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: ["+msg+"]");
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.RUNNING = false;
-				if (NetUtil.isLocalIp(ip)) {
-					server.shutdown();
-					return true;
-				}else {
-					logger.error("[HookListener]服务端 Shutdown but ip ["+ip+"] error");
-					return false;
-				}
+				server.shutdown();
+				return true;
 			}else if (msg.equals(hook.getReloadCfgMsg())){
 				hook.reloadCfg();
 			}else {
-				hook.custom(msg, ip);
+				hook.custom(msg);
 			}
 			return false;
 		}
@@ -255,7 +250,7 @@ public class BootstrapServer {
 								channel.read(byteBuffer);
 								byteBuffer.flip();
 								try {
-									handlerMsg(byteBuffer, channel);
+									handlerMsg(byteBuffer);
 								}finally {
 									channel.close();
 								}

@@ -1,13 +1,15 @@
 package org.qiunet.flash.handler.bootstrap.hook;
 
+
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.flash.handler.netty.server.hook.BaseHook;
+import org.qiunet.flash.handler.netty.server.hook.Hook;
+import org.qiunet.utils.logger.LoggerType;
 
 /**
  * Created by qiunet.
  * 17/11/22
  */
-public class MyHook extends BaseHook {
+public class MyHook implements Hook {
 
 	@Override
 	public String getReloadCfgMsg() {
@@ -35,20 +37,11 @@ public class MyHook extends BaseHook {
 
 	@Override
 	public void shutdown() {
-		logger.error("Called MyHook");
+		LoggerType.DUODUO.error("Called MyHook");
 	}
 
 	@Override
-	public Runnable returnCustomTask(String msg, String ip) {
-		return () -> {
-			switch (msg) {
-				case "A":
-					logger.error("A msg called");
-					break;
-				case "B":
-					logger.error("B msg called");
-					break;
-			}
-		};
+	public void custom(String msg) {
+
 	}
 }
