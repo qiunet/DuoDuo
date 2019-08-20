@@ -7,20 +7,22 @@
     能够在第一时间反应过来问题出在哪.
     
 ## 名词解释
-* Po Persisent Object 持久化对象 负责跟存储层交互的对象
-* Vo View Object Mvc 中给视图提供数据支持的对象, 对Po的计算方法大部分在这个里面.
+* Do Database Object 持久化对象 负责跟数据库交互的对象
+* Bo Business Object 业务对象, 给业务提供支持的对象
 * DataSupport 操作数据的类, 会自动搞定异步更新等问题
 * Service    处理业务的一些公用方法
 * Handler   处理请求的逻辑类. 一个请求一个handler
-* TestCase  对应handler的测试类  
+* TestCase  对应handler的测试类 
 
 ## 模块简介
 | 	模块			|	简介					|
 |----------		|----------	|
-|[Quartz](Quartz/README.md) 			|	 定时调度	|
+|[Quartz](Quartz/README.md) 			|	 定时调度相关的模块	|
+|[CfgReader](CfgReader/README.md) 			|	 配置文件读取的模块	|
 |[QiunetUtils](QiunetUtils/README.md)		|	 各种基本工具类|
-|[QiunetDatas](QiunetDatas/README.md) 		|	 Mysql和Redis使用模块, 实现了异步更新等功能.|
-|[ProjectInit](ProjectInit/README.md) 		| 通过xml配置.自动生成po xml 和调用的类.|
+|[QiunetDatas](QiunetDatas/README.md) 		|	 Mysql和Redis以及本地Cache使用模块, 实现了异步更新等功能.|
+|[Entity2Table](Entity2Table/README.md) 		|	根据Do对象自动生成和更新数据库结构的模块|
+|[ProjectInit](ProjectInit/README.md) 		| 通过xml配置.自动生成Do Bo xml Service和调用的类.|
 |[ExcelToStream](ExcelToStream/README.md)	| Excel转设定的工具. 打包成可以执行的jar包.|
 |[FlashHandler](FlashHandler/README.md) 		| 能启动Tcp Http WebSocket作为服务的模块|
 |[GameTest](GameTest/README.md)  		|	 模拟机器人测试的模块.|
