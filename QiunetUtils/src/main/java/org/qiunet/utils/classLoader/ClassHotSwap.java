@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /***
@@ -23,15 +24,15 @@ public final class ClassHotSwap {
 	 * class 文件不需要有层级结构 直接在里面就ok
 	 * @param classesParentPath
 	 */
-	public static void hotSwap(String classesParentPath) {
+	public static void hotSwap(Path classesParentPath) {
 		ClassInfos classInfos = new ClassInfos();
 
-		File file = new File(classesParentPath);
-		if (! file.isDirectory()) {
+		File classDirectory = classesParentPath.toFile();
+		if (! classDirectory.isDirectory()) {
 			logger.error(" classesParentPath must be a directory!");
 			return;
 		}
-		classInfos.setClassPath(file.getAbsolutePath());
+		classInfos.setClassPath(classDirectory.getAbsolutePath());
 
 		String classPath  = System.getProperty("java.class.path");
 		String [] paths = StringUtil.split(classPath, SystemPropertyUtil.getPathSeparator());
@@ -50,7 +51,7 @@ public final class ClassHotSwap {
 			return;
 		}
 
-		for (File clazzFile : file.listFiles()) {
+		for (File clazzFile : classDirectory.listFiles()) {
 			if (clazzFile.isDirectory() || !clazzFile.getName().endsWith(".class")) continue;
 
 			try {
