@@ -104,4 +104,16 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	String getDeleteSql();
+
+	/**
+	 * 得到表的注释
+	 * @return
+	 */
+	String getComment();
+
+	/**
+	 * 是否是列表类型
+	 * @return
+	 */
+	boolean isList();
 }

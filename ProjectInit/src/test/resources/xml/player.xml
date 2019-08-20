@@ -2,6 +2,7 @@
 <db_entity key="uid"
 		name="PlayerDo"
 	    baseDir="src/test/java"
+	    comment="玩家存放数据的表"
 		packageName="org.qiunet.project.init.test.player"
 		xmlns="https://github.com/qiunet/DuoDuo/DbEntity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

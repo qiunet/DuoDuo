@@ -22,38 +22,42 @@ import java.util.stream.Collectors;
  * qiunet
  * 2019-08-14 22:31
  ***/
-public abstract class BaseEntityDefine implements IEntityDefine {
+ abstract class BaseEntityDefine implements IEntityDefine {
 	/***
 	 * 对象的类名
 	 */
-	private String name;
+	protected String name;
 	/***
 	 * 主键
 	 */
-	private String key;
+	protected String key;
+	/**
+	 * 对表的注释
+	 */
+	protected String comment;
 	/***
 	 * 包名相对于userDir的路径
 	 */
-	private String baseDir = "src/main/java";
+	protected String baseDir = "src/main/java";
 	/***
 	 * 包名 路径
 	 */
-	private String packageName;
+	protected String packageName;
 	/***
 	 * 表名
 	 */
-	private String tableName;
+	protected String tableName;
 	/***
 	 * 所有的字段定义
 	 */
-	private List<FieldDefine> fieldDefines = new ArrayList<>();
+	protected List<FieldDefine> fieldDefines = new ArrayList<>();
 	/***
 	 * 所有的构造函数定义
 	 */
-	private List<ConstructorDefine> constructorDefines = new ArrayList<>();
+	protected List<ConstructorDefine> constructorDefines = new ArrayList<>();
 
-	private EntityType entityType;
-	private Class<? extends IEntity> entityClass;
+	protected EntityType entityType;
+	protected Class<? extends IEntity> entityClass;
 
 	protected BaseEntityDefine(EntityType entityType, Class<? extends IEntity> entityClass) {
 		this.entityType = entityType;
@@ -142,9 +146,12 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 
 	@Override
 	public String getKeyName() {
-		Optional<FieldDefine> keyField = fieldDefines.stream().filter(f -> f.getName().equals(key)).findFirst();
-		FieldDefine fieldDefine = keyField.orElseThrow(() -> new NullPointerException("DoName ["+name+"] have not a field named ["+key+"]"));
-		return fieldDefine.getName();
+		return key;
+	}
+
+	@Override
+	public boolean isList() {
+		return entityType.isList();
 	}
 
 	@Override
@@ -236,4 +243,15 @@ public abstract class BaseEntityDefine implements IEntityDefine {
 	 */
 	protected abstract String buildWhereCondition();
 
+	public boolean isCommentEmpty(){
+		return StringUtil.isEmpty(comment);
+	}
+	@Override
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
 }

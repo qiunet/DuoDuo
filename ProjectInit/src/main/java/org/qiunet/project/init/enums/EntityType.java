@@ -62,21 +62,30 @@ public enum  EntityType {
 	DB_ENTITY_LIST("DbEntityList.xsd", DbDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-
+			DigesterUtil.addObjectCreate(digester, "db_entity_list", DbEntityListDefine.class, "setEntityDefine");
+			DigesterUtil.addObjectCreate(digester, "db_entity_list/field", FieldDefine.class, "addField");
+			DigesterUtil.addObjectCreate(digester, "db_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			DigesterUtil.addObjectCreate(digester, "db_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	CACHE_ENTITY_LIST("CacheEntityList.xsd", CacheDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-
+			DigesterUtil.addObjectCreate(digester, "cache_entity_list", CacheEntityListDefine.class, "setEntityDefine");
+			DigesterUtil.addObjectCreate(digester, "cache_entity_list/field", FieldDefine.class, "addField");
+			DigesterUtil.addObjectCreate(digester, "cache_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			DigesterUtil.addObjectCreate(digester, "cache_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	REDIS_ENTITY_LIST("RedisEntityList.xsd", RedisDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-
+			DigesterUtil.addObjectCreate(digester, "redis_entity_list", RedisEntityListDefine.class, "setEntityDefine");
+			DigesterUtil.addObjectCreate(digester, "redis_entity_list/field", FieldDefine.class, "addField");
+			DigesterUtil.addObjectCreate(digester, "redis_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			DigesterUtil.addObjectCreate(digester, "redis_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 	;

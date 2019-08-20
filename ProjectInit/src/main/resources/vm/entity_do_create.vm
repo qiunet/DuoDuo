@@ -1,3 +1,4 @@
+#set($define=${define})
 package ${define.entityPackage};
 
 import org.qiunet.data.core.support.db.Table;
@@ -9,23 +10,23 @@ import ${define.entityClass.name};
 * 对象为自动创建 不要修改
 */
 @Alias("${define.DoName}")
-@Table(name = "${define.tableName}")
-public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}, ${define.BoName}> {
+@Table(name = "${define.tableName}"#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end)
+public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}#if(${define.list}), ${define.subKeyType}#end, ${define.BoName}> {
 #foreach(${field} in ${define.fieldDefines})
-	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key}), isKey = true#end#if(${field.length} > 0), length = ${field.length}#end)
+	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key} || ${field.name} == ${define.subKey}), isKey = true#end#if(${field.length} > 0), length = ${field.length}#end)
 	private ${field.type} ${field.name};
 #end
 ### constructor
 
-#if(${define.ConstructorDefines.isEmpty()})
+#if(${define.ConstructorDefines.empty})
 	/**默认的构造函数**/
 	public ${define.DoName}(){}
 #end
 #foreach(${constructorDefine} in ${define.ConstructorDefines})
 	public ${define.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${velocityCount} < (${constructorDefine.fields.size()})),#end#end){
-	#foreach(${field} in ${constructorDefine.fields})
+#foreach(${field} in ${constructorDefine.fields})
 	this.${field.name} = ${field.name};
-	#end
+#end
 }
 #end
 ### get set方法
@@ -49,4 +50,16 @@ public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.
 	public String keyFieldName() {
 		return "${define.keyName}";
 	}
+#if(${define.list})
+
+	@Override
+	public ${define.subKeyType} subKey() {
+		return ${define.subKeyName};
+	}
+
+	@Override
+	public String subKeyFieldName() {
+		return "${define.subKeyName}";
+	}
+#end
 }

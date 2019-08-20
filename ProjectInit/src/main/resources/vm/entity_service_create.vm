@@ -17,6 +17,12 @@ public class ${define.serviceName} {
 	private static DbDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'REDIS_ENTITY')
 	private static RedisDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
+#elseif(${define.type} == 'REDIS_ENTITY_LIST')
+	private static RedisDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataListSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
+#elseif(${define.type} == 'DB_ENTITY_LIST')
+	private static DbDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataListSupport<>(${define.doName}.class, ${define.boName}::new);
+#elseif(${define.type} == 'CACHE_ENTITY_LIST')
+	private static CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #end
 
 	private ${define.serviceName} () {
@@ -28,7 +34,17 @@ public class ${define.serviceName} {
 	public static ${define.serviceName} getInstance() {
 		return instance;
 	}
+#if(${define.list})
 
+	/***
+	 * 获得一个 ${define.subKey} -> ${define.boName} Map对象
+	 * @param ${define.keyName} 获取对象的主键
+	 * @return ${define.boName} map对象
+	 **/
+	public Map<${define.subKeyType}, ${define.boName}> get${define.boName}Map(${define.keyType} ${define.keyName}) {
+		return dataSupport.getBoMap(${define.keyName});
+	}
+#else
 	/***
 	* 获得一个 ${define.boName} 对象
 	* @param ${define.keyName} 获取对象的主键
@@ -37,4 +53,5 @@ public class ${define.serviceName} {
 	public ${define.boName} get${define.boName}(${define.keyType} ${define.keyName}) {
 		return dataSupport.getBo(${define.keyName});
 	}
+#end
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<db_entity_list key="uid"
+				subKey="item_id"
+				name="ItemDo"
+				baseDir="src/test/java"
+				packageName="org.qiunet.project.init.test.item"
+				xmlns="https://github.com/qiunet/DuoDuo/DbEntityList"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntityList"
+	>
+	<field name="uid" type="long" comment="玩家id" />
+	<field name="item_id" type="int" comment="道具id" />
+	<field name="count" type="int" comment="数量"/>
+	<constructor>
+		<constructor_arg field="uid"/>
+	</constructor>
+	<constructor>
+		<constructor_arg field="uid" />
+		<constructor_arg field="item_id" />
+	</constructor>
+</db_entity_list>

@@ -28,10 +28,7 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static String getNameSpace(String doName) {
-		if (doName.endsWith("Do")) {
-			return doName.substring(0, doName.length() - 2).toLowerCase();
-		}
-		return doName;
+		return getDefaultTableName(doName);
 	}
 	/***
 	 * 得到表名 保留驼峰.
