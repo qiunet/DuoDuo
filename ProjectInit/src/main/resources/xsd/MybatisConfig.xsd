@@ -19,7 +19,7 @@
 				<xs:element name="extraConfigs">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="extra" minOccurs="0" >
+							<xs:element name="extra" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:attribute name="file" use="required" type="xmlNameRegex" />
 								</xs:complexType>

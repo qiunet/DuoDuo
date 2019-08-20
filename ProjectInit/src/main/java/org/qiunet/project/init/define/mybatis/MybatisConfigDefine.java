@@ -6,7 +6,10 @@ import org.qiunet.project.init.util.InitProjectUtil;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /***
  *
@@ -19,7 +22,7 @@ public class MybatisConfigDefine implements ITemplateObjectDefine {
 	private String baseDir = "src/main/resources";
 	private String configDir = "mybatis";
 
-	private List<String> files = new ArrayList<>();
+	private Set<String> files = new HashSet<>();
 	private List<String> aliasPackages = new ArrayList<>();
 
 	public void addExtraFile(String extraFileName) {
@@ -55,7 +58,7 @@ public class MybatisConfigDefine implements ITemplateObjectDefine {
 	}
 
 	public List<String> getFiles() {
-		return files;
+		return files.stream().sorted().collect(Collectors.toList());
 	}
 
 	public void addAliasPackage(String packageName) {
