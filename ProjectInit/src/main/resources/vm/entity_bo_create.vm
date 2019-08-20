@@ -7,6 +7,7 @@ public class ${define.boName} implements IEntityBo<${define.doName}>{
 
 	public ${define.boName} (${define.doName} aDo) {
 		this.aDo = aDo;
+		this.deserialize();
 	}
 
 	public ${define.doName} getDo(){
