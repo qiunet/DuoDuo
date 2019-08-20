@@ -7,6 +7,12 @@
 >
 	<xs:import namespace="https://github.com/qiunet/DuoDuo/Base" schemaLocation="Base.xsd" />
 
+	<xs:simpleType name="xmlNameRegex">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z_-]{2,20}\.xml" />
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:element name="mybatis_config" >
 		<xs:complexType>
 			<xs:sequence>
@@ -15,20 +21,14 @@
 						<xs:sequence>
 							<xs:element name="extra" minOccurs="0" >
 								<xs:complexType>
-									<xs:attribute name="file" use="required" >
-										<xs:simpleType>
-											<xs:restriction base="xs:string">
-												<xs:pattern value="[a-zA-Z_]{2,20}\.xml" />
-											</xs:restriction>
-										</xs:simpleType>
-									</xs:attribute>
+									<xs:attribute name="file" use="required" type="xmlNameRegex" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
-			<xs:attribute name="fileName" type="xs:NCName" default="mybatis-config.xml" />
+			<xs:attribute name="fileName" type="xmlNameRegex" default="mybatis-config.xml" />
 			<xs:attribute name="baseDir" type="base:PathPattern" default="src/main/resources" />
 			<xs:attribute name="configDir" type="xs:NCName" default="mybatis" />
 		</xs:complexType>

@@ -23,13 +23,11 @@
 				<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="base:field_content" />
 				<xs:element name="constructor" minOccurs="0" maxOccurs="5" type="entity:constructor_content"/>
 			</xs:sequence>
-			<xs:attribute name="name" type="base:NamePattern" use="required" />
-			<xs:attribute name="key" type="xs:string" use="required" />
-			<xs:attribute name="tableName" type="xs:normalizedString" />
-			<xs:attribute name="baseDir" type="base:PathPattern" default="src/main/java" />
-			<xs:attribute name="packageName" type="base:ClassAndPackagePattern" use="required" />
+
+			<xs:attributeGroup ref="base:EntityAttributeGroup" />
 			<xs:attribute name="redis" type="base:ClassAndPackagePattern" use="required" />
 		</xs:complexType>
+
 		<xs:unique name="field_name_unique">
 			<xs:annotation>
 				<xs:documentation>field 的 name字段必须唯一不重复 </xs:documentation>
