@@ -35,6 +35,6 @@
 	</plugins>
 
 	<mappers>
-		<mapper resource="mybatis/CreateTable-mapper.xml"/>
+		<mapper resource="mybatis/CreateTableMapper.xml"/>
 	</mappers>
 </configuration>

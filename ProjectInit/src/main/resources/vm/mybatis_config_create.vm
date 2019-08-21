@@ -36,6 +36,7 @@
         <plugin interceptor="org.qiunet.data.core.support.db.plugins.MybatisInterceptor" />
     </plugins>
 	<mappers>
+		<mapper resource="mybatis/CreateTableMapper.xml"/>
 #foreach(${extra} in ${extraFiles})
         <mapper resource="${define.configDir}/${extra}" />
 #end
