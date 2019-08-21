@@ -27,18 +27,14 @@ import java.util.Set;
  * 19/04/22
  */
 class CreateTableController implements IApplicationContextAware {
-
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
-
-	private CreateTableService createTableService = CreateTableService.getInstance();
-
 	private volatile static CreateTableController instance;
 
+	private CreateTableService createTableService = CreateTableService.getInstance();
 	private CreateTableController() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
 	}
-
 	/**
 	 * 构建出全部表的增删改的map
 	 *
@@ -133,7 +129,7 @@ class CreateTableController implements IApplicationContextAware {
 		buildNewFields(addTableMap, table, newFieldList, addFieldList, columnNames);
 
 		// 将fieldList转成Map类型，字段名作为主键
-		Map<String, CreateTableParam> fieldMap = new HashMap<String, CreateTableParam>();
+		Map<String, CreateTableParam> fieldMap = new HashMap<>();
 		for (Object obj : newFieldList) {
 			CreateTableParam createTableParam = (CreateTableParam) obj;
 			fieldMap.put(createTableParam.getFieldName(), createTableParam);
@@ -230,35 +226,11 @@ class CreateTableController implements IApplicationContextAware {
 					modifyFieldList.add(createTableParam);
 					continue;
 				}
-
 			}
 		}
 
 		if (modifyFieldList.size() > 0) {
 			modifyTableMap.put(table.name(), modifyFieldList);
-		}
-	}
-
-	/**
-	 * 根据数据库中表的结构和model中表的结构对比找出删除的字段
-	 *
-	 * @param removeTableMap  用于存需要删除字段的表名+结构
-	 * @param table           表
-	 * @param removeFieldList 用于存删除的字段
-	 * @param columnNames     数据库中的结构
-	 * @param fieldMap        model中的字段，字段名为key
-	 */
-	private void buildRemoveFields(Map<String, List<Object>> removeTableMap, Table table, List<Object> removeFieldList,
-								   List<String> columnNames, Map<String, CreateTableParam> fieldMap) {
-		for (String fieldNm : columnNames) {
-			// 判断该字段在新的model结构中是否存在
-			if (fieldMap.get(fieldNm) == null) {
-				// 不存在，做删除处理
-				removeFieldList.add(fieldNm);
-			}
-		}
-		if (removeFieldList.size() > 0) {
-			removeTableMap.put(table.name(), removeFieldList);
 		}
 	}
 
@@ -297,9 +269,6 @@ class CreateTableController implements IApplicationContextAware {
 									  List<Object> newFieldList) {
 		Field[] fields = clas.getDeclaredFields();
 
-		// 判断是否有父类，如果有拉取父类的field，这里只支持多层继承
-		fields = recursionParents(clas, fields);
-
 		for (Field field : fields) {
 			// 判断方法中是否有指定注解类型的注解
 			boolean hasAnnotation = field.isAnnotationPresent(Column.class);
@@ -334,34 +303,6 @@ class CreateTableController implements IApplicationContextAware {
 	}
 
 	/**
-	 * 递归扫描父类的fields
-	 *
-	 * @param clas   类
-	 * @param fields 属性
-	 */
-	@SuppressWarnings("rawtypes")
-	private Field[] recursionParents(Class<?> clas, Field[] fields) {
-		if (clas.getSuperclass() != null) {
-			Class clsSup = clas.getSuperclass();
-//			fields = (Field[]) ArrayUtils.addAll(fields, clsSup.getDeclaredFields());
-			List<Field> all = new ArrayList<>();
-			for (Field field : fields) {
-				all.add(field);
-			}
-			for (Field field : clsSup.getDeclaredFields()) {
-				all.add(field);
-			}
-
-			fields = new Field[all.size()];
-			all.toArray(fields);
-
-			fields = recursionParents(clsSup, fields);
-		}
-		return fields;
-	}
-
-
-	/**
 	 * 根据map结构修改表中的字段类型等
 	 *
 	 * @param modifyTableMap 用于存需要更新字段类型等的表名+结构
@@ -371,7 +312,7 @@ class CreateTableController implements IApplicationContextAware {
 		if (modifyTableMap.size() > 0) {
 			for (Entry<String, List<Object>> entry : modifyTableMap.entrySet()) {
 				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<>();
 					map.put(entry.getKey(), obj);
 					CreateTableParam fieldProperties = (CreateTableParam) obj;
 					logger.info("\n\n========开始修改表" + entry.getKey() + "中的字段" + fieldProperties.getFieldName());
@@ -392,7 +333,7 @@ class CreateTableController implements IApplicationContextAware {
 		if (addTableMap.size() > 0) {
 			for (Entry<String, List<Object>> entry : addTableMap.entrySet()) {
 				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<>();
 					map.put(entry.getKey(), obj);
 					CreateTableParam fieldProperties = (CreateTableParam) obj;
 					logger.info("开始为表" + entry.getKey() + "增加字段" + fieldProperties.getFieldName());
@@ -412,7 +353,7 @@ class CreateTableController implements IApplicationContextAware {
 		// 做创建表操作
 		if (newTableMap.size() > 0) {
 			for (Entry<String, List<Object>> entry : newTableMap.entrySet()) {
-				Map<String, List<Object>> map = new HashMap<String, List<Object>>();
+				Map<String, List<Object>> map = new HashMap<>();
 				map.put(entry.getKey().split(";")[0], entry.getValue());
 				logger.info("开始创建表：" + entry.getKey());
 				createTableService.createTable(map, entry.getKey().split(";")[1]);
@@ -427,7 +368,7 @@ class CreateTableController implements IApplicationContextAware {
 	 */
 	public Map<String, Object> mySqlTypeAndLengthMap() {
 		Field[] fields = MySqlTypeConstant.class.getDeclaredFields();
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		for (Field field : fields) {
 			LengthCount lengthCount = field.getAnnotation(LengthCount.class);
 			map.put(field.getName().toLowerCase(), lengthCount.LengthCount());
