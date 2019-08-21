@@ -1,7 +1,6 @@
 package org.qiunet.entity2table;
 
-import org.qiunet.entity2table.annotation.InitData;
-import org.qiunet.entity2table.controller.CreateTableController;
+import org.qiunet.utils.classScanner.ClassScanner;
 
 /**
  * Created by zhengj
@@ -10,12 +9,8 @@ import org.qiunet.entity2table.controller.CreateTableController;
  * To change this template use File | Settings | File Templates.
  */
 public class TestModel2table {
-	@InitData
-	public void initData() {
-		System.out.println("\n\n\n===================TestOne");
-	}
 
 	public static void main(String[] args) {
-		CreateTableController.getInstance().start();
+		ClassScanner.getInstance().scanner();
 	}
 }

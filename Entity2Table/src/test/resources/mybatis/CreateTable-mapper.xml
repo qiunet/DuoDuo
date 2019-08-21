@@ -95,12 +95,6 @@
 
 	</select>
 
-	<!-- 删除字段 -->
-	<select id="removeTableField" parameterType="java.util.Map">
-		<foreach collection="tableMap" index="key" item="field" separator=";">
-			alter table <if test="dbName!=null">${dbName}.</if>`${key}` drop `${field}`
-		</foreach>
-	</select>
 
 	<!-- 修改字段 -->
 	<select id="modifyTableField" parameterType="java.util.Map">
@@ -118,33 +112,4 @@
 
 	</select>
 
-	<!-- 删除主键字段 -->
-	<select id="dropKeyTableField" parameterType="java.util.Map">
-
-		<foreach collection="tableMap" index="key" item="fields" separator=";">
-			alter table <if test="dbName!=null">${dbName}.</if>`${key}` modify
-			<include refid="commonSql"></include>
-			,drop primary key
-		</foreach>
-
-	</select>
-
-	<!-- 删除唯一约束 -->
-	<select id="dropUniqueTableField" parameterType="java.util.Map">
-
-		<foreach collection="tableMap" index="key" item="fields" separator=";">
-			alter table <if test="dbName!=null">${dbName}.</if>`${key}` DROP INDEX `unique_${key}_${fields.fieldName}`
-		</foreach>
-
-	</select>
-
-	<!-- 删除存在的表 -->
-	<select id="dorpTableByName" parameterType="String">
-		DROP TABLE IF EXISTS <if test="dbName!=null">${dbName}.</if>`${tableName}`;
-	</select>
-
-	<!-- 获取数据库的总记录数 -->
-	<select id="getTableCount" resultType="java.lang.Integer">
-		SELECT count(table_rows) FROM information_schema.tables <if test="dbName!=null">WHERE TABLE_SCHEMA = #{dbName}</if>;
-	</select>
 </mapper>

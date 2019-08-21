@@ -1,79 +1,176 @@
 package org.qiunet.entity2table.service;
 
+import org.qiunet.entity2table.command.Columns;
+import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
+import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.redis.constants.RedisDbConstants;
+import org.qiunet.data.util.DbProperties;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.annotations.Param;
-import org.qiunet.entity2table.command.Columns;
-
-
 /**
- * 操作表的接口(建表, 增减修改列)
+ *
  */
-public interface CreateTableService {
+public class CreateTableService {
 
-	/**
-	 * 根据结构注解解析出来的信息创建表
-	 * @param tableMap 表结构的map {
-	 *  key 	tableName
-	 *  value 	fieldList
-	 * }
-	 *
-	 */
-	void createTable(@Param("tableMap") Map<String, List<Object>> tableMap, String tableComment);
+	private static final String sqlPath = "org.qiunet.entity2table.service.CreateTableService.";
 
-	/**
-	 * 根据表名查询表在库中是否存在，存在返回1，不存在返回0
-	 * @param tableName 表结构的map
-	 * @return 存在返回1，不存在返回0
-	 */
-	int findTableCountByTableName(@Param("tableName") String tableName);
+	private volatile static CreateTableService instance;
 
-	/**
-	 * 根据表名查询库中该表的字段结构等信息
-	 * @param tableName 表结构的map
-	 * @return 表的字段结构等信息
-	 */
-	List<Columns> findTableEnsembleByTableName(@Param("tableName") String tableName);
+	private CreateTableService() {
+		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		instance = this;
+	}
 
-	/**
-	 * 增加字段
-	 * @param tableMap 表结构的map
-	 */
-	void addTableField(@Param("tableMap") Map<String, Object> tableMap);
+	public static CreateTableService getInstance() {
+		if (instance == null) {
+			synchronized (CreateTableService.class) {
+				if (instance == null)
+				{
+					new CreateTableService();
+				}
+			}
+		}
+		return instance;
+	}
 
-	/**
-	 * 删除字段
-	 * @param tableMap 表结构的map
-	 */
-	void removeTableField(@Param("tableMap") Map<String, Object> tableMap);
+	public void createTable(Map<String, List<Object>> tableMap, String tableComment) {
 
-	/**
-	 * 修改字段
-	 * @param tableMap 表结构的map
-	 */
-	void modifyTableField(@Param("tableMap") Map<String, Object> tableMap);
+		/*List<Integer> dbIndexList = DbProperties.getInstance().getDbIndexList();
+		for (Integer dbIndex : dbIndexList) {
+			String dbSourceKey = DbProperties.getInstance().getDataSourceKeyByDbIndex(dbIndex);
 
-	/**
-	 * 删除主键约束，附带修改其他字段属性功能
-	 * @param tableMap 表结构的map
-	 */
-	void dropKeyTableField(@Param("tableMap") Map<String, Object> tableMap);
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableComment", tableComment);
+			map.put("tableMap", tableMap);
 
-	/**
-	 * 删除唯一约束字段，不带修改其他字段属性的功能
-	 * @param tableMap 表结构的map
-	 */
-	void dropUniqueTableField(@Param("tableMap") Map<String, Object> tableMap);
+			map.put("dbName", DbProperties.getInstance().getDbNameByDbIndex(dbIndex));
+			DatabaseSupport.getInstance().getSqlSession(dbSourceKey).selectOne(sqlPath + "createTable", map);
+		}*/
 
-	/**
-	 * 根据表名删除表
-	 * @param tableName 表结构的map
-	 */
-	void dorpTableByName(@Param("tableName") String tableName);
+		//判断当前项目的数据源是单一数据源还是多个数据源,根据数据源不同,执行不同的处理, 暂不考虑分表的情况
+		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
+				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
 
-	/**
-	 * 获取当前连接的数据库的数据记录数
-	 */
-	Integer getTableCount();
+				Map<String, Object> paramMap = new HashMap<>();
+				paramMap.put("tableComment", tableComment);
+				paramMap.put("tableMap", tableMap);
+				paramMap.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+
+				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", paramMap);
+			}
+		} else {
+			Map<String, Object> paramMap = new HashMap<>();
+			paramMap.put("tableComment", tableComment);
+			paramMap.put("tableMap", tableMap);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "createTable", paramMap);
+		}
+	}
+
+
+	public int findTableCountByTableName(String tableName) {
+
+		/*String dbSourceKey = DbProperties.getInstance().getDataSourceKeyByDbIndex(0);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("tableName", tableName);
+		map.put("dbName", DbProperties.getInstance().getDbNameByDbIndex(0));
+
+		return DatabaseSupport.getInstance().getSqlSession(dbSourceKey).selectOne(sqlPath + "findTableCountByTableName", map);*/
+
+		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableName", tableName);
+			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
+
+			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "findTableCountByTableName", map);
+		} else {
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableName", tableName);
+			return DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "findTableCountByTableName", map);
+		}
+
+	}
+
+
+	public List<Columns> findTableEnsembleByTableName(String tableName) {
+
+		/*String dbSourceKey = DbProperties.getInstance().getDataSourceKeyByDbIndex(0);
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("tableName", tableName);
+		map.put("dbName", DbProperties.getInstance().getDbNameByDbIndex(0));
+		return DatabaseSupport.getInstance().getSqlSession(dbSourceKey).selectList(sqlPath + "findTableEnsembleByTableName", map);*/
+
+		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableName", tableName);
+			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
+			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectList(sqlPath + "findTableEnsembleByTableName", map);
+		} else {
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableName", tableName);
+			return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableEnsembleByTableName", map);
+		}
+	}
+
+
+	public void addTableField(Map<String, Object> tableMap) {
+		/*List<Integer> dbIndexList = DbProperties.getInstance().getDbIndexList();
+		for (Integer dbIndex : dbIndexList) {
+			String dbSourceKey = DbProperties.getInstance().getDataSourceKeyByDbIndex(dbIndex);
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableMap", tableMap);
+			map.put("dbName", DbProperties.getInstance().getDbNameByDbIndex(dbIndex));
+
+			DatabaseSupport.getInstance().getSqlSession(dbSourceKey).selectOne(sqlPath + "addTableField", map);
+		}*/
+		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
+				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
+				Map<String, Object> map = new HashMap<>();
+				map.put("tableMap", tableMap);
+				map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+
+				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", map);
+			}
+		} else {
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableMap", tableMap);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "addTableField", map);
+		}
+	}
+
+
+	public void modifyTableField(Map<String, Object> tableMap) {
+		/*List<Integer> dbIndexList = DbProperties.getInstance().getDbIndexList();
+		for (Integer dbIndex : dbIndexList) {
+			String dbSourceKey = DbProperties.getInstance().getDataSourceKeyByDbIndex(dbIndex);
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableMap", tableMap);
+			map.put("dbName", DbProperties.getInstance().getDbNameByDbIndex(dbIndex));
+			DatabaseSupport.getInstance().getSqlSession(dbSourceKey).selectOne(sqlPath + "modifyTableField", map);
+		}*/
+		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
+				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
+				Map<String, Object> map = new HashMap<>();
+				map.put("tableMap", tableMap);
+				map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", map);
+			}
+		} else {
+			Map<String, Object> map = new HashMap<>();
+			map.put("tableMap", tableMap);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "modifyTableField", map);
+		}
+	}
 }

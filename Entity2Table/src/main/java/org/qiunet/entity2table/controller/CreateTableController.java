@@ -5,13 +5,11 @@ import org.qiunet.entity2table.annotation.LengthCount;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.CreateTableParam;
-import org.qiunet.entity2table.config.ConfigLoder;
 import org.qiunet.entity2table.constants.MySqlTypeConstant;
 import org.qiunet.entity2table.service.CreateTableService;
-import org.qiunet.entity2table.service.InitDataService;
-import org.qiunet.entity2table.service.impl.CreateTableServiceImpl;
-import org.qiunet.entity2table.service.impl.InitDataServiceImpl;
 import org.qiunet.entity2table.utils.ClassTools;
+import org.qiunet.utils.classScanner.IApplicationContext;
+import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
@@ -28,102 +26,17 @@ import java.util.Set;
  * 数据对象和表同步控制
  * 19/04/22
  */
-public class CreateTableController {
+class CreateTableController implements IApplicationContextAware {
 
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
-//	@Resource
-	private CreateTableService createTableService = CreateTableServiceImpl.getInstance();
-
-//	@Resource
-	private InitDataService initDataService = InitDataServiceImpl.getInstance();
-
-	private String tableAuto;
+	private CreateTableService createTableService = CreateTableService.getInstance();
 
 	private volatile static CreateTableController instance;
 
 	private CreateTableController() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
-	}
-
-	public static CreateTableController getInstance() {
-		if (instance == null) {
-			synchronized (CreateTableController.class) {
-				if (instance == null)
-				{
-					new CreateTableController();
-				}
-			}
-		}
-		return instance;
-	}
-
-
-	/**
-	 * 这个注释的作用是,让服务器再加载servlet的时候调用一次, 调用时刻是构造函数之后, init函数之前
-	 * @PostConstruct
-	 */
-	public void start() {
-		tableAuto = ConfigLoder.getProperty("mybatis.model.tableAuto");
-		// 不做任何事情
-		if ("none".equals(tableAuto)) {
-			logger.info("\n配置mybatis.table.auto=none，不需要做任何事情");
-			return;
-		}
-		/**扫描同步table结构*/
-		this.modelSyncMysqlTable();
-
-		//TODO 数据初始化, 这部分逻辑可以先删除
-		String initData = ConfigLoder.getProperty("mybatis.table.initData");
-		if ("insert".equals(initData)) {
-			//查询数据库是否有数据，有的话就不初始化数据了
-			Integer dataCount = createTableService.getTableCount();
-			if (dataCount > 0) {
-				logger.info("\n===数据库已存在数据，停止初始化数据===");
-			} else {
-				initDataService.initData();
-			}
-		}
-	}
-
-	/**
-	 * 读取配置文件的三种状态（创建表、更新表、不做任何事情）
-	 */
-	public void modelSyncMysqlTable() {
-
-		// 获取Mysql的类型，以及类型需要设置几个长度
-		Map<String, Object> mySqlTypeAndLengthMap = mySqlTypeAndLengthMap();
-
-		// 扫描带有Table注解的class
-		Reflections reflection = new Reflections("org.qiunet");
-		Set<Class<?>> classes = reflection.getTypesAnnotatedWith(Table.class);
-
-		// 用于存需要创建的表名+结构
-		Map<String, List<Object>> newTableMap = new HashMap<>();
-
-		// 用于存需要更新字段类型等的表名+结构
-		Map<String, List<Object>> modifyTableMap = new HashMap<>();
-
-		// 用于存需要增加字段的表名+结构
-		Map<String, List<Object>> addTableMap = new HashMap<>();
-
-		// 用于存需要删除字段的表名+结构
-		Map<String, List<Object>> removeTableMap = new HashMap<>();
-
-		// 用于存需要删除主键的表名+结构
-		Map<String, List<Object>> dropKeyTableMap = new HashMap<>();
-
-		// 用于存需要删除唯一约束的表名+结构
-		Map<String, List<Object>> dropUniqueTableMap = new HashMap<>();
-
-		// 构建出全部表的增删改的map
-		allTableMapConstruct(mySqlTypeAndLengthMap, classes, newTableMap, modifyTableMap, addTableMap, removeTableMap,
-				dropKeyTableMap, dropUniqueTableMap);
-
-		// 根据传入的map，分别去创建或修改表结构
-		createOrModifyTableConstruct(newTableMap, modifyTableMap, addTableMap, removeTableMap, dropKeyTableMap,
-				dropUniqueTableMap);
 	}
 
 	/**
@@ -134,14 +47,10 @@ public class CreateTableController {
 	 * @param newTableMap           用于存需要创建的表名+结构
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap           用于存需要增加字段的表名+结构
-	 * @param removeTableMap        用于存需要删除字段的表名+结构
-	 * @param dropKeyTableMap       用于存需要删除主键的表名+结构
-	 * @param dropUniqueTableMap    用于存需要删除唯一约束的表名+结构
 	 */
 	private void allTableMapConstruct(Map<String, Object> mySqlTypeAndLengthMap, Set<Class<?>> classes,
 									  Map<String, List<Object>> newTableMap, Map<String, List<Object>> modifyTableMap,
-									  Map<String, List<Object>> addTableMap, Map<String, List<Object>> removeTableMap,
-									  Map<String, List<Object>> dropKeyTableMap, Map<String, List<Object>> dropUniqueTableMap) {
+									  Map<String, List<Object>> addTableMap) {
 		for (Class<?> clas : classes) {
 
 			Table table = clas.getAnnotation(Table.class);
@@ -150,25 +59,14 @@ public class CreateTableController {
 				continue;
 			}*/
 			// 用于存新增表的字段
-			List<Object> newFieldList = new ArrayList<Object>();
-			// 用于存删除的字段
-			List<Object> removeFieldList = new ArrayList<Object>();
+			List<Object> newFieldList = new ArrayList<>();
 			// 用于存新增的字段
-			List<Object> addFieldList = new ArrayList<Object>();
+			List<Object> addFieldList = new ArrayList<>();
 			// 用于存修改的字段
-			List<Object> modifyFieldList = new ArrayList<Object>();
-			// 用于存删除主键的字段
-			List<Object> dropKeyFieldList = new ArrayList<Object>();
-			// 用于存删除唯一约束的字段
-			List<Object> dropUniqueFieldList = new ArrayList<Object>();
+			List<Object> modifyFieldList = new ArrayList<>();
 
 			// 迭代出所有model的所有fields存到newFieldList中
 			tableFieldsConstruct(mySqlTypeAndLengthMap, clas, newFieldList);
-
-			// 如果配置文件配置的是create，表示将所有的表删掉重新创建
-			if ("create".equals(tableAuto)) {
-				createTableService.dorpTableByName(table.name());
-			}
 
 			// 先查该表是否存在
 			int exist = createTableService.findTableCountByTableName(table.name());
@@ -188,9 +86,8 @@ public class CreateTableController {
 				// 1. 找出增加的字段
 				// 2. 找出删除的字段
 				// 3. 找出更新的字段
-				buildAddAndRemoveAndModifyFields(mySqlTypeAndLengthMap, modifyTableMap, addTableMap, removeTableMap,
-						dropKeyTableMap, dropUniqueTableMap, table, newFieldList, removeFieldList, addFieldList,
-						modifyFieldList, dropKeyFieldList, dropUniqueFieldList, tableColumnList, columnNames);
+				buildAddAndRemoveAndModifyFields(mySqlTypeAndLengthMap, modifyTableMap, addTableMap, table, newFieldList,
+					addFieldList, modifyFieldList, tableColumnList, columnNames);
 
 			}
 		}
@@ -202,24 +99,13 @@ public class CreateTableController {
 	 * @param newTableMap        用于存需要创建的表名+结构
 	 * @param modifyTableMap     用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap        用于存需要增加字段的表名+结构
-	 * @param removeTableMap     用于存需要删除字段的表名+结构
-	 * @param dropKeyTableMap    用于存需要删除主键的表名+结构
-	 * @param dropUniqueTableMap 用于存需要删除唯一约束的表名+结构
 	 */
 	private void createOrModifyTableConstruct(Map<String, List<Object>> newTableMap,
-											  Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap,
-											  Map<String, List<Object>> removeTableMap, Map<String, List<Object>> dropKeyTableMap,
-											  Map<String, List<Object>> dropUniqueTableMap) {
+											  Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap) {
 		// 1. 创建表
 		createTableByMap(newTableMap);
-		// 2. 删除要变更主键的表的原来的字段的主键
-		dropFieldsKeyByMap(dropKeyTableMap);
-		// 3. 删除要变更唯一约束的表的原来的字段的唯一约束
-		dropFieldsUniqueByMap(dropUniqueTableMap);
 		// 4. 添加新的字段
 		addFieldsByMap(addTableMap);
-		// 5. 删除字段
-		removeFieldsByMap(removeTableMap);
 		// 6. 修改字段类型等
 		modifyFieldsByMap(modifyTableMap);
 	}
@@ -230,26 +116,18 @@ public class CreateTableController {
 	 * @param mySqlTypeAndLengthMap 获取Mysql的类型，以及类型需要设置几个长度
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap           用于存需要增加字段的表名+结构
-	 * @param removeTableMap        用于存需要删除字段的表名+结构
-	 * @param dropKeyTableMap       用于存需要删除主键的表名+结构
-	 * @param dropUniqueTableMap    用于存需要删除唯一约束的表名+结构
 	 * @param table                 表
 	 * @param newFieldList          用于存新增表的字段
-	 * @param removeFieldList       用于存删除的字段
 	 * @param addFieldList          用于存新增的字段
 	 * @param modifyFieldList       用于存修改的字段
-	 * @param dropKeyFieldList      用于存删除主键的字段
-	 * @param dropUniqueFieldList   用于存删除唯一约束的字段
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param columnNames           从sysColumns中取出我们需要比较的列的List
 	 */
 	private void buildAddAndRemoveAndModifyFields(Map<String, Object> mySqlTypeAndLengthMap,
 												  Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap,
-												  Map<String, List<Object>> removeTableMap, Map<String, List<Object>> dropKeyTableMap,
-												  Map<String, List<Object>> dropUniqueTableMap, Table table, List<Object> newFieldList,
-												  List<Object> removeFieldList, List<Object> addFieldList, List<Object> modifyFieldList,
-												  List<Object> dropKeyFieldList, List<Object> dropUniqueFieldList, List<Columns> tableColumnList,
-												  List<String> columnNames) {
+												  Table table, List<Object> newFieldList,
+												  List<Object> addFieldList, List<Object> modifyFieldList,
+												  List<Columns> tableColumnList, List<String> columnNames) {
 		// 1. 找出增加的字段
 		// 根据数据库中表的结构和model中表的结构对比找出新增的字段
 		buildNewFields(addTableMap, table, newFieldList, addFieldList, columnNames);
@@ -261,12 +139,9 @@ public class CreateTableController {
 			fieldMap.put(createTableParam.getFieldName(), createTableParam);
 		}
 
-		// 2. 找出删除的字段
-		buildRemoveFields(removeTableMap, table, removeFieldList, columnNames, fieldMap);
-
 		// 3. 找出更新的字段
-		buildModifyFields(mySqlTypeAndLengthMap, modifyTableMap, dropKeyTableMap, dropUniqueTableMap, table,
-				modifyFieldList, dropKeyFieldList, dropUniqueFieldList, tableColumnList, fieldMap);
+		buildModifyFields(mySqlTypeAndLengthMap, modifyTableMap, table,
+				modifyFieldList, tableColumnList, fieldMap);
 	}
 
 	/**
@@ -274,34 +149,19 @@ public class CreateTableController {
 	 *
 	 * @param mySqlTypeAndLengthMap 获取Mysql的类型，以及类型需要设置几个长度
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
-	 * @param dropKeyTableMap       用于存需要删除主键的表名+结构
-	 * @param dropUniqueTableMap    用于存需要删除唯一约束的表名+结构
 	 * @param table                 表
 	 * @param modifyFieldList       用于存修改的字段
-	 * @param dropKeyFieldList      用于存删除主键的字段
-	 * @param dropUniqueFieldList   用于存删除唯一约束的字段
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param fieldMap              从sysColumns中取出我们需要比较的列的List
 	 */
 	private void buildModifyFields(Map<String, Object> mySqlTypeAndLengthMap, Map<String, List<Object>> modifyTableMap,
-								   Map<String, List<Object>> dropKeyTableMap, Map<String, List<Object>> dropUniqueTableMap, Table table,
-								   List<Object> modifyFieldList, List<Object> dropKeyFieldList, List<Object> dropUniqueFieldList,
+								   Table table,
+								   List<Object> modifyFieldList,
 								   List<Columns> tableColumnList, Map<String, CreateTableParam> fieldMap) {
 		for (Columns sysColumn : tableColumnList) {
 			// 数据库中有该字段时
 			CreateTableParam createTableParam = fieldMap.get(sysColumn.getColumn_name());
 			if (createTableParam != null) {
-				// 检查是否要删除已有主键和是否要删除已有唯一约束的代码必须放在其他检查的最前面
-				// 原本是主键，现在不是了，那么要去做删除主键的操作
-				if ("PRI".equals(sysColumn.getColumn_key()) && !createTableParam.isFieldIsKey()) {
-					dropKeyFieldList.add(createTableParam);
-				}
-
-				// 原本是唯一，现在不是了，那么要去做删除唯一的操作
-				if ("UNI".equals(sysColumn.getColumn_key()) && !createTableParam.isFieldIsUnique()) {
-					dropUniqueFieldList.add(createTableParam);
-				}
-
 				// 验证是否有更新
 				// 1.验证类型
 				if (!sysColumn.getData_type().toLowerCase().equals(createTableParam.getFieldType().toLowerCase())) {
@@ -329,12 +189,6 @@ public class CreateTableController {
 					continue;
 				}
 
-				// 4.验证主键
-				if (!"PRI".equals(sysColumn.getColumn_key()) && createTableParam.isFieldIsKey()) {
-					// 原本不是主键，现在变成了主键，那么要去做更新
-					modifyFieldList.add(createTableParam);
-					continue;
-				}
 
 				// 5.验证自增
 				if ("auto_increment".equals(sysColumn.getExtra()) && !createTableParam.isFieldIsAutoIncrement()) {
@@ -382,14 +236,6 @@ public class CreateTableController {
 
 		if (modifyFieldList.size() > 0) {
 			modifyTableMap.put(table.name(), modifyFieldList);
-		}
-
-		if (dropKeyFieldList.size() > 0) {
-			dropKeyTableMap.put(table.name(), dropKeyFieldList);
-		}
-
-		if (dropUniqueFieldList.size() > 0) {
-			dropUniqueTableMap.put(table.name(), dropUniqueFieldList);
 		}
 	}
 
@@ -537,27 +383,6 @@ public class CreateTableController {
 	}
 
 	/**
-	 * 根据map结构删除表中的字段
-	 *
-	 * @param removeTableMap 用于存需要删除字段的表名+结构
-	 */
-	private void removeFieldsByMap(Map<String, List<Object>> removeTableMap) {
-		// 做删除字段操作
-		if (removeTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : removeTableMap.entrySet()) {
-				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put(entry.getKey(), obj);
-					String fieldName = (String) obj;
-					logger.info("开始删除表" + entry.getKey() + "中的字段" + fieldName);
-					createTableService.removeTableField(map);
-					logger.info("完成删除表" + entry.getKey() + "中的字段" + fieldName);
-				}
-			}
-		}
-	}
-
-	/**
 	 * 根据map结构对表中添加新的字段
 	 *
 	 * @param addTableMap 用于存需要增加字段的表名+结构
@@ -573,51 +398,6 @@ public class CreateTableController {
 					logger.info("开始为表" + entry.getKey() + "增加字段" + fieldProperties.getFieldName());
 					createTableService.addTableField(map);
 					logger.info("完成为表" + entry.getKey() + "增加字段" + fieldProperties.getFieldName());
-				}
-			}
-		}
-	}
-
-	/**
-	 * 根据map结构删除要变更表中字段的主键
-	 *
-	 * @param dropKeyTableMap 用于存需要删除主键的表名+结构
-	 */
-	private void dropFieldsKeyByMap(Map<String, List<Object>> dropKeyTableMap) {
-		// 先去做删除主键的操作，这步操作必须在增加和修改字段之前！
-		if (dropKeyTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : dropKeyTableMap.entrySet()) {
-				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put(entry.getKey(), obj);
-					CreateTableParam fieldProperties = (CreateTableParam) obj;
-					logger.info("开始为表" + entry.getKey() + "删除主键" + fieldProperties.getFieldName());
-					createTableService.dropKeyTableField(map);
-					logger.info("完成为表" + entry.getKey() + "删除主键" + fieldProperties.getFieldName());
-				}
-			}
-		}
-	}
-
-	/**
-	 * 根据map结构删除要变更表中字段的唯一约束
-	 *
-	 * @param dropUniqueTableMap 用于存需要删除唯一约束的表名+结构
-	 */
-	private void dropFieldsUniqueByMap(Map<String, List<Object>> dropUniqueTableMap) {
-		// 先去做删除唯一约束的操作，这步操作必须在增加和修改字段之前！
-		if (dropUniqueTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : dropUniqueTableMap.entrySet()) {
-				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<String, Object>();
-					map.put(entry.getKey(), obj);
-					CreateTableParam fieldProperties = (CreateTableParam) obj;
-					logger.info("开始为表" + entry.getKey() + "删除唯一约束" + fieldProperties.getFieldName());
-					createTableService.dropUniqueTableField(map);
-					logger.info("完成为表" + entry.getKey() + "删除唯一约束" + fieldProperties.getFieldName());
-					logger.info("开始修改表" + entry.getKey() + "中的字段" + fieldProperties.getFieldName());
-					createTableService.modifyTableField(map);
-					logger.info("完成修改表" + entry.getKey() + "中的字段" + fieldProperties.getFieldName());
 				}
 			}
 		}
@@ -655,4 +435,28 @@ public class CreateTableController {
 		return map;
 	}
 
+	@Override
+	public void setApplicationContext(IApplicationContext context) {
+
+		// 获取Mysql的类型，以及类型需要设置几个长度
+		Map<String, Object> mySqlTypeAndLengthMap = mySqlTypeAndLengthMap();
+
+		Set<Class<?>> classes = context.getTypesAnnotatedWith(Table.class);
+
+		// 用于存需要创建的表名+结构
+		Map<String, List<Object>> newTableMap = new HashMap<>();
+
+		// 用于存需要更新字段类型等的表名+结构
+		Map<String, List<Object>> modifyTableMap = new HashMap<>();
+
+		// 用于存需要增加字段的表名+结构
+		Map<String, List<Object>> addTableMap = new HashMap<>();
+
+
+		// 构建出全部表的增删改的map
+		allTableMapConstruct(mySqlTypeAndLengthMap, classes, newTableMap, modifyTableMap, addTableMap);
+
+		// 根据传入的map，分别去创建或修改表结构
+		createOrModifyTableConstruct(newTableMap, modifyTableMap, addTableMap);
+	}
 }
