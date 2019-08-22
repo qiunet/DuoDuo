@@ -1,6 +1,7 @@
 package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.annotation.Cfg;
+import org.qiunet.cfg.annotation.CfgIgnore;
 import org.qiunet.cfg.convert.ICfgTypeConvert;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.CfgTypeConvertManager;
@@ -111,7 +112,8 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			if (Modifier.isPublic(field.getModifiers())
 				|| Modifier.isFinal(field.getModifiers())
 				|| Modifier.isStatic(field.getModifiers())
-				|| Modifier.isTransient(field.getModifiers()))
+				|| Modifier.isTransient(field.getModifiers())
+				|| field.isAnnotationPresent(CfgIgnore.class))
 				continue;
 			Object val;
 			Class<?> type = field.getType();

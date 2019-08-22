@@ -3,6 +3,7 @@ package org.qiunet.cfg.manager.json;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.qiunet.cfg.annotation.Cfg;
+import org.qiunet.cfg.annotation.CfgIgnore;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.file.FileUtil;
@@ -105,7 +106,8 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 			if (Modifier.isPublic(field.getModifiers())
 					|| Modifier.isFinal(field.getModifiers())
 					|| Modifier.isStatic(field.getModifiers())
-					|| Modifier.isTransient(field.getModifiers()))
+					|| Modifier.isTransient(field.getModifiers())
+					|| field.isAnnotationPresent(CfgIgnore.class))
 				continue;
 
 			Object val = convertFieldVal(field, jsonObject);
