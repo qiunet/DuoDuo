@@ -42,8 +42,8 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param addTableMap           用于存需要增加字段的表名+结构
 	 */
 	private void allTableMapConstruct(Set<Class<?>> classes,
-									  Map<String, List<Object>> newTableMap, Map<String, List<Object>> modifyTableMap,
-									  Map<String, List<Object>> addTableMap) {
+									  Map<String, List<CreateTableParam>> newTableMap, Map<String, List<CreateTableParam>> modifyTableMap,
+									  Map<String, List<CreateTableParam>> addTableMap) {
 		for (Class<?> clas : classes) {
 
 			Table table = clas.getAnnotation(Table.class);
@@ -52,11 +52,11 @@ class CreateTableController implements IApplicationContextAware {
 				continue;
 			}*/
 			// 用于存新增表的字段
-			List<Object> newFieldList = new ArrayList<>();
+			List<CreateTableParam> newFieldList = new ArrayList<>();
 			// 用于存新增的字段
-			List<Object> addFieldList = new ArrayList<>();
+			List<CreateTableParam> addFieldList = new ArrayList<>();
 			// 用于存修改的字段
-			List<Object> modifyFieldList = new ArrayList<>();
+			List<CreateTableParam> modifyFieldList = new ArrayList<>();
 
 			// 迭代出所有model的所有fields存到newFieldList中
 			tableFieldsConstruct(clas, newFieldList);
@@ -78,7 +78,7 @@ class CreateTableController implements IApplicationContextAware {
 				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
 				// 1. 找出增加的字段
 				// 3. 找出更新的字段
-				buildAddAndRemoveAndModifyFields(modifyTableMap, addTableMap, table, newFieldList,
+				buildAddAndModifyFields(modifyTableMap, addTableMap, table, newFieldList,
 					addFieldList, modifyFieldList, tableColumnList, columnNames);
 
 			}
@@ -92,8 +92,9 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param modifyTableMap     用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap        用于存需要增加字段的表名+结构
 	 */
-	private void createOrModifyTableConstruct(Map<String, List<Object>> newTableMap,
-											  Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap) {
+	private void createOrModifyTableConstruct(Map<String, List<CreateTableParam>> newTableMap,
+											  Map<String, List<CreateTableParam>> modifyTableMap,
+											  Map<String, List<CreateTableParam>> addTableMap) {
 		// 1. 创建表
 		createTableByMap(newTableMap);
 		// 4. 添加新的字段
@@ -114,10 +115,10 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param columnNames           从sysColumns中取出我们需要比较的列的List
 	 */
-	private void buildAddAndRemoveAndModifyFields(Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap,
-												  Table table, List<Object> newFieldList,
-												  List<Object> addFieldList, List<Object> modifyFieldList,
-												  List<Columns> tableColumnList, List<String> columnNames) {
+	private void buildAddAndModifyFields(Map<String, List<CreateTableParam>> modifyTableMap, Map<String, List<CreateTableParam>> addTableMap,
+										 Table table, List<CreateTableParam> newFieldList,
+										 List<CreateTableParam> addFieldList, List<CreateTableParam> modifyFieldList,
+										 List<Columns> tableColumnList, List<String> columnNames) {
 		// 1. 找出增加的字段
 		// 根据数据库中表的结构和model中表的结构对比找出新增的字段
 		buildNewFields(addTableMap, table, newFieldList, addFieldList, columnNames);
@@ -143,9 +144,9 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param fieldMap              从sysColumns中取出我们需要比较的列的List
 	 */
-	private void buildModifyFields( Map<String, List<Object>> modifyTableMap,
+	private void buildModifyFields( Map<String, List<CreateTableParam>> modifyTableMap,
 								   Table table,
-								   List<Object> modifyFieldList,
+								   List<CreateTableParam> modifyFieldList,
 								   List<Columns> tableColumnList, Map<String, CreateTableParam> fieldMap) {
 		for (Columns sysColumn : tableColumnList) {
 			// 数据库中有该字段时
@@ -214,14 +215,14 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param addFieldList 用于存新增的字段
 	 * @param columnNames  数据库中的结构
 	 */
-	private void buildNewFields(Map<String, List<Object>> addTableMap, Table table, List<Object> newFieldList,
-								List<Object> addFieldList, List<String> columnNames) {
+	private void buildNewFields(Map<String, List<CreateTableParam>> addTableMap, Table table, List<CreateTableParam> newFieldList,
+								List<CreateTableParam> addFieldList, List<String> columnNames) {
 		for (Object obj : newFieldList) {
 			CreateTableParam createTableParam = (CreateTableParam) obj;
 			// 循环新的model中的字段，判断是否在数据库中已经存在
 			if (!columnNames.contains(createTableParam.getFieldName())) {
 				// 不存在，表示要在数据库中增加该字段
-				addFieldList.add(obj);
+				addFieldList.add(createTableParam);
 			}
 		}
 		if (addFieldList.size() > 0) {
@@ -236,7 +237,7 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param newFieldList          用于存新增表的字段
 	 */
 	private void tableFieldsConstruct(Class<?> clas,
-									  List<Object> newFieldList) {
+									  List<CreateTableParam> newFieldList) {
 		Field[] fields = clas.getDeclaredFields();
 
 		for (Field field : fields) {
@@ -270,17 +271,16 @@ class CreateTableController implements IApplicationContextAware {
 	 *
 	 * @param modifyTableMap 用于存需要更新字段类型等的表名+结构
 	 */
-	private void modifyFieldsByMap(Map<String, List<Object>> modifyTableMap) {
+	private void modifyFieldsByMap(Map<String, List<CreateTableParam>> modifyTableMap) {
 		// 做修改字段操作
 		if (modifyTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : modifyTableMap.entrySet()) {
-				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<>();
+			for (Entry<String, List<CreateTableParam>> entry : modifyTableMap.entrySet()) {
+				for (CreateTableParam obj : entry.getValue()) {
+					Map<String, CreateTableParam> map = new HashMap<>();
 					map.put(entry.getKey(), obj);
-					CreateTableParam fieldProperties = (CreateTableParam) obj;
-					logger.info("\n\n========开始修改表" + entry.getKey() + "中的字段" + fieldProperties.getFieldName());
+					logger.info("\n\n========开始修改表" + entry.getKey() + "中的字段" + obj.getFieldName());
 					createTableService.modifyTableField(map);
-					logger.info("\n\n========完成修改表" + entry.getKey() + "中的字段" + fieldProperties.getFieldName());
+					logger.info("\n\n========完成修改表" + entry.getKey() + "中的字段" + obj.getFieldName());
 				}
 			}
 		}
@@ -291,17 +291,16 @@ class CreateTableController implements IApplicationContextAware {
 	 *
 	 * @param addTableMap 用于存需要增加字段的表名+结构
 	 */
-	private void addFieldsByMap(Map<String, List<Object>> addTableMap) {
+	private void addFieldsByMap(Map<String, List<CreateTableParam>> addTableMap) {
 		// 做增加字段操作
 		if (addTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : addTableMap.entrySet()) {
-				for (Object obj : entry.getValue()) {
-					Map<String, Object> map = new HashMap<>();
+			for (Entry<String, List<CreateTableParam>> entry : addTableMap.entrySet()) {
+				for (CreateTableParam obj : entry.getValue()) {
+					Map<String, CreateTableParam> map = new HashMap<>();
 					map.put(entry.getKey(), obj);
-					CreateTableParam fieldProperties = (CreateTableParam) obj;
-					logger.info("开始为表" + entry.getKey() + "增加字段" + fieldProperties.getFieldName());
+					logger.info("开始为表" + entry.getKey() + "增加字段" + obj.getFieldName());
 					createTableService.addTableField(map);
-					logger.info("完成为表" + entry.getKey() + "增加字段" + fieldProperties.getFieldName());
+					logger.info("完成为表" + entry.getKey() + "增加字段" + obj.getFieldName());
 				}
 			}
 		}
@@ -312,11 +311,11 @@ class CreateTableController implements IApplicationContextAware {
 	 *
 	 * @param newTableMap 用于存需要创建的表名+结构
 	 */
-	private void createTableByMap(Map<String, List<Object>> newTableMap) {
+	private void createTableByMap(Map<String, List<CreateTableParam>> newTableMap) {
 		// 做创建表操作
 		if (newTableMap.size() > 0) {
-			for (Entry<String, List<Object>> entry : newTableMap.entrySet()) {
-				Map<String, List<Object>> map = new HashMap<>();
+			for (Entry<String, List<CreateTableParam>> entry : newTableMap.entrySet()) {
+				Map<String, List<CreateTableParam>> map = new HashMap<>();
 				map.put(entry.getKey().split(";")[0], entry.getValue());
 				logger.info("开始创建表：" + entry.getKey());
 				createTableService.createTable(map, entry.getKey().split(";")[1]);
@@ -330,13 +329,13 @@ class CreateTableController implements IApplicationContextAware {
 		Set<Class<?>> classes = context.getTypesAnnotatedWith(Table.class);
 
 		// 用于存需要创建的表名+结构
-		Map<String, List<Object>> newTableMap = new HashMap<>();
+		Map<String, List<CreateTableParam>> newTableMap = new HashMap<>();
 
 		// 用于存需要更新字段类型等的表名+结构
-		Map<String, List<Object>> modifyTableMap = new HashMap<>();
+		Map<String, List<CreateTableParam>> modifyTableMap = new HashMap<>();
 
 		// 用于存需要增加字段的表名+结构
-		Map<String, List<Object>> addTableMap = new HashMap<>();
+		Map<String, List<CreateTableParam>> addTableMap = new HashMap<>();
 
 
 		// 构建出全部表的增删改的map
