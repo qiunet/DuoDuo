@@ -1,5 +1,7 @@
 package org.qiunet.project.init.define;
 
+import org.qiunet.utils.string.StringUtil;
+
 /***
  *
  *
@@ -14,14 +16,18 @@ public class FieldDefine {
 
 	private String comment;
 
-	private int length;
+	private String jdbcType;
 
-	public int getLength() {
-		return length;
+	public String getJdbcType() {
+		return jdbcType;
 	}
 
-	public void setLength(int length) {
-		this.length = length;
+	public void setJdbcType(String jdbcType) {
+		this.jdbcType = jdbcType;
+	}
+
+	public boolean isJdbcTypeNotEmpty() {
+		return !StringUtil.isEmpty(jdbcType);
 	}
 
 	public String getName() {

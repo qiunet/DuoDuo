@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -253,5 +254,9 @@ import java.util.stream.Collectors;
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public boolean isNeedImportColumnJdbcType(){
+		return fieldDefines.stream().filter(f -> Objects.nonNull(f.getJdbcType())).count() > 0;
 	}
 }

@@ -13,11 +13,27 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="jdbc_type">
+		<xs:annotation>
+			<xs:documentation>
+				参考: ColumnJdbcType 枚举类
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NULL" />
+			<xs:enumeration value="VARCHAR255" />
+			<xs:enumeration value="VARCHAR1000" />
+			<xs:enumeration value="TEXT" />
+			<xs:enumeration value="MEDIUMTEXT" />
+			<xs:enumeration value="LONGTEXT" />
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:complexType name="field_content">
 		<xs:attribute name="name" type="xs:NCName" use="required" />
 		<xs:attribute name="type" type="field_type" use="required" />
 		<xs:attribute name="comment" type="xs:string" use="required" />
-		<xs:attribute name="length" type="xs:integer" default="0" />
+		<xs:attribute name="jdbcType" type="jdbc_type" default="NULL" />
 	</xs:complexType>
 
 	<xs:simpleType name="NamePattern">
