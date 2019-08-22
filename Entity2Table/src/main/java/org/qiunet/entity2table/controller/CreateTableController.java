@@ -4,21 +4,18 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
-import org.qiunet.entity2table.command.CreateTableParam;
+import org.qiunet.entity2table.command.FieldParam;
+import org.qiunet.entity2table.command.TableAlterParam;
+import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.service.CreateTableService;
-import org.qiunet.entity2table.utils.ClassTools;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 数据对象和表同步控制
@@ -34,222 +31,129 @@ class CreateTableController implements IApplicationContextAware {
 		instance = this;
 	}
 	/**
-	 * 构建出全部表的增删改的map
-	 *
-	 * @param classes               从包package中获取所有的Class
-	 * @param newTableMap           用于存需要创建的表名+结构
-	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
-	 * @param addTableMap           用于存需要增加字段的表名+结构
-	 */
-	private void allTableMapConstruct(Set<Class<?>> classes,
-									  Map<String, List<CreateTableParam>> newTableMap, Map<String, List<CreateTableParam>> modifyTableMap,
-									  Map<String, List<CreateTableParam>> addTableMap) {
-		for (Class<?> clas : classes) {
-
-			Table table = clas.getAnnotation(Table.class);
-			/*// 没有打注解不需要创建表
-			if (null == table) {
-				continue;
-			}*/
-			// 用于存新增表的字段
-			List<CreateTableParam> newFieldList = new ArrayList<>();
-			// 用于存新增的字段
-			List<CreateTableParam> addFieldList = new ArrayList<>();
-			// 用于存修改的字段
-			List<CreateTableParam> modifyFieldList = new ArrayList<>();
-
-			// 迭代出所有model的所有fields存到newFieldList中
-			tableFieldsConstruct(clas, newFieldList);
-
-			// 先查该表是否存在
-			int exist = createTableService.findTableCountByTableName(table.name());
-
-			// 不存在时
-			if (exist == 0) {
-				newTableMap.put(table.name() + ";" + table.comment(), newFieldList);
-			} else {
-				// 已存在时理论上做修改的操作，这里查出该表的结构
-				List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name());
-
-				// 从sysColumns中取出我们需要比较的列的List
-				// 先取出name用来筛选出增加和删除的字段
-				List<String> columnNames = ClassTools.getPropertyValueList(tableColumnList, Columns.COLUMN_NAME_KEY);
-
-				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
-				// 1. 找出增加的字段
-				// 3. 找出更新的字段
-				buildAddAndModifyFields(modifyTableMap, addTableMap, table, newFieldList,
-					addFieldList, modifyFieldList, tableColumnList, columnNames);
-
-			}
-		}
-	}
-
-	/**
-	 * 根据传入的map创建或修改表结构
-	 *
-	 * @param newTableMap        用于存需要创建的表名+结构
-	 * @param modifyTableMap     用于存需要更新字段类型等的表名+结构
-	 * @param addTableMap        用于存需要增加字段的表名+结构
-	 */
-	private void createOrModifyTableConstruct(Map<String, List<CreateTableParam>> newTableMap,
-											  Map<String, List<CreateTableParam>> modifyTableMap,
-											  Map<String, List<CreateTableParam>> addTableMap) {
-		// 1. 创建表
-		createTableByMap(newTableMap);
-		// 4. 添加新的字段
-		addFieldsByMap(addTableMap);
-		// 6. 修改字段类型等
-		modifyFieldsByMap(modifyTableMap);
-	}
-
-	/**
 	 * 构建增加的删除的修改的字段
 	 *
-	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
-	 * @param addTableMap           用于存需要增加字段的表名+结构
-	 * @param table                 表
-	 * @param newFieldList          用于存新增表的字段
-	 * @param addFieldList          用于存新增的字段
-	 * @param modifyFieldList       用于存修改的字段
-	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
-	 * @param columnNames           从sysColumns中取出我们需要比较的列的List
+	 * @param newFieldList            用于存新增表的字段
+	 * @param clazz                  表
 	 */
-	private void buildAddAndModifyFields(Map<String, List<CreateTableParam>> modifyTableMap, Map<String, List<CreateTableParam>> addTableMap,
-										 Table table, List<CreateTableParam> newFieldList,
-										 List<CreateTableParam> addFieldList, List<CreateTableParam> modifyFieldList,
-										 List<Columns> tableColumnList, List<String> columnNames) {
+	private void handlerAddAndModifyFields(List<FieldParam> newFieldList, Class<?> clazz) {
+		Table table = clazz.getAnnotation(Table.class);
+		// 已存在时理论上做修改的操作，这里查出该表的结构
+		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name());
+
+		// 从sysColumns中取出我们需要比较的列的List
+		// 先取出name用来筛选出增加和删除的字段
+		Set<String> columnNames = tableColumnList.stream().map(Columns::getColumn_name).collect(Collectors.toSet());
+
 		// 1. 找出增加的字段
 		// 根据数据库中表的结构和model中表的结构对比找出新增的字段
-		buildNewFields(addTableMap, table, newFieldList, addFieldList, columnNames);
+		this.handlerAddFields(clazz, newFieldList, columnNames);
 
-		// 将fieldList转成Map类型，字段名作为主键
-		Map<String, CreateTableParam> fieldMap = new HashMap<>();
-		for (Object obj : newFieldList) {
-			CreateTableParam createTableParam = (CreateTableParam) obj;
-			fieldMap.put(createTableParam.getFieldName(), createTableParam);
-		}
-
+		Map<String, FieldParam> fieldMap = newFieldList.stream().collect(Collectors.toMap(FieldParam::getFieldName, f -> f));
 		// 3. 找出更新的字段
-		buildModifyFields(modifyTableMap, table,
-				modifyFieldList, tableColumnList, fieldMap);
+		this.handlerModifyFields(clazz, tableColumnList, fieldMap);
 	}
 
 	/**
 	 * 根据数据库中表的结构和model中表的结构对比找出修改类型默认值等属性的字段
 	 *
-	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
-	 * @param table                 表
-	 * @param modifyFieldList       用于存修改的字段
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
-	 * @param fieldMap              从sysColumns中取出我们需要比较的列的List
+	 * @param clazz              Do class
 	 */
-	private void buildModifyFields( Map<String, List<CreateTableParam>> modifyTableMap,
-								   Table table,
-								   List<CreateTableParam> modifyFieldList,
-								   List<Columns> tableColumnList, Map<String, CreateTableParam> fieldMap) {
+	private void handlerModifyFields(Class<?> clazz, List<Columns> tableColumnList, Map<String, FieldParam> fieldMap) {
+		Table table = clazz.getAnnotation(Table.class);
+
+		List<FieldParam> modifyFieldList = new ArrayList<>();
 		for (Columns sysColumn : tableColumnList) {
 			// 数据库中有该字段时
-			CreateTableParam createTableParam = fieldMap.get(sysColumn.getColumn_name());
-			if (createTableParam != null) {
-				// 验证是否有更新
-				// 1.验证类型
-				if (!sysColumn.getData_type().toLowerCase().equals(createTableParam.getFieldType().toLowerCase())) {
-					modifyFieldList.add(createTableParam);
+			FieldParam fieldParam = fieldMap.get(sysColumn.getColumn_name());
+			if (fieldParam == null) continue;
+
+			// 验证是否有更新
+			if (sysColumn.getJdbcType()  != fieldParam.getColumnJdbcType()) {
+				if (sysColumn.getJdbcType().canAlterTo(fieldParam.getColumnJdbcType())) {
+					// 1.验证类型
+					modifyFieldList.add(fieldParam);
+				}else {
+					throw new IllegalArgumentException("Can not change jdbcType ["+sysColumn.getJdbcType()+"] to ["+fieldParam.getColumnJdbcType()+"]");
+				}
+				continue;
+			}
+
+			// 5.验证自增
+			if ("auto_increment".equals(sysColumn.getExtra()) && !fieldParam.isFieldIsAutoIncrement()) {
+				modifyFieldList.add(fieldParam);
+				continue;
+			}
+
+			// 6.验证默认值
+			if (sysColumn.getColumn_default() == null || sysColumn.getColumn_default().equals("")) {
+				// 数据库默认值是null，model中注解设置的默认值不为NULL时，那么需要更新该字段
+				if (!"NULL".equals(fieldParam.getFieldDefaultValue())) {
+					modifyFieldList.add(fieldParam);
 					continue;
 				}
-				String typeAndLength = createTableParam.getFieldType().toLowerCase();
-				if (!sysColumn.getColumn_type().toLowerCase().equals(typeAndLength)) {
-					modifyFieldList.add(createTableParam);
+			} else if (!sysColumn.getColumn_default().equals(fieldParam.getFieldDefaultValue())) {
+				// 两者不相等时，需要更新该字段
+				modifyFieldList.add(fieldParam);
+				continue;
+			}
+
+			// 7.验证是否可以为null(主键不参与是否为null的更新)
+			if (sysColumn.getIs_nullable().equals("NO") && !fieldParam.isFieldIsKey()) {
+				if (fieldParam.isFieldIsNull()) {
+					// 一个是可以一个是不可用，所以需要更新该字段
+					modifyFieldList.add(fieldParam);
 					continue;
 				}
-
-
-				// 5.验证自增
-				if ("auto_increment".equals(sysColumn.getExtra()) && !createTableParam.isFieldIsAutoIncrement()) {
-					modifyFieldList.add(createTableParam);
+			} else if (sysColumn.getIs_nullable().equals("YES") && !fieldParam.isFieldIsKey()) {
+				if (!fieldParam.isFieldIsNull()) {
+					// 一个是可以一个是不可用，所以需要更新该字段
+					modifyFieldList.add(fieldParam);
 					continue;
-				}
-
-				// 6.验证默认值
-				if (sysColumn.getColumn_default() == null || sysColumn.getColumn_default().equals("")) {
-					// 数据库默认值是null，model中注解设置的默认值不为NULL时，那么需要更新该字段
-					if (!"NULL".equals(createTableParam.getFieldDefaultValue())) {
-						modifyFieldList.add(createTableParam);
-						continue;
-					}
-				} else if (!sysColumn.getColumn_default().equals(createTableParam.getFieldDefaultValue())) {
-					// 两者不相等时，需要更新该字段
-					modifyFieldList.add(createTableParam);
-					continue;
-				}
-
-				// 7.验证是否可以为null(主键不参与是否为null的更新)
-				if (sysColumn.getIs_nullable().equals("NO") && !createTableParam.isFieldIsKey()) {
-					if (createTableParam.isFieldIsNull()) {
-						// 一个是可以一个是不可用，所以需要更新该字段
-						modifyFieldList.add(createTableParam);
-						continue;
-					}
-				} else if (sysColumn.getIs_nullable().equals("YES") && !createTableParam.isFieldIsKey()) {
-					if (!createTableParam.isFieldIsNull()) {
-						// 一个是可以一个是不可用，所以需要更新该字段
-						modifyFieldList.add(createTableParam);
-						continue;
-					}
 				}
 			}
 		}
 
-		if (modifyFieldList.size() > 0) {
-			modifyTableMap.put(table.name(), modifyFieldList);
-		}
+		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(table.name(), f, table.splitTable())));
 	}
 
 	/**
 	 * 根据数据库中表的结构和model中表的结构对比找出新增的字段
 	 *
-	 * @param addTableMap  用于存需要增加字段的表名+结构
-	 * @param table        表
+	 * @param clazz  Do class
 	 * @param newFieldList model中的结构
-	 * @param addFieldList 用于存新增的字段
 	 * @param columnNames  数据库中的结构
 	 */
-	private void buildNewFields(Map<String, List<CreateTableParam>> addTableMap, Table table, List<CreateTableParam> newFieldList,
-								List<CreateTableParam> addFieldList, List<String> columnNames) {
-		for (Object obj : newFieldList) {
-			CreateTableParam createTableParam = (CreateTableParam) obj;
-			// 循环新的model中的字段，判断是否在数据库中已经存在
-			if (!columnNames.contains(createTableParam.getFieldName())) {
-				// 不存在，表示要在数据库中增加该字段
-				addFieldList.add(createTableParam);
-			}
-		}
-		if (addFieldList.size() > 0) {
-			addTableMap.put(table.name(), addFieldList);
-		}
+	private void handlerAddFields(Class<?> clazz, List<FieldParam> newFieldList, Set<String> columnNames) {
+		Table table = clazz.getAnnotation(Table.class);
+
+		List<FieldParam> addFieldList = newFieldList.stream()
+			.filter(f -> ! columnNames.contains(f.getFieldName()))
+			.collect(Collectors.toList());
+
+		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable())));
 	}
 
 	/**
 	 * 迭代出所有model的所有fields存到newFieldList中
 	 *
 	 * @param clas                  准备做为创建表依据的class
-	 * @param newFieldList          用于存新增表的字段
 	 */
-	private void tableFieldsConstruct(Class<?> clas,
-									  List<CreateTableParam> newFieldList) {
+	private List<FieldParam> tableFieldsConstruct(Class<?> clas) {
 		Field[] fields = clas.getDeclaredFields();
-
+		List<FieldParam> list = new ArrayList<>();
 		for (Field field : fields) {
 			// 判断方法中是否有指定注解类型的注解
 			boolean hasAnnotation = field.isAnnotationPresent(Column.class);
 			if (hasAnnotation) {
 				// 根据注解类型返回方法的指定类型注解
 				Column column = field.getAnnotation(Column.class);
-				CreateTableParam param = new CreateTableParam();
+				FieldParam param = new FieldParam();
 				param.setFieldName(field.getName());
 				ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column.jdbcType());
 				param.setFieldType(columnJdbcType.getJdbcTypeDesc());
+				param.setColumnJdbcType(columnJdbcType);
 				// 主键或唯一键时设置必须不为null
 				if (column.isKey()) {
 					param.setFieldIsNull(false);
@@ -261,87 +165,74 @@ class CreateTableController implements IApplicationContextAware {
 				param.setFieldDefaultValue(column.defaultValue());
 				param.setFieldComment(column.comment());
 
-				newFieldList.add(param);
+				list.add(param);
 			}
 		}
+		return list;
 	}
 
 	/**
 	 * 根据map结构修改表中的字段类型等
 	 *
-	 * @param modifyTableMap 用于存需要更新字段类型等的表名+结构
+	 * @param alterParam 用于存需要更新字段类型等的表名+结构
 	 */
-	private void modifyFieldsByMap(Map<String, List<CreateTableParam>> modifyTableMap) {
-		// 做修改字段操作
-		if (modifyTableMap.size() > 0) {
-			for (Entry<String, List<CreateTableParam>> entry : modifyTableMap.entrySet()) {
-				for (CreateTableParam obj : entry.getValue()) {
-					Map<String, CreateTableParam> map = new HashMap<>();
-					map.put(entry.getKey(), obj);
-					logger.info("\n\n========开始修改表" + entry.getKey() + "中的字段" + obj.getFieldName());
-					createTableService.modifyTableField(map);
-					logger.info("\n\n========完成修改表" + entry.getKey() + "中的字段" + obj.getFieldName());
-				}
-			}
-		}
+	private void modifyTableField(TableAlterParam alterParam) {
+		logger.info("\n\n========开始修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
+		createTableService.modifyTableField(alterParam);
+		logger.info("\n\n========完成修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
 	}
 
 	/**
-	 * 根据map结构对表中添加新的字段
+	 * 根据m结构对表中添加新的字段
 	 *
-	 * @param addTableMap 用于存需要增加字段的表名+结构
+	 * @param tableParam 用于存需要增加字段的表名+结构
 	 */
-	private void addFieldsByMap(Map<String, List<CreateTableParam>> addTableMap) {
+	private void addTableFields(TableAlterParam tableParam) {
 		// 做增加字段操作
-		if (addTableMap.size() > 0) {
-			for (Entry<String, List<CreateTableParam>> entry : addTableMap.entrySet()) {
-				for (CreateTableParam obj : entry.getValue()) {
-					Map<String, CreateTableParam> map = new HashMap<>();
-					map.put(entry.getKey(), obj);
-					logger.info("开始为表" + entry.getKey() + "增加字段" + obj.getFieldName());
-					createTableService.addTableField(map);
-					logger.info("完成为表" + entry.getKey() + "增加字段" + obj.getFieldName());
-				}
-			}
-		}
+		logger.info("开始为表" + tableParam.getTableName() + "增加字段" + tableParam.getField().getFieldName());
+		createTableService.addTableField(tableParam);
+		logger.info("完成为表" + tableParam.getTableName() + "增加字段" + tableParam.getField().getFieldName());
 	}
 
 	/**
 	 * 根据map结构创建表
 	 *
-	 * @param newTableMap 用于存需要创建的表名+结构
+	 * @param tableParam 用于存需要创建的表名+结构
 	 */
-	private void createTableByMap(Map<String, List<CreateTableParam>> newTableMap) {
+	private void createTable(TableCreateParam tableParam) {
 		// 做创建表操作
-		if (newTableMap.size() > 0) {
-			for (Entry<String, List<CreateTableParam>> entry : newTableMap.entrySet()) {
-				Map<String, List<CreateTableParam>> map = new HashMap<>();
-				map.put(entry.getKey().split(";")[0], entry.getValue());
-				logger.info("开始创建表：" + entry.getKey());
-				createTableService.createTable(map, entry.getKey().split(";")[1]);
-				logger.info("完成创建表：" + entry.getKey());
-			}
-		}
+		logger.info("开始创建表：" + tableParam.getTableName());
+		createTableService.createTable(tableParam);
+		logger.info("完成创建表：" + tableParam.getTableName());
 	}
+
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
+		context.getTypesAnnotatedWith(Table.class).forEach(this::handlerTable);
+	}
 
-		Set<Class<?>> classes = context.getTypesAnnotatedWith(Table.class);
+	/***
+	 * 处理Entity类.
+	 * 判断是否新建表,  有字段改动等
+	 * @param clazz
+	 */
+	private void handlerTable(Class<?> clazz){
+		Table table = clazz.getAnnotation(Table.class);
 
-		// 用于存需要创建的表名+结构
-		Map<String, List<CreateTableParam>> newTableMap = new HashMap<>();
+		// 迭代出所有model的所有fields存到newFieldList中
+		List<FieldParam> newFieldList = tableFieldsConstruct(clazz);
 
-		// 用于存需要更新字段类型等的表名+结构
-		Map<String, List<CreateTableParam>> modifyTableMap = new HashMap<>();
-
-		// 用于存需要增加字段的表名+结构
-		Map<String, List<CreateTableParam>> addTableMap = new HashMap<>();
-
-
-		// 构建出全部表的增删改的map
-		allTableMapConstruct(classes, newTableMap, modifyTableMap, addTableMap);
-
-		// 根据传入的map，分别去创建或修改表结构
-		createOrModifyTableConstruct(newTableMap, modifyTableMap, addTableMap);
+		int tableExist = createTableService.findTableCountByTableName(table.name());
+		// 不存在时
+		if (tableExist == 0) {
+			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), newFieldList, table.splitTable());
+			createTable(tableParam);
+			//TODO
+		}else {
+			// 验证对比从model中解析的fieldList与从数据库查出来的columnList
+			// 1. 找出增加的字段
+			// 3. 找出更新的字段
+			handlerAddAndModifyFields(newFieldList, clazz);
+		}
 	}
 }

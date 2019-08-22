@@ -4,52 +4,40 @@
 
 	<!-- 抽取出来的公共部分 -->
 	<sql id="commonSql">
-		`${fields.fieldName}` ${fields.fieldType}
+		`${field.fieldName}` ${field.fieldType}
 
-		<if test="fields.fieldIsNull">
+		<if test="field.fieldIsNull">
 			NULL
 		</if>
-		<if test="!fields.fieldIsNull">
+		<if test="!field.fieldIsNull">
 			NOT NULL
 		</if>
-		<if test="fields.fieldIsAutoIncrement">
+		<if test="field.fieldIsAutoIncrement">
 			AUTO_INCREMENT
 		</if>
 		<!-- 不是自增长的才能有默认值 -->
 		<!-- 并且不为null时，因为null是默认的没必要写 -->
-		<if test="!fields.fieldIsAutoIncrement and !fields.fieldIsNull and fields.fieldDefaultValue != 'NULL'">
-			DEFAULT #{fields.fieldDefaultValue}
-		</if>
-		<!-- 不是自增长的才能有默认值 -->
-		<!-- 不是非空时，并且默认值不是NUll -->
-		<if test="!fields.fieldIsAutoIncrement and fields.fieldIsNull and fields.fieldDefaultValue != 'NULL'">
-			DEFAULT #{fields.fieldDefaultValue}
+		<if test="!field.fieldIsAutoIncrement and !field.fieldIsNull and field.fieldDefaultValue != 'NULL'">
+			DEFAULT #{field.fieldDefaultValue}
 		</if>
 
-		<if test="fields.fieldComment != 'NULL'">
-			COMMENT #{fields.fieldComment}
+		<if test="field.fieldComment != 'NULL'">
+			COMMENT #{field.fieldComment}
 		</if>
 	</sql>
 
 	<!-- 创建表的 -->
-	<select id="createTable" parameterType="java.util.Map">
-
-		<foreach collection="tableMap" index="key" item="value">
-
-			create table <if test="dbName!=null">${dbName}.</if>`${key}`(
-
-			<foreach collection="value" item="fields" separator=",">
-				<include refid="commonSql"></include>
-				<if test="fields.fieldIsKey">
-					,PRIMARY KEY `index_${key}_${fields.fieldName}` (`${fields.fieldName}`)
-				</if>
-			</foreach>
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-			<if test="tableComment != 'NULL'">
-				COMMENT = '${tableComment}'
-			</if>
-			;
+	<select id="createTable" parameterType="org.qiunet.entity2table.command.TableCreateParam">
+		create table <if test="dbName!=null">${dbName}.</if>`${tableName}`(
+		<foreach collection="fields" item="field" separator="," close=",">
+			<include refid="commonSql" />
 		</foreach>
+		PRIMARY KEY (${priKeyDesc}))
+		ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+		<if test="comment != 'NULL'">
+			COMMENT = '${comment}'
+		</if>
+		;
 	</select>
 
 	<!-- 验证表是否存在 -->
@@ -65,36 +53,15 @@
 	</select>
 
 	<!-- 增加字段 -->
-	<select id="addTableField" parameterType="java.util.Map">
-
-		<foreach collection="tableMap" index="key" item="fields" separator=";">
-			alter table <if test="dbName!=null">${dbName}.</if> `${key}` add
-			<include refid="commonSql"></include>
-			<if test="fields.fieldIsKey">
-				PRIMARY KEY
-			</if>
-			<if test="fields.fieldIsUnique">
-				UNIQUE KEY
-			</if>
-		</foreach>
-
+	<select id="addTableField" parameterType="org.qiunet.entity2table.command.TableAlterParam">
+		alter table <if test="dbName!=null">${dbName}.</if> `${tableName}` add
+		<include refid="commonSql"></include>
 	</select>
 
 
 	<!-- 修改字段 -->
-	<select id="modifyTableField" parameterType="java.util.Map">
-
-		<foreach collection="tableMap" index="key" item="fields" separator=";">
-			alter table <if test="dbName!=null">${dbName}.</if>`${key}` modify
-			<include refid="commonSql"></include>
-			<if test="fields.fieldIsKey">
-				PRIMARY KEY
-			</if>
-			<if test="fields.fieldIsUnique">
-				UNIQUE KEY
-			</if>
-		</foreach>
-
+	<select id="modifyTableField" parameterType="org.qiunet.entity2table.command.TableAlterParam">
+		alter table <if test="dbName!=null">${dbName}.</if>`${tableName}` modify
+		<include refid="commonSql"></include>
 	</select>
-
 </mapper>

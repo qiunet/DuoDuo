@@ -1,9 +1,11 @@
 package org.qiunet.entity2table.command;
 
+import org.qiunet.data.core.enums.ColumnJdbcType;
+
 /**
  * 用于存放创建表的字段信息
  */
-public class CreateTableParam {
+public class FieldParam {
 
 	/**
 	 * 字段名
@@ -38,6 +40,16 @@ public class CreateTableParam {
 	 * 注释
 	 */
 	private String fieldComment;
+
+	private ColumnJdbcType columnJdbcType;
+
+	public ColumnJdbcType getColumnJdbcType() {
+		return columnJdbcType;
+	}
+
+	public void setColumnJdbcType(ColumnJdbcType columnJdbcType) {
+		this.columnJdbcType = columnJdbcType;
+	}
 
 	public String getFieldComment() {
 		return fieldComment;

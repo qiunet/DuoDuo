@@ -5,7 +5,9 @@ import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.redis.constants.RedisDbConstants;
 import org.qiunet.data.util.DbProperties;
-import org.qiunet.entity2table.command.CreateTableParam;
+import org.qiunet.entity2table.command.FieldParam;
+import org.qiunet.entity2table.command.TableAlterParam;
+import org.qiunet.entity2table.command.TableCreateParam;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +19,6 @@ import java.util.Map;
 public class CreateTableService {
 	private static final String sqlPath = "org.qiunet.entity2table.service.CreateTableService.";
 	private volatile static CreateTableService instance = new CreateTableService();
-
 	private CreateTableService() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
@@ -27,24 +28,25 @@ public class CreateTableService {
 		return instance;
 	}
 
-	public void createTable(Map<String, List<CreateTableParam>> tableMap, String tableComment) {
+	public void createTable(TableCreateParam createParam) {
 		//判断当前项目的数据源是单一数据源还是多个数据源,根据数据源不同,执行不同的处理, 暂不考虑分表的情况
 		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			String tableName = createParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
 
-				Map<String, Object> paramMap = new HashMap<>();
-				paramMap.put("tableComment", tableComment);
-				paramMap.put("tableMap", tableMap);
-				paramMap.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-
-				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", paramMap);
+				createParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+				if (createParam.isSplitTable()) {
+					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
+						createParam.setTableName(tableName + "_"+tbIndex);
+						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", createParam);
+					}
+				}else {
+					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", createParam);
+				}
 			}
 		} else {
-			Map<String, Object> paramMap = new HashMap<>();
-			paramMap.put("tableComment", tableComment);
-			paramMap.put("tableMap", tableMap);
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "createTable", paramMap);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "createTable", createParam);
 		}
 	}
 
@@ -82,37 +84,44 @@ public class CreateTableService {
 	}
 
 
-	public void addTableField(Map<String, CreateTableParam> tableMap) {
+	public void addTableField(TableAlterParam alterParam) {
 		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			String tableName = alterParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-				Map<String, Object> map = new HashMap<>();
-				map.put("tableMap", tableMap);
-				map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-
-				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", map);
+				alterParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+				if (alterParam.isSplitTable()) {
+					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
+						alterParam.setTableName(tableName + "_"+tbIndex);
+						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", alterParam);
+					}
+				}else {
+					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", alterParam);
+				}
 			}
 		} else {
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableMap", tableMap);
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "addTableField", map);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "addTableField", alterParam);
 		}
 	}
 
 
-	public void modifyTableField(Map<String, CreateTableParam> tableMap) {
+	public void modifyTableField(TableAlterParam alterParam) {
 		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			String tableName = alterParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-				Map<String, Object> map = new HashMap<>();
-				map.put("tableMap", tableMap);
-				map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-				MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", map);
+				alterParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
+				if (alterParam.isSplitTable()) {
+					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
+						alterParam.setTableName(tableName + "_"+tbIndex);
+						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", alterParam);
+					}
+				}else {
+					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", alterParam);
+				}
 			}
 		} else {
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableMap", tableMap);
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "modifyTableField", map);
+			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "modifyTableField", alterParam);
 		}
 	}
 }

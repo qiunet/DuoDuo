@@ -30,6 +30,29 @@ public class SysDict {
 	@Column(comment = "排序号")
 	private Integer	orderNo;
 
+	@Column(comment = "排序号1")
+	private Integer	orderNo1;
+
+	@Column(comment = "排序号2")
+	private long orderNo2;
+
+
+	public Integer getOrderNo1() {
+		return orderNo1;
+	}
+
+	public void setOrderNo1(Integer orderNo1) {
+		this.orderNo1 = orderNo1;
+	}
+
+	public long getOrderNo2() {
+		return orderNo2;
+	}
+
+	public void setOrderNo2(long orderNo2) {
+		this.orderNo2 = orderNo2;
+	}
+
 	public Long getId() {
 		return id;
 	}

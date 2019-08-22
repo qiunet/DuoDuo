@@ -1,5 +1,7 @@
 package org.qiunet.entity2table.command;
 
+import org.qiunet.data.core.enums.ColumnJdbcType;
+
 /**
  * 用于查询表中字段结构详细信息
  */
@@ -246,4 +248,7 @@ public class Columns {
 		this.column_comment = column_comment;
 	}
 
+	public ColumnJdbcType getJdbcType() {
+		return ColumnJdbcType.parse(this.column_type);
+	}
 }
