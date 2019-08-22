@@ -18,6 +18,20 @@ public class FieldDefine {
 
 	private String jdbcType;
 
+	private String defaultVal;
+
+	public boolean isHaveDefaultVal(){
+		return !StringUtil.isEmpty(defaultVal) && !"NULL".equals(defaultVal);
+	}
+
+	public String getDefaultVal() {
+		return defaultVal;
+	}
+
+	public void setDefaultVal(String defaultVal) {
+		this.defaultVal = defaultVal;
+	}
+
 	public String getJdbcType() {
 		return jdbcType;
 	}

@@ -34,6 +34,7 @@
 		<xs:attribute name="type" type="field_type" use="required" />
 		<xs:attribute name="comment" type="xs:string" use="required" />
 		<xs:attribute name="jdbcType" type="jdbc_type" default="NULL" />
+		<xs:attribute name="defaultVal" type="xs:string" default="NULL" />
 	</xs:complexType>
 
 	<xs:simpleType name="NamePattern">

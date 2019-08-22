@@ -12,7 +12,7 @@
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="equip_id" type="int" comment="装备id" />
-	<field name="level" type="int" comment="等级"/>
+	<field name="level" type="int" comment="等级" defaultVal="0" />
 	<constructor>
 		<constructor_arg field="uid"/>
 	</constructor>
