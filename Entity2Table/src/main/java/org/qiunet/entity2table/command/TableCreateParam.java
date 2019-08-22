@@ -22,9 +22,6 @@ public class TableCreateParam {
 	private List<FieldParam> fields;
 
 	private String dbName;
-	public TableCreateParam(String tableName, List<FieldParam> fields) {
-		this(tableName, null, fields, false);
-	}
 
 	public TableCreateParam(String tableName, String comment, List<FieldParam> fields, boolean splitTable) {
 		this.splitTable = splitTable;

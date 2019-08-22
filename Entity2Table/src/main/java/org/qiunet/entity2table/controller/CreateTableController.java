@@ -71,12 +71,11 @@ class CreateTableController implements IApplicationContextAware {
 
 			// 验证是否有更新
 			if (sysColumn.getJdbcType()  != fieldParam.getColumnJdbcType()) {
-				if (sysColumn.getJdbcType().canAlterTo(fieldParam.getColumnJdbcType())) {
-					// 1.验证类型
-					modifyFieldList.add(fieldParam);
-				}else {
+				if (! sysColumn.getJdbcType().canAlterTo(fieldParam.getColumnJdbcType())) {
 					throw new IllegalArgumentException("Can not change jdbcType ["+sysColumn.getJdbcType()+"] to ["+fieldParam.getColumnJdbcType()+"]");
 				}
+				// 1.验证类型
+				modifyFieldList.add(fieldParam);
 				continue;
 			}
 
@@ -145,28 +144,27 @@ class CreateTableController implements IApplicationContextAware {
 		List<FieldParam> list = new ArrayList<>();
 		for (Field field : fields) {
 			// 判断方法中是否有指定注解类型的注解
-			boolean hasAnnotation = field.isAnnotationPresent(Column.class);
-			if (hasAnnotation) {
-				// 根据注解类型返回方法的指定类型注解
-				Column column = field.getAnnotation(Column.class);
-				FieldParam param = new FieldParam();
-				param.setFieldName(field.getName());
-				ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column.jdbcType());
-				param.setFieldType(columnJdbcType.getJdbcTypeDesc());
-				param.setColumnJdbcType(columnJdbcType);
-				// 主键或唯一键时设置必须不为null
-				if (column.isKey()) {
-					param.setFieldIsNull(false);
-				} else {
-					param.setFieldIsNull(column.isNull());
-				}
-				param.setFieldIsKey(column.isKey());
-				param.setFieldIsAutoIncrement(column.isAutoIncrement());
-				param.setFieldDefaultValue(column.defaultValue());
-				param.setFieldComment(column.comment());
+			if (!field.isAnnotationPresent(Column.class)) continue;
 
-				list.add(param);
+			// 根据注解类型返回方法的指定类型注解
+			Column column = field.getAnnotation(Column.class);
+			FieldParam param = new FieldParam();
+			param.setFieldName(field.getName());
+			ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column.jdbcType());
+			param.setFieldType(columnJdbcType.getJdbcTypeDesc());
+			param.setColumnJdbcType(columnJdbcType);
+			// 主键或唯一键时设置必须不为null
+			if (column.isKey()) {
+				param.setFieldIsNull(false);
+			} else {
+				param.setFieldIsNull(column.isNull());
 			}
+			param.setFieldIsKey(column.isKey());
+			param.setFieldIsAutoIncrement(column.isAutoIncrement());
+			param.setFieldDefaultValue(column.defaultValue());
+			param.setFieldComment(column.comment());
+
+			list.add(param);
 		}
 		return list;
 	}
@@ -227,7 +225,6 @@ class CreateTableController implements IApplicationContextAware {
 		if (tableExist == 0) {
 			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), newFieldList, table.splitTable());
 			createTable(tableParam);
-			//TODO
 		}else {
 			// 验证对比从model中解析的fieldList与从数据库查出来的columnList
 			// 1. 找出增加的字段
