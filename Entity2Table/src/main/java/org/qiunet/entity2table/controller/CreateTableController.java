@@ -1,17 +1,15 @@
 package org.qiunet.entity2table.controller;
 
+import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
-import org.qiunet.entity2table.annotation.LengthCount;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.CreateTableParam;
-import org.qiunet.entity2table.constants.MySqlTypeConstant;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.entity2table.utils.ClassTools;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.logger.LoggerType;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -38,13 +36,12 @@ class CreateTableController implements IApplicationContextAware {
 	/**
 	 * 构建出全部表的增删改的map
 	 *
-	 * @param mySqlTypeAndLengthMap 获取Mysql的类型，以及类型需要设置几个长度
 	 * @param classes               从包package中获取所有的Class
 	 * @param newTableMap           用于存需要创建的表名+结构
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap           用于存需要增加字段的表名+结构
 	 */
-	private void allTableMapConstruct(Map<String, Object> mySqlTypeAndLengthMap, Set<Class<?>> classes,
+	private void allTableMapConstruct(Set<Class<?>> classes,
 									  Map<String, List<Object>> newTableMap, Map<String, List<Object>> modifyTableMap,
 									  Map<String, List<Object>> addTableMap) {
 		for (Class<?> clas : classes) {
@@ -62,7 +59,7 @@ class CreateTableController implements IApplicationContextAware {
 			List<Object> modifyFieldList = new ArrayList<>();
 
 			// 迭代出所有model的所有fields存到newFieldList中
-			tableFieldsConstruct(mySqlTypeAndLengthMap, clas, newFieldList);
+			tableFieldsConstruct(clas, newFieldList);
 
 			// 先查该表是否存在
 			int exist = createTableService.findTableCountByTableName(table.name());
@@ -80,9 +77,8 @@ class CreateTableController implements IApplicationContextAware {
 
 				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
 				// 1. 找出增加的字段
-				// 2. 找出删除的字段
 				// 3. 找出更新的字段
-				buildAddAndRemoveAndModifyFields(mySqlTypeAndLengthMap, modifyTableMap, addTableMap, table, newFieldList,
+				buildAddAndRemoveAndModifyFields(modifyTableMap, addTableMap, table, newFieldList,
 					addFieldList, modifyFieldList, tableColumnList, columnNames);
 
 			}
@@ -109,7 +105,6 @@ class CreateTableController implements IApplicationContextAware {
 	/**
 	 * 构建增加的删除的修改的字段
 	 *
-	 * @param mySqlTypeAndLengthMap 获取Mysql的类型，以及类型需要设置几个长度
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
 	 * @param addTableMap           用于存需要增加字段的表名+结构
 	 * @param table                 表
@@ -119,8 +114,7 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param columnNames           从sysColumns中取出我们需要比较的列的List
 	 */
-	private void buildAddAndRemoveAndModifyFields(Map<String, Object> mySqlTypeAndLengthMap,
-												  Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap,
+	private void buildAddAndRemoveAndModifyFields(Map<String, List<Object>> modifyTableMap, Map<String, List<Object>> addTableMap,
 												  Table table, List<Object> newFieldList,
 												  List<Object> addFieldList, List<Object> modifyFieldList,
 												  List<Columns> tableColumnList, List<String> columnNames) {
@@ -136,21 +130,20 @@ class CreateTableController implements IApplicationContextAware {
 		}
 
 		// 3. 找出更新的字段
-		buildModifyFields(mySqlTypeAndLengthMap, modifyTableMap, table,
+		buildModifyFields(modifyTableMap, table,
 				modifyFieldList, tableColumnList, fieldMap);
 	}
 
 	/**
 	 * 根据数据库中表的结构和model中表的结构对比找出修改类型默认值等属性的字段
 	 *
-	 * @param mySqlTypeAndLengthMap 获取Mysql的类型，以及类型需要设置几个长度
 	 * @param modifyTableMap        用于存需要更新字段类型等的表名+结构
 	 * @param table                 表
 	 * @param modifyFieldList       用于存修改的字段
 	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param fieldMap              从sysColumns中取出我们需要比较的列的List
 	 */
-	private void buildModifyFields(Map<String, Object> mySqlTypeAndLengthMap, Map<String, List<Object>> modifyTableMap,
+	private void buildModifyFields( Map<String, List<Object>> modifyTableMap,
 								   Table table,
 								   List<Object> modifyFieldList,
 								   List<Columns> tableColumnList, Map<String, CreateTableParam> fieldMap) {
@@ -164,22 +157,7 @@ class CreateTableController implements IApplicationContextAware {
 					modifyFieldList.add(createTableParam);
 					continue;
 				}
-				// 2.验证长度
-				// 3.验证小数点位数
-				int length = (Integer) mySqlTypeAndLengthMap.get(createTableParam.getFieldType().toLowerCase());
 				String typeAndLength = createTableParam.getFieldType().toLowerCase();
-				if (length == 1) {
-					// 拼接出类型加长度，比如varchar(1)
-					typeAndLength = typeAndLength + "(" + createTableParam.getFieldLength() + ")";
-				} else if (length == 2) {
-					// 拼接出类型加长度，比如varchar(1)
-					typeAndLength = typeAndLength + "(" + createTableParam.getFieldLength() + ","
-							+ createTableParam.getFieldDecimalLength() + ")";
-				}
-				// 判断类型+长度是否相同
-				if (createTableParam.getFieldIsUnsigned()) {
-					typeAndLength += " unsigned";
-				}
 				if (!sysColumn.getColumn_type().toLowerCase().equals(typeAndLength)) {
 					modifyFieldList.add(createTableParam);
 					continue;
@@ -219,13 +197,6 @@ class CreateTableController implements IApplicationContextAware {
 						continue;
 					}
 				}
-
-				// 8.验证是否唯一
-				if (!"UNI".equals(sysColumn.getColumn_key()) && createTableParam.isFieldIsUnique()) {
-					// 原本不是唯一，现在变成了唯一，那么要去做更新
-					modifyFieldList.add(createTableParam);
-					continue;
-				}
 			}
 		}
 
@@ -261,11 +232,10 @@ class CreateTableController implements IApplicationContextAware {
 	/**
 	 * 迭代出所有model的所有fields存到newFieldList中
 	 *
-	 * @param mySqlTypeAndLengthMap mysql数据类型和对应几个长度的map
 	 * @param clas                  准备做为创建表依据的class
 	 * @param newFieldList          用于存新增表的字段
 	 */
-	private void tableFieldsConstruct(Map<String, Object> mySqlTypeAndLengthMap, Class<?> clas,
+	private void tableFieldsConstruct(Class<?> clas,
 									  List<Object> newFieldList) {
 		Field[] fields = clas.getDeclaredFields();
 
@@ -277,13 +247,10 @@ class CreateTableController implements IApplicationContextAware {
 				Column column = field.getAnnotation(Column.class);
 				CreateTableParam param = new CreateTableParam();
 				param.setFieldName(field.getName());
-				int fieldlength = MySqlTypeConstant.getLength(field.getType(), column.length());
-				param.setFieldLength(fieldlength);
-				String fieldtype = MySqlTypeConstant.parse(field.getType(), fieldlength);
-				param.setFieldType(fieldtype);
-				param.setFieldDecimalLength(column.decimalLength());
+				ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column.jdbcType());
+				param.setFieldType(columnJdbcType.getJdbcTypeDesc());
 				// 主键或唯一键时设置必须不为null
-				if (column.isKey() || column.isUnique()) {
+				if (column.isKey()) {
 					param.setFieldIsNull(false);
 				} else {
 					param.setFieldIsNull(column.isNull());
@@ -291,11 +258,7 @@ class CreateTableController implements IApplicationContextAware {
 				param.setFieldIsKey(column.isKey());
 				param.setFieldIsAutoIncrement(column.isAutoIncrement());
 				param.setFieldDefaultValue(column.defaultValue());
-				param.setFieldIsUnique(column.isUnique());
-				int length = (Integer) mySqlTypeAndLengthMap.get(fieldtype);
-				param.setFileTypeLength(length);
 				param.setFieldComment(column.comment());
-				param.setFieldIsUnsigned(column.isUnsigned());
 
 				newFieldList.add(param);
 			}
@@ -361,26 +324,8 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 	}
-
-	/**
-	 * 获取Mysql的类型，以及类型需要设置几个长度，这里构建成map的样式
-	 * 构建Map(字段名(小写),需要设置几个长度(0表示不需要设置，1表示需要设置一个，2表示需要设置两个))
-	 */
-	public Map<String, Object> mySqlTypeAndLengthMap() {
-		Field[] fields = MySqlTypeConstant.class.getDeclaredFields();
-		Map<String, Object> map = new HashMap<>();
-		for (Field field : fields) {
-			LengthCount lengthCount = field.getAnnotation(LengthCount.class);
-			map.put(field.getName().toLowerCase(), lengthCount.LengthCount());
-		}
-		return map;
-	}
-
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
-
-		// 获取Mysql的类型，以及类型需要设置几个长度
-		Map<String, Object> mySqlTypeAndLengthMap = mySqlTypeAndLengthMap();
 
 		Set<Class<?>> classes = context.getTypesAnnotatedWith(Table.class);
 
@@ -395,7 +340,7 @@ class CreateTableController implements IApplicationContextAware {
 
 
 		// 构建出全部表的增删改的map
-		allTableMapConstruct(mySqlTypeAndLengthMap, classes, newTableMap, modifyTableMap, addTableMap);
+		allTableMapConstruct(classes, newTableMap, modifyTableMap, addTableMap);
 
 		// 根据传入的map，分别去创建或修改表结构
 		createOrModifyTableConstruct(newTableMap, modifyTableMap, addTableMap);

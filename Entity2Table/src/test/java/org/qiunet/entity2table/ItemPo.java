@@ -1,5 +1,6 @@
 package org.qiunet.entity2table;
 
+import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.apache.ibatis.type.Alias;
@@ -12,31 +13,28 @@ import java.io.Serializable;
  * Time: 22:42.
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "item", comment = "道具表") @Alias("ItemPo")
+@Table(name = "item_po", comment = "道具表") @Alias("ItemPo")
 public class ItemPo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(isUnsigned = true, isKey = true, isNull = false, comment = "字典表ID")
+	@Column(isKey = true, isNull = false, comment = "字典表ID")
 	private Long id;
 
-	@Column(isUnsigned = true, comment = "父级ID")
+	@Column(comment = "父级ID")
 	private Long parentId;
 
-	@Column(isUnique = true, comment = "树路径")
+	@Column(comment = "树路径")
 	private String path;
 
 	@Column(comment = "字典名称")
 	private String dictName;
 
-	@Column(length = 20, comment = "字典编码")
+	@Column(comment = "字典编码")
 	private String code;
 
-	@Column(length = 5, comment = "排序号")
+	@Column(jdbcType = ColumnJdbcType.LONGTEXT, comment = "排序号")
 	private Integer	orderNo;
-
-	@Column(comment = "有子节点，0否，1是")
-	private boolean	hasChildren;
 
 
 	public Long getId() {
@@ -85,13 +83,5 @@ public class ItemPo implements Serializable {
 
 	public void setOrderNo(Integer orderNo) {
 		this.orderNo = orderNo;
-	}
-
-	public boolean isHasChildren() {
-		return hasChildren;
-	}
-
-	public void setHasChildren(boolean hasChildren) {
-		this.hasChildren = hasChildren;
 	}
 }

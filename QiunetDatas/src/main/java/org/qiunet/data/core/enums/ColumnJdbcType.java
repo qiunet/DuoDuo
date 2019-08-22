@@ -8,6 +8,7 @@ package org.qiunet.data.core.enums;
  * 2019-08-21 17:14
  ***/
 public enum  ColumnJdbcType {
+	NULL(""),
 	/***
 	 * int
 	 */
@@ -19,11 +20,11 @@ public enum  ColumnJdbcType {
 	/***
 	 * 0 ~ 255 的文本
 	 */
-	VARCHAR255("VARCHAR(255"),
+	VARCHAR255("VARCHAR(255)"),
 	/***
 	 * 0 ~ 1000 的文本
 	 */
-	VARCHAR1000("VARCHAR(1000"),
+	VARCHAR1000("VARCHAR(1000)"),
 	/**
 	 * 0 ~ 65536 的文本
 	 */
@@ -43,7 +44,22 @@ public enum  ColumnJdbcType {
 		this.jdbcType = jdbcType;
 	}
 
-	public String getJdbcType() {
+	public String getJdbcTypeDesc() {
 		return jdbcType;
+	}
+
+	public static ColumnJdbcType parse(Class type, ColumnJdbcType jdbcType) {
+		if (type == Integer.class || type == int.class)
+			return INT;
+		else if (type == Long.class || type == long.class)
+			return BIGINT;
+		else if (type == String.class) {
+			if (jdbcType == null || jdbcType == NULL) return VARCHAR255;
+
+			if (jdbcType == INT || jdbcType == BIGINT)
+				throw new IllegalArgumentException("Can set jdbcType [" + jdbcType + "] to String Column");
+			return jdbcType;
+		}
+		throw new IllegalArgumentException("Not support type for ["+type+"]");
 	}
 }

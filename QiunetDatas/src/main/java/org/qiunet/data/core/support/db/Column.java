@@ -1,5 +1,7 @@
 package org.qiunet.data.core.support.db;
 
+import org.qiunet.data.core.enums.ColumnJdbcType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -21,18 +23,12 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface Column {
 	/**
-	 * 字段长度，默认是255
+	 * 字段类型
 	 *
-	 * @return 字段长度，默认是255
+	 * @return
 	 */
-	int length() default 0;
+	ColumnJdbcType jdbcType() default ColumnJdbcType.NULL;
 
-	/**
-	 * 小数点长度，默认是0
-	 *
-	 * @return 小数点长度，默认是0
-	 */
-	int decimalLength() default 0;
 
 	/**
 	 * 是否为可以为null，true是可以，false是不可以，默认为true
@@ -61,20 +57,6 @@ public @interface Column {
 	 * @return 默认值，默认为null
 	 */
 	String defaultValue() default "NULL";
-
-	/**
-	 * 是否是唯一，默认false
-	 *
-	 * @return 是否是唯一，默认false
-	 */
-	boolean isUnique() default false;
-
-	/**
-	 * 是否无符号，只能用在数值类型的字段中
-	 *
-	 * @return 是否是唯一，默认false
-	 */
-	boolean isUnsigned() default false;
 
 	/**
 	 * 注释说明

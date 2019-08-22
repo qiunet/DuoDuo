@@ -11,29 +11,24 @@ import org.qiunet.data.core.support.db.Table;
  */
 @Table(name = "sys_dict", comment = "字典表")
 public class SysDict {
-	private static final long serialVersionUID = 1L;
 
-	@Column(isUnsigned = true, isKey = true, isNull = false, comment = "字典表ID")
+	@Column(isKey = true, isNull = false, comment = "字典表ID")
 	private Long id;
 
-	@Column(isUnsigned = true, comment = "父级ID")
+	@Column(comment = "父级ID")
 	private Long parentId;
 
-	@Column(length = 100, isUnique = true, comment = "树路径")
+	@Column(comment = "树路径")
 	private String path;
 
 	@Column(comment = "字典名称")
 	private String dictName;
 
-	@Column(length = 20, comment = "字典编码")
+	@Column(comment = "字典编码")
 	private String code;
 
-	@Column(length = 5, comment = "排序号")
+	@Column(comment = "排序号")
 	private Integer	orderNo;
-
-	@Column(comment = "有子节点，0否，1是")
-	private boolean	hasChildren;
-
 
 	public Long getId() {
 		return id;
@@ -81,13 +76,5 @@ public class SysDict {
 
 	public void setOrderNo(Integer orderNo) {
 		this.orderNo = orderNo;
-	}
-
-	public boolean isHasChildren() {
-		return hasChildren;
-	}
-
-	public void setHasChildren(boolean hasChildren) {
-		this.hasChildren = hasChildren;
 	}
 }

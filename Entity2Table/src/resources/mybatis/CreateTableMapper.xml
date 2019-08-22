@@ -4,19 +4,8 @@
 
 	<!-- 抽取出来的公共部分 -->
 	<sql id="commonSql">
-		<if test="fields.fileTypeLength == 0">
-			`${fields.fieldName}` ${fields.fieldType}
-		</if>
-		<if test="fields.fileTypeLength == 1">
-			`${fields.fieldName}` ${fields.fieldType}(${fields.fieldLength})
-		</if>
-		<if test="fields.fileTypeLength == 2">
-			`${fields.fieldName}`
-			${fields.fieldType}(${fields.fieldLength},${fields.fieldDecimalLength})
-		</if>
-		<if test="fields.fieldIsUnsigned">
-			unsigned
-		</if>
+		`${fields.fieldName}` ${fields.fieldType}
+
 		<if test="fields.fieldIsNull">
 			NULL
 		</if>
@@ -54,17 +43,13 @@
 				<if test="fields.fieldIsKey">
 					,PRIMARY KEY `index_${key}_${fields.fieldName}` (`${fields.fieldName}`)
 				</if>
-				<if test="fields.fieldIsUnique">
-					,UNIQUE KEY `unique_${key}_${fields.fieldName}` (`${fields.fieldName}`)
-				</if>
 			</foreach>
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 			<if test="tableComment != 'NULL'">
 				COMMENT = '${tableComment}'
 			</if>
 			;
 		</foreach>
-
 	</select>
 
 	<!-- 验证表是否存在 -->

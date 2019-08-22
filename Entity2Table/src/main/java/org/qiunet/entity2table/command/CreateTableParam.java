@@ -16,16 +16,6 @@ public class CreateTableParam {
 	private String fieldType;
 
 	/**
-	 * 类型长度
-	 */
-	private int	fieldLength;
-
-	/**
-	 * 类型小数长度
-	 */
-	private int	fieldDecimalLength;
-
-	/**
 	 * 字段是否非空
 	 */
 	private boolean	fieldIsNull;
@@ -44,34 +34,10 @@ public class CreateTableParam {
 	 * 字段默认值
 	 */
 	private String fieldDefaultValue;
-
-	/**
-	 * 该类型需要几个长度（例如，需要小数位数的，那么总长度和小数长度就是2个长度）一版只有0、1、2三个可选值，自动从配置的类型中获取的
-	 */
-	private int	fileTypeLength;
-
-	/**
-	 * 值是否唯一
-	 */
-	private boolean	fieldIsUnique;
-
 	/**
 	 * 注释
 	 */
 	private String fieldComment;
-
-	/**
-	 * 是否无符号
-	 */
-	private boolean fieldIsUnsigned;
-
-	public boolean getFieldIsUnsigned() {
-		return fieldIsUnsigned;
-	}
-
-	public void setFieldIsUnsigned(boolean fieldIsUnsigned) {
-		this.fieldIsUnsigned = fieldIsUnsigned;
-	}
 
 	public String getFieldComment() {
 		return fieldComment;
@@ -95,22 +61,6 @@ public class CreateTableParam {
 
 	public void setFieldType(String fieldType) {
 		this.fieldType = fieldType;
-	}
-
-	public int getFieldLength() {
-		return fieldLength;
-	}
-
-	public void setFieldLength(int fieldLength) {
-		this.fieldLength = fieldLength;
-	}
-
-	public int getFieldDecimalLength() {
-		return fieldDecimalLength;
-	}
-
-	public void setFieldDecimalLength(int fieldDecimalLength) {
-		this.fieldDecimalLength = fieldDecimalLength;
 	}
 
 	public boolean isFieldIsNull() {
@@ -144,21 +94,4 @@ public class CreateTableParam {
 	public void setFieldDefaultValue(String fieldDefaultValue) {
 		this.fieldDefaultValue = fieldDefaultValue;
 	}
-
-	public int getFileTypeLength() {
-		return fileTypeLength;
-	}
-
-	public void setFileTypeLength(int fileTypeLength) {
-		this.fileTypeLength = fileTypeLength;
-	}
-
-	public boolean isFieldIsUnique() {
-		return fieldIsUnique;
-	}
-
-	public void setFieldIsUnique(boolean fieldIsUnique) {
-		this.fieldIsUnique = fieldIsUnique;
-	}
-
 }
