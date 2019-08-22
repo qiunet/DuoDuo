@@ -257,6 +257,6 @@ import java.util.stream.Collectors;
 	}
 
 	public boolean isNeedImportColumnJdbcType(){
-		return fieldDefines.stream().filter(f -> Objects.nonNull(f.getJdbcType())).count() > 0;
+		return fieldDefines.stream().anyMatch(f -> Objects.nonNull(f.getJdbcType()));
 	}
 }
