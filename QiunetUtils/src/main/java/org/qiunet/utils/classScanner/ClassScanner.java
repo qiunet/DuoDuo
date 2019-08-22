@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -42,14 +43,22 @@ public final class ClassScanner implements IApplicationContext {
 		return instance;
 	}
 
+	private AtomicBoolean scannered = new AtomicBoolean();
 	public void scanner(String ... packetPrefix){
-		if (packetPrefix != null && packetPrefix.length > 0) {
-			this.reflections.merge(new Reflections(packetPrefix, scanners));
+		if (scannered.get()) {
+			logger.error("Duplicate scanner!!!");
+			return;
 		}
-		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
-		for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
-			IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
-			instance.setApplicationContext(this);
+
+		if (scannered.compareAndSet(false, true)) {
+			if (packetPrefix != null && packetPrefix.length > 0) {
+				this.reflections.merge(new Reflections(packetPrefix, scanners));
+			}
+			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
+			for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
+				IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
+				instance.setApplicationContext(this);
+			}
 		}
 	}
 
