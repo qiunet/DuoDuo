@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.netty.server.listener.ServerShutdownEventData;
+import org.qiunet.utils.listener.event_data.ServerShutdownEventData;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -13,7 +13,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -151,7 +150,7 @@ public class BootstrapServer {
 	 * 通过shutdown 监听. 停止服务
 	 */
 	private void shutdown(){
-		ListenerManager.fireEventHandler(new ServerShutdownEventData());
+		ServerShutdownEventData.fireShutdownEventHandler();
 
 		if (hook != null) {
 			hook.shutdown();
