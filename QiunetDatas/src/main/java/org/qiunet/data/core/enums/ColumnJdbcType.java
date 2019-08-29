@@ -49,8 +49,13 @@ public enum  ColumnJdbcType {
 		return jdbcType;
 	}
 
+	/**
+	 * 判断是否可以修改类型
+	 * 同类型, 并且只能往上修改
+	 * @param jdbcType
+	 * @return
+	 */
 	public boolean canAlterTo(ColumnJdbcType jdbcType) {
-		// 同类型, 并且只能往上修改
 		return this.factor / 100 == jdbcType.factor/100
 			&& this.factor  < jdbcType.factor;
 	}

@@ -32,29 +32,26 @@ public @interface Column {
 
 	/**
 	 * 是否为可以为null，true是可以，false是不可以，默认为true
-	 *
-	 * @return 是否为可以为null，true是可以，false是不可以，默认为true
+	 * @return
 	 */
 	boolean isNull() default true;
 
 	/**
 	 * 是否是主键，默认false,不能和 isUnique 一起使用
-	 *
-	 * @return 是否是主键，默认false
+	 * @return
 	 */
 	boolean isKey() default false;
 
 	/**
 	 * 是否自动递增，默认false 只有主键才能使用
-	 *
-	 * @return 是否自动递增，默认false 只有主键才能使用
+	 * @return
 	 */
 	boolean isAutoIncrement() default false;
 
 	/**
 	 * 默认值，默认为null
 	 *
-	 * @return 默认值，默认为null
+	 * @return
 	 */
 	String defaultValue() default "NULL";
 
