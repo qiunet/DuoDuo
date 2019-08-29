@@ -70,10 +70,10 @@ public class TableCreateParam {
 		this.splitTable = splitTable;
 	}
 
-	public String getPriKeyDesc(){
+	public String getPriKeyDesc() {
 		return fields.stream()
-			.filter(FieldParam::isFieldIsKey)
-			.map(FieldParam::getFieldName)
-			.collect(Collectors.joining("` ,`", "`", "`"));
+				.filter(FieldParam::isFieldIsKey)
+				.map(FieldParam::getFieldName)
+				.collect(Collectors.joining("` ,`", "`", "`"));
 	}
 }

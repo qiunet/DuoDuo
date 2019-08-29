@@ -3,7 +3,7 @@ package org.qiunet.entity2table.command;
 import org.qiunet.data.core.enums.ColumnJdbcType;
 
 /**
- * 用于查询表中字段结构详细信息
+ * 用于查询表中字段结构详细信息,其实是用于mybatis查询语句映射的对象
  */
 public class Columns {
 

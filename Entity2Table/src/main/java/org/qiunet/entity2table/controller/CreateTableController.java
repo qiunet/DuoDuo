@@ -26,89 +26,92 @@ class CreateTableController implements IApplicationContextAware {
 	private volatile static CreateTableController instance;
 
 	private CreateTableService createTableService = CreateTableService.getInstance();
+
 	private CreateTableController() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
 	}
+
 	/**
-	 * 构建增加的删除的修改的字段
+	 * 构建(增加,删除,修改)的字段
 	 *
-	 * @param newFieldList            用于存新增表的字段
-	 * @param clazz                  表
+	 * @param entityFieldList 用于存entity的字段
+	 * @param clazz           entity
 	 */
-	private void handlerAddAndModifyFields(List<FieldParam> newFieldList, Class<?> clazz) {
+	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<?> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
 		// 已存在时理论上做修改的操作，这里查出该表的结构
 		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name());
 
 		// 从sysColumns中取出我们需要比较的列的List
 		// 先取出name用来筛选出增加和删除的字段
-		Set<String> columnNames = tableColumnList.stream().map(Columns::getColumn_name).collect(Collectors.toSet());
+		Set<String> tableColumnNames = tableColumnList.stream().map(Columns::getColumn_name).collect(Collectors.toSet());
 
 		// 1. 找出增加的字段
 		// 根据数据库中表的结构和model中表的结构对比找出新增的字段
-		this.handlerAddFields(clazz, newFieldList, columnNames);
+		this.handlerAddFields(clazz, entityFieldList, tableColumnNames);
 
-		Map<String, FieldParam> fieldMap = newFieldList.stream().collect(Collectors.toMap(FieldParam::getFieldName, f -> f));
+		Map<String, FieldParam> entityFieldMap = entityFieldList.stream().collect(Collectors.toMap(FieldParam::getFieldName, f -> f));
 		// 3. 找出更新的字段
-		this.handlerModifyFields(clazz, tableColumnList, fieldMap);
+		this.handlerModifyFields(clazz, tableColumnList, entityFieldMap);
 	}
 
 	/**
 	 * 根据数据库中表的结构和model中表的结构对比找出修改类型默认值等属性的字段
 	 *
-	 * @param tableColumnList       已存在时理论上做修改的操作，这里查出该表的结构
-	 * @param clazz              Do class
+	 * @param clazz           Do class
+	 * @param tableColumnList 已存在时理论上做修改的操作，这里查出该表的结构
+	 * @param entityFieldMap  entity的列 map
 	 */
-	private void handlerModifyFields(Class<?> clazz, List<Columns> tableColumnList, Map<String, FieldParam> fieldMap) {
+	private void handlerModifyFields(Class<?> clazz, List<Columns> tableColumnList, Map<String, FieldParam> entityFieldMap) {
 		Table table = clazz.getAnnotation(Table.class);
 
 		List<FieldParam> modifyFieldList = new ArrayList<>();
-		for (Columns sysColumn : tableColumnList) {
+		for (Columns tableColumn : tableColumnList) {
 			// 数据库中有该字段时
-			FieldParam fieldParam = fieldMap.get(sysColumn.getColumn_name());
-			if (fieldParam == null) continue;
+			FieldParam entityFieldParam = entityFieldMap.get(tableColumn.getColumn_name());
+			if (entityFieldParam == null) continue;
 
 			// 验证是否有更新
-			if (sysColumn.getJdbcType()  != fieldParam.getColumnJdbcType()) {
-				if (! sysColumn.getJdbcType().canAlterTo(fieldParam.getColumnJdbcType())) {
-					throw new IllegalArgumentException("Can not change jdbcType ["+sysColumn.getJdbcType()+"] to ["+fieldParam.getColumnJdbcType()+"]");
+			if (tableColumn.getJdbcType() != entityFieldParam.getColumnJdbcType()) {
+				if (!tableColumn.getJdbcType().canAlterTo(entityFieldParam.getColumnJdbcType())) {
+					throw new IllegalArgumentException("Can not change jdbcType [" + tableColumn.getJdbcType() + "] to [" + entityFieldParam.getColumnJdbcType() + "]");
 				}
 				// 1.验证类型
-				modifyFieldList.add(fieldParam);
+				modifyFieldList.add(entityFieldParam);
 				continue;
 			}
 
 			// 5.验证自增
-			if ("auto_increment".equals(sysColumn.getExtra()) && !fieldParam.isFieldIsAutoIncrement()) {
-				modifyFieldList.add(fieldParam);
+			if ("auto_increment".equals(tableColumn.getExtra()) && !entityFieldParam.isFieldIsAutoIncrement()) {
+				modifyFieldList.add(entityFieldParam);
 				continue;
 			}
 
 			// 6.验证默认值
-			if (sysColumn.getColumn_default() == null || sysColumn.getColumn_default().equals("")) {
+			if (tableColumn.getColumn_default() == null || tableColumn.getColumn_default().equals("")) {
 				// 数据库默认值是null，model中注解设置的默认值不为NULL时，那么需要更新该字段
-				if (!"NULL".equals(fieldParam.getFieldDefaultValue())) {
-					modifyFieldList.add(fieldParam);
+				if (!"NULL".equals(entityFieldParam.getFieldDefaultValue())) {
+					modifyFieldList.add(entityFieldParam);
 					continue;
 				}
-			} else if (!sysColumn.getColumn_default().equals(fieldParam.getFieldDefaultValue())) {
+			} else if (!tableColumn.getColumn_default().equals(entityFieldParam.getFieldDefaultValue())) {
 				// 两者不相等时，需要更新该字段
-				modifyFieldList.add(fieldParam);
+				modifyFieldList.add(entityFieldParam);
 				continue;
 			}
 
 			// 7.验证是否可以为null(主键不参与是否为null的更新)
-			if (sysColumn.getIs_nullable().equals("NO") && !fieldParam.isFieldIsKey()) {
-				if (fieldParam.isFieldIsNull()) {
+			if (tableColumn.getIs_nullable().equals("NO") && !entityFieldParam.isFieldIsKey()) {
+				if (entityFieldParam.isFieldIsNull()) {
 					// 一个是可以一个是不可用，所以需要更新该字段
-					modifyFieldList.add(fieldParam);
+					modifyFieldList.add(entityFieldParam);
 					continue;
 				}
-			} else if (sysColumn.getIs_nullable().equals("YES") && !fieldParam.isFieldIsKey()) {
-				if (!fieldParam.isFieldIsNull()) {
+			} else if (tableColumn.getIs_nullable().equals("YES") && !entityFieldParam.isFieldIsKey()) {
+				if (!entityFieldParam.isFieldIsNull()) {
 					// 一个是可以一个是不可用，所以需要更新该字段
-					modifyFieldList.add(fieldParam);
+					modifyFieldList.add(entityFieldParam);
 					continue;
 				}
 			}
@@ -120,16 +123,16 @@ class CreateTableController implements IApplicationContextAware {
 	/**
 	 * 根据数据库中表的结构和model中表的结构对比找出新增的字段
 	 *
-	 * @param clazz  Do class
-	 * @param newFieldList model中的结构
-	 * @param columnNames  数据库中的结构
+	 * @param clazz            Do class
+	 * @param entityFieldList  entity中的结构
+	 * @param tableColumnNames 数据库中的结构
 	 */
-	private void handlerAddFields(Class<?> clazz, List<FieldParam> newFieldList, Set<String> columnNames) {
+	private void handlerAddFields(Class<?> clazz, List<FieldParam> entityFieldList, Set<String> tableColumnNames) {
 		Table table = clazz.getAnnotation(Table.class);
 
-		List<FieldParam> addFieldList = newFieldList.stream()
-			.filter(f -> ! columnNames.contains(f.getFieldName()))
-			.collect(Collectors.toList());
+		List<FieldParam> addFieldList = entityFieldList.stream()
+				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
+				.collect(Collectors.toList());
 
 		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable())));
 	}
@@ -137,7 +140,7 @@ class CreateTableController implements IApplicationContextAware {
 	/**
 	 * 迭代出所有model的所有fields存到newFieldList中
 	 *
-	 * @param clas                  准备做为创建表依据的class
+	 * @param clas 准备做为创建表依据的class
 	 */
 	private List<FieldParam> tableFieldsConstruct(Class<?> clas) {
 		Field[] fields = clas.getDeclaredFields();
@@ -214,22 +217,22 @@ class CreateTableController implements IApplicationContextAware {
 	 * 判断是否新建表,  有字段改动等
 	 * @param clazz
 	 */
-	private void handlerTable(Class<?> clazz){
+	private void handlerTable(Class<?> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
 
-		// 迭代出所有model的所有fields存到newFieldList中
-		List<FieldParam> newFieldList = tableFieldsConstruct(clazz);
+		// 迭代出当前clazz所有fields存到newFieldList中
+		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
 		int tableExist = createTableService.findTableCountByTableName(table.name());
 		// 不存在时
 		if (tableExist == 0) {
-			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), newFieldList, table.splitTable());
+			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable());
 			createTable(tableParam);
-		}else {
+		} else {
 			// 验证对比从model中解析的fieldList与从数据库查出来的columnList
 			// 1. 找出增加的字段
-			// 3. 找出更新的字段
-			handlerAddAndModifyFields(newFieldList, clazz);
+			// 2. 找出更新的字段
+			handlerAddAndModifyFields(entityFieldList, clazz);
 		}
 	}
 }
