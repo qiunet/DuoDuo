@@ -8,25 +8,31 @@
 |包名| 简介|
 |----|----|
 | args 			|`处理参数的`|
-| classloader	|`类加载器`|
-| badword	|`输入敏感字库工具类`|
+| asyncQueue 			|`异步队列的一些通用类`|
+| badWord 			|`使用单词查找树进行脏字过滤的类`|
+| classloader	|`类加载器  热更新工具包`|
 | classScanner	|`类的扫描 可以扫描一些特定的class 避免需要配置来确定关系.`|
 | collection.safe |`安全的集合类, 使用后. 不允许修改内容.`|
 | common 		|`通用的一些判断, 在不在大的集合等`|
 | data 			|`自己定义了一个keyval的类, 大部分的get 转换关系写这`|
 | date 			|`时间的工具类`|
 | encryptAndDecrypt |`加密 解密相关`|
-| hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
+| exception 			|`部分通用的异常定义`|
+| file 			|`文件的操作, 可复制 移动  读写内容等等`|
 | groovy			|`使用groovy 脚本的工具类.优化使用中可能出现的线程安全问题`|
+| gzip 			|`对byte数组的 zip压缩 解压缩操作工具类`|
+| hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
 | http 			|`Http 的工具类`|
 | json 			|`json相关的操作`|
-| net 			|`网络相关的操作 得到内网ip什么`|
+| listener 			|`一个监听工具类. 可以实现监听接口后, 处理对应的监听事件.`|
 | math 			|`随机啊什么的工具相关`|
-| pool 			|`自己实现的简易池`|
+| net 			|`网络相关的操作 得到内网ip什么`|
 | property 		|`加载properties 相关的工具`|
 | shell 		|`操作shell脚本, 以及返回结果`|
+| string 		|`对字符串的一些操作方法`|
+| system 		|`获取系统内存当前pid等方法`|
 | threadLocal 		|`线程变量类的简易封装`|
-| timer 		|`调度相关的东西. 是Timer的封装`|
+| timer 		|`调度相关的东西. 是 ScheduledThreadPoolExecutor 的封装`|
 
 ### Test
 > 基本都有测试类, 可以自行添加. 自行测试
