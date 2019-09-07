@@ -5,16 +5,13 @@ import org.qiunet.utils.string.StringUtil;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class FileUtil {
 	private static final String loadWorkHomeName = ".xdProject";
 	private static final String loadWorkFileName = ".xd.project";
-
+	private static final Set<String> postfixs = new HashSet(Arrays.asList(new String[]{"xlsx", "xls", "xd", "json"}));
 
 	public static File returnWorkFile() {
 		Path path = Paths.get(System.getProperty("user.home"), loadWorkHomeName, loadWorkFileName);
@@ -131,4 +128,17 @@ public class FileUtil {
 		return isExcel2003(filePath) || isExcel2007(filePath);
 	}
 
+	public static final boolean filePostfixCheck(File file) {
+		String fileName = file.getName();
+
+		if (fileName.startsWith("~") || fileName.startsWith(".")) return false;
+
+		if (file.isFile()) {
+			if (file.getName().contains(".")) {
+				String postfix = file.getName().substring(file.getName().indexOf(".") + 1);
+				if (!postfixs.contains(postfix)) return false;
+			}
+		}
+		return true;
+	}
 }

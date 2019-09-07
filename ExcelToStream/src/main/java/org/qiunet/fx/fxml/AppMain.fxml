@@ -8,7 +8,7 @@
 <?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="600.0" maxWidth="900.0" prefHeight="545.0" prefWidth="1070.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
+<AnchorPane maxHeight="600.0" maxWidth="900.0" prefHeight="600.0" prefWidth="900.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.qiunet.fx.controller.AppMainController">
   <children>
     <TabPane fx:id="tabPane" prefHeight="530.0" prefWidth="1042.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="0.0">
       <tabs>
@@ -45,28 +45,13 @@
                     <Separator layoutY="79.0" prefWidth="834.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   </children>
                 </AnchorPane>
-                <SplitPane dividerPositions="0.4632183908045977, 0.7" focusTraversable="true" prefHeight="324.0" prefWidth="872.0" AnchorPane.bottomAnchor="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
+                <SplitPane dividerPositions="0.6931034482758621" focusTraversable="true" prefHeight="324.0" prefWidth="872.0" AnchorPane.bottomAnchor="92.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="84.0">
                   <items>
-                    <AnchorPane maxWidth="400.0" minWidth="400.0" prefHeight="377.0" prefWidth="416.0">
+                    <AnchorPane minWidth="600.0" prefHeight="322.0" prefWidth="490.0">
                       <children>
-                        <TableView fx:id="table" prefHeight="286.0" prefWidth="400.0" AnchorPane.bottomAnchor="36.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                          <columns>
-                            <TableColumn prefWidth="50.0" text="选中" fx:id="tab_check" />
-                            <TableColumn prefWidth="350.0" text="名称" fx:id="tab_name" />
-                          </columns>
-                        </TableView>
-                        <AnchorPane prefHeight="36.0" prefWidth="350.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                          <children>
-                            <CheckBox fx:id="checkAll" layoutX="22.0" layoutY="10.0" mnemonicParsing="false" selected="true" text="全选" />
-                            <Label font="$x1" layoutX="188.0" layoutY="6.0" text="总数：" />
-                            <Label fx:id="allCount" font="$x1" layoutX="226.0" layoutY="6.0" prefWidth="40.0" text="999" />
-                            <Label font="$x1" layoutX="266.0" layoutY="5.0" text="选中：" />
-                            <Label fx:id="checkCount" font="$x1" layoutX="304.0" layoutY="5.0" prefWidth="40.0" text="999" />
-                          </children>
-                        </AnchorPane>
+                        <TreeView fx:id="treeView"  prefHeight="364.0" prefWidth="594.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"  />
                       </children>
                     </AnchorPane>
-                    <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="70.0" />
                     <AnchorPane minHeight="200.0" minWidth="200.0" prefHeight="377.0" prefWidth="417.0">
                       <children>
                         <TextArea fx:id="msgContent" editable="false" prefHeight="378.0" prefWidth="309.0" text="版本：v1.0&#10;系统信息输出&#10;" visible="true" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
