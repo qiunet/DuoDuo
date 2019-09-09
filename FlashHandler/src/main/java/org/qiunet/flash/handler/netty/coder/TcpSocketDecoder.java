@@ -4,12 +4,9 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -54,8 +51,7 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		if (encryption && ! header.encryptionValid(CrcUtil.getCrc32Value(bytes))) {
-			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+header);
+		if (encryption && (bytes = header.validAndDecryptBytes(bytes)) == null) {
 			ctx.channel().close();
 			return;
 		}
