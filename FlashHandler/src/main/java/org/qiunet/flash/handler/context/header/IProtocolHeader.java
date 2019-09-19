@@ -31,9 +31,9 @@ public interface IProtocolHeader {
 	 */
 	int getLength();
 	/***
-	 * 对剩余bytes的校验数据进行校验
-	 * @param validData
-	 * @return
+	 * 对剩余bytes的校验数据进行校验并解密.
+	 * @param bytes 原始的byte数组
+	 * @return 如果校验成功, 返回解密的bytes 否则null
 	 */
-	boolean encryptionValid(Object validData);
+	byte[] validAndDecryptBytes(byte [] bytes);
 }

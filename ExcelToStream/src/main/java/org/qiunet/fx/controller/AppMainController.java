@@ -1,14 +1,20 @@
 package org.qiunet.fx.controller;
 
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
-import org.qiunet.fx.bean.TableData;
+import org.qiunet.fx.bean.ConfigData;
+import org.qiunet.fx.bean.FileTreeItem;
+import org.qiunet.fx.bean.GlobalMenu;
 import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.utils.ExecutorServiceUtil;
 import org.qiunet.utils.FileUtil;
@@ -16,8 +22,10 @@ import org.qiunet.utils.FxUIUtil;
 import org.qiunet.utils.SvnUtil;
 import org.qiunet.utils.string.StringUtil;
 
+import java.awt.*;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -26,8 +34,6 @@ import java.util.stream.Collectors;
 public class AppMainController extends BaseController {
 
 	private Stage stage;
-	@FXML
-	private TabPane tabPane;
 	@FXML
 	private RadioButton searchAll;
 	@FXML
@@ -40,8 +46,6 @@ public class AppMainController extends BaseController {
 	private ChoiceBox<String> excelPaths;
 
 	private final ToggleGroup searchGroup = new ToggleGroup();
-	//excel列表的缓存
-	private Map<String, ObservableList<TableData>> tabDataCache = new HashMap<>();
 
 	//信息输出
 	@FXML
@@ -49,15 +53,6 @@ public class AppMainController extends BaseController {
 	@FXML
 	private ChoiceBox<String> outPaths;
 
-	/**
-	 * 表格数据
-	 */
-	@FXML
-	private TableView<TableData> table;
-	@FXML
-	private TableColumn<TableData, String> tab_name;
-	@FXML
-	private TableColumn<TableData, Boolean> tab_check;
 
 	@FXML
 	private CheckBox checkJson;
@@ -66,11 +61,7 @@ public class AppMainController extends BaseController {
 	@FXML
 	private CheckBox checkXD;
 	@FXML
-	private CheckBox checkAll;
-	@FXML
-	private Label allCount;
-	@FXML
-	private Label checkCount;
+	private TreeView<File> treeView;
 
 	@Override
 	public void init(Object... objs) {
@@ -81,116 +72,96 @@ public class AppMainController extends BaseController {
 		/**初始化下拉选择框*/
 		intiChoiceBox();
 
-		checkBoxListener();
+
+		addTreeViewListener();
 	}
 
-	public void checkBoxListener() {
-		checkAll.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			table.getItems().stream().forEach(tableData -> tableData.setCheck(newValue));
-			setCount();
-		});
 
+	public void initCheckBox(ConfigData data) {
+		if (data == null) return;
+		checkXML.setSelected(data.isXml());
+		checkJson.setSelected(data.isJson());
+		checkXD.setSelected(data.isXd());
 	}
 
-	public void setCount() {
-		allCount.setText(table.getItems().size() + "");
-		checkCount.setText(getCheckExcelPaths().size() + "");
-	}
 
-	//加载表格数据
-	public ObservableList<TableData> loadTableData(String filePath) {
+	//加载tree数据
+	public void loadTreeData(String filePath) {
 		if (StringUtil.isEmpty(filePath))
-			return FXCollections.observableArrayList();
-		ObservableList<TableData> list = tabDataCache.get(filePath);
-		if (list == null) {
-			list = FXCollections.observableArrayList();
-			List<File> pathList = FileUtil.getExcelArrays(filePath);
-
-			if (!pathList.isEmpty()) {
-				for (File file : pathList) {
-					list.add(new TableData(file));
-				}
-			}
-			tabDataCache.put(filePath, list);
+			return;
+		File rootFile = new File(filePath);
+		TreeItem<File> rootItem = new TreeItem<>(rootFile);
+		for (File file : rootFile.listFiles()) {
+			if (!FileUtil.filePostfixCheck(file)) continue;
+			FileTreeItem rootsitem = new FileTreeItem(file);
+			rootItem.getChildren().add(rootsitem);
 		}
-		return tabDataCache.get(filePath);
+		FxUIUtil.addUITask(()->{
+			treeView.setRoot(rootItem);
+		});
+
 	}
 
-	//显示列表
-	public void showTableData(final ObservableList<TableData> list) {
-		FxUIUtil.addUITask(() -> {
-			tab_name.setCellValueFactory(cell -> cell.getValue().nameProperty());
-			tab_check.setCellValueFactory(cell -> cell.getValue().checkProperty());
-			tab_check.setCellFactory((col) -> {
-				TableCell<TableData, Boolean> cell = new TableCell<TableData, Boolean>() {
-					@Override
-					public void updateItem(Boolean item, boolean empty) {
-						super.updateItem(item, empty);
-						this.setText(null);
-						this.setGraphic(null);
-						if (!empty) {
-							CheckBox checkBox = new CheckBox();
-							if (item != null)
-								checkBox.setSelected(item);
-							this.setGraphic(checkBox);
-							checkBox.selectedProperty().addListener((obVal, oldVal, newVal) -> {
-								TableData tableData = this.getTableView().getItems().get(getIndex());
-								tableData.setCheck(checkBox.isSelected());
-								setCount();
-							});
-						}
+	//添加tree事件监听
+	public void addTreeViewListener() {
+		GlobalMenu.getInstance().addOnAction(treeView);
+		treeView.setContextMenu(GlobalMenu.getInstance());
+		treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				MouseButton type = mouseEvent.getButton();
+				TreeItem<File> item = treeView.getSelectionModel().getSelectedItem();
+				//双击左键
+				if (type == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
+					try {
+						Desktop.getDesktop().open(item.getValue());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-				};
-				return cell;
-			});
-			table.setItems(list);
-			setCount();
+				}
+
+
+			}
 		});
 	}
 
-	/**
-	 * 获取选中的列表
-	 *
-	 * @return
-	 */
-	public List<String> getCheckExcelPaths() {
-		ObservableList<TableData> list = table.getItems();
-		if (list == null || list.isEmpty())
-			return Collections.emptyList();
-		return list.stream().filter(data -> data.isCheck()).map(data -> data.getName()).collect(Collectors.toList());
-	}
 
 	/***/
 	public void intiChoiceBox() {
-		Map<String, String> outPathMap = ConfigManager.getInstance().getOut_path();
-		Set<String> set = ConfigManager.getInstance().getExcel_path_array();
-		if (set != null && !set.isEmpty())
-			excelPaths.getItems().addAll(set);
-		String last_excel = ConfigManager.getInstance().getLast_check_excel();
-		if (!StringUtil.isEmpty(last_excel)) {
-			excelPaths.getSelectionModel().select(last_excel);
-			showTableData(loadTableData(last_excel));
+		List<ConfigData> configDataList = ConfigManager.getInstance().getConfigDataList();
+		ConfigData configData = null;
+		if (configDataList != null && !configDataList.isEmpty()) {
+			excelPaths.getItems().addAll(configDataList.stream().map(data -> data.getExcelPath()).collect(Collectors.toList()));
+			configData = configDataList.get(0);
+		}
+
+		if (configData != null) {
+			excelPaths.getSelectionModel().select(configData.getExcelPath());
+			initCheckBox(configData);
+			loadTreeData(configData.getExcelPath());
 		}
 		//下拉选择框事件监听
 		excelPaths.getSelectionModel().selectedIndexProperty().addListener(((observable, oldValue, newValue) -> {
 			if (oldValue.equals(newValue))
 				return;
 			String path = excelPaths.getItems().get(excelPaths.getSelectionModel().getSelectedIndex());
-			boolean isOutHas = outPathMap.containsKey(path);
-			if (isOutHas) {
-				outPaths.getSelectionModel().select(outPathMap.get(path));
+			ConfigData data = ConfigManager.getInstance().getData(path);
+			String outPath = null;
+			if (data != null && (outPath = data.getFirstOutPath()) != null) {
+				outPaths.getSelectionModel().select(outPath);
 			}
 			ExecutorServiceUtil.getInstance().submit(() -> {
-				ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
+				ConfigManager.getInstance().addConfigData(path, checkXML.isSelected(), checkXD.isSelected(), checkJson.isSelected(), null);
 			});
-			showTableData(loadTableData(path));
+			initCheckBox(data);
+			loadTreeData(path);
 		}));
 
+		String outPath = null;
+		if (configData != null &&  (outPath = configData.getFirstOutPath()) != null) {
+			outPaths.getItems().addAll(configData.getOutPaths());
 
-		if (outPathMap != null && !outPathMap.isEmpty()) {
-			outPaths.getItems().addAll(outPathMap.values());
-			if (!StringUtil.isEmpty(last_excel) && !StringUtil.isEmpty(outPathMap.get(last_excel)))
-				outPaths.getSelectionModel().select(outPathMap.get(last_excel));
+			outPaths.getSelectionModel().select(outPath);
 		}
 
 		outPaths.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
@@ -198,13 +169,15 @@ public class AppMainController extends BaseController {
 				return;
 			final String path = outPaths.getItems().get(outPaths.getSelectionModel().getSelectedIndex());
 			ExecutorServiceUtil.getInstance().submit(() -> {
-				ConfigManager.getInstance().writeOutPath(getChoiceSelect(excelPaths), path);
+				ConfigManager.getInstance().addConfigData(getChoiceSelect(excelPaths), checkXML.isSelected(), checkXD.isSelected(), checkJson.isSelected(), path);
 			});
 		});
 
 	}
 
 	public <T> T getChoiceSelect(ChoiceBox<T> choiceBox) {
+		if (choiceBox.getSelectionModel().getSelectedIndex() < 0)
+			return null;
 		return choiceBox.getItems().get(choiceBox.getSelectionModel().getSelectedIndex());
 	}
 
@@ -274,11 +247,11 @@ public class AppMainController extends BaseController {
 				break;
 			}
 			case svn_update: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true, msgContent,"");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, ConfigManager.getInstance().getLast_check_excel(), true, msgContent, "");
 				break;
 			}
 			case svn_commit: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, ConfigManager.getInstance().getLast_check_excel(), false, msgContent, "log");
 				break;
 			}
 			case clean: {
@@ -305,10 +278,10 @@ public class AppMainController extends BaseController {
 						outPaths.getSelectionModel().select(path);
 					}
 					ExecutorServiceUtil.getInstance().submit(() -> {
-						ConfigManager.getInstance().writeOutPath(getChoiceSelect(excelPaths), path);
+						ConfigManager.getInstance().addConfigData( getChoiceSelect(excelPaths), checkXML.isSelected(),checkXD.isSelected(),checkJson.isSelected(),path);
+
 					});
 				}
-
 				break;
 			}
 			case openExcelPath: {
@@ -321,20 +294,19 @@ public class AppMainController extends BaseController {
 					}
 					ExecutorServiceUtil.getInstance().submit(() -> {
 						if (!has)
-							ConfigManager.getInstance().write(ConfigManager.excel_path_array_key, path, true);
-						ConfigManager.getInstance().write(ConfigManager.last_check_excel_key, path, false);
-						showTableData(loadTableData(path));
+							ConfigManager.getInstance().addConfigData( path, true,true,true,path);
+						loadTreeData(path);
 					});
 				}
 
 				break;
 			}
 			case out_svn_commit: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.commit, getChoiceSelect(outPaths), false, msgContent, "log");
 				break;
 			}
 			case out_svn_update: {
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true, msgContent,"log");
+				SvnUtil.svnEvent(SvnUtil.SvnCommand.update, getChoiceSelect(outPaths), true, msgContent, "log");
 				break;
 			}
 			case exportAll: {
@@ -351,7 +323,7 @@ public class AppMainController extends BaseController {
 				boolean json = checkJson.isSelected();
 				boolean xml = checkXML.isSelected();
 				boolean xd = checkXD.isSelected();
-				List<String> checkExcelPaths = getCheckExcelPaths();
+				//List<String> checkExcelPaths = getCheckExcelPaths();
 				//TODO 执行导出方法
 				break;
 			}

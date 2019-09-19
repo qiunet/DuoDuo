@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 
@@ -12,6 +14,7 @@ import java.util.Arrays;
  * 17/7/19
  */
 public class DefaultProtocolHeader implements IProtocolHeader {
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	/**包头识别码*/
 	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 
@@ -54,8 +57,13 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public boolean encryptionValid(Object validData) {
-		return ((Long) validData).intValue() == this.crc;
+	public byte[] validAndDecryptBytes(byte [] bytes) {
+		boolean ret = (int)CrcUtil.getCrc32Value(bytes) == this.crc;
+		if (! ret) {
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+ this.crc);
+		}
+		// 仅仅使用crc32校验了, 没有进行加密
+		return bytes;
 	}
 
 	@Override
