@@ -7,8 +7,8 @@
     能够在第一时间反应过来问题出在哪.
     
 ## 名词解释
-* Do Database Object 持久化对象 负责跟数据库交互的对象
-* Bo Business Object 业务对象, 给业务提供支持的对象
+* Do Data Object 持久化对象(阿里规范) 负责跟数据库交互的对象
+* Bo Business Object 业务对象(阿里规范), 给业务提供支持的对象
 * DataSupport 操作数据的类, 会自动搞定异步更新等问题
 * Service    处理业务的一些公用方法
 * Handler   处理请求的逻辑类. 一个请求一个handler
@@ -54,4 +54,4 @@
 
 
 ## 交流
-QQ群: `669409114`
+QQ群: `669409114` , 入群请附带申请留言: "Github"
