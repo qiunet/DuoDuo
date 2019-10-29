@@ -72,7 +72,7 @@
 						</goals>
 						<configuration>
 							<classifier>sources</classifier>
-							<includes>org/qiunet/**, **/*.vm</includes>
+							<includes>org/qiunet/**, **/*.vm, **/*.xsd</includes>
 							<includeScope>runtime</includeScope>
 							<includeGroupIds>${project.groupId}</includeGroupIds>
 							<outputDirectory>${generatedSourceDir}</outputDirectory>
@@ -87,7 +87,7 @@
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
-							<includes>org/qiunet/**,**/*.vm,META-INF/native/**</includes>
+							<includes>org/qiunet/**,**/*.vm, **/*.xsd,META-INF/native/**</includes>
 							<includeScope>runtime</includeScope>
 							<includeGroupIds>${project.groupId}</includeGroupIds>
 							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
