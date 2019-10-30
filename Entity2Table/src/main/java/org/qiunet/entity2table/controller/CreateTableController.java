@@ -75,7 +75,7 @@ class CreateTableController implements IApplicationContextAware {
 			// 验证是否有更新
 			if (tableColumn.getJdbcType() != entityFieldParam.getColumnJdbcType()) {
 				if (!tableColumn.getJdbcType().canAlterTo(entityFieldParam.getColumnJdbcType())) {
-					throw new IllegalArgumentException("Can not change jdbcType [" + tableColumn.getJdbcType() + "] to [" + entityFieldParam.getColumnJdbcType() + "]");
+					throw new IllegalArgumentException("table [" + table.name() + "]  column[" + tableColumn.getColumn_name() + "] Can not change jdbcType [" + tableColumn.getJdbcType() + "] to [" + entityFieldParam.getColumnJdbcType() + "]");
 				}
 				// 1.验证类型
 				modifyFieldList.add(entityFieldParam);

@@ -20,6 +20,10 @@ public enum  ColumnJdbcType {
 	/***
 	 * 0 ~ 255 的文本
 	 */
+	VARCHAR190("VARCHAR(190)", 200),
+	/***
+	 * 0 ~ 255 的文本
+	 */
 	VARCHAR255("VARCHAR(255)", 201),
 	/***
 	 * 0 ~ 1000 的文本
@@ -79,6 +83,7 @@ public enum  ColumnJdbcType {
 		columnType = columnType.toLowerCase();
 		if (columnType.startsWith("int")) return INT;
 		if (columnType.startsWith("bigint")) return BIGINT;
+		if (columnType.equals("varchar(190)")) return VARCHAR190;
 		if (columnType.equals("varchar(255)")) return VARCHAR255;
 		if (columnType.equals("varchar(1000)")) return VARCHAR1000;
 		if (columnType.equals("text")) return TEXT;
