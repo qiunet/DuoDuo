@@ -72,7 +72,12 @@
 						</goals>
 						<configuration>
 							<classifier>sources</classifier>
-							<includes>org/qiunet/**, **/*.vm, **/*.xsd</includes>
+							<includes>
+								mybatis/CreateTableMapper.xml,
+								org/qiunet/**,
+								**/*.vm,
+								**/*.xsd
+							</includes>
 							<includeScope>runtime</includeScope>
 							<includeGroupIds>${project.groupId}</includeGroupIds>
 							<outputDirectory>${generatedSourceDir}</outputDirectory>
@@ -87,7 +92,13 @@
 							<goal>unpack-dependencies</goal>
 						</goals>
 						<configuration>
-							<includes>org/qiunet/**,**/*.vm, **/*.xsd,META-INF/native/**</includes>
+							<includes>
+								org/qiunet/**,
+								**/*.vm,
+								mybatis/CreateTableMapper.xml,
+								**/*.xsd,
+								META-INF/native/**
+							</includes>
 							<includeScope>runtime</includeScope>
 							<includeGroupIds>${project.groupId}</includeGroupIds>
 							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
@@ -202,6 +213,13 @@
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetUtils</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>Entity2Table</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
