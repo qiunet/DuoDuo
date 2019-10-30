@@ -20,10 +20,10 @@ public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.
 #end
 ### constructor
 
-#if(${define.ConstructorDefines.empty})
+###if(${define.ConstructorDefines.empty})
 	/**默认的构造函数**/
 	public ${define.DoName}(){}
-#end
+###end
 #foreach(${constructorDefine} in ${define.ConstructorDefines})
 	public ${define.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${velocityCount} < (${constructorDefine.fields.size()})),#end#end){
 #foreach(${field} in ${constructorDefine.fields})
