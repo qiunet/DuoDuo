@@ -30,7 +30,7 @@ public final class ChannelUtil {
 
 		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(header.getLength() + adapter.getHeaderLength());
 		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(content.bytes());
+		byteBuf.writeBytes(header.encodeBytes(content.bytes()));
 		return byteBuf;
 	}
 }
