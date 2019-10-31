@@ -14,9 +14,6 @@ public class DbProperties extends LoaderProperties {
 	private DbProperties() {
 		super("db.properties");
 	}
-	public String getDbName(){
-		return getString("db_name");
-	}
 
 	/***
 	 * 同步 或者 异步
