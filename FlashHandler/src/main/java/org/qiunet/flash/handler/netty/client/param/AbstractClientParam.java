@@ -49,6 +49,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 
 		protected int maxReceivedLength = 1024 * 1024 * 8;
 		protected InetSocketAddress address;
+		protected boolean encryption = true;
 
 		public B setAddress(InetSocketAddress address) {
 			this.address = address;
@@ -68,6 +69,11 @@ public abstract class AbstractClientParam implements IClientConfig {
 			return (B) this;
 		}
 
+		public B setEncryption(boolean encryption) {
+			this.encryption = encryption;
+			return (B) this;
+		}
+
 		/**
 		 * 构造build
 		 * @return
@@ -79,6 +85,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 			p.protocolHeaderAdapter = protocolHeaderAdapter;
 			p.maxReceivedLength = maxReceivedLength;
 			p.address = address;
+			p.encryption = encryption;
 			this.buildInner(p);
 			return p;
 		}
