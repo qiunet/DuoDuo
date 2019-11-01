@@ -27,10 +27,12 @@ public final class ChannelUtil {
 	public static ByteBuf messageContentToByteBuf(MessageContent content, Channel channel) {
 		IProtocolHeaderAdapter adapter = getProtolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.newHeader(content);
+		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
+		byte[] bytes = header.encodeBytes(content.bytes());
 
 		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(header.getLength() + adapter.getHeaderLength());
 		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(header.encodeBytes(content.bytes()));
+		byteBuf.writeBytes(bytes);
 		return byteBuf;
 	}
 }
