@@ -18,10 +18,10 @@ public class AppMainStage extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource(AppMain.fxml_path + "AppMain.fxml"));
+			FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource("/AppMain.fxml"));
 			Parent root = loader.load();
 			Scene scene = new Scene(root, 600, 400);
-			primaryStage.setTitle("game_tool");
+			primaryStage.setTitle("配置文件转换工具");
 			primaryStage.setScene(scene);
 			primaryStage.setMinHeight(600);
 			primaryStage.setMinWidth(900);
