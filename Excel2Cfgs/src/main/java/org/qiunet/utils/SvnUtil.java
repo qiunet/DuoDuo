@@ -12,14 +12,14 @@ import java.io.*;
 
 public class SvnUtil {
 	private static Logger logger = LoggerType.DUODUO.getLogger();
-	private static OSType osType = OSType.getOSType(SystemPropertyUtil.getOsName());
+	private static SystemPropertyUtil.OSType osType = SystemPropertyUtil.getOsName();
 
 	public static void svnEvent(SvnCommand command, String path, boolean close, TextInputControl input,String log) {
 		if (StringUtil.isEmpty(path)) {
 			FxUIUtil.sendMsgToTextInput(input, "路径不能为null!\n", true);
 			return;
 		}
-		if (!OSType.WINDOWS.is(osType) && SvnCommand.commit == command) {
+		if (!SystemPropertyUtil.OSType.WINDOWS.is(osType) && SvnCommand.commit == command) {
 			execSvn(splicing(SvnCommand.add, path, close,log), input);
 		}
 		String shell = splicing(command, path, close,log);
@@ -53,25 +53,6 @@ public class SvnUtil {
 		add,;
 	}
 
-	public enum OSType {
-		MAC_OS,
-		WINDOWS,
-		LINUX,;
-
-		public boolean is(OSType type) {
-			return this == type;
-		}
-
-		public static OSType getOSType(String osName) {
-			if (osName.startsWith("Mac OS")) {
-				return OSType.MAC_OS;
-			} else if (osName.startsWith("Windows")) {
-				return OSType.WINDOWS;
-			} else {
-				return OSType.LINUX;
-			}
-		}
-	}
 
 
 	public static String execSvn(String svn, TextInputControl input) {
