@@ -203,8 +203,29 @@ public final class SystemPropertyUtil {
 	 * get operation system name
 	 * @return
 	 */
-	public static String getOsName(){
-		return get("os.name");
+	public static OSType getOsName(){
+		return OSType.getOSType(get("os.name"));
+	}
+
+
+	public enum OSType {
+		MAC_OS,
+		WINDOWS,
+		LINUX,;
+
+		public boolean is(OSType type) {
+			return this == type;
+		}
+
+		public static OSType getOSType(String osName) {
+			if (osName.startsWith("Mac OS")) {
+				return OSType.MAC_OS;
+			} else if (osName.startsWith("Windows")) {
+				return OSType.WINDOWS;
+			} else {
+				return OSType.LINUX;
+			}
+		}
 	}
 
 	public static String getPathSeparator() {
