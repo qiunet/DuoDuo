@@ -98,7 +98,7 @@ public class MathUtil {
 	 * @param <T>
 	 * @return
 	 */
-	public <T extends IWeightObj> T randByWeight(List<T> list) {
+	public static <T extends IWeightObj> T randByWeight(List<T> list) {
 		int totalRandNum = list.stream().mapToInt(IWeightObj::weight).sum();
 		return randByWeight(list, totalRandNum);
 	}
@@ -110,7 +110,7 @@ public class MathUtil {
 	 * @param <T>
 	 * @return
 	 */
-	public <T extends IWeightObj> T randByWeight(List<T> list, int totalRandNum) {
+	public static <T extends IWeightObj> T randByWeight(List<T> list, int totalRandNum) {
 		int rand = MathUtil.random(totalRandNum) ,start = 0;
 		for (T obj : list) {
 			if (rand >= start && rand < start+obj.weight()) {
