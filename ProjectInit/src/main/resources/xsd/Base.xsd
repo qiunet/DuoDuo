@@ -21,6 +21,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="NULL" />
+			<xs:enumeration value="VARCHAR190" />
 			<xs:enumeration value="VARCHAR255" />
 			<xs:enumeration value="VARCHAR1000" />
 			<xs:enumeration value="TEXT" />

@@ -46,7 +46,7 @@ public final class ClassScanner implements IApplicationContext {
 	private AtomicBoolean scannered = new AtomicBoolean();
 	public void scanner(String ... packetPrefix){
 		if (scannered.get()) {
-			logger.error("Duplicate scanner!!!");
+			logger.error("Duplicate scanner!!!", new IllegalStateException("Class scanner was initialization, can not scanner again."));
 			return;
 		}
 

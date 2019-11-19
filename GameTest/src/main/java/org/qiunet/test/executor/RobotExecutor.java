@@ -30,9 +30,9 @@ public final class RobotExecutor {
 	public RobotExecutor(ExecutorParams params){
 		this.params = params;
 		// 已经默认集成了 org.qiunet
-		logger.error("-------测试初始化开始-------");
-		ClassScanner.getInstance().scanner();
-		logger.error("-------测试初始化结束-------");
+//		logger.error("-------测试初始化开始-------");
+//		ClassScanner.getInstance().scanner();
+//		logger.error("-------测试初始化结束-------");
 
 		if (params.getInitializer() != null) {
 			logger.error("-------用户自定义初始化代码开始-------");

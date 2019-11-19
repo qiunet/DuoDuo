@@ -67,6 +67,11 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
+	public byte[] encodeBytes(byte[] bytes) {
+		return bytes;
+	}
+
+	@Override
 	public int getProtocolId() {
 		return protocolId;
 	}

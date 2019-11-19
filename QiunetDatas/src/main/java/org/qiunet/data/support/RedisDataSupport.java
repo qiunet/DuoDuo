@@ -117,6 +117,9 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 			bo = supplier.get(aDo);
 			this.setDataObjectJson(aDo);
 			ThreadContextData.put(redisKey, bo);
+		}else{
+			bo = supplier.get(aDo);
+			ThreadContextData.put(redisKey, bo);
 		}
 		return bo;
 	}
