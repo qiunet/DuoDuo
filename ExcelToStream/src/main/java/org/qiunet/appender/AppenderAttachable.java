@@ -62,4 +62,7 @@ public class AppenderAttachable implements Appender{
 			appender.fileOver();
 		}
 	}
+	public int getAppenderSize(){
+		return appenders.size();
+	}
 }
