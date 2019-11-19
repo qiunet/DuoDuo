@@ -1,11 +1,14 @@
 package org.qiunet.fx.bean;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
+import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.TextArea;
+import org.qiunet.utils.ExcelToStream;
+import org.qiunet.utils.FxUIUtil;
+import org.qiunet.utils.string.StringUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -18,7 +21,6 @@ public class GlobalMenu extends ContextMenu {
 
 	private final static String export_id = "export";
 	private final static String open_id = "open";
-
 
 
 	/**
@@ -48,28 +50,48 @@ public class GlobalMenu extends ContextMenu {
 		return INSTANCE;
 	}
 
-	public void addOnAction(final TreeView<File> treeView){
-		EventHandler<ActionEvent> handler=new TreeEventHandler(treeView);
-		getItems().stream().forEach(item->setOnAction(handler));
+	public void addOnAction(final TreeView<File> treeView, TextArea msgContent) {
+		EventHandler<ActionEvent> handler = new TreeEventHandler(treeView, msgContent);
+		getItems().stream().forEach(item -> setOnAction(handler));
 	}
 
 	private static class TreeEventHandler implements EventHandler<ActionEvent> {
 
+		private void export(File file) {
+			ExcelToStream excelToStream = new ExcelToStream();
+			if (file.isDirectory()) {//文件夹操作
+				ObservableList<TreeItem<File>> list = treeView.getRoot().getChildren();
+				try {
+					for (TreeItem<File> o : list) {
+						String msg = excelToStream.excelToStream(o.getValue());
+						FxUIUtil.sendMsgToTextInput(msgContent, msg, true);
 
-		final  TreeView<File> treeView;
+					}
+				} catch (Exception e) {
+					FxUIUtil.sendMsgToTextInput(msgContent, e.getMessage(), true);
+				}
+			} else if (file.isFile()) {
+				FxUIUtil.sendMsgToTextInput(msgContent, excelToStream.excelToStream(file), true);
+			}
 
-		public TreeEventHandler (TreeView<File> treeView){
-			this.treeView=treeView;
+		}
+
+		final TreeView<File> treeView;
+		final TextArea msgContent;
+
+		public TreeEventHandler(TreeView<File> treeView, TextArea msgContent) {
+			this.treeView = treeView;
+			this.msgContent = msgContent;
 		}
 
 		@Override
 		public void handle(ActionEvent event) {
-			if(treeView==null) return;
+			if (treeView == null) return;
 			Object tag = event.getTarget();
 			if (tag instanceof MenuItem) {
-				TreeItem<File> treeItem=treeView.getSelectionModel().getSelectedItem();
-				if(treeItem==null) return;
-				File file=treeItem.getValue();
+				TreeItem<File> treeItem = treeView.getSelectionModel().getSelectedItem();
+				if (treeItem == null) return;
+				File file = treeItem.getValue();
 				MenuItem menuItem = (MenuItem) tag;
 				try {
 					switch (menuItem.getId()) {
@@ -77,13 +99,12 @@ public class GlobalMenu extends ContextMenu {
 							Desktop.getDesktop().open(file);
 							break;
 						case export_id:
-							System.out.println("导出："+file.getName());
+							export(file);
 							break;
 						default:
-							throw new RuntimeException("无法识别id:"+menuItem.getId());
+							throw new RuntimeException("无法识别id:" + menuItem.getId());
 					}
-				}
-				catch (Exception e){
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 

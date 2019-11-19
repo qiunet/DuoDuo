@@ -104,7 +104,7 @@ public class AppMainController extends BaseController {
 
 	//添加tree事件监听
 	public void addTreeViewListener() {
-		GlobalMenu.getInstance().addOnAction(treeView);
+		GlobalMenu.getInstance().addOnAction(treeView,msgContent);
 		treeView.setContextMenu(GlobalMenu.getInstance());
 		treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
