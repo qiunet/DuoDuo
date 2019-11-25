@@ -19,6 +19,7 @@ public class FxUIUtil {
 		addUITask(() -> {
 			Alert alert = new Alert(alertType);
 			alert.setContentText(msg);
+			alert.setHeaderText(null);
 			alert.setTitle(title);
 			alert.showAndWait();
 		});
