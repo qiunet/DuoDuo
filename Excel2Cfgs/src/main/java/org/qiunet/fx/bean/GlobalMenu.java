@@ -50,7 +50,7 @@ public class GlobalMenu extends ContextMenu {
 		return INSTANCE;
 	}
 
-	public void addOnAction(final TreeView<File> treeView, TextArea msgContent) {
+	public void addOnAction(final TreeView<FileTreeItem.FileTree> treeView, TextArea msgContent) {
 		EventHandler<ActionEvent> handler = new TreeEventHandler(treeView, msgContent);
 		getItems().stream().forEach(item -> setOnAction(handler));
 	}
@@ -60,10 +60,10 @@ public class GlobalMenu extends ContextMenu {
 		private void export(File file) {
 			ExcelToStream excelToStream = new ExcelToStream();
 			if (file.isDirectory()) {//文件夹操作
-				ObservableList<TreeItem<File>> list = treeView.getRoot().getChildren();
+				ObservableList<TreeItem<FileTreeItem.FileTree>> list = treeView.getRoot().getChildren();
 				try {
-					for (TreeItem<File> o : list) {
-						String msg = excelToStream.excelToStream(o.getValue());
+					for (TreeItem<FileTreeItem.FileTree> o : list) {
+						String msg = excelToStream.excelToStream(o.getValue().getFile());
 						FxUIUtil.sendMsgToTextInput(msgContent, msg, true);
 
 					}
@@ -76,10 +76,10 @@ public class GlobalMenu extends ContextMenu {
 
 		}
 
-		final TreeView<File> treeView;
+		final TreeView<FileTreeItem.FileTree> treeView;
 		final TextArea msgContent;
 
-		public TreeEventHandler(TreeView<File> treeView, TextArea msgContent) {
+		public TreeEventHandler(TreeView<FileTreeItem.FileTree> treeView, TextArea msgContent) {
 			this.treeView = treeView;
 			this.msgContent = msgContent;
 		}
@@ -89,9 +89,9 @@ public class GlobalMenu extends ContextMenu {
 			if (treeView == null) return;
 			Object tag = event.getTarget();
 			if (tag instanceof MenuItem) {
-				TreeItem<File> treeItem = treeView.getSelectionModel().getSelectedItem();
+				TreeItem<FileTreeItem.FileTree> treeItem = treeView.getSelectionModel().getSelectedItem();
 				if (treeItem == null) return;
-				File file = treeItem.getValue();
+				File file = treeItem.getValue().getFile();
 				MenuItem menuItem = (MenuItem) tag;
 				try {
 					switch (menuItem.getId()) {
