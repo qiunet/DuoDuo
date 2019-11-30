@@ -96,7 +96,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		protected void buildInner(HttpBootstrapParams params) {
 			if (httpInterceptor == null) throw new NullPointerException("httpInterceptor can not be Null");
 			if (websocketPath != null) {
-				if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can equals websocketPath");
+				if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can not equals websocketPath");
 				if (webSocketInterceptor == null) throw new NullPointerException("webSocketInterceptor can not be Null");
 				if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
 				params.webSocketInterceptor = this.webSocketInterceptor;
