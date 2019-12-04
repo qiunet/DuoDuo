@@ -61,7 +61,7 @@ public class AppMainController extends BaseController {
 	@FXML
 	private CheckBox checkXD;
 	@FXML
-	private TreeView<File> treeView;
+	private TreeView<FileTreeItem.FileTree> treeView;
 
 	@Override
 	public void init(Object... objs) {
@@ -90,7 +90,7 @@ public class AppMainController extends BaseController {
 		if (StringUtil.isEmpty(filePath))
 			return;
 		File rootFile = new File(filePath);
-		TreeItem<File> rootItem = new TreeItem<>(rootFile);
+		FileTreeItem rootItem = new FileTreeItem(rootFile);
 		for (File file : rootFile.listFiles()) {
 			if (!FileUtil.filePostfixCheck(file)) continue;
 			FileTreeItem rootsitem = new FileTreeItem(file);
@@ -104,17 +104,17 @@ public class AppMainController extends BaseController {
 
 	//添加tree事件监听
 	public void addTreeViewListener() {
-		GlobalMenu.getInstance().addOnAction(treeView);
+		GlobalMenu.getInstance().addOnAction(treeView,msgContent);
 		treeView.setContextMenu(GlobalMenu.getInstance());
 		treeView.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent mouseEvent) {
 				MouseButton type = mouseEvent.getButton();
-				TreeItem<File> item = treeView.getSelectionModel().getSelectedItem();
+				TreeItem<FileTreeItem.FileTree> item = treeView.getSelectionModel().getSelectedItem();
 				//双击左键
 				if (type == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
 					try {
-						Desktop.getDesktop().open(item.getValue());
+						Desktop.getDesktop().open(item.getValue().getFile());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
