@@ -48,6 +48,7 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getNestListCfg();
+		this.initBySelf();
 	}
 	/***
 	 * 得到的map

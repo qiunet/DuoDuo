@@ -31,7 +31,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	protected BaseJsonCfgManager(String fileName) {
 		Cfg annotation = getClass().getAnnotation(Cfg.class);
-		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
+		CfgManagers.getInstance().addDataSettingManager(this, annotation == null ? 0 : annotation.order());
 		this.fileName = fileName;
 	}
 
@@ -51,7 +51,18 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 	abstract void init() throws Exception;
 
 	/**
+	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
+	 * 目前是空的实现,开发者选择是否覆盖函数
+	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
+	 * @throws Exception
+	 */
+	public void initBySelf() throws Exception {
+
+	}
+
+	/**
 	 * 获取配置文件真实路径
+	 *
 	 * @param fileName
 	 * @return
 	 */
@@ -61,12 +72,13 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	/**
 	 * json解析成为cfg对象
+	 *
 	 * @param sheetName
 	 * @param cfgClass
 	 * @param <Cfg>
 	 * @return
 	 */
-	protected <Cfg> List<Cfg> getSimpleListCfg(String sheetName, Class<Cfg> cfgClass) throws Exception{
+	protected <Cfg> List<Cfg> getSimpleListCfg(String sheetName, Class<Cfg> cfgClass) throws Exception {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
 		String json = null;
 		try {
@@ -81,7 +93,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 			List<Cfg> reList = new ArrayList<>();
 
 			for (JSONObject jsonObject : generalList) {
-				reList.add(generalCfg(jsonObject,cfgClass));
+				reList.add(generalCfg(jsonObject, cfgClass));
 			}
 			return reList;
 //			return JsonUtil.getGeneralList(json, cfgClass);
@@ -119,6 +131,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	/**
 	 * 从JSONObject 去到对应属性名的值
+	 *
 	 * @param field
 	 * @param jsonObject
 	 * @return
@@ -133,6 +146,6 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 		if (type == Double.TYPE || type == Double.class) return jsonObject.getDouble(name);
 		if (type == String.class) return jsonObject.getString(name);
 
-		throw new RuntimeException("not define convert for type ["+type.getName()+"]");
+		throw new RuntimeException("not define convert for type [" + type.getName() + "]");
 	}
 }

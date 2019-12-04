@@ -44,6 +44,7 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg(cfgClass);
+		this.initBySelf();
 	}
 
 	protected <Key, Cfg extends ISimpleMapConfig<Key>> Map<Key, Cfg> getSimpleMapCfg(Class<Cfg> cfgClass) throws Exception{
