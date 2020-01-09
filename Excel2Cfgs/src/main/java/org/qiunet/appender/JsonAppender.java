@@ -2,29 +2,35 @@ package org.qiunet.appender;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.qiunet.utils.DataType;
+import org.qiunet.frame.enums.DataType;
+import org.qiunet.frame.enums.OutPutType;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by qiunet.
  * 17/10/30
  */
-public class CliJsonAppender implements Appender{
-	private String outFileParent;
+public class JsonAppender implements IAppender {
 
 	private String filePrefix;
 
 	private JSONArray rowRecordArray;
 
 	private JSONObject rowRecord;
-
-	public CliJsonAppender(String outFileParent, String filePrefix) {
-		this.filePrefix = filePrefix;
-		this.outFileParent = outFileParent;
-
+	/**
+	 * 相对根目录的目录相对路径
+	 */
+	private String relativeDirPath;
+	public JsonAppender(String relativeDirPath, String filePrefix) {
+		this.relativeDirPath = relativeDirPath;
 		this.rowRecordArray = new JSONArray();
 		this.rowRecord = new JSONObject();
+		this.filePrefix = filePrefix;
+
 	}
 
 	@Override
@@ -41,10 +47,10 @@ public class CliJsonAppender implements Appender{
 	}
 
 	@Override
-	public void append(DataType datatype, String name, String val, boolean cliFlag) {
-		if (rowRecord == null) rowRecord = new JSONObject();
-
-		if ( !cliFlag ) return;
+	public void append(DataType datatype, String name, String val, OutPutType outPutType) {
+		if (rowRecord == null) {
+			rowRecord = new JSONObject();
+		}
 
 		switch (datatype) {
 			case DATA_STRING:
@@ -72,22 +78,26 @@ public class CliJsonAppender implements Appender{
 			return;
 		}
 		if (! this.rowRecordArray.isEmpty()){
-			File outFile = new File(outFileParent);
-			if (! outFile.exists()) outFile.mkdirs();
-			outFile = new File(outFileParent, filePrefix+"_"+sheetName+".json");
-
+			Path path = Paths.get(getServerOutputPath(), relativeDirPath, filePrefix + "_" + sheetName + ".json");
+			if (! path.toFile().getParentFile().exists()) {
+				path.toFile().getParentFile().mkdirs();
+			}
 			FileOutputStream fos = null;
 			OutputStreamWriter writer = null;
 			try {
-				fos = new FileOutputStream(outFile);
-				writer = new OutputStreamWriter(fos, "UTF-8");
+				fos = new FileOutputStream(path.toFile());
+				writer = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
 				writer.write(rowRecordArray.toJSONString());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}finally {
 				try {
-					if (writer != null)	writer.close();
-					if (fos != null)	fos.close();
+					if (writer != null) {
+						writer.close();
+					}
+					if (fos != null) {
+						fos.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -99,5 +109,10 @@ public class CliJsonAppender implements Appender{
 	@Override
 	public void fileOver() {
 
+	}
+
+	@Override
+	public String name() {
+		return "json";
 	}
 }

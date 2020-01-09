@@ -1,6 +1,7 @@
 package org.qiunet.appender;
 
-import org.qiunet.utils.DataType;
+import org.qiunet.frame.enums.DataType;
+import org.qiunet.frame.enums.OutPutType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.List;
  * Created by qiunet.
  * 17/10/30
  */
-public class AppenderAttachable implements Appender{
+public class AppenderAttachable implements IAppender {
 	private String fileName;
-	private List<Appender> appenders = new LinkedList<>();
+	private List<IAppender> appenders = new LinkedList<>();
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;
 	}
@@ -24,44 +25,44 @@ public class AppenderAttachable implements Appender{
 	 * 添加一个Appender
 	 * @param appender
 	 */
-	public void addAppender(Appender appender) {
+	public void addAppender(IAppender appender) {
 		this.appenders.add(appender);
 	}
 
 	@Override
 	public void rowRecordOver() {
-		for (Appender appender : appenders) {
-			appender.rowRecordOver();
-		}
+		appenders.forEach(IAppender::rowRecordOver);
 	}
 
 	@Override
 	public void recordNum(int count) {
-		for (Appender appender : appenders) {
-			appender.recordNum(count);
-		}
+		appenders.forEach(appender -> appender.recordNum(count));
 	}
 
 	@Override
-	public void append(DataType datatype, String name, String val, boolean cliFlag) {
-		for (Appender appender : appenders) {
-			appender.append(datatype, name, val, cliFlag);
+	public void append(DataType datatype, String name, String val, OutPutType outPutType) {
+		for (IAppender appender : appenders) {
+			appender.append(datatype, name, val, outPutType);
 		}
 	}
 
 	@Override
 	public void sheetOver(String sheetName) {
-		for (Appender appender : appenders) {
+		for (IAppender appender : appenders) {
 			appender.sheetOver(sheetName);
 		}
 	}
 
 	@Override
 	public void fileOver() {
-		for (Appender appender : appenders) {
-			appender.fileOver();
-		}
+		appenders.forEach(IAppender::fileOver);
 	}
+
+	@Override
+	public String name() {
+		return null;
+	}
+
 	public int getAppenderSize(){
 		return appenders.size();
 	}

@@ -1,4 +1,4 @@
-package org.qiunet.utils;
+package org.qiunet.frame.enums;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,28 +9,37 @@ import java.io.IOException;
  * 17/10/30
  */
 public enum DataType {
-
+	/**
+	 * string
+	 */
 	DATA_STRING("string") {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeUTF(val);
 		}
 	},
-
+	/**
+	 * double
+	 */
 	DATA_DOUBLE("double") {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeDouble(Double.parseDouble(val));
 		}
 	},
-
+	/***
+	 * int
+	 *
+	 */
 	DATA_INT("int") {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeInt(Integer.parseInt(val));
 		}
 	},
-
+	/***
+	 * long 类型
+	 */
 	DATA_LONG("long") {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
@@ -49,10 +58,11 @@ public enum DataType {
 	}
 
 	public static DataType parse(String val){
-		for(DataType t : values())
-			if(t.getType().equals(val.toLowerCase()))
+		for(DataType t : values()) {
+			if(t.getType().equals(val.toLowerCase())) {
 				return t;
-
+			}
+		}
 		return null;
 	}
 
