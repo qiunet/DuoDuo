@@ -1,5 +1,7 @@
 package org.qiunet.frame.setting;
 
+import org.qiunet.frame.enums.RoleType;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,6 +32,13 @@ public class Setting {
 	 * json是否勾选
 	 */
 	private boolean jsonChecked;
+	/***
+	 * 角色类型
+	 * 服务端 客户端 和 策划
+	 * 服务端 客户端输出到项目配置路径
+	 * 策划输出到根目录下.
+	 */
+	private String roleType = RoleType.SERVER;
 
 	public LinkedList<String> getExcelPaths() {
 		return excelPaths;
@@ -69,5 +78,13 @@ public class Setting {
 
 	public void setJsonChecked(boolean jsonChecked) {
 		this.jsonChecked = jsonChecked;
+	}
+
+	public String getRoleType() {
+		return roleType;
+	}
+
+	public void setRoleType(String roleType) {
+		this.roleType = roleType;
 	}
 }

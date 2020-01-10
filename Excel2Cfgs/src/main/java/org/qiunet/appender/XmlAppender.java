@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
 
+import java.util.List;
+
 /***
  *
  *
@@ -24,22 +26,7 @@ public class XmlAppender implements IAppender {
 	}
 
 	@Override
-	public void rowRecordOver() {
-
-	}
-
-	@Override
-	public void recordNum(int count) {
-
-	}
-
-	@Override
-	public void append(DataType datatype, String name, String val, OutPutType outPutType) {
-
-	}
-
-	@Override
-	public void sheetOver(String sheetName) {
+	public void createCfgFile(String sheetName, boolean server, String outPath, AppenderAttachable attachable) {
 
 	}
 

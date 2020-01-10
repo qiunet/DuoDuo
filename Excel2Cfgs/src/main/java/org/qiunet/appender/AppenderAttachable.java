@@ -1,18 +1,21 @@
 package org.qiunet.appender;
 
-import org.qiunet.frame.enums.DataType;
-import org.qiunet.frame.enums.OutPutType;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * Created by qiunet.
+ * @author  qiunet.
  * 17/10/30
  */
-public class AppenderAttachable implements IAppender {
+public class AppenderAttachable {
 	private String fileName;
 	private List<IAppender> appenders = new LinkedList<>();
+	private List<List<AppenderData>> appenderDatas = new ArrayList<>();
+	private List<AppenderData> rowDatas = new ArrayList<>();
+
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;
 	}
@@ -21,6 +24,20 @@ public class AppenderAttachable implements IAppender {
 		return fileName;
 	}
 
+	/***
+	 * 获得数据的名称
+	 * xd 以后考虑写开始. 方便反射赋值
+	 * @return
+	 */
+	public List<String> getRowNames() {
+		if (appenderDatas.isEmpty())  {
+			return Collections.emptyList();
+		}
+
+		return appenderDatas.get(0).stream()
+			.map(AppenderData::getName)
+			.collect(Collectors.toList());
+	}
 	/**
 	 * 添加一个Appender
 	 * @param appender
@@ -29,38 +46,27 @@ public class AppenderAttachable implements IAppender {
 		this.appenders.add(appender);
 	}
 
-	@Override
 	public void rowRecordOver() {
-		appenders.forEach(IAppender::rowRecordOver);
+		appenderDatas.add(rowDatas);
+		rowDatas = new ArrayList<>();
 	}
 
-	@Override
-	public void recordNum(int count) {
-		appenders.forEach(appender -> appender.recordNum(count));
+	public void append(AppenderData appenderData) {
+		this.rowDatas.add(appenderData);
 	}
 
-	@Override
-	public void append(DataType datatype, String name, String val, OutPutType outPutType) {
-		for (IAppender appender : appenders) {
-			appender.append(datatype, name, val, outPutType);
-		}
-	}
-
-	@Override
 	public void sheetOver(String sheetName) {
 		for (IAppender appender : appenders) {
-			appender.sheetOver(sheetName);
+			appender.sheetOver(sheetName, this);
 		}
 	}
 
-	@Override
-	public void fileOver() {
-		appenders.forEach(IAppender::fileOver);
+	public List<List<AppenderData>> getAppenderDatas() {
+		return appenderDatas;
 	}
 
-	@Override
-	public String name() {
-		return null;
+	public void fileOver() {
+		appenders.forEach(IAppender::fileOver);
 	}
 
 	public int getAppenderSize(){

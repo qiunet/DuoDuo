@@ -3,10 +3,7 @@ package org.qiunet.utils;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import org.apache.poi.ss.usermodel.*;
-import org.qiunet.appender.AppenderAttachable;
-import org.qiunet.appender.JsonAppender;
-import org.qiunet.appender.XdAppender;
-import org.qiunet.appender.XmlAppender;
+import org.qiunet.appender.*;
 import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
 import org.qiunet.frame.setting.Setting;
@@ -104,9 +101,6 @@ public class ExcelToCfg {
 		/*写二进制文件规则：参数-数据行数-数据   写流的时候 d要压缩*/
 
 		try {
-			// 记录总行数 数据行数
-			attachable.recordNum(lastRow - DATA_DEFINE_ROW);
-
 			int cellLength = getCellLength(sheet);
 			// 对字段的说明
 			Row descRow = sheet.getRow(0);
@@ -136,8 +130,7 @@ public class ExcelToCfg {
 					String dataName = dataNameRow.getCell(columnNum).getStringCellValue();
 
 					OutPutType outPutType = OutPutType.valueOf(dataOutPutTypeRow.getCell(columnNum).getStringCellValue());
-					attachable.append(dateType, dataName, c.getStringCellValue().trim(), outPutType);
-
+					attachable.append(new AppenderData(dateType, dataName, c.getStringCellValue().trim(), outPutType));
 				}
 				// 行结束
 				attachable.rowRecordOver();

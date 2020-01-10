@@ -2,12 +2,15 @@ package org.qiunet.appender;
 
 
 
+import javafx.scene.control.Alert;
 import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
+import org.qiunet.utils.FxUIUtil;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * 拼接xd的方式
@@ -18,11 +21,8 @@ public class XdAppender implements IAppender {
 
 	private String filePrefix;
 
-	private DataOutputStream dos;
-
 	private String outputRelativePath;
 
-	private ByteArrayOutputStream baos;
 
 	public XdAppender(String outputRelativePath, String filePrefix) {
 		this.outputRelativePath = outputRelativePath;
@@ -30,70 +30,37 @@ public class XdAppender implements IAppender {
 	}
 
 	@Override
-	public void rowRecordOver() {
-		// do nothing
-	}
-
-	@Override
-	public void recordNum(int count) {
-		try {
-			baos = new ByteArrayOutputStream();
-			dos = new DataOutputStream(baos);
-
-			dos.writeInt(count);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void append(DataType datatype, String name, String val, OutPutType outPutType) {
-		try {
-			datatype.writeData(dos, val);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void createCfgFile(String sheetName, boolean server, String outPath, AppenderAttachable attachable) {
+		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".xd");
+		if (! path.toFile().getParentFile().exists()) {
+			path.toFile().getParentFile().mkdirs();
 		}
 
-	}
-
-	@Override
-	public void sheetOver(String sheetName) {
-		if (sheetName.startsWith("_")) {
-			sheetName = sheetName.substring(1);
-		}
-
-		FileOutputStream outStream = null;
-		DataOutputStream dos = null;
-		try {
-			Path path = Paths.get(getServerOutputPath(), outputRelativePath, filePrefix + "_" + sheetName + ".xd");
-			if (! path.toFile().getParentFile().exists()) {
-				path.toFile().getParentFile().mkdirs();
+		List<List<AppenderData>> appenderDatas = attachable.getAppenderDatas();
+		try(FileOutputStream fos = new FileOutputStream(path.toFile());
+			DataOutputStream dos = new DataOutputStream(fos)) {
+			// 写入数据行数
+			dos.writeInt(appenderDatas.size());
+			// 写入名称
+			List<String> names = attachable.getRowNames();
+			dos.writeShort(names.size());
+			for (String name : names) {
+				dos.writeUTF(name);
 			}
-			outStream = new FileOutputStream(path.toFile());
-			dos = new DataOutputStream(outStream);
-
-			dos.write(this.baos.toByteArray());
-
+			// 写入数据
+			for (List<AppenderData> rowDatas : appenderDatas) {
+				for (AppenderData rowData : rowDatas) {
+					OutPutType oType = rowData.getOutPutType();
+					if (oType == OutPutType.ALL
+					|| (server && oType == OutPutType.SERVER)
+					|| (!server && oType == OutPutType.CLIENT)) {
+						rowData.getDataType().writeData(dos, rowData.getVal());
+					}
+				}
+			}
 		}catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				if(dos != null) {
-					dos.close();
-				}
-				if (outStream != null) {
-					outStream.close();
-				}
-
-				if (this.baos != null) {
-					this.baos.close();
-				}
-				if (this.dos != null) {
-					this.dos.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			FxUIUtil.openAlert(Alert.AlertType.ERROR, e.getMessage(), "错误");
 		}
 	}
 

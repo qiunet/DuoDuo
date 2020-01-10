@@ -15,6 +15,14 @@
 	第一行 中文名描述 如果有 _ 表示需要生成json对象字段.
 	第二行  数据类型
 		支持: int  long  string  double
+	第三行  英文名 项目里面使用的
+	第四行  ALL  SERVER  CLIENT 区别谁需要. 还是都要.
 	
-	sheet如果有_ 表示客户端不需要 该sheet 不会生成 json.			
+	sheet名如果开头有_ 表示客户端不需要该sheet 不会生成客户端的文件.
+	
+### 身份问题
+	服务端和客户端会生成对应的配置文件到项目目录.
+	策划会将对应的生成到根目录的.xd.config .json.config .xml.config 文件夹
+	文件夹里面区分 server  client目录.
+				
 	

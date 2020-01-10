@@ -12,6 +12,7 @@ import org.qiunet.frame.component.FileTreeItem;
 import org.qiunet.frame.setting.SettingManager;
 import org.qiunet.utils.Excel2CfgsUtil;
 import org.qiunet.utils.ExcelToCfg;
+import org.qiunet.utils.FxUIUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.awt.*;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
+import static org.qiunet.frame.enums.RoleType.*;
 
 /***
  *
@@ -49,6 +52,10 @@ public class RootController {
 
 	@FXML
 	public ChoiceBox<String> excelPaths;
+
+	@FXML
+	public ChoiceBox<String> roleType;
+
 	@FXML
 	public ChoiceBox<String> cfgPaths;
 
@@ -68,10 +75,28 @@ public class RootController {
 		this.initExcelChoiceBox();
 		this.primaryStage = stage;
 		this.initCfgChoiceBox();
+		this.initRoleType();
 		this.initCheckBox();
 		this.initMenu();
 	}
 
+	/***
+	 * 初始化输出模式
+	 */
+	private void initRoleType() {
+		this.roleType.getItems().addAll( SERVER, CLENTER, SCHEMER);
+		String currRoleType = SettingManager.getInstance().getSetting().getRoleType();
+		if (! StringUtil.isEmpty(currRoleType)) {
+			this.roleType.getSelectionModel().select(currRoleType);
+		}
+
+		this.roleType.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) ->
+			SettingManager.getInstance().getSetting().setRoleType(n2)
+		);
+	}
+	/***
+	 * 初始化左边文件树
+	 */
 	private void initExcelTreeView(){
 		this.excelPaths.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) -> this.refreshExcelTree());
 		this.excelNames.setOnMouseClicked(event -> {
@@ -86,6 +111,9 @@ public class RootController {
 		this.excelNames.setContextMenu(this.contextMenu);
 	}
 
+	/***
+	 * 初始化输出配置文件路径 下拉选择框
+	 */
 	private void initCfgChoiceBox() {
 		List<String> cfgPathStrs = SettingManager.getInstance().getCfgPaths();
 		if (cfgPathStrs == null || cfgPathStrs.isEmpty()) {
@@ -95,7 +123,9 @@ public class RootController {
 		this.cfgPaths.getItems().addAll(cfgPathStrs);
 		this.cfgPaths.getSelectionModel().select(cfgPathStrs.get(0));
 	}
-
+	/***
+	 * 初始化Excel路径 下拉选择框
+	 */
 	private void initExcelChoiceBox() {
 		List<String> excelPathStrs = SettingManager.getInstance().getExcelPaths();
 		if (excelPathStrs == null || excelPathStrs.isEmpty()) {
@@ -106,12 +136,19 @@ public class RootController {
 		this.excelPaths.getSelectionModel().select(excelPathStrs.get(0));
 	}
 
+	/***
+	 * 初始化 输出格式 多选框.
+	 */
 	private void initCheckBox(){
 		this.jsonBox.setSelected(SettingManager.getInstance().getSetting().isJsonChecked());
 		this.xmlBox.setSelected(SettingManager.getInstance().getSetting().isXmlChecked());
 		this.xdBox.setSelected(SettingManager.getInstance().getSetting().isXdChecked());
 	}
 
+	/***
+	 * 按钮的事件处理
+	 * @param event
+	 */
 	public void componentAction(ActionEvent event) {
 		ActionType type = ActionType.valueOf(((Control) event.getSource()).getId());
 		type.handlerAction(primaryStage, event, this);
@@ -128,15 +165,21 @@ public class RootController {
 		}
 
 		File rootFile = new File(path);
-		excelNames.setShowRoot(false);
+		excelNames.setShowRoot(true);
 		excelNames.setRoot(new FileTreeItem(rootFile));
 	}
 
+	/***
+	 * 初始化右键菜单选项
+	 */
 	private void initMenu(){
 		this.contextMenu.getItems().forEach(item -> item.setOnAction(event -> {
 			MenuItem source = (MenuItem) event.getSource();
 			FileTreeItem selectedItem = (FileTreeItem) excelNames.getSelectionModel().getSelectedItem();
-
+			if (selectedItem == null) {
+				FxUIUtil.openAlert(Alert.AlertType.ERROR, "选中组件后导出", "错误");
+				return;
+			}
 			switch (source.getText()) {
 				case "导出配置":
 					exportCfgs(selectedItem.getFile());
