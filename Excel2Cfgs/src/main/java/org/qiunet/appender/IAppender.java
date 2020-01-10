@@ -23,9 +23,11 @@ public interface IAppender {
 	 default void sheetOver(String sheetName, AppenderAttachable attachable){
 		String roleType = SettingManager.getInstance().getSetting().getRoleType();
 		String baseCfgPath = SettingManager.getInstance().getFirstCfgPath();
-		boolean clienterContinue = sheetName.startsWith("_");
-		if (clienterContinue) {
-			sheetName = sheetName.substring(1);
+		boolean justServer = sheetName.startsWith("s.");
+		boolean justClient = sheetName.startsWith("c.");
+		boolean all = !justClient && !justServer;
+		if (justClient || justServer) {
+			sheetName = sheetName.substring(2);
 		}
 
 		if (! roleType.equals(RoleType.SCHEMER) && StringUtil.isEmpty(baseCfgPath)) {
@@ -35,16 +37,20 @@ public interface IAppender {
 
 		switch (roleType) {
 			case RoleType.SERVER:
-				this.createCfgFile(sheetName,true, baseCfgPath, attachable);
+				if (all || justServer) {
+					this.createCfgFile(sheetName,true, baseCfgPath, attachable);
+				}
 				break;
 			case RoleType.CLENTER:
-				if (! clienterContinue) {
+				if (all || justClient) {
 					this.createCfgFile(sheetName,false, baseCfgPath, attachable);
 				}
 				break;
 			case RoleType.SCHEMER:
-				this.createCfgFile(sheetName,true, getServerOutputPath(), attachable);
-				if (! clienterContinue) {
+				if (all || justServer) {
+					this.createCfgFile(sheetName, true, getServerOutputPath(), attachable);
+				}
+				if (all || justClient) {
 					this.createCfgFile(sheetName,false, getClientOutputPath(), attachable);
 				}
 				break;
