@@ -116,6 +116,10 @@
 			<version>3.9</version>
 		</dependency>
 		<dependency>
+			<groupId>org.dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>

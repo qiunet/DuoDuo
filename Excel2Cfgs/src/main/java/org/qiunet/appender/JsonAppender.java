@@ -1,14 +1,12 @@
 package org.qiunet.appender;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.qiunet.frame.enums.DataType;
-import org.qiunet.frame.enums.OutPutType;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.qiunet.frame.enums.RoleType;
 import org.qiunet.utils.file.FileUtil;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -53,7 +51,9 @@ public class JsonAppender implements IAppender {
 			}
 			jsonArray.add(jsonObject);
 		}
-		FileUtil.createFileWithContent(path.toFile(), jsonArray.toJSONString());
+
+		String content = JSON.toJSONString(jsonArray, SerializerFeature.PrettyFormat);
+		FileUtil.createFileWithContent(path.toFile(), content);
 	}
 
 	@Override

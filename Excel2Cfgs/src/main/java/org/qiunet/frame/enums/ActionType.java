@@ -78,7 +78,7 @@ public enum ActionType {
 	svnClean {
 		@Override
 		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-
+			ProcessBuilder builder = new ProcessBuilder("TortoiseProc.exe");
 		}
 	},
 	/**
