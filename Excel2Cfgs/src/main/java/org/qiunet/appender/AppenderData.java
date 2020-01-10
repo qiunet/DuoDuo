@@ -52,4 +52,14 @@ public class AppenderData {
 	public OutPutType getOutPutType() {
 		return outPutType;
 	}
+
+	@Override
+	public String toString() {
+		return "AppenderData{" +
+			"dataType=" + dataType +
+			", name='" + name + '\'' +
+			", val='" + val + '\'' +
+			", outPutType=" + outPutType +
+			'}';
+	}
 }

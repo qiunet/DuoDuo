@@ -37,20 +37,20 @@ public interface IAppender {
 		switch (roleType) {
 			case SERVER:
 				if (all || justServer) {
-					this.createCfgFile(sheetName,true, baseCfgPath, attachable);
+					this.createCfgFile(sheetName, roleType, baseCfgPath, attachable);
 				}
 				break;
 			case CLENTER:
 				if (all || justClient) {
-					this.createCfgFile(sheetName,false, baseCfgPath, attachable);
+					this.createCfgFile(sheetName, roleType, baseCfgPath, attachable);
 				}
 				break;
 			case SCHEMER:
 				if (all || justServer) {
-					this.createCfgFile(sheetName, true, getServerOutputPath(), attachable);
+					this.createCfgFile(sheetName, RoleType.SERVER, getServerOutputPath(), attachable);
 				}
 				if (all || justClient) {
-					this.createCfgFile(sheetName,false, getClientOutputPath(), attachable);
+					this.createCfgFile(sheetName, RoleType.CLENTER, getClientOutputPath(), attachable);
 				}
 				break;
 			default:
@@ -60,11 +60,11 @@ public interface IAppender {
 
 	/***
 	 * 输出配置文件
-	 * @param server 是否输出模式为服务端. 否则为客户端
+	 * @param roleType 角色
 	 * @param outPath 输出路径
 	 * @param attachable
 	 */
-	void createCfgFile(String sheetName, boolean server, String outPath, AppenderAttachable attachable);
+	void createCfgFile(String sheetName, RoleType roleType, String outPath, AppenderAttachable attachable);
 	/***
 	 * 文件结束
 	 */

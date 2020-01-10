@@ -17,6 +17,11 @@ public enum DataType {
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeUTF(val);
 		}
+
+		@Override
+		public Object convert(String val) {
+			return val;
+		}
 	},
 	/**
 	 * double
@@ -25,6 +30,11 @@ public enum DataType {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeDouble(Double.parseDouble(val));
+		}
+
+		@Override
+		public Object convert(String val) {
+			return Double.parseDouble(val);
 		}
 	},
 	/***
@@ -36,6 +46,11 @@ public enum DataType {
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeInt(Integer.parseInt(val));
 		}
+
+		@Override
+		public Object convert(String val) {
+			return Integer.parseInt(val);
+		}
 	},
 	/***
 	 * long 类型
@@ -44,6 +59,11 @@ public enum DataType {
 		@Override
 		public void writeData(DataOutputStream dos, String val) throws IOException {
 			dos.writeLong(Long.parseLong(val));
+		}
+
+		@Override
+		public Object convert(String val) {
+			return Long.parseLong(val);
 		}
 	},
 	;
@@ -73,4 +93,6 @@ public enum DataType {
 	 * @throws IOException
 	 */
 	public abstract void writeData(DataOutputStream dos, String val)throws IOException;
+
+	public abstract Object convert(String val);
 }

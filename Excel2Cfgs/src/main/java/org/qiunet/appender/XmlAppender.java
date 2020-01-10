@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
+import org.qiunet.frame.enums.RoleType;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class XmlAppender implements IAppender {
 	}
 
 	@Override
-	public void createCfgFile(String sheetName, boolean server, String outPath, AppenderAttachable attachable) {
+	public void createCfgFile(String sheetName, RoleType roleType, String outPath, AppenderAttachable attachable) {
 
 	}
 

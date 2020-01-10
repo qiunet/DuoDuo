@@ -72,7 +72,7 @@ public class ExcelToCfg {
 	 */
 	private int getCellLength(Sheet sheet) {
 		//数据类型行
-		Row dateTypeRow = sheet.getRow(DATA_DEFINE_ROW - 1);
+		Row dateTypeRow = sheet.getRow(1);
 		int cellLength = dateTypeRow.getLastCellNum();
 		for (int i = 1; i < cellLength; i++) {
 			Cell cell = dateTypeRow.getCell(i);
@@ -102,8 +102,6 @@ public class ExcelToCfg {
 
 		try {
 			int cellLength = getCellLength(sheet);
-			// 对字段的说明
-			Row descRow = sheet.getRow(0);
 			//数据类型行
 			Row dateTypeRow = sheet.getRow(1);
 

@@ -5,6 +5,7 @@ package org.qiunet.appender;
 import javafx.scene.control.Alert;
 import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
+import org.qiunet.frame.enums.RoleType;
 import org.qiunet.utils.FxUIUtil;
 
 import java.io.*;
@@ -30,7 +31,7 @@ public class XdAppender implements IAppender {
 	}
 
 	@Override
-	public void createCfgFile(String sheetName, boolean server, String outPath, AppenderAttachable attachable) {
+	public void createCfgFile(String sheetName, RoleType roleType, String outPath, AppenderAttachable attachable) {
 		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".xd");
 		if (! path.toFile().getParentFile().exists()) {
 			path.toFile().getParentFile().mkdirs();
@@ -51,9 +52,7 @@ public class XdAppender implements IAppender {
 			for (List<AppenderData> rowDatas : appenderDatas) {
 				for (AppenderData rowData : rowDatas) {
 					OutPutType oType = rowData.getOutPutType();
-					if (oType == OutPutType.ALL
-					|| (server && oType == OutPutType.SERVER)
-					|| (!server && oType == OutPutType.CLIENT)) {
+					if (oType.canWrite(roleType)) {
 						rowData.getDataType().writeData(dos, rowData.getVal());
 					}
 				}

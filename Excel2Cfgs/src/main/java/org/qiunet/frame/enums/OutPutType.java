@@ -10,14 +10,30 @@ public enum  OutPutType {
 	/***
 	 * 输出服务端 客户端
 	 */
-	ALL,
+	ALL {
+		@Override
+		public boolean canWrite(RoleType roleType) {
+			return true;
+		}
+	},
 	/***
 	 * 仅输出客户端
 	 */
-	CLIENT,
+	CLIENT {
+		@Override
+		public boolean canWrite(RoleType roleType) {
+			return roleType == RoleType.CLENTER;
+		}
+	},
 	/***
 	 * 仅输出服务端
 	 */
-	SERVER,
+	SERVER {
+		@Override
+		public boolean canWrite(RoleType roleType) {
+			return roleType == RoleType.SERVER;
+		}
+	},
 	;
+	public abstract boolean canWrite(RoleType roleType);
 }
