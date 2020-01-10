@@ -8,7 +8,6 @@ import org.qiunet.utils.FxUIUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * 一个文件的处理流程
@@ -21,7 +20,7 @@ public interface IAppender {
 	 * @param sheetName
 	 */
 	 default void sheetOver(String sheetName, AppenderAttachable attachable){
-		String roleType = SettingManager.getInstance().getSetting().getRoleType();
+		RoleType roleType = SettingManager.getInstance().getSetting().getRoleType();
 		String baseCfgPath = SettingManager.getInstance().getFirstCfgPath();
 		boolean justServer = sheetName.startsWith("s.");
 		boolean justClient = sheetName.startsWith("c.");
@@ -30,23 +29,23 @@ public interface IAppender {
 			sheetName = sheetName.substring(2);
 		}
 
-		if (! roleType.equals(RoleType.SCHEMER) && StringUtil.isEmpty(baseCfgPath)) {
+		if (roleType != RoleType.SCHEMER && StringUtil.isEmpty(baseCfgPath)) {
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, "服务端客户端需要设定导出的项目路径", "错误");
 			return;
 		}
 
 		switch (roleType) {
-			case RoleType.SERVER:
+			case SERVER:
 				if (all || justServer) {
 					this.createCfgFile(sheetName,true, baseCfgPath, attachable);
 				}
 				break;
-			case RoleType.CLENTER:
+			case CLENTER:
 				if (all || justClient) {
 					this.createCfgFile(sheetName,false, baseCfgPath, attachable);
 				}
 				break;
-			case RoleType.SCHEMER:
+			case SCHEMER:
 				if (all || justServer) {
 					this.createCfgFile(sheetName, true, getServerOutputPath(), attachable);
 				}

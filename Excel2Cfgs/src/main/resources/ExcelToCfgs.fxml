@@ -133,12 +133,12 @@
                                                          <children>
                                                             <HBox prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
-                                                                  <Label text="输出">
+                                                                  <Label text="项目输出路径">
                                                                      <padding>
                                                                         <Insets left="10.0" top="15.0" />
                                                                      </padding>
                                                                   </Label>
-                                                                  <ChoiceBox fx:id="cfgPaths" prefHeight="23.0" prefWidth="238.0">
+                                                                  <ChoiceBox fx:id="cfgPaths" prefHeight="23.0" prefWidth="350.0">
                                                                      <HBox.margin>
                                                                         <Insets left="5.0" top="12.0" />
                                                                      </HBox.margin>
@@ -149,21 +149,6 @@
                                                                      </HBox.margin>
                                                                   </Button>
                                                                   <Button fx:id="cfgPathRem" mnemonicParsing="false" onAction="#componentAction" text="移除">
-                                                                     <HBox.margin>
-                                                                        <Insets left="5.0" top="12.0" />
-                                                                     </HBox.margin>
-                                                                  </Button>
-                                                                  <Button fx:id="cfgPathSvnUpdate" mnemonicParsing="false" onAction="#componentAction" text="更新">
-                                                                     <HBox.margin>
-                                                                        <Insets left="5.0" top="12.0" />
-                                                                     </HBox.margin>
-                                                                  </Button>
-                                                                  <Button fx:id="exportSelected" mnemonicParsing="false" onAction="#componentAction" text="导出选中">
-                                                                     <HBox.margin>
-                                                                        <Insets left="5.0" top="12.0" />
-                                                                     </HBox.margin>
-                                                                  </Button>
-                                                                  <Button fx:id="exportAll" mnemonicParsing="false" onAction="#componentAction" text="导出全部">
                                                                      <HBox.margin>
                                                                         <Insets left="5.0" top="12.0" />
                                                                      </HBox.margin>

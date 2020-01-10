@@ -38,7 +38,7 @@ public class Setting {
 	 * 服务端 客户端输出到项目配置路径
 	 * 策划输出到根目录下.
 	 */
-	private String roleType = RoleType.SERVER;
+	private RoleType roleType = RoleType.SERVER;
 
 	public LinkedList<String> getExcelPaths() {
 		return excelPaths;
@@ -80,11 +80,11 @@ public class Setting {
 		this.jsonChecked = jsonChecked;
 	}
 
-	public String getRoleType() {
+	public RoleType getRoleType() {
 		return roleType;
 	}
 
-	public void setRoleType(String roleType) {
+	public void setRoleType(RoleType roleType) {
 		this.roleType = roleType;
 	}
 }

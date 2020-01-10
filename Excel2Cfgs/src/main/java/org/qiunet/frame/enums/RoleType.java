@@ -6,9 +6,28 @@ package org.qiunet.frame.enums;
  * @author qiunet
  * 2020-01-10 12:20
  ***/
-public class RoleType {
+public enum  RoleType {
+	/***
+	 *服务端
+	 */
+	SERVER("服务端"),
+	/**
+	 *客户端
+	 */
+	CLENTER("客户端"),
+	/**
+	 * 策划
+	 */
+	SCHEMER("策划"),
+	;
+	private String name;
 
-	public static final String SERVER = "服务端";
-	public static final String CLENTER = "客户端";
-	public static final String SCHEMER = "策划";
+	RoleType(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
 }

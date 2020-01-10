@@ -9,6 +9,7 @@ import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
 import org.qiunet.frame.enums.ActionType;
 import org.qiunet.frame.component.FileTreeItem;
+import org.qiunet.frame.enums.RoleType;
 import org.qiunet.frame.setting.SettingManager;
 import org.qiunet.utils.Excel2CfgsUtil;
 import org.qiunet.utils.ExcelToCfg;
@@ -54,7 +55,7 @@ public class RootController {
 	public ChoiceBox<String> excelPaths;
 
 	@FXML
-	public ChoiceBox<String> roleType;
+	public ChoiceBox<RoleType> roleType;
 
 	@FXML
 	public ChoiceBox<String> cfgPaths;
@@ -84,11 +85,9 @@ public class RootController {
 	 * 初始化输出模式
 	 */
 	private void initRoleType() {
-		this.roleType.getItems().addAll( SERVER, CLENTER, SCHEMER);
-		String currRoleType = SettingManager.getInstance().getSetting().getRoleType();
-		if (! StringUtil.isEmpty(currRoleType)) {
-			this.roleType.getSelectionModel().select(currRoleType);
-		}
+		this.roleType.getItems().addAll(RoleType.values());
+		RoleType currRoleType = SettingManager.getInstance().getSetting().getRoleType();
+		this.roleType.getSelectionModel().select(currRoleType);
 
 		this.roleType.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) ->
 			SettingManager.getInstance().getSetting().setRoleType(n2)
@@ -101,8 +100,12 @@ public class RootController {
 		this.excelPaths.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) -> this.refreshExcelTree());
 		this.excelNames.setOnMouseClicked(event -> {
 			if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
+				File file = ((FileTreeItem) excelNames.getSelectionModel().getSelectedItem()).getFile();
+				if (file.isDirectory()) {
+					return;
+				}
 				try {
-					Desktop.getDesktop().open(((FileTreeItem) excelNames.getSelectionModel().getSelectedItem()).getFile());
+					Desktop.getDesktop().open(file);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

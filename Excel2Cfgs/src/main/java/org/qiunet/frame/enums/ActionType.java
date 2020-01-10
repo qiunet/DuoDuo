@@ -146,31 +146,6 @@ public enum ActionType {
 			}
 		}
 	},
-	
-	cfgPathSvnUpdate {
-		@Override
-		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-
-		}
-	},
-	/***
-	 * 导出选中的配置
-	 */
-	exportSelected {
-		@Override
-		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-
-		}
-	},
-	/***
-	 * 导出所有的配置
-	 */
-	exportAll {
-		@Override
-		public void handlerAction(Stage primaryStage, ActionEvent event, RootController controller) {
-
-		}
-	},
 
 	/***
 	 * 勾选xd
