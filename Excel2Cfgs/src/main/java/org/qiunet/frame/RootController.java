@@ -6,6 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.qiunet.frame.enums.ActionType;
 import org.qiunet.frame.component.FileTreeItem;
@@ -60,6 +61,9 @@ public class RootController {
 	@FXML
 	public ChoiceBox<String> cfgPaths;
 
+	@FXML
+	private HBox projectInfo;
+
 	public static RootController getInstance() {
 		return instance;
 	}
@@ -87,11 +91,12 @@ public class RootController {
 	private void initRoleType() {
 		this.roleType.getItems().addAll(RoleType.values());
 		RoleType currRoleType = SettingManager.getInstance().getSetting().getRoleType();
-		this.roleType.getSelectionModel().select(currRoleType);
-
-		this.roleType.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) ->
-			SettingManager.getInstance().getSetting().setRoleType(n2)
+		this.roleType.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) -> {
+				SettingManager.getInstance().getSetting().setRoleType(n2);
+				projectInfo.setDisable(n2 == SCHEMER);
+			}
 		);
+		this.roleType.getSelectionModel().select(currRoleType);
 	}
 	/***
 	 * 初始化左边文件树
