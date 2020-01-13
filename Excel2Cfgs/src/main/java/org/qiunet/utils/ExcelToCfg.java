@@ -4,10 +4,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.appender.*;
-import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
 import org.qiunet.frame.setting.Setting;
 import org.qiunet.frame.setting.SettingManager;
+import org.qiunet.utils.string.StringUtil;
 
 import java.io.*;
 import java.util.Iterator;
@@ -28,7 +28,7 @@ public class ExcelToCfg {
 	/**
 	 * 定义数据的行数-行号
 	 */
-	private static final int DATA_DEFINE_ROW = 4;
+	private static final int DATA_DEFINE_ROW = 3;
 	/***
 	 * 从根目录开始的文件名
 	 */
@@ -81,8 +81,8 @@ public class ExcelToCfg {
 				break;
 			}
 			cell.setCellType(CellType.STRING);
-			DataType dataType = DataType.parse(cell.getStringCellValue().toLowerCase());
-			if (dataType == null) {
+			String cellValue = cell.getStringCellValue();
+			if (cellValue == null || StringUtil.isEmpty(cellValue.trim())) {
 				cellLength = i;
 				break;
 			}
@@ -102,22 +102,14 @@ public class ExcelToCfg {
 
 		try {
 			int cellLength = getCellLength(sheet);
-			//数据类型行
-			Row dateTypeRow = sheet.getRow(1);
 
-			Row dataNameRow = sheet.getRow(2);
+			Row dataNameRow = sheet.getRow(1);
 
-			Row dataOutPutTypeRow = sheet.getRow(3);
+			Row dataOutPutTypeRow = sheet.getRow(2);
 
 			for (rowNum = DATA_DEFINE_ROW; rowNum < lastRow; rowNum++) {
 				Row row = sheet.getRow(rowNum);
 				for (columnNum = 0; columnNum < cellLength; columnNum++) {
-					DataType dateType = DataType.parse(dateTypeRow.getCell(columnNum).getStringCellValue());
-					if (dateType == null) {
-						this.alterError("Sheet: [" + sheet.getSheetName() + "] Row: ["+(rowNum + 1)+"] Column ["+(columnNum + 1)+"] 数据格式不支持");
-						return;
-					}
-
 					Cell c = row.getCell(columnNum);
 					if (c == null) {
 						c = row.createCell(columnNum);
@@ -128,7 +120,7 @@ public class ExcelToCfg {
 					String dataName = dataNameRow.getCell(columnNum).getStringCellValue();
 
 					OutPutType outPutType = OutPutType.valueOf(dataOutPutTypeRow.getCell(columnNum).getStringCellValue());
-					attachable.append(new AppenderData(dateType, dataName, c.getStringCellValue().trim(), outPutType));
+					attachable.append(new AppenderData(dataName, c.getStringCellValue().trim(), outPutType));
 				}
 				// 行结束
 				attachable.rowRecordOver();

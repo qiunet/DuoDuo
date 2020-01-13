@@ -3,7 +3,6 @@ package org.qiunet.appender;
 
 
 import javafx.scene.control.Alert;
-import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
 import org.qiunet.frame.enums.RoleType;
 import org.qiunet.utils.FxUIUtil;
@@ -53,7 +52,7 @@ public class XdAppender implements IAppender {
 				for (AppenderData rowData : rowDatas) {
 					OutPutType oType = rowData.getOutPutType();
 					if (oType.canWrite(roleType)) {
-						rowData.getDataType().writeData(dos, rowData.getVal());
+						dos.writeUTF(rowData.getVal());
 					}
 				}
 			}

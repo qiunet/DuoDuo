@@ -1,9 +1,7 @@
 package org.qiunet.appender;
 
-import org.qiunet.frame.enums.DataType;
 import org.qiunet.frame.enums.OutPutType;
 
-import java.util.List;
 
 /***
  *
@@ -12,10 +10,6 @@ import java.util.List;
  * 2020-01-10 11:09
  ***/
 public class AppenderData {
-	/***
-	 * 数据类型
-	 */
-	private DataType dataType;
 	/***
 	 * 数据名称
 	 */
@@ -30,15 +24,10 @@ public class AppenderData {
 	 */
 	private OutPutType outPutType;
 
-	public AppenderData(DataType dataType, String name, String val, OutPutType outPutType) {
-		this.dataType = dataType;
+	public AppenderData(String name, String val, OutPutType outPutType) {
 		this.name = name;
 		this.val = val;
 		this.outPutType = outPutType;
-	}
-
-	public DataType getDataType() {
-		return dataType;
 	}
 
 	public String getName() {
@@ -56,7 +45,6 @@ public class AppenderData {
 	@Override
 	public String toString() {
 		return "AppenderData{" +
-			"dataType=" + dataType +
 			", name='" + name + '\'' +
 			", val='" + val + '\'' +
 			", outPutType=" + outPutType +

@@ -46,7 +46,7 @@ public class JsonAppender implements IAppender {
 			JSONObject jsonObject = new JSONObject();
 			for (AppenderData rowData : rowDatas) {
 				if (rowData.getOutPutType().canWrite(roleType)) {
-					jsonObject.put(rowData.getName(), rowData.getDataType().convert(rowData.getVal()));
+					jsonObject.put(rowData.getName(), rowData.getVal());
 				}
 			}
 			jsonArray.add(jsonObject);
