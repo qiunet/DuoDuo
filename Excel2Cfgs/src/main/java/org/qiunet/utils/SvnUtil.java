@@ -19,8 +19,8 @@ public class SvnUtil {
 			FxUIUtil.sendMsgToTextInput(input, "路径不能为null!\n", true);
 			return;
 		}
-		if (!SystemPropertyUtil.OSType.WINDOWS.is(osType) && SvnCommand.commit == command) {
-			execSvn(splicing(SvnCommand.add, path, close,log), input);
+		if (!SystemPropertyUtil.OSType.WINDOWS.is(osType) && SvnCommand.COMMIT == command) {
+			execSvn(splicing(SvnCommand.ADD, path, close,log), input);
 		}
 		String shell = splicing(command, path, close,log);
 		execSvn(shell, input);
@@ -29,28 +29,33 @@ public class SvnUtil {
 	private static String splicing(SvnCommand command, String path, boolean close,String log) {
 		StringBuilder sb = new StringBuilder();
 		switch (osType) {
-			case WINDOWS: {
-				sb.append("TortoiseProc.exe /command:").append(command.name()).append(" /path:").append(path);
-				if (close)
-					sb.append(" /closeonend:2");
+			case WINDOWS:
+				sb.append("TortoiseProc.exe /command:").append(command.name()).append(" /path:").append(path).append(" /closeopenid:1");
 				break;
-			}
 			case MAC_OS:
-			case LINUX: {
+			case LINUX:
 				sb.append("svn ").append(command.name()).append(" ").append(path);
-				if (SvnCommand.add == command) sb.append(" --no-ignore --force ");
-				if (SvnCommand.commit == command) sb.append(" -m ").append(log);
+				if (SvnCommand.ADD == command) {
+					sb.append(" --no-ignore --force ");
+				}
+				if (SvnCommand.COMMIT == command) {
+					sb.append(" -m ").append(log);
+				}
 				break;
-			}
-
+			default:
+				break;
 		}
+
 		return sb.toString();
 	}
 
 	public enum SvnCommand {
-		commit,//提交
-		update,//更新
-		add,;
+		//提交
+		COMMIT,
+		//更新
+		UPDATE,
+		//添加
+		ADD,;
 	}
 
 
@@ -87,36 +92,24 @@ public class SvnUtil {
 
 		@Override
 		public void run() {
-			InputStreamReader isr = null;
-			BufferedReader br = null;
-			try {
-				isr = new InputStreamReader(is);
-				br = new BufferedReader(isr);
-				String line = null;
+			String line;
+			try (
+				 InputStream is = this.is;
+				 InputStreamReader isr = new InputStreamReader(is);
+				 BufferedReader br = new BufferedReader(isr)){
 				StringBuilder sb = new StringBuilder();
 				while ((line = br.readLine()) != null) {
 					if (type.equals("Error")) {
 						sb.append(line);
-						FxUIUtil.sendMsgToTextInput(input, line, true);
-					} else {
-						FxUIUtil.sendMsgToTextInput(input, line, true);
 					}
+					FxUIUtil.sendMsgToTextInput(input, line, true);
 				}
 				if (!StringUtil.isEmpty(sb.toString())) {
 					logger.error(sb.toString());
 				}
 			} catch (Exception ioe) {
 				logger.error("异常！", ioe);
-			} finally {
-				try {
-					if (br != null) br.close();
-					if (isr != null) isr.close();
-					if (is != null) is.close();
-				} catch (IOException e) {
-					logger.error(ExceptionUtils.getStackTrace(e));
-				}
 			}
-
 		}
 	}
 }
