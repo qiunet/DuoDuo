@@ -52,8 +52,8 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 		this.checkCfgClass(cfgClass);
 
 		SafeHashMap<ID, Map<SubId, Cfg>> cfgMap = new SafeHashMap<>();
-		int num = loadXdFileToDataInputStream();
-		for (int i = 0; i < num; i++) {
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
+		for (int i = 0; i < xdInfoData.getNum(); i++) {
 			Cfg cfg = generalCfg(cfgClass);
 			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeHashMap<>());
 

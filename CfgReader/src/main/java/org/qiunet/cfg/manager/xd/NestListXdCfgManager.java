@@ -57,9 +57,9 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 	 * @throws Exception
 	 */
 	private Map<ID, List<Cfg>> getNestListCfg() throws Exception{
-		int num = loadXdFileToDataInputStream();
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
 		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
-		for (int i = 0; i < num; i++) {
+		for (int i = 0; i < xdInfoData.getNum(); i++) {
 			Cfg cfg = generalCfg(cfgClass);
 
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());

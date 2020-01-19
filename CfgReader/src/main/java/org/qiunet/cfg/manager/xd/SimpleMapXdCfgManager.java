@@ -52,9 +52,9 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 	 * @throws Exception
 	 */
 	private Map<ID, Cfg> getSimpleMapCfg() throws Exception{
-		int num = loadXdFileToDataInputStream();
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
 		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
-		for (int i = 0 ; i < num; i++ ) {
+		for (int i = 0 ; i < xdInfoData.getNum(); i++ ) {
 			Cfg cfg = generalCfg(cfgClass);
 
 			if (cfgMap.containsKey(cfg.getId())) {

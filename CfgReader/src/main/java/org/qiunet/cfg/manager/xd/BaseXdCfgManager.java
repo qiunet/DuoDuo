@@ -13,6 +13,8 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 大部分数据可以分为:
@@ -28,7 +30,7 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 	private InputStream in;
 	protected String fileName;
 	protected DataInputStream dis;
-
+	protected XdInfoData xdInfoData;
 	protected BaseXdCfgManager(String fileName) {
 		Cfg annotation = getClass().getAnnotation(Cfg.class);
 		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
@@ -36,10 +38,10 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 	}
 	/**
 	 * 获取xd文件
-	 * @return 该表的行数量
+	 * @return 该表的行数量 和 列名称信息
 	 * @throws IOException
 	 */
-	int loadXdFileToDataInputStream() throws Exception{
+	XdInfoData loadXdFileToDataInputStream() throws Exception{
 		logger.debug("读取配置文件 [ "+fileName+" ]");
 
 		URL url = getClass().getClassLoader().getResource(fileName);
@@ -51,7 +53,15 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 		}
 
 		dis = new DataInputStream(in);
-		return dis.readInt();
+		int rowNum = dis.readInt();
+		List<String> names = new ArrayList<>();
+		int nameLength = dis.readShort();
+		for (int i = 0; i < nameLength; i++) {
+			names.add(dis.readUTF());
+		}
+
+		this.xdInfoData = new XdInfoData(rowNum, names);
+		return this.xdInfoData;
 	}
 	/**
 	 * 初始化设定
@@ -66,8 +76,8 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			failFileName = this.fileName;
 		}finally{
 			this.close();
-			return failFileName;
 		}
+		return failFileName;
 	}
 
 	private void close() {
@@ -86,8 +96,12 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			}
 		}
 		try {
-			if(dis != null)dis.close();
-			if (in != null) in.close();
+			if(dis != null) {
+				dis.close();
+			}
+			if (in != null) {
+				in.close();
+			}
 		} catch (IOException e) {
 			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
 		}
@@ -118,14 +132,8 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 	<Cfg> Cfg generalCfg(Class<Cfg> cfgClass) throws Exception {
 		Cfg cfg = cfgClass.newInstance();
 
-		Field [] fields = cfgClass.getDeclaredFields();
-		for (Field field : fields) {
-			if (Modifier.isPublic(field.getModifiers())
-				|| Modifier.isFinal(field.getModifiers())
-				|| Modifier.isStatic(field.getModifiers())
-				|| Modifier.isTransient(field.getModifiers())
-				|| field.isAnnotationPresent(CfgIgnore.class))
-				continue;
+		for (String name: xdInfoData.getNames()) {
+			Field field = cfgClass.getDeclaredField(name);
 			Object val;
 			Class<?> type = field.getType();
 			if (type == Integer.TYPE || type == Integer.class) val = dis.readInt();
