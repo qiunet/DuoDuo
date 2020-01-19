@@ -3,18 +3,15 @@ package org.qiunet.frame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.qiunet.frame.component.CfgTreeCell;
 import org.qiunet.frame.enums.ActionType;
 import org.qiunet.frame.component.FileTreeItem;
 import org.qiunet.frame.enums.RoleType;
 import org.qiunet.frame.setting.SettingManager;
-import org.qiunet.utils.Excel2CfgsUtil;
-import org.qiunet.utils.ExcelToCfg;
-import org.qiunet.utils.FxUIUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.awt.*;
@@ -28,18 +25,15 @@ import static org.qiunet.frame.enums.RoleType.*;
 /***
  *
  *
- * qiunet
+ * @author qiunet
  * 2019-11-05 18:13
  ***/
 public class RootController {
-
-	private ContextMenu contextMenu = new ContextMenu(new MenuItem("导出配置"));
-
 	private static RootController instance;
 
 	private Stage primaryStage;
 	@FXML
-	public TreeView<String> excelNames;
+	public TreeView<File> excelNames;
 
 	@FXML
 	public CheckBox xdBox;
@@ -48,7 +42,7 @@ public class RootController {
 	@FXML
 	public CheckBox xmlBox;
 
-
+	private boolean treeViewInited;
 	@FXML
 	public TextArea console;
 
@@ -82,7 +76,6 @@ public class RootController {
 		this.initCfgChoiceBox();
 		this.initRoleType();
 		this.initCheckBox();
-		this.initMenu();
 	}
 
 	/***
@@ -105,7 +98,7 @@ public class RootController {
 		this.excelPaths.getSelectionModel().selectedItemProperty().addListener((v1, o1, n2) -> this.refreshExcelTree());
 		this.excelNames.setOnMouseClicked(event -> {
 			if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2) {
-				File file = ((FileTreeItem) excelNames.getSelectionModel().getSelectedItem()).getFile();
+				File file = excelNames.getSelectionModel().getSelectedItem().getValue();
 				if (file.isDirectory()) {
 					return;
 				}
@@ -116,7 +109,6 @@ public class RootController {
 				}
 			}
 		});
-		this.excelNames.setContextMenu(this.contextMenu);
 	}
 
 	/***
@@ -172,46 +164,15 @@ public class RootController {
 			return;
 		}
 
+		boolean treeViewInited = this.treeViewInited;
+		this.treeViewInited = true;
+
 		File rootFile = new File(path);
-		excelNames.setShowRoot(true);
 		excelNames.setRoot(new FileTreeItem(rootFile));
-	}
 
-	/***
-	 * 初始化右键菜单选项
-	 */
-	private void initMenu(){
-		this.contextMenu.getItems().forEach(item -> item.setOnAction(event -> {
-			MenuItem source = (MenuItem) event.getSource();
-			FileTreeItem selectedItem = (FileTreeItem) excelNames.getSelectionModel().getSelectedItem();
-			if (selectedItem == null) {
-				FxUIUtil.openAlert(Alert.AlertType.ERROR, "选中组件后导出", "错误");
-				return;
-			}
-			switch (source.getText()) {
-				case "导出配置":
-					exportCfgs(selectedItem.getFile());
-					break;
-				default:
-					throw new IllegalStateException("Unexpected value: " + source.getText());
-			}
-		}));
-	}
-
-	/***
-	 * 递归 循环所有的配置.
-	 * @param fileOrDir
-	 */
-	private void exportCfgs(File fileOrDir) {
-		if (fileOrDir.isDirectory()) {
-			for (File file : Objects.requireNonNull(fileOrDir.listFiles())) {
-				this.exportCfgs(file);
-			}
-		}else {
-			if (Excel2CfgsUtil.filePostfixCheck(fileOrDir)) {
-
-				new ExcelToCfg(fileOrDir, console).excelToStream();
-			}
+		if (! treeViewInited) {
+			excelNames.setShowRoot(true);
+			excelNames.setCellFactory(item -> new CfgTreeCell(this.console));
 		}
 	}
 }

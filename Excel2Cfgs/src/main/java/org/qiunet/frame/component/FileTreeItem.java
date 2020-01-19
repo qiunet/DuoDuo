@@ -11,36 +11,38 @@ import java.io.File;
  * @author  qiunet
  * 2019-11-07 17:44
  ***/
-public class FileTreeItem extends TreeItem<String> {
-	private File file;
+public class FileTreeItem extends TreeItem<File> {
 
 	public FileTreeItem(File file) {
-		super(file.getName());
-		this.file = file;
+		super(file);
 
 		if (file.isDirectory()) {
 			this.fillChildren(this);
 		}
-
 		this.setExpanded(true);
-	}
-
-	public File getFile() {
-		return file;
 	}
 
 	@Override
 	public boolean isLeaf() {
-		return this.file.isFile();
+		return getValue().isFile();
 	}
 
 	private void fillChildren(FileTreeItem parent) {
-		if (! file.isDirectory()) return;
+		if (! getValue().isDirectory()) {
+			return;
+		}
 
-		for (File file : parent.file.listFiles()) {
-			if (! Excel2CfgsUtil.filePostfixCheck(file)) continue;
+		for (File file : parent.getValue().listFiles()) {
+			if (! Excel2CfgsUtil.filePostfixCheck(file)) {
+				continue;
+			}
 
 			parent.getChildren().add(new FileTreeItem(file));
 		}
+	}
+
+	@Override
+	public String toString() {
+		return getValue().getName();
 	}
 }
