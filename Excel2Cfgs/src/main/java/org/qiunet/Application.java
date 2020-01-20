@@ -33,12 +33,15 @@ public class Application extends javafx.application.Application{
 			primaryStage.setResizable(false);
 			primaryStage.setScene(scene);
 			primaryStage.show();
-
 			RootController.getInstance().init(primaryStage);
-			primaryStage.setOnCloseRequest(event -> SettingManager.getInstance().syncSetting());
 		} catch (Exception e) {
 			LoggerType.DUODUO.error("Exception: ", e);
 			System.exit(1);
+		}finally {
+			primaryStage.setOnCloseRequest(event -> {
+				SettingManager.getInstance().syncSetting();
+				// 其它需要停止的代码
+			});
 		}
 	}
 }

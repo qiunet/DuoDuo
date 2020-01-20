@@ -75,6 +75,10 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 			convert.setOnAction(event -> this.exportCfgs(item));
 			menu = new ContextMenu(convert);
 		}
+
+		MenuItem svnUpdate = new MenuItem("更新");
+		MenuItem svnCommit = new MenuItem("提交");
+		menu.getItems().addAll(svnUpdate, svnCommit);
 		this.setContextMenu(menu);
 	}
 }

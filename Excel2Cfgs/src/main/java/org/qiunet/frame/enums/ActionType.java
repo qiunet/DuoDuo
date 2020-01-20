@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import org.qiunet.frame.RootController;
 import org.qiunet.frame.setting.SettingManager;
 import org.qiunet.utils.FxUIUtil;
+import org.qiunet.utils.SvnUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -69,7 +70,8 @@ public enum ActionType {
 	svnUpdate {
 		@Override
 		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-
+			String path = controller.excelPaths.getSelectionModel().getSelectedItem();
+			SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, path);
 		}
 	},
 	/***
@@ -87,7 +89,8 @@ public enum ActionType {
 	svnCommit {
 		@Override
 		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-
+			String path = controller.excelPaths.getSelectionModel().getSelectedItem();
+			SvnUtil.svnEvent(SvnUtil.SvnCommand.COMMIT, path);
 		}
 	},
 	/***
