@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.qiunet.frame.RootController;
 import org.qiunet.frame.setting.SettingManager;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  *
@@ -36,6 +37,7 @@ public class Application extends javafx.application.Application{
 			RootController.getInstance().init(primaryStage);
 			primaryStage.setOnCloseRequest(event -> SettingManager.getInstance().syncSetting());
 		} catch (Exception e) {
+			LoggerType.DUODUO.error("Exception: ", e);
 			System.exit(1);
 		}
 	}
