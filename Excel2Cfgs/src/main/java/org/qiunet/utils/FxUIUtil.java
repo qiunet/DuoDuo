@@ -3,11 +3,22 @@ package org.qiunet.utils;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextInputControl;
+import org.qiunet.frame.RootController;
 
 /**
  * created by wgw on 2019/7/29
  */
 public class FxUIUtil {
+	private static final TextInputControl control = RootController.getInstance().console;
+
+	/***
+	 * 弹出错误信息
+	 * @param errorMsg
+	 */
+	public static void alterError(String errorMsg) {
+		openAlert(Alert.AlertType.ERROR, errorMsg, "错误");
+	}
+
 	/**
 	 * 打开一个弹窗
 	 *
@@ -27,22 +38,28 @@ public class FxUIUtil {
 	}
 
 	/**
+	 * 拼加一条消息到输出控制台
+	 * @param msg
+	 */
+	public static void appendMessage(String msg) {
+		sendMsgToTextInput(msg, true);
+	}
+	/**
 	 * 发送信息到文本控件
-	 * @param input
 	 * @param msg
 	 * @param append 是否追加
 	 */
-	public static void sendMsgToTextInput(TextInputControl input, String msg, boolean append) {
-		if (input == null) {
+	public static void sendMsgToTextInput(String msg, boolean append) {
+		if (control == null) {
 			openAlert(Alert.AlertType.ERROR, msg, "error");
 			return;
 		}
 		addUITask(() -> {
 			if (append) {
-				input.appendText(msg);
-				input.appendText("\n");
+				control.appendText(msg);
+				control.appendText("\n");
 			}
-			else input.setText(msg);
+			else control.setText(msg);
 
 		});
 	}

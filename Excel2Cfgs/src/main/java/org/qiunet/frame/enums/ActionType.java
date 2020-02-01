@@ -80,7 +80,8 @@ public enum ActionType {
 	svnClean {
 		@Override
 		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-			ProcessBuilder builder = new ProcessBuilder("TortoiseProc.exe");
+			String path = controller.excelPaths.getSelectionModel().getSelectedItem();
+			SvnUtil.svnEvent(SvnUtil.SvnCommand.CLEANUP, path);
 		}
 	},
 	/**
@@ -109,7 +110,7 @@ public enum ActionType {
 			try {
 				Desktop.getDesktop().open(new File(selectedItem));
 			} catch (IOException e) {
-				FxUIUtil.openAlert(Alert.AlertType.ERROR, "打开错误:"+e.getMessage(), "ERROR");
+				FxUIUtil.alterError("打开错误:"+e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -197,7 +198,7 @@ public enum ActionType {
 			try {
 				Desktop.getDesktop().open(new File(selectedItem));
 			} catch (IOException e) {
-				FxUIUtil.openAlert(Alert.AlertType.ERROR, "打开错误:"+e.getMessage(), "ERROR");
+				FxUIUtil.alterError("打开错误:"+e.getMessage());
 				e.printStackTrace();
 			}
 		}

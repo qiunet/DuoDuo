@@ -35,12 +35,10 @@ public class ExcelToCfg {
 	private String fileRelativeName;
 
 	private File sourceFile;
-	private TextArea console;
 
-	public ExcelToCfg(File file, TextArea console) {
+	public ExcelToCfg(File file) {
 		this.fileRelativeName = file.getAbsolutePath().substring(rootPath.length() + 1);
 		this.sourceFile = file;
-		this.console = console;
 
 	}
 	/***
@@ -97,7 +95,7 @@ public class ExcelToCfg {
 		 */
 		int rowNum = 0, columnNum = 0;
 		int lastRow = getSheetLastRow(sheet);
-		this.sendMessage("表格["+fileRelativeName+"]:[" + sheet.getSheetName() + "]转换数据内容[ "+(lastRow - DATA_DEFINE_ROW)+" ]行");
+		FxUIUtil.appendMessage("表格["+fileRelativeName+"]:[" + sheet.getSheetName() + "]转换数据内容[ "+(lastRow - DATA_DEFINE_ROW)+" ]行");
 		/*写二进制文件规则：参数-数据行数-数据   写流的时候 d要压缩*/
 
 		try {
@@ -127,7 +125,7 @@ public class ExcelToCfg {
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			this.alterError("Sheet: [" + sheet.getSheetName() + "] Row: ["+(rowNum + 1)+"] Column ["+(columnNum + 1)+"] 错误!");
+			FxUIUtil.alterError("Sheet: [" + sheet.getSheetName() + "] Row: ["+(rowNum + 1)+"] Column ["+(columnNum + 1)+"] 错误!");
 		}
 	}
 
@@ -153,7 +151,7 @@ public class ExcelToCfg {
 			}
 
 			if (appenderAttachable.getAppenderSize() == 0){
-				this.alterError("请选择至少一种配置输出格式");
+				FxUIUtil.alterError("请选择至少一种配置输出格式");
 				return;
 			}
 
@@ -177,14 +175,6 @@ public class ExcelToCfg {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.sendMessage("["+this.fileRelativeName +"]导出配置成功");
-	}
-
-
-	private void alterError(String message) {
-		FxUIUtil.openAlert(Alert.AlertType.ERROR, message, "错误");
-	}
-	private void sendMessage(String message) {
-		FxUIUtil.sendMsgToTextInput(console, message, true);
+		FxUIUtil.appendMessage("["+this.fileRelativeName +"]导出配置成功");
 	}
 }

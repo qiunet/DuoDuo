@@ -8,6 +8,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import org.qiunet.utils.Excel2CfgsUtil;
 import org.qiunet.utils.ExcelToCfg;
+import org.qiunet.utils.SvnUtil;
+import org.qiunet.utils.system.OSUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -21,13 +23,8 @@ import java.util.Objects;
  * 2020-01-19 16:51
  ***/
 public class CfgTreeCell extends TextFieldTreeCell<File> {
-
-	private TextArea console;
-
-	public CfgTreeCell(TextArea console){
+	public CfgTreeCell(){
 		super(new FileStringConvert());
-
-		this.console = console;
 	}
 	/***
 	 * 递归 循环所有的配置.
@@ -41,7 +38,7 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 		}else {
 			if (Excel2CfgsUtil.filePostfixCheck(fileOrDir)) {
 
-				new ExcelToCfg(fileOrDir, console).excelToStream();
+				new ExcelToCfg(fileOrDir).excelToStream();
 			}
 		}
 	}
@@ -77,7 +74,12 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 		}
 
 		MenuItem svnUpdate = new MenuItem("更新");
+		svnUpdate.setOnAction(event -> SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, item.getAbsolutePath()));
 		MenuItem svnCommit = new MenuItem("提交");
+		svnCommit.setOnAction(event -> SvnUtil.svnEvent(SvnUtil.SvnCommand.COMMIT, item.getAbsolutePath()));
+		if (OSUtil.isMac() || OSUtil.isLinux()) {
+			svnCommit.setVisible(false);
+		}
 		menu.getItems().addAll(svnUpdate, svnCommit);
 		this.setContextMenu(menu);
 	}

@@ -3,6 +3,7 @@ package org.qiunet.frame;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -13,6 +14,7 @@ import org.qiunet.frame.component.FileTreeItem;
 import org.qiunet.frame.enums.RoleType;
 import org.qiunet.frame.setting.SettingManager;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.system.OSUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -35,6 +37,8 @@ public class RootController {
 	@FXML
 	public TreeView<File> excelNames;
 
+	@FXML
+	public Button svnCommit;
 	@FXML
 	public CheckBox xdBox;
 	@FXML
@@ -76,6 +80,18 @@ public class RootController {
 		this.initCfgChoiceBox();
 		this.initRoleType();
 		this.initCheckBox();
+		this.nonWindowsHandler();
+	}
+
+	/***
+	 * 非windows 处理.
+	 * windows 能调起提交窗. mac  linux 不行所以屏蔽提交按钮
+	 */
+	private void nonWindowsHandler(){
+		if (OSUtil.isLinux() || OSUtil.isMac()) {
+			svnCommit.setVisible(false);
+			svnCommit.setManaged(false);
+		}
 	}
 
 	/***
@@ -172,7 +188,7 @@ public class RootController {
 
 		if (! treeViewInited) {
 			excelNames.setShowRoot(true);
-			excelNames.setCellFactory(item -> new CfgTreeCell(this.console));
+			excelNames.setCellFactory(item -> new CfgTreeCell());
 		}
 	}
 }
