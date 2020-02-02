@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
+import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.utils.file.FileUtil;
 
 import java.nio.file.Path;

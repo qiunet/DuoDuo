@@ -2,10 +2,10 @@ package org.qiunet.excel2cfgs.utils;
 
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.excel2cfgs.appender.*;
-import org.qiunet.excel2cfgs.frame.enums.OutPutType;
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
-import org.qiunet.excel2cfgs.frame.setting.Setting;
-import org.qiunet.excel2cfgs.frame.setting.SettingManager;
+import org.qiunet.excel2cfgs.enums.OutPutType;
+import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.setting.Setting;
+import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.*;

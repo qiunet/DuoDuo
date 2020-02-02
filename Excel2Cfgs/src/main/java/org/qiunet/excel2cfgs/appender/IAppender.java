@@ -2,8 +2,8 @@ package org.qiunet.excel2cfgs.appender;
 
 
 import javafx.scene.control.Alert;
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
-import org.qiunet.excel2cfgs.frame.setting.SettingManager;
+import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.utils.string.StringUtil;
 

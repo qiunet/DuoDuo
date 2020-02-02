@@ -1,6 +1,6 @@
 package org.qiunet.excel2cfgs.utils;
 
-import org.qiunet.excel2cfgs.frame.setting.Setting;
+import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;

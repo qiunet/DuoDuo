@@ -1,6 +1,6 @@
-package org.qiunet.excel2cfgs.frame.setting;
+package org.qiunet.excel2cfgs.setting;
 
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
+import org.qiunet.excel2cfgs.enums.RoleType;
 
 import java.util.LinkedList;
 import java.util.List;

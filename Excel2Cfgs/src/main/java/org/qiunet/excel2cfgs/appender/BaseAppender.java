@@ -1,6 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
-import org.qiunet.excel2cfgs.frame.setting.SettingManager;
+import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.string.StringUtil;
 

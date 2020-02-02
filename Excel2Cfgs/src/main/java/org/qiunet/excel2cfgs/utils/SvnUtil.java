@@ -1,5 +1,6 @@
 package org.qiunet.excel2cfgs.utils;
 
+import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
@@ -19,6 +20,10 @@ public class SvnUtil {
 
 
 	public static void svnEvent(SvnCommand command, String path) {
+		if (processing) {
+			return;
+		}
+
 		switch (osType) {
 			case WINDOWS:
 				ProcessBuilder builder = new ProcessBuilder("TortoiseProc.exe", "/command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
@@ -65,6 +70,7 @@ public class SvnUtil {
 		}
 		processing = true;
 		boolean haveProcessMsg = false;
+		new SvnProcessingListenerData().fireEventHandler();
 		try (
 			InputStreamReader ir=new InputStreamReader(process.getInputStream());
 			LineNumberReader input = new LineNumberReader (ir);
@@ -89,6 +95,7 @@ public class SvnUtil {
 		if (! haveProcessMsg) {
 			FxUIUtil.sendMsgToTextInput(process.exitValue() == 0 ? "执行成功": "执行失败", true);
 		}
+		new SvnProcessingListenerData().fireEventHandler();
 	}
 
 	/**

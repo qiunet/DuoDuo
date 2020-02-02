@@ -9,10 +9,17 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.qiunet.excel2cfgs.frame.component.CfgTreeCell;
-import org.qiunet.excel2cfgs.frame.enums.ActionType;
+import org.qiunet.excel2cfgs.enums.ActionType;
 import org.qiunet.excel2cfgs.frame.component.FileTreeItem;
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
-import org.qiunet.excel2cfgs.frame.setting.SettingManager;
+import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.setting.SettingManager;
+import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
+import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
+import org.qiunet.excel2cfgs.utils.FxUIUtil;
+import org.qiunet.excel2cfgs.utils.SvnUtil;
+import org.qiunet.utils.listener.EventHandler;
+import org.qiunet.utils.listener.IEventData;
+import org.qiunet.utils.listener.IEventListener;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 
@@ -21,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.qiunet.excel2cfgs.frame.enums.RoleType.*;
+import static org.qiunet.excel2cfgs.enums.RoleType.*;
 
 /***
  *
@@ -29,7 +36,7 @@ import static org.qiunet.excel2cfgs.frame.enums.RoleType.*;
  * @author qiunet
  * 2019-11-05 18:13
  ***/
-public class RootController {
+public class RootController implements IEventListener {
 	private static RootController instance;
 
 	private Stage primaryStage;
@@ -38,6 +45,10 @@ public class RootController {
 
 	@FXML
 	public Button svnCommit;
+	@FXML
+	public Button svnUpdate;
+	@FXML
+	public Button svnClean;
 	@FXML
 	public CheckBox xdBox;
 	@FXML
@@ -73,9 +84,9 @@ public class RootController {
 	}
 
 	public void init(Stage stage) {
+		this.primaryStage = stage;
 		this.initExcelTreeView();
 		this.initExcelChoiceBox();
-		this.primaryStage = stage;
 		this.initCfgChoiceBox();
 		this.initRoleType();
 		this.initCheckBox();
@@ -188,6 +199,22 @@ public class RootController {
 		if (! treeViewInited) {
 			excelNames.setShowRoot(true);
 			excelNames.setCellFactory(item -> new CfgTreeCell());
+		}
+	}
+
+	@Override
+	@EventHandler(SvnProcessingListenerData.class)
+	@EventHandler(Excel2CfgServerStartListenerData.class)
+	public void eventHandler(IEventData eventData) {
+		if (eventData.getClass() == Excel2CfgServerStartListenerData.class) {
+			this.init(((Excel2CfgServerStartListenerData) eventData).getStage());
+		}else if (eventData.getClass() == SvnProcessingListenerData.class) {
+			FxUIUtil.addUITask(() -> {
+				boolean processing = SvnUtil.isProcessing();
+				svnCommit.setDisable(processing);
+				svnUpdate.setDisable(processing);
+				svnClean.setDisable(processing);
+			});
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.frame.enums;
+package org.qiunet.excel2cfgs.enums;
 
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
@@ -6,7 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.qiunet.excel2cfgs.frame.RootController;
-import org.qiunet.excel2cfgs.frame.setting.SettingManager;
+import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
 

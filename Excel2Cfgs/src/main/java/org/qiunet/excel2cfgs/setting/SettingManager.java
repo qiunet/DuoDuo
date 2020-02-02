@@ -1,11 +1,15 @@
-package org.qiunet.excel2cfgs.frame.setting;
+package org.qiunet.excel2cfgs.setting;
 
 
-import org.qiunet.excel2cfgs.frame.enums.RoleType;
+import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.listener.EventHandler;
+import org.qiunet.utils.listener.IEventData;
+import org.qiunet.utils.listener.IEventListener;
+import org.qiunet.utils.listener.event_data.ServerShutdownEventData;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.stream.Collectors;
  * qiunet
  * 2019-11-06 14:57
  ***/
-public class SettingManager {
+public class SettingManager implements IEventListener {
 	private static final SettingManager instance = new SettingManager();
 
 	private SettingManager(){
@@ -122,14 +126,6 @@ public class SettingManager {
 	public List<String> getCfgPaths() {
 		return setting.getCfgPaths().stream().map(StrCodecUtil::decrypt).collect(Collectors.toList());
 	}
-
-	/***
-	 * 同步保存
-	 */
-	public void syncSetting(){
-		Excel2CfgsUtil.writeToProjectFile(this.setting);
-	}
-
 	/***
 	 *  加载setting
 	 */
@@ -140,5 +136,11 @@ public class SettingManager {
 			return;
 		}
 		this.setting = JsonUtil.getGeneralObject(json, Setting.class);
+	}
+
+	@Override
+	@EventHandler(ServerShutdownEventData.class)
+	public void eventHandler(IEventData eventData) {
+		Excel2CfgsUtil.writeToProjectFile(this.setting);
 	}
 }

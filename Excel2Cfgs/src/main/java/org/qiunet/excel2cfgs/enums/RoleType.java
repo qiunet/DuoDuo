@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.frame.enums;
+package org.qiunet.excel2cfgs.enums;
 
 /***
  * 角色类型
