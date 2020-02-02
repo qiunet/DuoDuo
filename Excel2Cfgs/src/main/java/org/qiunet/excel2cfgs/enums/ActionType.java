@@ -94,27 +94,6 @@ public enum ActionType {
 			SvnUtil.svnEvent(SvnUtil.SvnCommand.COMMIT, path);
 		}
 	},
-	/***
-	 * 打开当前excel的目录
-	 */
-	openExcelPath {
-		@Override
-		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
-			boolean empty = controller.excelPaths.getSelectionModel().isEmpty();
-			if (empty) {
-				FxUIUtil.openAlert(Alert.AlertType.INFORMATION, "没有选中的文件夹", "提示");
-				return;
-			}
-
-			String selectedItem = controller.excelPaths.getSelectionModel().getSelectedItem();
-			try {
-				Desktop.getDesktop().open(new File(selectedItem));
-			} catch (IOException e) {
-				FxUIUtil.alterError("打开错误:"+e.getMessage());
-				e.printStackTrace();
-			}
-		}
-	},
 
 	/**
 	 * 配置文件路径的选择
@@ -123,7 +102,9 @@ public enum ActionType {
 		@Override
 		public void handlerAction(Stage primaryStage, ActionEvent event,  RootController controller) {
 			String path = openDirectoryChooser(primaryStage, "选择你的项目配置文件夹");
-			if (path == null) return;
+			if (path == null) {
+				return;
+			}
 
 			if (SettingManager.getInstance().addCfgPath(path)){
 				controller.cfgPaths.getItems().add(path);

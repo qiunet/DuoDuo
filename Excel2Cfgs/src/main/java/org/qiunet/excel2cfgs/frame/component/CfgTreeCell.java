@@ -65,7 +65,7 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 			MenuItem menuItem2 = new MenuItem("转换该文件夹所有配置");
 			menuItem2.setOnAction(event -> this.exportCfgs(item));
 
-			menu = new ContextMenu(open, menuItem2);
+			menu = new ContextMenu(menuItem2, open);
 		}else {
 			MenuItem convert = new MenuItem("转换");
 			convert.setOnAction(event -> this.exportCfgs(item));
