@@ -18,16 +18,12 @@ import java.util.List;
  * qiunet
  * 2019-11-25 15:20
  ***/
-public class XmlAppender implements IAppender {
+public class XmlAppender extends BaseAppender {
 	private String filePrefix;
-	/**
-	 * 相对根目录的目录相对路径
-	 */
-	private String relativeDirPath;
 
 	public XmlAppender(String relativeDirPath, String filePrefix) {
+		super(relativeDirPath);
 		this.filePrefix = filePrefix;
-		this.relativeDirPath = relativeDirPath;
 	}
 
 	@Override
@@ -37,7 +33,7 @@ public class XmlAppender implements IAppender {
 			return;
 		}
 
-		Path path = Paths.get(outPath, relativeDirPath, filePrefix + "_" + sheetName + ".xml");
+		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".xml");
 		if (! path.toFile().getParentFile().exists()) {
 			path.toFile().getParentFile().mkdirs();
 		}
@@ -62,6 +58,8 @@ public class XmlAppender implements IAppender {
 			xmlWriter.write(document);
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			this.copyToProject(path.toFile());
 		}
 	}
 

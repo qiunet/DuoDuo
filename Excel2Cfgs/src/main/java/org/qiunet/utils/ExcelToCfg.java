@@ -5,6 +5,7 @@ import javafx.scene.control.TextArea;
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.appender.*;
 import org.qiunet.frame.enums.OutPutType;
+import org.qiunet.frame.enums.RoleType;
 import org.qiunet.frame.setting.Setting;
 import org.qiunet.frame.setting.SettingManager;
 import org.qiunet.utils.string.StringUtil;
@@ -152,6 +153,11 @@ public class ExcelToCfg {
 
 			if (appenderAttachable.getAppenderSize() == 0){
 				FxUIUtil.alterError("请选择至少一种配置输出格式");
+				return;
+			}
+
+			if (SettingManager.getInstance().roleType() != RoleType.SCHEMER && appenderAttachable.getAppenderSize() != 1){
+				FxUIUtil.alterError("非策划人员只能选择一种文件输出格式! ");
 				return;
 			}
 

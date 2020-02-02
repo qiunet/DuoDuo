@@ -17,15 +17,12 @@ import java.util.List;
  * Created by qiunet.
  * 17/10/30
  */
-public class XdAppender implements IAppender {
+public class XdAppender extends BaseAppender {
 
 	private String filePrefix;
 
-	private String outputRelativePath;
-
-
 	public XdAppender(String outputRelativePath, String filePrefix) {
-		this.outputRelativePath = outputRelativePath;
+		super(outputRelativePath);
 		this.filePrefix = filePrefix;
 	}
 
@@ -59,6 +56,8 @@ public class XdAppender implements IAppender {
 		}catch (Exception e) {
 			e.printStackTrace();
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, e.getMessage(), "错误");
+		}finally {
+			this.copyToProject(path.toFile());
 		}
 	}
 

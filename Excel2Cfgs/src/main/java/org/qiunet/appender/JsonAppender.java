@@ -15,16 +15,12 @@ import java.util.List;
  * Created by qiunet.
  * 17/10/30
  */
-public class JsonAppender implements IAppender {
+public class JsonAppender extends BaseAppender {
 
 	private String filePrefix;
 
-	/**
-	 * 相对根目录的目录相对路径
-	 */
-	private String relativeDirPath;
 	public JsonAppender(String relativeDirPath, String filePrefix) {
-		this.relativeDirPath = relativeDirPath;
+		super(relativeDirPath);
 		this.filePrefix = filePrefix;
 
 	}
@@ -36,7 +32,7 @@ public class JsonAppender implements IAppender {
 			return;
 		}
 
-		Path path = Paths.get(outPath, relativeDirPath, filePrefix + "_" + sheetName + ".json");
+		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".json");
 		if (! path.toFile().getParentFile().exists()) {
 			path.toFile().getParentFile().mkdirs();
 		}
@@ -54,6 +50,8 @@ public class JsonAppender implements IAppender {
 
 		String content = JSON.toJSONString(jsonArray, SerializerFeature.PrettyFormat);
 		FileUtil.createFileWithContent(path.toFile(), content);
+
+		this.copyToProject(path.toFile());
 	}
 
 	@Override

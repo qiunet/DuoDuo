@@ -1,6 +1,7 @@
 package org.qiunet.frame.setting;
 
 
+import org.qiunet.frame.enums.RoleType;
 import org.qiunet.utils.Excel2CfgsUtil;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
@@ -62,6 +63,14 @@ public class SettingManager {
 		return ! existInList;
 	}
 
+	/**
+	 * 得到角色类型
+	 * @return
+	 */
+	public RoleType roleType() {
+		return setting.getRoleType();
+	}
+
 	/***
 	 * 删除指定的路径
 	 * @param path
@@ -72,7 +81,7 @@ public class SettingManager {
 	}
 
 	/***
-	 * 返回第一个路径. 默认值
+	 * 返回第一个项目配置路径. 默认值
 	 * @return
 	 */
 	public String getFirstCfgPath() {
