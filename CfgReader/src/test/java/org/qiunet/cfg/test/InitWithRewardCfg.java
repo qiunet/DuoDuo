@@ -5,20 +5,21 @@ import org.qiunet.cfg.base.ISimpleMapConfig;
 /***
  * Excel 的内容
  *
- * KEY	VALUE	VALUE	VALUE
- * int	string	long	double
- * 1111	1,2,3	123456	1.1
- * 2222	3,4,5	123457	1.2
- * 3333	5,6,7	123458	1.3
+ 键	值1	开始时间(10位时间戳)	结束时间(10位时间戳)
+ id	val1	val2	val3
+ ALL	SERVER	ALL	ALL
+ 1111	1,2,3	123456	1.1
+ 2222	3,4,5	123457	1.2
+ 3333	5,6,7	123458	1.3
  */
 public class InitWithRewardCfg implements ISimpleMapConfig<Integer> {
 	private int id;
-	private RewardData val;
+	private RewardData val1;
 	private long val2;
 	private double val3;
 
 	public RewardData getReward() {
-		return val;
+		return val1;
 	}
 
 	public long getVal2() {

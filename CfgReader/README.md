@@ -1,7 +1,10 @@
 # `CfgReader`配置文件的读取模块
-* 支持格式 `json` `xd`
+* 支持格式 `json` `xd` `xd`
 * 根据定义类字段顺序自动注入数据
-* 支持使用ICfgTypeConvert进行复杂字段的注入
+* 支持继承 BaseObjConvert 进行复杂字段的注入
+
+#### 测试
+使用Excel2Cfgs可以转换 测试资源下的参数表进行测试
 
 
 #### Cfg实现那个接口?

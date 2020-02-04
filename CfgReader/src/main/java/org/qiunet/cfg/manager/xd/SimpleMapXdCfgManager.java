@@ -13,22 +13,12 @@ import java.util.Map;
  * @param <ID>
  * @param <Cfg>
  */
-public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>> extends BaseXdCfgManager {
-
-	private Class<Cfg> cfgClass;
+public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>> extends BaseXdCfgManager<Cfg> {
 
 	private Map<ID, Cfg> cfgMap;
 
 	protected SimpleMapXdCfgManager(String fileName) {
 		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
 	}
 
 	/**
@@ -55,7 +45,7 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 		XdInfoData xdInfoData = loadXdFileToDataInputStream();
 		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
 		for (int i = 0 ; i < xdInfoData.getNum(); i++ ) {
-			Cfg cfg = generalCfg(cfgClass);
+			Cfg cfg = generalCfg();
 
 			if (cfgMap.containsKey(cfg.getId())) {
 				throw new RuntimeException("ID ["+cfg.getId()+"] is duplicate!");

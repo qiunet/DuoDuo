@@ -1,17 +1,13 @@
 package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.annotation.Cfg;
-import org.qiunet.cfg.annotation.CfgIgnore;
-import org.qiunet.cfg.convert.ICfgTypeConvert;
+import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.cfg.manager.CfgTypeConvertManager;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,16 +21,13 @@ import java.util.List;
  * Created by qiunet.
  * 17/7/16
  */
-abstract class BaseXdCfgManager extends BaseCfgManager {
-	protected final Logger logger = LoggerType.DUODUO.getLogger();
+abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	private InputStream in;
-	protected String fileName;
 	protected DataInputStream dis;
 	protected XdInfoData xdInfoData;
+
 	protected BaseXdCfgManager(String fileName) {
-		Cfg annotation = getClass().getAnnotation(Cfg.class);
-		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
-		this.fileName = fileName;
+		super(fileName);
 	}
 	/**
 	 * 获取xd文件
@@ -125,36 +118,14 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 
 	/***
 	 * 通过反射得到一个cfg
-	 * @param cfgClass
-	 * @param <Cfg>
 	 * @return
 	 */
-	<Cfg> Cfg generalCfg(Class<Cfg> cfgClass) throws Exception {
+	Cfg generalCfg() throws Exception {
 		Cfg cfg = cfgClass.newInstance();
 
 		for (String name: xdInfoData.getNames()) {
-			Field field = cfgClass.getDeclaredField(name);
-			Object val;
-			Class<?> type = field.getType();
-			if (type == Integer.TYPE || type == Integer.class) val = dis.readInt();
-			else if (type == Boolean.TYPE || type == Boolean.class) val = dis.readInt() == 1;
-			else if (type == Long.TYPE || type == Long.class) val = dis.readLong();
-			else if (type == Double.TYPE || type == Double.class) val = dis.readDouble();
-			else if (type == String.class) val = dis.readUTF();
-			else {
-				ICfgTypeConvert convert = returnConvert(type);
-				val = convert.returnObject(field.getName(), dis);
-			}
-			field.setAccessible(true);
-			field.set(cfg, val);
+			this.handlerObjConvertAndAssign(cfg, name, dis.readUTF());
 		}
 		return cfg;
-	}
-	private ICfgTypeConvert returnConvert(Class type) {
-		ICfgTypeConvert cfgTypeConvert = CfgTypeConvertManager.getInstance().returnConvert(type);
-		if (cfgTypeConvert == null) {
-			throw new RuntimeException("not define convert for type ["+type.getName()+"]");
-		}
-		return cfgTypeConvert;
 	}
 }

@@ -30,12 +30,7 @@ abstract class BaseAppender implements IAppender {
 	 * @param file
 	 */
 	protected void copyToProject(File file) {
-		String firstCfgPath = SettingManager.getInstance().getFirstCfgPath();
-		if (StringUtil.isEmpty(firstCfgPath)) {
-			return;
-		}
-
-		Path path = Paths.get(firstCfgPath, outputRelativePath, file.getName());
-		FileUtil.copy(file, path.toString());
+		// 目前是服务端 客户端直接生成到项目配置路径. 不需要额外copy
+		// 策划负责转化和提交. 服务端 客户端只需要生成.
 	}
 }

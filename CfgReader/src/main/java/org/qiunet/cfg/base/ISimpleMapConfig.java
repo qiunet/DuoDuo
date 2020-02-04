@@ -6,10 +6,5 @@ package org.qiunet.cfg.base;
  * Created by qiunet.
  * 17/6/3
  */
-public interface ISimpleMapConfig<ID> {
-	/**
-	 * 得到key
-	 * @return
-	 */
-	public ID getId();
+public interface ISimpleMapConfig<ID> extends ICfg<ID> {
 }

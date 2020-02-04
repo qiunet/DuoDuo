@@ -1,13 +1,10 @@
 package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.ISimpleMapConfig;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
-import java.io.DataInputStream;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -18,22 +15,11 @@ import java.util.Map;
  * @param <ID>
  * @param <Cfg>
  */
-public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> extends BaseXdCfgManager {
-
-	private Class<Cfg> cfgClass;
-
+public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> extends BaseXdCfgManager<Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
 	protected NestListXdCfgManager(String fileName) {
 		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
 	}
 
 	/**
@@ -60,7 +46,7 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 		XdInfoData xdInfoData = loadXdFileToDataInputStream();
 		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
 		for (int i = 0; i < xdInfoData.getNum(); i++) {
-			Cfg cfg = generalCfg(cfgClass);
+			Cfg cfg = generalCfg();
 
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);

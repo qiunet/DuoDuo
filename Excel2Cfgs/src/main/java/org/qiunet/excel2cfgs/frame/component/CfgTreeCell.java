@@ -50,26 +50,30 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 		}
 
 		ContextMenu menu;
-		if (item.isDirectory()) {
-			EventHandler<ActionEvent> handler = event -> {
-				try {
+		EventHandler<ActionEvent> handler = event -> {
+			try {
+				if (item.isDirectory()) {
 					Desktop.getDesktop().open(item);
-				} catch (IOException e) {
-					e.printStackTrace();
+				}else {
+					Desktop.getDesktop().open(item.getParentFile());
 				}
-			};
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		};
 
-			MenuItem open = new MenuItem("打开文件夹");
-			open.setOnAction(handler);
+		MenuItem openDir = new MenuItem("打开文件夹");
+		openDir.setOnAction(handler);
 
+		if (item.isDirectory()) {
 			MenuItem menuItem2 = new MenuItem("转换该文件夹所有配置");
 			menuItem2.setOnAction(event -> this.exportCfgs(item));
 
-			menu = new ContextMenu(menuItem2, open);
+			menu = new ContextMenu(menuItem2, openDir);
 		}else {
 			MenuItem convert = new MenuItem("转换");
 			convert.setOnAction(event -> this.exportCfgs(item));
-			menu = new ContextMenu(convert);
+			menu = new ContextMenu(openDir, convert);
 		}
 
 		MenuItem svnUpdate = new MenuItem("更新");

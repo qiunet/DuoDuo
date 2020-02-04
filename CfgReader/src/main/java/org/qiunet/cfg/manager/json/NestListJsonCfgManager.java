@@ -3,10 +3,6 @@ package org.qiunet.cfg.manager.json;
 import org.qiunet.cfg.base.INestListConfig;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
@@ -16,21 +12,11 @@ import java.util.Map;
  * Time: 16:06.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID>> extends BaseJsonCfgManager {
-	private Class<Cfg> cfgClass;
-
+public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID>> extends BaseJsonCfgManager<Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
 	protected NestListJsonCfgManager(String fileName) {
 		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
 	}
 
 
@@ -45,22 +31,19 @@ public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID
 
 	@Override
 	void init() throws Exception {
-		this.cfgMap = getNestListCfg(cfgClass);
+		this.cfgMap = getNestListCfg();
 		this.initBySelf();
 	}
 
 	/***
 	 * 得到嵌套list的map数据
 	 * 一个key  对应一个 cfg list的结构
-	 * @param cfgClass
-	 * @param <Key>
-	 * @param <Cfg>
 	 * @return
 	 * @throws Exception
 	 */
-	protected <Key, Cfg extends INestListConfig<Key>> Map<Key, List<Cfg>> getNestListCfg(Class<Cfg> cfgClass) throws Exception {
-		SafeHashMap<Key, List<Cfg>> cfgMap = new SafeHashMap<>();
-		List<Cfg> cfgs = getSimpleListCfg("", cfgClass);
+	protected Map<ID, List<Cfg>> getNestListCfg() throws Exception {
+		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
+		List<Cfg> cfgs = getSimpleListCfg();
 		for (Cfg cfg : cfgs) {
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
