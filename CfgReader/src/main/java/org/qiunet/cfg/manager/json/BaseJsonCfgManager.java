@@ -23,16 +23,9 @@ public abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManage
 	}
 
 	@Override
-	public String loadCfg() {
-		String failFileName = "";
-		try {
-			this.init();
-			this.initBySelf();
-		} catch (Exception e) {
-			logger.error("读取配置文件" + fileName + "失败 ERROR:", e);
-			failFileName = this.fileName;
-		}
-		return failFileName;
+	public void loadCfg() throws Exception {
+		this.init();
+		this.initBySelf();
 	}
 
 	abstract void init() throws Exception;

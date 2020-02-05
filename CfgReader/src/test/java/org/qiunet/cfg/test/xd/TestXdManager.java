@@ -21,7 +21,7 @@ public class TestXdManager {
 	}
 
 	@Test
-	public void testSimpleMapInit(){
+	public void testSimpleMapInit() throws Exception {
 		SimpleMapInitManager.getInstance().loadCfg();
 		InitCfg initCfg = SimpleMapInitManager.getInstance().getCfgById(1111);
 
@@ -34,7 +34,7 @@ public class TestXdManager {
 	}
 
 	@Test
-	public void testSimpleMapWithReward(){
+	public void testSimpleMapWithReward() throws Exception{
 		SimpleMapWithRewardManager.getInstance().loadCfg();
 		InitWithRewardCfg initCfg = SimpleMapWithRewardManager.getInstance().getCfgById(1111);
 
@@ -48,7 +48,7 @@ public class TestXdManager {
 
 
 	@Test
-	public void testNestMapInit(){
+	public void testNestMapInit() throws Exception{
 		nestMapXdCfgManager.loadCfg();
 		Init2Cfg initCfg = nestMapXdCfgManager.getCfgByIdAndSubId(2222, "3,4,5");
 
@@ -61,7 +61,7 @@ public class TestXdManager {
 	}
 
 	@Test
-	public void testNestListInit(){
+	public void testNestListInit() throws Exception{
 		nestListInitManager.loadCfg();
 		List<Init3Cfg> initCfgs = nestListInitManager.getCfgListById(3333);
 

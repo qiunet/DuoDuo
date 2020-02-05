@@ -60,18 +60,10 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	 * 初始化设定
 	 */
 	@Override
-	public String loadCfg() {
-		String failFileName = "";
-		try {
-			this.init();
-			this.initBySelf();
-		} catch (Exception e) {
-			logger.error("读取配置文件"+fileName+"失败 ERROR:", e);
-			failFileName = this.fileName;
-		}finally{
-			this.close();
-		}
-		return failFileName;
+	public void loadCfg() throws Exception{
+		this.init();
+		this.initBySelf();
+		this.close();
 	}
 
 	private void close() {
@@ -82,11 +74,11 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			}catch (EOFException e) {
 				readOver = true;
 			} catch (IOException e) {
-				logger.error("读取配置文件"+fileName+"数据出现问题", e);
+				throw new RuntimeException("读取配置文件"+fileName+"数据出现问题", e);
 			}
 
 			if (! readOver) {
-				logger.error("读取配置文件"+fileName+"数据异常 有残留数据", new EOFException());
+				throw new RuntimeException("读取配置文件"+fileName+"数据异常 有残留数据");
 			}
 		}
 		try {
@@ -97,7 +89,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 				in.close();
 			}
 		} catch (IOException e) {
-			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
+			throw new RuntimeException("关闭配置文件"+fileName+"数据出现问题");
 		}
 
 		fileName = null;

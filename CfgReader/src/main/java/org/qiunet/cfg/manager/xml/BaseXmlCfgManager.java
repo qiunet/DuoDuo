@@ -30,7 +30,7 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	}
 
 	@Override
-	public String loadCfg() {
+	public void loadCfg() throws Exception {
 		XStream xStream = new XStream();
 		// allow some basics
 		xStream.addPermission(NullPermission.NULL);
@@ -46,7 +46,6 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			throw new NullPointerException("File ["+fileName+"] is not exist in classpath");
 		}
 
-		String failFileName = "";
 		InputStream in = null;
 		try {
 			if (url.getPath().contains(".jar!")) {
@@ -59,19 +58,11 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 
 			this.init();
 			this.initBySelf();
-		} catch (Exception e) {
-			logger.error("读取配置文件" + fileName + "失败 ERROR:", e);
-			failFileName = this.fileName;
-		}finally {
+		} finally {
 			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				in.close();
 			}
 		}
-		return failFileName;
 	}
 
 	abstract void init() throws Exception;

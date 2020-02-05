@@ -3,7 +3,6 @@ package org.qiunet.cfg.manager;
 import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
-import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
 import java.util.*;
@@ -14,7 +13,7 @@ import java.util.*;
  *         Created on 17/2/9 12:15.
  */
 public class CfgManagers {
-	private Logger qLogger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private static CfgManagers instance = new CfgManagers();
 	private List<Container<ICfgManager>> gameSettingList = new ArrayList<>();
@@ -49,12 +48,11 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public List<String> reloadSetting() throws  Exception{
-		qLogger.error("Game Setting Data Load start.....");
+	public void reloadSetting() throws  Exception{
+		logger.error("Game Setting Data Load start.....");
 		this.loadPropertySetting();
-		List<String> failFileNames = this.loadDataSetting();
-		qLogger.error("Game Setting Data Load over.....");
-		return failFileNames;
+		this.loadDataSetting();
+		logger.error("Game Setting Data Load over.....");
 	}
 
 	private Set<Class<? extends ICfgManager>> cfgClasses = new HashSet<>();
@@ -64,7 +62,9 @@ public class CfgManagers {
 	 * @param order
 	 */
 	public void addDataSettingManager(ICfgManager manager, int order) {
-		if (cfgClasses.contains(manager.getClass())) return;
+		if (cfgClasses.contains(manager.getClass())) {
+			return;
+		}
 
 		this.gameSettingList.add(new Container<>(manager, order));
 		cfgClasses.add(manager.getClass());
@@ -82,7 +82,7 @@ public class CfgManagers {
 	 */
 	protected void loadPropertySetting() {
 		for (Container<? extends LoaderProperties> container : propertylist){
-			qLogger.info("Load Properties ["+ container.t.getClass().getSimpleName() +"]");
+			logger.info("Load Properties ["+ container.t.getClass().getName() +"]");
 			container.t.reload();
 		}
 	}
@@ -92,17 +92,16 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	protected List<String> loadDataSetting() throws  Exception{
-		List<String> failFileNames = new ArrayList<>(5);
+	protected void loadDataSetting() throws Exception {
 		for (Container<ICfgManager> container : gameSettingList) {
-			String name = container.t.loadCfg();
-			qLogger.info("Load Game Config Manager["+ container.t.getClass().getSimpleName() +"]");
-
-			if(!StringUtil.isEmpty(name)) {
-				failFileNames.add(name);
+			try {
+				container.t.loadCfg();
+			}catch (Exception e) {
+				logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
+				throw e;
 			}
+			logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
 		}
-		return failFileNames;
 	}
 
 	/***

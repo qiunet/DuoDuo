@@ -1,5 +1,6 @@
 package org.qiunet.cfg.manager.base;
 
+import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.ICfgManager;
@@ -34,6 +35,18 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 	protected void initBySelf() throws Exception {
 
 	}
+
+
+	@Override
+	public String getLoadFileName() {
+		return fileName;
+	}
+
+	@Override
+	public Class<? extends ICfg> getCfgClass() {
+		return cfgClass;
+	}
+
 
 	public BaseCfgManager(String fileName) {
 		Type type = getClass().getGenericSuperclass();
@@ -117,7 +130,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (NoSuchFieldException e) {
-			logger.error("Cfg ["+cfg.getClass().getName()+"] name ["+name+"] not define", e);
+			throw new AbstractReflectionConverter.UnknownFieldException(cfgClass.getName(), name);
 		} catch (IllegalAccessException e) {
 			logger.error("Cfg ["+cfg.getClass().getName()+"] name ["+name+"] assign error", e);
 		}

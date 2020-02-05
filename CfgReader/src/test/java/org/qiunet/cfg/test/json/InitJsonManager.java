@@ -33,13 +33,16 @@ public class InitJsonManager {
 
 
 	private void load() {
-		simpleMapJsonCfgManager = new SimpleMapJsonCfgManager<Integer, InitCfg>("config/init/init_data.json"){};
-		nestListJsonCfgManager = new NestListJsonCfgManager<Integer, Init3Cfg>("config/init/init_data.json"){};
-		nestMapJsonCfgManager = new NestMapJsonCfgManager<Integer, String, Init2Cfg>("config/init/init_data.json"){};
-		simpleMapJsonCfgManager.loadCfg();
-		nestListJsonCfgManager.loadCfg();
-		nestMapJsonCfgManager.loadCfg();
-
+		try {
+			simpleMapJsonCfgManager = new SimpleMapJsonCfgManager<Integer, InitCfg>("config/init/init_data.json"){};
+			nestListJsonCfgManager = new NestListJsonCfgManager<Integer, Init3Cfg>("config/init/init_data.json"){};
+			nestMapJsonCfgManager = new NestMapJsonCfgManager<Integer, String, Init2Cfg>("config/init/init_data.json"){};
+			simpleMapJsonCfgManager.loadCfg();
+			nestListJsonCfgManager.loadCfg();
+			nestMapJsonCfgManager.loadCfg();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public SimpleMapJsonCfgManager<Integer, InitCfg> getSimpleMapJsonCfgManager() {
