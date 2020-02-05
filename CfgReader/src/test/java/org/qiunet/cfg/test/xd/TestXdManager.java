@@ -1,14 +1,14 @@
-package org.qiunet.cfg.test;
+package org.qiunet.cfg.test.xd;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.cfg.manager.xd.NestListXdCfgManager;
 import org.qiunet.cfg.manager.xd.NestMapXdCfgManager;
+import org.qiunet.cfg.test.*;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.util.List;
-import java.util.Map;
 
 public class TestXdManager {
 

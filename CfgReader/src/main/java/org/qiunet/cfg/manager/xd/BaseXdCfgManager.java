@@ -64,6 +64,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 		String failFileName = "";
 		try {
 			this.init();
+			this.initBySelf();
 		} catch (Exception e) {
 			logger.error("读取配置文件"+fileName+"失败 ERROR:", e);
 			failFileName = this.fileName;
@@ -105,16 +106,6 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	}
 
 	abstract void init()throws Exception;
-
-	/**
-	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
-	 * 目前是空的实现,开发者选择是否覆盖函数
-	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
-	 * @throws Exception
-	 */
-	public void initBySelf() throws Exception {
-
-	}
 
 	/***
 	 * 通过反射得到一个cfg

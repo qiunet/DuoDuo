@@ -1,8 +1,11 @@
-package org.qiunet.cfg.test;
+package org.qiunet.cfg.test.json;
 
 import org.qiunet.cfg.manager.json.NestListJsonCfgManager;
 import org.qiunet.cfg.manager.json.NestMapJsonCfgManager;
 import org.qiunet.cfg.manager.json.SimpleMapJsonCfgManager;
+import org.qiunet.cfg.test.Init2Cfg;
+import org.qiunet.cfg.test.Init3Cfg;
+import org.qiunet.cfg.test.InitCfg;
 
 /**
  * Created by zhengj

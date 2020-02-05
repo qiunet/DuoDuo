@@ -1,8 +1,9 @@
-package org.qiunet.cfg.test;
+package org.qiunet.cfg.test.xd;
 
 import org.qiunet.cfg.manager.xd.SimpleMapXdCfgManager;
+import org.qiunet.cfg.test.InitWithRewardCfg;
 
-public class SimpleMapWithRewardManager extends SimpleMapXdCfgManager<Integer, InitWithRewardCfg> {
+class SimpleMapWithRewardManager extends SimpleMapXdCfgManager<Integer, InitWithRewardCfg> {
 	private static SimpleMapWithRewardManager instance = new SimpleMapWithRewardManager();
 
 	public static SimpleMapWithRewardManager getInstance() {

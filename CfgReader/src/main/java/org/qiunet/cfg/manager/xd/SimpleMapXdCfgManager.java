@@ -33,7 +33,6 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg();
-		this.initBySelf();
 	}
 	/***
 	 * 得到的map

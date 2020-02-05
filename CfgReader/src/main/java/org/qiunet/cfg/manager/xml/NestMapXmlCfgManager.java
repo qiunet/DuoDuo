@@ -1,26 +1,26 @@
-package org.qiunet.cfg.manager.json;
+package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.INestMapConfig;
+import org.qiunet.cfg.manager.xd.XdInfoData;
 import org.qiunet.utils.collection.safe.SafeHashMap;
-import java.util.List;
+
 import java.util.Map;
 
-/**
- * @author zhengj
- * Date: 2019/6/6.
- * Time: 16:10.
- * To change this template use File | Settings | File Templates.
- */
-public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseJsonCfgManager<Cfg> {
-	private Map<ID, Map<SubId, Cfg>> cfgs;
+/***
+ *
+ * @author qiunet
+ * 2020-02-05 11:52
+ **/
+public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXmlCfgManager<Cfg> {
+	private Map<ID, Map<SubId, Cfg>> cfgMap;
 
-	protected NestMapJsonCfgManager(String fileName) {
+	protected NestMapXmlCfgManager(String fileName) {
 		super(fileName);
 	}
 
 	@Override
 	void init() throws Exception {
-		this.cfgs = getNestMapCfg();
+		this.cfgMap = getNestMapCfg();
 	}
 
 	/***
@@ -30,30 +30,35 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 	 * @return
 	 */
 	public Cfg getCfgByIdAndSubId(ID id, SubId subId) {
-		Map<SubId, Cfg> subIdCfgMap = cfgs.get(id);
+		Map<SubId, Cfg> subIdCfgMap = cfgMap.get(id);
 		if (subIdCfgMap == null) {
 			return null;
 		}
 		return subIdCfgMap.get(subId);
 	}
-
 	/***
 	 * 得到一个一定格式的嵌套map
 	 * 格式: key 对应 Map<subKey, cfg>
 	 * @return
 	 * @throws Exception
 	 */
-	protected Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
+	private Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
 		SafeHashMap<ID, Map<SubId, Cfg>> cfgMap = new SafeHashMap<>();
-		List<Cfg> cfgs = getSimpleListCfg();
 		for (Cfg cfg : cfgs) {
-			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeHashMap<>());
+			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeHashMap<>());
+
+			if (subMap.containsKey(cfg.getSubId())) {
+				throw new RuntimeException("SubId ["+cfg.getSubId()+"] is duplicate!");
+			}
+
 			subMap.put(cfg.getSubId(), cfg);
 		}
+
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
 			((SafeHashMap) subKeyCfgMap).loggerIfAbsent();
 			((SafeHashMap) subKeyCfgMap).safeLock();
 		}
+
 		cfgMap.loggerIfAbsent();
 		cfgMap.safeLock();
 		return cfgMap;
@@ -61,6 +66,6 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 
 
 	public Map<ID, Map<SubId, Cfg>> getCfgs() {
-		return cfgs;
+		return cfgMap;
 	}
 }

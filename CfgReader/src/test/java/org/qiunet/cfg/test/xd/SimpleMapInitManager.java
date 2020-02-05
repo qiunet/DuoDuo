@@ -1,8 +1,9 @@
-package org.qiunet.cfg.test;
+package org.qiunet.cfg.test.xd;
 
 import org.qiunet.cfg.manager.xd.SimpleMapXdCfgManager;
+import org.qiunet.cfg.test.InitCfg;
 
-public class SimpleMapInitManager extends SimpleMapXdCfgManager<Integer, InitCfg> {
+class SimpleMapInitManager extends SimpleMapXdCfgManager<Integer, InitCfg> {
 	private static SimpleMapInitManager instance = new SimpleMapInitManager();
 
 	public static SimpleMapInitManager getInstance() {

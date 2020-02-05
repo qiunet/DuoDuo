@@ -25,6 +25,16 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 
 	protected Class<Cfg> cfgClass;
 
+	/**
+	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
+	 * 目前是空的实现,开发者选择是否覆盖函数
+	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
+	 * @throws Exception
+	 */
+	protected void initBySelf() throws Exception {
+
+	}
+
 	public BaseCfgManager(String fileName) {
 		Type type = getClass().getGenericSuperclass();
 		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {

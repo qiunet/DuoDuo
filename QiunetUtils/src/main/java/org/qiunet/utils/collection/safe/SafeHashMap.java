@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author qiunet
@@ -25,8 +27,9 @@ public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
 	private boolean loggerAbsent;
 	@Override
 	public VAL put(KEY key, VAL value) {
-		if (safeLock)
+		if (safeLock) {
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
 		return super.put(key, value);
 	}
 
@@ -41,17 +44,52 @@ public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
 
 	@Override
 	public void putAll(Map<? extends KEY, ? extends VAL> m) {
-		if (safeLock)
+		if (safeLock) {
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
 		super.putAll(m);
 	}
 
 	@Override
 	public VAL remove(Object key) {
-		if (safeLock)
+		if (safeLock) {
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
 		return super.remove(key);
 	}
+
+	@Override
+	public VAL compute(KEY key, BiFunction<? super KEY, ? super VAL, ? extends VAL> remappingFunction) {
+		if (safeLock) {
+			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
+		return super.compute(key, remappingFunction);
+	}
+
+	@Override
+	public VAL computeIfAbsent(KEY key, Function<? super KEY, ? extends VAL> mappingFunction) {
+		if (safeLock) {
+			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
+		return super.computeIfAbsent(key, mappingFunction);
+	}
+
+	@Override
+	public VAL computeIfPresent(KEY key, BiFunction<? super KEY, ? super VAL, ? extends VAL> remappingFunction) {
+		if (safeLock) {
+			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
+		return super.computeIfPresent(key, remappingFunction);
+	}
+
+	@Override
+	public VAL merge(KEY key, VAL value, BiFunction<? super VAL, ? super VAL, ? extends VAL> remappingFunction) {
+		if (safeLock) {
+			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
+		return super.merge(key, value, remappingFunction);
+	}
+
 	/**
 	 * 把当前的list设置为锁定状态. 不允许修改里面的数据
 	 */
@@ -68,8 +106,9 @@ public class SafeHashMap<KEY, VAL> extends LinkedHashMap<KEY, VAL> {
 
 	@Override
 	public void clear() {
-		if (safeLock)
+		if (safeLock) {
 			throw new SafeColletionsModifyException("It locked, Can not set again!");
+		}
 		super.clear();
 	}
 }

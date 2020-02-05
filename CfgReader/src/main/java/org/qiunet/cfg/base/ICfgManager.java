@@ -9,7 +9,6 @@ public interface ICfgManager {
 	/**
 	 * 设定加载
 	 * @return
-	 * @throws Exception
 	 */
-	String loadCfg ()throws Exception;
+	String loadCfg ();
 }

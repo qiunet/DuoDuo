@@ -32,7 +32,6 @@ public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getNestListCfg();
-		this.initBySelf();
 	}
 
 	/***

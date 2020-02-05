@@ -30,7 +30,6 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg();
-		this.initBySelf();
 	}
 
 	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{

@@ -20,7 +20,6 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 	@Override
 	void init() throws Exception {
 		this.cfgs = getNestMapCfg();
-		this.initBySelf();
 	}
 
 	/***
