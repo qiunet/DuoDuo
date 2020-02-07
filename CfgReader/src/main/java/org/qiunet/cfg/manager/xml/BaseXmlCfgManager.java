@@ -10,9 +10,9 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -37,8 +37,8 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 		xStream.addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xStream.allowTypeHierarchy(Collection.class);
 
-		xStream.alias("configs", Configs.class);
-		xStream.addImplicitArray(Configs.class, "config", cfgClass);
+		xStream.alias("configs", ArrayList.class);
+		xStream.alias("config", cfgClass);
 		CfgFieldObjConvertManager.getInstance().getConverts().forEach(convert -> xStream.registerConverter(convert, XStream.PRIORITY_VERY_HIGH - 1));
 
 		URL url = getClass().getClassLoader().getResource(fileName);
@@ -54,7 +54,7 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			}else {
 				in = new FileInputStream(url.getPath());
 			}
-			this.cfgs = (List<Cfg>) ((Configs) xStream.fromXML(in)).getConfig();
+			this.cfgs = (List<Cfg>) xStream.fromXML(in);
 
 			this.init();
 			this.initBySelf();

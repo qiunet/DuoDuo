@@ -11,7 +11,9 @@ import org.qiunet.cfg.test.InitCfg;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /***
  *
@@ -29,13 +31,12 @@ public class TestXstream {
 		xStream.addPermission(PrimitiveTypePermission.PRIMITIVES);
 		xStream.allowTypeHierarchy(Collection.class);
 
-		xStream.alias("configs", Configs.class);
-		xStream.addImplicitArray(Configs.class, "config", InitCfg.class);
+		xStream.alias("configs", ArrayList.class);
+		xStream.alias("config", InitCfg.class);
 
 		CfgFieldObjConvertManager.getInstance().getConverts().forEach(convert -> xStream.registerConverter(convert, XStream.PRIORITY_VERY_HIGH - 1));
 
-		Object obj = xStream.fromXML(stream);
-		Assert.assertSame(obj.getClass(), Configs.class);
-		Assert.assertEquals(((Configs) obj).getConfig().size(), 3);
+		List<InitCfg> obj = (List<InitCfg>) xStream.fromXML(stream);
+		Assert.assertEquals(obj.size(), 3);
 	}
 }
