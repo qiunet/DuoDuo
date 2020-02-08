@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.security.NullPermission;
 import com.thoughtworks.xstream.security.PrimitiveTypePermission;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
+import org.qiunet.cfg.convert.xml.XmlEnumConvert;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 		xStream.alias("configs", ArrayList.class);
 		xStream.alias("config", cfgClass);
 		CfgFieldObjConvertManager.getInstance().getConverts().forEach(convert -> xStream.registerConverter(convert, XStream.PRIORITY_VERY_HIGH - 1));
-
+		xStream.registerConverter(new XmlEnumConvert(), XStream.PRIORITY_VERY_HIGH - 1);
 		URL url = getClass().getClassLoader().getResource(fileName);
 		if (url == null) {
 			throw new NullPointerException("File ["+fileName+"] is not exist in classpath");

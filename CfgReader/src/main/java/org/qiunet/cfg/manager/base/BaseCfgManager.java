@@ -143,11 +143,17 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 	 * @return 没有转换器将抛出异常
 	 */
 	public Object covert(Class cfg, Class clazz, String val) {
+
 		for (BaseObjConvert convert : CfgFieldObjConvertManager.getInstance().getConverts()) {
 			if (convert.canConvert(clazz)) {
 				return convert.fromString(val);
 			}
 		}
+
+		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
+			return Enum.valueOf(clazz, val);
+		}
+
 		throw new RuntimeException("Can not convert class type for ["+clazz.getName()+"] in class ["+cfg.getName()+"]");
 	}
 }
