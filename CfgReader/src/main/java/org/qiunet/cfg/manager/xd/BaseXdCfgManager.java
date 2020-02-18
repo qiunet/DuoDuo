@@ -92,7 +92,6 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			throw new RuntimeException("关闭配置文件"+fileName+"数据出现问题");
 		}
 
-		fileName = null;
 		dis = null;
 		in = null;
 	}
