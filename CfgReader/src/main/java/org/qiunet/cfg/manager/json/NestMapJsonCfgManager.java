@@ -34,6 +34,7 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 	@Override
 	void init() throws Exception {
 		this.cfgs = getNestMapCfg(cfgClass);
+		this.initBySelf();
 	}
 
 	/***
