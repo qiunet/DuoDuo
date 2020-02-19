@@ -1,5 +1,6 @@
 package org.qiunet.excel2cfgs.utils;
 
+import javafx.application.Platform;
 import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.SystemPropertyUtil;
@@ -10,6 +11,10 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.StringJoiner;
 
+/***
+ * svn 处理
+ * @author qiunet
+ */
 public class SvnUtil {
 	/**svn正操作中 后期可以做监听, 告知按钮不可被操作.*/
 	private static boolean processing = false;
@@ -26,13 +31,13 @@ public class SvnUtil {
 
 		switch (osType) {
 			case WINDOWS:
-				ProcessBuilder builder = new ProcessBuilder("TortoiseProc.exe", "/command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
-				try {
-					Process process = builder.start();
-					System.out.println(process.exitValue()+"=============================");
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				Platform.runLater(() -> {
+					try {
+						Runtime.getRuntime().exec("TortoiseProc.exe /command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				});
 				break;
 			case MAC_OS:
 			case LINUX:
