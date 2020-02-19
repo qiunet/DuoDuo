@@ -10,7 +10,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -57,7 +56,11 @@ public final class ClassScanner implements IApplicationContext {
 			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
 			for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
 				IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
-				instance.setApplicationContext(this);
+				try {
+					instance.setApplicationContext(this);
+				}catch (Exception e) {
+					logger.error("Scanner Exception: ", e);
+				}
 			}
 		}
 	}
