@@ -218,21 +218,34 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param clazz
 	 */
 	private void handlerTable(Class<?> clazz) {
-		Table table = clazz.getAnnotation(Table.class);
+		try {
+			Table table = clazz.getAnnotation(Table.class);
+			if(table == null){
+				logger.info("===========扫描到:" + clazz + "\t table is null");
+				return;
+			}
 
-		// 迭代出当前clazz所有fields存到newFieldList中
-		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
+			// 迭代出当前clazz所有fields存到newFieldList中
+			List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-		int tableExist = createTableService.findTableCountByTableName(table.name());
-		// 不存在时
-		if (tableExist == 0) {
-			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable());
-			createTable(tableParam);
-		} else {
-			// 验证对比从model中解析的fieldList与从数据库查出来的columnList
-			// 1. 找出增加的字段
-			// 2. 找出更新的字段
-			handlerAddAndModifyFields(entityFieldList, clazz);
+			int tableExist = createTableService.findTableCountByTableName(table.name());
+			// 不存在时
+			if (tableExist == 0) {
+				TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable());
+				createTable(tableParam);
+			} else {
+				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
+				// 1. 找出增加的字段
+				// 2. 找出更新的字段
+				handlerAddAndModifyFields(entityFieldList, clazz);
+			}
+		} catch (Exception e) {
+			logger.error("===========扫描到:" + clazz + "\t e:", e);
+			Table table = clazz.getAnnotation(Table.class);
+			logger.info("===============1 " + clazz.getName());
+			logger.info("===============2 " + table);
+			e.printStackTrace();
 		}
+
 	}
 }
