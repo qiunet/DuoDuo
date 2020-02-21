@@ -9,7 +9,7 @@ import org.qiunet.data.core.support.db.Table;
  * Time: 15:41.
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "sys_dict", comment = "字典表")
+@Table(name = "sys_dict", comment = "字典表", defaultDb = true)
 public class SysDict {
 
 	@Column(isKey = true, isNull = false, comment = "字典表ID")

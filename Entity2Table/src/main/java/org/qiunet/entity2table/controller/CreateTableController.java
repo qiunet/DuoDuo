@@ -28,7 +28,9 @@ class CreateTableController implements IApplicationContextAware {
 	private CreateTableService createTableService = CreateTableService.getInstance();
 
 	private CreateTableController() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 		instance = this;
 	}
 
@@ -41,7 +43,7 @@ class CreateTableController implements IApplicationContextAware {
 	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<?> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
 		// 已存在时理论上做修改的操作，这里查出该表的结构
-		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name());
+		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name(), table.splitTable(), table.defaultDb());
 
 		// 从sysColumns中取出我们需要比较的列的List
 		// 先取出name用来筛选出增加和删除的字段
@@ -70,7 +72,9 @@ class CreateTableController implements IApplicationContextAware {
 		for (Columns tableColumn : tableColumnList) {
 			// 数据库中有该字段时
 			FieldParam entityFieldParam = entityFieldMap.get(tableColumn.getColumn_name());
-			if (entityFieldParam == null) continue;
+			if (entityFieldParam == null) {
+				continue;
+			}
 
 			// 验证是否有更新
 			if (tableColumn.getJdbcType() != entityFieldParam.getColumnJdbcType()) {
@@ -117,7 +121,7 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 
-		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(table.name(), f, table.splitTable())));
+		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(table.name(), f, table.splitTable(), table.defaultDb())));
 	}
 
 	/**
@@ -134,7 +138,7 @@ class CreateTableController implements IApplicationContextAware {
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
 				.collect(Collectors.toList());
 
-		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable())));
+		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable(), table.defaultDb())));
 	}
 
 	/**
@@ -147,7 +151,9 @@ class CreateTableController implements IApplicationContextAware {
 		List<FieldParam> list = new ArrayList<>();
 		for (Field field : fields) {
 			// 判断方法中是否有指定注解类型的注解
-			if (!field.isAnnotationPresent(Column.class)) continue;
+			if (!field.isAnnotationPresent(Column.class)) {
+				continue;
+			}
 
 			// 根据注解类型返回方法的指定类型注解
 			Column column = field.getAnnotation(Column.class);
@@ -219,14 +225,13 @@ class CreateTableController implements IApplicationContextAware {
 	 */
 	private void handlerTable(Class<?> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
-
 		// 迭代出当前clazz所有fields存到newFieldList中
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-		int tableExist = createTableService.findTableCountByTableName(table.name());
+		int tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.defaultDb());
 		// 不存在时
 		if (tableExist == 0) {
-			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable());
+			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), table.defaultDb());
 			createTable(tableParam);
 		} else {
 			// 验证对比从model中解析的fieldList与从数据库查出来的columnList

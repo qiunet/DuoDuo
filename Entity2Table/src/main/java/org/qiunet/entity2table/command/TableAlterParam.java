@@ -15,10 +15,18 @@ public class TableAlterParam {
 	private String dbName;
 
 	private boolean splitTable;
-	public TableAlterParam(String tableName, FieldParam field, boolean splitTable) {
+
+	private boolean defaultDb;
+
+	public TableAlterParam(String tableName, FieldParam field, boolean splitTable, boolean defaultDb) {
 		this.splitTable = splitTable;
+		this.defaultDb = defaultDb;
 		this.tableName = tableName;
 		this.field = field;
+	}
+
+	public boolean isDefaultDb() {
+		return defaultDb;
 	}
 
 	public String getTableName() {

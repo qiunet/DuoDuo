@@ -19,15 +19,28 @@ public class TableCreateParam {
 	 */
 	private boolean splitTable;
 
+	/**
+	 * 只有第一次建表判断,
+	 * 是否是默认db的表.
+	 * 是的话, 就不会按照分库的方式搞.
+	 * 否则 会判断是否有分库, 没有才会查找默认db
+	 */
+	private boolean defaultDb;
+
 	private List<FieldParam> fields;
 
 	private String dbName;
 
-	public TableCreateParam(String tableName, String comment, List<FieldParam> fields, boolean splitTable) {
+	public TableCreateParam(String tableName, String comment, List<FieldParam> fields, boolean splitTable, boolean defaultDb) {
 		this.splitTable = splitTable;
+		this.defaultDb = defaultDb;
 		this.tableName = tableName;
 		this.comment = comment;
 		this.fields = fields;
+	}
+
+	public boolean isDefaultDb() {
+		return defaultDb;
 	}
 
 	public String getDbName() {
