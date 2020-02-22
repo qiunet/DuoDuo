@@ -32,12 +32,16 @@ class DbLoader {
 
 	/**mybatis 的配置文件名称**/
 	private static final String DEFAULT_MYBATIS_FILENAME = "mybatis/mybatis-config.xml";
-	// DbSourceType 对应的 dataSource
+	/**
+	 *DbSourceType 对应的 dataSource
+	 */
 	private Map<String, SqlSessionFactory> dataSources = new HashMap<>();
 
 	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
 
-	// mybatis 配置文件的名称
+	/**
+	 *mybatis 配置文件的名称
+	 */
 	private static final String MYBATIS_CONFIG_FILENAME = "mybatis_config_filename";
 
 	/***
@@ -85,7 +89,9 @@ class DbLoader {
 	private volatile static DbLoader instance;
 
 	private DbLoader() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 
 		try {
 			if (dbProperties.containKey(MYBATIS_CONFIG_FILENAME)) {
@@ -129,9 +135,13 @@ class DbLoader {
 	private void loaderDataSource() throws Exception {
 		Set<String> sets = new HashSet<>();
 		for (Object key : dbProperties.returnMap().keySet()) {
-			if (!key.toString().endsWith("driverClassName")) continue;
+			if (!key.toString().endsWith("driverClassName")) {
+				continue;
+			}
 			String name = StringUtil.split(key.toString(), ".")[1];
-			if (sets.contains(name)) continue;
+			if (sets.contains(name)) {
+				continue;
+			}
 
 			SqlSessionFactory factory = buildSqlSessionFactory(name);
 			this.dataSources.put(name, factory);
@@ -162,8 +172,9 @@ class DbLoader {
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
 				val = dbProperties.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
-				boolean contain = dbProperties.containKey(dbKey);
-				if (contain) val = dbProperties.getBoolean(dbKey);
+				if (dbProperties.containKey(dbKey)) {
+					val = dbProperties.getBoolean(dbKey);
+				}
 			}else if(val.getClass() == String.class){
 				val = dbProperties.getString(dbKey, (String) val);
 			}

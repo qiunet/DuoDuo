@@ -53,14 +53,14 @@
 	</select>
 
 	<!-- 增加字段 -->
-	<select id="addTableField" parameterType="org.qiunet.entity2table.command.TableAlterParam">
+	<select id="addTableField" parameterType="org.qiunet.entity2table.command.TableParam">
 		alter table <if test="dbName!=null">${dbName}.</if> `${tableName}` add
 		<include refid="commonSql"></include>
 	</select>
 
 
 	<!-- 修改字段 -->
-	<select id="modifyTableField" parameterType="org.qiunet.entity2table.command.TableAlterParam">
+	<select id="modifyTableField" parameterType="org.qiunet.entity2table.command.TableParam">
 		alter table <if test="dbName!=null">${dbName}.</if>`${tableName}` modify
 		<include refid="commonSql"></include>
 	</select>

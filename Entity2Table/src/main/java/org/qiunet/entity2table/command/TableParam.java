@@ -6,7 +6,7 @@ package org.qiunet.entity2table.command;
  * qiunet
  * 2019-08-22 11:09
  ***/
-public class TableAlterParam {
+public class TableParam {
 
 	private String tableName;
 
@@ -18,7 +18,7 @@ public class TableAlterParam {
 
 	private boolean defaultDb;
 
-	public TableAlterParam(String tableName, FieldParam field, boolean splitTable, boolean defaultDb) {
+	public TableParam(String tableName, FieldParam field, boolean splitTable, boolean defaultDb) {
 		this.splitTable = splitTable;
 		this.defaultDb = defaultDb;
 		this.tableName = tableName;

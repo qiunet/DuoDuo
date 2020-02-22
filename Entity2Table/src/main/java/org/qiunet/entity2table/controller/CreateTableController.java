@@ -5,7 +5,7 @@ import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
-import org.qiunet.entity2table.command.TableAlterParam;
+import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.utils.classScanner.IApplicationContext;
@@ -121,7 +121,7 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 
-		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(table.name(), f, table.splitTable(), table.defaultDb())));
+		modifyFieldList.forEach(f -> this.modifyTableField(new TableParam(table.name(), f, table.splitTable(), table.defaultDb())));
 	}
 
 	/**
@@ -138,7 +138,7 @@ class CreateTableController implements IApplicationContextAware {
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
 				.collect(Collectors.toList());
 
-		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable(), table.defaultDb())));
+		addFieldList.forEach(fieldParam -> this.addTableFields(new TableParam(table.name(), fieldParam, table.splitTable(), table.defaultDb())));
 	}
 
 	/**
@@ -183,7 +183,7 @@ class CreateTableController implements IApplicationContextAware {
 	 *
 	 * @param alterParam 用于存需要更新字段类型等的表名+结构
 	 */
-	private void modifyTableField(TableAlterParam alterParam) {
+	private void modifyTableField(TableParam alterParam) {
 		logger.info("\n\n========开始修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
 		createTableService.modifyTableField(alterParam);
 		logger.info("\n\n========完成修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
@@ -194,7 +194,7 @@ class CreateTableController implements IApplicationContextAware {
 	 *
 	 * @param tableParam 用于存需要增加字段的表名+结构
 	 */
-	private void addTableFields(TableAlterParam tableParam) {
+	private void addTableFields(TableParam tableParam) {
 		// 做增加字段操作
 		logger.info("开始为表" + tableParam.getTableName() + "增加字段" + tableParam.getField().getFieldName());
 		createTableService.addTableField(tableParam);
