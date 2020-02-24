@@ -25,6 +25,11 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	}
 
 	@Override
+	protected void asyncInvalidateCache(Do aDo) {
+		cache.put(aDo.key(), NULL);
+	}
+
+	@Override
 	protected void deleteDoFromDb(Do aDo) {
 		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key());
 		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
@@ -60,7 +65,8 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 			}
 
 			aDo.updateEntityStatus(EntityStatus.NORMAL);
-			bo = cache.putIfAbsent(key, supplier.get(aDo));
+			cache.putIfAbsent(key, supplier.get(aDo));
+			bo = cache.get(key);
 		}
 		return bo;
 	}

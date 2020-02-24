@@ -69,6 +69,11 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	}
 
 	@Override
+	protected void asyncInvalidateCache(Do aDo) {
+		this.invalidateCache(aDo);
+	}
+
+	@Override
 	protected void deleteDoFromDb(Do aDo) {
 		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key()).put(defaultDo.subKeyFieldName(), aDo.subKey());
 		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);

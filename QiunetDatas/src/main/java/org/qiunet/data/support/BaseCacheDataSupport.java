@@ -121,12 +121,13 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		}
 
 		// 直接删除缓存. 异步更新时候, 不校验状态
-		this.invalidateCache(aDo);
 		aDo.updateEntityStatus(EntityStatus.DELETE);
 
 		if (! async) {
+			this.invalidateCache(aDo);
 			this.deleteDoFromDb(aDo);
 		}else {
+			this.asyncInvalidateCache(aDo);
 			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.DELETE));
 		}
 	}
@@ -137,6 +138,12 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	 */
 	protected abstract void invalidateCache(Do aDo);
 
+	/***
+	 * 异步的失效数据
+	 * 不会删除 免得删除后 , 异步更新前, 缓存没有. 又从数据库取了还原了.
+	 * @param aDo
+	 */
+	protected abstract void asyncInvalidateCache(Do aDo);
 	/***
 	 * 从数据库删除do
 	 * @param aDo
