@@ -65,13 +65,13 @@ class DbLoader {
 			add(new DatasourceAttr("initialSize", 20, int.class));
 			add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
 			add(new DatasourceAttr("logAbandoned", true, boolean.class));
-			add(new DatasourceAttr("testOnBorrow", false, boolean.class));
+			add(new DatasourceAttr("testOnBorrow", true, boolean.class));
 			add(new DatasourceAttr("testWhileIdle", true, boolean.class));
 			add(new DatasourceAttr("numTestsPerEvictionRun", 10, int.class));
 			add(new DatasourceAttr("removeAbandonedTimeout", 60, int.class));
 			add(new DatasourceAttr("validationQuery", "select 1", String.class));
-			add(new DatasourceAttr("minEvictableIdleTimeMillis", 60000, long.class));
-			add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 30000, long.class));
+			add(new DatasourceAttr("minEvictableIdleTimeMillis", 30000, long.class));
+			add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 10000, long.class));
 			add(new DatasourceAttr("removeAbandonedOnMaintenance", true, boolean.class));
 		}
 	};
