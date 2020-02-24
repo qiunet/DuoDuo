@@ -59,10 +59,10 @@ class DbLoader {
 			add(new DatasourceAttr("password", "", String.class));
 			add(new DatasourceAttr("driverClassName", "", String.class));
 
-			add(new DatasourceAttr("maxIdle", 5, int.class));
+			add(new DatasourceAttr("maxIdle", 10, int.class));
 			add(new DatasourceAttr("minIdle", 2, int.class));
-			add(new DatasourceAttr("maxTotal", 10, int.class));
-			add(new DatasourceAttr("initialSize", 2, int.class));
+			add(new DatasourceAttr("maxTotal", 200, int.class));
+			add(new DatasourceAttr("initialSize", 20, int.class));
 			add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
 			add(new DatasourceAttr("logAbandoned", true, boolean.class));
 			add(new DatasourceAttr("testOnBorrow", false, boolean.class));
