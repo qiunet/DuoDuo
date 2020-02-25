@@ -39,4 +39,19 @@ public class TestNetUtil  extends BaseTest {
 	public void testGetInnerIp(){
 		logger.info("内网IP: "+NetUtil.getInnerIp());
 	}
+
+	/**
+	 * 得到内网ip
+	 */
+	@Test
+	public void testGetLocalHostName(){
+		logger.info("内网HostName: "+NetUtil.getLocalHostName());
+	}
+
+	@Test
+	public void testAllInnerIp(){
+		for (String ip : NetUtil.getAllInnerIp()) {
+			logger.info("Ip: "+ip);
+		}
+	}
 }

@@ -52,4 +52,36 @@ public class NetUtil {
 		}
 		return address.getHostAddress();
 	}
+	/***
+	 * 得到主机名
+	 * @return
+	 */
+	public static String getLocalHostName() {
+		InetAddress address = null;
+		try {
+			address = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return address.getHostName();
+	}
+
+	/**
+	 * 获得本机所有的ip
+	 * @return
+	 */
+	public static String[] getAllInnerIp(){
+		String localHostName = getLocalHostName();
+		String [] ret = null;
+		try {
+			InetAddress[] inetAddresses = InetAddress.getAllByName(localHostName);
+			ret = new String[inetAddresses.length];
+			for (int i = 0; i < inetAddresses.length; i++) {
+				ret[i] = inetAddresses[i].getHostAddress();
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return ret;
+	}
 }
