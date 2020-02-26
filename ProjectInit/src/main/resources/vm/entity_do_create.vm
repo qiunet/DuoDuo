@@ -12,7 +12,7 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 * 对象为自动创建 不要修改
 */
 @Alias("${define.DoName}")
-@Table(name = "${define.tableName}"#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end)
+@Table(name = "${define.tableName}"#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end#if(${define.defaultDb}), defaultDb = true#end)
 public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}#if(${define.list}), ${define.subKeyType}#end, ${define.BoName}> {
 #foreach(${field} in ${define.fieldDefines})
 	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key} || ${field.name} == ${define.subKey}), isKey = true#end#if(${field.haveDefaultVal}), defaultValue="${field.defaultVal}" , isNull = false#end#if(${field.jdbcTypeNotEmpty}), jdbcType = ColumnJdbcType.${field.jdbcType}#end)

@@ -66,6 +66,7 @@
 		<xs:attribute name="name" type="NamePattern" use="required" />
 		<xs:attribute name="tableName" type="xs:normalizedString" />
 		<xs:attribute name="comment" type="xs:NCName" />
+		<xs:attribute name="defaultDb" type="xs:boolean" default="false" />
 		<xs:attribute name="baseDir" type="PathPattern" default="src/main/java" />
 		<xs:attribute name="packageName" type="ClassAndPackagePattern" use="required" />
 	</xs:attributeGroup>

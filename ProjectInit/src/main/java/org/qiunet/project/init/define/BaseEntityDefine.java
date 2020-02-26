@@ -45,6 +45,10 @@ import java.util.stream.Collectors;
 	 */
 	protected String packageName;
 	/***
+	 * 是否是默认db的表.
+	 */
+	protected boolean defaultDb;
+	/***
 	 * 表名
 	 */
 	protected String tableName;
@@ -127,6 +131,14 @@ import java.util.stream.Collectors;
 	public void addConstructor(ConstructorDefine constructorDefine){
 		this.constructorDefines.add(constructorDefine);
 		constructorDefine.init(this);
+	}
+
+	public boolean isDefaultDb() {
+		return defaultDb;
+	}
+
+	public void setDefaultDb(boolean defaultDb) {
+		this.defaultDb = defaultDb;
 	}
 
 	public String getBaseDir() {

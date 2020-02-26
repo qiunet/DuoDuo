@@ -3,6 +3,7 @@
 				subKey="equip_id"
 				name="EquipDo"
 			    splitTable="true"
+				defaultDb="true"
 				baseDir="src/test/java"
 				packageName="org.qiunet.project.init.test.equip"
 			    redis="org.qiunet.project.init.redis.RedisDataUtil"
