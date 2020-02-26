@@ -2,18 +2,26 @@ package org.qiunet.data.support;
 
 
 import org.qiunet.data.async.SyncType;
+import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
+import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.util.DbProperties;
-import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.string.StringUtil;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringJoiner;
 
+/***
+ *
+ * @param <Do>
+ * @param <Bo>
+ * @author qiunet
+ */
 public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
 	/***缓存一天*/
 	protected final int NORMAL_LIFECYCLE=86400;
@@ -24,10 +32,13 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
 	protected IRedisUtil redisUtil;
 
+	private Table table;
 	BaseRedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		this.redisUtil = redisUtil;
 		this.redisUpdateSyncSetKey = "SYNC_SET#"+doName;
+
+		table = doClass.getAnnotation(Table.class);
 	}
 
 	@Override
@@ -52,7 +63,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 					logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
 					continue;
 				}
-				MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
+				databaseSupport(aDo.key()).update(updateStatement, aDo);
 			}catch (Exception e) {
 				logger.error("Sync to Database Exception: ", e);
 				errorSyncParams.add(syncParams);
@@ -75,7 +86,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public Bo insert(Do aDo) {
 		this.setDataObjectToRedis(aDo);
-		MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
+		databaseSupport(aDo.getDbSourceKey()).insert(insertStatement, aDo);
 		return supplier.get(aDo);
 	}
 
@@ -136,5 +147,18 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			sj.add(String.valueOf(key));
 		}
 		return sj.toString();
+	}
+
+	/**
+	 * 根据 注解Table 获取数据源
+	 * @param key
+	 * @return
+	 */
+	protected IDatabaseSupport databaseSupport(Object key) {
+		if (table.defaultDb()) {
+			return DefaultDatabaseSupport.getInstance();
+		}else {
+			return MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key));
+		}
 	}
 }

@@ -2,10 +2,8 @@ package org.qiunet.data.support;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntityList;
-import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -35,7 +33,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			.put(defaultDo.subKeyFieldName(), aDo.subKey())
 			.put("tbIndex", aDo.getTbIndex())
 			.put("dbName", aDo.getDbName());
-		MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).delete(deleteStatement, map);
+		databaseSupport(aDo.key()).delete(deleteStatement, map);
 	}
 
 	@Override
@@ -69,7 +67,9 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	private List<Do> returnDoListFromRedis(String redisKey) {
 		return redisUtil.execCommands(jedis -> {
 			List<String> hvals = jedis.hvals(redisKey);
-			if (hvals.size() <= 1 && hvals.remove(PLACE_HOLDER)) return null;
+			if (hvals.size() <= 1 && hvals.remove(PLACE_HOLDER)) {
+				return null;
+			}
 
 			return hvals.parallelStream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
 		});
@@ -92,12 +92,14 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 		String redisKey = getRedisKey(doName, key);
 
 		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
-		if (map != null) return map;
+		if (map != null) {
+			return map;
+		}
 
 		List<Do> doList = returnDoListFromRedis(redisKey);
 		if (doList != null && doList.isEmpty()) {
 			DbParamMap paramMap = DbParamMap.create(defaultDo.keyFieldName(), key);
-			doList = MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key)).selectList(selectStatement, paramMap);
+			doList = databaseSupport(key).selectList(selectStatement, paramMap);
 
 			if (! doList.isEmpty()) {
 				this.setListToRedis(redisKey, doList);
@@ -125,7 +127,9 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	public Bo insert(Do aDo) {
 		String redisKey = getRedisKey(doName, aDo.key());
 		Map<SubKey, Bo> boMap = getBoMap(aDo.key());
-		if (boMap.isEmpty()) returnJedis().hdel(redisKey, PLACE_HOLDER);
+		if (boMap.isEmpty()) {
+			returnJedis().hdel(redisKey, PLACE_HOLDER);
+		}
 
 		Bo bo = super.insert(aDo);
 		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
