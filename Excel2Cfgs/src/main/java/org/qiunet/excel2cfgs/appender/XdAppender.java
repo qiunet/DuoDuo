@@ -19,11 +19,8 @@ import java.util.List;
  */
 public class XdAppender extends BaseAppender {
 
-	private String filePrefix;
-
 	public XdAppender(String outputRelativePath, String filePrefix) {
-		super(outputRelativePath);
-		this.filePrefix = filePrefix;
+		super(outputRelativePath, filePrefix);
 	}
 
 	@Override

@@ -20,9 +20,15 @@ abstract class BaseAppender implements IAppender {
 	 * 输出目录到文件的中间相对路径.
 	 */
 	protected String outputRelativePath;
+	/***
+	 * 例如一个文件名为: 模板_template.xlsx
+	 * filePrefix 就是template
+	 */
+	protected String filePrefix;
 
-	protected BaseAppender(String outputRelativePath) {
+	protected BaseAppender(String outputRelativePath, String filePrefix) {
 		this.outputRelativePath = outputRelativePath;
+		this.filePrefix = filePrefix;
 	}
 
 	/**

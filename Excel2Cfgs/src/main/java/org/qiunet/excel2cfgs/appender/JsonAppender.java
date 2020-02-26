@@ -17,12 +17,8 @@ import java.util.List;
  */
 public class JsonAppender extends BaseAppender {
 
-	private String filePrefix;
-
 	public JsonAppender(String relativeDirPath, String filePrefix) {
-		super(relativeDirPath);
-		this.filePrefix = filePrefix;
-
+		super(relativeDirPath, filePrefix);
 	}
 
 	@Override

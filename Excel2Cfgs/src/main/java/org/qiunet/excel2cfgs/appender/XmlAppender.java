@@ -15,15 +15,13 @@ import java.util.List;
 /***
  *
  *
- * qiunet
+ * @author  qiunet
  * 2019-11-25 15:20
  ***/
 public class XmlAppender extends BaseAppender {
-	private String filePrefix;
 
 	public XmlAppender(String relativeDirPath, String filePrefix) {
-		super(relativeDirPath);
-		this.filePrefix = filePrefix;
+		super(relativeDirPath, filePrefix);
 	}
 
 	@Override
