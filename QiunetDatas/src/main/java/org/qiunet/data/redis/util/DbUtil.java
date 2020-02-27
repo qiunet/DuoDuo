@@ -5,7 +5,21 @@ import org.qiunet.data.redis.constants.RedisDbConstants;
 public final class DbUtil {
 
 	public static int getDbIndex(Object key) {
-		return (Math.abs(key.hashCode()) % RedisDbConstants.MAX_DB_COUNT);
+
+		return (hashCode(key) % RedisDbConstants.MAX_DB_COUNT);
+	}
+
+	/***
+	 * hashcode 如果 == Integer.MIN_VALUE 时候, Math.abs 还是等于自己
+	 * @param key
+	 * @return
+	 */
+	private static int hashCode(Object key) {
+		int hashCode = key.hashCode();
+		if (hashCode == Integer.MIN_VALUE) {
+			hashCode += 1;
+		}
+		return Math.abs(hashCode);
 	}
 
 	public static String getDbName(Object key) {
@@ -18,7 +32,7 @@ public final class DbUtil {
 	}
 
 	public static int getTbIndex(Object key) {
-		return (Math.abs(key.hashCode()) / RedisDbConstants.MAX_DB_COUNT)
+		return (hashCode(key) / RedisDbConstants.MAX_DB_COUNT)
 			% RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT;
 	}
 

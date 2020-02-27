@@ -6,16 +6,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.
  * 17/8/13
  */
 public class WebSocketEncoder extends MessageToByteEncoder<MessageContent> {
-	private Logger logger = LoggerType.DUODUO.getLogger();
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
 		try {

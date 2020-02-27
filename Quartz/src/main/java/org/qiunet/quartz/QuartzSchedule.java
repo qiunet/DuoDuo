@@ -5,15 +5,12 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.DelayTask;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class QuartzSchedule {
@@ -41,11 +38,13 @@ public class QuartzSchedule {
 	 * 添加一个job到线程调度表
 	 * @param job
 	 */
-	public void addJob(IJob job) {
-		this.jobs.add(new JobFacade(job));
+	public Future<Boolean> addJob(IJob job) {
+		JobFacade jobFacade = new JobFacade(job);
+		this.jobs.add(jobFacade);
+		return jobFacade.getFuture();
 	}
 
-	private class JobFacade implements DelayTask<Boolean> {
+	private static  class JobFacade implements DelayTask<Boolean> {
 		private IJob job;
 
 		private LocalDateTime fireTime;
@@ -70,6 +69,10 @@ public class QuartzSchedule {
 			if (nextDt != null) {
 				this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
 			}
+		}
+
+		public Future<Boolean> getFuture() {
+			return future;
 		}
 
 		@Override

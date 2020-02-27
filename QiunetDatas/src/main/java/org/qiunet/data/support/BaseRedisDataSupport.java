@@ -24,7 +24,7 @@ import java.util.StringJoiner;
  */
 public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
 	/***缓存一天*/
-	protected final int NORMAL_LIFECYCLE=86400;
+	protected static final int NORMAL_LIFECYCLE=86400;
 
 	/**redis update 同步队列 key**/
 	private String redisUpdateSyncSetKey;

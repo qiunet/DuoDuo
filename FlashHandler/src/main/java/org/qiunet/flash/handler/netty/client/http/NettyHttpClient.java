@@ -31,11 +31,10 @@ import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
@@ -182,7 +181,7 @@ public final class NettyHttpClient {
 	}
 
 
-	private class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
 		private IHttpResponseTrigger trigger;
 		private FullHttpResponse response;
 		HttpClientHandler(IHttpResponseTrigger trigger) {

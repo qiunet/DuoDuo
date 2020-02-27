@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
 
-import java.net.InetSocketAddress;
 import java.net.URI;
 
 /**
@@ -65,13 +64,6 @@ public final class WebSocketClientParams extends AbstractClientParam {
 		private Builder(){}
 		// 默认 /f
 		private String uriIPath = "/ws";
-
-		private boolean ssl = false;
-
-		public Builder setSsl(boolean ssl) {
-			this.ssl = ssl;
-			return this;
-		}
 
 		public Builder setUriIPath(String uriIPath) {
 			this.uriIPath = uriIPath;

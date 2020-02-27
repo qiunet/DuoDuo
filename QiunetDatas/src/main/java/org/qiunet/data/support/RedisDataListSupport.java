@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
-	private final String PLACE_HOLDER = "PLACE_HOLDER";
+	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataListSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);

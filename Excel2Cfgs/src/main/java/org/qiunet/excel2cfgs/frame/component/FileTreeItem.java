@@ -31,8 +31,12 @@ public class FileTreeItem extends TreeItem<File> {
 		if (! getValue().isDirectory()) {
 			return;
 		}
+		File[] listFiles = parent.getValue().listFiles();
+		if (listFiles == null) {
+			return;
+		}
 
-		for (File file : parent.getValue().listFiles()) {
+		for (File file : listFiles) {
 			if (! Excel2CfgsUtil.filePostfixCheck(file)) {
 				continue;
 			}

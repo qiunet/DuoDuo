@@ -3,8 +3,6 @@ package org.qiunet.utils.listener;
 import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -13,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class ListenerManager0 implements IApplicationContextAware {
-	private Logger logger = LoggerType.DUODUO.getLogger();
 	private static ListenerManager0 instance;
 	private Map<Class<? extends IEventData>, List<Wrapper>> methods;
 	private ListenerManager0(){

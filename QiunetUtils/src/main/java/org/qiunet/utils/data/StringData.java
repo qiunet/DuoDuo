@@ -1,5 +1,9 @@
 package org.qiunet.utils.data;
 
+import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -7,11 +11,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 把一个类的所有字段拼串. {} 为对象.  [] 数组
@@ -103,11 +102,11 @@ public class StringData {
 		return sb;
 	}
 	@SuppressWarnings("rawtypes")
-	private StringBuilder getMapVal(Map map){
+	private StringBuilder getMapVal(Map<Object, Object> map){
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		for(Object key : map.keySet()){
-			this.append(sb, getObjectVal(key), getObjectVal(map.get(key)));
+		for(Entry entry : map.entrySet()){
+			this.append(sb, getObjectVal(entry.getKey()), getObjectVal(entry.getValue()));
 		}
 		if(sb.length() > 1) sb.deleteCharAt(sb.length() - 1);
 		sb.append("}");

@@ -19,6 +19,7 @@ import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequest
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,11 +68,12 @@ public enum DataType {
 					field.setAccessible(true);
 					parser = (Parser) field.get(null);
 					class2Parse.putIfAbsent((Class<?>) args[0], parser);
-				} catch (NoSuchFieldException e) {
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+				} catch (NoSuchFieldException | IllegalAccessException e) {
+					LoggerType.DUODUO.error("parse error: ", e);
 				}
+			}
+			if (parser == null) {
+				throw new NullPointerException("parse is null for class "+ args[0]);
 			}
 			try {
 				return parser.parseFrom(bytes);

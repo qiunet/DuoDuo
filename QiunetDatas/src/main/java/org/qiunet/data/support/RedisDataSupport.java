@@ -1,8 +1,8 @@
 package org.qiunet.data.support;
 
+import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
-import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -20,7 +20,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 	/**防止缓存击穿的 NULL*/
 	private Do NULL;
 
-	private final String PLACE_HOLDER = "PLACE_HOLDER";
+	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);

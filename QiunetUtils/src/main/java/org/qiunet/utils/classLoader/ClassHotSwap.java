@@ -50,8 +50,11 @@ public final class ClassHotSwap {
 			logger.error(" JavaAgentJarPath is null!");
 			return;
 		}
-
-		for (File clazzFile : classDirectory.listFiles()) {
+		File[] listFiles = classDirectory.listFiles();
+		if (listFiles == null) {
+			throw new NullPointerException("No class file in class hot swap dir ["+classesParentPath.toString()+"]");
+		}
+		for (File clazzFile : listFiles) {
 			if (clazzFile.isDirectory() || !clazzFile.getName().endsWith(".class")) continue;
 
 			try {

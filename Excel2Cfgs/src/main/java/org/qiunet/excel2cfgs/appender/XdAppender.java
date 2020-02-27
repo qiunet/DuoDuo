@@ -1,13 +1,13 @@
 package org.qiunet.excel2cfgs.appender;
 
 
-
 import javafx.scene.control.Alert;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -50,6 +50,8 @@ public class XdAppender extends BaseAppender {
 					}
 				}
 			}
+		}catch (RuntimeException e) {
+			throw e;
 		}catch (Exception e) {
 			e.printStackTrace();
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, e.getMessage(), "错误");

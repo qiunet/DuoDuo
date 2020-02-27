@@ -77,38 +77,34 @@ public class ConfigManager extends LoaderProperties implements Runnable {
 				Thread.sleep(10000);
 				Field field = this.getClass().getSuperclass().getSuperclass().getDeclaredField("map");
 				field.setAccessible(true);
-				Map oldMap = (Map) field.get(this);
+				Map<Object, Object> oldMap = (Map<Object, Object>) field.get(this);
 				reload();
-				Map newMap = (Map) field.get(this);
+				Map<Object, Object> newMap = (Map<Object, Object>) field.get(this);
 
 				if (first){
 					first = false;
 					continue;
 				}
 
-				for (Object nkey : newMap.keySet()) {
-					if (! oldMap.containsKey(nkey)) {
-						logger.info("Config add entry key ["+nkey+"] value ["+newMap.get(nkey)+"]");
+				for (Map.Entry entry : newMap.entrySet()) {
+					if (! oldMap.containsKey(entry.getKey())) {
+						logger.info("Config add entry key ["+entry.getKey()+"] value ["+entry.getValue()+"]");
 						continue;
 					}
 
-					if (! oldMap.get(nkey).equals(newMap.get(nkey))) {
-						logger.info("Config modify entry key ["+nkey+"] value ["+newMap.get(nkey)+"]");
-						if (nkey.toString().startsWith("log_")) LoggerUtil.cleanLogger();
+					if (! oldMap.get(entry.getKey()).equals(entry.getValue())) {
+						logger.info("Config modify entry key ["+entry.getKey()+"] value ["+entry.getValue()+"]");
+						if (entry.getKey().toString().startsWith("log_")) LoggerUtil.cleanLogger();
 						continue;
 					}
 				}
 
-				for (Object okey : oldMap.keySet()) {
-					if (! newMap.containsKey(okey)) {
-						logger.info("Config remove entry key ["+okey+"] value ["+oldMap.get(okey)+"]");
+				for (Map.Entry entry : oldMap.entrySet()) {
+					if (! newMap.containsKey(entry.getKey())) {
+						logger.info("Config remove entry key ["+entry.getKey()+"] value ["+entry.getValue()+"]");
 					}
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (NoSuchFieldException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
+			} catch (InterruptedException | NoSuchFieldException | IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}

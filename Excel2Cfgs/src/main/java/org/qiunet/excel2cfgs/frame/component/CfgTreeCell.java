@@ -2,7 +2,7 @@ package org.qiunet.excel2cfgs.frame.component;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
@@ -13,7 +13,6 @@ import org.qiunet.utils.system.OSUtil;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Objects;
 
 /***
  *
@@ -31,7 +30,11 @@ public class CfgTreeCell extends TextFieldTreeCell<File> {
 	 */
 	private void exportCfgs(File fileOrDir) {
 		if (fileOrDir.isDirectory()) {
-			for (File file : Objects.requireNonNull(fileOrDir.listFiles())) {
+			File[] listFiles = fileOrDir.listFiles();
+			if (listFiles == null) {
+				return;
+			}
+			for (File file : listFiles) {
 				this.exportCfgs(file);
 			}
 		}else {

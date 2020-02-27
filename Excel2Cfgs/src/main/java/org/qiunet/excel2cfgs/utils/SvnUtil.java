@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
 
 /***
@@ -77,9 +78,9 @@ public class SvnUtil {
 		boolean haveProcessMsg = false;
 		new SvnProcessingListenerData().fireEventHandler();
 		try (
-			InputStreamReader ir=new InputStreamReader(process.getInputStream());
+			InputStreamReader ir=new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 			LineNumberReader input = new LineNumberReader (ir);
-			InputStreamReader irError = new InputStreamReader(process.getErrorStream());
+			InputStreamReader irError = new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8);
 			LineNumberReader inputError = new LineNumberReader(irError)
 		){
 			String line;

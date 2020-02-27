@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 /**
  * Created by qiunet on 4/8/17.
@@ -67,8 +66,11 @@ public final class ProjectInitCreator {
 
 	private void process(){
 		this.processMybatisConfig();
-
-		for (File file : Objects.requireNonNull(xmlDirectory.listFiles())) {
+		File[] listFiles = xmlDirectory.listFiles();
+		if (listFiles == null) {
+			throw new NullPointerException("No file in xmlDirectory ["+xmlDirectory+"]");
+		}
+		for (File file : listFiles) {
 			if (mybatisConfigFileName.equals(file.getName())) continue;
 
 			EntityType entityType = EntityType.parse(file);

@@ -38,8 +38,8 @@ public class EntityCreator {
 	}
 
 	void validXml(){
-		try {
-			entityType.validate(new FileInputStream(file));
+		try (FileInputStream fis = new FileInputStream(file)){
+			entityType.validate(fis);
 		}catch (Exception e) {
 			logger.error("file ["+file.getName()+"] create exception:", e);
 		}

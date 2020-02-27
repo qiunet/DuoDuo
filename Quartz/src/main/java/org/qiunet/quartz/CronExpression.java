@@ -1626,7 +1626,7 @@ public class CronExpression implements Serializable, Cloneable {
 	}
 
 
-	class ValueSet {
+	static class ValueSet {
 		public int value;
 
 		public int pos;

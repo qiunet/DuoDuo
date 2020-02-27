@@ -1,9 +1,6 @@
 package org.qiunet.utils.badword;
 
-import org.qiunet.utils.string.StringUtil;
-
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -195,7 +192,7 @@ public class BadWordFilter {
 		boolean endChar();
 	}
 
-	private class RootNode implements INode {
+	private static  class RootNode implements INode {
 		private Map<Character, INode> nextNodes = new HashMap<>(512);
 
 		@Override
@@ -219,7 +216,7 @@ public class BadWordFilter {
 		}
 	}
 
-	private class CharNode implements INode {
+	private static class CharNode implements INode {
 		private char c;
 		private boolean endFlag;
 		private List<INode> nextNodes = new LinkedList<>();

@@ -92,7 +92,7 @@ public class TCPServer {
 			LogDataRegister.getInstance().addLogNode(msg);
 		}
 	}
-	class Decoder extends ByteToMessageDecoder {
+	static class Decoder extends ByteToMessageDecoder {
 		@Override
 		protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 			if (! in.isReadable(MsgHeader.MESSAGE_HEADER_LENGTH)) return;

@@ -7,9 +7,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -56,10 +56,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getUriPath() {
-		if (messageContent.getProtocolId() == 0)
+		if (messageContent.getProtocolId() == 0) {
 			return ((UriHttpMessageContent) messageContent).getUriPath();
-		else
-			return params.getGameURIPath();
+		}
+		return params.getGameURIPath();
 	}
 
 	@Override
@@ -97,7 +97,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
-		if (getUriPath() == params.getGameURIPath()) {
+		if (getUriPath().equals(params.getGameURIPath())) {
 			// 不是游戏业务. 不写业务头.
 			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), ctx.channel());
 		}else {

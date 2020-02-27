@@ -272,7 +272,7 @@ class DbLoader {
 		return (SqlSession) Proxy.newProxyInstance(handler.getClass().getClassLoader(), sqlSession.getClass().getInterfaces(), handler);
 	}
 
-	private class SqlSessionTemp implements InvocationHandler {
+	private static class SqlSessionTemp implements InvocationHandler {
 		private SqlSession sqlSession;
 
 		SqlSessionTemp(SqlSession sqlSession) {
