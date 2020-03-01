@@ -1,7 +1,6 @@
 package org.qiunet.test.server.error;
 
-import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 /**
@@ -10,13 +9,13 @@ import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
  */
 public class ErrorHandler implements IClientErrorMessage {
 	@Override
-	public IMessage getHandlerNotFound() {
+	public IResponseMessage getHandlerNotFound() {
 
 		return null;
 	}
 
 	@Override
-	public IMessage exception(Throwable cause) {
+	public IResponseMessage exception(Throwable cause) {
 		return null;
 	}
 

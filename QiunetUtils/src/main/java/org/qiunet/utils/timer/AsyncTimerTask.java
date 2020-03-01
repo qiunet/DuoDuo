@@ -2,7 +2,6 @@ package org.qiunet.utils.timer;
 
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -24,6 +23,10 @@ public abstract class AsyncTimerTask implements Runnable {
 	 */
 	public void cancel(){
 		future.cancel(true);
+	}
+
+	public ScheduledFuture getFuture() {
+		return future;
 	}
 
 	@Override

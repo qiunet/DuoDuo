@@ -7,8 +7,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Created by qiunet.
  * 17/11/21
@@ -37,23 +35,12 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 	}
 
 	@Override
-	public boolean handler() {
+	public void handlerRequest() {
 		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
 		ResponseData data = (ResponseData) params.getHttpInterceptor().handler((IHttpHandler)getHandler(), request);
 		if (data == null) {
 			throw new NullPointerException("Response Protobuf data can not be null!");
 		}
 		this.response(data);
-		return true;
-	}
-
-	@Override
-	public int getQueueIndex() {
-		return 0;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
 	}
 }

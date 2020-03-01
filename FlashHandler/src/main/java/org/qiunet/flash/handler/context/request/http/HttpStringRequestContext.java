@@ -6,9 +6,6 @@ import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.utils.string.StringUtil;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * 把请求解析为string的对象
@@ -35,19 +32,13 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
-	public boolean handler() {
+	public void handlerRequest() {
 		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
 		String responseData = (String) params.getHttpInterceptor().handler((IHttpHandler) getHandler(), requestData);
 		if (requestData == null){
 			throw new NullPointerException("Response String can not be null!");
 		}
 		this.response(responseData);
-		return true;
-	}
-
-	@Override
-	public int getQueueIndex() {
-		return 0;
 	}
 
 	@Override
@@ -55,8 +46,4 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 		return "text/plain; charset=UTF-8";
 	}
 
-	@Override
-	public String toStr() {
-		return "request: "+reqeustData;
-	}
 }

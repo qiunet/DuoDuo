@@ -5,11 +5,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.
@@ -28,19 +26,13 @@ public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSoc
 	}
 
 	@Override
-	protected IMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
+	protected IResponseMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
 		return new DefaultProtobufMessage(protocolId, generatedMessageV3);
 	}
 
 	@Override
-	public boolean handler() {
+	public void handlerRequest() {
 		FacadeWebSocketRequest<RequestData> facadeWebSocketRequest = new FacadeWebSocketRequest(this);
 		params.getWebSocketInterceptor().handler((IWebSocketHandler) getHandler(), facadeWebSocketRequest);
-		return true;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
 	}
 }

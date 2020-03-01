@@ -4,12 +4,10 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.ChannelMatchers;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 方便广播使用的组
@@ -43,7 +41,7 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture broadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		IMessage message = buildMessage(protocolId, msg);
+		IResponseMessage message = buildMessage(protocolId, msg);
 		if (logger.isInfoEnabled()) {
 			logger.info(message.toStr());
 		}
@@ -67,7 +65,7 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		IMessage message = buildMessage(protocolId, msg);
+		IResponseMessage message = buildMessage(protocolId, msg);
 		if (logger.isInfoEnabled()) {
 			logger.info(message.toStr());
 		}
@@ -118,5 +116,5 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	 * @param msg
 	 * @return
 	 */
-	protected abstract IMessage buildMessage(int protocolId, Msg msg);
+	protected abstract IResponseMessage buildMessage(int protocolId, Msg msg);
 }

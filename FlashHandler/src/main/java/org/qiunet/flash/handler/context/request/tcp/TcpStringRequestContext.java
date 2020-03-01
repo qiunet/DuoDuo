@@ -1,15 +1,12 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * tcp 请求解析成字符串的.
@@ -23,7 +20,7 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	}
 
 	@Override
-	protected IMessage getResponseMessage(int protocolId, String s) {
+	protected IResponseMessage getResponseMessage(int protocolId, String s) {
 		return new DefaultStringMessage(protocolId, s);
 	}
 
@@ -36,14 +33,8 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	}
 
 	@Override
-	public boolean handler() {
+	public void handlerRequest() {
 		FacadeTcpRequest<String> facadeTcpRequest = new FacadeTcpRequest<>(this);
 		params.getTcpInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
-		return true;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
 	}
 }

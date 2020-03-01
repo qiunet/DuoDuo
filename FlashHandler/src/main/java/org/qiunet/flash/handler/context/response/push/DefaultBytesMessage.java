@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.response.push;
 
-import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.flash.handler.common.message.MessageContent;
 
 import java.util.Arrays;
@@ -10,7 +9,7 @@ import java.util.Arrays;
  * @Author qiunet
  * @Date Create in 2018/5/26 23:49
  **/
-public class DefaultBytesMessage implements IMessage<byte []> {
+public class DefaultBytesMessage implements IResponseMessage<byte []> {
 
 	private int protocolId;
 	private byte [] message;

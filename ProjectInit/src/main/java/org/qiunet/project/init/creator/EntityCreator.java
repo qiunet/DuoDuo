@@ -16,9 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /***
+ * 创建Entity 的初始类.
  *
- *
- * qiunet
+ * @author qiunet
  * 2019-08-16 11:56
  ***/
 public class EntityCreator {

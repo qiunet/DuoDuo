@@ -3,11 +3,11 @@ package org.qiunet.flash.handler.context.response.push;
 import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
- * 对外的编码
- * Created by qiunet.
+ * 对外响应的编码消息
+ * @author qiunet.
  * 17/12/11
  */
-public interface IMessage<T> {
+public interface IResponseMessage<T> {
 	/***
 	 * push 消息 编码
 	 * @return

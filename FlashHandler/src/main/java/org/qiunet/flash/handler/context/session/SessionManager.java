@@ -2,9 +2,9 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,7 +46,7 @@ public class SessionManager{
 		this.sessions.putIfAbsent(val.getUid(), val);
 
 		val.getChannel().closeFuture().addListener(future -> {
-			val.fireSessionClose();
+			new SessionCloseEventData(future, val).fireEventHandler();
 			sessions.remove(val.getUid());
 		});
 		return (T) sessions.get(val.getUid());

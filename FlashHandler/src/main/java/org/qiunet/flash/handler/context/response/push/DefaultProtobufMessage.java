@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IMessage<GeneratedMessageV3> {
+public class DefaultProtobufMessage implements IResponseMessage<GeneratedMessageV3> {
 	private static final JsonFormat jsonFormat = new JsonFormat();
 
 	private int protocolId;

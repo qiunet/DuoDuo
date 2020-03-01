@@ -2,12 +2,10 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
-import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.SessionManager;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
 import java.net.InetSocketAddress;
@@ -23,12 +21,6 @@ abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends Base
 		super(content, channelContext);
 		this.params = params;
 	}
-	@Override
-	public int getQueueIndex() {
-		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		if (session != null) return session.getQueueIndex();
-		return channel().hashCode();
-	}
 
 	@Override
 	public void response(int protocolId, Object data) {
@@ -39,7 +31,7 @@ abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends Base
 	 * @param responseData
 	 * @return
 	 */
-	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
+	protected abstract IResponseMessage getResponseMessage(int protocolId, ResponseData responseData);
 
 	@Override
 	public String getRemoteAddress() {

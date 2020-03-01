@@ -1,11 +1,6 @@
 package org.qiunet.flash.handler.common.enums;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import org.qiunet.flash.handler.acceptor.ProcessAcceptor;
 import org.qiunet.flash.handler.context.request.IRequestContext;
-import org.qiunet.flash.handler.context.response.push.IMessage;
 
 /**
  * handler的类型. 区分使用
@@ -19,7 +14,7 @@ public enum HandlerType {
 	HTTP{
 		@Override
 		public void processRequest(IRequestContext context) {
-			context.handler();
+			context.handlerRequest();
 		}
 	},
 	/**
@@ -29,7 +24,6 @@ public enum HandlerType {
 	TCP{
 		@Override
 		public void processRequest(IRequestContext context) {
-			ProcessAcceptor.getInstance().process(context);
 		}
 	},
 	/**
@@ -38,7 +32,6 @@ public enum HandlerType {
 	WEB_SOCKET{
 		@Override
 		public void processRequest(IRequestContext context) {
-			ProcessAcceptor.getInstance().process(context);
 		}
 	},
 	;

@@ -71,7 +71,9 @@ public final class ProjectInitCreator {
 			throw new NullPointerException("No file in xmlDirectory ["+xmlDirectory+"]");
 		}
 		for (File file : listFiles) {
-			if (mybatisConfigFileName.equals(file.getName())) continue;
+			if (mybatisConfigFileName.equals(file.getName())) {
+				continue;
+			}
 
 			EntityType entityType = EntityType.parse(file);
 			EntityCreator entityCreator = new EntityCreator(entityType, file, Paths.get(mybatisConfig.getBaseDir(), mybatisConfig.getConfigDir()).toString());

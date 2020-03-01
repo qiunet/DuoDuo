@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.context.request;
 
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.utils.asyncQuene.IndexQueueElement;
+
 
 /**
  *  处理请求的封装类
@@ -9,11 +9,15 @@ import org.qiunet.utils.asyncQuene.IndexQueueElement;
  * @author qiunet
  *         Created on 17/3/13 19:48.
  */
-public interface IRequestContext<RequestData> extends IndexQueueElement, IRequest<RequestData> {
+public interface IRequestContext<RequestData> extends IRequest<RequestData> {
 	/**
 	 * 得到Ihandler
 	 * @return
 	 */
 	 IHandler<RequestData> getHandler();
 
+	/**
+	 * 处理请求
+	 */
+	 void handlerRequest();
 }

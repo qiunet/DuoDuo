@@ -4,11 +4,9 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.
@@ -28,19 +26,13 @@ public class TcpProtobufRequestContext<RequestData> extends AbstractTcpRequestCo
 	}
 
 	@Override
-	protected IMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
+	protected IResponseMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
 		return new DefaultProtobufMessage(protocolId, generatedMessageV3);
 	}
 
 	@Override
-	public boolean handler() {
+	public void handlerRequest() {
 		FacadeTcpRequest<RequestData> facadeTcpRequest = new FacadeTcpRequest<>(this);
 		params.getTcpInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
-		return true;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
 	}
 }

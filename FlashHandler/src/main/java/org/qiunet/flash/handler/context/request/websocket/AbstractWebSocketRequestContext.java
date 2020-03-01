@@ -7,9 +7,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IResponse;
-import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.SessionManager;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -26,14 +24,6 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 		this.params = params;
 	}
 
-	@Override
-	public int getQueueIndex() {
-		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		if (session != null) {
-			return session.getQueueIndex();
-		}
-		return channel().hashCode();
-	}
 
 	@Override
 	public void response(int protocolId, Object data) {
@@ -49,7 +39,7 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData>  exten
 	 * @param responseData
 	 * @return
 	 */
-	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
+	protected abstract IResponseMessage getResponseMessage(int protocolId, ResponseData responseData);
 	@Override
 	public String getRemoteAddress() {
 		return getRealIp(this.headers);
