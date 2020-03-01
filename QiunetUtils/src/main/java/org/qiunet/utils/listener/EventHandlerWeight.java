@@ -5,17 +5,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 容易和EventHandler 混淆.
- * 所以加个 _
- */
+/***
+ *
+ * @author qiunet
+ * 2020-03-01 16:19
+ **/
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface _EventHandlers {
+public @interface EventHandlerWeight {
 	/***
-	 * 这里应该填枚举值. 但是java限制很多
-	 * 只能使用常量.
+	 * 为事件处理提供一个先后顺序.
+	 * 越大. 越靠前执行.
+	 * 越小, 越靠后执行.
+	 * 可以负数
 	 * @return
 	 */
-	EventHandler[] value();
+	EventHandlerWeightType value() default EventHandlerWeightType.NORMAL;
 }

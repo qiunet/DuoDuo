@@ -9,6 +9,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -19,13 +20,16 @@ import java.util.stream.Stream;
  */
 public final class ClassScanner implements IApplicationContext {
 	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
+	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
 
 	private volatile static ClassScanner instance;
 
 	private ClassScanner() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 		this.reflections = new Reflections("org.qiunet", scanners);
 		instance = this;
 	}
@@ -87,6 +91,10 @@ public final class ClassScanner implements IApplicationContext {
 
 	@Override
 	public Object getInstanceOfClass(Class clazz, Object... params) {
+		if (beanInstances.containsKey(clazz)) {
+			return beanInstances.get(clazz);
+		}
+
 		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
 			.filter(f -> Modifier.isStatic(f.getModifiers()))
 			.filter(f -> f.getType() == clazz)
@@ -97,11 +105,15 @@ public final class ClassScanner implements IApplicationContext {
 			field.setAccessible(true);
 			try {
 				Object ret = field.get(null);
-				if (ret != null) return ret;
+				if (ret != null) {
+					beanInstances.put(clazz, ret);
+					return ret;
+				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+
 		Class<?> [] clazzes = new Class[params.length];
 		for (int i = 0; i < params.length; i++) {
 			clazzes[i] = params[i].getClass();
@@ -109,14 +121,20 @@ public final class ClassScanner implements IApplicationContext {
 
 		Constructor[] constructors = clazz.getDeclaredConstructors();
 		for (Constructor constructor : constructors) {
-			if (constructor.getParameterCount() != clazzes.length) continue;
+			if (constructor.getParameterCount() != clazzes.length) {
+				continue;
+			}
 
 			boolean allMatch = IntStream.range(0, clazzes.length).mapToObj(i -> clazzes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
-			if (! allMatch) continue;
+			if (! allMatch) {
+				continue;
+			}
 
 			constructor.setAccessible(true);
 			try {
-				return constructor.newInstance(params);
+				Object ret = constructor.newInstance(params);
+				beanInstances.put(clazz, ret);
+				return ret;
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}

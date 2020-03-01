@@ -17,9 +17,6 @@ import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
-import org.qiunet.utils.listener.EventHandler;
-import org.qiunet.utils.listener.IEventData;
-import org.qiunet.utils.listener.IEventListener;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 
@@ -36,7 +33,7 @@ import static org.qiunet.excel2cfgs.enums.RoleType.SCHEMER;
  * @author qiunet
  * 2019-11-05 18:13
  ***/
-public class RootController implements IEventListener {
+public class RootController implements Excel2CfgServerStartListenerData.Excel2CfgServerStartListener, SvnProcessingListenerData.SvnProcessingListener {
 	private static RootController instance;
 
 	private Stage primaryStage;
@@ -203,18 +200,17 @@ public class RootController implements IEventListener {
 	}
 
 	@Override
-	@EventHandler(SvnProcessingListenerData.class)
-	@EventHandler(Excel2CfgServerStartListenerData.class)
-	public void eventHandler(IEventData eventData) {
-		if (eventData.getClass() == Excel2CfgServerStartListenerData.class) {
-			this.init(((Excel2CfgServerStartListenerData) eventData).getStage());
-		}else if (eventData.getClass() == SvnProcessingListenerData.class) {
-			FxUIUtil.addUITask(() -> {
-				boolean processing = SvnUtil.isProcessing();
-				svnCommit.setDisable(processing);
-				svnUpdate.setDisable(processing);
-				svnClean.setDisable(processing);
-			});
-		}
+	public void onServerStart(Excel2CfgServerStartListenerData data) {
+		this.init(data.getStage());
+	}
+
+	@Override
+	public void onSvnProcessing(SvnProcessingListenerData data) {
+		FxUIUtil.addUITask(() -> {
+			boolean processing = SvnUtil.isProcessing();
+			svnCommit.setDisable(processing);
+			svnUpdate.setDisable(processing);
+			svnClean.setDisable(processing);
+		});
 	}
 }

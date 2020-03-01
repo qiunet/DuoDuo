@@ -6,10 +6,7 @@ import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.listener.EventHandler;
-import org.qiunet.utils.listener.IEventData;
-import org.qiunet.utils.listener.IEventListener;
-import org.qiunet.utils.listener.event_data.ServerShutdownEventData;
+import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.List;
@@ -18,14 +15,17 @@ import java.util.stream.Collectors;
 /***
  *
  *
- * qiunet
+ * @author qiunet
  * 2019-11-06 14:57
  ***/
-public class SettingManager implements IEventListener {
-	private static final SettingManager instance = new SettingManager();
+public class SettingManager implements ServerShutdownEventData.ServerShutdownListener {
+	private static SettingManager instance;
 
 	private SettingManager(){
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
+		instance = this;
 		this.loadSetting();
 	}
 
@@ -89,7 +89,9 @@ public class SettingManager implements IEventListener {
 	 * @return
 	 */
 	public String getFirstCfgPath() {
-		if (setting.getCfgPaths().isEmpty()) return null;
+		if (setting.getCfgPaths().isEmpty()) {
+			return null;
+		}
 		return StrCodecUtil.decrypt(setting.getCfgPaths().getFirst());
 	}
 
@@ -107,7 +109,9 @@ public class SettingManager implements IEventListener {
 	 * @return
 	 */
 	public String getFirstExcelPath() {
-		if (setting.getExcelPaths().isEmpty()) return null;
+		if (setting.getExcelPaths().isEmpty()) {
+			return null;
+		}
 		return StrCodecUtil.decrypt(setting.getExcelPaths().getFirst());
 	}
 
@@ -139,8 +143,7 @@ public class SettingManager implements IEventListener {
 	}
 
 	@Override
-	@EventHandler(ServerShutdownEventData.class)
-	public void eventHandler(IEventData eventData) {
+	public void onShutdown(ServerShutdownEventData data) {
 		Excel2CfgsUtil.writeToProjectFile(this.setting);
 	}
 }

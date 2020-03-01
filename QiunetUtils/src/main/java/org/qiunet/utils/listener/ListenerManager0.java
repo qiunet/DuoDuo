@@ -3,18 +3,27 @@ package org.qiunet.utils.listener;
 import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+/***
+ * 监听器的manager
+ *
+ * @author qiunet
+ */
 class ListenerManager0 implements IApplicationContextAware {
+	private Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private static ListenerManager0 instance;
-	private Map<Class<? extends IEventData>, List<Wrapper>> methods;
+	private IApplicationContext context;
 	private ListenerManager0(){
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 		instance = this;
 	}
 
@@ -22,22 +31,68 @@ class ListenerManager0 implements IApplicationContextAware {
 		return instance;
 	}
 
+//	private static final Collector<Wrapper, List<Wrapper>, List<Wrapper>> sortList = Collector.of(
+//		ArrayList::new,
+//		List::add,
+//		(left, right)->{left.addAll(right); return left;},
+//		i -> {i.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()); return i;});
+
+
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
-		Set<Method> annotated = context.getMethodsAnnotatedWith(_EventHandlers.class);
-		annotated.addAll(context.getMethodsAnnotatedWith(EventHandler.class));
+	public void setApplicationContext(IApplicationContext context) throws Exception {
+		this.context = context;
 
-		Collector<Wrapper, List<Wrapper>, List<Wrapper>> sortList = Collector.of(
-			ArrayList::new,
-			List::add,
-			(left, right)->{left.addAll(right); return left;},
-			i -> {i.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()); return i;});
+		Set<Class<? extends IEventData>> eventDataClasses = context.getSubTypesOf(IEventData.class);
+		for (Class<? extends IEventData> eventDataClass : eventDataClasses) {
+			this.listeners.put(eventDataClass, wrapperList(eventDataClass));
+		}
+	}
 
-		methods = annotated.stream()
-			.filter(m -> IEventListener.class.isAssignableFrom(m.getDeclaringClass()))
-			.map(m ->new Wrapper((IEventListener) context.getInstanceOfClass(m.getDeclaringClass()), m))
-			.flatMap(Wrapper::flatMap)
-			.collect(Collectors.groupingBy(Wrapper::getDataClass, sortList));
+	/**
+	 * 使用eventDataClass 构造一个
+	 * @param eventDataClass
+	 * @return
+	 */
+	private List<Wrapper> wrapperList(Class<?> eventDataClass) throws NoSuchMethodException {
+		EventListener annotation = eventDataClass.getAnnotation(EventListener.class);
+		if (annotation == null) {
+			throw new NullPointerException("Class ["+eventDataClass.getName()+"] need specify EventListener annotation!");
+		}
+
+		String methodName = getEventListenerMethodName(annotation.value(), eventDataClass);
+		Set<Class<?>> impls = context.getSubTypesOf((Class<Object>) annotation.value());
+		List<Wrapper> wrappers = new ArrayList<>(impls.size());
+		for (Class<?> impl : impls) {
+			Object implInstance = context.getInstanceOfClass(impl);
+			Method callerMethod = impl.getDeclaredMethod(methodName, eventDataClass);
+			EventHandlerWeight handlerWeight = callerMethod.getAnnotation(EventHandlerWeight.class);
+			Wrapper wrapper = new Wrapper(implInstance, callerMethod, handlerWeight == null ?
+				0 : handlerWeight.value().ordinal());
+			wrappers.add(wrapper);
+		}
+		wrappers.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result());
+		return wrappers;
+	}
+
+	/**
+	 * 获取eventListener 的接口名称.
+	 * @param eventListenerClass eventListener 的class
+	 * @param eventDataClass 使用该注解的eventData class
+	 * @return 接口中, 包含该eventData参数的方法名.
+	 */
+	private String getEventListenerMethodName(Class<?> eventListenerClass, Class<?> eventDataClass) {
+		for (Method method : eventListenerClass.getDeclaredMethods()) {
+			if (method.getParameterCount() != 1) {
+				continue;
+			}
+
+			if (method.getParameterTypes()[0] != eventDataClass) {
+				continue;
+			}
+
+			return method.getName();
+		}
+		throw new NullPointerException("EventListener ["+eventListenerClass.getName()+"] not define method use parameter ["+eventDataClass.getName()+"]");
 	}
 
 	/***
@@ -45,51 +100,32 @@ class ListenerManager0 implements IApplicationContextAware {
 	 * @param eventData
 	 */
 	void fireEventHandler(IEventData eventData) {
-		List<Wrapper> wrappers = methods.get(eventData.getClass());
-		if (wrappers == null) return;
+		List<Wrapper> wrappers = listeners.get(eventData.getClass());
+		if (wrappers == null) {
+			throw new NullPointerException("No listener for class ["+eventData.getClass().getName()+"]");
+		}
 
 		wrappers.forEach(w -> w.fireEventHandler(eventData));
 	}
 
-	private class Wrapper {
+	private static class Wrapper {
 		private int weight;
 		private Method method;
-		private IEventListener caller;
-		private Class<? extends IEventData> dataClass;
+		private Object caller;
 
-		public Wrapper(IEventListener caller, Method method) {
-			this.caller = caller;
-			this.method = method;
-		}
-
-		private Wrapper(Class<? extends IEventData> dataClass, IEventListener caller, Method method, int weight) {
+		private Wrapper(Object caller, Method method, int weight) {
 			this.caller = caller;
 			this.weight = weight;
 			this.method = method;
-			this.dataClass = dataClass;
 		}
 
-		Stream<Wrapper> flatMap(){
-			Map<Class<? extends IEventData>, Integer> as = new HashMap<>();
-			_EventHandlers annotation = this.method.getAnnotation(_EventHandlers.class);
-			if (annotation != null) {
-				for (EventHandler eventHandler : annotation.value()) {
-					as.merge(eventHandler.value(), eventHandler.weight(), Integer::sum);
-				}
-			}
-			EventHandler eventHandler = this.method.getAnnotation(EventHandler.class);
-			if (eventHandler != null) as.merge(eventHandler.value(), eventHandler.weight(), Integer::sum);
-
-			return as.entrySet().stream()
-				.map(en -> new Wrapper(en.getKey(), caller, method, en.getValue()));
-		}
-
-		public Class<? extends IEventData> getDataClass() {
-			return dataClass;
-		}
 
 		void fireEventHandler(IEventData data) {
-			caller.eventHandler(data);
+			try {
+				method.invoke(caller, data);
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				logger.error("Fire Event Handler Error: ", e);
+			}
 		}
 	}
 }

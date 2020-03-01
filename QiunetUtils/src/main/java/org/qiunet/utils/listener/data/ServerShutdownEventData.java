@@ -1,7 +1,14 @@
-package org.qiunet.utils.listener.event_data;
+package org.qiunet.utils.listener.data;
 
+import org.qiunet.utils.listener.EventListener;
 import org.qiunet.utils.listener.IEventData;
 
+/***
+ *
+ * 服务器启动的监听数据
+ * @author qiunet
+ */
+@EventListener(ServerShutdownEventData.ServerShutdownListener.class)
 public class ServerShutdownEventData implements IEventData {
 
 	private ServerShutdownEventData(){}
@@ -11,5 +18,10 @@ public class ServerShutdownEventData implements IEventData {
 
 	public static void fireShutdownEventHandler(){
 		instance.fireEventHandler();
+	}
+
+	public interface ServerShutdownListener {
+
+		void onShutdown(ServerShutdownEventData data);
 	}
 }
