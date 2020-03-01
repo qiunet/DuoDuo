@@ -1,7 +1,6 @@
 package org.qiunet.cfg.manager.base;
 
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
-import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.convert.BaseObjConvert;

@@ -3,7 +3,6 @@ package org.qiunet.quartz;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 

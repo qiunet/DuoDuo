@@ -5,7 +5,6 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class ArgsMapping extends KeyValueData<String,String> {
 				if (!s.startsWith("--") || s.indexOf("=") == -1) continue;
 
 				try {
-					String tt[] = StringUtil.split(s, "=");
+					String[] tt = StringUtil.split(s, "=");
 					temp.put(tt[0].substring(2).trim(), tt[1].trim());
 				} catch (Exception e) {
 					logger.warn("［"+s+"］参数异常", e);

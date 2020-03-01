@@ -1,7 +1,6 @@
 package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.manager.xd.XdInfoData;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
 

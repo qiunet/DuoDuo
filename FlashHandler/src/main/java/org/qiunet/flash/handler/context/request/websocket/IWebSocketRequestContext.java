@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.websocket;
 
 import org.qiunet.flash.handler.context.request.IRequestContext;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 
 /**
  * Created by qiunet.

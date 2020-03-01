@@ -3,11 +3,8 @@ package org.qiunet.utils.properties;
 import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * 加载properties 的工具类. 可以加载中文

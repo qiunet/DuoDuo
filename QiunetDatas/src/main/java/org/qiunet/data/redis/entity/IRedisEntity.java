@@ -1,9 +1,9 @@
 package org.qiunet.data.redis.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.support.IEntityBo;
-import org.qiunet.data.core.entity.IEntity;
 
 public interface IRedisEntity<Key, Bo extends IEntityBo> extends IEntity<Key, Bo> {
 	/***

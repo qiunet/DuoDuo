@@ -3,9 +3,7 @@ package org.qiunet.utils.collection.safe;
 import org.qiunet.utils.exceptions.SafeColletionsModifyException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.BiFunction;

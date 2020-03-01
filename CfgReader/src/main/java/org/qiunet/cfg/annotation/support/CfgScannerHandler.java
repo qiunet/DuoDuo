@@ -1,13 +1,11 @@
 package org.qiunet.cfg.annotation.support;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 

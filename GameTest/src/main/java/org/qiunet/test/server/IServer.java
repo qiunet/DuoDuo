@@ -3,9 +3,6 @@ package org.qiunet.test.server;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 
-import java.net.InetSocketAddress;
-import java.net.URI;
-
 /**
  * Created by qiunet.
  * 17/12/6

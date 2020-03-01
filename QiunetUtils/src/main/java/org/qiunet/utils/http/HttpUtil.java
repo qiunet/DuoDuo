@@ -1,9 +1,5 @@
 package org.qiunet.utils.http;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 import com.google.common.base.Preconditions;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -13,6 +9,10 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.qiunet.utils.string.StringUtil;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  */

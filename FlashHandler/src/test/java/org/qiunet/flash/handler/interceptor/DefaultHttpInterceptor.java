@@ -6,7 +6,6 @@ import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.

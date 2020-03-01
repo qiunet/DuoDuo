@@ -2,7 +2,6 @@ package org.qiunet.test.robot;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
-import org.qiunet.flash.handler.netty.client.param.AbstractClientParam;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -13,7 +12,6 @@ import org.qiunet.test.response.annotation.support.ResponseMapping;
 import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.server.IServer;
 
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;

@@ -1,5 +1,7 @@
 package org.qiunet.utils.net;
 
+import org.qiunet.utils.common.CommonUtil;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
@@ -24,10 +26,7 @@ public class NetUtil {
 	 * @return
 	 */
 	public static boolean isLocalIp(String ip){
-		if (ip.equals("localhost") || ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
-			return true;
-		}
-		return false;
+		return CommonUtil.existInList(ip, "localhost", "0:0:0:0:0:0:0:1", "127.0.0.1");
 	}
 
 	/**
@@ -50,7 +49,7 @@ public class NetUtil {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		return address.getHostAddress();
+		return address != null ? address.getHostAddress() : null;
 	}
 	/***
 	 * 得到主机名
@@ -63,7 +62,7 @@ public class NetUtil {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		return address.getHostName();
+		return address != null ? address.getHostName() : null;
 	}
 
 	/**

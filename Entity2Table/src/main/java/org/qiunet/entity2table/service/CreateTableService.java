@@ -1,13 +1,13 @@
 package org.qiunet.entity2table.service;
 
-import org.qiunet.data.core.support.db.IDatabaseSupport;
-import org.qiunet.entity2table.command.Columns;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
+import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.redis.constants.RedisDbConstants;
 import org.qiunet.data.util.DbProperties;
-import org.qiunet.entity2table.command.TableParam;
+import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.TableCreateParam;
+import org.qiunet.entity2table.command.TableParam;
 
 import java.util.HashMap;
 import java.util.List;

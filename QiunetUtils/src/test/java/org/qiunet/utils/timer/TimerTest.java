@@ -2,7 +2,6 @@ package org.qiunet.utils.timer;
 
 import org.qiunet.utils.date.DateUtil;
 
-import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;

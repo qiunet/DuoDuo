@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.qiunet.cfg.test.Init2Cfg;
 import org.qiunet.cfg.test.Init3Cfg;
 import org.qiunet.cfg.test.InitCfg;
-import org.qiunet.cfg.test.json.InitJsonManager;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.util.List;

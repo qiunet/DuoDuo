@@ -1,7 +1,8 @@
 package org.qiunet.utils.json;
-import org.qiunet.utils.base.BaseTest;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
 import java.util.ArrayList;
 import java.util.HashMap;

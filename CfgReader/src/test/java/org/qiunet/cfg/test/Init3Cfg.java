@@ -1,7 +1,6 @@
 package org.qiunet.cfg.test;
 
 import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.INestMapConfig;
 
 /***
  * Excel 的内容

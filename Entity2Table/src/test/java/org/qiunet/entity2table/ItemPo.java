@@ -1,9 +1,9 @@
 package org.qiunet.entity2table;
 
+import org.apache.ibatis.type.Alias;
 import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
-import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
 

@@ -1,11 +1,7 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.URL;

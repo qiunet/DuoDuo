@@ -1,9 +1,5 @@
 package org.qiunet.flash.handler.common.message;
 
-import io.netty.buffer.ByteBuf;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
-
 /**
  *  上下行消息的封装类.
  *  netty 只跟byte数组打交道.

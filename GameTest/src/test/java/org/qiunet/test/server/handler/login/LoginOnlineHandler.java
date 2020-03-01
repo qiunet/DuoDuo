@@ -4,7 +4,6 @@ import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
 import org.qiunet.flash.handler.handler.websocket.WebSocketProtobufHandler;
 import org.qiunet.test.proto.LoginOnlineProto;
-import org.qiunet.test.proto.LoginProto;
 
 /**
  * Created by qiunet.

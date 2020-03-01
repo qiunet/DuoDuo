@@ -4,12 +4,12 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
+import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
-import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 
 /**
  * Created by qiunet.

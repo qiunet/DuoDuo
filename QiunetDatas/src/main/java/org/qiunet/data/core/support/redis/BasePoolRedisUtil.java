@@ -2,17 +2,12 @@ package org.qiunet.data.core.support.redis;
 
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.hook.ShutdownHookThread;
-import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.StringUtil;
-import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 

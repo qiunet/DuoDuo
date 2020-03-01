@@ -5,10 +5,7 @@ import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.system.SystemPropertyUtil;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;

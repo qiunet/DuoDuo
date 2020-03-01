@@ -4,7 +4,6 @@ import org.qiunet.test.robot.Robot;
 import org.qiunet.test.server.IServer;
 import org.qiunet.test.server.type.ServerType;
 import org.qiunet.test.testcase.http.HttpJsonTestCase;
-import org.qiunet.test.testcase.http.HttpStringTestCase;
 
 /**
  * Created by qiunet.

@@ -1,8 +1,8 @@
 package org.qiunet.utils.shell;
 
 import org.junit.Assert;
-import org.qiunet.utils.base.BaseTest;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
 /**
  * @author qiunet
@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TestShellUtil extends BaseTest{
 	@Test
 	public void testExecShell(){
-		String cmd [] = {"ls"};
+		String[] cmd = {"ls"};
 		String ret = ShellUtil.execShell(cmd);
 		logger.info(ret);
 		Assert.assertNotNull(ret);

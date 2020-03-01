@@ -3,12 +3,12 @@ package org.qiunet.utils.classScanner;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
-import org.reflections.scanners.Scanner;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;

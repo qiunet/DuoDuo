@@ -3,7 +3,6 @@ package org.qiunet.utils.groovy;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class TestGroovy {
 		IGroovyRun<Void> groovyRun = new GroovyRun(url);
 		for (int i = 10; i < 20; i++) {
 			UserPo userPo = new UserPo(i);
-			groovyRun.invokeMethod("changeUserPo", new Object[]{userPo, i / 2});
+			groovyRun.invokeMethod("changeUserPo", userPo, i / 2);
 
 			Assert.assertEquals(userPo.getAge(), i/2);
 			if (userPo.getId() < 15) {

@@ -1,7 +1,7 @@
 package org.qiunet.data.cache.entity;
 
-import org.qiunet.data.support.DataSupportMapping;
 import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.data.support.DataSupportMapping;
 import org.qiunet.data.support.IDataSupport;
 import org.qiunet.data.support.IEntityBo;
 

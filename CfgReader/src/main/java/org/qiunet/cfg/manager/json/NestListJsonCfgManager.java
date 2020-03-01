@@ -3,6 +3,7 @@ package org.qiunet.cfg.manager.json;
 import org.qiunet.cfg.base.INestListConfig;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
+
 import java.util.List;
 import java.util.Map;
 

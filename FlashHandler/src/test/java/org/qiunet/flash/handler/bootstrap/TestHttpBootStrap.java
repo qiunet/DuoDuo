@@ -20,8 +20,8 @@ import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.io.IOException;

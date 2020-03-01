@@ -1,10 +1,6 @@
 package org.qiunet.flash.handler.handler.tcp;
 
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.enums.DataType;
-import org.qiunet.flash.handler.handler.tcp.BaseTcpHandler;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.

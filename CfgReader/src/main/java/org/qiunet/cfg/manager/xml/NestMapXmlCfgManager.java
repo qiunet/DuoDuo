@@ -1,7 +1,6 @@
 package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.cfg.manager.xd.XdInfoData;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 
 import java.util.Map;

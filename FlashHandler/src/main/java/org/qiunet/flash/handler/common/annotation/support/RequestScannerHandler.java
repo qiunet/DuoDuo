@@ -1,16 +1,14 @@
 package org.qiunet.flash.handler.common.annotation.support;
 
-import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
+import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-import java.util.Set;
 
 /**
  * 扫描requestHandler的一个类

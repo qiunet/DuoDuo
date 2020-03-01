@@ -7,8 +7,6 @@ import org.qiunet.test.server.IServer;
 import org.qiunet.test.server.type.ServerType;
 import org.qiunet.test.testcase.http.HttpProtobufTestCase;
 
-import java.net.URI;
-
 /**
  * Created by qiunet.
  * 17/12/9

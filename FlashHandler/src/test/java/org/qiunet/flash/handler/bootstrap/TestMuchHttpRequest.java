@@ -6,8 +6,8 @@ import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 
 import java.util.concurrent.CountDownLatch;
 

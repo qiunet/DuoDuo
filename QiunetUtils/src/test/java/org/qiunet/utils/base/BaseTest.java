@@ -1,9 +1,9 @@
 package org.qiunet.utils.base;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class BaseTest {
 	protected static final Logger logger = LoggerType.DUODUO.getLogger();

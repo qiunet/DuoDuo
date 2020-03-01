@@ -3,7 +3,6 @@ package org.qiunet.test.testcase.http;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.robot.IRobot;

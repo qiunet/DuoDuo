@@ -3,9 +3,6 @@ package org.qiunet.flash.handler.handler.websocket;
 import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.flash.handler.common.enums.DataType;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 /**
  * Created by qiunet.
  * 17/7/21

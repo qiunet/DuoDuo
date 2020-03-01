@@ -7,8 +7,6 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.test.server.IServer;
 
-import java.net.URI;
-
 /**
  * Created by qiunet.
  * 17/12/9
@@ -23,7 +21,7 @@ public enum ServerType implements IServer {
 	;
 	private IClientConfig config;
 
-	private ServerType(IClientConfig config) {
+	ServerType(IClientConfig config) {
 		this.config = config;
 	}
 

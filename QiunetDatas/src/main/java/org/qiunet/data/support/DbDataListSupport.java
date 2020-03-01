@@ -1,8 +1,8 @@
 package org.qiunet.data.support;
 
+import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.db.entity.IDbEntityList;
-import org.qiunet.data.core.select.DbParamMap;
 
 import java.util.Collections;
 import java.util.List;

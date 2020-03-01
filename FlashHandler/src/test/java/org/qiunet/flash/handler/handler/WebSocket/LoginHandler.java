@@ -1,9 +1,7 @@
 package org.qiunet.flash.handler.handler.WebSocket;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
-import org.qiunet.flash.handler.handler.tcp.TcpStringHandler;
 import org.qiunet.flash.handler.handler.websocket.WebSocketStringHandler;
 
 /**

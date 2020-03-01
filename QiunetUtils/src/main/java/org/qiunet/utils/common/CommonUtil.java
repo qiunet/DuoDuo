@@ -1,8 +1,9 @@
 package org.qiunet.utils.common;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 其它可以通用逻辑的工具类
@@ -15,14 +16,17 @@ public class CommonUtil {
 	/**
 	 * 检查一个元素是否在数组中
 	 * @param <T>
-	 * @param list
+	 * @param arrays
 	 * @return
 	 */
-	public static <T> boolean existInList(T element,T list[])
+	public static <T> boolean existInList(T element,T ... arrays)
 	{
-		if (list == null || element == null) return false;
-		return Stream.of(list).anyMatch(l -> l.equals(element));
+		if (arrays == null || element == null) {
+			return false;
+		}
+		return Arrays.asList(arrays).contains(element);
 	}
+
 	/**
 	 * 检查一个元素是否在集合中
 	 * @param <T>
@@ -32,7 +36,9 @@ public class CommonUtil {
 	 */
 	public static <T> boolean existInList(T element,Collection<T> list)
 	{
-		if(list.isEmpty() || element == null) return false;
+		if(list.isEmpty() || element == null) {
+			return false;
+		}
 		return list.stream().anyMatch(ele -> ele.equals(element));
 	}
 	/**

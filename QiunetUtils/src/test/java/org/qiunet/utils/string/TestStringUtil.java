@@ -1,8 +1,8 @@
 package org.qiunet.utils.string;
 
-import org.qiunet.utils.base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
 /**
  * @author qiunet
@@ -12,7 +12,7 @@ public class TestStringUtil extends BaseTest{
 	@Test
 	public void testSplit(){
 		String str = "1,2,";
-		String strs [] = StringUtil.split(str, ",");
+		String[] strs = StringUtil.split(str, ",");
 		Assert.assertEquals("",strs[2]);
 
 		str = ",1,2";

@@ -4,13 +4,12 @@ import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public final class PropertiesUtil {
@@ -33,7 +32,7 @@ public final class PropertiesUtil {
 			}else {
 				fis = new FileInputStream(url.getPath());
 			}
-			isr = new InputStreamReader(fis , "UTF-8");
+			isr = new InputStreamReader(fis , StandardCharsets.UTF_8);
 			tempProperties.load(isr);
 		} catch (Exception e) {
 			logger.error("[LoaderProperties] Exception: ", e);

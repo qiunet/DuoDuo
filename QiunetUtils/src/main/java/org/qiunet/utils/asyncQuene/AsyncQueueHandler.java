@@ -1,16 +1,15 @@
 package org.qiunet.utils.asyncQuene;
 
+import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.hook.ShutdownHookThread;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
+
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
-import org.qiunet.utils.hook.ShutdownHookThread;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 异步队列处理

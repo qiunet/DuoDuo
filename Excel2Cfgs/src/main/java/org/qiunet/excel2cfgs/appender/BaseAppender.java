@@ -1,12 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
-import org.qiunet.excel2cfgs.setting.SettingManager;
-import org.qiunet.utils.file.FileUtil;
-import org.qiunet.utils.string.StringUtil;
-
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /***
  * 中间base层, 处理

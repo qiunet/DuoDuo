@@ -1,10 +1,12 @@
 package org.qiunet.utils.common;
 
-import org.qiunet.utils.base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author qiunet
@@ -34,7 +36,7 @@ public class TestCommonUtil extends BaseTest {
 
 	@Test
 	public void testSubList() {
-		List<Integer> list = new ArrayList<>(Arrays.asList(new Integer[]{0,1,2,3,4,5,6,7,8,9}));
+		List<Integer> list = new ArrayList<>(Arrays.asList(0,1,2,3,4,5,6,7,8,9));
 		// skip
 		List<Integer> subList = CommonUtil.getSubListPage(list, 1 , 4);
 

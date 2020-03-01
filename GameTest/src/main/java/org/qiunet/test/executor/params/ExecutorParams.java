@@ -1,7 +1,6 @@
 package org.qiunet.test.executor.params;
 
 import org.qiunet.test.executor.IExecutorInitializer;
-import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
 

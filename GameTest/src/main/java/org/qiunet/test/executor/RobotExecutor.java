@@ -2,12 +2,13 @@ package org.qiunet.test.executor;
 
 
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.utils.classScanner.ClassScanner;
-import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.util.concurrent.*;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by qiunet.

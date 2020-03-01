@@ -5,8 +5,8 @@ import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
-import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.command.TableCreateParam;
+import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
@@ -14,7 +14,10 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**

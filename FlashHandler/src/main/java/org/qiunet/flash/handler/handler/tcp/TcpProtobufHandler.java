@@ -1,10 +1,6 @@
 package org.qiunet.flash.handler.handler.tcp;
 
 import org.qiunet.flash.handler.common.enums.DataType;
-import org.qiunet.flash.handler.handler.tcp.BaseTcpHandler;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * Created by qiunet.

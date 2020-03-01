@@ -1,7 +1,6 @@
 package org.qiunet.test;
 
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.flash.handler.common.annotation.support.RequestScannerHandler;
 import org.qiunet.test.TestCase.login.TestLogin;
 import org.qiunet.test.TestCase.login.TestLoginOnline;
 import org.qiunet.test.TestCase.player.TestJsonPlayerInfo;
@@ -9,10 +8,8 @@ import org.qiunet.test.TestCase.player.TestPlayerIndex;
 import org.qiunet.test.TestCase.player.TestPlayerInfo;
 import org.qiunet.test.TestCase.player.TestUriPathPlayerInfo;
 import org.qiunet.test.TestCase.room.TestLoginRoom;
-import org.qiunet.test.executor.IExecutorInitializer;
 import org.qiunet.test.executor.RobotExecutor;
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.test.response.annotation.support.ResponseScannerHandler;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.Robot;
 import org.qiunet.test.robot.init.DefaultRobotInfo;

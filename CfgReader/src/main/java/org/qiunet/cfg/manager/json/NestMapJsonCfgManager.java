@@ -2,6 +2,7 @@ package org.qiunet.cfg.manager.json;
 
 import org.qiunet.cfg.base.INestMapConfig;
 import org.qiunet.utils.collection.safe.SafeHashMap;
+
 import java.util.List;
 import java.util.Map;
 

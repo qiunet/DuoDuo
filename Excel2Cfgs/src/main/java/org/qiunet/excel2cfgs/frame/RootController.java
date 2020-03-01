@@ -2,19 +2,19 @@ package org.qiunet.excel2cfgs.frame;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.qiunet.excel2cfgs.frame.component.CfgTreeCell;
 import org.qiunet.excel2cfgs.enums.ActionType;
-import org.qiunet.excel2cfgs.frame.component.FileTreeItem;
 import org.qiunet.excel2cfgs.enums.RoleType;
-import org.qiunet.excel2cfgs.setting.SettingManager;
+import org.qiunet.excel2cfgs.frame.component.CfgTreeCell;
+import org.qiunet.excel2cfgs.frame.component.FileTreeItem;
 import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
+import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.utils.listener.EventHandler;
@@ -28,7 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static org.qiunet.excel2cfgs.enums.RoleType.*;
+import static org.qiunet.excel2cfgs.enums.RoleType.SCHEMER;
 
 /***
  *

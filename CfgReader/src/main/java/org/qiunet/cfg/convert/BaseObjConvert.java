@@ -1,7 +1,6 @@
 package org.qiunet.cfg.convert;
 
 import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
-import org.qiunet.cfg.base.ICfg;
 
 /***
  *

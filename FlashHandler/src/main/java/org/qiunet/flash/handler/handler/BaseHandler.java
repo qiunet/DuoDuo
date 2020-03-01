@@ -2,10 +2,9 @@ package org.qiunet.flash.handler.handler;
 
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Created by qiunet.
+ * @author qiunet.
  * 17/7/21
  */
 public abstract class BaseHandler<RequestData> implements IHandler<RequestData> {

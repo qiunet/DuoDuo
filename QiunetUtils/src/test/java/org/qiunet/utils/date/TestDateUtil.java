@@ -1,13 +1,11 @@
 package org.qiunet.utils.date;
 
 import org.junit.Assert;
-import org.qiunet.utils.base.BaseTest;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
-import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 
 /**
