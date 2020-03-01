@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.common.listener;
 
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.utils.listener.EventListener;
 import org.qiunet.utils.listener.IEventData;
-
-import java.util.concurrent.Future;
 
 /***
  *
@@ -11,22 +10,19 @@ import java.util.concurrent.Future;
  * @author qiunet
  * 2020-02-06 14:18
  **/
+@EventListener(SessionCloseEventData.SessionCloseListener.class)
 public class SessionCloseEventData implements IEventData {
-
-	private Future future;
-
 	private ISession session;
 
-	public SessionCloseEventData(Future future, ISession session) {
-		this.future = future;
+	public SessionCloseEventData(ISession session) {
 		this.session = session;
-	}
-
-	public Future getFuture() {
-		return future;
 	}
 
 	public ISession getSession() {
 		return session;
+	}
+
+	public interface SessionCloseListener {
+		void onCloseSession(SessionCloseEventData data);
 	}
 }

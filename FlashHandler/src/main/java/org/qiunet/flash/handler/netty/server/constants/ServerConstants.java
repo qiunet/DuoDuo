@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.netty.server.constants;
 
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.HandlerType;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.IStartupContextAdapter;
 
 /**
  * Created by qiunet.
@@ -17,5 +17,5 @@ public class ServerConstants {
 	/***
 	 * 使用的header adapter
 	 */
-	public static final AttributeKey<IProtocolHeaderAdapter> PROTOCOL_HEADER_ADAPTER = AttributeKey.newInstance("PROTOCOL_HEADER_ADAPTER");
+	public static final AttributeKey<IStartupContextAdapter> PROTOCOL_HEADER_ADAPTER = AttributeKey.newInstance("PROTOCOL_HEADER_ADAPTER");
 }

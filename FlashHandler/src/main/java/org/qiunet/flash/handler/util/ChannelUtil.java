@@ -3,8 +3,8 @@ package org.qiunet.flash.handler.util;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.IStartupContextAdapter;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
@@ -14,7 +14,7 @@ public final class ChannelUtil {
 	 * @param channel
 	 * @return
 	 */
-	public static IProtocolHeaderAdapter getProtolHeaderAdapter(Channel channel) {
+	public static IStartupContextAdapter getProtolHeaderAdapter(Channel channel) {
 		return channel.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).get();
 	}
 
@@ -25,7 +25,7 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static ByteBuf messageContentToByteBuf(MessageContent content, Channel channel) {
-		IProtocolHeaderAdapter adapter = getProtolHeaderAdapter(channel);
+		IStartupContextAdapter adapter = getProtolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.newHeader(content);
 		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
 		byte[] bytes = header.encodeBytes(content.bytes());

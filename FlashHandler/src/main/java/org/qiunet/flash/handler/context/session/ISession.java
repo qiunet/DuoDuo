@@ -24,9 +24,26 @@ public interface ISession {
 	 */
 	Channel getChannel();
 
+	/**
+	 * 是否已经认证登录
+	 * @return
+	 */
+	boolean isAuth();
+
+	/**
+	 * 是否活跃的session
+	 * @return
+	 */
+	boolean isActive();
+
 	/***
 	 * 对外写消息
 	 * @param message
 	 */
 	ChannelFuture writeMessage(IResponseMessage message);
+
+	/**
+	 * 清理 session
+	 */
+	void close();
 }

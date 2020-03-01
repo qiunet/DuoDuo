@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by qiunet.
  * 17/10/23
  */
-public class SessionManager{
+public class SessionManager implements SessionCloseEventData.SessionCloseListener {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private static final AttributeKey<ISession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
 	/***
@@ -41,15 +41,14 @@ public class SessionManager{
 	 * @param val
 	 * @return
 	 */
-	public <T extends ISession> T addSession(ISession val) {
+	public ISession addSession(ISession val) {
 		val.getChannel().attr(SESSION_KEY).set(val);
-		this.sessions.putIfAbsent(val.getUid(), val);
-
-		val.getChannel().closeFuture().addListener(future -> {
-			new SessionCloseEventData(future, val).fireEventHandler();
-			sessions.remove(val.getUid());
-		});
-		return (T) sessions.get(val.getUid());
+		ISession oldSession = this.sessions.putIfAbsent(val.getUid(), val);
+		if (oldSession != null && oldSession.isActive()) {
+			oldSession.close();
+		}
+		val.getChannel().closeFuture().addListener(future -> val.close());
+		return sessions.get(val.getUid());
 	}
 	/***
 	 * 得到一个Session
@@ -73,5 +72,10 @@ public class SessionManager{
 	 */
 	public int sessionSize(){
 		return sessions.size();
+	}
+
+	@Override
+	public void onCloseSession(SessionCloseEventData data) {
+		sessions.remove(data.getSession().getUid());
 	}
 }

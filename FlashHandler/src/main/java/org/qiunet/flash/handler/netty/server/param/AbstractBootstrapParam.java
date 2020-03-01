@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.IStartupContextAdapter;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
@@ -30,9 +29,9 @@ public abstract class AbstractBootstrapParam {
 
 	protected int maxReceivedLength;
 
-	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+	protected IStartupContextAdapter protocolHeaderAdapter;
 
-	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
+	public IStartupContextAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
 	}
 
@@ -68,14 +67,19 @@ public abstract class AbstractBootstrapParam {
 
 		protected boolean encryption = true;
 
-		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
+		protected IStartupContextAdapter startupContextAdapter;
 		/***
 		 * 读超时处理.默认300秒 (单位秒)
 		 */
 		private int readIdleCheckSeconds = 300;
 
-		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
-			this.protocolHeaderAdapter = protocolHeaderAdapter;
+		/***
+		 * 启动需要的上下文对象
+		 * @param startupContextAdapter
+		 * @return
+		 */
+		public B setStartupContextAdapter(IStartupContextAdapter startupContextAdapter) {
+			this.startupContextAdapter = startupContextAdapter;
 			return (B) this;
 		}
 
@@ -114,7 +118,7 @@ public abstract class AbstractBootstrapParam {
 			p.errorMessage = errorMessage;
 			p.readIdleCheckSeconds = readIdleCheckSeconds;
 			p.address = address;
-			p.protocolHeaderAdapter = protocolHeaderAdapter;
+			p.protocolHeaderAdapter = startupContextAdapter;
 			p.encryption = encryption;
 			this.buildInner(p);
 			return p;

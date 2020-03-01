@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.client.param;
 
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.IStartupContextAdapter;
 
 import java.net.InetSocketAddress;
 
@@ -19,9 +18,9 @@ public abstract class AbstractClientParam implements IClientConfig {
 
 	protected int maxReceivedLength;
 
-	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+	protected IStartupContextAdapter protocolHeaderAdapter;
 	@Override
-	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
+	public IStartupContextAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
 	}
 
@@ -45,7 +44,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 	 * */
 	public abstract static class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
 
-		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
+		protected IStartupContextAdapter startupContextAdapter;
 
 		protected int maxReceivedLength = 1024 * 1024 * 8;
 		protected InetSocketAddress address;
@@ -59,8 +58,13 @@ public abstract class AbstractClientParam implements IClientConfig {
 			return setAddress(new InetSocketAddress(host, port));
 		}
 
-		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
-			this.protocolHeaderAdapter = protocolHeaderAdapter;
+		/**
+		 * 设置启动需要的一些东西上下文
+		 * @param startupContextAdapter
+		 * @return
+		 */
+		public B setStartupContextAdapter(IStartupContextAdapter startupContextAdapter) {
+			this.startupContextAdapter = startupContextAdapter;
 			return (B) this;
 		}
 
@@ -82,7 +86,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 
 			P p = newParams();
-			p.protocolHeaderAdapter = protocolHeaderAdapter;
+			p.protocolHeaderAdapter = startupContextAdapter;
 			p.maxReceivedLength = maxReceivedLength;
 			p.address = address;
 			p.encryption = encryption;
