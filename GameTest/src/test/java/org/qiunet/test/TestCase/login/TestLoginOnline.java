@@ -19,8 +19,7 @@ public class TestLoginOnline extends BaseOnlineTestCase<LoginOnlineProto.LoginOn
 
 	@Override
 	public boolean conditionJudge(Robot robot) {
-		if (StringUtil.isEmpty(robot.getToken()) || robot.getUid() == 0) return false;
-		return true;
+		return !StringUtil.isEmpty(robot.getToken()) && robot.getUid() != 0;
 	}
 
 	@Override

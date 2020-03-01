@@ -9,5 +9,5 @@ public interface IResponse<ResponseData> {
 	 * 对客户端响应
 	 * @param responseData
 	 */
-	public void response(int protocolId, ResponseData responseData);
+	void response(int protocolId, ResponseData responseData);
 }

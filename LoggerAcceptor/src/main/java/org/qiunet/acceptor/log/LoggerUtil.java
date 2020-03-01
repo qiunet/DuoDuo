@@ -71,7 +71,7 @@ public class LoggerUtil {
 	 * @return
 	 */
 	private static Logger getLogger(short gameId, String prefix) {
-		String loggerName = String.valueOf(gameId) + "_" + prefix;
+		String loggerName = gameId + "_" + prefix;
 		Logger logger = loggerMap.get(loggerName);
 		if (logger != null) return logger;
 

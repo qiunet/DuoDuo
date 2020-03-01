@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by qiunet.
@@ -18,7 +19,7 @@ public class TestProtocol {
 		short chunkSize = 10;
 		byte [] secritBytes = ProtocolUtil.encryptData(srcBytes, chunkSize);
 		byte [] originBytes = ProtocolUtil.decryptData(secritBytes, chunkSize);
-		String originStr = new String(originBytes, "Utf-8");
+		String originStr = new String(originBytes, StandardCharsets.UTF_8);
 		Assert.assertEquals(originStr, str);
 	}
 }

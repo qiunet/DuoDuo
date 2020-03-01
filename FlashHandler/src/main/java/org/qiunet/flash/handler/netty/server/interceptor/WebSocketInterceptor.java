@@ -13,5 +13,5 @@ public interface WebSocketInterceptor {
 	 * @param handler
 	 * @param request
 	 */
-	public void handler(IWebSocketHandler handler, IWebSocketRequest request);
+	void handler(IWebSocketHandler handler, IWebSocketRequest request);
 }

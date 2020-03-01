@@ -11,8 +11,8 @@ public class TestEvent1And2Service implements IEventListener {
 	@EventHandler(value = Test1EventData.class, weight = 1)
 	@EventHandler(Test2EventData.class)
 	public void eventHandler(IEventData eventData) {
-		Assert.assertTrue(CommonUtil.existInList(eventData.getClass(), new Class[]{Test1EventData.class,
-			Test2EventData.class}));
+		Assert.assertTrue(CommonUtil.existInList(eventData.getClass(), Test1EventData.class,
+			Test2EventData.class));
 		if (eventData.getClass() == Test1EventData.class)
 			Assert.assertEquals(2, TestListener.test1Count.incrementAndGet());
 		else if (eventData.getClass() == Test2EventData.class)

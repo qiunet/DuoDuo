@@ -17,8 +17,7 @@ public class TestLoginRoom extends BaseRoomTestCase<LoginRoomProto.LoginRoomRequ
 
 	@Override
 	public boolean conditionJudge(Robot robot) {
-		if (StringUtil.isEmpty(robot.getToken()) || robot.getUid() == 0) return false;
-		return true;
+		return !StringUtil.isEmpty(robot.getToken()) && robot.getUid() != 0;
 	}
 
 	@Override

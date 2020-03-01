@@ -11,11 +11,11 @@ public interface IAttributeData {
 	 * @param key
 	 * @return
 	 */
-	public Object getAttribute(String key);
+	Object getAttribute(String key);
 	/**
 	 * 得到对象
 	 * @param key
 	 * @return
 	 */
-	public void setAttribute(String key, Object val);
+	void setAttribute(String key, Object val);
 }

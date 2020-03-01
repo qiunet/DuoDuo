@@ -19,7 +19,7 @@ public class MD5Util {
 			MessageDigest mg = MessageDigest.getInstance("MD5");
 			mg.update(source.getBytes(charset));
 			byte[] md = mg.digest();
-			char str[] = new char[md.length*2];
+			char[] str = new char[md.length * 2];
 			for(int i=0,k=0;i<md.length;i++){
 				byte b = md[i];
 				str[k++]=hexDigits[b>>>4&0xf];

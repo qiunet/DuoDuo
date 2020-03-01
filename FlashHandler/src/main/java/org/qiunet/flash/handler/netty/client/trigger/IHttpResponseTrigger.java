@@ -12,5 +12,5 @@ public interface IHttpResponseTrigger {
 	 *
 	 * @param response
 	 */
-	public void response(IProtocolHeaderAdapter adapter, FullHttpResponse response) ;
+	void response(IProtocolHeaderAdapter adapter, FullHttpResponse response) ;
 }
