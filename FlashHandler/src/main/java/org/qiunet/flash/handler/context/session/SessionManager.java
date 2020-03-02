@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.session;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -45,9 +46,9 @@ public class SessionManager implements SessionCloseEventData.SessionCloseListene
 		val.getChannel().attr(SESSION_KEY).set(val);
 		ISession oldSession = this.sessions.putIfAbsent(val.getUid(), val);
 		if (oldSession != null && oldSession.isActive()) {
-			oldSession.close();
+			oldSession.close(CloseCause.LOGIN_REPEATED);
 		}
-		val.getChannel().closeFuture().addListener(future -> val.close());
+		val.getChannel().closeFuture().addListener(future -> val.close(CloseCause.CHANNEL_CLOSE));
 		return sessions.get(val.getUid());
 	}
 	/***

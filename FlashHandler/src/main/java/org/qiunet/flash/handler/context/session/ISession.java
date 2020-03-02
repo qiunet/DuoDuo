@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.session;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /**
  * session 的接口,
@@ -45,5 +46,5 @@ public interface ISession {
 	/**
 	 * 清理 session
 	 */
-	void close();
+	void close(CloseCause cause);
 }

@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /**
  * Session 的 父类
@@ -45,7 +46,7 @@ public abstract class AbstractSession implements ISession {
 	}
 
 	@Override
-	public void close() {
-		new SessionCloseEventData(this).fireEventHandler();
+	public void close(CloseCause cause) {
+		new SessionCloseEventData(this, cause).fireEventHandler();
 	}
 }

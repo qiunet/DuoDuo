@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.listener;
 
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.listener.EventListener;
 import org.qiunet.utils.listener.IEventData;
 
@@ -13,9 +14,14 @@ import org.qiunet.utils.listener.IEventData;
 @EventListener(SessionCloseEventData.SessionCloseListener.class)
 public class SessionCloseEventData implements IEventData {
 	private ISession session;
-
-	public SessionCloseEventData(ISession session) {
+	private CloseCause cause;
+	public SessionCloseEventData(ISession session, CloseCause cause) {
 		this.session = session;
+		this.cause = cause;
+	}
+
+	public CloseCause getCause() {
+		return cause;
 	}
 
 	public ISession getSession() {
