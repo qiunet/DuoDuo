@@ -115,7 +115,7 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 			}
 		};
 		TimerManager.getInstance().scheduleAtFixedRate(asyncTimerTask, delay, period);
-		return new ScheduleFuture(scheduleName, msg, asyncTimerTask.getFuture());
+		return new ScheduleFuture(scheduleName, asyncTimerTask.getFuture());
 	}
 
 	/***
@@ -129,7 +129,7 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 				addMessage(msg);
 				return null;
 			}, executeTime);
-		return new ScheduleFuture(scheduleName, msg, future);
+		return new ScheduleFuture(scheduleName, future);
 	}
 
 	/**
@@ -146,18 +146,16 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 			return null;
 		}, delay, unit);
 
-		return new ScheduleFuture(scheduleName, msg, future);
+		return new ScheduleFuture(scheduleName, future);
 	}
 
 
 	public class ScheduleFuture implements Future<Void> {
 		private String scheduleName;
 		private Future<Void> future;
-		private IMessage message;
 
-		public ScheduleFuture(String scheduleName, IMessage message, Future<Void> future) {
+		public ScheduleFuture(String scheduleName, Future<Void> future) {
 			this.scheduleName = scheduleName;
-			this.message = message;
 			this.future = future;
 
 			scheduleFutures.add(this);

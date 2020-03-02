@@ -13,12 +13,12 @@ import java.util.Date;
  * 2020-02-05 13:55
  **/
 public class DateConvert extends BaseObjConvert<Date> {
-	private static SimpleDateFormat sdf = new SimpleDateFormat(DateUtil.DEFAULT_DATE_TIME_FORMAT);
+	private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(DateUtil.DEFAULT_DATE_TIME_FORMAT));
 
 	@Override
 	protected Date fromString0(String str) {
 		try {
-			return sdf.parse(str);
+			return sdf.get().parse(str);
 		} catch (ParseException e) {
 			LoggerType.DUODUO.error("Exception:", e);
 		}
