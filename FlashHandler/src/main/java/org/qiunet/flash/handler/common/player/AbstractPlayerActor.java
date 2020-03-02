@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.context.sender.IMessageSender;
+import org.qiunet.flash.handler.context.session.AbstractSession;
 import org.qiunet.flash.handler.context.session.ISession;
 
 /***
@@ -17,12 +18,10 @@ public abstract class AbstractPlayerActor<T extends AbstractPlayerActor, Session
 	protected Session session;
 
 	public AbstractPlayerActor(Session session) {
+		if (session instanceof AbstractSession) {
+			((AbstractSession) session).setPlayerActor(this);
+		}
 		this.session = session;
-	}
-
-	@Override
-	public long getPlayerId() {
-		return session.getUid();
 	}
 
 	public Session getSession() {

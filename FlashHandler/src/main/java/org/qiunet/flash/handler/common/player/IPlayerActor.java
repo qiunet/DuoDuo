@@ -21,6 +21,12 @@ public interface IPlayerActor<Session extends ISession> {
 	Session getSession();
 
 	/**
+	 * openId 或者账号account
+	 * @return
+	 */
+	String getOpenId();
+
+	/**
 	 * 是否已经登录认证.
 	 * @return
 	 */

@@ -19,6 +19,13 @@ public interface ISession {
 	 */
 	long getUid();
 
+	/**
+	 * openid
+	 * 或者
+	 * 账号 account
+	 * @return
+	 */
+	String getOpenId();
 	/***
 	 *
 	 * @return
@@ -36,6 +43,12 @@ public interface ISession {
 	 * @return
 	 */
 	boolean isActive();
+
+	/**
+	 * 得到ip
+	 * @return
+	 */
+	String getIp();
 
 	/***
 	 * 对外写消息
