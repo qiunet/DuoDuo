@@ -58,5 +58,6 @@ import java.util.concurrent.TimeUnit;
 	@EventHandlerWeight(EventHandlerWeightType.HIGHEST)
 	public void onShutdown(ServerShutdownEventData data) {
 		this.asyncToDb(100, TimeUnit.MILLISECONDS);
+		logger.info("Shutdown async update success!");
 	}
 }

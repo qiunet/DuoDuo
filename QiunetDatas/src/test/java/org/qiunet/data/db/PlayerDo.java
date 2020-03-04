@@ -1,9 +1,11 @@
 package org.qiunet.data.db;
 
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.db.entity.DbEntity;
 
 @Alias("PlayerDo")
+@Table(name = "player", defaultDb = true)
 public class PlayerDo extends DbEntity<Long, PlayerBo> {
 	private long uid;
 	private String name;

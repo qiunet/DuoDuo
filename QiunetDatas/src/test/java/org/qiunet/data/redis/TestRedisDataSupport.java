@@ -53,8 +53,6 @@ public class TestRedisDataSupport {
 		vipDo.setLevel(10);
 		vipDo.setExp(1000);
 
-		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("insertVipDo", vipDo);
-
 		vipDo.insert();
 		dataSupport.syncToDatabase();
 

@@ -1,9 +1,11 @@
 package org.qiunet.data.db;
 
 import org.apache.ibatis.type.Alias;
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.db.entity.DbEntityList;
 
 @Alias("ItemDo")
+@Table(name = "item", defaultDb = true)
 public class ItemDo extends DbEntityList<Long, Integer, ItemBo> {
 	private long uid;
 	private int item_id;
