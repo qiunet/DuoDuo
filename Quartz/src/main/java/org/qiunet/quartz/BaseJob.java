@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Created by qiunet on 4/12/17.
  */
-public abstract class BaseJob implements IJob {
+abstract class BaseJob implements IJob {
 	protected final static Logger logger = LoggerFactory.getLogger(BaseJob.class);
 	protected String jobName = getClass().getSimpleName();
 
