@@ -41,6 +41,7 @@ import org.slf4j.Logger;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * 给客户端测试使用的一个HttpClient类
@@ -85,7 +86,7 @@ public final class NettyHttpClient {
 	 * @param content
 	 * @param trigger
 	 */
-	public Promise<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
+	public Future<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
 		URI uri = clientParams.getURI(pathAndQuery);
 		Promise<FullHttpResponse> promise = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
 		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
@@ -117,7 +118,7 @@ public final class NettyHttpClient {
 	 * @param pathAndQuery
 	 */
 	public FullHttpResponse sendRequest(MessageContent content, String pathAndQuery) {
-		Promise<FullHttpResponse> promise = this.sendRequest(content, pathAndQuery, o2 -> {});
+		Future<FullHttpResponse> promise = this.sendRequest(content, pathAndQuery, o2 -> {});
 		try {
 			return promise.get();
 		} catch (InterruptedException | ExecutionException e) {
