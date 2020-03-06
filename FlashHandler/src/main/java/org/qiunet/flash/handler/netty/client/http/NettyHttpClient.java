@@ -26,6 +26,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.DefaultPromise;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -92,21 +93,22 @@ public final class NettyHttpClient {
 		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
 
 		HttpClientHandler clientHandler = new HttpClientHandler(promise);
+		GenericFutureListener<ChannelFuture> listener = f -> {
+			ByteBuf requestContent;
+			if (! StringUtil.isEmpty(this.clientParams.getUriIPath())
+				&& this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
+			}else {
+				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
+			}
+
+			f.channel().writeAndFlush(buildRequest(requestContent, uri));
+		};
+
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
-			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
-
-			future.addListener(f -> {
-				ByteBuf requestContent;
-				if (! StringUtil.isEmpty(this.clientParams.getUriIPath())
-					&& this.clientParams.getUriIPath().equals(uri.getRawPath())) {
-					requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
-				}else {
-					requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
-				}
-
-				((ChannelFuture) f).channel().writeAndFlush(buildRequest(requestContent, uri));
-			});
+			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri));
+			connectFuture.addListener(listener);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
