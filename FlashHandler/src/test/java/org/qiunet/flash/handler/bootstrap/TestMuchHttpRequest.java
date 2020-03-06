@@ -19,7 +19,10 @@ import java.util.concurrent.CountDownLatch;
 public class TestMuchHttpRequest extends HttpBootStrap {
 	private int requestCount = 10000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
-	private HttpClientParams params = HttpClientParams.custom().setAddress("localhost", 8080).build();
+	private HttpClientParams params = HttpClientParams.custom()
+		.setAddress("localhost", 8080)
+		.setStartupContextAdapter(ADAPTER)
+		.build();
 	@Test
 	public void muchRequest() throws InterruptedException {
 		long start = System.currentTimeMillis();
@@ -31,9 +34,9 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					final String test = "[测试testHttpProtobuf]"+i;
 
 					MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
-					httpClient.sendRequest(content, "/f", (adapter, response) -> {
+					httpClient.sendRequest(content, "/f", (response) -> {
 						Assert.assertEquals(response.status() , HttpResponseStatus.OK);
-						adapter.newHeader(response.content());
+						ADAPTER.newHeader(response.content());
 
 						Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
 						ReferenceCountUtil.release(response);

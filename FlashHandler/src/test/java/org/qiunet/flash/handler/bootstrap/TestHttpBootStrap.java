@@ -36,14 +36,18 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/22
  */
 public class TestHttpBootStrap extends HttpBootStrap {
-	private HttpClientParams params = HttpClientParams.custom().setAddress("localhost", 8080).build();
+	private HttpClientParams params = HttpClientParams.custom()
+		.setAddress("localhost", 8080)
+		.setStartupContextAdapter(ADAPTER)
+		.build();
+
 	@Test
 	public void testOtherHttpProtobuf() {
 		final String test = "测试[testOtherHttpProtobuf]";
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(new MessageContent(0, request.toByteArray()),
-			"/protobufTest", (adapter, httpResponse) -> {
+			"/protobufTest", (httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
 				byte[] bytes = new byte[httpResponse.content().readableBytes()];
@@ -68,10 +72,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
 		MessageContent content = new MessageContent(1001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.create(params).sendRequest(content, "/f", (adapter, httpResponse) -> {
+		NettyHttpClient.create(params).sendRequest(content, "/f", (httpResponse) -> {
 			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-			adapter.newHeader(httpResponse.content());
+			ADAPTER.newHeader(httpResponse.content());
 			byte [] bytes = new byte[httpResponse.content().readableBytes()];
 			httpResponse.content().readBytes(bytes);
 			LoginProto.LoginResponse loginResponse = null;
@@ -96,10 +100,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final String test = "测试[testHttpString]";
 		MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.create(params).sendRequest(content, "/f", (adapter, response) -> {
+		NettyHttpClient.create(params).sendRequest(content, "/f", (response) -> {
 			Assert.assertEquals(response.status(), HttpResponseStatus.OK);
 
-			adapter.newHeader(response.content());
+			ADAPTER.newHeader(response.content());
 			Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
 			ReferenceCountUtil.release(response);
 			LockSupport.unpark(currThread);
@@ -115,7 +119,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final String test = "测试[testOtherHttpString]";
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(new MessageContent(0, test.getBytes(CharsetUtil.UTF_8)),
-			"/back?a=b", (adapter, httpResponse) -> {
+			"/back?a=b", (httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 				Assert.assertEquals(httpResponse.content().toString(CharsetUtil.UTF_8), test);
 				ReferenceCountUtil.release(httpResponse);
@@ -133,10 +137,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 
 		MessageContent content = new MessageContent(1007, request.toString().getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.create(params).sendRequest(content, "/f", (adapter, httpResponse) -> {
+		NettyHttpClient.create(params).sendRequest(content, "/f", (httpResponse) -> {
 			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 
-			adapter.newHeader(httpResponse.content());
+			ADAPTER.newHeader(httpResponse.content());
 			JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
 			Assert.assertEquals(test, response.getString("test"));
 			ReferenceCountUtil.release(httpResponse);
@@ -154,7 +158,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 
 		NettyHttpClient.create(params).sendRequest(new MessageContent(0, jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8)),
-			"/jsonUrl", (adapter, httpResponse) -> {
+			"/jsonUrl", (httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 				String responseString = httpResponse.content().toString(CharsetUtil.UTF_8);
 				JsonResponse response = JsonResponse.parse(responseString);

@@ -25,6 +25,9 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.concurrent.DefaultPromise;
+import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
@@ -37,6 +40,7 @@ import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 给客户端测试使用的一个HttpClient类
@@ -81,50 +85,45 @@ public final class NettyHttpClient {
 	 * @param content
 	 * @param trigger
 	 */
-	public void sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
+	public Promise<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
 		URI uri = clientParams.getURI(pathAndQuery);
-		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
+		Promise<FullHttpResponse> promise = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
+		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
+
+		HttpClientHandler clientHandler = new HttpClientHandler(promise);
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
 			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
 
-			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
-				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
-			}else {
-				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
-			}
-			future.channel().writeAndFlush(buildRequest(requestContent, uri));
+			future.addListener(f -> {
+				ByteBuf requestContent;
+				if (! StringUtil.isEmpty(this.clientParams.getUriIPath())
+					&& this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+					requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
+				}else {
+					requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
+				}
+
+				((ChannelFuture) f).channel().writeAndFlush(buildRequest(requestContent, uri));
+			});
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
+		return promise;
 	}
 	/***
 	 * 阻塞的方式请求
 	 * @param content
-	 * @param uri
+	 * @param pathAndQuery
 	 */
 	public FullHttpResponse sendRequest(MessageContent content, String pathAndQuery) {
-		URI uri = clientParams.getURI(pathAndQuery);
-		HttpClientHandler clientHandler = new HttpClientHandler(null);
+		Promise<FullHttpResponse> promise = this.sendRequest(content, pathAndQuery, o2 -> {});
 		try {
-			Bootstrap b = createBootstrap(group, clientHandler, clientParams, uri);
-			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
-
-			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
-				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
-			}else {
-				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
-			}
-			future.channel().writeAndFlush(buildRequest(requestContent, uri));
-			future.channel().closeFuture().sync();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
+			return promise.get();
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		return clientHandler.response;
+		return null;
 	}
 	/****
 	 * 如果是keepalive 可以重用channel
@@ -182,10 +181,9 @@ public final class NettyHttpClient {
 
 
 	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
-		private IHttpResponseTrigger trigger;
-		private FullHttpResponse response;
-		HttpClientHandler(IHttpResponseTrigger trigger) {
-			this.trigger = trigger;
+		private Promise<FullHttpResponse> promise;
+		HttpClientHandler(Promise<FullHttpResponse> promise) {
+			this.promise = promise;
 		}
 		@Override
 		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
@@ -193,8 +191,8 @@ public final class NettyHttpClient {
 				ctx.close();
 				return;
 			}
-			this.response = ((FullHttpResponse) msg).copy();
-			if (trigger != null) this.trigger.response(ChannelUtil.getProtolHeaderAdapter(ctx.channel()), response);
+			FullHttpResponse response = ((FullHttpResponse) msg).copy();
+			this.promise.trySuccess(response);
 			ctx.close();
 		}
 
