@@ -1,13 +1,11 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import io.netty.channel.Channel;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
-import org.qiunet.flash.handler.context.IStartupContextAdapter;
-import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.interceptor.DefaultHttpInterceptor;
 import org.qiunet.flash.handler.interceptor.DefaultWebSocketInterceptor;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
@@ -22,17 +20,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public class HttpBootStrap {
-	protected static final IStartupContextAdapter ADAPTER = new IStartupContextAdapter() {
-		@Override
-		public IPlayerActor buildSession(Channel channel) {
-			return null;
-		}
-
-		@Override
-		public IPlayerActor buildPlayerActor(ISession session) {
-			return null;
-		}
-	};
+	protected static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
 
 	private static Hook hook = new MyHook();
 	private static Thread currThread;
@@ -46,7 +34,6 @@ public class HttpBootStrap {
 					.setWebSocketInterceptor(new DefaultWebSocketInterceptor())
 					.setHttpInterceptor(new DefaultHttpInterceptor())
 					.setErrorMessage(new DefaultErrorMessage())
-					.setStartupContextAdapter(ADAPTER)
 					.setWebsocketPath("/ws")
 					.setPort(8080)
 					.build();

@@ -32,6 +32,7 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	protected static Hook hook = new MyHook();
 	protected NettyTcpClient tcpClient;
 	private static Thread currThread;
+
 	@BeforeClass
 	public static void init(){
 		ClassScanner.getInstance().scanner();

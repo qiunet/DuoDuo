@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.response.push.IResponseMessage;
  */
 public interface IClientErrorMessage {
 	/***
-	 *  没有找到handler
+	 *  没有找到handler 404
 	 * @return
 	 */
 	IResponseMessage getHandlerNotFound();

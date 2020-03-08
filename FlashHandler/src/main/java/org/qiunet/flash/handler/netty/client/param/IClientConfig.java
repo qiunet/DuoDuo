@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
-import org.qiunet.flash.handler.context.IStartupContextAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 
 import java.net.InetSocketAddress;
 
@@ -10,7 +10,7 @@ public interface IClientConfig {
 	 * 获得处理Header对象
 	 * @return
 	 */
-	IStartupContextAdapter getProtocolHeaderAdapter();
+	IProtocolHeaderAdapter getProtocolHeaderAdapter();
 	/***
 	 * 地址
 	 * @return

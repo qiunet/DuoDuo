@@ -26,7 +26,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 				.setAddress("localhost", 8080)
 				.setUriIPath("/ws")
 				.build()
-			, new Trigger());
+			, new ResponseTrigger());
 		text = "Hello world";
 		latch = new CountDownLatch(1);
 
@@ -43,7 +43,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
 			.setAddress("localhost", 8080)
 			.setUriIPath("/ws")
-			.build(), new Trigger());
+			.build(), new ResponseTrigger());
 		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
@@ -52,7 +52,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		latch.await();
 	}
 
-	public class Trigger implements ILongConnResponseTrigger {
+	public class ResponseTrigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
 			switch (data.getProtocolId()) {

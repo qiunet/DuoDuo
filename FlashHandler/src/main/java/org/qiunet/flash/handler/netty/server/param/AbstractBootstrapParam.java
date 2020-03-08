@@ -1,6 +1,10 @@
 package org.qiunet.flash.handler.netty.server.param;
 
-import org.qiunet.flash.handler.context.IStartupContextAdapter;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.context.IStartupContext;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
 
 import java.net.InetSocketAddress;
@@ -11,7 +15,13 @@ import java.net.SocketAddress;
  * 17/11/22
  */
 public abstract class AbstractBootstrapParam {
-	// 一些定义好的错误消息.
+	/**
+	 * 可以自定义协议头
+	 */
+	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+	/**
+	 * 一些定义好的错误消息.
+ 	 */
 	protected IClientErrorMessage errorMessage;
 	/***
 	 * 接收端口
@@ -26,12 +36,14 @@ public abstract class AbstractBootstrapParam {
 	 * 一般测试时候使用
 	 */
 	protected boolean encryption;
-
+	/**
+	 * 最大接受的数据长度
+	 */
 	protected int maxReceivedLength;
 
-	protected IStartupContextAdapter protocolHeaderAdapter;
+	protected IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext;
 
-	public IStartupContextAdapter getProtocolHeaderAdapter() {
+	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
 	}
 
@@ -55,6 +67,10 @@ public abstract class AbstractBootstrapParam {
 		return readIdleCheckSeconds;
 	}
 
+	public IStartupContext<? extends ISession, ? extends IPlayerActor> getStartupContext() {
+		return startupContext;
+	}
+
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
@@ -67,19 +83,25 @@ public abstract class AbstractBootstrapParam {
 
 		protected boolean encryption = true;
 
-		protected IStartupContextAdapter startupContextAdapter;
+		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
 		/***
 		 * 读超时处理.默认300秒 (单位秒)
 		 */
 		private int readIdleCheckSeconds = 300;
 
+		protected IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext;
 		/***
 		 * 启动需要的上下文对象
-		 * @param startupContextAdapter
+		 * @param protocolHeaderAdapter
 		 * @return
 		 */
-		public B setStartupContextAdapter(IStartupContextAdapter startupContextAdapter) {
-			this.startupContextAdapter = startupContextAdapter;
+		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
+			this.protocolHeaderAdapter = protocolHeaderAdapter;
+			return (B) this;
+		}
+
+		public B setStartupContext(IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext) {
+			this.startupContext = startupContext;
 			return (B) this;
 		}
 
@@ -115,11 +137,12 @@ public abstract class AbstractBootstrapParam {
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			P p = newParams();
 			p.maxReceivedLength = maxReceivedLength;
-			p.errorMessage = errorMessage;
 			p.readIdleCheckSeconds = readIdleCheckSeconds;
-			p.address = address;
-			p.protocolHeaderAdapter = startupContextAdapter;
+			p.protocolHeaderAdapter = protocolHeaderAdapter;
+			p.startupContext = startupContext;
+			p.errorMessage = errorMessage;
 			p.encryption = encryption;
+			p.address = address;
 			this.buildInner(p);
 			return p;
 		}

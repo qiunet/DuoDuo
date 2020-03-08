@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.client.param;
 
-import org.qiunet.flash.handler.context.IStartupContextAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 
 import java.net.InetSocketAddress;
 
@@ -18,9 +18,9 @@ public abstract class AbstractClientParam implements IClientConfig {
 
 	protected int maxReceivedLength;
 
-	protected IStartupContextAdapter protocolHeaderAdapter;
+	protected IProtocolHeaderAdapter protocolHeaderAdapter;
 	@Override
-	public IStartupContextAdapter getProtocolHeaderAdapter() {
+	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
 	}
 
@@ -44,7 +44,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 	 * */
 	public abstract static class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
 
-		protected IStartupContextAdapter startupContextAdapter;
+		protected IProtocolHeaderAdapter startupContextAdapter;
 
 		protected int maxReceivedLength = 1024 * 1024 * 8;
 		protected InetSocketAddress address;
@@ -63,7 +63,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @param startupContextAdapter
 		 * @return
 		 */
-		public B setStartupContextAdapter(IStartupContextAdapter startupContextAdapter) {
+		public B setStartupContextAdapter(IProtocolHeaderAdapter startupContextAdapter) {
 			this.startupContextAdapter = startupContextAdapter;
 			return (B) this;
 		}

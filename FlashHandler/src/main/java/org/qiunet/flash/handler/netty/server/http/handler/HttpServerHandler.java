@@ -12,8 +12,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
-import org.qiunet.flash.handler.context.IStartupContextAdapter;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -110,7 +110,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
-		IStartupContextAdapter adapter = ChannelUtil.getProtolHeaderAdapter(ctx.channel());
+		IProtocolHeaderAdapter adapter = ChannelUtil.getProtolHeaderAdapter(ctx.channel());
 		IProtocolHeader header = adapter.newHeader(request.content());
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message magic! client is "+ header);
