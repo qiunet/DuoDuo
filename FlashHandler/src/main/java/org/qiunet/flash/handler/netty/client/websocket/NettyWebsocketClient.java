@@ -21,7 +21,7 @@ import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 

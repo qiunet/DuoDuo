@@ -1,7 +1,7 @@
 package org.qiunet.acceptor.log;
 
 
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;

@@ -9,7 +9,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 

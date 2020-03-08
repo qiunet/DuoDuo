@@ -27,9 +27,9 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public abstract class TcpBootStrap implements ILongConnResponseTrigger {
-	protected static String host = "localhost";
-	protected static int port = 8888;
-	protected static Hook hook = new MyHook();
+	protected static final String host = "localhost";
+	protected static final int port = 8888;
+	protected static final Hook hook = new MyHook();
 	protected NettyTcpClient tcpClient;
 	private static Thread currThread;
 

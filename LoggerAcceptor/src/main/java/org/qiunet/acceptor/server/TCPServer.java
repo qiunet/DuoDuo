@@ -13,7 +13,7 @@ import org.qiunet.acceptor.log.LogDataRegister;
 import org.qiunet.acceptor.log.LoggerUtil;
 import org.qiunet.logger.sender.MsgHeader;
 import org.qiunet.utils.args.ArgsMapping;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 
 import java.net.InetSocketAddress;
 import java.util.List;

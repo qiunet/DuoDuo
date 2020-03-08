@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 

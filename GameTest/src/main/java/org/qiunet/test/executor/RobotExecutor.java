@@ -2,7 +2,7 @@ package org.qiunet.test.executor;
 
 
 import org.qiunet.test.executor.params.ExecutorParams;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 

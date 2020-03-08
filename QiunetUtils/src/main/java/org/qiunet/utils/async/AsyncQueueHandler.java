@@ -1,6 +1,6 @@
-package org.qiunet.utils.asyncQuene;
+package org.qiunet.utils.async;
 
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;

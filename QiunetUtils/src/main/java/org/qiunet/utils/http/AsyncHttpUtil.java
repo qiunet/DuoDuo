@@ -13,7 +13,7 @@ import org.apache.http.nio.client.methods.AsyncByteConsumer;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.Args;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
 
 import java.io.IOException;

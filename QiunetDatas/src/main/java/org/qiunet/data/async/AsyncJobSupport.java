@@ -1,6 +1,6 @@
 package org.qiunet.data.async;
 
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.listener.EventHandlerWeight;
 import org.qiunet.utils.listener.EventHandlerWeightType;

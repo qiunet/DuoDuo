@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common;
 
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.timer.AsyncTimerTask;

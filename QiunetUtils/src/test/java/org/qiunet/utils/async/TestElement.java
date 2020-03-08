@@ -1,4 +1,4 @@
-package org.qiunet.utils.asyncQuene;
+package org.qiunet.utils.async;
 
 
 public class TestElement implements IQueueElement {
