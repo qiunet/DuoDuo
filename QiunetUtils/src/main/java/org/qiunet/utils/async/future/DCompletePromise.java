@@ -29,18 +29,24 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 
 	@Override
 	public boolean tryFailure(Throwable cause) {
-		return completeExceptionally(cause);
+		boolean triggered = completeExceptionally(cause);
+		if (triggered) {
+			this.checkNotifyWaiters();
+		}
+		return triggered;
 	}
 
 	@Override
 	public boolean complete(V value) {
-		boolean ret = super.complete(value);
-		this.checkNotifyWaiters();
-		return  ret;
+		boolean triggered = super.complete(value);
+		if (triggered) {
+			this.checkNotifyWaiters();
+		}
+		return triggered;
 	}
 
 	private void incWaiters() {
-		if (this.waiters == 32767) {
+		if (this.waiters == Short.MAX_VALUE) {
 			throw new IllegalStateException("too many waiters: " + this);
 		} else {
 			++this.waiters;
