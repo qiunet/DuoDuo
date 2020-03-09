@@ -192,17 +192,18 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 	 * Check if there are any waiters and if so notify these.
 	 * @return {@code true} if there are any listeners attached to the promise, {@code false} otherwise.
 	 */
-	private synchronized boolean checkNotifyWaiters() {
+	private synchronized void checkNotifyWaiters() {
 		if (waiters > 0) {
 			notifyAll();
 		}
-		return true;
 	}
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
 		boolean ret = super.cancel(mayInterruptIfRunning);
-		this.checkNotifyWaiters();
+		if (ret) {
+			this.checkNotifyWaiters();
+		}
 		return ret;
 	}
 }
