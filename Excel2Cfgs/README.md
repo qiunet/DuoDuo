@@ -13,10 +13,8 @@
 			
 ### 生成规则
 	第一行 中文名描述 如果有 _ 表示需要生成json对象字段.
-	第二行  数据类型
-		支持: int  long  string  double
-	第三行  英文名 项目里面使用的
-	第四行  ALL  SERVER  CLIENT 区别谁需要. 还是都要.
+	第二行  英文名 项目里面使用的
+	第三行  ALL  SERVER  CLIENT 区别谁需要. 还是都要.
 	
 	sheet名如果开头有 s. 表示仅服务端生成
 	sheet名如果开头有 c. 表示仅客户端生成
