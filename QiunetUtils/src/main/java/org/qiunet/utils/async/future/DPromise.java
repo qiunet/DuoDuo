@@ -21,4 +21,8 @@ public interface DPromise<V> extends DFuture<V> {
 	 * @return
 	 */
 	boolean tryFailure(Throwable cause);
+	@Override
+	DPromise<V> await() throws InterruptedException;
+	@Override
+	DPromise<V> awaitUninterruptibly();
 }
