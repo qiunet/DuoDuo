@@ -25,19 +25,4 @@ public interface DFuture<V> extends Future<V> {
 	 * @return
 	 */
 	boolean isSuccess();
-	/**
-	 * 尝试设置成功
-	 * 与{@link DFuture#tryFailure(Throwable)} 相斥
-	 * @param result
-	 * @return
-	 */
-	boolean trySuccess(V result);
-
-	/***
-	 * 尝试设置失败
-	 * 与{@link DFuture#trySuccess(Object)} 相斥
-	 * @param cause
-	 * @return
-	 */
-	boolean tryFailure(Throwable cause);
 }

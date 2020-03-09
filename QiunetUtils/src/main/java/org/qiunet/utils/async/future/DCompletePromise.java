@@ -8,7 +8,7 @@ import java.util.concurrent.CompletionStage;
  * @author qiunet
  * 2020/3/8 22:01
  **/
-public class DCompleteFuture<V> extends CompletableFuture<V> implements DFuture<V> , CompletionStage<V> {
+public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture<V>, DPromise<V>, CompletionStage<V> {
 
 
 	@Override
