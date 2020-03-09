@@ -19,7 +19,7 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 
 	@Override
 	public boolean isSuccess() {
-		return ! isCompletedExceptionally();
+		return isDone() && ! isCompletedExceptionally();
 	}
 
 	@Override

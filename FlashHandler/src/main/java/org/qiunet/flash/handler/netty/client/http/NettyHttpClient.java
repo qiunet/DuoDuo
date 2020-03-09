@@ -25,9 +25,8 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.util.concurrent.ImmediateEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
@@ -89,7 +88,7 @@ public final class NettyHttpClient {
 	 */
 	public Future<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
 		URI uri = clientParams.getURI(pathAndQuery);
-		Promise<FullHttpResponse> promise = new DefaultPromise<>(GlobalEventExecutor.INSTANCE);
+		Promise<FullHttpResponse> promise = ImmediateEventExecutor.INSTANCE.newPromise();
 		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
 
 		HttpClientHandler clientHandler = new HttpClientHandler(promise);
