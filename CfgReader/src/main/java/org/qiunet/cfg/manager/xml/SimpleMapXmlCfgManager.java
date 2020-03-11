@@ -1,6 +1,7 @@
 package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.ISimpleMapConfig;
+import org.qiunet.cfg.base.InitCfg;
 import org.qiunet.utils.collection.safe.SafeHashMap;
 
 import java.util.Map;
@@ -20,8 +21,21 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 	@Override
 	void init() throws Exception{
 		this.cfgMap = getSimpleMapCfg();
+		this.initCfgSelf();
 	}
+	/***
+	 * 如果cfg 对象是实现了 initCfg接口,
+	 * 就调用init方法实现cfg的二次init.
+	 */
+	private void initCfgSelf() {
+		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+			return;
+		}
 
+		this.cfgMap.values().stream()
+				.map(cfg -> (InitCfg)cfg)
+				.forEach(InitCfg::init);
+	}
 	/***
 	 * 得到的map
 	 * Map<Key, Cfg>

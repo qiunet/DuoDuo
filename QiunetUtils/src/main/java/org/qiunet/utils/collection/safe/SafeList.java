@@ -26,6 +26,11 @@ public class SafeList<E> extends ArrayList<E> {
 	public SafeList(int initialCapacity){
 		super(initialCapacity);
 	}
+
+	public SafeList(Collection<? extends E> c) {
+		super(c);
+	}
+
 	@Override
 	public boolean add(E e) {
 		if (safeLock)

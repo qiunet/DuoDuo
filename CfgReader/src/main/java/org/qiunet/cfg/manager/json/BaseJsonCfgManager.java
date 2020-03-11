@@ -25,7 +25,7 @@ public abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManage
 	@Override
 	public void loadCfg() throws Exception {
 		this.init();
-		this.initBySelf();
+		this.afterLoad();
 	}
 
 	abstract void init() throws Exception;

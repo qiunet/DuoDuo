@@ -58,8 +58,8 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	@Override
 	public void loadCfg() throws Exception{
 		this.init();
-		this.initBySelf();
 		this.close();
+		this.afterLoad();
 	}
 
 	private void close() {

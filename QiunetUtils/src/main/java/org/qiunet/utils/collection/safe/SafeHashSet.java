@@ -10,6 +10,22 @@ import java.util.HashSet;
  *         Created on 17/3/1 16:42.
  */
 public class SafeHashSet<E> extends HashSet<E> {
+
+	public SafeHashSet() {
+	}
+
+	public SafeHashSet(Collection<? extends E> c) {
+		super(c);
+	}
+
+	public SafeHashSet(int initialCapacity, float loadFactor) {
+		super(initialCapacity, loadFactor);
+	}
+
+	public SafeHashSet(int initialCapacity) {
+		super(initialCapacity);
+	}
+
 	private boolean safeLock;
 	@Override
 	public boolean addAll(Collection<? extends E> c) {

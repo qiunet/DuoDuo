@@ -31,7 +31,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
 	 * @throws Exception
 	 */
-	protected void initBySelf() throws Exception {
+	protected void afterLoad() throws Exception {
 
 	}
 

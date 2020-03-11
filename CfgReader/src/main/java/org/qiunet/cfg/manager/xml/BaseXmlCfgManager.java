@@ -56,9 +56,8 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 				in = new FileInputStream(url.getPath());
 			}
 			this.cfgs = (List<Cfg>) xStream.fromXML(in);
-
 			this.init();
-			this.initBySelf();
+			this.afterLoad();
 		} finally {
 			if (in != null) {
 				in.close();
