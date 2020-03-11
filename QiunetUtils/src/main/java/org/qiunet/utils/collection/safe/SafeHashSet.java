@@ -1,76 +1,99 @@
 package org.qiunet.utils.collection.safe;
 
-import org.qiunet.utils.exceptions.SafeColletionsModifyException;
-
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 /**
+ * 不改变类的情况下. 将集合可以定义为不可修改的集合.
+ * 用于配置等地方.
  * @author qiunet
  *         Created on 17/3/1 16:42.
  */
-public class SafeHashSet<E> extends HashSet<E> {
+public class SafeHashSet<E> implements Set<E>, ISafeCollection {
 
+	private Set<E> set;
 	public SafeHashSet() {
+		this.set = new HashSet<>();
 	}
 
 	public SafeHashSet(Collection<? extends E> c) {
-		super(c);
+		this.set = new HashSet<>(c);
 	}
 
 	public SafeHashSet(int initialCapacity, float loadFactor) {
-		super(initialCapacity, loadFactor);
+		this.set = new HashSet<>(initialCapacity, loadFactor);
 	}
 
 	public SafeHashSet(int initialCapacity) {
-		super(initialCapacity);
+		this.set = new HashSet<>(initialCapacity);
 	}
 
-	private boolean safeLock;
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		return super.addAll(c);
+	public int size() {
+		return set.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return set.isEmpty();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return set.contains(o);
+	}
+
+	@Override
+	public Iterator<E> iterator() {
+		return set.iterator();
+	}
+
+	@Override
+	public Object[] toArray() {
+		return set.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(T[] a) {
+		return set.toArray(a);
 	}
 
 	@Override
 	public boolean add(E e) {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		return super.add(e);
+		return set.add(e);
 	}
 
 	@Override
 	public boolean remove(Object o) {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		return super.remove(o);
+		return this.set.remove(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return this.set.containsAll(c);
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends E> c) {
+		return this.set.addAll(c);
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		return this.set.retainAll(c);
 	}
 
 	@Override
 	public boolean removeAll(Collection<?> c) {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		return super.removeAll(c);
-	}
-	/**
-	 * 把当前的list设置为锁定状态. 不允许修改里面的数据
-	 */
-	public void safeLock() {
-		this.safeLock = true;
-	}
-	@Override
-	public void clear() {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		super.clear();
-	}
-	@Override
-	public boolean retainAll(Collection<?> c) {
-		if (safeLock)
-			throw new SafeColletionsModifyException("It locked, Can not set again!");
-		return super.retainAll(c);
+		return this.set.removeAll(c);
 	}
 
+	@Override
+	public void clear() {
+		this.set.clear();
+	}
+
+	@Override
+	public void convertSafe() {
+		this.set = Collections.unmodifiableSet(set);
+	}
 }

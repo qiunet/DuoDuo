@@ -2,7 +2,7 @@ package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.base.INestMapConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
 
@@ -57,11 +57,11 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 	 * @throws Exception
 	 */
 	private Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
-		SafeHashMap<ID, Map<SubId, Cfg>> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
 		XdInfoData xdInfoData = loadXdFileToDataInputStream();
 		for (int i = 0; i < xdInfoData.getNum(); i++) {
 			Cfg cfg = generalCfg();
-			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeHashMap<>());
+			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeMap<>());
 
 			if (subMap.containsKey(cfg.getSubId())) {
 				throw new RuntimeException("SubId ["+cfg.getSubId()+"] is duplicate!");
@@ -70,11 +70,11 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 			subMap.put(cfg.getSubId(), cfg);
 		}
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
-			((SafeHashMap) subKeyCfgMap).loggerIfAbsent();
-			((SafeHashMap) subKeyCfgMap).safeLock();
+			((SafeMap) subKeyCfgMap).loggerIfAbsent();
+			((SafeMap) subKeyCfgMap).convertSafe();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

@@ -2,7 +2,7 @@ package org.qiunet.cfg.manager.json;
 
 import org.qiunet.cfg.base.INestMapConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.List;
 import java.util.Map;
@@ -60,18 +60,18 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 	 * @throws Exception
 	 */
 	protected Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
-		SafeHashMap<ID, Map<SubId, Cfg>> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
 		List<Cfg> cfgs = getSimpleListCfg();
 		for (Cfg cfg : cfgs) {
-			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeHashMap<>());
+			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeMap<>());
 			subMap.put(cfg.getSubId(), cfg);
 		}
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
-			((SafeHashMap) subKeyCfgMap).loggerIfAbsent();
-			((SafeHashMap) subKeyCfgMap).safeLock();
+			((SafeMap) subKeyCfgMap).loggerIfAbsent();
+			((SafeMap) subKeyCfgMap).convertSafe();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

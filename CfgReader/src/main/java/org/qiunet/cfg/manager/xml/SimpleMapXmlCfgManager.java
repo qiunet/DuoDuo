@@ -2,7 +2,7 @@ package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.ISimpleMapConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 	 * @throws Exception
 	 */
 	private Map<ID, Cfg> getSimpleMapCfg() {
-		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
 		for(Cfg cfg : cfgs) {
 			if (cfgMap.containsKey(cfg.getId())) {
 				throw new RuntimeException("ID ["+cfg.getId()+"] is duplicate!");
@@ -51,7 +51,7 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

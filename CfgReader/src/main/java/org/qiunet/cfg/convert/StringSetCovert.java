@@ -20,7 +20,7 @@ public class StringSetCovert extends BaseObjConvert<StringSet> {
 		String[] strings = StringUtil.split(str, SPLIT);
 		List<String> collect = Stream.of(strings).collect(Collectors.toList());
 		StringSet stringSet = new StringSet(collect);
-		stringSet.safeLock();
+		stringSet.convertSafe();
 		return stringSet;
 	}
 

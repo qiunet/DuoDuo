@@ -2,8 +2,8 @@ package org.qiunet.cfg.manager.xml;
 
 import org.qiunet.cfg.base.INestListConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,15 +46,15 @@ public class NestListXmlCfgManager<ID, Cfg extends INestListConfig<ID>> extends 
 	 * @throws Exception
 	 */
 	private Map<ID, List<Cfg>> getNestListCfg() throws Exception{
-		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
 		cfgs.forEach(cfg -> {
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		});
 
-		cfgMap.values().forEach(list -> ((SafeList<Cfg>) list).safeLock());
+		cfgMap.values().forEach(list -> ((SafeList<Cfg>) list).convertSafe());
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

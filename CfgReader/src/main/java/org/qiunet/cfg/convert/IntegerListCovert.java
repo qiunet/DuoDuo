@@ -20,7 +20,7 @@ public class IntegerListCovert extends BaseObjConvert<IntegerList> {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
 		List<Integer> collect = Stream.of(integers).collect(Collectors.toList());
 		IntegerList integerList = new IntegerList(collect);
-		integerList.safeLock();
+		integerList.convertSafe();
 		return integerList;
 	}
 

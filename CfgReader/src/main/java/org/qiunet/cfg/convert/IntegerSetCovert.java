@@ -20,7 +20,7 @@ public class IntegerSetCovert extends BaseObjConvert<IntegerSet> {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
 		List<Integer> collect = Stream.of(integers).collect(Collectors.toList());
 		IntegerSet integerSet = new IntegerSet(collect);
-		integerSet.safeLock();
+		integerSet.convertSafe();
 		return integerSet;
 	}
 

@@ -2,8 +2,8 @@ package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.base.INestListConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
 import org.qiunet.utils.collection.safe.SafeList;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Collection;
 import java.util.List;
@@ -56,7 +56,7 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 	 */
 	private Map<ID, List<Cfg>> getNestListCfg() throws Exception{
 		XdInfoData xdInfoData = loadXdFileToDataInputStream();
-		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
 		for (int i = 0; i < xdInfoData.getNum(); i++) {
 			Cfg cfg = generalCfg();
 
@@ -64,10 +64,10 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {
-			((SafeList) cfgList).safeLock();
+			((SafeList) cfgList).convertSafe();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

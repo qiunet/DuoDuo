@@ -20,7 +20,7 @@ public class StringListCovert extends BaseObjConvert<StringList> {
 		String[] strings = StringUtil.split(str, SPLIT);
 		List<String> collect = Stream.of(strings).collect(Collectors.toList());
 		StringList stringList = new StringList(collect);
-		stringList.safeLock();
+		stringList.convertSafe();
 		return stringList;
 	}
 

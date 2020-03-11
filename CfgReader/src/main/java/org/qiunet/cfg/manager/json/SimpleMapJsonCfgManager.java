@@ -2,7 +2,7 @@ package org.qiunet.cfg.manager.json;
 
 import org.qiunet.cfg.base.ISimpleMapConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.List;
 import java.util.Map;
@@ -49,13 +49,13 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 	}
 
 	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{
-		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
 		List<Cfg> cfgs = getSimpleListCfg();
 		for (Cfg cfg : cfgs) {
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 

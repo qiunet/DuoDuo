@@ -2,7 +2,7 @@ package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.base.ISimpleMapConfig;
 import org.qiunet.cfg.base.InitCfg;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
 
@@ -55,7 +55,7 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 	 */
 	private Map<ID, Cfg> getSimpleMapCfg() throws Exception{
 		XdInfoData xdInfoData = loadXdFileToDataInputStream();
-		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
+		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
 		for (int i = 0 ; i < xdInfoData.getNum(); i++ ) {
 			Cfg cfg = generalCfg();
 
@@ -65,7 +65,7 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertSafe();
 		return cfgMap;
 	}
 
