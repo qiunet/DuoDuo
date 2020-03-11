@@ -3,7 +3,6 @@ package org.qiunet.cfg.convert;
 import org.qiunet.cfg.convert.generics.StringSet;
 import org.qiunet.utils.string.StringUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +17,7 @@ public class StringSetCovert extends BaseObjConvert<StringSet> {
 	@Override
 	protected StringSet fromString0(String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
-		List<String> collect = Stream.of(strings).collect(Collectors.toList());
-		StringSet stringSet = new StringSet(collect);
+		StringSet stringSet = Stream.of(strings).collect(Collectors.toCollection(StringSet::new));
 		stringSet.convertSafe();
 		return stringSet;
 	}

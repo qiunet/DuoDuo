@@ -3,7 +3,6 @@ package org.qiunet.cfg.convert;
 import org.qiunet.cfg.convert.generics.IntegerSet;
 import org.qiunet.utils.string.StringUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +17,7 @@ public class IntegerSetCovert extends BaseObjConvert<IntegerSet> {
 	@Override
 	protected IntegerSet fromString0(String str) {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
-		List<Integer> collect = Stream.of(integers).collect(Collectors.toList());
-		IntegerSet integerSet = new IntegerSet(collect);
+		IntegerSet integerSet = Stream.of(integers).collect(Collectors.toCollection(IntegerSet::new));
 		integerSet.convertSafe();
 		return integerSet;
 	}

@@ -3,7 +3,6 @@ package org.qiunet.cfg.convert;
 import org.qiunet.cfg.convert.generics.IntegerList;
 import org.qiunet.utils.string.StringUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +17,7 @@ public class IntegerListCovert extends BaseObjConvert<IntegerList> {
 	@Override
 	protected IntegerList fromString0(String str) {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
-		List<Integer> collect = Stream.of(integers).collect(Collectors.toList());
-		IntegerList integerList = new IntegerList(collect);
+		IntegerList integerList = Stream.of(integers).collect(Collectors.toCollection(IntegerList::new));
 		integerList.convertSafe();
 		return integerList;
 	}

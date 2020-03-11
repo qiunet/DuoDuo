@@ -3,7 +3,6 @@ package org.qiunet.cfg.convert;
 import org.qiunet.cfg.convert.generics.StringList;
 import org.qiunet.utils.string.StringUtil;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,8 +17,7 @@ public class StringListCovert extends BaseObjConvert<StringList> {
 	@Override
 	protected StringList fromString0(String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
-		List<String> collect = Stream.of(strings).collect(Collectors.toList());
-		StringList stringList = new StringList(collect);
+		StringList stringList = Stream.of(strings).collect(Collectors.toCollection(StringList::new));
 		stringList.convertSafe();
 		return stringList;
 	}
