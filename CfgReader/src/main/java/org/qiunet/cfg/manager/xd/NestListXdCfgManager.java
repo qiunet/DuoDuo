@@ -64,10 +64,10 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {
-			((SafeList) cfgList).convertSafe();
+			((SafeList) cfgList).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.convertSafe();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 

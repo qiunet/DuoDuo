@@ -113,7 +113,7 @@ public class SafeMap<KEY, VAL> implements Map<KEY, VAL>, ISafeCollection {
 	}
 
 	@Override
-	public void convertSafe() {
+	public void convertToUnmodifiable() {
 		this.map = Collections.unmodifiableMap(map);
 	}
 }

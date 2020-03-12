@@ -18,7 +18,7 @@ public class StringSetCovert extends BaseObjConvert<StringSet> {
 	protected StringSet fromString0(String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
 		StringSet stringSet = Stream.of(strings).collect(Collectors.toCollection(StringSet::new));
-		stringSet.convertSafe();
+		stringSet.convertToUnmodifiable();
 		return stringSet;
 	}
 

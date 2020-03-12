@@ -18,7 +18,7 @@ public class IntegerListCovert extends BaseObjConvert<IntegerList> {
 	protected IntegerList fromString0(String str) {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
 		IntegerList integerList = Stream.of(integers).collect(Collectors.toCollection(IntegerList::new));
-		integerList.convertSafe();
+		integerList.convertToUnmodifiable();
 		return integerList;
 	}
 

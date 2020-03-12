@@ -51,7 +51,7 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.convertSafe();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 

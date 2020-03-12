@@ -144,7 +144,7 @@ public class SafeList<E> implements List<E>, ISafeCollection {
 	}
 
 	@Override
-	public void convertSafe() {
+	public void convertToUnmodifiable() {
 		list = Collections.unmodifiableList(list);
 	}
 }

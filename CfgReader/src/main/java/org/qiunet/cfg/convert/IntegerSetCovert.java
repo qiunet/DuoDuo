@@ -18,7 +18,7 @@ public class IntegerSetCovert extends BaseObjConvert<IntegerSet> {
 	protected IntegerSet fromString0(String str) {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);
 		IntegerSet integerSet = Stream.of(integers).collect(Collectors.toCollection(IntegerSet::new));
-		integerSet.convertSafe();
+		integerSet.convertToUnmodifiable();
 		return integerSet;
 	}
 

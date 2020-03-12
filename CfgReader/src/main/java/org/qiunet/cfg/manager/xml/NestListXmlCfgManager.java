@@ -52,9 +52,9 @@ public class NestListXmlCfgManager<ID, Cfg extends INestListConfig<ID>> extends 
 			subList.add(cfg);
 		});
 
-		cfgMap.values().forEach(list -> ((SafeList<Cfg>) list).convertSafe());
+		cfgMap.values().forEach(list -> ((SafeList<Cfg>) list).convertToUnmodifiable());
 		cfgMap.loggerIfAbsent();
-		cfgMap.convertSafe();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 

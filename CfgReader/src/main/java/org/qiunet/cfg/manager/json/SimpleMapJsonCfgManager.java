@@ -55,7 +55,7 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.convertSafe();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 

@@ -68,10 +68,10 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 		}
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
 			((SafeMap) subKeyCfgMap).loggerIfAbsent();
-			((SafeMap) subKeyCfgMap).convertSafe();
+			((SafeMap) subKeyCfgMap).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.convertSafe();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 

@@ -93,7 +93,7 @@ public class SafeHashSet<E> implements Set<E>, ISafeCollection {
 	}
 
 	@Override
-	public void convertSafe() {
+	public void convertToUnmodifiable() {
 		this.set = Collections.unmodifiableSet(set);
 	}
 }

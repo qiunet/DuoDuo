@@ -18,7 +18,7 @@ public class StringListCovert extends BaseObjConvert<StringList> {
 	protected StringList fromString0(String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
 		StringList stringList = Stream.of(strings).collect(Collectors.toCollection(StringList::new));
-		stringList.convertSafe();
+		stringList.convertToUnmodifiable();
 		return stringList;
 	}
 

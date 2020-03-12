@@ -11,5 +11,5 @@ public interface ISafeCollection {
 	 * 将集合转为安全集合.
 	 * 不可写.
 	 */
-	void convertSafe();
+	void convertToUnmodifiable();
 }
