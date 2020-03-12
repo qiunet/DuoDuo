@@ -9,15 +9,11 @@ import java.util.*;
  * 不改变类的情况下. 将集合可以定义为不可修改的集合.
  *  * 用于配置等地方.
  * @author qiunet
- *         Created on 17/3/1 16:35.
+ * Created on 17/3/1 16:35.
  */
 public class SafeMap<KEY, VAL> implements Map<KEY, VAL>, ISafeCollection {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Map<KEY, VAL> map;
-	/**
-	 * 一个只允许初始化一次的锁变量
-	 */
-	private boolean safeLock;
 	/***
 	 * 缺失打印.
 	 */
