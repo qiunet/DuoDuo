@@ -52,7 +52,7 @@ public class CdTimer {
 	 * @param cdType
 	 * @return
 	 */
-	public boolean validCDTimeout(ICdType cdType){
+	public boolean isTimeout(ICdType cdType){
 		if (close) {
 			return true;
 		}
@@ -82,7 +82,7 @@ public class CdTimer {
 	 * @return 没有cd中, 返回0
 	 */
 	public long getNextTime(ICdType cdType) {
-		if (validCDTimeout(cdType)) {
+		if (isTimeout(cdType)) {
 			return 0;
 		}
 
