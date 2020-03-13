@@ -24,10 +24,6 @@ class Timer {
 		this.nextTime = DateUtil.currentTimeMillis() +period;
 	}
 
-	Timer(ICdType cdType) {
-		this(cdType.unit().toMillis(cdType.period()));
-	}
-
 	/**
 	 * 如果cd失效, 重新cd
 	 * @param renew 如果已经失效, 重新计时.

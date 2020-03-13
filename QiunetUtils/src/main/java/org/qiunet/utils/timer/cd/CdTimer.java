@@ -23,17 +23,8 @@ public class CdTimer {
 	 * @param cdType
 	 * @return
 	 */
-	public boolean recordCd(ICdType cdType) {
-		if (close) {
-			return true;
-		}
-
-		Timer timer = cdTimers.get(cdType);
-		if (timer == null) {
-			cdTimers.putIfAbsent(cdType, new Timer(cdType));
-			return true;
-		}
-		return timer.isTimeout(true);
+	public void recordCd(ICdType cdType) {
+		this.recordCd(cdType, cdType.period(), cdType.unit());
 	}
 	/***
 	 * 使用自己指定的period 记录cd 并返回cd是否失效.
@@ -43,17 +34,17 @@ public class CdTimer {
 	 * @param unit 时间单位
 	 * @return
 	 */
-	public boolean recordCd(ICdType cdType, long period, TimeUnit unit) {
+	public void recordCd(ICdType cdType, long period, TimeUnit unit) {
 		if (close) {
-			return true;
+			return;
 		}
 
 		Timer timer = cdTimers.get(cdType);
 		if (timer == null) {
 			cdTimers.putIfAbsent(cdType, new Timer(unit.toMillis(period)));
-			return true;
+			return;
 		}
-		return timer.isTimeout(true);
+		timer.isTimeout(true);
 	}
 	/***
 	 * 仅仅校验是否cd是否失效.
