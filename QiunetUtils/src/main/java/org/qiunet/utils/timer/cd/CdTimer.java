@@ -2,6 +2,7 @@ package org.qiunet.utils.timer.cd;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /***
  * Cd 的工具类
@@ -17,20 +18,12 @@ public class CdTimer {
 	 */
 	private boolean close;
 	/**
-	 * 校验cd是否失效,  如果失效, 重新cd
-	 * @return
-	 */
-	public boolean validCDTimeout(ICdType cdType) {
-		return this.validCDTimeout(cdType, true);
-	}
-	/**
 	 * 校验cd是否失效
+	 * 失效会重新计时 并返回true
 	 * @param cdType
-	 * @param renew true 如果失效, 重新cd,
-	 *                false 仅仅校验是否失效
 	 * @return
 	 */
-	public boolean validCDTimeout(ICdType cdType, boolean renew) {
+	public boolean recordCd(ICdType cdType) {
 		if (close) {
 			return true;
 		}
@@ -40,7 +33,43 @@ public class CdTimer {
 			cdTimers.putIfAbsent(cdType, new Timer(cdType));
 			return true;
 		}
-		return timer.isTimeout(renew);
+		return timer.isTimeout(true);
+	}
+	/***
+	 * 使用自己指定的period 记录cd 并返回cd是否失效.
+	 * 有时候不一定是使用 cdType 定义的间隔时间.
+	 * @param cdType
+	 * @param period 自己指定的间隔时间
+	 * @param unit 时间单位
+	 * @return
+	 */
+	public boolean recordCd(ICdType cdType, long period, TimeUnit unit) {
+		if (close) {
+			return true;
+		}
+
+		Timer timer = cdTimers.get(cdType);
+		if (timer == null) {
+			cdTimers.putIfAbsent(cdType, new Timer(unit.toMillis(period)));
+			return true;
+		}
+		return timer.isTimeout(true);
+	}
+	/***
+	 * 仅仅校验是否cd是否失效.
+	 *
+	 * @param cdType
+	 * @return
+	 */
+	public boolean validCDTimeout(ICdType cdType){
+		if (close) {
+			return true;
+		}
+		Timer timer = cdTimers.get(cdType);
+		if (timer == null) {
+			return true;
+		}
+		return timer.isTimeout(false);
 	}
 
 	/**
@@ -54,6 +83,21 @@ public class CdTimer {
 		Timer timer = cdTimers.get(cdType);
 		return timer.getLeftSeconds();
 	}
+
+	/**
+	 * 得到下次cd的毫秒时间戳
+	 *
+	 * @param cdType
+	 * @return 没有cd中, 返回0
+	 */
+	public long getNextTime(ICdType cdType) {
+		if (validCDTimeout(cdType)) {
+			return 0;
+		}
+
+		return cdTimers.get(cdType).getNextTime();
+	}
+
 
 	public boolean isClose() {
 		return close;

@@ -19,9 +19,13 @@ class Timer {
 	private long period;
 
 
-	Timer(ICdType cdType) {
-		this.period = cdType.unit().toMillis(cdType.period());
+	Timer(long period) {
+		this.period = period;
 		this.nextTime = DateUtil.currentTimeMillis() +period;
+	}
+
+	Timer(ICdType cdType) {
+		this(cdType.unit().toMillis(cdType.period()));
 	}
 
 	/**
@@ -53,11 +57,15 @@ class Timer {
 	 * 得到cd剩余秒数
 	 * @return
 	 */
-	public int getLeftSeconds() {
+	 int getLeftSeconds() {
 		long now = DateUtil.currentTimeMillis();
 		if (validTimeout(now)) {
 			return 0;
 		}
 		return (int) ((nextTime - now) / 1000);
+	}
+
+	long getNextTime() {
+		return nextTime;
 	}
 }
