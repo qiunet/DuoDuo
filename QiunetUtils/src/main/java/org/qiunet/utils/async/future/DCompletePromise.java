@@ -2,6 +2,7 @@ package org.qiunet.utils.async.future;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -16,6 +17,30 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 	 * Threading - synchronized(this). We are required to hold the monitor to use Java's underlying wait()/notifyAll().
 	 */
 	private short waiters;
+	/**
+	 * 保证cancel时候, 能cancel原有的任务.
+	 */
+	private Future<V> future;
+
+	public DCompletePromise() {
+	}
+
+	public DCompletePromise(Future<V> future) {
+		this.future = future;
+	}
+
+	public void setFuture(Future<V> future) {
+		this.future = future;
+	}
+
+	@Override
+	public boolean isCancelled() {
+		if (future != null) {
+			return future.isCancelled();
+		}
+		return super.isCancelled();
+	}
+
 
 	@Override
 	public boolean isSuccess() {
@@ -200,6 +225,10 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 
 	@Override
 	public boolean cancel(boolean mayInterruptIfRunning) {
+		if (future != null) {
+			future.cancel(mayInterruptIfRunning);
+		}
+
 		boolean ret = super.cancel(mayInterruptIfRunning);
 		if (ret) {
 			this.checkNotifyWaiters();
