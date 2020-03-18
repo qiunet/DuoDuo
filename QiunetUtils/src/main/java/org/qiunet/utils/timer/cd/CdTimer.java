@@ -68,9 +68,10 @@ public class CdTimer {
 	 * @return
 	 */
 	public int getLeftTime(ICdType cdType){
-		if (! cdTimers.containsKey(cdType)) {
+		if (isTimeout(cdType)) {
 			return 0;
 		}
+
 		Timer timer = cdTimers.get(cdType);
 		return timer.getLeftSeconds();
 	}

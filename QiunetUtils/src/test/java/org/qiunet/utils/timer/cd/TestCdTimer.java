@@ -17,7 +17,7 @@ public class TestCdTimer {
 		cdtime.removeCd(CdType.CHAT);
 		cdtime.recordCd(CdType.CHAT);
 
-		boolean timeout = cdtime.validCDTimeout(CdType.CHAT);
+		boolean timeout = cdtime.isTimeout(CdType.CHAT);
 		Assert.assertFalse(timeout);
 	}
 }

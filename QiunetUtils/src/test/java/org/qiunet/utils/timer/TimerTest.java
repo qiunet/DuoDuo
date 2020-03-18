@@ -4,6 +4,7 @@ import org.qiunet.utils.date.DateUtil;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,42 +12,35 @@ import java.util.concurrent.TimeUnit;
  * 18/1/27
  */
 public class TimerTest {
+	private static int time;
+	private static ScheduledFuture<?> scheduledFuture;
+
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		final long createTime = System.currentTimeMillis();
 
-		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
-			private int time;
-			@Override
-			protected void asyncRun() {
-				long diff = (System.currentTimeMillis() - createTime);
-				System.out.println("time["+time+"] diff: "+diff);
-				if (diff < (1000 * (time+1))){
-					return;
-				}
-				time = (int) (diff / 1000);
-				System.out.println("curr["+diff+"] Seconds: " + Math.round(diff / 1000f));
-				if (time == 2) {
-					try {
-						Thread.sleep(800);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-
-				if (time == 5) {
-					this.cancel();
+		scheduledFuture = TimerManager.getInstance().scheduleAtFixedRate(() -> {
+			time ++;
+			long diff = (System.currentTimeMillis() - createTime);
+			System.out.println("curr[" + diff + "] time: " + time);
+			if (time == 2) {
+				try {
+					// 执行太久 .会阻塞后面的调度执行的
+					Thread.sleep(4000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
-		}, 0, 100);
 
-
-		Future<String> future = TimerManager.getInstance().scheduleWithDeley(new DelayTask<String>() {
-			@Override
-			public String call() throws Exception {
-				System.out.println("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
-				Thread.sleep(5000);
-				return "SUCCESS";
+			if (time == 5) {
+				scheduledFuture.cancel(true);
 			}
+		}, 0, 1000, TimeUnit.MILLISECONDS);
+
+
+		Future<String> future = TimerManager.getInstance().scheduleWithDeley(() -> {
+			System.out.println("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
+			Thread.sleep(5000);
+			return "SUCCESS";
 		}, 1, TimeUnit.SECONDS);
 
 		System.out.println(future.get()+ "========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));

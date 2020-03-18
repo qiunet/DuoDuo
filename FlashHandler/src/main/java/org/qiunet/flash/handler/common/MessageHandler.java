@@ -1,14 +1,17 @@
 package org.qiunet.flash.handler.common;
 
+import com.google.common.collect.Sets;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
-import org.qiunet.utils.timer.AsyncTimerTask;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,7 +31,7 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 
 	private Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
 
-	private Queue<ScheduleFuture> scheduleFutures = new LinkedBlockingQueue<>();
+	private Set<Future> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private volatile Thread currentThread;
 
@@ -107,15 +110,9 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	 * @param period
 	 * @return
 	 */
-	public ScheduleFuture scheduleFuture(String scheduleName, IMessage<H> msg, long delay, long period) {
-		AsyncTimerTask asyncTimerTask = new AsyncTimerTask() {
-			@Override
-			protected void asyncRun() {
-				addMessage(msg);
-			}
-		};
-		TimerManager.getInstance().scheduleAtFixedRate(asyncTimerTask, delay, period);
-		return new ScheduleFuture(scheduleName, asyncTimerTask.getFuture());
+	public ScheduleFuture scheduleFuture(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
+		ScheduledFuture<?> future = TimerManager.getInstance().scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
+		return new ScheduleFuture(scheduleName, future);
 	}
 
 	/***
@@ -124,49 +121,51 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	 * @param executeTime 执行的毫秒时间戳
 	 * @return
 	 */
-	public ScheduleFuture scheduleMessage(String scheduleName, IMessage<H> msg, long executeTime) {
-		Future<Void> future = TimerManager.getInstance().scheduleWithTimeMillis(() -> {
-				addMessage(msg);
-				return null;
-			}, executeTime);
-		return new ScheduleFuture(scheduleName, future);
+	public DFuture<Void> scheduleMessage(IMessage<H> msg, long executeTime) {
+		long now = DateUtil.currentTimeMillis();
+		if (executeTime < now) {
+			throw new IllegalStateException("executeTime ["+executeTime+"] is less than current time ["+now+"]");
+		}
+		return this.scheduleMessage(msg, (executeTime - now), TimeUnit.MILLISECONDS);
 	}
 
 	/**
 	 * 指定一定的延迟时间后, 执行该消息
-	 * @param scheduleName
 	 * @param msg
 	 * @param delay
 	 * @param unit
 	 * @return
 	 */
-	public ScheduleFuture scheduleMessage(String scheduleName, IMessage<H> msg, long delay, TimeUnit unit) {
-		Future<Void> future = TimerManager.getInstance().scheduleWithDeley(() -> {
+	public DFuture<Void> scheduleMessage(IMessage<H> msg, long delay, TimeUnit unit) {
+		DFuture<Void> future = TimerManager.getInstance().scheduleWithDeley(() -> {
 			addMessage(msg);
 			return null;
 		}, delay, unit);
-
-		return new ScheduleFuture(scheduleName, future);
+		future.whenComplete((res, e) -> this.scheduleFutures.remove(future));
+		this.scheduleFutures.add(future);
+		return future;
 	}
 
 
-	public class ScheduleFuture implements Future<Void> {
+	public class ScheduleFuture implements Future<Object> {
 		private String scheduleName;
-		private Future<Void> future;
+		private Future<?> future;
 
-		public ScheduleFuture(String scheduleName, Future<Void> future) {
+		public ScheduleFuture(String scheduleName, Future<?> future) {
 			this.scheduleName = scheduleName;
 			this.future = future;
 
 			scheduleFutures.add(this);
 		}
 
-		public String getScheduleName() {
+		@Override
+		public String toString() {
 			return scheduleName;
 		}
 
 		@Override
 		public boolean cancel(boolean mayInterruptIfRunning) {
+			scheduleFutures.remove(this);
 			return future.cancel(mayInterruptIfRunning);
 		}
 
@@ -181,12 +180,12 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 		}
 
 		@Override
-		public Void get() throws InterruptedException, ExecutionException {
+		public Object get() throws InterruptedException, ExecutionException {
 			return future.get();
 		}
 
 		@Override
-		public Void get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+		public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 			return future.get(timeout, unit);
 		}
 	}

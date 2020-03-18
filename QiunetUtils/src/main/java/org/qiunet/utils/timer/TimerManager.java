@@ -2,10 +2,13 @@ package org.qiunet.utils.timer;
 
 
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.hook.ShutdownHookThread;
+import org.qiunet.utils.logger.LoggerType;
 
-import java.util.concurrent.Future;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * 18/1/26
  */
 public class TimerManager {
-	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(4, new DefaultThreadFactory("Qiunet-TimerManager"));
+	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(2, new DefaultThreadFactory("Qiunet-TimerManager"));
 
 	private volatile static TimerManager instance;
 
@@ -49,9 +52,8 @@ public class TimerManager {
 	 * @param delay 延时毫秒
 	 * @param period 调度周期
 	 */
-	public void scheduleAtFixedRate(AsyncTimerTask timerTask, long delay, long period){
-		ScheduledFuture future = schedule.scheduleAtFixedRate(timerTask, delay, period, TimeUnit.MILLISECONDS);
-		timerTask.setFuture(future);
+	public ScheduledFuture<?> scheduleAtFixedRate(IScheduledTask timerTask, long delay, long period, TimeUnit unit){
+		return schedule.scheduleAtFixedRate(timerTask, delay, period, unit);
 	}
 
 	/***
@@ -61,8 +63,23 @@ public class TimerManager {
 	 * @param unit 时间格式
 	 * @param <T>
 	 */
-	public <T> Future<T> scheduleWithDeley(DelayTask<T> delayTask, long delay, TimeUnit unit) {
-		return schedule.schedule(delayTask, delay, unit);
+	public <T> DFuture<T> scheduleWithDeley(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
+		DCompletePromise<T> promise = new DCompletePromise<>();
+		Callable<T> caller = () -> {
+			try {
+				T result = delayTask.call();
+				promise.trySuccess(result);
+				return result;
+			} catch (Exception e) {
+				LoggerType.DUODUO.error("DelayTask Exception: ", e);
+				promise.tryFailure(e);
+			}
+			return null;
+		};
+
+		ScheduledFuture<T> future = TimerManager.schedule.schedule(caller, delay, unit);
+		promise.setFuture(future);
+		return promise;
 	}
 
 	/***
@@ -72,7 +89,7 @@ public class TimerManager {
 	 * @param <T>
 	 * @return
 	 */
-	public <T> Future<T> scheduleWithTimeMillis(DelayTask<T> delayTask, long timeMillis) {
+	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
 		if (timeMillis < now) {
 			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");
