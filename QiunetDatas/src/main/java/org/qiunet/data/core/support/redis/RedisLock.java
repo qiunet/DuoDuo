@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisLock implements AutoCloseable {
 	private String key;
-	private boolean locked;
 	private Future<Long> future;
 	private IRedisUtil redisUtil;
 
@@ -44,17 +43,21 @@ public class RedisLock implements AutoCloseable {
 	 */
 	public boolean lock(){
 		String ret = redisUtil.returnJedis().set(key, "", "nx", "ex", 30);
-		this.locked ="OK".equals(ret);
-		if (this.locked) {
+		boolean locked = "OK".equals(ret);
+		if (locked) {
 			this.prolongedTime();
 		}
-		return this.locked;
+		return locked;
 	}
 
 	private void prolongedTime(){
 		DFuture<Long> dFuture = TimerManager.getInstance().scheduleWithDeley(() -> redisUtil.returnJedis().expire(key, 30),
 			20, TimeUnit.SECONDS);
-		dFuture.whenComplete((res , e) -> this.prolongedTime());
+		dFuture.whenComplete((res , e) -> {
+			if (! future.isCancelled()) {
+				this.prolongedTime();
+			}
+		});
 		this.future = dFuture;
 	}
 
