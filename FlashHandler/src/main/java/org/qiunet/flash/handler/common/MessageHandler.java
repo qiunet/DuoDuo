@@ -93,14 +93,14 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	 * 销毁时候调用
 	 */
 	public void destory(){
-		this.cancelAllFuture();
+		this.cancelAllFuture(true);
 	}
 
 	/**
 	 * 结束所有的调度
 	 */
-	public void cancelAllFuture() {
-		scheduleFutures.forEach(scheduleFuture -> scheduleFuture.cancel(true));
+	public void cancelAllFuture(boolean mayInterruptIfRunning) {
+		scheduleFutures.forEach(scheduleFuture -> scheduleFuture.cancel(mayInterruptIfRunning));
 	}
 	/***
 	 * 循环执行某个调度
@@ -110,7 +110,7 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	 * @param period
 	 * @return
 	 */
-	public ScheduleFuture scheduleFuture(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
+	public ScheduleFuture scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
 		ScheduledFuture<?> future = TimerManager.getInstance().scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
 		return new ScheduleFuture(scheduleName, future);
 	}
@@ -147,7 +147,7 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	}
 
 
-	public class ScheduleFuture implements Future<Object> {
+	private class ScheduleFuture implements Future<Object> {
 		private String scheduleName;
 		private Future<?> future;
 
