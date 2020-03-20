@@ -16,20 +16,29 @@ import java.util.StringJoiner;
 
 public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
 	/***缓存一天*/
-	protected final int NORMAL_LIFECYCLE=86400;
+	protected final int NORMAL_LIFECYCLE = 86400;
 
 	private enum RedisSyncSetKey {
 		DELETE, INSERT, UPDATE;
-		public String getSyncSetKeyName(String doName){
+
+		public String getSyncSetKeyName(String doName) {
 			return name() + "#SYNC_SET#" + doName;
 		}
-		private static RedisSyncSetKey [] values = values();
+
+		private static RedisSyncSetKey[] values = values();
 	}
-	/**redis delete 同步队列 key**/
+
+	/**
+	 * redis delete 同步队列 key
+	 **/
 	private String redisDeleteSyncSetKey;
-	/**redis insert 同步队列 key**/
+	/**
+	 * redis insert 同步队列 key
+	 **/
 	private String redisInsertSyncSetKey;
-	/**redis update 同步队列 key**/
+	/**
+	 * redis update 同步队列 key
+	 **/
 	private String redisUpdateSyncSetKey;
 
 	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
@@ -66,7 +75,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 						case UPDATE:
 							Do aDo = getDoBySyncParams(syncParams);
 							if (aDo == null) {
-								logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
+								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
 								continue;
 							}
 							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
@@ -77,13 +86,13 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 						case INSERT:
 							aDo = getDoBySyncParams(syncParams);
 							if (aDo == null) {
-								logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
+								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
 								continue;
 							}
 							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
 							break;
 					}
-				}catch (Exception e) {
+				} catch (Exception e) {
 					logger.error("Sync to Database Exception: ", e);
 					errorSyncParams.add(syncParams);
 				}
@@ -95,6 +104,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			}
 		}
 	}
+
 	private void deleteBySyncParams(String syncParams) {
 		String deleteRedisKey = buildDeleteRedisKey(syncParams);
 		Do aDo = returnDataObjByRedisKey(deleteRedisKey);
@@ -102,8 +112,10 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 		// 不会读到deleted key 可以不删除. 万一有异常. 还能往回get出来.
 		// returnJedis().del(deleteRedisKey);
 	}
+
 	/**
 	 * 由syncParams 得到 Do 子类实现
+	 *
 	 * @param syncParams
 	 * @return
 	 */
@@ -111,21 +123,22 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 
 	@Override
 	public Bo insert(Do aDo) {
+		boolean asyncOpen = false;    //先屏蔽掉异步开关
 		this.setDataObjectToRedis(aDo);
-		if (async) {
+		if (asyncOpen && async) {
 			String syncParams = buildSyncParams(aDo);
 			Long rem = returnJedis().srem(redisDeleteSyncSetKey, syncParams);
-			if (rem != null && rem > 0){
+			if (rem != null && rem > 0) {
 				try {
 					// insert 前先执行之前的delete操作.
 					this.deleteBySyncParams(syncParams);
-				}catch (Exception e) {
+				} catch (Exception e) {
 					logger.error("Delete Exception", e);
 				}
 			}
 
 			returnJedis().sadd(redisInsertSyncSetKey, syncParams);
-		}else {
+		} else {
 			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
 		}
 		return supplier.get(aDo);
@@ -133,23 +146,23 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 
 	@Override
 	public void delete(Do aDo) {
-		if (!async) {
+		boolean asyncOpen = false;    //先屏蔽掉异步开关
+		if (asyncOpen && async) {
+			String syncKey = buildSyncParams(aDo);
+			this.returnJedis().srem(redisUpdateSyncSetKey, syncKey);
+			this.returnJedis().srem(redisInsertSyncSetKey, syncKey);
+//			if (insert > 0) {
+//				// 说明都没有插入数据库
+//				 但是前面有insert失败的情况. delete 会使情况恢复正常
+//				return;
+//			}
+			this.delFromRedis(aDo);
+			this.sendDataObjToRedis(buildDeleteRedisKey(buildSyncParams(aDo)), aDo);
+			this.returnJedis().sadd(redisDeleteSyncSetKey, syncKey);
+		} else {
 			this.delFromRedis(aDo);
 			this.deleteFromDb(aDo);
-			return;
 		}
-
-		String syncKey = buildSyncParams(aDo);
-		this.returnJedis().srem(redisUpdateSyncSetKey, syncKey);
-		this.returnJedis().srem(redisInsertSyncSetKey, syncKey);
-//		if (insert > 0) {
-//			// 说明都没有插入数据库
-//			 但是前面有insert失败的情况. delete 会使情况恢复正常
-//			return;
-//		}
-		this.delFromRedis(aDo);
-		this.sendDataObjToRedis(buildDeleteRedisKey(buildSyncParams(aDo)), aDo);
-		this.returnJedis().sadd(redisDeleteSyncSetKey, syncKey);
 	}
 
 	/***
@@ -157,21 +170,26 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @param syncParams
 	 * @return
 	 */
-	private String buildDeleteRedisKey(String syncParams){
+	private String buildDeleteRedisKey(String syncParams) {
 		return getRedisKey(doName, "DELETED", syncParams);
 	}
+
 	/**
 	 * 从数据库删除
+	 *
 	 * @param aDo
 	 */
 	protected abstract void deleteFromDb(Do aDo);
 
 	/**
 	 * 返回jedis 之后好统一是否需要日志.
+	 *
 	 * @return
-	 */protected JedisCommands returnJedis(){
+	 */
+	protected JedisCommands returnJedis() {
 		return redisUtil.returnJedis();
 	}
+
 	@Override
 	public void update(Do aDo) {
 		this.setDataObjectToRedis(aDo);
@@ -188,24 +206,27 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @return
 	 */
 	protected abstract String buildSyncParams(Do aDo);
+
 	/***
 	 * set Object to redis
 	 * @param aDo
 	 * @return
 	 */
 	protected abstract void setDataObjectToRedis(Do aDo);
+
 	/***
 	 * 子类去失效某个do
 	 * 因为需要区分 是否是list
 	 * @param aDo
 	 */
 	protected abstract void delFromRedis(Do aDo);
+
 	/***
 	 * 获得redis key
 	 * @param keys
 	 * @return
 	 */
-	protected String getRedisKey(Object ... keys) {
+	protected String getRedisKey(Object... keys) {
 		StringJoiner sj = new StringJoiner("#");
 		for (Object key : keys) sj.add(String.valueOf(key));
 		return sj.toString();
