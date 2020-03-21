@@ -8,10 +8,7 @@ import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  *
@@ -45,6 +42,29 @@ public class TimerManager {
 	 */
 	public void shutdown(){
 		schedule.shutdownNow();
+	}
+
+
+	/**
+	 * 立刻执行
+	 * @param callable
+	 * @param <V>
+	 * @return
+	 */
+	public <V> DFuture<V> executorNow(Callable<V> callable) {
+		DCompletePromise<V> future = new DCompletePromise<>();
+		Future<V> submit = schedule.submit(() -> {
+			V result = null;
+			try {
+				result = callable.call();
+				future.trySuccess(result);
+			} catch (Exception e) {
+				future.tryFailure(e);
+			}
+			return result;
+		});
+		future.setFuture(submit);
+		return future;
 	}
 	/***
 	 * 默认使用毫秒

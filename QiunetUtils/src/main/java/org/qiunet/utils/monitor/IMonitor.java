@@ -1,4 +1,4 @@
-package org.qiunet.utils.monistor;
+package org.qiunet.utils.monitor;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,22 +16,22 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-03-20 16:51
  ***/
-public interface IMonitor<KEY, VAL> {
+public interface IMonitor<Type, SubType> {
 	/**
 	 * 进行行为操作加 1
-	 * @param key
-	 * @param val
+	 * @param type
+	 * @param subType
 	 */
-	default void add(KEY key, VAL val){
-		this.add(key, val, 1);
+	default void add(Type type, SubType subType){
+		this.add(type, subType, 1);
 	}
 	/**
 	 * 增加指定数量的行为统计
-	 * @param key
-	 * @param val
+	 * @param type
+	 * @param subType
 	 * @param num
 	 */
-	void add(KEY key, VAL val, long num);
+	void add(Type type, SubType subType, long num);
 	/***
 	 * 触发的时间间隔.
 	 * 建议分为单位.
