@@ -16,11 +16,12 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /***
+ * 销毁时候, 需要一定调用 {@link MessageHandler#destory()}!!!!!!!!!!!!!
  *
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public class MessageHandler<H extends MessageHandler> implements Runnable {
+public abstract class MessageHandler<H extends MessageHandler> implements Runnable {
 
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
@@ -34,6 +35,8 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	private Set<Future> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private volatile Thread currentThread;
+
+	private volatile boolean close;
 
 	private UseTimer useTimer = new UseTimer(getClass().getName(), 500);
 
@@ -78,6 +81,11 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	 * @param msg
 	 */
 	public void addMessage(IMessage<H> msg) {
+		if (close) {
+			logger.error("MessageHandler ["+getIdent()+"] 已经关闭销毁", new RuntimeException());
+			return;
+		}
+
 		messages.add(msg);
 		int size = this.size.incrementAndGet();
 		if (size == 1) {
@@ -90,10 +98,17 @@ public class MessageHandler<H extends MessageHandler> implements Runnable {
 	}
 
 	/**
+	 * 一个标识.
+	 * 最好能明确的找到问题的id. 比如玩家id什么的.
+	 * @return
+	 */
+	protected abstract String getIdent();
+	/**
 	 * 销毁时候调用
 	 */
 	public void destory(){
 		this.cancelAllFuture(true);
+		this.close = true;
 	}
 
 	/**
