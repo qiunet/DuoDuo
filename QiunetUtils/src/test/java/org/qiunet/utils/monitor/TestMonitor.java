@@ -30,7 +30,7 @@ public class TestMonitor {
 													System.out.println((DateUtil.currentTimeMillis() - curr)+ "num ["+num+"] delayTimes ["+delayTimes+"]");
 													return false;
 												},
-											1,
+											LogType.SHOP_BUY.getCount(),
 											TimeUnit.SECONDS
 
 		);
@@ -38,11 +38,12 @@ public class TestMonitor {
 
 	public void test(){
 		long uid = 10000; int sleepMillis = 0;
+		long millis = TimeUnit.SECONDS.toMillis(LogType.SHOP_BUY.getCount());
 		for (int i = 0; i < 12; i++) {
 			monitor.add(uid, LogType.SHOP_BUY);
 
-			int sleep = 990;
-			if (i == 7) sleep = 11000;
+			long sleep = millis - 10;
+			if (i == 7) sleep = 6 * millis;
 			sleepMillis += sleep;
 			DateUtil.setTimeOffset(sleepMillis, TimeUnit.MILLISECONDS);
 			try {
