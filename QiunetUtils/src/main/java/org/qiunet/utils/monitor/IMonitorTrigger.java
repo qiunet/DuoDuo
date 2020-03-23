@@ -20,5 +20,5 @@ public interface IMonitorTrigger<Type, SubType> {
 	 * 				第N次. 会踢出 然后封号等等.
 	 * 	  			后 5 个触发时间内. 没有触发. 就会清空次数
 	 */
-	boolean trigger(Type type, SubType subType, long num, int delayTimes);
+	boolean trigger(IMonitorData<Type, SubType> data);
 }

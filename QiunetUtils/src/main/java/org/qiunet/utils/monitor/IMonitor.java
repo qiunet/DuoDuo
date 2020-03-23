@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * 通过单位时间{@link IMonitor#getTriggerTime()}内,
  * KEY的VAL类型的数量达到{@link IMonitorTriggerNumMapping#triggerNum(Object)}进行触发.
  *
- * 触发讲调用 {@link IMonitorTrigger#trigger(Object, Object, long, int)} )}
+ * 触发讲调用 {@link IMonitorTrigger#trigger(IMonitorData)} )}
  * @author qiunet
  * 2020-03-20 16:51
  ***/

@@ -21,7 +21,7 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 	/***
 	 * 忽略次数清空, 需要的等待的时间次数系数
 	 */
-	static final int IGNORE_COUNT_CLEAN_FAC = 5;
+	private static final int IGNORE_COUNT_CLEAN_FAC = 5;
 
 
 	private final Map<SubType, Long> triggerNumMap = Maps.newConcurrentMap();
@@ -88,8 +88,9 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 			}
 
 			if (now - monitorData.getStartCheckTime() < triggerMillis) {
+				TempMonitorData<Type, SubType> data = new TempMonitorData<>(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes());
 				DFuture<Boolean> future = TimerManager.getInstance().executorNow(() ->
-					trigger.trigger(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes())
+					trigger.trigger(data)
 				);
 
 				future.whenComplete((ret, e) -> {

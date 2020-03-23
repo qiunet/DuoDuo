@@ -26,8 +26,8 @@ public class TestMonitor {
 
 	private IMonitor<Long, LogType> monitor = new DefaultMonitor<>(
 											LogType::getCount,
-												(type, subType, num, delayTimes) -> {
-													System.out.println((DateUtil.currentTimeMillis() - curr)+ "num ["+num+"] delayTimes ["+delayTimes+"]");
+												(data) -> {
+													System.out.println((DateUtil.currentTimeMillis() - curr)+ "num ["+data.triggerNum()+"] delayTimes ["+data.delayTimes()+"]");
 													return false;
 												},
 											LogType.SHOP_BUY.getCount(),

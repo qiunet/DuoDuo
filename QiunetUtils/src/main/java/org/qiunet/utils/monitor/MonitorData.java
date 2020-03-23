@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author qiunet
  * 2020-03-20 18:01
  ***/
-public class MonitorData<KEY, VAL> implements IMonitorData<KEY, VAL> {
+ class MonitorData<KEY, VAL> implements IMonitorData<KEY, VAL> {
 	AtomicInteger delayTimes = new AtomicInteger();
 	AtomicLong num = new AtomicLong();
 	private long ignoreStartCheckTime;
