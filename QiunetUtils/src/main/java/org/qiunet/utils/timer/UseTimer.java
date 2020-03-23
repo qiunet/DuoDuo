@@ -32,7 +32,12 @@ public class UseTimer {
 		this.start();
 	}
 
+	public void reset() {
+		this.stopWatch.reset();
+	}
+
 	public void start(){
+		this.reset();
 		this.stopWatch.start();
 	}
 
