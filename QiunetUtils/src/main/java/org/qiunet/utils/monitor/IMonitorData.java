@@ -31,5 +31,5 @@ public interface IMonitorData<Type, SubType> {
 	 * 忽略的次数
 	 * @return
 	 */
-	int ignoreNum();
+	int delayTimes();
 }

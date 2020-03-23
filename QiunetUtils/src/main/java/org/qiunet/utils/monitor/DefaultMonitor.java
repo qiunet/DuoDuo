@@ -1,7 +1,9 @@
 package org.qiunet.utils.monitor;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -68,46 +70,52 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 	}
 
 	@Override
-	public void add(Type type, SubType subType, long num) {
+	public IMonitorData<Type, SubType> add(Type type, SubType subType, long num) {
+		Preconditions.checkArgument(num > 0 , "num [%s] is less than 1", num);
+		long triggerNum = triggerNumMap.computeIfAbsent(subType, k -> numMapping.triggerNum(k));
+		if (triggerNum <= 0) return null;
+
 		Map<SubType, MonitorData<Type, SubType>> subData = this.statistics.computeIfAbsent(type, k -> Maps.newConcurrentMap());
 		MonitorData<Type, SubType> monitorData = subData.computeIfAbsent(subType, key -> new MonitorData<>(type, subType));
-		long triggerNum = triggerNumMap.computeIfAbsent(subType, k -> numMapping.triggerNum(k));
 		long newNum = monitorData.num.addAndGet(num);
 
 		if (newNum >= triggerNum) {
-			long now = System.currentTimeMillis();
+			long now = DateUtil.currentTimeMillis();
 
 			if (now - monitorData.getIgnoreStartCheckTime() > IGNORE_COUNT_CLEAN_FAC * triggerMillis) {
-				monitorData.resetIgnoreStartCheckTime();
-				monitorData.ignoreNum.set(0);
+				monitorData.resetDelayStartCheckTime();
+				monitorData.delayTimes.set(0);
 			}
 
 			if (now - monitorData.getStartCheckTime() < triggerMillis) {
-				DFuture<Boolean> future = TimerManager.getInstance().executorNow(() -> trigger.trigger(monitorData));
+				DFuture<Boolean> future = TimerManager.getInstance().executorNow(() ->
+					trigger.trigger(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes())
+				);
 
 				future.whenComplete((ret, e) -> {
 					if (e != null) {
 						LoggerType.DUODUO.error("DefaultMonitor Exception: ", e);
 					}else {
-						if (ret) monitorData.handler();
-						else monitorData.ignore();
+						if (ret) monitorData.reset();
+						else monitorData.delayIt();
 					}
 				});
-
+				monitorData.resetMonitorTime();
 			} else {
 				monitorData.resetStartCheckTime();
 			}
 		}
+		return monitorData;
 	}
 
 
 	@Override
-	public int triggerTime() {
+	public int getTriggerTime() {
 		return triggerTime;
 	}
 
 	@Override
-	public TimeUnit unit() {
+	public TimeUnit getUnit() {
 		return unit;
 	}
 }

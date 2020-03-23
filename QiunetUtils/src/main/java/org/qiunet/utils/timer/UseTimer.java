@@ -1,5 +1,6 @@
 package org.qiunet.utils.timer;
 
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -31,12 +32,12 @@ public class UseTimer {
 	}
 
 	public void start(){
-		this.startTime = System.currentTimeMillis();
+		this.startTime = DateUtil.currentTimeMillis();
 	}
 
 
 	private long countUseTime(){
-		return System.currentTimeMillis() - startTime;
+		return DateUtil.currentTimeMillis() - startTime;
 	}
 
 	public long printUseTime(){

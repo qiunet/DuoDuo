@@ -1,5 +1,7 @@
 package org.qiunet.utils.monitor;
 
+import org.qiunet.utils.date.DateUtil;
+
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -8,9 +10,10 @@ import java.util.concurrent.TimeUnit;
  * 2020-03-21 18:05
  **/
 public class TestMonitor {
+	private long curr = System.currentTimeMillis();
 
 	private enum LogType {
-		SHOP_BUY(2), MISSION(5), TASK(10);
+		SHOP_BUY(1), MISSION(5), TASK(10);
 		private int count;
 		LogType(int count) {
 			this.count = count;
@@ -23,29 +26,30 @@ public class TestMonitor {
 
 	private IMonitor<Long, LogType> monitor = new DefaultMonitor<>(
 											LogType::getCount,
-											data -> {
-													System.out.println(data);
+												(type, subType, num, delayTimes) -> {
+													System.out.println((DateUtil.currentTimeMillis() - curr)+ "num ["+num+"] delayTimes ["+delayTimes+"]");
 													return false;
 												},
-											200,
-											TimeUnit.MILLISECONDS
+											1,
+											TimeUnit.SECONDS
 
 		);
 
 
 	public void test(){
-		long uid = 10000;
+		long uid = 10000; int sleepMillis = 0;
 		for (int i = 0; i < 12; i++) {
 			monitor.add(uid, LogType.SHOP_BUY);
 
-			int sleep = 80;
-			if (i >= 10) sleep = 1100;
+			int sleep = 990;
+			if (i == 7) sleep = 11000;
+			sleepMillis += sleep;
+			DateUtil.setTimeOffset(sleepMillis, TimeUnit.MILLISECONDS);
 			try {
-				Thread.sleep(sleep);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			// 最后一次. 如果去 DefaultMonitor 打印. 会发现已经重置 ignoreNum
 		}
 	}
 

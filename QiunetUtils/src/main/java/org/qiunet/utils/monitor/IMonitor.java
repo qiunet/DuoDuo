@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
  * 获得物品的频率
  * 某类型的消耗  获得频率等等
  *
- * 通过单位时间{@link IMonitor#triggerTime()}内,
+ * 通过单位时间{@link IMonitor#getTriggerTime()}内,
  * KEY的VAL类型的数量达到{@link IMonitorTriggerNumMapping#triggerNum(Object)}进行触发.
  *
  * 触发讲调用 {@link IMonitorTrigger#trigger(IMonitorData)}
@@ -22,8 +22,8 @@ public interface IMonitor<Type, SubType> {
 	 * @param type
 	 * @param subType
 	 */
-	default void add(Type type, SubType subType){
-		this.add(type, subType, 1);
+	default IMonitorData<Type, SubType> add(Type type, SubType subType){
+		return this.add(type, subType, 1);
 	}
 	/**
 	 * 增加指定数量的行为统计
@@ -31,16 +31,16 @@ public interface IMonitor<Type, SubType> {
 	 * @param subType
 	 * @param num
 	 */
-	void add(Type type, SubType subType, long num);
+	IMonitorData<Type, SubType> add(Type type, SubType subType, long num);
 	/***
 	 * 触发的时间间隔.
 	 * 建议分为单位.
 	 * @return
 	 */
-	int triggerTime();
+	int getTriggerTime();
 	/***
 	 * 时间单位
 	 * @return
 	 */
-	TimeUnit unit();
+	TimeUnit getUnit();
 }
