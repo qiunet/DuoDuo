@@ -78,33 +78,28 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 		Map<SubType, MonitorData<Type, SubType>> subData = this.statistics.computeIfAbsent(type, k -> Maps.newConcurrentMap());
 		MonitorData<Type, SubType> monitorData = subData.computeIfAbsent(subType, key -> new MonitorData<>(type, subType));
 		long newNum = monitorData.num.addAndGet(num);
+		if (newNum < triggerNum) return;
 
-		if (newNum >= triggerNum) {
-			long now = DateUtil.currentTimeMillis();
+		long now = DateUtil.currentTimeMillis();
+		if (now - monitorData.getIgnoreStartCheckTime() > IGNORE_COUNT_CLEAN_FAC * triggerMillis) {
+			monitorData.resetDelayStartCheckTime();
+			monitorData.delayTimes.set(0);
+		}
 
-			if (now - monitorData.getIgnoreStartCheckTime() > IGNORE_COUNT_CLEAN_FAC * triggerMillis) {
-				monitorData.resetDelayStartCheckTime();
-				monitorData.delayTimes.set(0);
-			}
-
-			if (now - monitorData.getStartCheckTime() < triggerMillis) {
-				TempMonitorData<Type, SubType> data = new TempMonitorData<>(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes());
-				DFuture<Boolean> future = TimerManager.getInstance().executorNow(() ->
-					trigger.trigger(data)
-				);
-
-				future.whenComplete((ret, e) -> {
-					if (e != null) {
-						LoggerType.DUODUO.error("DefaultMonitor Exception: ", e);
-					}else {
-						if (ret) monitorData.reset();
-						else monitorData.delayIt();
-					}
-				});
-				monitorData.resetMonitorTime();
-			} else {
-				monitorData.resetStartCheckTime();
-			}
+		if (now - monitorData.getStartCheckTime() < triggerMillis) {
+			TempMonitorData<Type, SubType> data = new TempMonitorData<>(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes());
+			DFuture<Boolean> future = TimerManager.getInstance().executorNow(() -> trigger.trigger(data));
+			future.whenComplete((ret, e) -> {
+				if (e != null) {
+					LoggerType.DUODUO.error("DefaultMonitor Exception: ", e);
+					return;
+				}
+				if (ret) monitorData.reset();
+				else monitorData.delayIt();
+			});
+			monitorData.resetMonitorTime();
+		} else {
+			monitorData.resetStartCheckTime();
 		}
 	}
 
