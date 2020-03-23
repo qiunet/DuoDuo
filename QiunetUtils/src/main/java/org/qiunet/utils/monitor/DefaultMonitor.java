@@ -70,10 +70,10 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 	}
 
 	@Override
-	public IMonitorData<Type, SubType> add(Type type, SubType subType, long num) {
+	public void add(Type type, SubType subType, long num) {
 		Preconditions.checkArgument(num > 0 , "num [%s] is less than 1", num);
 		long triggerNum = triggerNumMap.computeIfAbsent(subType, k -> numMapping.triggerNum(k));
-		if (triggerNum <= 0) return null;
+		if (triggerNum <= 0) return;
 
 		Map<SubType, MonitorData<Type, SubType>> subData = this.statistics.computeIfAbsent(type, k -> Maps.newConcurrentMap());
 		MonitorData<Type, SubType> monitorData = subData.computeIfAbsent(subType, key -> new MonitorData<>(type, subType));
@@ -105,7 +105,6 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 				monitorData.resetStartCheckTime();
 			}
 		}
-		return monitorData;
 	}
 
 

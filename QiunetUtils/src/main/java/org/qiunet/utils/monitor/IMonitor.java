@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * 通过单位时间{@link IMonitor#getTriggerTime()}内,
  * KEY的VAL类型的数量达到{@link IMonitorTriggerNumMapping#triggerNum(Object)}进行触发.
  *
- * 触发讲调用 {@link IMonitorTrigger#trigger(IMonitorData)}
+ * 触发讲调用 {@link IMonitorTrigger#trigger(Object, Object, long, int)} )}
  * @author qiunet
  * 2020-03-20 16:51
  ***/
@@ -22,8 +22,8 @@ public interface IMonitor<Type, SubType> {
 	 * @param type
 	 * @param subType
 	 */
-	default IMonitorData<Type, SubType> add(Type type, SubType subType){
-		return this.add(type, subType, 1);
+	default void add(Type type, SubType subType){
+		this.add(type, subType, 1);
 	}
 	/**
 	 * 增加指定数量的行为统计
@@ -31,7 +31,7 @@ public interface IMonitor<Type, SubType> {
 	 * @param subType
 	 * @param num
 	 */
-	IMonitorData<Type, SubType> add(Type type, SubType subType, long num);
+	void add(Type type, SubType subType, long num);
 	/***
 	 * 触发的时间间隔.
 	 * 建议分为单位.
