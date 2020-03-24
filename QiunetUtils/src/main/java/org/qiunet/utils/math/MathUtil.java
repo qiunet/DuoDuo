@@ -3,6 +3,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MathUtil {
+	/***游戏定为万分比.**/
+	private static final long BASE_RATE = 10000;
+
 	private MathUtil(){}
 	public enum RandomType{
 		/** 前闭后开 [start,end) */
@@ -119,5 +122,16 @@ public class MathUtil {
 			start += obj.weight();
 		}
 		return null;
+	}
+
+	/**
+	 * 得到val的 万分之rate .
+	 * (val * rate) / 10000;
+	 * @param val 数值
+	 * @param rate 万分比 整数 1% 表示为100
+	 * @return
+	 */
+	public static long getByRate(long val, long rate) {
+		return (val * rate)/BASE_RATE;
 	}
 }

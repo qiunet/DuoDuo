@@ -20,10 +20,10 @@ public @interface CronSchedule {
 	 */
 	String value();
 	/**
-	 * 打印执行信息
+	 * 告警的执行时间毫秒数
 	 * @return
 	 */
-	boolean logExecInfo() default false;
+	int warnExecMillis() default 500;
 }
 
 

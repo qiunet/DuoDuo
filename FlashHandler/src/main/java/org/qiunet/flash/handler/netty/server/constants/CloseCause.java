@@ -15,6 +15,10 @@ public enum  CloseCause {
 	 * 老session还处于激活状态 关闭老session
 	 */
 	LOGIN_REPEATED,
+	/**
+	 * 通道空闲太久
+	 */
+	CHANNEL_IDLE,
 	/***
 	 * 被封禁
 	 */

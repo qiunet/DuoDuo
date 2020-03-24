@@ -24,11 +24,18 @@ public class UseTimer {
 	 *
 	 */
 	private StopWatch stopWatch;
-
+	/**
+	 * 没有告警的消息是否打印
+	 */
+	private boolean printNormalMsg;
 	public UseTimer(String name, long warnUseTime) {
+		this(name,warnUseTime, true);
+	}
+	public UseTimer(String name, long warnUseTime, boolean printNormalMsg) {
 		this.name = name;
 		this.warnUseTime = warnUseTime;
 		this.stopWatch = new StopWatch();
+		this.printNormalMsg = printNormalMsg;
 		this.start();
 	}
 
@@ -51,9 +58,16 @@ public class UseTimer {
 		long useTime = countUseTime();
 		if (useTime > warnUseTime) {
 			logger.warn("{} use {} ms", name, useTime);
-		}else {
+		}else if (printNormalMsg){
 			logger.info("{} use {} ms", name, useTime);
 		}
 		return useTime;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(name).append(" current use [").append(this.stopWatch.getTime()).append("]ms");
+		return sb.toString();
 	}
 }
