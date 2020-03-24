@@ -6,7 +6,6 @@ import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
 import java.text.ParseException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,7 +43,7 @@ public class QuartzSchedule {
 	private static  class JobFacade implements IDelayTask<Boolean> {
 		private IJob job;
 
-		private LocalDateTime fireTime;
+		private Date fireTime;
 
 		private DFuture<Boolean> future;
 
@@ -52,7 +51,7 @@ public class QuartzSchedule {
 
 		 JobFacade(IJob job) {
 			this.job = job;
-			this.fireTime = DateUtil.currentLocalDateTime();
+			this.fireTime = DateUtil.currentDate();
 			try {
 				this.expression = new CronExpression(job.cronExpression());
 			} catch (ParseException e) {
@@ -62,7 +61,7 @@ public class QuartzSchedule {
 		}
 
 		void doNextJob() {
-			Date nextDt = expression.getTimeAfter(new Date(DateUtil.getMilliByTime(this.fireTime)));
+			Date nextDt = expression.getTimeAfter(this.fireTime);
 			if (nextDt != null) {
 				this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
 				this.future.whenComplete((res, e) -> this.doNextJob());
@@ -75,7 +74,7 @@ public class QuartzSchedule {
 
 		@Override
 		public Boolean call() throws Exception {
-			this.fireTime = DateUtil.currentLocalDateTime();
+			this.fireTime = DateUtil.currentDate();
 			return this.job.doJob();
 		}
 	}

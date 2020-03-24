@@ -61,7 +61,13 @@ public final class ProjectInitCreator {
 		if (! xmlDirectory.isDirectory()) {
 			throw new RuntimeException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
 		}
-		new ProjectInitCreator(mybatisConfigFileName, xmlDirectory).process();
+		try {
+			new ProjectInitCreator(mybatisConfigFileName, xmlDirectory).process();
+		}catch (Exception e) {
+			logger.error("Create exception:", e);
+		}finally {
+			logger.info("Create Success!");
+		}
 	}
 
 	private void process(){

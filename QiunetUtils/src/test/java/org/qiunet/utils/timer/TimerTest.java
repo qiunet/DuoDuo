@@ -1,6 +1,7 @@
 package org.qiunet.utils.timer;
 
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -21,7 +22,7 @@ public class TimerTest {
 		scheduledFuture = TimerManager.getInstance().scheduleAtFixedRate(() -> {
 			time ++;
 			long diff = (System.currentTimeMillis() - createTime);
-			System.out.println("curr[" + diff + "] time: " + time);
+			LoggerType.DUODUO.info("curr[" + diff + "] time: " + time);
 			if (time == 2) {
 				try {
 					// 执行太久 .会阻塞后面的调度执行的
@@ -38,11 +39,11 @@ public class TimerTest {
 
 
 		Future<String> future = TimerManager.getInstance().scheduleWithDeley(() -> {
-			System.out.println("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
+			LoggerType.DUODUO.info("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 			Thread.sleep(5000);
 			return "SUCCESS";
 		}, 1, TimeUnit.SECONDS);
 
-		System.out.println(future.get()+ "========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
+		LoggerType.DUODUO.info(future.get()+ "========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 	}
 }

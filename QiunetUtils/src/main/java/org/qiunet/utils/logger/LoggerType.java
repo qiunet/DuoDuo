@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
  */
 public enum  LoggerType {
 	/**普通的日志打印*/
-	DUODUO("duoduo"),
+	DUODUO("DuoDuo"),
 	/**sql日志打印*/
-	DUODUO_SQL("duoduo_sql"),
+	DUODUO_SQL("DuoDuoSql"),
 	/**redis 的 日志打印*/
-	DUODUO_REDIS("duoduo_redis"),
+	DUODUO_REDIS("DuoDuoRedis"),
 	/***热替换**/
-	DUODUO_HOTSWAP("duoduo_hotswap"),
+	DUODUO_HOTSWAP("DuoDuoHotSwap"),
 	;
 
 	private String loggerName;

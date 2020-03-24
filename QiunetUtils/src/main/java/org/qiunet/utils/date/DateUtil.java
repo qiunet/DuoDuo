@@ -35,6 +35,10 @@ public final class DateUtil {
 		return Instant.ofEpochMilli(currentTimeMillis());
 	}
 
+	public static Date currentDate() {
+		return new Date();
+	}
+
 	public static LocalDateTime currentLocalDateTime() {
 		return LocalDateTime.ofInstant(currentInstant(), defaultZoneId);
 	}
