@@ -5,12 +5,15 @@ import javafx.scene.control.Alert;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
+import org.qiunet.utils.common.CommonUtil;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * 拼接xd的方式
@@ -31,33 +34,43 @@ public class XdAppender extends BaseAppender {
 		}
 
 		List<List<AppenderData>> appenderDatas = attachable.getAppenderDatas();
-		try(FileOutputStream fos = new FileOutputStream(path.toFile());
-			DataOutputStream dos = new DataOutputStream(fos)) {
-			// 写入数据行数
-			dos.writeInt(appenderDatas.size());
-			// 写入名称
-			List<String> names = attachable.getRowNames();
-			dos.writeShort(names.size());
-			for (String name : names) {
-				dos.writeUTF(name);
-			}
-			// 写入数据
-			for (List<AppenderData> rowDatas : appenderDatas) {
-				for (AppenderData rowData : rowDatas) {
-					OutPutType oType = rowData.getOutPutType();
-					if (oType.canWrite(roleType)) {
-						dos.writeUTF(rowData.getVal());
+		try (ByteArrayOutputStream bouts = new ByteArrayOutputStream(1024)){
+			try(GZIPOutputStream gos = new GZIPOutputStream(bouts);
+				DataOutputStream dos = new DataOutputStream(gos)) {
+				// 写入数据行数
+				dos.writeInt(appenderDatas.size());
+				// 写入名称
+				List<String> names = attachable.getRowNames();
+				dos.writeShort(names.size());
+				for (String name : names) {
+					dos.writeUTF(name);
+				}
+				// 写入数据
+				for (List<AppenderData> rowDatas : appenderDatas) {
+					for (AppenderData rowData : rowDatas) {
+						OutPutType oType = rowData.getOutPutType();
+						if (oType.canWrite(roleType)) {
+							dos.writeUTF(rowData.getVal());
+						}
 					}
 				}
 			}
-		}catch (RuntimeException e) {
+
+			byte [] bytes = bouts.toByteArray();
+			CommonUtil.reverse(bytes);
+			try (FileOutputStream fos = new FileOutputStream(path.toFile())){
+				fos.write(bytes);
+			}
+		} catch (RuntimeException e) {
 			throw e;
 		}catch (Exception e) {
 			e.printStackTrace();
 			FxUIUtil.openAlert(Alert.AlertType.ERROR, e.getMessage(), "错误");
-		}finally {
-			this.copyToProject(path.toFile());
 		}
+
+
+
+		this.copyToProject(path.toFile());
 	}
 
 	@Override

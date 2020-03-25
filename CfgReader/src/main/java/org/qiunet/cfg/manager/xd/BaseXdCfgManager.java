@@ -2,11 +2,13 @@ package org.qiunet.cfg.manager.xd;
 
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
+import org.qiunet.utils.common.CommonUtil;
 
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * 大部分数据可以分为:
@@ -19,6 +21,8 @@ import java.util.List;
  */
 abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	private InputStream in;
+	private ByteArrayInputStream bais;
+	private GZIPInputStream gis;
 	protected DataInputStream dis;
 	protected XdInfoData xdInfoData;
 
@@ -41,7 +45,13 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			in = new FileInputStream(url.getPath());
 		}
 
-		dis = new DataInputStream(in);
+		byte [] bytes = new byte[in.available()];
+		in.read(bytes);
+		CommonUtil.reverse(bytes);
+		bais = new ByteArrayInputStream(bytes);
+		gis = new GZIPInputStream(bais);
+		dis = new DataInputStream(gis);
+
 		int rowNum = dis.readInt();
 		List<String> names = new ArrayList<>();
 		int nameLength = dis.readShort();
@@ -81,13 +91,20 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			if(dis != null) {
 				dis.close();
 			}
+			if (gis != null) {
+				gis.close();
+			}
+			if (bais != null) {
+				bais.close();
+			}
 			if (in != null) {
 				in.close();
 			}
 		} catch (IOException e) {
 			throw new RuntimeException("关闭配置文件"+fileName+"数据出现问题");
 		}
-
+		bais = null;
+		gis = null;
 		dis = null;
 		in = null;
 	}

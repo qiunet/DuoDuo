@@ -54,4 +54,41 @@ public class CommonUtil {
 		}
 		return list.stream().skip(skip).limit(count).collect(Collectors.toList());
 	}
+
+	/***
+	 * 翻转换整个数组
+	 * @param array
+	 */
+	public static void reverse(byte [] array) {
+		if (array == null || array.length <= 1) {
+			return;
+		}
+		byte temp;
+		int len = array.length;
+		int loopNum = len / 2;
+		for (int i = 0; i < loopNum; i++) {
+			temp = array[i];
+			int last = len - 1 - i;
+			array[i] = array[last];
+			array[last] = temp;
+		}
+	}
+	/***
+	 * 翻转换整个数组
+	 * @param array
+	 */
+	public static void reverse(int [] array) {
+		if (array == null || array.length <= 1) {
+			return;
+		}
+		int temp;
+		int len = array.length;
+		int loopNum = len / 2;
+		for (int i = 0; i < loopNum; i++) {
+			int last = len - 1 - i;
+			temp = array[i];
+			array[i] = array[last];
+			array[last] = temp;
+		}
+	}
 }

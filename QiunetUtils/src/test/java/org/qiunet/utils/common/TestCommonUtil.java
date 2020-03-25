@@ -44,4 +44,15 @@ public class TestCommonUtil extends BaseTest {
 		Assert.assertTrue(subList.get(0) == 1);
 		Assert.assertTrue(subList.get(subList.size() - 1) == 4);
 	}
+	@Test
+	public void testReverse(){
+		byte [] arr1 = new byte[]{1,2,3,4};
+		byte [] arr2 = new byte[]{1,2,3,4,5};
+
+		CommonUtil.reverse(arr1);
+		CommonUtil.reverse(arr2);
+
+		Assert.assertArrayEquals(new byte[]{4,3,2,1}, arr1);
+		Assert.assertArrayEquals(new byte[]{5, 4,3,2,1}, arr2);
+	}
 }
