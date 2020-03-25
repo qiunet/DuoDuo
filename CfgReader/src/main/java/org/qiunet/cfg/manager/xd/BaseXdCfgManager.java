@@ -38,11 +38,17 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 		logger.debug("读取配置文件 [ "+fileName+" ]");
 
 		URL url = getClass().getClassLoader().getResource(fileName);
+		if (url == null) {
+			throw new NullPointerException("fileName "+fileName+" is not exist in classpath");
+		}
 		if (url.getPath().contains(".jar!")) {
 			//jar包里面的文件. 只能用这种加载方式. 缺点是有缓存. 不能热加载设定
 			in = getClass().getClassLoader().getResourceAsStream(fileName);
 		}else {
 			in = new FileInputStream(url.getPath());
+		}
+		if (in == null) {
+			throw new NullPointerException("FileInputStream for "+fileName+" is null!");
 		}
 
 		byte [] bytes = new byte[in.available()];
