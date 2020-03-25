@@ -6,6 +6,7 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
+import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
@@ -70,6 +71,7 @@ public abstract class MessageHandler<H extends MessageHandler> implements Runnab
 		}
 		this.currentThread = null;
 
+		ThreadContextData.removeAll();
 		if (taskUseTimeToMuch) {
 			// 重新进入排队队列， 如果线程池空闲, 会接着继续执行该Handler
 			executorService.execute(this);
