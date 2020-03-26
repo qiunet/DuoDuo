@@ -21,6 +21,7 @@
 		<module>Quartz</module>
 		<module>Entity2Table</module>
 		<module>all</module>
+		<module>EventLog</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -129,6 +130,16 @@
 				<groupId>org.qiunet</groupId>
 				<artifactId>CfgReader</artifactId>
 				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.qiunet</groupId>
+				<artifactId>EventLog</artifactId>
+				<version>${modules.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.7.21</version>
 			</dependency>
 			<dependency>
 				<groupId>org.qiunet</groupId>
@@ -248,7 +259,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.2.58</version>
+				<version>1.2.67</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.velocity</groupId>

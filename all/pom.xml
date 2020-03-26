@@ -261,7 +261,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
-			<artifactId>LoggerSender</artifactId>
+			<artifactId>EventLog</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
