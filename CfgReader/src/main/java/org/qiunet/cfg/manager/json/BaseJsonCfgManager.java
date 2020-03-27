@@ -1,6 +1,7 @@
 package org.qiunet.cfg.manager.json;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Preconditions;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.file.FileUtil;
@@ -58,7 +59,7 @@ public abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManage
 		if (generalList == null) {
 			throw new NullPointerException("FileName ["+fileName+"] is not JsonList!");
 		}
-		return generalList.stream().map(jsonObject -> generalCfg(jsonObject)).collect(Collectors.toList());
+		return generalList.stream().map(this::generalCfg).collect(Collectors.toList());
 	}
 
 
@@ -74,6 +75,7 @@ public abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManage
 			e.printStackTrace();
 		}
 		final Cfg finalCfg = cfg;
+		Preconditions.checkNotNull(cfg);
 		jsonObject.forEach((key, val) -> handlerObjConvertAndAssign(finalCfg, key, String.valueOf(val)));
 		return cfg;
 	}
