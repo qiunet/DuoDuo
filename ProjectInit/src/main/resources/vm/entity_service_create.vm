@@ -9,8 +9,8 @@ import java.util.Map;
 import ${define.entityPackage}.${define.boName};
 import ${define.entityPackage}.${define.doName};
 
-public class ${define.serviceName} {
-	private volatile static ${define.serviceName} instance = new ${define.serviceName}();
+public enum ${define.serviceName} {
+	instance;
 #if(${define.type} == 'CACHE_ENTITY')
 	private static CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY')
@@ -24,16 +24,6 @@ public class ${define.serviceName} {
 #elseif(${define.type} == 'CACHE_ENTITY_LIST')
 	private static CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #end
-
-	private ${define.serviceName} () {
-		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
-		}
-	}
-
-	public static ${define.serviceName} getInstance() {
-		return instance;
-	}
 #if(${define.list})
 
 	/***
