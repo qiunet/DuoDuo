@@ -36,6 +36,17 @@ public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubI
 				.map(cfg -> (InitCfg)cfg)
 				.forEach(InitCfg::init);
 	}
+
+	public boolean contains(ID id, SubId subId) {
+		if (! cfgMap.containsKey(id)) {
+			return false;
+		}
+		return cfgMap.get(id).containsKey(subId);
+	}
+
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
 	/***
 	 * 根据id 和 subId 得到一条cfg数据
 	 * @param id

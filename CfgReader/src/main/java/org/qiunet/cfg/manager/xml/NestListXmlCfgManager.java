@@ -39,6 +39,9 @@ public class NestListXmlCfgManager<ID, Cfg extends INestListConfig<ID>> extends 
 				.map(cfg -> (InitCfg)cfg)
 				.forEach(InitCfg::init);
 	}
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
 	/***
 	 * 得到的map
 	 * Map<Key, Cfg>

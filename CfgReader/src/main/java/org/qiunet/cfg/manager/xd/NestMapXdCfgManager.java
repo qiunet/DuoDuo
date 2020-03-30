@@ -50,6 +50,18 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 		}
 		return subIdCfgMap.get(subId);
 	}
+
+	public boolean contains(ID id, SubId subId) {
+		if (! cfgs.containsKey(id)) {
+			return false;
+		}
+		return cfgs.get(id).containsKey(subId);
+	}
+
+	public boolean contains(ID id) {
+		return cfgs.containsKey(id);
+	}
+
 	/***
 	 * 得到一个一定格式的嵌套map
 	 * 格式: key 对应 Map<subKey, cfg>

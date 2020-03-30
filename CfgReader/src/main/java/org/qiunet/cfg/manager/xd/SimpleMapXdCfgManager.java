@@ -28,6 +28,9 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 		return cfgMap.get(id);
 	}
 
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg();

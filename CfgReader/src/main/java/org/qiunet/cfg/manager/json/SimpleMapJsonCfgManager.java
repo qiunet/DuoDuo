@@ -29,6 +29,10 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 		return cfgMap.get(id);
 	}
 
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
+
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg();

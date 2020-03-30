@@ -30,6 +30,10 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 		return cfgMap.get(id);
 	}
 
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
+
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getNestListCfg();

@@ -37,7 +37,9 @@ public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID
 		this.cfgMap = getNestListCfg();
 		this.initCfgSelf();
 	}
-
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
 	/***
 	 * 如果cfg 对象是实现了 initCfg接口,
 	 * 就调用init方法实现cfg的二次init.

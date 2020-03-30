@@ -36,6 +36,9 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 				.map(cfg -> (InitCfg)cfg)
 				.forEach(InitCfg::init);
 	}
+	public boolean contains(ID id) {
+		return cfgMap.containsKey(id);
+	}
 	/***
 	 * 得到的map
 	 * Map<Key, Cfg>

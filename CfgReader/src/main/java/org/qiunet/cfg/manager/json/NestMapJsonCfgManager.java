@@ -38,7 +38,16 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 				.map(cfg -> (InitCfg)cfg)
 				.forEach(InitCfg::init);
 	}
+	public boolean contains(ID id, SubId subId) {
+		if (! cfgs.containsKey(id)) {
+			return false;
+		}
+		return cfgs.get(id).containsKey(subId);
+	}
 
+	public boolean contains(ID id) {
+		return cfgs.containsKey(id);
+	}
 	/***
 	 * 根据id 和 subId 得到一条cfg数据
 	 * @param id
