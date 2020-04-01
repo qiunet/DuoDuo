@@ -22,4 +22,13 @@ public final class BitUtil {
 		ori >>= index;
 		return ori & flag;
 	}
+
+
+	public static int setBit(int ori, int index) {
+		return ori | (1 << index);
+	}
+
+	public static boolean isBitSet(int ori, int index) {
+		return (ori & (1 << index)) != 0;
+	}
 }
