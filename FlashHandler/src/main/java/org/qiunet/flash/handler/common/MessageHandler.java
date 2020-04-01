@@ -39,7 +39,7 @@ public abstract class MessageHandler<H extends MessageHandler> implements Runnab
 
 	private volatile boolean close;
 
-	private UseTimer useTimer = new UseTimer(getClass().getName(), 500);
+	private UseTimer useTimer = new UseTimer(getClass().getName(), 500, false);
 
 	@Override
 	public void run() {
