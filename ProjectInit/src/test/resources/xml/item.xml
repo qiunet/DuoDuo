@@ -6,7 +6,8 @@
 				packageName="org.qiunet.project.init.test.item"
 				xmlns="https://github.com/qiunet/DuoDuo/DbEntityList"
 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntityList"
+				xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntityList
+				https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/DbEntityList.xsd"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="item_id" type="int" comment="道具id" />
