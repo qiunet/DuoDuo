@@ -41,6 +41,11 @@ public final class LoggerChoice {
 	}
 
 	private static ILogger createLogger(String name) {
+		if (useLogBack) {
+
+		}else if (useLog4j) {
+			// 暂时不实现了. 以后可能不使用log4j
+		}
 		return null;
 	}
 }

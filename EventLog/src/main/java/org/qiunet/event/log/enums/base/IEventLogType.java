@@ -15,7 +15,7 @@ public interface IEventLogType {
 	 *
 	 * @return
 	 */
-	String getName();
+	String getLoggerName();
 	/**
 	 * 保存方式
 	 * @return

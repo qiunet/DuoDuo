@@ -1,6 +1,8 @@
 package org.qiunet.event.log;
 
-import org.qiunet.event.log.enums.base.IEventLogType;
+import com.google.common.base.Preconditions;
+import org.qiunet.event.log.enums.RecordModel;
+import org.qiunet.event.log.log.ILogEvent;
 
 /***
  *
@@ -11,10 +13,12 @@ import org.qiunet.event.log.enums.base.IEventLogType;
 public final class LogRecord {
 	/**
 	 * 发送日志
-	 * @param logType
-	 * @param objs
+	 * @param log
 	 */
-	public static void sendLog(IEventLogType logType, Object ... objs){
-
+	public static void sendLog(ILogEvent log){
+		Preconditions.checkNotNull(log);
+		String logMessage = log.logMessage();
+		RecordModel recordModel = log.logType().recordModel();
+		recordModel.getLogger().info(logMessage);
 	}
 }

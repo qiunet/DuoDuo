@@ -1,5 +1,7 @@
 package org.qiunet.event.log.enums;
 
+import org.qiunet.event.log.logger.ILogger;
+
 /***
  *
  *
@@ -10,16 +12,32 @@ public enum RecordModel {
 	/**
 	 * 本地保存
 	 */
-	LOCAL,
+	LOCAL{
+		@Override
+		public ILogger getLogger() {
+			return null;
+		}
+	},
 	/**
 	 * tcp 发到事件日志保存平台.
 	 * 重要日志一般使用tcp
 	 */
-	TCP,
+	TCP {
+		@Override
+		public ILogger getLogger() {
+			return null;
+		}
+	},
 	/***
 	 * udp发到事件日志保存平台
 	 * 普通日志使用udp, 有一定丢失可能.
 	 */
-	UDP,
+	UDP {
+		@Override
+		public ILogger getLogger() {
+			return null;
+		}
+	},
 	;
+	public abstract ILogger getLogger();
 }
