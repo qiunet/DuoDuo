@@ -1,8 +1,7 @@
 package org.qiunet.event.log.logger;
 
 import org.qiunet.event.log.enums.RecordModel;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
+import org.qiunet.event.log.enums.base.IEventLogType;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,8 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * 2020-03-25 10:02
  ***/
 public final class LoggerChoice {
-	private Logger logger = LoggerType.DUODUO.getLogger();
-
 	private static Map<String, ILogger> loggers = new ConcurrentHashMap<>();
 
 	private static boolean useLogBack;
@@ -36,8 +33,9 @@ public final class LoggerChoice {
 //		}
 	}
 
-	public static ILogger getLogger(RecordModel model, String loggerName) {
-		return loggers.computeIfAbsent(loggerName, name -> LoggerChoice.createLogger(model, name));
+	public static ILogger getLogger(IEventLogType logType) {
+		return loggers.computeIfAbsent(logType.getLoggerName(), name ->
+			LoggerChoice.createLogger(logType.recordModel(), name));
 	}
 
 	private static ILogger createLogger(RecordModel model, String loggerName) {

@@ -1,5 +1,7 @@
 package org.qiunet.event.log.logger;
 
+import org.qiunet.event.log.log.ILogEvent;
+
 /***
  *
  * 自己的一个通用logger接口.
@@ -14,5 +16,9 @@ public interface ILogger {
 	 */
 	 String loggerName();
 
-	 void send(String msg);
+	/**
+	 * 记录日志
+	 * @param logEvent
+	 */
+	 void send(ILogEvent logEvent);
 }

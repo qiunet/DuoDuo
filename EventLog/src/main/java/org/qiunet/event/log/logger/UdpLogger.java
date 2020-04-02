@@ -1,5 +1,7 @@
 package org.qiunet.event.log.logger;
 
+import org.qiunet.event.log.log.ILogEvent;
+
 /***
  *
  * @author qiunet
@@ -12,7 +14,7 @@ package org.qiunet.event.log.logger;
 	}
 
 	@Override
-	public void send(String msg) {
+	public void send(ILogEvent logEvent) {
 
 	}
 }

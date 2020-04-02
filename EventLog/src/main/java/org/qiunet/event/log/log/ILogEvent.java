@@ -20,7 +20,11 @@ public interface ILogEvent {
 	 * @return
 	 */
 	String logMessage();
-
+	/**
+	 * 日志生成时间 13位时间戳
+	 * @return
+	 */
+	long createTime();
 	/**
 	 * 发送日志
 	 */

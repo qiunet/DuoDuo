@@ -1,8 +1,5 @@
 package org.qiunet.event.log.enums;
 
-import org.qiunet.event.log.logger.ILogger;
-import org.qiunet.event.log.logger.LoggerChoice;
-
 /***
  *
  *
@@ -25,8 +22,4 @@ public enum RecordModel {
 	 */
 	UDP,
 	;
-
-	public ILogger getLogger(String loggerName){
-		return LoggerChoice.getLogger(this, loggerName);
-	}
 }

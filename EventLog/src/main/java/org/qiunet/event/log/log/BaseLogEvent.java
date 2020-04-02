@@ -9,9 +9,16 @@ import org.qiunet.event.log.enums.base.IEventLogType;
  **/
 public abstract class BaseLogEvent implements ILogEvent {
 	private IEventLogType eventLogType;
+	private long createTime;
 
 	public BaseLogEvent(IEventLogType eventLogType) {
+		this.createTime = System.currentTimeMillis();
 		this.eventLogType = eventLogType;
+	}
+
+	@Override
+	public long createTime() {
+		return createTime;
 	}
 
 	@Override
