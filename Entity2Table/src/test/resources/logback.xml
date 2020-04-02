@@ -6,36 +6,35 @@
 	https://raw.githubusercontent.com/enricopulatzo/logback-XSD/master/src/main/xsd/logback.xsd"
 	debug="false" scan="true" scanPeriod="2 minute">
 
-	<timestamp key="dailyTimestamp" datePattern="_yyyy-MM-dd" />
-	<timestamp key="yyyyMMdd" datePattern="yyyy-MM-dd" />
-
-	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%level [%d{yyyy/MM/dd HH:mm:ss.SSS}] %logger - %msg%n</pattern>
 		</encoder>
 	</appender>
 
-<!--	<appender name="dailyFileAppender" class="ch.qos.logback.core.FileAppender">-->
-<!--		<append>true</append>-->
-<!--		<file>logs/${yyyyMMdd}/DuoDuo.log${dailyTimestamp}</file>-->
-<!--		<encoder>-->
-<!--			<pattern>%level [%d{yyyy/MM/dd HH:mm:ss.SSS}] %logger - %msg%n</pattern>-->
-<!--		</encoder>-->
-<!--	</appender>-->
+	<!--	<appender name="dailyFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+	<!--		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+	<!--			<fileNamePattern>logs/%d{yyyy-MM-dd}/DuoDuo.log_%d{yyyy-MM-dd}</fileNamePattern>-->
+	<!--		</rollingPolicy>-->
+	<!--		<append>true</append>-->
+	<!--		<encoder>-->
+	<!--			<pattern>%level [%d{yyyy/MM/dd HH:mm:ss.SSS}] %logger - %msg%n</pattern>-->
+	<!--		</encoder>-->
+	<!--	</appender>-->
 
 	<logger name="DuoDuo" level="INFO" additivity="false">
-		<appender-ref ref="console" />
+		<appender-ref ref="stdout" />
 	</logger>
 
 	<logger name="DuoDuoSql" level="INFO" additivity="false">
-		<appender-ref ref="console" />
+		<appender-ref ref="stdout" />
 	</logger>
 
 	<logger name="DuoDuoRedis" level="INFO" additivity="false">
-		<appender-ref ref="console" />
+		<appender-ref ref="stdout" />
 	</logger>
 
 	<root level="INFO">
-		<appender-ref ref="console" />
+		<appender-ref ref="stdout" />
 	</root>
 </configuration>
