@@ -17,8 +17,9 @@ public final class LogRecord {
 	 */
 	public static void sendLog(ILogEvent log){
 		Preconditions.checkNotNull(log);
+
 		String logMessage = log.logMessage();
 		RecordModel recordModel = log.logType().recordModel();
-		recordModel.getLogger().info(logMessage);
+		recordModel.getLogger(log.logType().getLoggerName()).send(logMessage);
 	}
 }

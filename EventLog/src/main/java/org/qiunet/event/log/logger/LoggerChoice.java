@@ -1,5 +1,6 @@
 package org.qiunet.event.log.logger;
 
+import org.qiunet.event.log.enums.RecordModel;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -18,7 +19,7 @@ public final class LoggerChoice {
 	private static Map<String, ILogger> loggers = new ConcurrentHashMap<>();
 
 	private static boolean useLogBack;
-	private static boolean useLog4j;
+//	private static boolean useLog4j;
 
 	static {
 		try {
@@ -27,25 +28,29 @@ public final class LoggerChoice {
 		} catch (ClassNotFoundException e) {
 			useLogBack = false;
 		}
-		try {
-			Class.forName("org.apache.log4j.Logger");
-			useLog4j = true;
-		} catch (ClassNotFoundException e) {
-
-			useLog4j = false;
-		}
+//		try {
+//			Class.forName("org.apache.log4j.Logger");
+//			useLog4j = true;
+//		} catch (ClassNotFoundException e) {
+//			useLog4j = false;
+//		}
 	}
 
-	public static ILogger getLogger(String name) {
-		return loggers.computeIfAbsent(name, LoggerChoice::createLogger);
+	public static ILogger getLogger(RecordModel model, String loggerName) {
+		return loggers.computeIfAbsent(loggerName, name -> LoggerChoice.createLogger(model, name));
 	}
 
-	private static ILogger createLogger(String name) {
-		if (useLogBack) {
-
-		}else if (useLog4j) {
-			// 暂时不实现了. 以后可能不使用log4j
+	private static ILogger createLogger(RecordModel model, String loggerName) {
+		switch (model) {
+			case LOCAL:
+				if (useLogBack) return new LogBackLogger(loggerName);
+				else throw new IllegalStateException("Just support for logback");
+			case TCP:
+				return new TcpLogger(loggerName);
+			case UDP:
+				return new UdpLogger(loggerName);
+			default:
+				throw new RuntimeException("not Support for model ["+model+"]");
 		}
-		return null;
 	}
 }

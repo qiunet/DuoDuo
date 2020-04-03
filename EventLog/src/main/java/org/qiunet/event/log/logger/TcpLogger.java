@@ -1,14 +1,13 @@
 package org.qiunet.event.log.logger;
 
 /***
- * 暂时不实现
  *
  * @author qiunet
  * 2020-03-25 10:33
  ***/
- class Log4jLogger extends BaseLogger {
+ class TcpLogger extends BaseLogger {
 
- 	Log4jLogger(String loggerName) {
+	TcpLogger(String loggerName) {
 		super(loggerName);
 	}
 
