@@ -15,7 +15,14 @@ public interface IEventLogType {
 	 *
 	 * @return
 	 */
-	String getLoggerName();
+	default String getLoggerName() {
+		return name().toLowerCase();
+	}
+	/**
+	 * 如果是枚举. 不用实现该方法
+	 * @return
+	 */
+	String name();
 	/**
 	 * 保存方式
 	 * @return

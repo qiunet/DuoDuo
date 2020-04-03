@@ -1,6 +1,5 @@
 package org.qiunet.event.log.test.enums;
 
-import org.qiunet.event.log.enums.RecordModel;
 import org.qiunet.event.log.enums.base.IEventLogType;
 
 /***
@@ -11,21 +10,6 @@ import org.qiunet.event.log.enums.base.IEventLogType;
  ***/
 public enum EventLogType implements IEventLogType {
 	/**金币日志**/
-	M1(RecordModel.LOCAL),
+	MONEY1,
 	;
-	private RecordModel model;
-
-	EventLogType(RecordModel model) {
-		this.model = model;
-	}
-
-	@Override
-	public String getLoggerName() {
-		return name().toLowerCase();
-	}
-
-	@Override
-	public RecordModel recordModel() {
-		return model;
-	}
 }

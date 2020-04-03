@@ -17,7 +17,7 @@ public class M1LogEvent extends AbstractLogEvent {
 	private String operate;
 
 	public M1LogEvent(long playerId, long currM1, int m1, String operate) {
-		super(EventLogType.M1);
+		super(EventLogType.MONEY1);
 		this.playerId = playerId;
 		this.currM1 = currM1;
 		this.m1 = m1;
