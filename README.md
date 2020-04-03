@@ -27,8 +27,7 @@
 |[FlashHandler](FlashHandler/README.md) 		| 能启动Tcp Http WebSocket作为服务的模块|
 |[GameTest](GameTest/README.md)  		|	 模拟机器人测试的模块.|
 |[JavaAgent](JavaAgent/README.md)  		|	 可以通过javaAgent 最后热加载指定的class|
-|[LoggerSender](LoggerSender/README.md)  	|	 日志发送模块|
-|[LoggerAcceptor](LoggerAcceptor/README.md)  	|  日志接收模块.| 
+|[EventLog](EventLog/README.md)  	|	 日志发送模块|
 |[all](all/README.md)  				|	 打包成一个duoduo-all 方便调用的模块.|
  
 ## 安装环境

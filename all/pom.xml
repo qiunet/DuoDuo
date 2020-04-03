@@ -233,6 +233,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
+			<artifactId>EventLog</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
 			<artifactId>ProjectInit</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>

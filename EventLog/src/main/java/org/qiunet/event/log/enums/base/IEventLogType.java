@@ -20,5 +20,7 @@ public interface IEventLogType {
 	 * 保存方式
 	 * @return
 	 */
-	RecordModel recordModel();
+	default RecordModel recordModel(){
+		return RecordModel.LOCAL;
+	}
 }

@@ -15,8 +15,6 @@
 		<module>Excel2Cfgs</module>
 		<module>ProjectInit</module>
 		<module>FlashHandler</module>
-		<module>LoggerSender</module>
-		<module>LoggerAcceptor</module>
 		<module>JavaAgent</module>
 		<module>Quartz</module>
 		<module>Entity2Table</module>
@@ -137,11 +135,6 @@
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
-				<version>1.7.21</version>
-			</dependency>
-			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>FlashHandler</artifactId>
 				<version>${modules.version}</version>
@@ -159,11 +152,6 @@
 			<dependency>
 				<groupId>org.qiunet</groupId>
 				<artifactId>ProjectInit</artifactId>
-				<version>${modules.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.qiunet</groupId>
-				<artifactId>LoggerSender</artifactId>
 				<version>${modules.version}</version>
 			</dependency>
 			<dependency>

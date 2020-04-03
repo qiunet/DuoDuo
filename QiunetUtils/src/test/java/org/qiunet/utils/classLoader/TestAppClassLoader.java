@@ -29,11 +29,11 @@ public class TestAppClassLoader extends BaseTest{
 			Object object2 = method1.invoke(object1);
 			Assert.assertEquals("org.test.ObjectB", object2.getClass().getName());
 			Assert.assertEquals(object2.toString() , "GameAppClassLoader");
-			
-			Class c2 = loader.loadClass("javaz.utils.date.DateUtil");
-			Object object3 = c2.newInstance();
-			Assert.assertEquals(object3.getClass().getClassLoader().getClass().getSimpleName(), "GameAppClassLoader");
-			
+
+//			Class c2 = loader.loadClass("javaz.utils.date.DateUtil");
+//			Object object3 = c2.newInstance();
+//			Assert.assertEquals(object3.getClass().getClassLoader().getClass().getSimpleName(), "GameAppClassLoader");
+//
 			Method method2 = object1.getClass().getMethod("createString");
 			String string = (String) method2.invoke(object1);
 			Assert.assertEquals("TestA", string);
@@ -41,7 +41,7 @@ public class TestAppClassLoader extends BaseTest{
 			exception = true;
 			e.printStackTrace();
 		} finally {
-			Assert.assertTrue(! exception);
+			Assert.assertFalse(exception);
 		}
 	}
 }

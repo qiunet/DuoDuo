@@ -42,7 +42,7 @@ public class GameAppClassLoader extends URLClassLoader {
 		Class<?> clazz = findLoadedClass(name);
 		if (clazz != null) return clazz;
 
-		if (Stream.of(this.allowLoaderNames).anyMatch(str ->name.startsWith(str))) {
+		if (Stream.of(this.allowLoaderNames).anyMatch(name::startsWith)) {
 			byte [] bytes = getClassDefineBytes(name);
 			return defineClass(name, bytes, 0 , bytes.length);
 		}
