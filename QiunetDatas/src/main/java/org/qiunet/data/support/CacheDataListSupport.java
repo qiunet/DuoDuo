@@ -51,7 +51,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 				DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
 				List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 
-				return doList.parallelStream()
+				return doList.stream()
 					.peek(aDo -> aDo.updateEntityStatus(EntityStatus.NORMAL))
 					.collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 			});

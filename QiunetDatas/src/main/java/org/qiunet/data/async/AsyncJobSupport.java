@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 	 * 异步更新到db
 	 */
 	public void asyncToDb(int maxDelay, TimeUnit unit){
-		nodes.parallelStream().forEach(node -> executor.schedule(() -> {
+		nodes.stream().forEach(node -> executor.schedule(() -> {
 			try {
 				// 必须try catch 否则导致线程停止
 				node.syncToDatabase();

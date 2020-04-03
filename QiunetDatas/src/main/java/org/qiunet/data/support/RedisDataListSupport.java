@@ -71,7 +71,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 				return null;
 			}
 
-			return hvals.parallelStream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
+			return hvals.stream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
 		});
 	}
 
@@ -117,7 +117,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 		if (doList == null || doList.isEmpty()) {
 			map = new ConcurrentHashMap<>();
 		}else {
-			map = doList.parallelStream().collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
+			map = doList.stream().collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 		}
 		ThreadContextData.put(redisKey, map);
 		return map;

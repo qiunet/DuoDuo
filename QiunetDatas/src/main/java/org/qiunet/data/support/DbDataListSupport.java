@@ -24,7 +24,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 		List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
 		if (doList == null) return Collections.emptyMap();
 
-		return doList.parallelStream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
+		return doList.stream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
 	}
 	/**
 	 * 删除
