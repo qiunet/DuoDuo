@@ -64,7 +64,8 @@ public class TestRedisDataListSupport {
 		map = dataListSupport.getBoMap(uid);
 		Assert.assertFalse(map.isEmpty());
 
-		this.expire(uid);
+		map.values().forEach(EquipBo::delete);
+		dataListSupport.syncToDatabase();
 	}
 
 	public void expire(long uid) {
