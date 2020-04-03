@@ -7,10 +7,13 @@ import org.qiunet.event.log.log.ILogEvent;
  * @author qiunet
  * 2020-03-25 10:33
  ***/
- class UdpLogger extends BaseLogger {
+ enum  UdpLogger implements ILogger {
+	instance;
 
-	 UdpLogger(String loggerName) {
-		super(loggerName);
+
+	@Override
+	public String loggerName() {
+		return "UdpLogger";
 	}
 
 	@Override

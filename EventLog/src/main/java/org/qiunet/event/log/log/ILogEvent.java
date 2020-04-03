@@ -17,6 +17,7 @@ public interface ILogEvent {
 	IEventLogType logType();
 	/**
 	 * 生成发送的消息
+	 * 业务自己拼需要的log msg
 	 * @return
 	 */
 	String logMessage();

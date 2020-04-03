@@ -8,10 +8,15 @@ import org.qiunet.event.log.log.ILogEvent;
  * @author qiunet
  * 2020-03-25 10:33
  ***/
- class Log4jLogger extends BaseLogger {
+ class Log4jLogger implements ILogger {
 
  	Log4jLogger(String loggerName) {
-		super(loggerName);
+
+	}
+
+	@Override
+	public String loggerName() {
+		return null;
 	}
 
 	@Override

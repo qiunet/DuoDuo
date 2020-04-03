@@ -16,7 +16,6 @@ public final class LoggerChoice {
 	private static Map<String, ILogger> loggers = new ConcurrentHashMap<>();
 
 	private static boolean useLogBack;
-//	private static boolean useLog4j;
 
 	static {
 		try {
@@ -25,28 +24,21 @@ public final class LoggerChoice {
 		} catch (ClassNotFoundException e) {
 			useLogBack = false;
 		}
-//		try {
-//			Class.forName("org.apache.log4j.Logger");
-//			useLog4j = true;
-//		} catch (ClassNotFoundException e) {
-//			useLog4j = false;
-//		}
 	}
 
 	public static ILogger getLogger(IEventLogType logType) {
-		return loggers.computeIfAbsent(logType.getLoggerName(), name ->
-			LoggerChoice.createLogger(logType.recordModel(), name));
+			return LoggerChoice.createLogger(logType.recordModel(), logType.getLoggerName());
 	}
 
 	private static ILogger createLogger(RecordModel model, String loggerName) {
 		switch (model) {
 			case LOCAL:
-				if (useLogBack) return new LogBackLogger(loggerName);
+				if (useLogBack) return loggers.computeIfAbsent(loggerName, LogBackLogger::new);
 				else throw new IllegalStateException("Just support for logback");
-			case TCP:
-				return new TcpLogger(loggerName);
-			case UDP:
-				return new UdpLogger(loggerName);
+//			case TCP:
+//				return TcpLogger.instance;
+//			case UDP:
+//				return UdpLogger.instance;
 			default:
 				throw new RuntimeException("not Support for model ["+model+"]");
 		}
