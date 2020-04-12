@@ -8,13 +8,13 @@ import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.net.InetAddress;
@@ -40,11 +40,12 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-					.setTcpInterceptor(new DefaultTcpInterceptor())
-					.setErrorMessage(new DefaultErrorMessage())
-					.setPort(port)
-					.setEncryption(true)
-					.build();
+				.setErrorMessage(new DefaultErrorMessage())
+				.setStartupContext(new StartupContext())
+				.setEncryption(true)
+				.setPort(port)
+				.build();
+
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
 			LockSupport.unpark(currThread);
 			server.await();

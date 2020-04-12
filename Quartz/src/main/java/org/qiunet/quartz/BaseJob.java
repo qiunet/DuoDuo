@@ -29,7 +29,7 @@ abstract class BaseJob implements IJob {
 
 	@Override
 	public Boolean doJob(){
-		UseTimer useTimer = new UseTimer(jobName, warnMillis, false);
+		UseTimer useTimer = new UseTimer(jobName, warnMillis);
 		useTimer.start();
 		try {
 			 return doWork();

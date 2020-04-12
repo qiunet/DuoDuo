@@ -1,7 +1,8 @@
-package org.qiunet.flash.handler.context.header;
+package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 
 /***
  * 创建启动上下文

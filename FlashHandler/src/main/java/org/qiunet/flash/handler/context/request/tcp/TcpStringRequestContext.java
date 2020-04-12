@@ -2,10 +2,10 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
 
 /**
@@ -13,10 +13,10 @@ import org.qiunet.utils.string.StringUtil;
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpStringRequestContext extends AbstractTcpRequestContext<String, String> {
+public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcpRequestContext<String, String, P> {
 	protected String requestData;
-	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, TcpBootstrapParams params) {
-		super(content, channelContext, params);
+	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, P playerActor) {
+		super(content, channelContext, playerActor);
 	}
 
 	@Override
@@ -34,7 +34,16 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 
 	@Override
 	public void handlerRequest() {
-		FacadeTcpRequest<String> facadeTcpRequest = new FacadeTcpRequest<>(this);
-		params.getTcpInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
+		FacadeTcpRequest<String, String, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
+		try {
+			((ITcpHandler) getHandler()).handler(playerActor, facadeTcpRequest);
+		} catch (Exception e) {
+			logger.error("TcpStringRequestContext Exception", e);
+		}
+	}
+
+	@Override
+	public void execute(P p) {
+		this.handlerRequest();
 	}
 }

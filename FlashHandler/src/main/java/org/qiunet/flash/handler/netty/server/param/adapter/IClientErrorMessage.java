@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.tcp.error;
+package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 

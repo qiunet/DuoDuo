@@ -4,7 +4,6 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -36,8 +35,14 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 
 	@Override
 	public void handlerRequest() {
-		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
-		ResponseData data = (ResponseData) params.getHttpInterceptor().handler((IHttpHandler)getHandler(), request);
+		FacadeHttpRequest<RequestData, GeneratedMessageV3> request = new FacadeHttpRequest<>(this);
+		ResponseData data = null;
+		try {
+			data = getHandler().handler(request);
+		} catch (Exception e) {
+			logger.error("HttpProtobufRequestContext Exception: ", e);
+		}
+
 		if (data == null) {
 			throw new NullPointerException("Response Protobuf data can not be null!");
 		}

@@ -3,8 +3,6 @@ package org.qiunet.flash.handler.params;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
-import org.qiunet.flash.handler.interceptor.DefaultHttpInterceptor;
-import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 
@@ -20,7 +18,6 @@ public class TestParams {
 	public void testBootstrapParam() throws UnknownHostException {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
-				.setHttpInterceptor(new DefaultHttpInterceptor())
 				.build();
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 
@@ -28,7 +25,6 @@ public class TestParams {
 				.setPort(1315)
 				.setMaxReceivedLength(1024*1024)
 				.setErrorMessage(new DefaultErrorMessage())
-				.setTcpInterceptor(new DefaultTcpInterceptor())
 				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}

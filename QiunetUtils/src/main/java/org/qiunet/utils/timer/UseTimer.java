@@ -11,7 +11,7 @@ import org.slf4j.Logger;
  **/
 public class UseTimer {
 
-	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO_USE_TIME.getLogger();
 	/**
 	 * 用时表名称
 	 */
@@ -24,20 +24,11 @@ public class UseTimer {
 	 *
 	 */
 	private StopWatch stopWatch;
-	/**
-	 * 没有告警的消息是否打印
-	 */
-	private boolean printNormalMsg;
 
 	public UseTimer(String name, long warnUseTime) {
-		this(name,warnUseTime, true);
-	}
-
-	public UseTimer(String name, long warnUseTime, boolean printNormalMsg) {
 		this.name = name;
 		this.warnUseTime = warnUseTime;
 		this.stopWatch = new StopWatch();
-		this.printNormalMsg = printNormalMsg;
 		this.start();
 	}
 
@@ -59,8 +50,8 @@ public class UseTimer {
 	public long printUseTime(){
 		long useTime = countUseTime();
 		if (useTime > warnUseTime) {
-			logger.error("{} use {} ms", name, useTime);
-		}else if (printNormalMsg){
+			logger.warn("{} use {} ms", name, useTime);
+		}else {
 			logger.info("{} use {} ms", name, useTime);
 		}
 		return useTime;

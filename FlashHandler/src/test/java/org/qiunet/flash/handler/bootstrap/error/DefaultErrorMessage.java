@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.bootstrap.error;
 
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
-import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
+import org.qiunet.flash.handler.netty.server.param.adapter.IClientErrorMessage;
 
 /**
  * Created by qiunet.

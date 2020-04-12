@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
+import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -25,7 +26,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author qiunet
  *         Created on 17/3/17 14:28.
  */
-abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData> {
+abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData, ResponseData> {
 	private HttpRequest request;
 	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;
@@ -34,6 +35,11 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		super(content, channelContext);
 		this.request = request;
 		this.params = params;
+	}
+
+	@Override
+	public IHttpHandler<RequestData, ResponseData> getHandler() {
+		return (IHttpHandler<RequestData, ResponseData>) handler;
 	}
 
 	private Map<String ,List<String>> parameters(){

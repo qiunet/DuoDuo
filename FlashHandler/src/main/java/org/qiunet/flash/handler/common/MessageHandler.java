@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public abstract class MessageHandler<H extends MessageHandler> implements Runnable {
+public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H> {
 
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
@@ -39,7 +39,7 @@ public abstract class MessageHandler<H extends MessageHandler> implements Runnab
 
 	private volatile boolean close;
 
-	private UseTimer useTimer = new UseTimer(getClass().getName(), 500, false);
+	private UseTimer useTimer = new UseTimer(getClass().getName(), 500);
 
 	@Override
 	public void run() {
@@ -82,6 +82,7 @@ public abstract class MessageHandler<H extends MessageHandler> implements Runnab
 	 * 添加一条可以执行消息
 	 * @param msg
 	 */
+	@Override
 	public void addMessage(IMessage<H> msg) {
 		if (close) {
 			logger.error("MessageHandler ["+getIdent()+"] 已经关闭销毁", new RuntimeException());

@@ -1,14 +1,15 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 
 /**
  * tcp request 的外观类
  * Created by qiunet.
  * 17/11/21
  */
-class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
-	private AbstractTcpRequestContext<RequestData, Object> context;
+class FacadeTcpRequest<RequestData, ResponseData, P extends IPlayerActor> implements ITcpRequest<RequestData> {
+	private AbstractTcpRequestContext<RequestData, ResponseData, P> context;
 
 	public FacadeTcpRequest (AbstractTcpRequestContext context) {
 		this.context = context;
@@ -31,14 +32,6 @@ class FacadeTcpRequest<RequestData> implements ITcpRequest<RequestData> {
 	@Override
 	public void setAttribute(String key, Object val) {
 		context.setAttribute(key, val);
-	}
-
-	@Override
-	public void response(int protocolId, Object responseData) {
-		if (responseData == null){
-			throw new NullPointerException("ResponseData can not be null");
-		}
-		context.response(protocolId, responseData);
 	}
 
 	@Override

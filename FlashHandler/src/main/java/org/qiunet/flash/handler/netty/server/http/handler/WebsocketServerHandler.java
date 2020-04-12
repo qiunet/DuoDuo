@@ -7,6 +7,8 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
+import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -27,6 +29,11 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
+
+		ISession iSession = params.getStartupContext().buildSession(ctx.channel());
+
+		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
+		SessionManager.getInstance().addSession(iSession);
 	}
 
 	public WebsocketServerHandler (HttpHeaders headers, HttpBootstrapParams params) {
@@ -42,9 +49,10 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 			return;
 		}
 
-		IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, params, headers);
-		if (ctx.channel().isActive()) {
-			handler.getHandlerType().processRequest(context);
+		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		if (session != null && ctx.channel().isActive()) {
+			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, session.getPlayerActor(), headers);
+			session.getPlayerActor().addMessage(context);
 		}
 	}
 

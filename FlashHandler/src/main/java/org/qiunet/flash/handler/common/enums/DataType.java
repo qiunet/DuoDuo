@@ -7,6 +7,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.http.HttpProtobufRequestContext;
 import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
@@ -18,7 +19,6 @@ import org.qiunet.flash.handler.context.request.websocket.WebSocketProtobufReque
 import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.lang.reflect.Field;
@@ -45,13 +45,13 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers) {
-			return new WebSocketStringRequestContext(content, channelContext, params, headers);
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers) {
+			return new WebSocketStringRequestContext(content, channelContext, playerActor, headers);
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
-			return new TcpStringRequestContext(content, channelContext, params);
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor) {
+			return new TcpStringRequestContext(content, channelContext, playerActor);
 		}
 	},
 	/**
@@ -89,13 +89,13 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers) {
-			return new WebSocketProtobufRequestContext(content, channelContext, params, headers);
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers) {
+			return new WebSocketProtobufRequestContext(content, channelContext, playerActor, headers);
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params) {
-			return new TcpProtobufRequestContext(content, channelContext, params);
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor) {
+			return new TcpProtobufRequestContext(content, channelContext, playerActor);
 		}
 	},
 	;
@@ -116,12 +116,12 @@ public enum DataType {
 	 * @param channelContext
 	 * @return
 	 */
-	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers);
+	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers);
 	/**
 	 * 得到一个tcp使用的context
 	 * @param content
 	 * @param channelContext
 	de * @return
 	 */
-	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params);
+	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor);
 }

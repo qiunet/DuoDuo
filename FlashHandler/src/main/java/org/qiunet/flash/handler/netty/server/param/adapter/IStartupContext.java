@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.context;
+package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
@@ -11,13 +11,13 @@ import org.qiunet.flash.handler.context.session.ISession;
  * @author qiunet
  * 2020/3/8 09:31
  **/
-public interface IStartupContext< S extends ISession, T extends IPlayerActor<S>> {
+public interface IStartupContext<S extends ISession, T extends IPlayerActor<S, ? extends IPlayerActor>> {
 	/**
 	 * 构造session http情况不会调用.
 	 * @param channel
 	 * @return
 	 */
-	T buildSession(Channel channel);
+	S buildSession(Channel channel);
 
 	/**
 	 * 构造PlayerActor
@@ -25,5 +25,5 @@ public interface IStartupContext< S extends ISession, T extends IPlayerActor<S>>
 	 * @param session
 	 * @return
 	 */
-	T buildPlayerActor(S session);
+	T buildPlayerActor(ISession session);
 }

@@ -2,14 +2,15 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
-class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<RequestData> {
-	private AbstractWebSocketRequestContext<RequestData, Object> context;
-	public FacadeWebSocketRequest(AbstractWebSocketRequestContext<RequestData, Object> context) {
+class FacadeWebSocketRequest<RequestData, ResponseData, P extends IPlayerActor> implements IWebSocketRequest<RequestData> {
+	private AbstractWebSocketRequestContext<RequestData, ResponseData, P> context;
+	public FacadeWebSocketRequest(AbstractWebSocketRequestContext<RequestData, ResponseData, P> context) {
 		this.context = context;
 	}
 
@@ -36,13 +37,5 @@ class FacadeWebSocketRequest<RequestData> implements IWebSocketRequest<RequestDa
 	@Override
 	public Channel channel() {
 		return context.channel();
-	}
-
-	@Override
-	public void response(int protocolId, Object responseData) {
-		if (responseData == null){
-			throw new NullPointerException("ResponseData can not be null");
-		}
-		context.response(protocolId, responseData);
 	}
 }

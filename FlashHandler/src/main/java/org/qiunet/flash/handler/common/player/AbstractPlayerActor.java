@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
-import org.qiunet.flash.handler.context.sender.IMessageSender;
+import org.qiunet.flash.handler.context.sender.IResponseSender;
 import org.qiunet.flash.handler.context.session.AbstractSession;
 import org.qiunet.flash.handler.context.session.ISession;
 
@@ -13,18 +13,19 @@ import org.qiunet.flash.handler.context.session.ISession;
  * @author qiunet
  * 2020/3/1 21:45
  **/
-public abstract class AbstractPlayerActor<T extends AbstractPlayerActor, Session extends ISession> extends MessageHandler<T>
-		implements IPlayerActor<Session>, IMessageSender {
-	protected Session session;
+public abstract class AbstractPlayerActor<S extends ISession, P extends AbstractPlayerActor>
+	extends MessageHandler<P> implements IPlayerActor<S, P>, IResponseSender {
 
-	public AbstractPlayerActor(Session session) {
+	protected S session;
+
+	public AbstractPlayerActor(S session) {
 		if (session instanceof AbstractSession) {
 			((AbstractSession) session).setPlayerActor(this);
 		}
 		this.session = session;
 	}
 
-	public Session getSession() {
+	public S getSession() {
 		return session;
 	}
 

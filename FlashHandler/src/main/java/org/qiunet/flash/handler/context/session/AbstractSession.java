@@ -14,15 +14,15 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/26
  */
-public abstract class AbstractSession implements ISession {
-	protected IPlayerActor playerActor;
+public abstract class AbstractSession<P extends IPlayerActor> implements ISession<P> {
+	protected P playerActor;
 	protected Channel channel;
 
 	public AbstractSession(Channel channel) {
 		this.channel = channel;
 	}
 
-	public void setPlayerActor(IPlayerActor playerActor) {
+	public void setPlayerActor(P playerActor) {
 		this.playerActor = playerActor;
 	}
 
@@ -69,6 +69,11 @@ public abstract class AbstractSession implements ISession {
 	@Override
 	public ChannelFuture writeMessage(IResponseMessage message) {
 		return channel.writeAndFlush(message.encode());
+	}
+
+	@Override
+	public P getPlayerActor() {
+		return playerActor;
 	}
 
 	@Override

@@ -1,11 +1,11 @@
 package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.common.player.IPlayerActor;
-import org.qiunet.flash.handler.context.IStartupContext;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.server.tcp.error.IClientErrorMessage;
+import org.qiunet.flash.handler.netty.server.param.adapter.IClientErrorMessage;
+import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;

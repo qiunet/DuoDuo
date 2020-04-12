@@ -4,7 +4,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -13,7 +12,7 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  * 17/11/21
  */
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
-	private String reqeustData;
+	private String requestData;
 
 	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channelContext, params, request);
@@ -21,10 +20,10 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 
 	@Override
 	public String getRequestData() {
-		if (reqeustData == null) {
-			reqeustData = getHandler().parseRequestData(messageContent.bytes());
+		if (requestData == null) {
+			requestData = getHandler().parseRequestData(messageContent.bytes());
 		}
-		return reqeustData;
+		return requestData;
 	}
 	@Override
 	protected byte[] getResponseDataBytes(String s) {
@@ -33,11 +32,18 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 
 	@Override
 	public void handlerRequest() {
-		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
-		String responseData = (String) params.getHttpInterceptor().handler((IHttpHandler) getHandler(), requestData);
-		if (requestData == null){
+		FacadeHttpRequest<String, String> requestData = new FacadeHttpRequest<>(this);
+		String responseData = null;
+		try {
+			responseData = getHandler().handler(requestData);
+		} catch (Exception e) {
+			logger.error("HttpStringRequestContext Exception", e);
+		}
+
+		if (responseData == null){
 			throw new NullPointerException("Response String can not be null!");
 		}
+
 		this.response(responseData);
 	}
 

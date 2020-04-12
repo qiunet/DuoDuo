@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.response.push.IResponseMessage;
  * @author qiunet
  * 2020/3/1 20:53
  **/
-public interface IMessageSender {
+public interface IResponseSender {
 	/***
 	 * 发送消息.
 	 * @param message

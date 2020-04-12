@@ -2,15 +2,17 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /**
  * session 的接口,
  * Created by qiunet.
  * 17/10/23
  */
-public interface ISession {
+public interface ISession<P extends IPlayerActor> {
 
 
 	/***
@@ -32,6 +34,13 @@ public interface ISession {
 	 */
 	Channel getChannel();
 
+	/**
+	 * 得到玩家相关的对象.
+	 * @return
+	 */
+	default P getPlayerActor(){
+		return (P) getChannel().attr(ServerConstants.PLAYER_ACTOR_KEY).get();
+	}
 	/**
 	 * 是否已经认证登录
 	 * @return
