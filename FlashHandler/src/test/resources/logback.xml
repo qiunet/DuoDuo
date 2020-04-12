@@ -34,6 +34,10 @@
 		<appender-ref ref="stdout" />
 	</logger>
 
+	<logger name="DuoDuoUseTime" level="WARN" additivity="false">
+		<appender-ref ref="stdout" />
+	</logger>
+
 	<root level="INFO">
 		<appender-ref ref="stdout" />
 	</root>

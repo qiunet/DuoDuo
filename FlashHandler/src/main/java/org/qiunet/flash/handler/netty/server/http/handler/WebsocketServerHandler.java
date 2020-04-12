@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
@@ -27,26 +28,19 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	private HttpBootstrapParams params;
 	private HttpHeaders headers;
 
-	@Override
-	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
-
-		ISession iSession = params.getStartupContext().buildSession(ctx.channel());
-
-		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
-		SessionManager.getInstance().addSession(iSession);
-	}
 
 	@Override
-	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("================1");
-		super.channelInactive(ctx);
-	}
+	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
+		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
 
-	@Override
-	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		System.out.println("================");
-		super.channelActive(ctx);
+			ISession iSession = params.getStartupContext().buildSession(ctx.channel());
+
+			ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
+			SessionManager.getInstance().addSession(iSession);
+		}
+		super.userEventTriggered(ctx, evt);
 	}
 
 	public WebsocketServerHandler (HttpHeaders headers, HttpBootstrapParams params) {
