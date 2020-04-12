@@ -15,7 +15,7 @@ public class TestCfgManager {
 		ClassScanner.getInstance().scanner();
 		try {
 			CfgManagers.getInstance().reloadSetting();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}

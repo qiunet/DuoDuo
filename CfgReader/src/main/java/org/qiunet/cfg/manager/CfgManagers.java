@@ -1,11 +1,16 @@
 package org.qiunet.cfg.manager;
 
 import org.qiunet.cfg.base.ICfgManager;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * 总管 游戏设定加载
@@ -15,9 +20,9 @@ import java.util.*;
 public class CfgManagers {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
-	private static CfgManagers instance = new CfgManagers();
+	private static final CfgManagers instance = new CfgManagers();
 	private List<Container<ICfgManager>> gameSettingList = new ArrayList<>();
-	private List<Container<LoaderProperties>> propertylist = new ArrayList<>();
+	private List<Container<LoaderProperties>> propertyList = new ArrayList<>();
 
 	private CfgManagers(){
 		if (instance != null) {
@@ -37,9 +42,9 @@ public class CfgManagers {
 	/**
 	 * 初始化会比重新加载多一层排序
 	 */
-	public void initSetting() throws Exception{
+	public void initSetting() throws Throwable {
 		Collections.sort(gameSettingList);
-		Collections.sort(propertylist);
+		Collections.sort(propertyList);
 		this.reloadSetting();
 	}
 
@@ -48,7 +53,7 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public void reloadSetting() throws  Exception{
+	public void reloadSetting() throws Throwable {
 		logger.error("Game Setting Data Load start.....");
 		this.loadPropertySetting();
 		this.loadDataSetting();
@@ -75,13 +80,13 @@ public class CfgManagers {
 	 * @param order
 	 */
 	public void addPropertySetting(LoaderProperties properties, int order) {
-		this.propertylist.add(new Container<>(properties, order));
+		this.propertyList.add(new Container<>(properties, order));
 	}
 	/**
 	 * 加载property
 	 */
-	protected void loadPropertySetting() {
-		for (Container<? extends LoaderProperties> container : propertylist){
+	private void loadPropertySetting() {
+		for (Container<? extends LoaderProperties> container : propertyList){
 			logger.info("Load Properties ["+ container.t.getClass().getName() +"]");
 			container.t.reload();
 		}
@@ -92,15 +97,35 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	protected void loadDataSetting() throws Exception {
+	private void loadDataSetting() throws Throwable {
+		int size = gameSettingList.size();
+		CountDownLatch latch = new CountDownLatch(size);
+		DPromise<Throwable> future = new DCompletePromise<>();
 		for (Container<ICfgManager> container : gameSettingList) {
-			try {
-				container.t.loadCfg();
-			}catch (Exception e) {
-				logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
-				throw e;
-			}
-			logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
+			DFuture<Void> dFuture = TimerManager.getInstance().executorNow(() -> {
+					container.t.loadCfg();
+					return null;
+			});
+
+			dFuture.whenComplete((res, ex) -> {
+				if (ex != null) {
+					logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
+					future.trySuccess(ex);
+
+					for (long i = 0; i < latch.getCount(); i++) {
+						latch.countDown();
+					}
+					return;
+				}
+
+				logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
+				latch.countDown();
+			});
+		}
+
+		latch.await();
+		if (future.isDone()) {
+			throw future.get();
 		}
 	}
 
@@ -117,7 +142,7 @@ public class CfgManagers {
 	 * @return
 	 */
 	public int propertySize(){
-		return propertylist.size();
+		return propertyList.size();
 	}
 	/***
 	 * IGameSetting  的包装类 包含排序
@@ -127,7 +152,7 @@ public class CfgManagers {
 		private T t;
 		private int order ;
 
-		public Container(T t , int order ){
+		Container(T t , int order ){
 			this.order = order;
 			this.t = t;
 		}

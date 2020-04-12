@@ -36,7 +36,7 @@ public class Executor {
 				.setInitializer(() -> {
 					try {
 						CfgManagers.getInstance().initSetting();
-					} catch (Exception e) {
+					} catch (Throwable e) {
 						e.printStackTrace();
 					}
 				})
