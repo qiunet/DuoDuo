@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.client.param;
 
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 
 import java.net.InetSocketAddress;
@@ -43,9 +44,7 @@ public abstract class AbstractClientParam implements IClientConfig {
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
 	public abstract static class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
-
-		protected IProtocolHeaderAdapter startupContextAdapter;
-
+		protected IProtocolHeaderAdapter startupContextAdapter = new DefaultProtocolHeaderAdapter();
 		protected int maxReceivedLength = 1024 * 1024 * 8;
 		protected InetSocketAddress address;
 		protected boolean encryption = true;

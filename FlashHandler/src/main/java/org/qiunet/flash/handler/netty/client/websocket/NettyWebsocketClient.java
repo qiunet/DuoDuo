@@ -74,7 +74,6 @@ public class NettyWebsocketClient implements ILongConnClient {
 		}
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
-			ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast("HttpClientCodec", new HttpClientCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024*1024*2));
@@ -130,6 +129,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 					System.out.println("WebSocket Client failed to connect");
 					handshakeFuture.setFailure(e);
 				}
+				ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 				ctx.fireChannelRead(msg.retain());
 			}
 		}
