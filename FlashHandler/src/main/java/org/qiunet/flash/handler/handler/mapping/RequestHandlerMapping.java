@@ -119,7 +119,7 @@ public class RequestHandlerMapping {
 				clazz = clazz.getSuperclass();
 				continue;
 			}
-
+			// 可能有的第一位是PlayerActor或者PlayerActor泛型类型 第二位才是requestClass类型.
 			Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
 			Type type = types[0];
 			Class requestDataClass = null;

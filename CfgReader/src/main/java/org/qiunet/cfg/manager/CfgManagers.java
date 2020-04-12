@@ -1,16 +1,19 @@
 package org.qiunet.cfg.manager;
 
+import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ICfgManager;
-import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 总管 游戏设定加载
@@ -21,13 +24,15 @@ public class CfgManagers {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private static final CfgManagers instance = new CfgManagers();
-	private List<Container<ICfgManager>> gameSettingList = new ArrayList<>();
-	private List<Container<LoaderProperties>> propertyList = new ArrayList<>();
+	private List<Container<ICfgManager>> gameSettingList;
+	private List<Container<LoaderProperties>> propertyList;
 
 	private CfgManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
+		this.propertyList = Lists.newArrayListWithCapacity(10);
+		this.gameSettingList = Lists.newArrayListWithCapacity(100);
 	}
 
 	public static CfgManagers getInstance(){
@@ -100,8 +105,19 @@ public class CfgManagers {
 	private void loadDataSetting() throws Throwable {
 		int size = gameSettingList.size();
 		CountDownLatch latch = new CountDownLatch(size);
-		DPromise<Throwable> future = new DCompletePromise<>();
+		AtomicReference<Throwable> reference = new AtomicReference<>();
 		for (Container<ICfgManager> container : gameSettingList) {
+			if (container.order > 0) {
+				try {
+					container.t.loadCfg();
+				}catch (Exception e) {
+					logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
+					throw e;
+				}
+				logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
+				continue;
+			}
+
 			DFuture<Void> dFuture = TimerManager.getInstance().executorNow(() -> {
 					container.t.loadCfg();
 					return null;
@@ -110,7 +126,7 @@ public class CfgManagers {
 			dFuture.whenComplete((res, ex) -> {
 				if (ex != null) {
 					logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
-					future.trySuccess(ex);
+					reference.compareAndSet(null, ex);
 
 					for (long i = 0; i < latch.getCount(); i++) {
 						latch.countDown();
@@ -124,8 +140,8 @@ public class CfgManagers {
 		}
 
 		latch.await();
-		if (future.isDone()) {
-			throw future.get();
+		if (reference.get() != null) {
+			throw reference.get();
 		}
 	}
 
