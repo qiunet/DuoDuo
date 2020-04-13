@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.common;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.listener.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.data.ServerShutdownEventData.ServerShutdownListener;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -16,12 +18,12 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /***
- * 销毁时候, 需要一定调用 {@link MessageHandler#destory()}!!!!!!!!!!!!!
+ * 销毁时候, 需要一定调用 {@link MessageHandler#destroy()} !!!!!!!!!!!!!
  *
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H> {
+public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H>, ServerShutdownListener {
 
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
@@ -151,6 +153,16 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		return future;
 	}
 
+	@Override
+	public void onShutdown(ServerShutdownEventData data) {
+		try {
+			this.destroy();
+			executorService.shutdown();
+			executorService.awaitTermination(2, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			logger.error("shutdownException: ", e);
+		}
+	}
 
 	private class ScheduleFuture implements Future<Object> {
 		private String scheduleName;
