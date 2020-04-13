@@ -18,7 +18,6 @@ public class PlayerActor extends AbstractPlayerActor<GameSession, PlayerActor> {
 
 	public PlayerActor(GameSession session) {
 		super(session);
-		this.playerId = 10000;
 	}
 
 	@Override

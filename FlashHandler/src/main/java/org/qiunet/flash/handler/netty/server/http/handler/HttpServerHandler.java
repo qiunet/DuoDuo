@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolConfig;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
@@ -95,7 +96,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, false, params.getMaxReceivedLength()));
+		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WebSocketServerProtocolConfig.newBuilder()
+			.maxFramePayloadLength(params.getMaxReceivedLength())
+			.websocketPath(params.getWebsocketPath())
+			.handleCloseFrames(true)
+			.build()));
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
