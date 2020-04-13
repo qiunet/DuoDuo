@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 17/10/23
  */
 public class SessionManager implements SessionCloseEventData.SessionCloseListener {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private static final AttributeKey<ISession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
 	/***
 	 * 所有的session
@@ -48,7 +48,7 @@ public class SessionManager implements SessionCloseEventData.SessionCloseListene
 		if (oldSession != null && oldSession.isActive()) {
 			oldSession.close(CloseCause.LOGIN_REPEATED);
 		}
-		val.getChannel().closeFuture().addListener(future -> val.close(CloseCause.CHANNEL_CLOSE));
+		val.getChannel().closeFuture().addListener(future -> logger.warn("Session ["+val+"] closed"));
 		return sessions.get(val.getUid());
 	}
 	/***

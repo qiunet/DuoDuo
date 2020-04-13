@@ -68,8 +68,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		String errMeg = "Exception Ip["+(session != null ? session.getIp() : "" )+"]" +
-			"openId ["+(session != null ? session.getOpenId(): "")+"]";
+		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {

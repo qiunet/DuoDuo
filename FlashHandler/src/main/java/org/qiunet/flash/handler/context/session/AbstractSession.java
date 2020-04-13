@@ -6,6 +6,8 @@ import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 
@@ -15,6 +17,7 @@ import java.net.InetSocketAddress;
  * 17/11/26
  */
 public abstract class AbstractSession<P extends IPlayerActor> implements ISession<P> {
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	protected P playerActor;
 	protected Channel channel;
 
@@ -78,7 +81,18 @@ public abstract class AbstractSession<P extends IPlayerActor> implements ISessio
 
 	@Override
 	public void close(CloseCause cause) {
-		playerActor.destroy();
+		logger.info("Session ["+this.toString()+"] closed by cause ["+cause+"]");
 		new SessionCloseEventData(this, cause).fireEventHandler();
+		playerActor.destroy();
+		if (channel.isActive() || channel.isOpen()) {
+			channel.close();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "uid=" + getUid() + "\t" +
+			"openId=" + getOpenId() + "\t" +
+			"Ip=" + getIp() + "\t";
 	}
 }

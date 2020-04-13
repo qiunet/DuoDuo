@@ -19,6 +19,10 @@ public enum  LoggerType {
 	DUODUO_REDIS("DuoDuoRedis"),
 	/***热替换**/
 	DUODUO_HOTSWAP("DuoDuoHotSwap"),
+	/**
+	 * flashHandler 的日志
+	 */
+	DUODUO_FLASH_HANDLER("DuoDuoFlashHandler"),
 	;
 
 	private String loggerName;

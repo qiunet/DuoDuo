@@ -99,7 +99,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
-		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(request.headers(), params));
+		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
 		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
 
 		ctx.fireChannelRead(request.retain());

@@ -35,6 +35,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+			this.headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
 			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
 
 			ISession iSession = params.getStartupContext().buildSession(ctx.channel());
@@ -45,9 +46,8 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		super.userEventTriggered(ctx, evt);
 	}
 
-	public WebsocketServerHandler (HttpHeaders headers, HttpBootstrapParams params) {
+	public WebsocketServerHandler (HttpBootstrapParams params) {
 		this.params = params;
-		this.headers = headers;
 	}
 
 	@Override
@@ -76,8 +76,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		String errMeg = "Exception openId ["+(session != null ? session.getOpenId(): '-')+"]"+
-						"Ip["+(session != null ? session.getIp() : "" )+"]" ;
+		String errMeg = "Exception session ["+(session != null ? session.toString(): "")+"]";
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
