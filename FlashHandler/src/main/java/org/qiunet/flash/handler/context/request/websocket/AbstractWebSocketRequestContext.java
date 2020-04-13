@@ -7,14 +7,13 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.context.response.IResponse;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
-abstract class AbstractWebSocketRequestContext<RequestData, ResponseData, P extends IPlayerActor>  extends BaseRequestContext<RequestData> implements IWebSocketRequestContext<RequestData, P>, IResponse<ResponseData> {
+abstract class AbstractWebSocketRequestContext<RequestData, ResponseData, P extends IPlayerActor>  extends BaseRequestContext<RequestData> implements IWebSocketRequestContext<RequestData, P>{
 	protected HttpHeaders headers;
 	protected P playerActor;
 
@@ -22,12 +21,6 @@ abstract class AbstractWebSocketRequestContext<RequestData, ResponseData, P exte
 		super(content, ctx);
 		this.headers = headers;
 		this.playerActor = playerActor;
-	}
-
-
-	@Override
-	public void response(int protocolId, ResponseData data) {
-		channel().writeAndFlush(getResponseMessage(protocolId, data).encode());
 	}
 
 	@Override
