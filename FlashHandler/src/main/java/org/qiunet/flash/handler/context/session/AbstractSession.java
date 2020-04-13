@@ -78,6 +78,7 @@ public abstract class AbstractSession<P extends IPlayerActor> implements ISessio
 
 	@Override
 	public void close(CloseCause cause) {
+		playerActor.destroy();
 		new SessionCloseEventData(this, cause).fireEventHandler();
 	}
 }

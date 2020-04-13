@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.common;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -109,7 +108,8 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	/**
 	 * 销毁时候调用
 	 */
-	public void destory(){
+	@Override
+	public void destroy(){
 		this.cancelAllFuture(true);
 		this.close = true;
 	}
@@ -133,20 +133,6 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		return new ScheduleFuture(scheduleName, future);
 	}
 
-	/***
-	 * 在某个毫秒时间戳执行
-	 * @param msg
-	 * @param executeTime 执行的毫秒时间戳
-	 * @return
-	 */
-	public DFuture<Void> scheduleMessage(IMessage<H> msg, long executeTime) {
-		long now = DateUtil.currentTimeMillis();
-		if (executeTime < now) {
-			throw new IllegalStateException("executeTime ["+executeTime+"] is less than current time ["+now+"]");
-		}
-		return this.scheduleMessage(msg, (executeTime - now), TimeUnit.MILLISECONDS);
-	}
-
 	/**
 	 * 指定一定的延迟时间后, 执行该消息
 	 * @param msg
@@ -154,6 +140,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 * @param unit
 	 * @return
 	 */
+	@Override
 	public DFuture<Void> scheduleMessage(IMessage<H> msg, long delay, TimeUnit unit) {
 		DFuture<Void> future = TimerManager.getInstance().scheduleWithDeley(() -> {
 			addMessage(msg);
