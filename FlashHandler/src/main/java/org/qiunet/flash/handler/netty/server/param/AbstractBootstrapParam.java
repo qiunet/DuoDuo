@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.netty.server.param;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.server.param.adapter.IClientErrorMessage;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
@@ -19,10 +18,6 @@ public abstract class AbstractBootstrapParam {
 	 * 可以自定义协议头
 	 */
 	protected IProtocolHeaderAdapter protocolHeaderAdapter;
-	/**
-	 * 一些定义好的错误消息.
- 	 */
-	protected IClientErrorMessage errorMessage;
 	/***
 	 * 接收端口
 	 */
@@ -45,10 +40,6 @@ public abstract class AbstractBootstrapParam {
 
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
-	}
-
-	public IClientErrorMessage getErrorMessage() {
-		return errorMessage;
 	}
 
 	public int getMaxReceivedLength() {
@@ -79,8 +70,6 @@ public abstract class AbstractBootstrapParam {
 		// 最大上行1M的长度(HTTP 同样有满足)
 		protected int maxReceivedLength = 1024 * 1024;
 
-		protected IClientErrorMessage errorMessage;
-
 		protected boolean encryption = true;
 
 		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
@@ -102,11 +91,6 @@ public abstract class AbstractBootstrapParam {
 
 		public B setStartupContext(IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext) {
 			this.startupContext = startupContext;
-			return (B) this;
-		}
-
-		public B setErrorMessage(IClientErrorMessage errorMessage) {
-			this.errorMessage = errorMessage;
 			return (B) this;
 		}
 
@@ -140,7 +124,6 @@ public abstract class AbstractBootstrapParam {
 			p.readIdleCheckSeconds = readIdleCheckSeconds;
 			p.protocolHeaderAdapter = protocolHeaderAdapter;
 			p.startupContext = startupContext;
-			p.errorMessage = errorMessage;
 			p.encryption = encryption;
 			p.address = address;
 			this.buildInner(p);

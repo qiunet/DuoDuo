@@ -45,7 +45,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound());
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			ctx.close();
 			return;
 		}
@@ -73,7 +73,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
 			if (session != null) {
 				session.close(CloseCause.EXCEPTION);
 			}else {

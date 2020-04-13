@@ -70,9 +70,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 				if (websocketPath.equals(gameURIPath)) {
 					throw new IllegalArgumentException("gameUrl can equals websocketPath");
 				}
-				if (errorMessage == null) {
-					throw new NullPointerException("IClientErrorMessage can not be Null");
-				}
+
 				if (startupContext == null) {
 					throw new NullPointerException("startupContext can not be Null");
 				}

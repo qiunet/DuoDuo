@@ -31,7 +31,6 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(TcpBootstrapParams tcpBootstrapParams) {
-			if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
 		}
 	}
 }

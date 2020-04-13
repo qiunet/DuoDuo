@@ -54,7 +54,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode());
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			return;
 		}
@@ -76,16 +76,16 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		String errMeg = "Exception Ip["+(session != null ? session.getIp() : "" )+"]" +
-			"openId ["+(session != null ? session.getOpenId(): "")+"]";
+		String errMeg = "Exception openId ["+(session != null ? session.getOpenId(): '-')+"]"+
+						"Ip["+(session != null ? session.getIp() : "" )+"]" ;
 		logger.error(errMeg, cause);
 
-		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
-			if (session != null) {
-				session.close(CloseCause.EXCEPTION);
-			}else {
+		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
+			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			if (session == null) {
 				ctx.close();
+			}else {
+				session.close(CloseCause.EXCEPTION);
 			}
 		}
 	}

@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.bootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
@@ -30,7 +29,6 @@ public class HttpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-					.setErrorMessage(new DefaultErrorMessage())
 					.setStartupContext(new StartupContext())
 					.setWebsocketPath("/ws")
 					.setPort(8080)

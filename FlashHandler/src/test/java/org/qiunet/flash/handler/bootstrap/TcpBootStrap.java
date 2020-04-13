@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
@@ -40,7 +39,6 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-				.setErrorMessage(new DefaultErrorMessage())
 				.setStartupContext(new StartupContext())
 				.setEncryption(true)
 				.setPort(port)

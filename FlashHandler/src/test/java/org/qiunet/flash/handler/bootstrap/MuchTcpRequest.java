@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.bootstrap;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -27,7 +26,6 @@ public abstract class MuchTcpRequest {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-					.setErrorMessage(new DefaultErrorMessage())
 					.setPort(port)
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);

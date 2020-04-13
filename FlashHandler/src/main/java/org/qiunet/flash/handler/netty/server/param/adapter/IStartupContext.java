@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 
 /***
@@ -26,4 +27,16 @@ public interface IStartupContext<S extends ISession, T extends IPlayerActor<S, ?
 	 * @return
 	 */
 	T buildPlayerActor(ISession session);
+	/***
+	 *  没有找到handler 404
+	 * @return
+	 */
+	IResponseMessage getHandlerNotFound();
+
+	/***
+	 * 出现异常
+	 * @param cause
+	 * @return
+	 */
+	IResponseMessage exception(Throwable cause);
 }

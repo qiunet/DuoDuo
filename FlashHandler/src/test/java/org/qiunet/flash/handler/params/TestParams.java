@@ -2,9 +2,9 @@ package org.qiunet.flash.handler.params;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.startup.context.StartupContext;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -22,9 +22,9 @@ public class TestParams {
 		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
-				.setPort(1315)
+				.setStartupContext(new StartupContext())
 				.setMaxReceivedLength(1024*1024)
-				.setErrorMessage(new DefaultErrorMessage())
+				.setPort(1315)
 				.build();
 		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}
