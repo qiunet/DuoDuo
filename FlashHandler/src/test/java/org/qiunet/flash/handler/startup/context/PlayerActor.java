@@ -18,6 +18,8 @@ public class PlayerActor extends AbstractPlayerActor<GameSession, PlayerActor> {
 
 	public PlayerActor(GameSession session) {
 		super(session);
+		// 测试不需要管鉴权的问题.
+		this.auth(10000);
 	}
 
 	@Override

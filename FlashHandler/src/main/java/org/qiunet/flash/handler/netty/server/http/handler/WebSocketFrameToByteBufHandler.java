@@ -1,11 +1,11 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.codec.http.websocketx.*;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
 
 /**
@@ -20,7 +20,15 @@ public class WebSocketFrameToByteBufHandler extends ChannelInboundHandlerAdapter
 			ctx.fireChannelRead(((WebSocketFrame) msg).content());
 		} else if(msg instanceof PingWebSocketFrame) {
 			ctx.writeAndFlush(new PongWebSocketFrame(((PingWebSocketFrame) msg).content().retain()));
-		} else {
+		} else if (msg instanceof CloseWebSocketFrame) {
+			WebSocketServerHandshaker handshaker = ctx.channel().attr(ServerConstants.HANDSHAKER_ATTR_KEY).get();
+			CloseWebSocketFrame frame = (CloseWebSocketFrame) msg;
+			if (handshaker != null) {
+				handshaker.close(ctx.channel(), frame.retain());
+			} else {
+				ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+			}
+		}else {
 			LoggerType.DUODUO_FLASH_HANDLER.error("Do not support msg type [{}]", msg.getClass());
 		}
 	}
