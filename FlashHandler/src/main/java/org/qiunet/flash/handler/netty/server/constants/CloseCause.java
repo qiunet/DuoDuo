@@ -31,5 +31,13 @@ public enum  CloseCause {
 	 * 网络错误
 	 */
 	NET_ERROR,
+	/**
+	 * 未鉴权的非法请求
+	 */
+	ERR_REQUEST,
+	/**
+	 * serverHandler 层异常
+	 */
+	EXCEPTION,
 	;
 }

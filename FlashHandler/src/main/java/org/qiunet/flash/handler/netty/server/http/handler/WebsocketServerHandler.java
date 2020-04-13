@@ -8,11 +8,13 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
@@ -52,24 +54,39 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			return;
 		}
 
 		ISession session = SessionManager.getInstance().getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
+		IPlayerActor playerActor = session.getPlayerActor();
+		if (handler.needAuth() && ! playerActor.isAuth()) {
+			session.close(CloseCause.ERR_REQUEST);
+			return;
+		}
 
 		if (ctx.channel().isActive()) {
-			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, session.getPlayerActor(), headers);
-			session.getPlayerActor().addMessage(context);
+			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, playerActor, headers);
+			playerActor.addMessage(context);
 		}
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("Exception : ", cause);
-		ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
-		ctx.close();
+		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		String errMeg = "Exception Ip["+(session != null ? session.getIp() : "" )+"]" +
+			"openId ["+(session != null ? session.getOpenId(): "")+"]";
+		logger.error(errMeg, cause);
+
+		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
+			ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			if (session != null) {
+				session.close(CloseCause.EXCEPTION);
+			}else {
+				ctx.close();
+			}
+		}
 	}
 }
