@@ -259,13 +259,13 @@
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.qiunet</groupId>-->
-<!--			<artifactId>GameTest</artifactId>-->
-<!--			<version>${module.version}</version>-->
-<!--			<optional>true</optional>-->
-<!--			<scope>compile</scope>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>GameTest</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
 			<artifactId>EventLog</artifactId>

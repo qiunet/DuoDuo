@@ -11,7 +11,7 @@
 		<module>QiunetUtils</module>
 		<module>QiunetDatas</module>
 		<module>CfgReader</module>
-<!--		<module>GameTest</module>-->
+		<module>GameTest</module>
 		<module>Excel2Cfgs</module>
 		<module>ProjectInit</module>
 		<module>FlashHandler</module>
