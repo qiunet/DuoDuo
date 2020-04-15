@@ -12,13 +12,17 @@ import java.nio.file.Paths;
  * 2019-08-19 16:52
  ***/
 public final class InitProjectUtil {
-	public static File realUseDir = getDefaultUseDir();
+	private static File realUseDir = getDefaultUseDir();
 	/**
 	 * 得到真实的user.dir
 	 * @return
 	 */
 	public static File getRealUserDir() {
 		return realUseDir;
+	}
+
+	public static void setRealUseDir(File realUseDir) {
+		InitProjectUtil.realUseDir = realUseDir;
 	}
 
 	public static File getDefaultUseDir(){

@@ -8,6 +8,7 @@ import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.DigesterUtil;
 import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
 import org.xml.sax.SAXException;
 
@@ -34,10 +35,11 @@ public final class ProjectInitCreator {
 			outputModuleDir = InitProjectUtil.getRealUserDir();
 		}
 		this.mybatisConfigFileName = mybatisConfigFileName;
-		InitProjectUtil.realUseDir = outputModuleDir;
+		InitProjectUtil.setRealUseDir(outputModuleDir);
 		this.xmlDirectory = xmlDirectory;
 
 		logger.info("xml directory is [{}]", xmlDirectory.getAbsolutePath());
+		logger.info("Current user.dir is [{}]", SystemPropertyUtil.getUserDir());
 		logger.info("mybatis config file name is [{}]", mybatisConfigFileName);
 		logger.info("output module base directory is [{}]", outputModuleDir.getAbsolutePath());
 	}
