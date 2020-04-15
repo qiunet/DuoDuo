@@ -23,7 +23,7 @@ import java.util.List;
  * 2020-02-04 19:44
  **/
 abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
-	protected final Logger logger = LoggerType.DUODUO.getLogger();
+	protected final Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 	protected List<Cfg> cfgs;
 
 	protected BaseXmlCfgManager(String fileName) {

@@ -11,19 +11,19 @@ import org.slf4j.LoggerFactory;
 public enum  LoggerType {
 	/**普通的日志打印*/
 	DUODUO("DuoDuo"),
-	/**用时警告等打印*/
-	DUODUO_USE_TIME("DuoDuoUseTime"),
 	/**sql日志打印*/
 	DUODUO_SQL("DuoDuoSql"),
 	/**redis 的 日志打印*/
 	DUODUO_REDIS("DuoDuoRedis"),
-	/***热替换**/
+	/***热替换的日志打印**/
 	DUODUO_HOTSWAP("DuoDuoHotSwap"),
-
+	/**自动生成的日志打印 */
 	DUODUO_CREATOR("DuoDuoCreator"),
-	/**
-	 * flashHandler 的日志
-	 */
+	/**用时警告等打印*/
+	DUODUO_USE_TIME("DuoDuoUseTime"),
+	/** 读配置的日志打印 */
+	DUODUO_CFG_READER("DuoDuoCfgReader"),
+	/** flashHandler 的日志*/
 	DUODUO_FLASH_HANDLER("DuoDuoFlashHandler"),
 	;
 

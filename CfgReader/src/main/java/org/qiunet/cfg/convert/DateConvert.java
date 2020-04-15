@@ -20,7 +20,7 @@ public class DateConvert extends BaseObjConvert<Date> {
 		try {
 			return sdf.get().parse(str);
 		} catch (ParseException e) {
-			LoggerType.DUODUO.error("Exception:", e);
+			LoggerType.DUODUO_CFG_READER.error("Exception:", e);
 		}
 		return null;
 	}

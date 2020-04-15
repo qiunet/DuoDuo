@@ -19,7 +19,7 @@ import java.lang.reflect.*;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
-	protected Logger logger = LoggerType.DUODUO.getLogger();
+	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	protected String fileName;
 

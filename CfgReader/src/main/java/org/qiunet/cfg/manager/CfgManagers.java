@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
  *         Created on 17/2/9 12:15.
  */
 public class CfgManagers {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	private static final CfgManagers instance = new CfgManagers();
 	private List<Container<ICfgManager>> gameSettingList;
