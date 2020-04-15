@@ -6,6 +6,7 @@ import org.qiunet.project.init.define.mybatis.MybatisExtraDefine;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.DigesterUtil;
+import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 import org.xml.sax.SAXException;
@@ -24,13 +25,21 @@ public final class ProjectInitCreator {
 	 * 默认的mybatis config 文件名
 	 */
 	private static final String DEFAULT_MYBATIS_CONFIG_FILE_NAME = "MybatisConfig.xml";
-	private static Logger logger = LoggerType.DUODUO.getLogger();
+	private static Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
 	private String mybatisConfigFileName;
 	private File xmlDirectory;
 
-	public ProjectInitCreator(String mybatisConfigFileName, File xmlDirectory) {
+	public ProjectInitCreator(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
+		if (outputModuleDir == null) {
+			outputModuleDir = InitProjectUtil.getRealUserDir();
+		}
 		this.mybatisConfigFileName = mybatisConfigFileName;
+		InitProjectUtil.realUseDir = outputModuleDir;
 		this.xmlDirectory = xmlDirectory;
+
+		logger.info("xml directory is [{}]", xmlDirectory.getAbsolutePath());
+		logger.info("mybatis config file name is [{}]", mybatisConfigFileName);
+		logger.info("output module base directory is [{}]", outputModuleDir.getAbsolutePath());
 	}
 
 	/***
@@ -38,18 +47,27 @@ public final class ProjectInitCreator {
 	 * 使用默认的 MybatisConfig 文件名
 	 */
 	public static void create(String xmlDirectory) {
-		create(DEFAULT_MYBATIS_CONFIG_FILE_NAME, xmlDirectory);
+		create(DEFAULT_MYBATIS_CONFIG_FILE_NAME, xmlDirectory, null);
 	}
-	/***
-	 * 使用指定的MybatisConfig.xml 配置文件名 和 指定的xml路径
-	 * @param mybatisConfigFileName
+
+	/**
+	 * 输出到指定的module文件夹.
 	 * @param xmlDirectory
+	 * @param outputModuleDir 给出module的文件夹即可. 不需要包含: src
 	 */
-	public static void create(String mybatisConfigFileName, String xmlDirectory) {
+	public static void create(String xmlDirectory, File outputModuleDir) {
+		create(DEFAULT_MYBATIS_CONFIG_FILE_NAME, xmlDirectory, outputModuleDir);
+	}
+		/***
+         * 使用指定的MybatisConfig.xml 配置文件名 和 指定的xml路径
+         * @param mybatisConfigFileName
+         * @param xmlDirectory
+         */
+	public static void create(String mybatisConfigFileName, String xmlDirectory, File outputModuleDir) {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(xmlDirectory);
 		try {
 			assert url != null;
-			create(mybatisConfigFileName, new File(url.toURI()));
+			create(mybatisConfigFileName, new File(url.toURI()), outputModuleDir);
 		} catch (URISyntaxException e) {
 			logger.error("xml directory ["+xmlDirectory+"] create exception:", e);
 		}
@@ -57,16 +75,20 @@ public final class ProjectInitCreator {
 	/***
 	 * 给出对应classpath的xml文件夹File
 	 */
-	public static void create(String mybatisConfigFileName, File xmlDirectory) {
+	public static void create(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
 		if (! xmlDirectory.isDirectory()) {
 			throw new RuntimeException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
 		}
+		if (outputModuleDir!= null && ! outputModuleDir.isDirectory()) {
+			throw new RuntimeException("["+outputModuleDir.getAbsolutePath()+"] is not a directory");
+		}
+
 		try {
-			new ProjectInitCreator(mybatisConfigFileName, xmlDirectory).process();
+			new ProjectInitCreator(mybatisConfigFileName, xmlDirectory, outputModuleDir).process();
 		}catch (Exception e) {
 			logger.error("Create exception:", e);
 		}finally {
-			logger.info("Create Success!");
+			logger.info("Work Finished!");
 		}
 	}
 
@@ -90,8 +112,13 @@ public final class ProjectInitCreator {
 		}
 
 		// mybatis-config.xml 的输出
-		String configPath = Paths.get(mybatisConfig.outputPath().toString(), mybatisConfig.getFileName()).toString();
-		VelocityFactory.getInstance().parseOutFile("vm/mybatis_config_create.vm", configPath, mybatisConfig);
+		String configPath = "";
+		try {
+			configPath = Paths.get(mybatisConfig.outputPath().toString(), mybatisConfig.getFileName()).toString();
+			VelocityFactory.getInstance().parseOutFile("vm/mybatis_config_create.vm", configPath, mybatisConfig);
+		}finally {
+			logger.info("Create Mybatis Config [{}] Success!", configPath);
+		}
 	}
 
 
