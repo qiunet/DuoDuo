@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.common.player.IPlayerActor;
  * Created by qiunet.
  * 17/11/21
  */
-class FacadeTcpRequest<RequestData, ResponseData, P extends IPlayerActor> implements ITcpRequest<RequestData> {
-	private AbstractTcpRequestContext<RequestData, ResponseData, P> context;
+class FacadeTcpRequest<RequestData, P extends IPlayerActor> implements ITcpRequest<RequestData> {
+	private AbstractTcpRequestContext<RequestData, P> context;
 
 	public FacadeTcpRequest (AbstractTcpRequestContext context) {
 		this.context = context;

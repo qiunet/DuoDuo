@@ -8,9 +8,9 @@ import org.qiunet.flash.handler.common.player.IPlayerActor;
  * Created by qiunet.
  * 17/12/2
  */
-class FacadeWebSocketRequest<RequestData, ResponseData, P extends IPlayerActor> implements IWebSocketRequest<RequestData> {
-	private AbstractWebSocketRequestContext<RequestData, ResponseData, P> context;
-	public FacadeWebSocketRequest(AbstractWebSocketRequestContext<RequestData, ResponseData, P> context) {
+class FacadeWebSocketRequest<RequestData, P extends IPlayerActor> implements IWebSocketRequest<RequestData> {
+	private AbstractWebSocketRequestContext<RequestData, P> context;
+	public FacadeWebSocketRequest(AbstractWebSocketRequestContext<RequestData, P> context) {
 		this.context = context;
 	}
 

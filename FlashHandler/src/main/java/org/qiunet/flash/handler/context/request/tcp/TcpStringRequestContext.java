@@ -3,8 +3,6 @@ package org.qiunet.flash.handler.context.request.tcp;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
-import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.utils.string.StringUtil;
 
@@ -13,15 +11,10 @@ import org.qiunet.utils.string.StringUtil;
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcpRequestContext<String, String, P> {
+public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcpRequestContext<String, P> {
 	protected String requestData;
 	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, P playerActor) {
 		super(content, channelContext, playerActor);
-	}
-
-	@Override
-	protected IResponseMessage getResponseMessage(int protocolId, String s) {
-		return new DefaultStringMessage(protocolId, s);
 	}
 
 	@Override
@@ -34,7 +27,7 @@ public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcp
 
 	@Override
 	public void handlerRequest() {
-		FacadeTcpRequest<String, String, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
+		FacadeTcpRequest<String, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
 		try {
 			((ITcpHandler) getHandler()).handler(playerActor, facadeTcpRequest);
 		} catch (Exception e) {
