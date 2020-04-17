@@ -27,12 +27,21 @@ public enum ${define.serviceName} {
 #if(${define.list})
 
 	/***
-	 * 获得一个 ${define.subKey} -> ${define.boName} Map对象
+	 * 获得一个 ${define.key} -> ${define.boName} Map对象
 	 * @param ${define.keyName} 获取对象的主键
 	 * @return ${define.boName} map对象
 	 **/
 	public Map<${define.subKeyType}, ${define.boName}> get${define.boName}Map(${define.keyType} ${define.keyName}) {
 		return dataSupport.getBoMap(${define.keyName});
+	}
+	/***
+	* 获得一个 ${define.subKey} -> ${define.boName}  的bo对象
+	* @param ${define.keyName} 获取对象的主键
+	* @param ${define.subKeyName} 获取对象的次主键
+	* @return ${define.boName} bo对象
+	**/
+	public ${define.boName} get${define.boName}(${define.keyType} ${define.keyName}, ${define.SubKeyType} ${define.subKeyName}) {
+		return get${define.boName}Map(${define.keyName}).get(${define.subKeyName});
 	}
 #else
 	/***
