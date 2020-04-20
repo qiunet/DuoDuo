@@ -34,7 +34,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @param params
 	 * @return
 	 */
-	public PostHttpRequest withJsonData(Map<String, String> params) {
+	public PostHttpRequest withJsonData(Map<String, Object> params) {
 		String json = JsonUtil.toJsonString(params);
 		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset="+charset), json);
 		return this;

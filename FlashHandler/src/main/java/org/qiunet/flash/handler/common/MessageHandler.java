@@ -3,8 +3,6 @@ package org.qiunet.flash.handler.common;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.listener.data.ServerShutdownEventData;
-import org.qiunet.utils.listener.data.ServerShutdownEventData.ServerShutdownListener;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -23,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H>, ServerShutdownListener {
+public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H> {
 
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
@@ -153,14 +151,12 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		return future;
 	}
 
-	@Override
-	public void onShutdown(ServerShutdownEventData data) {
+	public static void shutdown() {
 		try {
-			this.destroy();
 			executorService.shutdown();
 			executorService.awaitTermination(2, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			logger.error("shutdownException: ", e);
+			e.printStackTrace();
 		}
 	}
 
