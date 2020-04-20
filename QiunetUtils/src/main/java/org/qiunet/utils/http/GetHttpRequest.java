@@ -14,7 +14,9 @@ import java.util.Map;
 public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 
 	private Map<String, String> params = Maps.newHashMap();
-	GetHttpRequest(){}
+	GetHttpRequest(String url){
+		super(url);
+	}
 
 	/**
 	 * 如果是get模式. 我会拼接到url后面.

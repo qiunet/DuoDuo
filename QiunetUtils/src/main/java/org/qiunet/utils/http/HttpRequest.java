@@ -28,20 +28,19 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	protected Charset charset = StandardCharsets.UTF_8;
 
+	protected HttpRequest(String url) {
+		this.url = url;
+	}
+
 	protected Headers.Builder headerBuilder = new Headers.Builder()
 		.add("Accept-Charset", "UTF-8");
 
-	public static PostHttpRequest post() {
-		return new PostHttpRequest();
+	public static PostHttpRequest post(String url) {
+		return new PostHttpRequest(url);
 	}
 
-	public static GetHttpRequest get() {
-		return new GetHttpRequest();
-	}
-
-	public B url(String url) {
-		this.url = url;
-		return (B) this;
+	public static GetHttpRequest get(String url) {
+		return new GetHttpRequest(url);
 	}
 
 	public B charset(Charset charset) {

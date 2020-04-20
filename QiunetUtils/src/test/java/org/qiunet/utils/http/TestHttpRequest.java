@@ -20,7 +20,7 @@ public class TestHttpRequest extends BaseTest{
 		Map<String,String> params = new HashMap<>();
 		params.put("wd", "qiunet");
 		for (int i = 0 ; i < 2; i++){
-			String ret = HttpRequest.post().url(url).withFormData(params).executor();
+			String ret = HttpRequest.post(url).withFormData(params).executor();
 			System.out.println(ret);
 			Assert.assertNotNull(ret);
 		}
@@ -33,7 +33,7 @@ public class TestHttpRequest extends BaseTest{
 		params.put("wd", "qiunet");
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
-			HttpRequest.get().params(params).url(url).asyncExecutor(
+			HttpRequest.get(url).params(params).asyncExecutor(
 				new IAsyncHttpCallBack() {
 					@Override
 					public void onFail(Exception e) {
@@ -55,8 +55,7 @@ public class TestHttpRequest extends BaseTest{
 	@Test
 	public void testHttpRequest() throws Exception {
 		String url = "http://www.gameley.com";
-		String ret = HttpRequest.get().url(url).executor();
-		System.out.println(ret);
+		String ret = HttpRequest.get(url).executor();
 		Assert.assertNotNull(ret);
 	}
 }

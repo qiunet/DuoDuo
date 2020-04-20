@@ -18,7 +18,9 @@ import java.util.Map;
 public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
 	private RequestBody requestBody;
-	PostHttpRequest() {}
+	PostHttpRequest(String url) {
+		super(url);
+	}
 
 	/**
 	 * 使用form的方式提交数据
