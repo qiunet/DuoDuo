@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 public class TestAppClassLoader extends BaseTest{
 	@Test
 	public void testClassLoad(){
-		String [] paths = {GameAppClassLoader.class.getResource("/lib/").getPath(), System.getProperty("user.dir")+"/clazzes/"};
+		String [] paths = {System.getProperty("user.dir")+"/clazzes/"};
 		GameAppClassLoader loader = new GameAppClassLoader(paths, new String[]{"org.test"});
 		boolean exception = false;
 		try {
