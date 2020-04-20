@@ -26,8 +26,6 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	protected String url;
 
-	protected IAsyncHttpCallBack callBack;
-
 	protected Charset charset = StandardCharsets.UTF_8;
 
 	protected Headers.Builder headerBuilder = new Headers.Builder()
@@ -43,11 +41,6 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	public B url(String url) {
 		this.url = url;
-		return (B) this;
-	}
-
-	public B async(IAsyncHttpCallBack callBack) {
-		this.callBack = callBack;
 		return (B) this;
 	}
 
@@ -68,25 +61,32 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	}
 
 	/**
-	 * 如果是异步请求. 返回null
+	 * 异步执行请求
+	 * @param callBack
+	 * @throws Exception
+	 */
+	public void asyncExecutor(IAsyncHttpCallBack callBack) throws Exception {
+		Request request = buildRequest();
+		client.newCall(request).enqueue(new Callback() {
+			@Override
+			public void onFailure(Call call, IOException e) {
+				callBack.onFail(e);
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				callBack.onResponse(response.body().string());
+			}
+		});
+	}
+
+	/**
+	 * 执行请求
 	 * @return
+	 * @throws Exception
 	 */
 	public String executor() throws Exception {
 		Request request = buildRequest();
-		if (callBack != null) {
-			client.newCall(request).enqueue(new Callback() {
-				@Override
-				public void onFailure(Call call, IOException e) {
-					callBack.onFail(e);
-				}
-
-				@Override
-				public void onResponse(Call call, Response response) throws IOException {
-					callBack.onResponse(response.body().string());
-				}
-			});
-			return null;
-		}
 		Response response = client.newCall(request).execute();
 		if (response.isSuccessful()) {
 			return response.body().string();

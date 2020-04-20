@@ -33,7 +33,7 @@ public class TestHttpRequest extends BaseTest{
 		params.put("wd", "qiunet");
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
-			HttpRequest.get().params(params).url(url).async(
+			HttpRequest.get().params(params).url(url).asyncExecutor(
 				new IAsyncHttpCallBack() {
 					@Override
 					public void onFail(Exception e) {
@@ -47,7 +47,7 @@ public class TestHttpRequest extends BaseTest{
 						latch.countDown();
 					}
 				}
-			).executor();
+			);
 		}
 		latch.await();
 	}
