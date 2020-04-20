@@ -169,7 +169,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		map.put("SourceType" ,1);
 		map.put("test" ,"myTest");
 
-		String respContent = HttpRequest.post().url("http://localhost:8080/jsonUrl")
+		String respContent = HttpRequest.post("http://localhost:8080/jsonUrl")
 			.withJsonData(map)
 			.executor();
 		System.out.println("================="+ respContent);
