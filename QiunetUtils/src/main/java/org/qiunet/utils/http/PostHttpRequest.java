@@ -1,6 +1,9 @@
 package org.qiunet.utils.http;
 
-import okhttp3.*;
+import okhttp3.FormBody;
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.util.Collections;
@@ -57,7 +60,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 			this.withFormData(Collections.emptyMap());
 		}
 		return new Request.Builder()
-			.headers(Headers.of(headerMap))
+			.headers(headerBuilder.build())
 			.post(requestBody)
 			.url(url)
 			.build();

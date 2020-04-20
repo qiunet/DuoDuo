@@ -1,7 +1,8 @@
 package org.qiunet.utils.http;
 
-import com.google.common.collect.Maps;
 import okhttp3.*;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * 2020-04-20 17:39
  ***/
 public abstract class HttpRequest<B extends HttpRequest> {
-
+	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
 	protected static final OkHttpClient client = new OkHttpClient.Builder()
 		.connectTimeout(3000, TimeUnit.MILLISECONDS)
 		.readTimeout(3000, TimeUnit.MILLISECONDS)
@@ -29,7 +30,8 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	protected Charset charset = StandardCharsets.UTF_8;
 
-	protected Map<String, String> headerMap = Maps.newHashMap();
+	protected Headers.Builder headerBuilder = new Headers.Builder()
+		.add("Accept-Charset", "UTF-8");
 
 	public static PostHttpRequest post() {
 		return new PostHttpRequest();
@@ -50,13 +52,18 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	}
 
 	public B charset(Charset charset) {
-		this.headerMap.put("Accept-Charset", charset.toString());
+		this.header("Accept-Charset", charset.toString());
 		this.charset = charset;
 		return (B) this;
 	}
 
-	public B headerMap(Map<String, String> headerMap) {
-		this.headerMap = headerMap;
+	public B header(String name, String val) {
+		this.headerBuilder.add(name, val);
+		return (B) this;
+	}
+
+	public B header(Map<String, String> headerMap) {
+		headerMap.forEach((key, val) -> this.headerBuilder.add(key ,val));
 		return (B) this;
 	}
 
@@ -80,7 +87,13 @@ public abstract class HttpRequest<B extends HttpRequest> {
 			});
 			return null;
 		}
-		return client.newCall(request).execute().body().string();
+		Response response = client.newCall(request).execute();
+		if (response.isSuccessful()) {
+			return response.body().string();
+		}else {
+			logger.error("Request: {} Fail, StatusCode {}", request, response.code());
+			return null;
+		}
 	}
 
 	protected abstract Request buildRequest();

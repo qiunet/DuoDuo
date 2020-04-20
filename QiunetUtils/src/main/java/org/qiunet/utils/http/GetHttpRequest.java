@@ -1,7 +1,6 @@
 package org.qiunet.utils.http;
 
 import com.google.common.collect.Maps;
-import okhttp3.Headers;
 import okhttp3.Request;
 
 import java.util.Map;
@@ -45,7 +44,7 @@ public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 	@Override
 	protected Request buildRequest() {
 		return new Request.Builder().url(buildUrl())
-			.headers(Headers.of(headerMap))
+			.headers(headerBuilder.build())
 			.build();
 	}
 }

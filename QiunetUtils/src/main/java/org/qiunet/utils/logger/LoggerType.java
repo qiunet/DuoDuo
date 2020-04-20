@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 public enum  LoggerType {
 	/**普通的日志打印*/
 	DUODUO("DuoDuo"),
+	/***http请求**/
+	DUODUO_HTTP("DuoDuoHttp"),
 	/**sql日志打印*/
 	DUODUO_SQL("DuoDuoSql"),
 	/**redis 的 日志打印*/

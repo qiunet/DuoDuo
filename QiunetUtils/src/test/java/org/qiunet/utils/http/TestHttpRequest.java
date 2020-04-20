@@ -20,7 +20,7 @@ public class TestHttpRequest extends BaseTest{
 		Map<String,String> params = new HashMap<>();
 		params.put("wd", "qiunet");
 		for (int i = 0 ; i < 2; i++){
-			String ret = HttpRequest.get().url(url).params(params).executor();
+			String ret = HttpRequest.post().url(url).withFormData(params).executor();
 			System.out.println(ret);
 			Assert.assertNotNull(ret);
 		}
