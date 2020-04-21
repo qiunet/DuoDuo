@@ -64,7 +64,7 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * @param callBack
 	 * @throws Exception
 	 */
-	public void asyncExecutor(IAsyncHttpCallBack callBack) throws Exception {
+	public void asyncExecutor(IAsyncHttpCallBack callBack) {
 		Request request = buildRequest();
 		client.newCall(request).enqueue(new Callback() {
 			@Override
