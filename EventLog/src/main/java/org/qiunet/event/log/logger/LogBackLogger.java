@@ -1,6 +1,7 @@
 package org.qiunet.event.log.logger;
 
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -28,15 +29,18 @@ class LogBackLogger implements ILogger {
 	}
 
 	private void createLogger(String loggerName) {
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+		if (logger != null) {
+			return;
+		}
 
+		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 		this.logger = lc.getLogger(loggerName);
-		if (logger.getAppender(loggerName) != null) {
+		if (this.logger.iteratorForAppenders().hasNext()) {
 			return;
 		}
 
 		RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
-		appender.setName(loggerName);
+		appender.setName(loggerName+"Appender");
 		appender.setContext(lc);
 		appender.setAppend(true);
 
@@ -56,7 +60,14 @@ class LogBackLogger implements ILogger {
 		appender.setEncoder(encoder);
 		appender.start();
 
-		logger.addAppender(appender);
+		AsyncAppender asyncAppender = new AsyncAppender();
+		asyncAppender.setDiscardingThreshold(0);
+		asyncAppender.addAppender(appender);
+		asyncAppender.setName(loggerName);
+		asyncAppender.setContext(lc);
+		asyncAppender.start();
+
+		logger.addAppender(asyncAppender);
 		logger.setLevel(Level.INFO);
 		logger.setAdditive(false);
 	}
