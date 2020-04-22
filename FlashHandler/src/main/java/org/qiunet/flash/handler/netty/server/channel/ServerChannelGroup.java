@@ -14,7 +14,7 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/11/30
  */
-public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
+public abstract class ServerChannelGroup extends DefaultChannelGroup {
 	protected Logger logger = LoggerType.DUODUO.getLogger();
 	/***
 	 * 构造函数
@@ -26,49 +26,19 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 
 	/***
 	 * 对所有人群发一个消息
-	 * @param protocolId
-	 * @param msg
+	 * @param message
 	 * @return
 	 */
-	public ChannelGroupFuture broadcast(int protocolId, Msg msg) {
-		return this.broadcast(protocolId, msg, ChannelMatchers.all());
+	public ChannelGroupFuture broadcast(IResponseMessage message) {
+		return this.broadcast(message, ChannelMatchers.all());
 	}
 	/***
 	 * 群发一个msg
-	 * @param protocolId 协议id
-	 * @param msg 消息
+	 * @param message 消息
 	 * @param matcher 匹配选择对象
 	 * @return
 	 */
-	public ChannelGroupFuture broadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		IResponseMessage message = buildMessage(protocolId, msg);
-		if (logger.isInfoEnabled()) {
-			logger.info(message.toStr());
-		}
-		return super.writeAndFlush(message.encode(), matcher, false);
-	}
-	/***
-	 * 群发一个webSocket msg
-	 * @param protocolId 协议id
-	 * @param msg 消息
-	 * @return
-	 */
-	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg) {
-		return this.wsBroadcast(protocolId, msg, ChannelMatchers.all());
-	}
-
-	/***
-	 * 群发一个webSocket msg
-	 * @param protocolId 协议id
-	 * @param msg 消息
-	 * @param matcher 匹配选择对象
-	 * @return
-	 */
-	public ChannelGroupFuture wsBroadcast(int protocolId, Msg msg, ChannelMatcher matcher) {
-		IResponseMessage message = buildMessage(protocolId, msg);
-		if (logger.isInfoEnabled()) {
-			logger.info(message.toStr());
-		}
+	public ChannelGroupFuture broadcast(IResponseMessage message, ChannelMatcher matcher) {
 		return super.writeAndFlush(message.encode(), matcher, false);
 	}
 
@@ -111,10 +81,4 @@ public abstract class ServerChannelGroup<Msg> extends DefaultChannelGroup {
 	public ChannelGroupFuture flushAndWrite(Object message, ChannelMatcher matcher) {
 		throw new RuntimeException("Can called this method , cause message not encode!");
 	}
-	/***
-	 * 转换成bytes
-	 * @param msg
-	 * @return
-	 */
-	protected abstract IResponseMessage buildMessage(int protocolId, Msg msg);
 }
