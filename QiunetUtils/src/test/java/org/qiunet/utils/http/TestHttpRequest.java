@@ -1,13 +1,9 @@
 package org.qiunet.utils.http;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -38,19 +34,11 @@ public class TestHttpRequest extends BaseTest{
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
 			HttpRequest.get(url).params(params).asyncExecutor(
-				new Callback() {
-					@Override
-					public void onFailure(Call call, IOException e) {
-						e.printStackTrace();
-					}
-
-					@Override
-					public void onResponse(Call call, Response response) throws IOException {
-						String result = response.body().string();
-						System.out.println(result);
-						Assert.assertNotNull(result);
-						latch.countDown();
-					}
+				(IHttpCallBack) (call, response) -> {
+					String result = response.body().string();
+					System.out.println(result);
+					Assert.assertNotNull(result);
+					latch.countDown();
 				}
 			);
 		}
