@@ -4,7 +4,6 @@ import okhttp3.*;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -17,6 +16,7 @@ import java.util.concurrent.TimeUnit;
  * 2020-04-20 17:39
  ***/
 public abstract class HttpRequest<B extends HttpRequest> {
+	private static final IResultSupplier<String> DEFAULT_SUPPLIER = response -> response.body().string();
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
 	protected static final OkHttpClient client = new OkHttpClient.Builder()
 		.connectTimeout(3000, TimeUnit.MILLISECONDS)
@@ -64,35 +64,32 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * @param callBack
 	 * @throws Exception
 	 */
-	public void asyncExecutor(IAsyncHttpCallBack callBack) {
+	public void asyncExecutor(Callback callBack) {
 		Request request = buildRequest();
-		client.newCall(request).enqueue(new Callback() {
-			@Override
-			public void onFailure(Call call, IOException e) {
-				callBack.onFail(e);
-			}
-
-			@Override
-			public void onResponse(Call call, Response response) throws IOException {
-				callBack.onResponse(response.body().string());
-			}
-		});
+		client.newCall(request).enqueue(callBack);
 	}
-
+	/**
+	 * 执行请求
+	 * @return
+	 * @throws Exception
+	 */
+	public <T> T executor(IResultSupplier<T> supplier) throws Exception {
+		Request request = buildRequest();
+		Response response = client.newCall(request).execute();
+		if (response.isSuccessful()) {
+			return supplier.result(response);
+		}else {
+			logger.error("Request: {} Fail, StatusCode {}", request, response.code());
+			return null;
+		}
+	}
 	/**
 	 * 执行请求
 	 * @return
 	 * @throws Exception
 	 */
 	public String executor() throws Exception {
-		Request request = buildRequest();
-		Response response = client.newCall(request).execute();
-		if (response.isSuccessful()) {
-			return response.body().string();
-		}else {
-			logger.error("Request: {} Fail, StatusCode {}", request, response.code());
-			return null;
-		}
+		return executor(DEFAULT_SUPPLIER);
 	}
 
 	protected abstract Request buildRequest();
