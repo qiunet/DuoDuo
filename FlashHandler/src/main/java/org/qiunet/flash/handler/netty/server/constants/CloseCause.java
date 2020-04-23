@@ -6,7 +6,7 @@ package org.qiunet.flash.handler.netty.server.constants;
  * @author qiunet
  * 2020-03-02 14:58
  ***/
-public enum  CloseCause {
+public enum CloseCause {
 	/**
 	 * 通道关闭
 	 */
@@ -19,10 +19,6 @@ public enum  CloseCause {
 	 * 通道空闲太久
 	 */
 	CHANNEL_IDLE,
-	/***
-	 * 被封禁
-	 */
-	FORBID_ROLE,
 	/***
 	 * 请求过快
 	 */
@@ -39,5 +35,17 @@ public enum  CloseCause {
 	 * serverHandler 层异常
 	 */
 	EXCEPTION,
+	/**
+	 * 登录信息丢失
+	 */
+	AUTH_LOST,
+	/**
+	 * IP 封禁
+	 */
+	FORBID_IP,
+	/***
+	 * 被封禁
+	 */
+	FORBID_ACCOUNT,
 	;
 }
