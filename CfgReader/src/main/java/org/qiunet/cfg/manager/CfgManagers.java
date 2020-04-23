@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.properties.LoaderProperties;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
@@ -25,13 +24,11 @@ public class CfgManagers {
 
 	private static final CfgManagers instance = new CfgManagers();
 	private List<Container<ICfgManager>> gameSettingList;
-	private List<Container<LoaderProperties>> propertyList;
 
 	private CfgManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
-		this.propertyList = Lists.newArrayListWithCapacity(10);
 		this.gameSettingList = Lists.newArrayListWithCapacity(100);
 	}
 
@@ -49,7 +46,6 @@ public class CfgManagers {
 	 */
 	public void initSetting() throws Throwable {
 		Collections.sort(gameSettingList);
-		Collections.sort(propertyList);
 		this.reloadSetting();
 	}
 
@@ -60,7 +56,6 @@ public class CfgManagers {
 	 */
 	public void reloadSetting() throws Throwable {
 		logger.error("Game Setting Data Load start.....");
-		this.loadPropertySetting();
 		this.loadDataSetting();
 		logger.error("Game Setting Data Load over.....");
 	}
@@ -78,23 +73,6 @@ public class CfgManagers {
 
 		this.gameSettingList.add(new Container<>(manager, order));
 		cfgClasses.add(manager.getClass());
-	}
-	/**
-	 * 添加 properties
-	 * @param properties
-	 * @param order
-	 */
-	public void addPropertySetting(LoaderProperties properties, int order) {
-		this.propertyList.add(new Container<>(properties, order));
-	}
-	/**
-	 * 加载property
-	 */
-	private void loadPropertySetting() {
-		for (Container<? extends LoaderProperties> container : propertyList){
-			logger.info("Load Properties ["+ container.t.getClass().getName() +"]");
-			container.t.reload();
-		}
 	}
 
 	/***
@@ -153,13 +131,6 @@ public class CfgManagers {
 		return this.gameSettingList.size();
 	}
 
-	/***
-	 * 得到properties的数量
-	 * @return
-	 */
-	public int propertySize(){
-		return propertyList.size();
-	}
 	/***
 	 * IGameSetting  的包装类 包含排序
 	 * @param <T>
