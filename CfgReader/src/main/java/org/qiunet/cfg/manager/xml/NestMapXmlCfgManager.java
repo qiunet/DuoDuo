@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.xml;
 
-import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestMapCfg;
+import org.qiunet.cfg.manager.base.INestMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
@@ -11,11 +12,12 @@ import java.util.Map;
  * @author qiunet
  * 2020-02-05 11:52
  **/
-public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXmlCfgManager<Cfg> {
+public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
+	extends BaseXmlCfgManager<Cfg>  implements INestMapCfgManager<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgMap;
 
-	protected NestMapXmlCfgManager(String fileName) {
-		super(fileName);
+	public NestMapXmlCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -28,38 +30,15 @@ public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubI
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgMap.values().stream().flatMap(val -> val.values().stream())
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
-	public boolean contains(ID id, SubId subId) {
-		if (! cfgMap.containsKey(id)) {
-			return false;
-		}
-		return cfgMap.get(id).containsKey(subId);
-	}
-
-	public boolean contains(ID id) {
-		return cfgMap.containsKey(id);
-	}
-	/***
-	 * 根据id 和 subId 得到一条cfg数据
-	 * @param id
-	 * @param subId
-	 * @return
-	 */
-	public Cfg getCfgByIdAndSubId(ID id, SubId subId) {
-		Map<SubId, Cfg> subIdCfgMap = cfgMap.get(id);
-		if (subIdCfgMap == null) {
-			return null;
-		}
-		return subIdCfgMap.get(subId);
-	}
 	/***
 	 * 得到一个一定格式的嵌套map
 	 * 格式: key 对应 Map<subKey, cfg>
@@ -88,8 +67,8 @@ public class NestMapXmlCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubI
 		return cfgMap;
 	}
 
-
-	public Map<ID, Map<SubId, Cfg>> getCfgs() {
+	@Override
+	public Map<ID, Map<SubId, Cfg>> allCfgs() {
 		return cfgMap;
 	}
 }

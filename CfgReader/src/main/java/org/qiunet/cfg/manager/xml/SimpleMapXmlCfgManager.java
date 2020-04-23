@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.xml;
 
-import org.qiunet.cfg.base.ISimpleMapConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
@@ -11,11 +12,11 @@ import java.util.Map;
  * @author qiunet
  * 2020-02-04 19:50
  **/
-public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID>> extends BaseXmlCfgManager<Cfg> {
+public class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapCfg<ID>> extends BaseXmlCfgManager<Cfg> implements ISimpleMapCfgManager<ID, Cfg> {
 	private Map<ID, Cfg> cfgMap;
 
-	protected SimpleMapXmlCfgManager(String fileName) {
-		super(fileName);
+	public SimpleMapXmlCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -28,16 +29,13 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgMap.values().stream()
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
-	}
-	public boolean contains(ID id) {
-		return cfgMap.containsKey(id);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 	/***
 	 * 得到的map
@@ -58,11 +56,8 @@ public abstract class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapConfig<ID
 		return cfgMap;
 	}
 
-	public Map<ID, Cfg> getCfgs() {
+	@Override
+	public Map<ID, Cfg> allCfgs() {
 		return cfgMap;
-	}
-
-	public Cfg getCfgById(ID id) {
-		return cfgMap.get(id);
 	}
 }

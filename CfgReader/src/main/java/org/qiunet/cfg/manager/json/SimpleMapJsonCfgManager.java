@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.ISimpleMapConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.List;
@@ -13,24 +14,11 @@ import java.util.Map;
  * Time: 15:45.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<ID>> extends BaseJsonCfgManager<Cfg> {
+public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>> extends BaseJsonCfgManager<Cfg> implements ISimpleMapCfgManager<ID, Cfg> {
 	private Map<ID, Cfg> cfgMap;
 
-	protected SimpleMapJsonCfgManager(String fileName) {
-		super(fileName);
-	}
-
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public Cfg getCfgById(ID id) {
-		return cfgMap.get(id);
-	}
-
-	public boolean contains(ID id) {
-		return cfgMap.containsKey(id);
+	public SimpleMapJsonCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -43,13 +31,13 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgMap.values().stream()
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
 	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{
@@ -63,9 +51,8 @@ public abstract class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapConfig<
 		return cfgMap;
 	}
 
-
-	public Map<ID, Cfg> getCfgs() {
+	@Override
+	public Map<ID, Cfg> allCfgs() {
 		return cfgMap;
 	}
-
 }

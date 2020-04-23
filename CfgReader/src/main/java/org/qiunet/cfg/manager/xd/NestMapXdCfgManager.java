@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestMapCfg;
+import org.qiunet.cfg.manager.base.INestMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Map;
@@ -12,11 +13,12 @@ import java.util.Map;
  * @param <SubId>
  * @param <Cfg>
  */
-public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXdCfgManager<Cfg> {
+public class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
+	extends BaseXdCfgManager<Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgs;
 
-	protected NestMapXdCfgManager(String fileName) {
-		super(fileName);
+	public NestMapXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -29,37 +31,13 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgs.values().stream().flatMap(val -> val.values().stream())
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
-	}
-	/***
-	 * 根据id 和 subId 得到一条cfg数据
-	 * @param id
-	 * @param subId
-	 * @return
-	 */
-	public Cfg getCfgByIdAndSubId(ID id, SubId subId) {
-		Map<SubId, Cfg> subIdCfgMap = cfgs.get(id);
-		if (subIdCfgMap == null) {
-			return null;
-		}
-		return subIdCfgMap.get(subId);
-	}
-
-	public boolean contains(ID id, SubId subId) {
-		if (! cfgs.containsKey(id)) {
-			return false;
-		}
-		return cfgs.get(id).containsKey(subId);
-	}
-
-	public boolean contains(ID id) {
-		return cfgs.containsKey(id);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
 	/***
@@ -90,8 +68,8 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 		return cfgMap;
 	}
 
-
-	public Map<ID, Map<SubId, Cfg>> getCfgs() {
+	@Override
+	public Map<ID, Map<SubId, Cfg>> allCfgs() {
 		return cfgs;
 	}
 }

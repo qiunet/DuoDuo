@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.cfg.manager.base.INestListCfgManager;
 import org.qiunet.utils.collection.safe.SafeList;
 import org.qiunet.utils.collection.safe.SafeMap;
 
@@ -14,24 +15,12 @@ import java.util.Map;
  * @param <ID>
  * @param <Cfg>
  */
-public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> extends BaseXdCfgManager<Cfg> {
+public class NestListXdCfgManager<ID, Cfg extends INestListCfg<ID>>
+	extends BaseXdCfgManager<Cfg> implements INestListCfgManager<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
-	protected NestListXdCfgManager(String fileName) {
-		super(fileName);
-	}
-
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public List<Cfg> getCfgListById(ID id) {
-		return cfgMap.get(id);
-	}
-
-	public boolean contains(ID id) {
-		return cfgMap.containsKey(id);
+	public NestListXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -44,13 +33,13 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgMap.values().stream().flatMap(Collection::stream)
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 	/***
 	 * 得到的map
@@ -75,7 +64,8 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 		return cfgMap;
 	}
 
-	public Map<ID, List<Cfg>> getCfgs() {
+	@Override
+	public Map<ID, List<Cfg>> allCfgs() {
 		return cfgMap;
 	}
 }

@@ -2,15 +2,14 @@ package org.qiunet.cfg.manager.base;
 
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.base.ICfgManager;
 import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
-import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * @author  zhengj
@@ -18,7 +17,7 @@ import java.lang.reflect.*;
  * Time: 15:51.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
+public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cfg> {
 	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	protected String fileName;
@@ -42,25 +41,16 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager {
 	}
 
 	@Override
-	public Class<? extends ICfg> getCfgClass() {
+	public Class<Cfg> getCfgClass() {
 		return cfgClass;
 	}
 
 
-	public BaseCfgManager(String fileName) {
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		Type[] actualTypeArguments = ((ParameterizedTypeImpl) type).getActualTypeArguments();
-		this.cfgClass = (Class<Cfg>) actualTypeArguments[actualTypeArguments.length - 1];
+	public BaseCfgManager(Class<Cfg> cfgClass) {
+		this.cfgClass = cfgClass;
+		org.qiunet.cfg.annotation.Cfg cfg = cfgClass.getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
+		this.fileName = cfg.value();
 		this.checkCfgClass(cfgClass);
-
-		org.qiunet.cfg.annotation.Cfg annotation = getClass().getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
-		CfgManagers.getInstance().addDataSettingManager(this, annotation == null ? 0 : annotation.order());
-
-		this.fileName = fileName;
 	}
 
 	/***

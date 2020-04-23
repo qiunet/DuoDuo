@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.cfg.manager.base.INestListCfgManager;
 import org.qiunet.utils.collection.safe.SafeList;
 import org.qiunet.utils.collection.safe.SafeMap;
 
@@ -15,43 +16,34 @@ import java.util.Map;
  * Time: 16:06.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID>> extends BaseJsonCfgManager<Cfg> {
+public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
+	extends BaseJsonCfgManager<Cfg> implements INestListCfgManager<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
-	protected NestListJsonCfgManager(String fileName) {
-		super(fileName);
+	public NestListJsonCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public List<Cfg> getCfgListById(ID id) {
-		return cfgMap.get(id);
-	}
 
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getNestListCfg();
 		this.initCfgSelf();
 	}
-	public boolean contains(ID id) {
-		return cfgMap.containsKey(id);
-	}
+
 	/***
 	 * 如果cfg 对象是实现了 initCfg接口,
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgMap.values().stream().flatMap(Collection::stream)
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
 	/***
@@ -75,8 +67,8 @@ public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID
 		return cfgMap;
 	}
 
-
-	public Map<ID, List<Cfg>> getCfgs() {
+	@Override
+	public Map<ID, List<Cfg>> allCfgs() {
 		return cfgMap;
 	}
 }

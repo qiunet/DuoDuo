@@ -26,8 +26,8 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	protected DataInputStream dis;
 	protected XdInfoData xdInfoData;
 
-	protected BaseXdCfgManager(String fileName) {
-		super(fileName);
+	protected BaseXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 	/**
 	 * 获取xd文件

@@ -1,7 +1,8 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.cfg.base.InitCfg;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestMapCfg;
+import org.qiunet.cfg.manager.base.INestMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.List;
@@ -13,11 +14,12 @@ import java.util.Map;
  * Time: 16:10.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseJsonCfgManager<Cfg> {
+public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
+	extends BaseJsonCfgManager<Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgs;
 
-	protected NestMapJsonCfgManager(String fileName) {
-		super(fileName);
+	public NestMapJsonCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
@@ -30,24 +32,15 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 	 * 就调用init方法实现cfg的二次init.
 	 */
 	private void initCfgSelf() {
-		if (! InitCfg.class.isAssignableFrom(getCfgClass())) {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
 			return;
 		}
 
 		this.cfgs.values().stream().flatMap(val -> val.values().stream())
-				.map(cfg -> (InitCfg)cfg)
-				.forEach(InitCfg::init);
-	}
-	public boolean contains(ID id, SubId subId) {
-		if (! cfgs.containsKey(id)) {
-			return false;
-		}
-		return cfgs.get(id).containsKey(subId);
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
-	public boolean contains(ID id) {
-		return cfgs.containsKey(id);
-	}
 	/***
 	 * 根据id 和 subId 得到一条cfg数据
 	 * @param id
@@ -84,8 +77,8 @@ public abstract class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapConfi
 		return cfgMap;
 	}
 
-
-	public Map<ID, Map<SubId, Cfg>> getCfgs() {
+	@Override
+	public Map<ID, Map<SubId, Cfg>> allCfgs() {
 		return cfgs;
 	}
 }

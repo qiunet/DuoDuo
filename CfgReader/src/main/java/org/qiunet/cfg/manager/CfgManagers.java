@@ -1,7 +1,7 @@
 package org.qiunet.cfg.manager;
 
 import com.google.common.collect.Lists;
-import org.qiunet.cfg.base.ICfgManager;
+import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
@@ -66,7 +66,7 @@ public class CfgManagers {
 	 * @param manager
 	 * @param order
 	 */
-	public void addDataSettingManager(ICfgManager manager, int order) {
+	public void addCfgManager(ICfgManager manager, int order) {
 		if (cfgClasses.contains(manager.getClass())) {
 			return;
 		}

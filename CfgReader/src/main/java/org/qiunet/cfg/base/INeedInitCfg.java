@@ -9,7 +9,7 @@ package org.qiunet.cfg.base;
  * @author qiunet
  * 2020/3/11 08:03
  **/
-public interface InitCfg {
+public interface INeedInitCfg {
 	/**
 	 * cfg 实现init的方法
 	 */

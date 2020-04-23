@@ -6,5 +6,5 @@ package org.qiunet.cfg.base;
  * Created by qiunet.
  * 17/6/3
  */
-public interface INestListConfig<ID> extends ICfg<ID> {
+public interface INestListCfg<ID> extends ICfg<ID> {
 }

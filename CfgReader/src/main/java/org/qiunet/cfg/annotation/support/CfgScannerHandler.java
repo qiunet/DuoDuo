@@ -1,12 +1,11 @@
 package org.qiunet.cfg.annotation.support;
 
 import org.qiunet.cfg.annotation.Cfg;
-import org.qiunet.cfg.base.ICfgManager;
-import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cfg.base.ICfg;
+import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 
-import java.lang.reflect.Modifier;
 import java.util.Set;
 
 /**
@@ -20,22 +19,9 @@ public class CfgScannerHandler implements IApplicationContextAware {
 	public void setApplicationContext(IApplicationContext context) {
 		this.context = context;
 
-		Set<Class<? extends ICfgManager>> set = context.getSubTypesOf(ICfgManager.class);
-		for (Class<? extends ICfgManager> aClass : set) {
-			if (Modifier.isAbstract(aClass.getModifiers())) continue;
-
-			this.handler(aClass);
-		}
-	}
-
-
-	private void handler(Class<? extends ICfgManager> clazz) {
-		Cfg setting = clazz.getAnnotation(Cfg.class);
-		try {
-			ICfgManager manager = (ICfgManager) context.getInstanceOfClass(clazz);
-
-			CfgManagers.getInstance().addDataSettingManager(manager , setting == null ? 0 : setting.order());
-		} catch (Exception e) {
+		Set<Class<?>> classSet = context.getTypesAnnotatedWith(Cfg.class);
+		for (Class<?> aClass : classSet) {
+			CfgType.createCfgWrapper((Class<? extends ICfg>) aClass);
 		}
 	}
 }

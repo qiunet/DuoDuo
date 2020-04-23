@@ -26,8 +26,8 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	protected final Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 	protected List<Cfg> cfgs;
 
-	protected BaseXmlCfgManager(String fileName) {
-		super(fileName);
+	protected BaseXmlCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override

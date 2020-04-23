@@ -6,7 +6,7 @@ package org.qiunet.cfg.base;
  * Created by qiunet.
  * 17/6/3
  */
-public interface INestMapConfig<ID, SubId> extends ICfg<ID> {
+public interface INestMapCfg<ID, SubId> extends ICfg<ID> {
 
 	SubId getSubId();
 }
