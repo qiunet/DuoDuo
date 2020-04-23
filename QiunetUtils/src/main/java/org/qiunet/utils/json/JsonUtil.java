@@ -1,6 +1,8 @@
 package org.qiunet.utils.json;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.util.List;
@@ -28,6 +30,21 @@ public final class JsonUtil {
 	 */
 	public static <T> List<T> getGeneralList(String json, Class<T> c){
 		return JSON.parseArray(json, c);
+	}
+
+	public static <T> T getGeneralObject(String json , TypeReference<T> typeReference, Feature ... features){
+		return JSON.parseObject(json, typeReference.getType(), features);
+	}
+
+	/***
+	 * 使用TypeReference 反序列json. TypeReference最好定义为常量
+	 * @param json
+	 * @param typeReference
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T getGeneralObject(String json , TypeReference<T> typeReference){
+		return getGeneralObject(json, typeReference, new Feature[0]);
 	}
 	/**
 	 * 得到通用的对象
