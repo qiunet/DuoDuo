@@ -5,7 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
-import org.qiunet.cfg.wrapper.SimpleMapCfgWrapper;
+import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 /***
@@ -22,7 +22,7 @@ public class TestJsonManager {
 	}
 	@Test
 	public void testSimpleMap() {
-		SimpleMapCfgWrapper<Integer, JsonInitCfg> cfgWrapper = CfgType.getCfgWrapper(JsonInitCfg.class);
+		ISimpleMapCfgWrapper<Integer, JsonInitCfg> cfgWrapper = CfgType.getCfgWrapper(JsonInitCfg.class);
 
 		JsonInitCfg cfg = cfgWrapper.getCfgById(1111);
 		Assert.assertEquals(cfg.getVal1(), "1,2,3");

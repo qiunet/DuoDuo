@@ -12,11 +12,11 @@ import java.util.Map;
  * @author qiunet
  * 2020-04-23 15:00
  ***/
-public class NestMapCfgWrapper<ID, SubId, Cfg extends INestMapCfg<ID, SubId>> implements INestMapCfgWrapper<ID, SubId, Cfg> {
+ class NestMapCfgWrapper<ID, SubId, Cfg extends INestMapCfg<ID, SubId>> implements INestMapCfgWrapper<ID, SubId, Cfg> {
 
 	private INestMapCfgManager<ID, SubId, Cfg> cfgManager;
 
-	public NestMapCfgWrapper(INestMapCfgManager<ID, SubId, Cfg> cfgManager) {
+	 NestMapCfgWrapper(INestMapCfgManager<ID, SubId, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;
 	}
 
