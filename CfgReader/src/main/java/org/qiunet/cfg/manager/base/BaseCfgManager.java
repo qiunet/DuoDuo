@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverte
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -51,6 +52,8 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 		org.qiunet.cfg.annotation.Cfg cfg = cfgClass.getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
 		this.fileName = cfg.value();
 		this.checkCfgClass(cfgClass);
+
+		CfgManagers.getInstance().addCfgManager(this, cfg.order());
 	}
 
 	/***
