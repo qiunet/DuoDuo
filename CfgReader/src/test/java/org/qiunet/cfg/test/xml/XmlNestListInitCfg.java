@@ -19,12 +19,12 @@ import org.qiunet.cfg.base.INestListCfg;
 @Cfg(value = "config/init/init_data.xml", order = 11111)
 public class XmlNestListInitCfg implements INestListCfg<Integer> {
 	private int id;
-	private String val4;
+	private String val1;
 	private long val2;
 	private double val3;
 
 	public String getVal1() {
-		return val4;
+		return val1;
 	}
 
 	public long getVal2() {
