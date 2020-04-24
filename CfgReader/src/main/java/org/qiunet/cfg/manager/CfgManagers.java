@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -24,6 +25,7 @@ public class CfgManagers {
 	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	private static final CfgManagers instance = new CfgManagers();
+	private AtomicBoolean reloading = new AtomicBoolean();
 	private List<Container<ICfgManager>> gameSettingList;
 
 	private CfgManagers(){
@@ -51,8 +53,18 @@ public class CfgManagers {
 	 * @throws Exception
 	 */
 	public synchronized void reloadSetting() throws Throwable {
+		if (reloading.get()) {
+			logger.error("Game Setting Data is loading now.....");
+			return;
+		}
+
 		logger.error("Game Setting Data Load start.....");
-		this.loadDataSetting();
+		try {
+			reloading.compareAndSet(false, true);
+			this.loadDataSetting();
+		}finally {
+			reloading.compareAndSet(true, false);
+		}
 		logger.error("Game Setting Data Load over.....");
 		new CfgLoadCompleteEventData().fireEventHandler();
 	}
