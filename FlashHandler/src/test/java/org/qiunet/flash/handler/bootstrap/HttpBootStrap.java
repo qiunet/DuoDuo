@@ -23,7 +23,7 @@ public class HttpBootStrap {
 	private static Hook hook = new MyHook();
 	private static Thread currThread;
 	@BeforeClass
-	public static void init() {
+	public static void init() throws Exception {
 		ClassScanner.getInstance().scanner();
 
 		currThread = Thread.currentThread();

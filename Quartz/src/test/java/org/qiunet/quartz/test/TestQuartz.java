@@ -7,7 +7,7 @@ import org.qiunet.utils.logger.LoggerType;
 
 public class TestQuartz {
 	@Test
-	public void testCron() throws InterruptedException {
+	public void testCron() throws Exception {
 		ClassScanner.getInstance().scanner();
 		Thread.sleep(10000);
 	}

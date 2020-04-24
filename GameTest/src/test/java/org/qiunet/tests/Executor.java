@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Executor {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		// 启动服务器
 		ClassScanner.getInstance().scanner();
 		ServerStartup server = new ServerStartup();

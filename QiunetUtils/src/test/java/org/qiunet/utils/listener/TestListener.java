@@ -11,7 +11,7 @@ public class TestListener {
 	public static final AtomicInteger loginEventCount = new AtomicInteger();
 	public static final AtomicInteger levelUpEventCount = new AtomicInteger();
 	@BeforeClass
-	public static void init(){
+	public static void init() throws Exception {
 		ClassScanner.getInstance().scanner();
 	}
 

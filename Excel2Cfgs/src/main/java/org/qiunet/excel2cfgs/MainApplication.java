@@ -20,7 +20,7 @@ import java.io.IOException;
  ***/
 public class MainApplication extends Application {
 	private static Scene scene;
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("/ExcelToCfgs.fxml"));
 		Parent root = null;
 		try {

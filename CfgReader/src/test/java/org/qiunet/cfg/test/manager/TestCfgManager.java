@@ -11,7 +11,7 @@ import org.qiunet.utils.classScanner.ClassScanner;
  **/
 public class TestCfgManager {
 	@Test
-	public void test(){
+	public void test() throws Exception {
 		ClassScanner.getInstance().scanner();
 		try {
 			CfgManagers.getInstance().reloadSetting();

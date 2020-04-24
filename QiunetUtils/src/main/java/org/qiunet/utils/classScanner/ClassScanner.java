@@ -50,7 +50,7 @@ public final class ClassScanner implements IApplicationContext {
 	}
 
 	private AtomicBoolean scannered = new AtomicBoolean();
-	public void scanner(String ... packetPrefix){
+	public void scanner(String ... packetPrefix) throws Exception {
 		if (scannered.get()) {
 			logger.warn("ClassScanner was initialization , ignore this!");
 			return;
@@ -70,7 +70,8 @@ public final class ClassScanner implements IApplicationContext {
 				try {
 					instance.setApplicationContext(this);
 				}catch (Exception e) {
-					logger.error("Scanner Exception: ", e);
+					logger.error("===========Scanner Exception============:"+e.getMessage());
+					throw e;
 				}
 			}
 		}
