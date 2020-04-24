@@ -11,6 +11,6 @@ public class TestSlf4j {
 	@Test
 	public void test(){
 		Logger logger = LoggerType.DUODUO.getLogger();
-		logger.info("12345");
+		logger.info(LogUtils.generatePrintStackTrace("Test"));
 	}
 }
