@@ -25,4 +25,9 @@ public interface ICfgManager<T extends ICfg> {
 	 * @return
 	 */
 	Class<T> getCfgClass();
+	/**
+	 * 加载顺序
+	 * @return
+	 */
+	int order();
 }

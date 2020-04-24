@@ -24,7 +24,10 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 	protected String fileName;
 
 	protected Class<Cfg> cfgClass;
-
+	/**
+	 * 加载顺序
+	 */
+	private int order;
 	/**
 	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
 	 * 目前是空的实现,开发者选择是否覆盖函数
@@ -48,12 +51,18 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 
 
 	public BaseCfgManager(Class<Cfg> cfgClass) {
-		this.cfgClass = cfgClass;
 		org.qiunet.cfg.annotation.Cfg cfg = cfgClass.getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
 		this.fileName = cfg.value();
-		this.checkCfgClass(cfgClass);
+		this.cfgClass = cfgClass;
+		this.order = cfg.order();
 
-		CfgManagers.getInstance().addCfgManager(this, cfg.order());
+		this.checkCfgClass(cfgClass);
+		CfgManagers.getInstance().addCfgManager(this);
+	}
+
+	@Override
+	public int order() {
+		return order;
 	}
 
 	/***
