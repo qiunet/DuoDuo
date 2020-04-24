@@ -59,7 +59,10 @@ public class CfgScannerHandler implements IApplicationContextAware {
 				throw new RuntimeException("ICfgWrapper must specify GenericType!");
 			}
 
-			Object obj = context.getInstanceOfClass(field.getDeclaringClass());
+			Object obj = null;
+			if (! Modifier.isStatic(field.getModifiers())) {
+				obj = context.getInstanceOfClass(field.getDeclaringClass());
+			}
 			Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
 			Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
 

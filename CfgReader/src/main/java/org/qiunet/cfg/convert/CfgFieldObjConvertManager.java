@@ -1,5 +1,6 @@
 package org.qiunet.cfg.convert;
 
+import com.google.common.collect.Lists;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.classScanner.Singleton;
@@ -20,7 +21,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 	/***
 	 * 所有的convert
 	 */
-	private List<? extends BaseObjConvert> converts;
+	private List<? extends BaseObjConvert> converts = Lists.newArrayList();
 
 	private CfgFieldObjConvertManager() {
 		if (instance != null) {
@@ -59,5 +60,10 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 
 	public List<? extends BaseObjConvert> getConverts() {
 		return converts;
+	}
+
+	@Override
+	public int order() {
+		return Integer.MAX_VALUE - 1;
 	}
 }

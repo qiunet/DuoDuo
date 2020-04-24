@@ -12,11 +12,17 @@ import java.util.Map;
  * @author qiunet
  * 2020-04-23 16:28
  ***/
- class NestListCfgWrapper<ID, Cfg extends INestListCfg<ID>> implements INestListCfgWrapper<ID, Cfg> {
+ class NestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
+	extends BaseCfgWrapper<Cfg> implements INestListCfgWrapper<ID, Cfg> {
 	private INestListCfgManager<ID, Cfg> cfgManager;
 
 	 NestListCfgWrapper(INestListCfgManager<ID, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;
+	}
+
+	@Override
+	protected Class<Cfg> getCfgClass() {
+		return cfgManager.getCfgClass();
 	}
 
 	@Override

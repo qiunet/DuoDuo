@@ -12,12 +12,16 @@ import java.util.Map;
  * 2020-04-23 11:10
  ***/
  class SimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>>
-	implements ISimpleMapCfgWrapper<ID, Cfg> {
+	extends BaseCfgWrapper<Cfg> implements ISimpleMapCfgWrapper<ID, Cfg> {
 
 	private ISimpleMapCfgManager<ID, Cfg> cfgManager;
 
 	 SimpleMapCfgWrapper(ISimpleMapCfgManager<ID, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;
+	}
+	@Override
+	protected Class<Cfg> getCfgClass() {
+		return cfgManager.getCfgClass();
 	}
 
 	@Override

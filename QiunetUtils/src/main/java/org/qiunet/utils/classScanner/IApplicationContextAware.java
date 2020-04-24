@@ -10,4 +10,12 @@ public interface IApplicationContextAware {
 	 * @param context
 	 */
 	void setApplicationContext(IApplicationContext context) throws Exception;
+
+	/**
+	 * 越大执行越靠前
+	 * @return
+	 */
+	default int order() {
+		return 0;
+	}
 }

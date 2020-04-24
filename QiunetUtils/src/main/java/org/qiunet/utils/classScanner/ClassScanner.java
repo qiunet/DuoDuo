@@ -1,5 +1,6 @@
 package org.qiunet.utils.classScanner;
 
+import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
@@ -7,10 +8,12 @@ import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,8 +61,12 @@ public final class ClassScanner implements IApplicationContext {
 				this.reflections.merge(new Reflections(packetPrefix, scanners));
 			}
 			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
-			for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
-				IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
+			List<IApplicationContextAware> collect = subTypesOf.stream()
+				.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
+				.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
+				.collect(Collectors.toList());
+
+			for (IApplicationContextAware instance : collect) {
 				try {
 					instance.setApplicationContext(this);
 				}catch (Exception e) {

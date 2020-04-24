@@ -50,6 +50,11 @@ class ListenerManager0 implements IApplicationContextAware {
 		}
 	}
 
+	@Override
+	public int order() {
+		return Integer.MAX_VALUE;
+	}
+
 	/**
 	 * 使用eventDataClass 构造一个
 	 * @param eventDataClass
@@ -124,6 +129,7 @@ class ListenerManager0 implements IApplicationContextAware {
 
 		void fireEventHandler(IEventData data) {
 			try {
+				method.setAccessible(true);
 				method.invoke(caller, data);
 			} catch (IllegalAccessException | InvocationTargetException e) {
 				logger.error("Fire Event Handler Error: ", e);

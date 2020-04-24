@@ -1,16 +1,16 @@
 package org.qiunet.cfg.manager;
 
 import com.google.common.collect.Lists;
+import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
+@Singleton
 public class CfgManagers {
 	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
@@ -33,18 +34,13 @@ public class CfgManagers {
 	}
 
 	public static CfgManagers getInstance(){
-		if (instance == null) {
-			synchronized (CfgManagers.class){
-				new CfgManagers();
-			}
-		}
 		return instance;
 	}
 
 	/**
 	 * 初始化会比重新加载多一层排序
 	 */
-	public void initSetting() throws Throwable {
+	public synchronized void initSetting() throws Throwable {
 		Collections.sort(gameSettingList);
 		this.reloadSetting();
 	}
@@ -54,13 +50,13 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public void reloadSetting() throws Throwable {
+	public synchronized void reloadSetting() throws Throwable {
 		logger.error("Game Setting Data Load start.....");
 		this.loadDataSetting();
 		logger.error("Game Setting Data Load over.....");
+		new CfgLoadCompleteEventData().fireEventHandler();
 	}
 
-	private Set<Class<? extends ICfgManager>> cfgClasses = new HashSet<>();
 	/**
 	 * 添加 Manager
 	 * @param manager
@@ -68,7 +64,6 @@ public class CfgManagers {
 	 */
 	public void addCfgManager(ICfgManager manager, int order) {
 		this.gameSettingList.add(new Container<>(manager, order));
-		cfgClasses.add(manager.getClass());
 	}
 
 	/***
@@ -76,7 +71,7 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	private void loadDataSetting() throws Throwable {
+	private synchronized void loadDataSetting() throws Throwable {
 		int size = gameSettingList.size();
 		CountDownLatch latch = new CountDownLatch(size);
 		AtomicReference<Throwable> reference = new AtomicReference<>();
@@ -118,14 +113,6 @@ public class CfgManagers {
 		if (reference.get() != null) {
 			throw reference.get();
 		}
-	}
-
-	/***
-	 * 得到cfg的数量
-	 * @return
-	 */
-	public int cfgSize(){
-		return this.gameSettingList.size();
 	}
 
 	/***

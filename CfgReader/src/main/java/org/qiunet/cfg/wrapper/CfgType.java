@@ -47,13 +47,14 @@ public enum  CfgType {
 	abstract ICfgWrapper getCfgWrapper(CfgFileType cfgFileType, Class<? extends ICfg> clazz);
 
 
-	private static final Map<Class, ICfgWrapper> cfgWrappers = Maps.newHashMap();
+	static final Map<Class, ICfgWrapper> cfgWrappers = Maps.newHashMap();
 	public static void createCfgWrapper(Class<? extends ICfg> clazz) {
 		Cfg cfg = clazz.getAnnotation(Cfg.class);
 		CfgFileType fileType = CfgFileType.parse(cfg.value());
 		for (CfgType type : values()) {
 			for (Type genericInterface : clazz.getGenericInterfaces()) {
-				if (((ParameterizedType) genericInterface).getRawType() == type.clazz){
+				if (genericInterface instanceof ParameterizedType
+					&& ((ParameterizedType) genericInterface).getRawType() == type.clazz){
 					cfgWrappers.put(clazz, type.getCfgWrapper(fileType, clazz));
 					return;
 				}
@@ -63,6 +64,9 @@ public enum  CfgType {
 	}
 
 	public static <T extends ICfgWrapper> T getCfgWrapper(Class clazz) {
+		if (! cfgWrappers.containsKey(clazz)) {
+			throw new RuntimeException("No wrapper for class ["+clazz.getName()+"]");
+		}
 		return (T) cfgWrappers.get(clazz);
 	}
 }
