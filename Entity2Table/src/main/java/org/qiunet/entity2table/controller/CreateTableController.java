@@ -10,6 +10,7 @@ import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
  * 数据对象和表同步控制
  * 19/04/22
  */
+@Singleton
 class CreateTableController implements IApplicationContextAware {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private volatile static CreateTableController instance;

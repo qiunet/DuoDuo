@@ -3,6 +3,7 @@ package org.qiunet.utils.listener;
 import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -15,6 +16,7 @@ import java.util.*;
  *
  * @author qiunet
  */
+@Singleton
 class ListenerManager0 implements IApplicationContextAware {
 	private Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();

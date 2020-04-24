@@ -2,6 +2,7 @@ package org.qiunet.cfg.convert;
 
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.classScanner.Singleton;
 
 import java.util.List;
 import java.util.Objects;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-02-04 13:09
  **/
+@Singleton
 public class CfgFieldObjConvertManager implements IApplicationContextAware {
 	private volatile static CfgFieldObjConvertManager instance;
 	/***

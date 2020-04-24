@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.classScanner.Singleton;
 
 import java.lang.reflect.Modifier;
 
@@ -15,6 +16,7 @@ import java.lang.reflect.Modifier;
  * @author qiunet
  *         Created on 17/3/3 16:42.
  */
+@Singleton
 public class RequestScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override

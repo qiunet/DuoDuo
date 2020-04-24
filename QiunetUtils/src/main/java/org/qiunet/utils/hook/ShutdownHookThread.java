@@ -1,5 +1,6 @@
 package org.qiunet.utils.hook;
 
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import java.util.LinkedList;
  * @Author qiunet
  * @Date Create in 2018/5/31 12:04
  **/
+@Singleton
 public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdownListener {
 	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();

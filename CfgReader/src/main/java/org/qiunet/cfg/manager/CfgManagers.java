@@ -67,10 +67,6 @@ public class CfgManagers {
 	 * @param order
 	 */
 	public void addCfgManager(ICfgManager manager, int order) {
-		if (cfgClasses.contains(manager.getClass())) {
-			return;
-		}
-
 		this.gameSettingList.add(new Container<>(manager, order));
 		cfgClasses.add(manager.getClass());
 	}
@@ -89,10 +85,11 @@ public class CfgManagers {
 				try {
 					container.t.loadCfg();
 				}catch (Exception e) {
-					logger.error("读取配置文件" + container.t.getLoadFileName() + "失败!");
+					logger.error("读取配置文件 [{}]({}) 失败!", container.t.getCfgClass().getSimpleName(), container.t.getLoadFileName());
 					throw e;
 				}
-				logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
+				logger.info("Load Config [{}]({})", container.t.getCfgClass().getSimpleName(), container.t.getLoadFileName());
+				latch.countDown();
 				continue;
 			}
 
@@ -112,7 +109,7 @@ public class CfgManagers {
 					return;
 				}
 
-				logger.info("Load Game Config Manager["+ container.t.getClass().getName() +"]");
+				logger.info("Load Config [{}]({})", container.t.getCfgClass().getSimpleName(), container.t.getLoadFileName());
 				latch.countDown();
 			});
 		}

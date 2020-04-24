@@ -1,4 +1,4 @@
-package org.qiunet.cfg.test.json;
+package org.qiunet.cfg.test.xml;
 
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
@@ -16,8 +16,8 @@ import org.qiunet.cfg.base.ISimpleMapCfg;
  * @author qiunet
  * 2020-04-23 18:26
  ***/
-@Cfg("config/init/init_data.json")
-public class JsonInitCfg implements ISimpleMapCfg<Integer> {
+@Cfg("config/init/init_data.xml")
+public class XmlSimpleMapInitCfg implements ISimpleMapCfg<Integer> {
 	private int id;
 	private String val1;
 	private long val2;

@@ -1,4 +1,4 @@
-package org.qiunet.cfg.test.json;
+package org.qiunet.cfg.test.xd;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,7 +10,7 @@ import org.qiunet.utils.classScanner.ClassScanner;
  * @author qiunet
  * 2020-04-23 18:26
  ***/
-public class TestJsonManager {
+public class TestXdManager {
 
 	@BeforeClass
 	public static void preExec() throws Throwable {
@@ -18,9 +18,9 @@ public class TestJsonManager {
 	}
 	@Test
 	public void test(){
-		TestJsonService.instance.testReward();
-		TestJsonService.instance.testSimpleMap();
-		TestJsonService.instance.testNestMap();
-		TestJsonService.instance.testNestList();
+		TestXdService.instance.testReward();
+		TestXdService.instance.testSimpleMap();
+		TestXdService.instance.testNestMap();
+		TestXdService.instance.testNestList();
 	}
 }
