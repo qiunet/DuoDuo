@@ -17,6 +17,7 @@ import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 
@@ -33,6 +34,7 @@ import static org.qiunet.excel2cfgs.enums.RoleType.SCHEMER;
  * @author qiunet
  * 2019-11-05 18:13
  ***/
+@Singleton
 public class RootController implements Excel2CfgServerStartListenerData.Excel2CfgServerStartListener, SvnProcessingListenerData.SvnProcessingListener {
 	private static RootController instance;
 

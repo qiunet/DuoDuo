@@ -1,7 +1,9 @@
 package org.qiunet.utils.listener;
 
 import org.junit.Assert;
+import org.qiunet.utils.classScanner.Singleton;
 
+@Singleton
 public class Test1Service implements LoginEventData.LoginListener {
 
 	@Override

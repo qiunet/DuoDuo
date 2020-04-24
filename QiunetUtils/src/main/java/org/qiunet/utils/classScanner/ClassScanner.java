@@ -102,10 +102,10 @@ public final class ClassScanner implements IApplicationContext {
 			return beanInstances.get(clazz);
 		}
 
-		if (! Enum.class.isAssignableFrom(clazz)
-			&& !clazz.isAnnotationPresent(Singleton.class)) {
-			throw new RuntimeException("["+clazz.getName()+"] Must be Singleton And Set Singleton Annotation");
-		}
+//		if (! Enum.class.isAssignableFrom(clazz)
+//			&& !clazz.isAnnotationPresent(Singleton.class)) {
+//			throw new RuntimeException("["+clazz.getName()+"] Must be Singleton And Set Singleton Annotation");
+//		}
 
 
 		Optional<Field> first = Stream.of(clazz.getDeclaredFields())

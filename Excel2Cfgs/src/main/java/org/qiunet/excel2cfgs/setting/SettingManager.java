@@ -3,6 +3,7 @@ package org.qiunet.excel2cfgs.setting;
 
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.json.JsonUtil;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2019-11-06 14:57
  ***/
+@Singleton
 public class SettingManager implements ServerShutdownEventData.ServerShutdownListener {
 	private static SettingManager instance;
 
