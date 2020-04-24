@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.handler;
 
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
  * @author qiunet.
  * 17/7/21
  */
+@Singleton
 public abstract class BaseHandler<RequestData> implements IHandler<RequestData> {
 	protected Logger logger = LoggerType.DUODUO.getLogger();
 
