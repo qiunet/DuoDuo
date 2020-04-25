@@ -59,6 +59,7 @@ public class AppenderAttachable {
 		for (IAppender appender : appenders) {
 			appender.sheetOver(sheetName, this);
 		}
+		this.appenderDatas.clear();
 	}
 
 	public List<List<AppenderData>> getAppenderDatas() {
