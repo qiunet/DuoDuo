@@ -46,14 +46,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
 		this.converts = context.getSubTypesOf(BaseObjConvert.class).stream()
-			.map(clazz -> {
-				try {
-					return clazz.newInstance();
-				} catch (InstantiationException | IllegalAccessException e) {
-					e.printStackTrace();
-				}
-				return null;
-			})
+			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 	}

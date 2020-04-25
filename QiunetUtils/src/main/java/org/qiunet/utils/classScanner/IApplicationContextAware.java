@@ -18,4 +18,13 @@ public interface IApplicationContextAware {
 	default int order() {
 		return 0;
 	}
+
+	/**
+	 * 部分只有某个场合执行.
+	 * 做下区分
+	 * @return
+	 */
+	default ScannerType scannerType() {
+		return ScannerType.ALL;
+	}
 }

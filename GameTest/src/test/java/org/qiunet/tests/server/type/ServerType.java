@@ -1,6 +1,5 @@
 package org.qiunet.tests.server.type;
 
-import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
@@ -28,21 +27,6 @@ public enum ServerType implements IServer {
 	@Override
 	public String getName() {
 		return name();
-	}
-
-	@Override
-	public String host() {
-		return config.getAddress().getHostName();
-	}
-
-	@Override
-	public int port() {
-		return config.getAddress().getPort();
-	}
-
-	@Override
-	public HandlerType getType() {
-		return config.getHandlerType();
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
+import org.qiunet.utils.classScanner.ScannerType;
 import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -223,6 +224,11 @@ class CreateTableController implements IApplicationContextAware {
 		context.getTypesAnnotatedWith(Table.class).forEach(this::handlerTable);
 	}
 
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.SERVER;
+	}
+
 	/***
 	 * 处理Entity类.
 	 * 判断是否新建表,  有字段改动等
@@ -234,6 +240,9 @@ class CreateTableController implements IApplicationContextAware {
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
 		int tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.defaultDb());
+		if (tableExist == -1) {
+			throw new RuntimeException("Table config error. not find a model to create table!");
+		}
 		// 不存在时
 		if (tableExist == 0) {
 			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), table.defaultDb());

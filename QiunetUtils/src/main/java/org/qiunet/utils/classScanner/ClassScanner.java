@@ -26,27 +26,32 @@ public final class ClassScanner implements IApplicationContext {
 	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
-
+	private ScannerType scannerType;
 	private volatile static ClassScanner instance;
 
-	private ClassScanner() {
+	private ClassScanner(ScannerType scannerType) {
 		if (instance != null) {
 			throw new RuntimeException("Instance Duplication!");
 		}
 		this.reflections = new Reflections("org.qiunet", scanners);
+		this.scannerType = scannerType;
 		instance = this;
 	}
 
-	public static ClassScanner getInstance() {
+	public static ClassScanner getInstance(ScannerType scannerType) {
 		if (instance == null) {
 			synchronized (ClassScanner.class) {
 				if (instance == null)
 				{
-					new ClassScanner();
+					new ClassScanner(scannerType);
 				}
 			}
 		}
 		return instance;
+	}
+
+	public static ClassScanner getInstance() {
+		return getInstance(ScannerType.ALL);
 	}
 
 	private AtomicBoolean scannered = new AtomicBoolean();
@@ -67,6 +72,13 @@ public final class ClassScanner implements IApplicationContext {
 				.collect(Collectors.toList());
 
 			for (IApplicationContextAware instance : collect) {
+				// 不相同. 并且都不是ALL
+				if (instance.scannerType() != this.scannerType
+				&& instance.scannerType() != ScannerType.ALL
+				&& this.scannerType != ScannerType.ALL) {
+					continue;
+				}
+
 				try {
 					instance.setApplicationContext(this);
 				}catch (Exception e) {

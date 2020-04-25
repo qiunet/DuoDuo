@@ -40,6 +40,14 @@ public class Columns {
 	 */
 	public static final String EXTRA_KEY = "extra";
 
+	public static final String GENERATION_EXPRESSION_KEY = "generation_expression";
+
+	public static final String DATETIME_PRECISION_KEY = "datetime_precision";
+
+	public static final String IS_GENERATED_KEY = "is_generated";
+
+
+
 	private String table_catalog;
 	/**
 	 * 库名
@@ -95,6 +103,34 @@ public class Columns {
 	private String extra;
 	private String privileges;
 	private String column_comment;
+
+	private String generation_expression;
+	private String datetime_precision;
+	private String is_generated;
+
+	public String getGeneration_expression() {
+		return generation_expression;
+	}
+
+	public void setGeneration_expression(String generation_expression) {
+		this.generation_expression = generation_expression;
+	}
+
+	public String getDatetime_precision() {
+		return datetime_precision;
+	}
+
+	public void setDatetime_precision(String datetime_precision) {
+		this.datetime_precision = datetime_precision;
+	}
+
+	public String getIs_generated() {
+		return is_generated;
+	}
+
+	public void setIs_generated(String is_generated) {
+		this.is_generated = is_generated;
+	}
 
 	public String getTable_catalog() {
 		return table_catalog;

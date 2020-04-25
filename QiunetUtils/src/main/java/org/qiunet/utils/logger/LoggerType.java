@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  * Created by qiunet.
  * 17/8/18
  */
-public enum  LoggerType {
+public enum  LoggerType implements ILoggerType {
 	/**普通的日志打印*/
 	DUODUO("DuoDuo"),
 	/***http请求**/
@@ -30,48 +30,13 @@ public enum  LoggerType {
 	;
 
 	private String loggerName;
+
 	LoggerType(String loggerName) {
 		this.loggerName = loggerName;
 	}
 
+	@Override
 	public Logger getLogger() {
-		return LoggerFactory.getLogger(this.loggerName);
-	}
-
-
-	public void debug(String msg) {
-		getLogger().debug(msg);
-	}
-
-	public void debug(String format, Object ... arguments) {
-		getLogger().debug(format, arguments);
-	}
-
-
-	public void info(String msg) {
-		getLogger().info(msg);
-	}
-
-	public void info(String format, Object ... arguments) {
-		getLogger().info(format, arguments);
-	}
-
-	public void warn(String msg) {
-		getLogger().warn(msg);
-	}
-
-	public void warn(String format, Object ... arguments) {
-		getLogger().warn(format, arguments);
-	}
-
-	public void error(String msg) {
-		getLogger().error(msg);
-	}
-
-	public void error(String format, Object ... arguments) {
-		getLogger().error(format, arguments);
-	}
-	public void error(String msg, Throwable e) {
-		getLogger().error(msg, e);
+		return LoggerFactory.getLogger(loggerName);
 	}
 }

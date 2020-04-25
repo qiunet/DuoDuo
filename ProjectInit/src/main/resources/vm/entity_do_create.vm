@@ -9,6 +9,8 @@ import ${define.entityClass.name};
 import org.qiunet.data.core.enums.ColumnJdbcType;
 #end
 /**
+* #if(!${define.commentEmpty}), comment="${define.comment}"#end
+*
 * 对象为自动创建 不要修改
 */
 @Alias("${define.DoName}")
