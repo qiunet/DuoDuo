@@ -239,12 +239,8 @@ class CreateTableController implements IApplicationContextAware {
 		// 迭代出当前clazz所有fields存到newFieldList中
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-		int tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.defaultDb());
-		if (tableExist == -1) {
-			throw new RuntimeException("Table config error. not find a model to create table!");
-		}
-		// 不存在时
-		if (tableExist == 0) {
+		boolean tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.defaultDb());
+		if (! tableExist) {
 			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), table.defaultDb());
 			createTable(tableParam);
 		} else {

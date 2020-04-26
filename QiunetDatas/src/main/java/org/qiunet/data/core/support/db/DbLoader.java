@@ -233,6 +233,27 @@ class DbLoader {
 		}
 	}
 
+
+	private String defaultDbName;
+
+	String getDefaultDbName(){
+		if (StringUtil.isEmpty(defaultDbName)) {
+			this.defaultDbName = initDefaultDbName();
+		}
+		return defaultDbName;
+	}
+
+	private String initDefaultDbName(){
+		if (dbProperties.containKey(DEFAULT_DATABASE_SOURCE)) {
+			return dbProperties.getString(DEFAULT_DATABASE_SOURCE);
+		}
+
+		if (this.dataSources.size() != 1) {
+			throw new NullPointerException("default config size must be 1!");
+		}
+		return new ArrayList<>(dataSources.keySet()).get(0);
+	}
+
 	/***
 	 * 得到默认的sqlFactory
 	 * @return

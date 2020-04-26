@@ -1,5 +1,6 @@
 package org.qiunet.entity2table.service;
 
+import com.google.common.collect.Maps;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
@@ -8,6 +9,7 @@ import org.qiunet.data.util.DbProperties;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.command.TableParam;
+import org.qiunet.utils.string.StringUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,24 +54,41 @@ public class CreateTableService {
 	 * @param splitTable 是否是分库的表
 	 * @return
 	 */
-	public int findTableCountByTableName(String tableName, boolean splitTable, boolean defaultDb) {
-		Map<String, Object> map = new HashMap<>();
+	public boolean findTableCountByTableName(String tableName, boolean splitTable, boolean defaultDb) {
 		if (splitTable) {
-			map.put("tableName", tableName+"_0");
-		} else{
-			map.put("tableName", tableName);
+			tableName = tableName+"_0";
 		}
+		String dbName = "";
+		if (defaultDb) {
+			dbName =  ((DefaultDatabaseSupport) DefaultDatabaseSupport.getInstance()).getDbName();
+		}else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)){
+			// 只需要找第一个库就行.
+			dbName = RedisDbConstants.DB_NAME_PREFIX + 0;
+		}
+		if (StringUtil.isEmpty(dbName)) {
+			throw new RuntimeException(" can not get dbName for query!");
+		}
+
+		List<String> tableNames = dbName2TableNames.computeIfAbsent(dbName, key -> findTableNamesByDbName(key, defaultDb));
+		if (tableNames == null) {
+			return false;
+		}
+		return tableNames.contains(tableName);
+	}
+
+	private static Map<String, List<String>> dbName2TableNames  = Maps.newHashMap();
+	private List<String> findTableNamesByDbName(String dbName, boolean defaultDb) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("dbName", dbName);
 
 		if (defaultDb) {
-			return DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "findTableCountByTableName", map);
+			return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableCountByTableName", map);
 		}else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
 			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-			// 只需要找第一个库就行.
-			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
-
-			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "findTableCountByTableName", map);
+			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectList(sqlPath + "findTableCountByTableName", map);
 		}
-		return -1;
+
+		throw new RuntimeException("findTableNamesByDbName error!");
 	}
 
 	/**

@@ -41,9 +41,8 @@
 	</select>
 
 	<!-- 验证表是否存在 -->
-	<select id="findTableCountByTableName" resultType="int" parameterType="java.util.Map">
-		select count(1) from information_schema.tables
-		where <if test="dbName!=null">table_schema=#{dbName} and </if> table_name = #{tableName}
+	<select id="findTableCountByTableName" resultType="String" parameterType="java.util.Map">
+		select `table_name` from information_schema.tables where table_schema=#{dbName};
 	</select>
 
 	<!-- 根据表名查询表的结构 -->

@@ -20,6 +20,10 @@ public final class DefaultDatabaseSupport extends BaseDatabaseSupport {
 		return instance;
 	}
 
+	public String getDbName(){
+		return dbLoader.getDefaultDbName();
+	}
+
 	@Override
 	SqlSession getSqlSession() {
 		return dbLoader.getDefaultSqlSession();
