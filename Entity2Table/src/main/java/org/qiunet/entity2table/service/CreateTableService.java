@@ -11,9 +11,10 @@ import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.utils.string.StringUtil;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /***
  * 对表的操作的类
@@ -58,6 +59,15 @@ public class CreateTableService {
 		if (splitTable) {
 			tableName = tableName+"_0";
 		}
+		String dbName = getDbName(defaultDb);
+		List<String> tableNames = dbName2TableNames.computeIfAbsent(dbName, this::findTableNamesByDbName);
+		if (tableNames == null) {
+			return false;
+		}
+		return tableNames.contains(tableName);
+	}
+
+	private String getDbName(boolean defaultDb) {
 		String dbName = "";
 		if (defaultDb) {
 			dbName =  ((DefaultDatabaseSupport) DefaultDatabaseSupport.getInstance()).getDbName();
@@ -68,27 +78,13 @@ public class CreateTableService {
 		if (StringUtil.isEmpty(dbName)) {
 			throw new RuntimeException(" can not get dbName for query!");
 		}
-
-		List<String> tableNames = dbName2TableNames.computeIfAbsent(dbName, key -> findTableNamesByDbName(key, defaultDb));
-		if (tableNames == null) {
-			return false;
-		}
-		return tableNames.contains(tableName);
+		return dbName;
 	}
 
 	private static Map<String, List<String>> dbName2TableNames  = Maps.newHashMap();
-	private List<String> findTableNamesByDbName(String dbName, boolean defaultDb) {
-		Map<String, Object> map = new HashMap<>();
-		map.put("dbName", dbName);
-
-		if (defaultDb) {
-			return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableCountByTableName", map);
-		}else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectList(sqlPath + "findTableCountByTableName", map);
-		}
-
-		throw new RuntimeException("findTableNamesByDbName error!");
+	private List<String> findTableNamesByDbName(String dbName) {
+		// 从公共库取. 使用默认源就行.
+		return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableNamesByDbName", dbName);
 	}
 
 	/**
@@ -98,24 +94,26 @@ public class CreateTableService {
 	 * @return
 	 */
 	public List<Columns> findTableEnsembleByTableName(String tableName, boolean splitTable, boolean defaultDb) {
-		Map<String, Object> map = new HashMap<>();
 		if (splitTable) {
-			map.put("tableName", tableName+"_0");
-		}else {
-			map.put("tableName", tableName);
+			tableName = tableName+"_0";
 		}
 
-		if (defaultDb) {
-			return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableEnsembleByTableName", map);
-		} else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-
-			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
-			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectList(sqlPath + "findTableEnsembleByTableName", map);
-		}
-		return null;
+		String dbName = getDbName(defaultDb);
+		Map<String, List<Columns>> tableColumns = dbName2TableColumns.computeIfAbsent(dbName, this::findTableColumnsByDbName);
+		return tableColumns.get(tableName);
 	}
 
+
+	/**dbName -> table -> columnList**/
+	private static Map<String, Map<String, List<Columns>>> dbName2TableColumns  = Maps.newHashMap();
+	private Map<String, List<Columns>> findTableColumnsByDbName(String dbName) {
+		// 从公共库取. 使用默认源就行.
+		List<Columns> columns = DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findColumnByDbName", dbName);
+		if (columns == null) {
+			return Collections.emptyMap();
+		}
+		return columns.stream().collect(Collectors.groupingBy(Columns::getTable_name));
+	}
 	/**
 	 * 增加列
 	 * @param alterParam

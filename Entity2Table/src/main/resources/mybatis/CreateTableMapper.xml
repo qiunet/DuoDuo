@@ -41,14 +41,14 @@
 	</select>
 
 	<!-- 验证表是否存在 -->
-	<select id="findTableCountByTableName" resultType="String" parameterType="java.util.Map">
-		select `table_name` from information_schema.tables where table_schema=#{dbName};
+	<select id="findTableNamesByDbName" resultType="String" parameterType="String">
+		select `table_name` from information_schema.tables where table_schema=#{value};
 	</select>
 
 	<!-- 根据表名查询表的结构 -->
-	<select id="findTableEnsembleByTableName" resultType="org.qiunet.entity2table.command.Columns"
-			parameterType="java.util.Map">
-		select * from information_schema.columns where <if test="dbName!=null">table_schema=#{dbName} and </if> table_name = #{tableName}
+	<select id="findColumnByDbName" resultType="org.qiunet.entity2table.command.Columns"
+			parameterType="String">
+		select `table_schema`, `table_name`, `column_name`, `column_default`, `is_nullable`, `column_type`, `extra` from information_schema.columns where table_schema=#{value};
 	</select>
 
 	<!-- 增加字段 -->
