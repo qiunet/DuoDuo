@@ -25,6 +25,14 @@ public interface IHandler<RequestData> {
 	 * @return
 	 */
 	int getProtocolID();
+
+	/**
+	 * 请求监视到一定时间多少次后, 会触发业务处理警告.
+	 * @return
+	 */
+	default int checkCount() {
+		return 20;
+	}
 	/**
 	 * 必须要已经鉴权 才能进入handler
 	 * @return

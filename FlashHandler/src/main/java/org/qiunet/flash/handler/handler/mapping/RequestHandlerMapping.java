@@ -54,24 +54,38 @@ public class RequestHandlerMapping {
 
 	/**
 	 * 通过请求的MessageContent 得到一个Handler
+	 * @param protocolId
+	 * @return
+	 */
+	public IHandler getHandler(int protocolId) {
+		if (! gameHandlers.containsKey(protocolId)) {
+			logger.error("Have not handler For ProtocolId ["+protocolId+"]");
+		}
+		return gameHandlers.get(protocolId);
+	}
+
+	/**
+	 * 通过请求的MessageContent 得到一个Handler
+	 * @param uriPath
+	 * @return
+	 */
+	public IHandler getHandler(String uriPath) {
+		if (! uriPathHandlers.containsKey(uriPath)) {
+			logger.error("Have not handler For UriPath ["+uriPath+"]");
+		}
+		return uriPathHandlers.get(uriPath);
+	}
+
+	/**
+	 * 通过请求的MessageContent 得到一个Handler
 	 * @param content
 	 * @return
 	 */
 	public IHandler getHandler(MessageContent content) {
 		if (content.getProtocolId() > 0) {
-			if (! gameHandlers.containsKey(content.getProtocolId())) {
-				logger.error("Have not handler For ProtocolId ["+content.getProtocolId()+"]");
-			}
-			return gameHandlers.get(content.getProtocolId());
+			return getHandler(content.getProtocolId());
 		}
-
-
-		String uriPath = ((UriHttpMessageContent) content).getUriPath();
-		if (! uriPathHandlers.containsKey(uriPath)) {
-			logger.error("Have not handler For UriPath ["+uriPath+"]");
-		}
-		return uriPathHandlers.get(uriPath);
-
+		return getHandler(((UriHttpMessageContent) content).getUriPath());
 	}
 	/**
 	 * 存一个handler对应mapping
