@@ -149,15 +149,6 @@ public final class DateUtil {
 		return nowLocalDateTime().atZone(getDefaultZoneId()).toInstant().toEpochMilli();
 	}
 
-	/**
-	 * 当前时间戳
-	 *
-	 * @param zoneOffset
-	 * @return
-	 */
-	public static long getNowMilliByTime(ZoneOffset zoneOffset) {
-		return nowLocalDateTime().toInstant(zoneOffset).toEpochMilli();
-	}
 
 	/**
 	 * 当前时间

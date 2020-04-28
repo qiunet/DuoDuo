@@ -6,15 +6,17 @@ import org.qiunet.utils.base.BaseTest;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.concurrent.CountDownLatch;
 
 /**
  * @author qiunet
  *         Created on 16/11/5 19:59.
  */
-public class TestDateUtil  extends BaseTest{
+public class TestDateUtil extends BaseTest {
 	@Test
-	public void testIsBetweenDay(){
+	public void testIsBetweenDay() {
 		LocalDateTime date1 = DateUtil.stringToDate("2016-05-16 00:00:00");
 		LocalDateTime date2 = DateUtil.stringToDate("2016-05-26 00:00:00");
 		LocalDateTime dt1 = DateUtil.stringToDate("2016-05-20 00:00:00");
@@ -31,8 +33,8 @@ public class TestDateUtil  extends BaseTest{
 	 */
 	@Test
 	public void threadSafeSdf() throws ParseException, InterruptedException {
-		String val1  = "2016-05-20 00:00:00";
-		String val2  = "2016-05-26 00:00:01";
+		String val1 = "2016-05-20 00:00:00";
+		String val2 = "2016-05-26 00:00:01";
 		LocalDateTime dt1 = DateUtil.stringToDate(val1);
 		LocalDateTime dt2 = DateUtil.stringToDate(val2);
 		long time1 = DateUtil.getMilliByTime(dt1);
@@ -58,7 +60,7 @@ public class TestDateUtil  extends BaseTest{
 	}
 
 	@Test
-	public void testAddHour(){
+	public void testAddHour() {
 		int hours = 5;
 		LocalDateTime now = DateUtil.currentLocalDateTime();
 		Assert.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, -hours)));
@@ -73,5 +75,48 @@ public class TestDateUtil  extends BaseTest{
 
 		Assert.assertTrue(DateUtil.isSameDay(date1, date2));
 		Assert.assertTrue(DateUtil.isSameDay(date1, date3));
+	}
+
+	@Test
+	public void testDateTime() {
+		ZoneId defaultZoneId = DateUtil.getDefaultZoneId();
+		System.out.println("系统默认时区:\t" + defaultZoneId);
+
+
+		LocalDateTime nowLocalDateTime = DateUtil.nowLocalDateTime();
+		LocalDateTime nowLocalDateTimeUTC = DateUtil.nowLocalDateTime(ZoneOffset.UTC);
+
+		System.out.println("系统时区:\t" + DateUtil.dateToString(nowLocalDateTime));
+		System.out.println("UTC时区:\t" + DateUtil.dateToString(nowLocalDateTimeUTC));
+
+		long milliByTime = DateUtil.getMilliByTime(nowLocalDateTime);
+		long milliByTimeUTC = DateUtil.getMilliByTime(nowLocalDateTimeUTC, ZoneOffset.UTC);
+
+		System.out.println("系统时间戳:\t" + milliByTime);
+		System.out.println("UTC时间戳:\t" + milliByTimeUTC);
+
+		Assert.assertTrue(milliByTime == milliByTimeUTC);
+
+
+
+		long nowMilliByTime = DateUtil.getNowMilliByTime();
+		System.out.println("当前时间戳:\t" + nowMilliByTime);
+
+		LocalDateTime localDateTime = DateUtil.getLocalDateTime(nowMilliByTime);
+		LocalDateTime localDateTimeUTC = DateUtil.getLocalDateTime(nowMilliByTime, ZoneOffset.UTC);
+
+		String dateStr1 = DateUtil.dateToString(localDateTime);
+		String dateStr2 = DateUtil.dateToString(localDateTimeUTC);
+		String dateStr3 = DateUtil.dateToString(DateUtil.addHours(localDateTimeUTC, 8));
+
+		System.out.println(dateStr1);
+		System.out.println(dateStr2);
+		System.out.println(dateStr3);
+
+		Assert.assertFalse(dateStr1.equals(dateStr2));
+		//+8 hour
+		Assert.assertTrue(dateStr1.equals(dateStr3));
+
+
 	}
 }
