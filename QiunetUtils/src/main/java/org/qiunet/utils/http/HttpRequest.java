@@ -1,6 +1,9 @@
 package org.qiunet.utils.http;
 
-import okhttp3.*;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -64,7 +67,7 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * @param callBack
 	 * @throws Exception
 	 */
-	public void asyncExecutor(Callback callBack) {
+	public void asyncExecutor(IHttpCallBack callBack) {
 		Request request = buildRequest();
 		client.newCall(request).enqueue(callBack);
 	}
