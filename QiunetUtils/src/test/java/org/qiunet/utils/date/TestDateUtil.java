@@ -79,28 +79,33 @@ public class TestDateUtil extends BaseTest {
 
 	@Test
 	public void testDateTime() {
-		ZoneId defaultZoneId = DateUtil.getDefaultZoneId();
-		System.out.println("系统默认时区:\t" + defaultZoneId);
-
-
 		LocalDateTime nowLocalDateTime = DateUtil.nowLocalDateTime();
 		LocalDateTime nowLocalDateTimeUTC = DateUtil.nowLocalDateTime(ZoneOffset.UTC);
 
-		System.out.println("系统时区:\t" + DateUtil.dateToString(nowLocalDateTime));
-		System.out.println("UTC时区:\t" + DateUtil.dateToString(nowLocalDateTimeUTC));
+//		System.out.println("系统时区:\t" + DateUtil.dateToString(nowLocalDateTime));
+//		System.out.println("UTC时区:\t" + DateUtil.dateToString(nowLocalDateTimeUTC));
 
 		long milliByTime = DateUtil.getMilliByTime(nowLocalDateTime);
 		long milliByTimeUTC = DateUtil.getMilliByTime(nowLocalDateTimeUTC, ZoneOffset.UTC);
 
-		System.out.println("系统时间戳:\t" + milliByTime);
-		System.out.println("UTC时间戳:\t" + milliByTimeUTC);
+//		System.out.println("系统时间戳:\t" + milliByTime);
+//		System.out.println("UTC时间戳:\t" + milliByTimeUTC);
+		Assert.assertEquals(milliByTime, milliByTimeUTC);
 
-		Assert.assertTrue(milliByTime == milliByTimeUTC);
+		LocalDateTime localDateTime = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTime));
+		LocalDateTime localDateTimeUTC = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTimeUTC));
 
+		long milliByTime1 = DateUtil.getMilliByTime(localDateTime);
+		long milliByTime2 = DateUtil.getMilliByTime(localDateTimeUTC, ZoneOffset.UTC);
+//		System.out.println("milliByTime1:\t" +milliByTime1);
+//		System.out.println("milliByTime2:\t" +milliByTime2);
+		Assert.assertEquals(milliByTime1, milliByTime2);
+	}
 
-
+	@Test
+	public void testMilliToDateTime() {
 		long nowMilliByTime = DateUtil.getNowMilliByTime();
-		System.out.println("当前时间戳:\t" + nowMilliByTime);
+//		System.out.println("当前时间戳:\t" + nowMilliByTime);
 
 		LocalDateTime localDateTime = DateUtil.getLocalDateTime(nowMilliByTime);
 		LocalDateTime localDateTimeUTC = DateUtil.getLocalDateTime(nowMilliByTime, ZoneOffset.UTC);
@@ -109,14 +114,10 @@ public class TestDateUtil extends BaseTest {
 		String dateStr2 = DateUtil.dateToString(localDateTimeUTC);
 		String dateStr3 = DateUtil.dateToString(DateUtil.addHours(localDateTimeUTC, 8));
 
-		System.out.println(dateStr1);
-		System.out.println(dateStr2);
-		System.out.println(dateStr3);
-
-		Assert.assertFalse(dateStr1.equals(dateStr2));
+		Assert.assertNotEquals(dateStr1, dateStr2);
 		//+8 hour
-		Assert.assertTrue(dateStr1.equals(dateStr3));
-
-
+		Assert.assertEquals(dateStr1, dateStr3);
 	}
+
+
 }
