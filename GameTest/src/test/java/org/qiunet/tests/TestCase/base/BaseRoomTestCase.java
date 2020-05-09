@@ -1,7 +1,6 @@
 package org.qiunet.tests.TestCase.base;
 
 import com.google.protobuf.GeneratedMessageV3;
-import org.qiunet.test.server.IServer;
 import org.qiunet.test.testcase.LongConn.LongConnProtobufTestCase;
 import org.qiunet.tests.proto.HeaderProto;
 import org.qiunet.tests.robot.Robot;
@@ -21,7 +20,7 @@ public abstract class BaseRoomTestCase<RequestData extends GeneratedMessageV3> e
 	}
 
 	@Override
-	protected IServer getServer() {
+	protected ServerType getServer() {
 		return ServerType.LC_ROOM;
 	}
 }
