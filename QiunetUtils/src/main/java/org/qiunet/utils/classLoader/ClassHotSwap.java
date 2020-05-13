@@ -3,7 +3,10 @@ package org.qiunet.utils.classLoader;
 import com.sun.tools.attach.VirtualMachine;
 import com.sun.tools.classfile.ClassFile;
 import org.qiunet.agent.ClassInfos;
+import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.encryptAndDecrypt.MD5Util;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.properties.PropertiesUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
@@ -13,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 /***
  * 对class 进行热替换
@@ -50,20 +54,42 @@ public final class ClassHotSwap {
 			logger.error(" JavaAgentJarPath is null!");
 			return;
 		}
-		File[] listFiles = classDirectory.listFiles();
-		if (listFiles == null) {
-			throw new NullPointerException("No class file in class hot swap dir ["+classesParentPath.toString()+"]");
+		/* 文件名=md5 */
+		File md5File = new File(classDirectory, "HotSwapMd5.properties");
+		if (! md5File.exists()) {
+			logger.error("HotSwapMd5.properties is not found!");
+			return;
 		}
-		for (File clazzFile : listFiles) {
-			if (clazzFile.isDirectory() || !clazzFile.getName().endsWith(".class")) continue;
+
+		IKeyValueData<Object, Object> md5Details = PropertiesUtil.loadProperties(md5File);
+		for (Map.Entry<Object, Object> entry : md5Details.returnMap().entrySet()) {
+			String fileName = entry.getKey().toString();
+			String md5String = entry.getValue().toString();
+
+			File clazzFile = new File(classDirectory, fileName);
+			if (clazzFile.isDirectory()) {
+				logger.error("File {} is a directory", fileName);
+				return;
+			}
+
+			if (! fileName.endsWith(".class")) {
+				logger.error("File {} is a class File", fileName);
+				return;
+			}
 
 			try {
+				if (! md5String.equals(MD5Util.encrypt(clazzFile))) {
+					logger.error("File {}` md5 {} is not match specify md5 {} in HotSwapMd5.properties", fileName, md5String, MD5Util.encrypt(clazzFile));
+					return;
+				}
+
 				ClassFile classFile = ClassFile.read(clazzFile);
 				classInfos.addClass(classFile.getName());
 			} catch (Exception e) {
 				logger.error(clazzFile.getName()+"ERROR", e);
 			}
 		}
+
 		VirtualMachine vm = null;
 		try {
 			vm = VirtualMachine.attach(String.valueOf(OSUtil.pid()));
