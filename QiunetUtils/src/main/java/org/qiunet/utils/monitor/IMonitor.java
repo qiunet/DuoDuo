@@ -1,7 +1,5 @@
 package org.qiunet.utils.monitor;
 
-import java.util.concurrent.TimeUnit;
-
 /***
  * 监视器. 长连接时候用比较合适.
  *
@@ -9,7 +7,7 @@ import java.util.concurrent.TimeUnit;
  * 获得物品的频率
  * 某类型的消耗  获得频率等等
  *
- * 通过单位时间{@link IMonitor#getTriggerTime()}内,
+ * 通过单位时间{@link IMonitor#getTriggerTime(Object)}内,
  * KEY的VAL类型的数量达到{@link IMonitorTriggerNumMapping#triggerNum(Object)}进行触发.
  *
  * 触发讲调用 {@link IMonitorTrigger#trigger(IMonitorData)} )}
@@ -37,10 +35,5 @@ public interface IMonitor<Type, SubType> {
 	 * 建议分为单位.
 	 * @return
 	 */
-	int getTriggerTime();
-	/***
-	 * 时间单位
-	 * @return
-	 */
-	TimeUnit getUnit();
+	long getTriggerTime(SubType subType);
 }

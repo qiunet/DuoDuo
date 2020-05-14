@@ -25,19 +25,24 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 
 
 	private final Map<SubType, Long> triggerNumMap = Maps.newConcurrentMap();
+	private final Map<SubType, Long> triggerTimeMap = Maps.newConcurrentMap();
 	/**
 	 * 统计结果的Map
 	 */
 	private final Map<Type, Map<SubType, MonitorData<Type, SubType>>> statistics = Maps.newConcurrentMap();
-
+	/**
+	 * 获取次数的一个接口
+	 */
 	private IMonitorTriggerNumMapping<SubType> numMapping;
-
+	/**
+	 * 触发监控的接口
+	 */
 	private IMonitorTrigger<Type, SubType> trigger;
+	/**
+	 * 获取每个subType的监控触发时间的接口
+	 */
+	private ITriggerTimeMapping<SubType> timeMapping;
 
-	private int triggerTime;
-	private TimeUnit unit;
-
-	private long triggerMillis;
 	/***
 	 * 以分为单位构造该类
 	 *
@@ -60,13 +65,17 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 	 */
 	public DefaultMonitor(IMonitorTriggerNumMapping<SubType> numMapping,
 						  IMonitorTrigger<Type, SubType> trigger,
-						  int triggerTime,
-						  TimeUnit unit) {
-		this.triggerMillis = unit.toMillis(triggerTime);
+						  final int triggerTime,
+						  final TimeUnit unit) {
+		this(numMapping, trigger, subType -> (int) unit.toMillis(triggerTime));
+	}
+
+	public DefaultMonitor(IMonitorTriggerNumMapping<SubType> numMapping,
+						  IMonitorTrigger<Type, SubType> trigger,
+						  ITriggerTimeMapping<SubType> timeMapping) {
+		this.timeMapping = timeMapping;
 		this.numMapping = numMapping;
-		this.triggerTime = triggerTime;
 		this.trigger = trigger;
-		this.unit = unit;
 	}
 
 	@Override
@@ -81,12 +90,12 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 		if (newNum < triggerNum) return;
 
 		long now = DateUtil.currentTimeMillis();
-		if (now - monitorData.getIgnoreStartCheckTime() > IGNORE_COUNT_CLEAN_FAC * triggerMillis) {
+		if (now - monitorData.getIgnoreStartCheckTime() > IGNORE_COUNT_CLEAN_FAC * this.getTriggerTime(subType)) {
 			monitorData.resetDelayStartCheckTime();
 			monitorData.delayTimes.set(0);
 		}
 
-		if (now - monitorData.getStartCheckTime() < triggerMillis) {
+		if (now - monitorData.getStartCheckTime() < this.getTriggerTime(subType)) {
 			TempMonitorData<Type, SubType> data = new TempMonitorData<>(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes());
 			DFuture<Boolean> future = TimerManager.getInstance().executorNow(() -> trigger.trigger(data));
 			future.whenComplete((ret, e) -> {
@@ -105,12 +114,7 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 
 
 	@Override
-	public int getTriggerTime() {
-		return triggerTime;
-	}
-
-	@Override
-	public TimeUnit getUnit() {
-		return unit;
+	public long getTriggerTime(SubType subType) {
+		return triggerTimeMap.computeIfAbsent(subType, timeMapping::triggerTime);
 	}
 }
