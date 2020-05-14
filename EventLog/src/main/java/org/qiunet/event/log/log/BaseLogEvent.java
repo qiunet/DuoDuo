@@ -7,11 +7,11 @@ import org.qiunet.event.log.enums.base.IEventLogType;
  * @author qiunet
  * 2020-03-30 07:52
  **/
-public abstract class BaseLogEvent implements ILogEvent {
-	protected IEventLogType eventLogType;
+public abstract class BaseLogEvent<T extends Enum<T> & IEventLogType> implements ILogEvent<T> {
+	protected T eventLogType;
 	protected long createTime;
 
-	protected BaseLogEvent(IEventLogType eventLogType) {
+	protected BaseLogEvent(T eventLogType) {
 		this.createTime = System.currentTimeMillis();
 		this.eventLogType = eventLogType;
 	}
@@ -22,7 +22,7 @@ public abstract class BaseLogEvent implements ILogEvent {
 	}
 
 	@Override
-	public IEventLogType logType() {
+	public T logType() {
 		return eventLogType;
 	}
 }

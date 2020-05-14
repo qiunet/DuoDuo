@@ -1,6 +1,7 @@
 package org.qiunet.event.log;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.event.log.enums.base.IEventLogType;
 import org.qiunet.event.log.log.ILogEvent;
 import org.qiunet.event.log.logger.LoggerChoice;
 
@@ -17,6 +18,6 @@ public final class LogRecord {
 	 */
 	public static void sendLog(ILogEvent log){
 		Preconditions.checkNotNull(log);
-		LoggerChoice.getLogger(log.logType()).send(log);
+		LoggerChoice.getLogger((IEventLogType) log.logType()).send(log);
 	}
 }

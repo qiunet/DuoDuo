@@ -9,12 +9,12 @@ import org.qiunet.event.log.enums.base.IEventLogType;
  * @author qiunet
  * 2020-03-29 10:07
  **/
-public interface ILogEvent {
+public interface ILogEvent<T extends Enum<T> & IEventLogType> {
 	/**
 	 * 日志的类型
 	 * @return
 	 */
-	IEventLogType logType();
+	T logType();
 	/**
 	 * 生成发送的消息
 	 * 业务自己拼需要的log msg
