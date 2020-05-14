@@ -18,12 +18,14 @@ import java.util.Map;
 public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
 	private RequestBody requestBody;
+
 	PostHttpRequest(String url) {
 		super(url);
 	}
 
 	/**
 	 * 使用form的方式提交数据
+	 *
 	 * @param params
 	 * @return
 	 */
@@ -36,17 +38,30 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
 	/**
 	 * 使用json的方式提交数据
+	 *
 	 * @param params
 	 * @return
 	 */
 	public PostHttpRequest withJsonData(Map<String, Object> params) {
 		String json = JsonUtil.toJsonString(params);
-		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset="+charset), json);
+		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
+		return this;
+	}
+
+	/**
+	 * 使用json的方式提交数据
+	 *
+	 * @param json
+	 * @return
+	 */
+	public PostHttpRequest withJsonData(String json) {
+		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
 		return this;
 	}
 
 	/**
 	 * 自定义body格式类型
+	 *
 	 * @param requestBody
 	 * @return
 	 */
@@ -62,9 +77,9 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 			this.withFormData(Collections.emptyMap());
 		}
 		return new Request.Builder()
-			.headers(headerBuilder.build())
-			.post(requestBody)
-			.url(url)
-			.build();
+				.headers(headerBuilder.build())
+				.post(requestBody)
+				.url(url)
+				.build();
 	}
 }
