@@ -1,13 +1,12 @@
 #set($define=${define})
 package ${define.packageName};
 
+import ${define.entityPackage}.${define.boName};
+import ${define.entityPackage}.${define.doName};
 import ${define.type.DataSupportClass.name};
 #if(${define.type.list})
 import java.util.Map;
 #end
-
-import ${define.entityPackage}.${define.boName};
-import ${define.entityPackage}.${define.doName};
 
 public enum ${define.serviceName} {
 	instance;
