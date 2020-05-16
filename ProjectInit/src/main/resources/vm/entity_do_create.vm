@@ -1,13 +1,13 @@
 #set($define=${define})
 package ${define.entityPackage};
 
-import org.qiunet.data.core.support.db.Table;
-import org.qiunet.data.core.support.db.Column;
 import org.apache.ibatis.type.Alias;
 import ${define.entityClass.name};
 #if(${define.needImportColumnJdbcType})
 import org.qiunet.data.core.enums.ColumnJdbcType;
 #end
+import org.qiunet.data.core.support.db.Column;
+import org.qiunet.data.core.support.db.Table;
 /**
 * #if(!${define.commentEmpty}), comment="${define.comment}"#end
 *
