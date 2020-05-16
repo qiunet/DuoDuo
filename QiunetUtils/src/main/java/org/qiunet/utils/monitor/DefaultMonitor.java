@@ -67,7 +67,7 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 						  IMonitorTrigger<Type, SubType> trigger,
 						  final int triggerTime,
 						  final TimeUnit unit) {
-		this(numMapping, trigger, subType -> (int) unit.toMillis(triggerTime));
+		this(numMapping, trigger, subType -> unit.toMillis(triggerTime));
 	}
 
 	public DefaultMonitor(IMonitorTriggerNumMapping<SubType> numMapping,
