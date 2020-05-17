@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-03-02 10:57
  ***/
-public class CdTimer {
+public class CdTimer<T extends Enum<T> & ICdType> {
 
-	private Map<ICdType, Timer> cdTimers = new ConcurrentHashMap<>();
+	private Map<T, Timer> cdTimers = new ConcurrentHashMap<>();
 	/**
 	 * 测试环境可以关闭cd
 	 */
@@ -23,7 +23,7 @@ public class CdTimer {
 	 * @param cdType
 	 * @return
 	 */
-	public void recordCd(ICdType cdType) {
+	public void recordCd(T cdType) {
 		this.recordCd(cdType, cdType.period(), cdType.unit());
 	}
 	/***
@@ -34,7 +34,7 @@ public class CdTimer {
 	 * @param unit 时间单位
 	 * @return
 	 */
-	public void recordCd(ICdType cdType, long period, TimeUnit unit) {
+	public void recordCd(T cdType, long period, TimeUnit unit) {
 		if (close) {
 			return;
 		}
@@ -52,7 +52,7 @@ public class CdTimer {
 	 * @param cdType
 	 * @return
 	 */
-	public boolean isTimeout(ICdType cdType){
+	public boolean isTimeout(T cdType){
 		if (close) {
 			return true;
 		}
@@ -67,7 +67,7 @@ public class CdTimer {
 	 * 得到该剩余秒数
 	 * @return
 	 */
-	public int getLeftTime(ICdType cdType){
+	public int getLeftTime(T cdType){
 		if (isTimeout(cdType)) {
 			return 0;
 		}
@@ -82,7 +82,7 @@ public class CdTimer {
 	 * @param cdType
 	 * @return 没有cd中, 返回0
 	 */
-	public long getNextTime(ICdType cdType) {
+	public long getNextTime(T cdType) {
 		if (isTimeout(cdType)) {
 			return 0;
 		}
@@ -96,7 +96,7 @@ public class CdTimer {
 	}
 
 
-	public void removeCd(ICdType cdType) {
+	public void removeCd(T cdType) {
 		cdTimers.remove(cdType);
 	}
 	/***
