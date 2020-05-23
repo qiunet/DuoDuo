@@ -20,10 +20,12 @@ public final class LoginOnlineProto {
 
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return The header.
      */
     org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader();
     /**
@@ -38,6 +40,7 @@ public final class LoginOnlineProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:LoginOnlineRequest)
       LoginOnlineRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use LoginOnlineRequest.newBuilder() to construct.
     private LoginOnlineRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -46,16 +49,27 @@ public final class LoginOnlineProto {
     }
 
     @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoginOnlineRequest();
+    }
+
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private LoginOnlineRequest(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -64,12 +78,6 @@ public final class LoginOnlineProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder subBuilder = null;
               if (header_ != null) {
@@ -83,6 +91,13 @@ public final class LoginOnlineProto {
 
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -91,6 +106,7 @@ public final class LoginOnlineProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -99,6 +115,7 @@ public final class LoginOnlineProto {
       return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineRequest_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineRequest_fieldAccessorTable
@@ -110,12 +127,14 @@ public final class LoginOnlineProto {
     private org.qiunet.tests.proto.HeaderProto.RequestHeader header_;
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     public boolean hasHeader() {
       return header_ != null;
     }
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return The header.
      */
     public org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader() {
       return header_ == null ? org.qiunet.tests.proto.HeaderProto.RequestHeader.getDefaultInstance() : header_;
@@ -128,6 +147,7 @@ public final class LoginOnlineProto {
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -137,13 +157,16 @@ public final class LoginOnlineProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (header_ != null) {
         output.writeMessage(1, getHeader());
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -153,11 +176,11 @@ public final class LoginOnlineProto {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getHeader());
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -168,13 +191,13 @@ public final class LoginOnlineProto {
       }
       org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest other = (org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest) obj;
 
-      boolean result = true;
-      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader() != other.hasHeader()) return false;
       if (hasHeader()) {
-        result = result && getHeader()
-            .equals(other.getHeader());
+        if (!getHeader()
+            .equals(other.getHeader())) return false;
       }
-      return result;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -193,6 +216,17 @@ public final class LoginOnlineProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -252,6 +286,7 @@ public final class LoginOnlineProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -259,6 +294,7 @@ public final class LoginOnlineProto {
     public static Builder newBuilder(org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -282,6 +318,7 @@ public final class LoginOnlineProto {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineRequest_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineRequest_fieldAccessorTable
@@ -289,7 +326,7 @@ public final class LoginOnlineProto {
                 org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest.class, org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.LoginOnlineProto.LoginOnlineRequest.newBuilder()
+      // Construct using org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -304,6 +341,7 @@ public final class LoginOnlineProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         if (headerBuilder_ == null) {
@@ -315,15 +353,18 @@ public final class LoginOnlineProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineRequest_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest getDefaultInstanceForType() {
         return org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest build() {
         org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest result = buildPartial();
         if (!result.isInitialized()) {
@@ -332,6 +373,7 @@ public final class LoginOnlineProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest buildPartial() {
         org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest result = new org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest(this);
         if (headerBuilder_ == null) {
@@ -343,32 +385,39 @@ public final class LoginOnlineProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest) {
           return mergeFrom((org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest)other);
@@ -383,14 +432,17 @@ public final class LoginOnlineProto {
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -409,17 +461,19 @@ public final class LoginOnlineProto {
         return this;
       }
 
-      private org.qiunet.tests.proto.HeaderProto.RequestHeader header_ = null;
+      private org.qiunet.tests.proto.HeaderProto.RequestHeader header_;
       private com.google.protobuf.SingleFieldBuilderV3<
           org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder> headerBuilder_;
       /**
        * <code>.RequestHeader header = 1;</code>
+       * @return Whether the header field is set.
        */
       public boolean hasHeader() {
         return headerBuilder_ != null || header_ != null;
       }
       /**
        * <code>.RequestHeader header = 1;</code>
+       * @return The header.
        */
       public org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader() {
         if (headerBuilder_ == null) {
@@ -513,7 +567,7 @@ public final class LoginOnlineProto {
        * <code>.RequestHeader header = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder>
+          org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder> 
           getHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -525,14 +579,16 @@ public final class LoginOnlineProto {
         }
         return headerBuilder_;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -551,11 +607,12 @@ public final class LoginOnlineProto {
 
     private static final com.google.protobuf.Parser<LoginOnlineRequest>
         PARSER = new com.google.protobuf.AbstractParser<LoginOnlineRequest>() {
+      @java.lang.Override
       public LoginOnlineRequest parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new LoginOnlineRequest(input, extensionRegistry);
+        return new LoginOnlineRequest(input, extensionRegistry);
       }
     };
 
@@ -568,6 +625,7 @@ public final class LoginOnlineProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -580,10 +638,12 @@ public final class LoginOnlineProto {
 
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader();
     /**
@@ -597,6 +657,7 @@ public final class LoginOnlineProto {
      * </pre>
      *
      * <code>int32 day = 2;</code>
+     * @return The day.
      */
     int getDay();
   }
@@ -611,25 +672,36 @@ public final class LoginOnlineProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:LoginOnlineResponse)
       LoginOnlineResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use LoginOnlineResponse.newBuilder() to construct.
     private LoginOnlineResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
     private LoginOnlineResponse() {
-      day_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoginOnlineResponse();
     }
 
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private LoginOnlineResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -638,12 +710,6 @@ public final class LoginOnlineProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder subBuilder = null;
               if (header_ != null) {
@@ -662,6 +728,13 @@ public final class LoginOnlineProto {
               day_ = input.readInt32();
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -670,6 +743,7 @@ public final class LoginOnlineProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -678,6 +752,7 @@ public final class LoginOnlineProto {
       return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineResponse_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineResponse_fieldAccessorTable
@@ -689,12 +764,14 @@ public final class LoginOnlineProto {
     private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     public boolean hasHeader() {
       return header_ != null;
     }
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
       return header_ == null ? org.qiunet.tests.proto.HeaderProto.ResponseHeader.getDefaultInstance() : header_;
@@ -714,12 +791,14 @@ public final class LoginOnlineProto {
      * </pre>
      *
      * <code>int32 day = 2;</code>
+     * @return The day.
      */
     public int getDay() {
       return day_;
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -729,6 +808,7 @@ public final class LoginOnlineProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (header_ != null) {
@@ -737,8 +817,10 @@ public final class LoginOnlineProto {
       if (day_ != 0) {
         output.writeInt32(2, day_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -752,11 +834,11 @@ public final class LoginOnlineProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, day_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -767,15 +849,15 @@ public final class LoginOnlineProto {
       }
       org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse other = (org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse) obj;
 
-      boolean result = true;
-      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader() != other.hasHeader()) return false;
       if (hasHeader()) {
-        result = result && getHeader()
-            .equals(other.getHeader());
+        if (!getHeader()
+            .equals(other.getHeader())) return false;
       }
-      result = result && (getDay()
-          == other.getDay());
-      return result;
+      if (getDay()
+          != other.getDay()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -796,6 +878,17 @@ public final class LoginOnlineProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -855,6 +948,7 @@ public final class LoginOnlineProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -862,6 +956,7 @@ public final class LoginOnlineProto {
     public static Builder newBuilder(org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -889,6 +984,7 @@ public final class LoginOnlineProto {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineResponse_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineResponse_fieldAccessorTable
@@ -896,7 +992,7 @@ public final class LoginOnlineProto {
                 org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse.class, org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.LoginOnlineProto.LoginOnlineResponse.newBuilder()
+      // Construct using org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -911,6 +1007,7 @@ public final class LoginOnlineProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         if (headerBuilder_ == null) {
@@ -924,15 +1021,18 @@ public final class LoginOnlineProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.LoginOnlineProto.internal_static_LoginOnlineResponse_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse getDefaultInstanceForType() {
         return org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse build() {
         org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse result = buildPartial();
         if (!result.isInitialized()) {
@@ -941,6 +1041,7 @@ public final class LoginOnlineProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse buildPartial() {
         org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse result = new org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse(this);
         if (headerBuilder_ == null) {
@@ -953,32 +1054,39 @@ public final class LoginOnlineProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse) {
           return mergeFrom((org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse)other);
@@ -996,14 +1104,17 @@ public final class LoginOnlineProto {
         if (other.getDay() != 0) {
           setDay(other.getDay());
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1022,17 +1133,19 @@ public final class LoginOnlineProto {
         return this;
       }
 
-      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_ = null;
+      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
       private com.google.protobuf.SingleFieldBuilderV3<
           org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> headerBuilder_;
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return Whether the header field is set.
        */
       public boolean hasHeader() {
         return headerBuilder_ != null || header_ != null;
       }
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return The header.
        */
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
         if (headerBuilder_ == null) {
@@ -1126,7 +1239,7 @@ public final class LoginOnlineProto {
        * <code>.ResponseHeader header = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder>
+          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> 
           getHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -1146,6 +1259,7 @@ public final class LoginOnlineProto {
        * </pre>
        *
        * <code>int32 day = 2;</code>
+       * @return The day.
        */
       public int getDay() {
         return day_;
@@ -1156,6 +1270,8 @@ public final class LoginOnlineProto {
        * </pre>
        *
        * <code>int32 day = 2;</code>
+       * @param value The day to set.
+       * @return This builder for chaining.
        */
       public Builder setDay(int value) {
         
@@ -1169,6 +1285,7 @@ public final class LoginOnlineProto {
        * </pre>
        *
        * <code>int32 day = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearDay() {
         
@@ -1176,14 +1293,16 @@ public final class LoginOnlineProto {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -1202,11 +1321,12 @@ public final class LoginOnlineProto {
 
     private static final com.google.protobuf.Parser<LoginOnlineResponse>
         PARSER = new com.google.protobuf.AbstractParser<LoginOnlineResponse>() {
+      @java.lang.Override
       public LoginOnlineResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new LoginOnlineResponse(input, extensionRegistry);
+        return new LoginOnlineResponse(input, extensionRegistry);
       }
     };
 
@@ -1219,6 +1339,7 @@ public final class LoginOnlineProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.LoginOnlineProto.LoginOnlineResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -1247,23 +1368,15 @@ public final class LoginOnlineProto {
       "\n\021LoginOnline.proto\032\014Header.proto\"4\n\022Log" +
       "inOnlineRequest\022\036\n\006header\030\001 \001(\0132\016.Reques" +
       "tHeader\"C\n\023LoginOnlineResponse\022\037\n\006header" +
-      "\030\001 \001(\0132\017.ResponseHeader\022\013\n\003day\030\002 \001(\005B)\n\025" +
-      "org.qiunet.test.protoB\020LoginOnlineProtob" +
-      "\006proto3"
+      "\030\001 \001(\0132\017.ResponseHeader\022\013\n\003day\030\002 \001(\005B*\n\026" +
+      "org.qiunet.tests.protoB\020LoginOnlineProto" +
+      "b\006proto3"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           org.qiunet.tests.proto.HeaderProto.getDescriptor(),
-        }, assigner);
+        });
     internal_static_LoginOnlineRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_LoginOnlineRequest_fieldAccessorTable = new

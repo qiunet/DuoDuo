@@ -24,6 +24,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string token = 1;</code>
+     * @return The token.
      */
     java.lang.String getToken();
     /**
@@ -32,6 +33,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string token = 1;</code>
+     * @return The bytes for token.
      */
     com.google.protobuf.ByteString
         getTokenBytes();
@@ -42,6 +44,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>int32 uid = 2;</code>
+     * @return The uid.
      */
     int getUid();
   }
@@ -52,26 +55,37 @@ public final class HeaderProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:RequestHeader)
       RequestHeaderOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use RequestHeader.newBuilder() to construct.
     private RequestHeader(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
     private RequestHeader() {
       token_ = "";
-      uid_ = 0;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new RequestHeader();
     }
 
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private RequestHeader(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -80,12 +94,6 @@ public final class HeaderProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
@@ -97,6 +105,13 @@ public final class HeaderProto {
               uid_ = input.readInt32();
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -105,6 +120,7 @@ public final class HeaderProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -113,6 +129,7 @@ public final class HeaderProto {
       return org.qiunet.tests.proto.HeaderProto.internal_static_RequestHeader_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.HeaderProto.internal_static_RequestHeader_fieldAccessorTable
@@ -128,6 +145,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string token = 1;</code>
+     * @return The token.
      */
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
@@ -147,6 +165,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string token = 1;</code>
+     * @return The bytes for token.
      */
     public com.google.protobuf.ByteString
         getTokenBytes() {
@@ -170,12 +189,14 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>int32 uid = 2;</code>
+     * @return The uid.
      */
     public int getUid() {
       return uid_;
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -185,6 +206,7 @@ public final class HeaderProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (!getTokenBytes().isEmpty()) {
@@ -193,8 +215,10 @@ public final class HeaderProto {
       if (uid_ != 0) {
         output.writeInt32(2, uid_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -207,11 +231,11 @@ public final class HeaderProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, uid_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -222,12 +246,12 @@ public final class HeaderProto {
       }
       org.qiunet.tests.proto.HeaderProto.RequestHeader other = (org.qiunet.tests.proto.HeaderProto.RequestHeader) obj;
 
-      boolean result = true;
-      result = result && getToken()
-          .equals(other.getToken());
-      result = result && (getUid()
-          == other.getUid());
-      return result;
+      if (!getToken()
+          .equals(other.getToken())) return false;
+      if (getUid()
+          != other.getUid()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -246,6 +270,17 @@ public final class HeaderProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.HeaderProto.RequestHeader parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.HeaderProto.RequestHeader parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.HeaderProto.RequestHeader parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -305,6 +340,7 @@ public final class HeaderProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -312,6 +348,7 @@ public final class HeaderProto {
     public static Builder newBuilder(org.qiunet.tests.proto.HeaderProto.RequestHeader prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -335,6 +372,7 @@ public final class HeaderProto {
         return org.qiunet.tests.proto.HeaderProto.internal_static_RequestHeader_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_RequestHeader_fieldAccessorTable
@@ -342,7 +380,7 @@ public final class HeaderProto {
                 org.qiunet.tests.proto.HeaderProto.RequestHeader.class, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.HeaderProto.RequestHeader.newBuilder()
+      // Construct using org.qiunet.tests.proto.HeaderProto.RequestHeader.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -357,6 +395,7 @@ public final class HeaderProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         token_ = "";
@@ -366,15 +405,18 @@ public final class HeaderProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_RequestHeader_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.RequestHeader getDefaultInstanceForType() {
         return org.qiunet.tests.proto.HeaderProto.RequestHeader.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.RequestHeader build() {
         org.qiunet.tests.proto.HeaderProto.RequestHeader result = buildPartial();
         if (!result.isInitialized()) {
@@ -383,6 +425,7 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.RequestHeader buildPartial() {
         org.qiunet.tests.proto.HeaderProto.RequestHeader result = new org.qiunet.tests.proto.HeaderProto.RequestHeader(this);
         result.token_ = token_;
@@ -391,32 +434,39 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.HeaderProto.RequestHeader) {
           return mergeFrom((org.qiunet.tests.proto.HeaderProto.RequestHeader)other);
@@ -435,14 +485,17 @@ public final class HeaderProto {
         if (other.getUid() != 0) {
           setUid(other.getUid());
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -468,6 +521,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string token = 1;</code>
+       * @return The token.
        */
       public java.lang.String getToken() {
         java.lang.Object ref = token_;
@@ -487,6 +541,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string token = 1;</code>
+       * @return The bytes for token.
        */
       public com.google.protobuf.ByteString
           getTokenBytes() {
@@ -507,6 +562,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string token = 1;</code>
+       * @param value The token to set.
+       * @return This builder for chaining.
        */
       public Builder setToken(
           java.lang.String value) {
@@ -524,6 +581,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string token = 1;</code>
+       * @return This builder for chaining.
        */
       public Builder clearToken() {
         
@@ -537,6 +595,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string token = 1;</code>
+       * @param value The bytes for token to set.
+       * @return This builder for chaining.
        */
       public Builder setTokenBytes(
           com.google.protobuf.ByteString value) {
@@ -557,6 +617,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 uid = 2;</code>
+       * @return The uid.
        */
       public int getUid() {
         return uid_;
@@ -567,6 +628,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 uid = 2;</code>
+       * @param value The uid to set.
+       * @return This builder for chaining.
        */
       public Builder setUid(int value) {
         
@@ -580,6 +643,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 uid = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearUid() {
         
@@ -587,14 +651,16 @@ public final class HeaderProto {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -613,11 +679,12 @@ public final class HeaderProto {
 
     private static final com.google.protobuf.Parser<RequestHeader>
         PARSER = new com.google.protobuf.AbstractParser<RequestHeader>() {
+      @java.lang.Override
       public RequestHeader parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new RequestHeader(input, extensionRegistry);
+        return new RequestHeader(input, extensionRegistry);
       }
     };
 
@@ -630,6 +697,7 @@ public final class HeaderProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.HeaderProto.RequestHeader getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -646,6 +714,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>int32 ret = 1;</code>
+     * @return The ret.
      */
     int getRet();
 
@@ -655,6 +724,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string msg = 2;</code>
+     * @return The msg.
      */
     java.lang.String getMsg();
     /**
@@ -663,6 +733,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string msg = 2;</code>
+     * @return The bytes for msg.
      */
     com.google.protobuf.ByteString
         getMsgBytes();
@@ -678,26 +749,37 @@ public final class HeaderProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:ResponseHeader)
       ResponseHeaderOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use ResponseHeader.newBuilder() to construct.
     private ResponseHeader(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
     private ResponseHeader() {
-      ret_ = 0;
       msg_ = "";
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ResponseHeader();
     }
 
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private ResponseHeader(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -706,12 +788,6 @@ public final class HeaderProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 8: {
 
               ret_ = input.readInt32();
@@ -723,6 +799,13 @@ public final class HeaderProto {
               msg_ = s;
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -731,6 +814,7 @@ public final class HeaderProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -739,6 +823,7 @@ public final class HeaderProto {
       return org.qiunet.tests.proto.HeaderProto.internal_static_ResponseHeader_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.HeaderProto.internal_static_ResponseHeader_fieldAccessorTable
@@ -754,6 +839,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>int32 ret = 1;</code>
+     * @return The ret.
      */
     public int getRet() {
       return ret_;
@@ -767,6 +853,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string msg = 2;</code>
+     * @return The msg.
      */
     public java.lang.String getMsg() {
       java.lang.Object ref = msg_;
@@ -786,6 +873,7 @@ public final class HeaderProto {
      * </pre>
      *
      * <code>string msg = 2;</code>
+     * @return The bytes for msg.
      */
     public com.google.protobuf.ByteString
         getMsgBytes() {
@@ -802,6 +890,7 @@ public final class HeaderProto {
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -811,6 +900,7 @@ public final class HeaderProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (ret_ != 0) {
@@ -819,8 +909,10 @@ public final class HeaderProto {
       if (!getMsgBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, msg_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -833,11 +925,11 @@ public final class HeaderProto {
       if (!getMsgBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, msg_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -848,12 +940,12 @@ public final class HeaderProto {
       }
       org.qiunet.tests.proto.HeaderProto.ResponseHeader other = (org.qiunet.tests.proto.HeaderProto.ResponseHeader) obj;
 
-      boolean result = true;
-      result = result && (getRet()
-          == other.getRet());
-      result = result && getMsg()
-          .equals(other.getMsg());
-      return result;
+      if (getRet()
+          != other.getRet()) return false;
+      if (!getMsg()
+          .equals(other.getMsg())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -872,6 +964,17 @@ public final class HeaderProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.HeaderProto.ResponseHeader parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.HeaderProto.ResponseHeader parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.HeaderProto.ResponseHeader parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -931,6 +1034,7 @@ public final class HeaderProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -938,6 +1042,7 @@ public final class HeaderProto {
     public static Builder newBuilder(org.qiunet.tests.proto.HeaderProto.ResponseHeader prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -965,6 +1070,7 @@ public final class HeaderProto {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ResponseHeader_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ResponseHeader_fieldAccessorTable
@@ -972,7 +1078,7 @@ public final class HeaderProto {
                 org.qiunet.tests.proto.HeaderProto.ResponseHeader.class, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.HeaderProto.ResponseHeader.newBuilder()
+      // Construct using org.qiunet.tests.proto.HeaderProto.ResponseHeader.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -987,6 +1093,7 @@ public final class HeaderProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         ret_ = 0;
@@ -996,15 +1103,18 @@ public final class HeaderProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ResponseHeader_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader getDefaultInstanceForType() {
         return org.qiunet.tests.proto.HeaderProto.ResponseHeader.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader build() {
         org.qiunet.tests.proto.HeaderProto.ResponseHeader result = buildPartial();
         if (!result.isInitialized()) {
@@ -1013,6 +1123,7 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader buildPartial() {
         org.qiunet.tests.proto.HeaderProto.ResponseHeader result = new org.qiunet.tests.proto.HeaderProto.ResponseHeader(this);
         result.ret_ = ret_;
@@ -1021,32 +1132,39 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.HeaderProto.ResponseHeader) {
           return mergeFrom((org.qiunet.tests.proto.HeaderProto.ResponseHeader)other);
@@ -1065,14 +1183,17 @@ public final class HeaderProto {
           msg_ = other.msg_;
           onChanged();
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1098,6 +1219,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 ret = 1;</code>
+       * @return The ret.
        */
       public int getRet() {
         return ret_;
@@ -1108,6 +1230,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 ret = 1;</code>
+       * @param value The ret to set.
+       * @return This builder for chaining.
        */
       public Builder setRet(int value) {
         
@@ -1121,6 +1245,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>int32 ret = 1;</code>
+       * @return This builder for chaining.
        */
       public Builder clearRet() {
         
@@ -1136,6 +1261,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string msg = 2;</code>
+       * @return The msg.
        */
       public java.lang.String getMsg() {
         java.lang.Object ref = msg_;
@@ -1155,6 +1281,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string msg = 2;</code>
+       * @return The bytes for msg.
        */
       public com.google.protobuf.ByteString
           getMsgBytes() {
@@ -1175,6 +1302,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string msg = 2;</code>
+       * @param value The msg to set.
+       * @return This builder for chaining.
        */
       public Builder setMsg(
           java.lang.String value) {
@@ -1192,6 +1321,7 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string msg = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearMsg() {
         
@@ -1205,6 +1335,8 @@ public final class HeaderProto {
        * </pre>
        *
        * <code>string msg = 2;</code>
+       * @param value The bytes for msg to set.
+       * @return This builder for chaining.
        */
       public Builder setMsgBytes(
           com.google.protobuf.ByteString value) {
@@ -1217,14 +1349,16 @@ public final class HeaderProto {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -1243,11 +1377,12 @@ public final class HeaderProto {
 
     private static final com.google.protobuf.Parser<ResponseHeader>
         PARSER = new com.google.protobuf.AbstractParser<ResponseHeader>() {
+      @java.lang.Override
       public ResponseHeader parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new ResponseHeader(input, extensionRegistry);
+        return new ResponseHeader(input, extensionRegistry);
       }
     };
 
@@ -1260,6 +1395,7 @@ public final class HeaderProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.HeaderProto.ResponseHeader getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -1272,10 +1408,12 @@ public final class HeaderProto {
 
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader();
     /**
@@ -1290,6 +1428,7 @@ public final class HeaderProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:ErrorResponse)
       ErrorResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use ErrorResponse.newBuilder() to construct.
     private ErrorResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -1298,16 +1437,27 @@ public final class HeaderProto {
     }
 
     @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new ErrorResponse();
+    }
+
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private ErrorResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -1316,12 +1466,6 @@ public final class HeaderProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder subBuilder = null;
               if (header_ != null) {
@@ -1335,6 +1479,13 @@ public final class HeaderProto {
 
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -1343,6 +1494,7 @@ public final class HeaderProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -1351,6 +1503,7 @@ public final class HeaderProto {
       return org.qiunet.tests.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.HeaderProto.internal_static_ErrorResponse_fieldAccessorTable
@@ -1362,12 +1515,14 @@ public final class HeaderProto {
     private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     public boolean hasHeader() {
       return header_ != null;
     }
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
       return header_ == null ? org.qiunet.tests.proto.HeaderProto.ResponseHeader.getDefaultInstance() : header_;
@@ -1380,6 +1535,7 @@ public final class HeaderProto {
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -1389,13 +1545,16 @@ public final class HeaderProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (header_ != null) {
         output.writeMessage(1, getHeader());
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -1405,11 +1564,11 @@ public final class HeaderProto {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(1, getHeader());
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -1420,13 +1579,13 @@ public final class HeaderProto {
       }
       org.qiunet.tests.proto.HeaderProto.ErrorResponse other = (org.qiunet.tests.proto.HeaderProto.ErrorResponse) obj;
 
-      boolean result = true;
-      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader() != other.hasHeader()) return false;
       if (hasHeader()) {
-        result = result && getHeader()
-            .equals(other.getHeader());
+        if (!getHeader()
+            .equals(other.getHeader())) return false;
       }
-      return result;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -1445,6 +1604,17 @@ public final class HeaderProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.HeaderProto.ErrorResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.HeaderProto.ErrorResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.HeaderProto.ErrorResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1504,6 +1674,7 @@ public final class HeaderProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -1511,6 +1682,7 @@ public final class HeaderProto {
     public static Builder newBuilder(org.qiunet.tests.proto.HeaderProto.ErrorResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -1534,6 +1706,7 @@ public final class HeaderProto {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ErrorResponse_fieldAccessorTable
@@ -1541,7 +1714,7 @@ public final class HeaderProto {
                 org.qiunet.tests.proto.HeaderProto.ErrorResponse.class, org.qiunet.tests.proto.HeaderProto.ErrorResponse.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.HeaderProto.ErrorResponse.newBuilder()
+      // Construct using org.qiunet.tests.proto.HeaderProto.ErrorResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1556,6 +1729,7 @@ public final class HeaderProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         if (headerBuilder_ == null) {
@@ -1567,15 +1741,18 @@ public final class HeaderProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.HeaderProto.internal_static_ErrorResponse_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ErrorResponse getDefaultInstanceForType() {
         return org.qiunet.tests.proto.HeaderProto.ErrorResponse.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ErrorResponse build() {
         org.qiunet.tests.proto.HeaderProto.ErrorResponse result = buildPartial();
         if (!result.isInitialized()) {
@@ -1584,6 +1761,7 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.HeaderProto.ErrorResponse buildPartial() {
         org.qiunet.tests.proto.HeaderProto.ErrorResponse result = new org.qiunet.tests.proto.HeaderProto.ErrorResponse(this);
         if (headerBuilder_ == null) {
@@ -1595,32 +1773,39 @@ public final class HeaderProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.HeaderProto.ErrorResponse) {
           return mergeFrom((org.qiunet.tests.proto.HeaderProto.ErrorResponse)other);
@@ -1635,14 +1820,17 @@ public final class HeaderProto {
         if (other.hasHeader()) {
           mergeHeader(other.getHeader());
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1661,17 +1849,19 @@ public final class HeaderProto {
         return this;
       }
 
-      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_ = null;
+      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
       private com.google.protobuf.SingleFieldBuilderV3<
           org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> headerBuilder_;
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return Whether the header field is set.
        */
       public boolean hasHeader() {
         return headerBuilder_ != null || header_ != null;
       }
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return The header.
        */
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
         if (headerBuilder_ == null) {
@@ -1765,7 +1955,7 @@ public final class HeaderProto {
        * <code>.ResponseHeader header = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder>
+          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> 
           getHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -1777,14 +1967,16 @@ public final class HeaderProto {
         }
         return headerBuilder_;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -1803,11 +1995,12 @@ public final class HeaderProto {
 
     private static final com.google.protobuf.Parser<ErrorResponse>
         PARSER = new com.google.protobuf.AbstractParser<ErrorResponse>() {
+      @java.lang.Override
       public ErrorResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new ErrorResponse(input, extensionRegistry);
+        return new ErrorResponse(input, extensionRegistry);
       }
     };
 
@@ -1820,6 +2013,7 @@ public final class HeaderProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.HeaderProto.ErrorResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -1853,21 +2047,13 @@ public final class HeaderProto {
       "\n\014Header.proto\"+\n\rRequestHeader\022\r\n\005token" +
       "\030\001 \001(\t\022\013\n\003uid\030\002 \001(\005\"*\n\016ResponseHeader\022\013\n" +
       "\003ret\030\001 \001(\005\022\013\n\003msg\030\002 \001(\t\"0\n\rErrorResponse" +
-      "\022\037\n\006header\030\001 \001(\0132\017.ResponseHeaderB$\n\025org" +
-      ".qiunet.test.protoB\013HeaderProtob\006proto3"
+      "\022\037\n\006header\030\001 \001(\0132\017.ResponseHeaderB%\n\026org" +
+      ".qiunet.tests.protoB\013HeaderProtob\006proto3"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-        }, assigner);
+        });
     internal_static_RequestHeader_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_RequestHeader_fieldAccessorTable = new

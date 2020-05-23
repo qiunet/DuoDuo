@@ -20,10 +20,12 @@ public final class LoginProto {
 
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return The header.
      */
     org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader();
     /**
@@ -33,10 +35,12 @@ public final class LoginProto {
 
     /**
      * <code>string openid = 2;</code>
+     * @return The openid.
      */
     java.lang.String getOpenid();
     /**
      * <code>string openid = 2;</code>
+     * @return The bytes for openid.
      */
     com.google.protobuf.ByteString
         getOpenidBytes();
@@ -48,6 +52,7 @@ public final class LoginProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:LoginRequest)
       LoginRequestOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use LoginRequest.newBuilder() to construct.
     private LoginRequest(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
@@ -57,16 +62,27 @@ public final class LoginProto {
     }
 
     @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoginRequest();
+    }
+
+    @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private LoginRequest(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -75,12 +91,6 @@ public final class LoginProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder subBuilder = null;
               if (header_ != null) {
@@ -100,6 +110,13 @@ public final class LoginProto {
               openid_ = s;
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -108,6 +125,7 @@ public final class LoginProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -116,6 +134,7 @@ public final class LoginProto {
       return org.qiunet.tests.proto.LoginProto.internal_static_LoginRequest_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.LoginProto.internal_static_LoginRequest_fieldAccessorTable
@@ -127,12 +146,14 @@ public final class LoginProto {
     private org.qiunet.tests.proto.HeaderProto.RequestHeader header_;
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     public boolean hasHeader() {
       return header_ != null;
     }
     /**
      * <code>.RequestHeader header = 1;</code>
+     * @return The header.
      */
     public org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader() {
       return header_ == null ? org.qiunet.tests.proto.HeaderProto.RequestHeader.getDefaultInstance() : header_;
@@ -148,6 +169,7 @@ public final class LoginProto {
     private volatile java.lang.Object openid_;
     /**
      * <code>string openid = 2;</code>
+     * @return The openid.
      */
     public java.lang.String getOpenid() {
       java.lang.Object ref = openid_;
@@ -163,6 +185,7 @@ public final class LoginProto {
     }
     /**
      * <code>string openid = 2;</code>
+     * @return The bytes for openid.
      */
     public com.google.protobuf.ByteString
         getOpenidBytes() {
@@ -179,6 +202,7 @@ public final class LoginProto {
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -188,6 +212,7 @@ public final class LoginProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (header_ != null) {
@@ -196,8 +221,10 @@ public final class LoginProto {
       if (!getOpenidBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 2, openid_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -210,11 +237,11 @@ public final class LoginProto {
       if (!getOpenidBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, openid_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -225,15 +252,15 @@ public final class LoginProto {
       }
       org.qiunet.tests.proto.LoginProto.LoginRequest other = (org.qiunet.tests.proto.LoginProto.LoginRequest) obj;
 
-      boolean result = true;
-      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader() != other.hasHeader()) return false;
       if (hasHeader()) {
-        result = result && getHeader()
-            .equals(other.getHeader());
+        if (!getHeader()
+            .equals(other.getHeader())) return false;
       }
-      result = result && getOpenid()
-          .equals(other.getOpenid());
-      return result;
+      if (!getOpenid()
+          .equals(other.getOpenid())) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -254,6 +281,17 @@ public final class LoginProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.LoginProto.LoginRequest parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.LoginProto.LoginRequest parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.LoginProto.LoginRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -313,6 +351,7 @@ public final class LoginProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -320,6 +359,7 @@ public final class LoginProto {
     public static Builder newBuilder(org.qiunet.tests.proto.LoginProto.LoginRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -343,6 +383,7 @@ public final class LoginProto {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginRequest_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginRequest_fieldAccessorTable
@@ -350,7 +391,7 @@ public final class LoginProto {
                 org.qiunet.tests.proto.LoginProto.LoginRequest.class, org.qiunet.tests.proto.LoginProto.LoginRequest.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.LoginProto.LoginRequest.newBuilder()
+      // Construct using org.qiunet.tests.proto.LoginProto.LoginRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -365,6 +406,7 @@ public final class LoginProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         if (headerBuilder_ == null) {
@@ -378,15 +420,18 @@ public final class LoginProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginRequest_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginRequest getDefaultInstanceForType() {
         return org.qiunet.tests.proto.LoginProto.LoginRequest.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginRequest build() {
         org.qiunet.tests.proto.LoginProto.LoginRequest result = buildPartial();
         if (!result.isInitialized()) {
@@ -395,6 +440,7 @@ public final class LoginProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginRequest buildPartial() {
         org.qiunet.tests.proto.LoginProto.LoginRequest result = new org.qiunet.tests.proto.LoginProto.LoginRequest(this);
         if (headerBuilder_ == null) {
@@ -407,32 +453,39 @@ public final class LoginProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.LoginProto.LoginRequest) {
           return mergeFrom((org.qiunet.tests.proto.LoginProto.LoginRequest)other);
@@ -451,14 +504,17 @@ public final class LoginProto {
           openid_ = other.openid_;
           onChanged();
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -477,17 +533,19 @@ public final class LoginProto {
         return this;
       }
 
-      private org.qiunet.tests.proto.HeaderProto.RequestHeader header_ = null;
+      private org.qiunet.tests.proto.HeaderProto.RequestHeader header_;
       private com.google.protobuf.SingleFieldBuilderV3<
           org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder> headerBuilder_;
       /**
        * <code>.RequestHeader header = 1;</code>
+       * @return Whether the header field is set.
        */
       public boolean hasHeader() {
         return headerBuilder_ != null || header_ != null;
       }
       /**
        * <code>.RequestHeader header = 1;</code>
+       * @return The header.
        */
       public org.qiunet.tests.proto.HeaderProto.RequestHeader getHeader() {
         if (headerBuilder_ == null) {
@@ -581,7 +639,7 @@ public final class LoginProto {
        * <code>.RequestHeader header = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder>
+          org.qiunet.tests.proto.HeaderProto.RequestHeader, org.qiunet.tests.proto.HeaderProto.RequestHeader.Builder, org.qiunet.tests.proto.HeaderProto.RequestHeaderOrBuilder> 
           getHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -597,6 +655,7 @@ public final class LoginProto {
       private java.lang.Object openid_ = "";
       /**
        * <code>string openid = 2;</code>
+       * @return The openid.
        */
       public java.lang.String getOpenid() {
         java.lang.Object ref = openid_;
@@ -612,6 +671,7 @@ public final class LoginProto {
       }
       /**
        * <code>string openid = 2;</code>
+       * @return The bytes for openid.
        */
       public com.google.protobuf.ByteString
           getOpenidBytes() {
@@ -628,6 +688,8 @@ public final class LoginProto {
       }
       /**
        * <code>string openid = 2;</code>
+       * @param value The openid to set.
+       * @return This builder for chaining.
        */
       public Builder setOpenid(
           java.lang.String value) {
@@ -641,6 +703,7 @@ public final class LoginProto {
       }
       /**
        * <code>string openid = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearOpenid() {
         
@@ -650,6 +713,8 @@ public final class LoginProto {
       }
       /**
        * <code>string openid = 2;</code>
+       * @param value The bytes for openid to set.
+       * @return This builder for chaining.
        */
       public Builder setOpenidBytes(
           com.google.protobuf.ByteString value) {
@@ -662,14 +727,16 @@ public final class LoginProto {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -688,11 +755,12 @@ public final class LoginProto {
 
     private static final com.google.protobuf.Parser<LoginRequest>
         PARSER = new com.google.protobuf.AbstractParser<LoginRequest>() {
+      @java.lang.Override
       public LoginRequest parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new LoginRequest(input, extensionRegistry);
+        return new LoginRequest(input, extensionRegistry);
       }
     };
 
@@ -705,6 +773,7 @@ public final class LoginProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.LoginProto.LoginRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -717,10 +786,12 @@ public final class LoginProto {
 
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     boolean hasHeader();
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader();
     /**
@@ -730,15 +801,18 @@ public final class LoginProto {
 
     /**
      * <code>int32 uid = 2;</code>
+     * @return The uid.
      */
     int getUid();
 
     /**
      * <code>string token = 3;</code>
+     * @return The token.
      */
     java.lang.String getToken();
     /**
      * <code>string token = 3;</code>
+     * @return The bytes for token.
      */
     com.google.protobuf.ByteString
         getTokenBytes();
@@ -749,6 +823,7 @@ public final class LoginProto {
      * </pre>
      *
      * <code>bool registered = 4;</code>
+     * @return The registered.
      */
     boolean getRegistered();
   }
@@ -763,27 +838,37 @@ public final class LoginProto {
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:LoginResponse)
       LoginResponseOrBuilder {
+  private static final long serialVersionUID = 0L;
     // Use LoginResponse.newBuilder() to construct.
     private LoginResponse(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
     private LoginResponse() {
-      uid_ = 0;
       token_ = "";
-      registered_ = false;
+    }
+
+    @java.lang.Override
+    @SuppressWarnings({"unused"})
+    protected java.lang.Object newInstance(
+        UnusedPrivateParameter unused) {
+      return new LoginResponse();
     }
 
     @java.lang.Override
     public final com.google.protobuf.UnknownFieldSet
     getUnknownFields() {
-      return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
+      return this.unknownFields;
     }
     private LoginResponse(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       this();
-      int mutable_bitField0_ = 0;
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
       try {
         boolean done = false;
         while (!done) {
@@ -792,12 +877,6 @@ public final class LoginProto {
             case 0:
               done = true;
               break;
-            default: {
-              if (!input.skipField(tag)) {
-                done = true;
-              }
-              break;
-            }
             case 10: {
               org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder subBuilder = null;
               if (header_ != null) {
@@ -827,6 +906,13 @@ public final class LoginProto {
               registered_ = input.readBool();
               break;
             }
+            default: {
+              if (!parseUnknownField(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -835,6 +921,7 @@ public final class LoginProto {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e).setUnfinishedMessage(this);
       } finally {
+        this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
       }
     }
@@ -843,6 +930,7 @@ public final class LoginProto {
       return org.qiunet.tests.proto.LoginProto.internal_static_LoginResponse_descriptor;
     }
 
+    @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
       return org.qiunet.tests.proto.LoginProto.internal_static_LoginResponse_fieldAccessorTable
@@ -854,12 +942,14 @@ public final class LoginProto {
     private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return Whether the header field is set.
      */
     public boolean hasHeader() {
       return header_ != null;
     }
     /**
      * <code>.ResponseHeader header = 1;</code>
+     * @return The header.
      */
     public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
       return header_ == null ? org.qiunet.tests.proto.HeaderProto.ResponseHeader.getDefaultInstance() : header_;
@@ -875,6 +965,7 @@ public final class LoginProto {
     private int uid_;
     /**
      * <code>int32 uid = 2;</code>
+     * @return The uid.
      */
     public int getUid() {
       return uid_;
@@ -884,6 +975,7 @@ public final class LoginProto {
     private volatile java.lang.Object token_;
     /**
      * <code>string token = 3;</code>
+     * @return The token.
      */
     public java.lang.String getToken() {
       java.lang.Object ref = token_;
@@ -899,6 +991,7 @@ public final class LoginProto {
     }
     /**
      * <code>string token = 3;</code>
+     * @return The bytes for token.
      */
     public com.google.protobuf.ByteString
         getTokenBytes() {
@@ -922,12 +1015,14 @@ public final class LoginProto {
      * </pre>
      *
      * <code>bool registered = 4;</code>
+     * @return The registered.
      */
     public boolean getRegistered() {
       return registered_;
     }
 
     private byte memoizedIsInitialized = -1;
+    @java.lang.Override
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized == 1) return true;
@@ -937,6 +1032,7 @@ public final class LoginProto {
       return true;
     }
 
+    @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       if (header_ != null) {
@@ -951,8 +1047,10 @@ public final class LoginProto {
       if (registered_ != false) {
         output.writeBool(4, registered_);
       }
+      unknownFields.writeTo(output);
     }
 
+    @java.lang.Override
     public int getSerializedSize() {
       int size = memoizedSize;
       if (size != -1) return size;
@@ -973,11 +1071,11 @@ public final class LoginProto {
         size += com.google.protobuf.CodedOutputStream
           .computeBoolSize(4, registered_);
       }
+      size += unknownFields.getSerializedSize();
       memoizedSize = size;
       return size;
     }
 
-    private static final long serialVersionUID = 0L;
     @java.lang.Override
     public boolean equals(final java.lang.Object obj) {
       if (obj == this) {
@@ -988,19 +1086,19 @@ public final class LoginProto {
       }
       org.qiunet.tests.proto.LoginProto.LoginResponse other = (org.qiunet.tests.proto.LoginProto.LoginResponse) obj;
 
-      boolean result = true;
-      result = result && (hasHeader() == other.hasHeader());
+      if (hasHeader() != other.hasHeader()) return false;
       if (hasHeader()) {
-        result = result && getHeader()
-            .equals(other.getHeader());
+        if (!getHeader()
+            .equals(other.getHeader())) return false;
       }
-      result = result && (getUid()
-          == other.getUid());
-      result = result && getToken()
-          .equals(other.getToken());
-      result = result && (getRegistered()
-          == other.getRegistered());
-      return result;
+      if (getUid()
+          != other.getUid()) return false;
+      if (!getToken()
+          .equals(other.getToken())) return false;
+      if (getRegistered()
+          != other.getRegistered()) return false;
+      if (!unknownFields.equals(other.unknownFields)) return false;
+      return true;
     }
 
     @java.lang.Override
@@ -1026,6 +1124,17 @@ public final class LoginProto {
       return hash;
     }
 
+    public static org.qiunet.tests.proto.LoginProto.LoginResponse parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.qiunet.tests.proto.LoginProto.LoginResponse parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
     public static org.qiunet.tests.proto.LoginProto.LoginResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -1085,6 +1194,7 @@ public final class LoginProto {
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
 
+    @java.lang.Override
     public Builder newBuilderForType() { return newBuilder(); }
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
@@ -1092,6 +1202,7 @@ public final class LoginProto {
     public static Builder newBuilder(org.qiunet.tests.proto.LoginProto.LoginResponse prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
+    @java.lang.Override
     public Builder toBuilder() {
       return this == DEFAULT_INSTANCE
           ? new Builder() : new Builder().mergeFrom(this);
@@ -1119,6 +1230,7 @@ public final class LoginProto {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginResponse_descriptor;
       }
 
+      @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginResponse_fieldAccessorTable
@@ -1126,7 +1238,7 @@ public final class LoginProto {
                 org.qiunet.tests.proto.LoginProto.LoginResponse.class, org.qiunet.tests.proto.LoginProto.LoginResponse.Builder.class);
       }
 
-      // Construct using org.qiunet.test.proto.LoginProto.LoginResponse.newBuilder()
+      // Construct using org.qiunet.tests.proto.LoginProto.LoginResponse.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1141,6 +1253,7 @@ public final class LoginProto {
                 .alwaysUseFieldBuilders) {
         }
       }
+      @java.lang.Override
       public Builder clear() {
         super.clear();
         if (headerBuilder_ == null) {
@@ -1158,15 +1271,18 @@ public final class LoginProto {
         return this;
       }
 
+      @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
         return org.qiunet.tests.proto.LoginProto.internal_static_LoginResponse_descriptor;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginResponse getDefaultInstanceForType() {
         return org.qiunet.tests.proto.LoginProto.LoginResponse.getDefaultInstance();
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginResponse build() {
         org.qiunet.tests.proto.LoginProto.LoginResponse result = buildPartial();
         if (!result.isInitialized()) {
@@ -1175,6 +1291,7 @@ public final class LoginProto {
         return result;
       }
 
+      @java.lang.Override
       public org.qiunet.tests.proto.LoginProto.LoginResponse buildPartial() {
         org.qiunet.tests.proto.LoginProto.LoginResponse result = new org.qiunet.tests.proto.LoginProto.LoginResponse(this);
         if (headerBuilder_ == null) {
@@ -1189,32 +1306,39 @@ public final class LoginProto {
         return result;
       }
 
+      @java.lang.Override
       public Builder clone() {
         return super.clone();
       }
+      @java.lang.Override
       public Builder setField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.setField(field, value);
       }
+      @java.lang.Override
       public Builder clearField(
           com.google.protobuf.Descriptors.FieldDescriptor field) {
         return super.clearField(field);
       }
+      @java.lang.Override
       public Builder clearOneof(
           com.google.protobuf.Descriptors.OneofDescriptor oneof) {
         return super.clearOneof(oneof);
       }
+      @java.lang.Override
       public Builder setRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          int index, Object value) {
+          int index, java.lang.Object value) {
         return super.setRepeatedField(field, index, value);
       }
+      @java.lang.Override
       public Builder addRepeatedField(
           com.google.protobuf.Descriptors.FieldDescriptor field,
-          Object value) {
+          java.lang.Object value) {
         return super.addRepeatedField(field, value);
       }
+      @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
         if (other instanceof org.qiunet.tests.proto.LoginProto.LoginResponse) {
           return mergeFrom((org.qiunet.tests.proto.LoginProto.LoginResponse)other);
@@ -1239,14 +1363,17 @@ public final class LoginProto {
         if (other.getRegistered() != false) {
           setRegistered(other.getRegistered());
         }
+        this.mergeUnknownFields(other.unknownFields);
         onChanged();
         return this;
       }
 
+      @java.lang.Override
       public final boolean isInitialized() {
         return true;
       }
 
+      @java.lang.Override
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
@@ -1265,17 +1392,19 @@ public final class LoginProto {
         return this;
       }
 
-      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_ = null;
+      private org.qiunet.tests.proto.HeaderProto.ResponseHeader header_;
       private com.google.protobuf.SingleFieldBuilderV3<
           org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> headerBuilder_;
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return Whether the header field is set.
        */
       public boolean hasHeader() {
         return headerBuilder_ != null || header_ != null;
       }
       /**
        * <code>.ResponseHeader header = 1;</code>
+       * @return The header.
        */
       public org.qiunet.tests.proto.HeaderProto.ResponseHeader getHeader() {
         if (headerBuilder_ == null) {
@@ -1369,7 +1498,7 @@ public final class LoginProto {
        * <code>.ResponseHeader header = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder>
+          org.qiunet.tests.proto.HeaderProto.ResponseHeader, org.qiunet.tests.proto.HeaderProto.ResponseHeader.Builder, org.qiunet.tests.proto.HeaderProto.ResponseHeaderOrBuilder> 
           getHeaderFieldBuilder() {
         if (headerBuilder_ == null) {
           headerBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
@@ -1385,12 +1514,15 @@ public final class LoginProto {
       private int uid_ ;
       /**
        * <code>int32 uid = 2;</code>
+       * @return The uid.
        */
       public int getUid() {
         return uid_;
       }
       /**
        * <code>int32 uid = 2;</code>
+       * @param value The uid to set.
+       * @return This builder for chaining.
        */
       public Builder setUid(int value) {
         
@@ -1400,6 +1532,7 @@ public final class LoginProto {
       }
       /**
        * <code>int32 uid = 2;</code>
+       * @return This builder for chaining.
        */
       public Builder clearUid() {
         
@@ -1411,6 +1544,7 @@ public final class LoginProto {
       private java.lang.Object token_ = "";
       /**
        * <code>string token = 3;</code>
+       * @return The token.
        */
       public java.lang.String getToken() {
         java.lang.Object ref = token_;
@@ -1426,6 +1560,7 @@ public final class LoginProto {
       }
       /**
        * <code>string token = 3;</code>
+       * @return The bytes for token.
        */
       public com.google.protobuf.ByteString
           getTokenBytes() {
@@ -1442,6 +1577,8 @@ public final class LoginProto {
       }
       /**
        * <code>string token = 3;</code>
+       * @param value The token to set.
+       * @return This builder for chaining.
        */
       public Builder setToken(
           java.lang.String value) {
@@ -1455,6 +1592,7 @@ public final class LoginProto {
       }
       /**
        * <code>string token = 3;</code>
+       * @return This builder for chaining.
        */
       public Builder clearToken() {
         
@@ -1464,6 +1602,8 @@ public final class LoginProto {
       }
       /**
        * <code>string token = 3;</code>
+       * @param value The bytes for token to set.
+       * @return This builder for chaining.
        */
       public Builder setTokenBytes(
           com.google.protobuf.ByteString value) {
@@ -1484,6 +1624,7 @@ public final class LoginProto {
        * </pre>
        *
        * <code>bool registered = 4;</code>
+       * @return The registered.
        */
       public boolean getRegistered() {
         return registered_;
@@ -1494,6 +1635,8 @@ public final class LoginProto {
        * </pre>
        *
        * <code>bool registered = 4;</code>
+       * @param value The registered to set.
+       * @return This builder for chaining.
        */
       public Builder setRegistered(boolean value) {
         
@@ -1507,6 +1650,7 @@ public final class LoginProto {
        * </pre>
        *
        * <code>bool registered = 4;</code>
+       * @return This builder for chaining.
        */
       public Builder clearRegistered() {
         
@@ -1514,14 +1658,16 @@ public final class LoginProto {
         onChanged();
         return this;
       }
+      @java.lang.Override
       public final Builder setUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.setUnknownFields(unknownFields);
       }
 
+      @java.lang.Override
       public final Builder mergeUnknownFields(
           final com.google.protobuf.UnknownFieldSet unknownFields) {
-        return this;
+        return super.mergeUnknownFields(unknownFields);
       }
 
 
@@ -1540,11 +1686,12 @@ public final class LoginProto {
 
     private static final com.google.protobuf.Parser<LoginResponse>
         PARSER = new com.google.protobuf.AbstractParser<LoginResponse>() {
+      @java.lang.Override
       public LoginResponse parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new LoginResponse(input, extensionRegistry);
+        return new LoginResponse(input, extensionRegistry);
       }
     };
 
@@ -1557,6 +1704,7 @@ public final class LoginProto {
       return PARSER;
     }
 
+    @java.lang.Override
     public org.qiunet.tests.proto.LoginProto.LoginResponse getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
@@ -1586,22 +1734,14 @@ public final class LoginProto {
       "est\022\036\n\006header\030\001 \001(\0132\016.RequestHeader\022\016\n\006o" +
       "penid\030\002 \001(\t\"`\n\rLoginResponse\022\037\n\006header\030\001" +
       " \001(\0132\017.ResponseHeader\022\013\n\003uid\030\002 \001(\005\022\r\n\005to" +
-      "ken\030\003 \001(\t\022\022\n\nregistered\030\004 \001(\010B#\n\025org.qiu" +
-      "net.test.protoB\nLoginProtob\006proto3"
+      "ken\030\003 \001(\t\022\022\n\nregistered\030\004 \001(\010B$\n\026org.qiu" +
+      "net.tests.protoB\nLoginProtob\006proto3"
     };
-    com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
-          public com.google.protobuf.ExtensionRegistry assignDescriptors(
-              com.google.protobuf.Descriptors.FileDescriptor root) {
-            descriptor = root;
-            return null;
-          }
-        };
-    com.google.protobuf.Descriptors.FileDescriptor
+    descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           org.qiunet.tests.proto.HeaderProto.getDescriptor(),
-        }, assigner);
+        });
     internal_static_LoginRequest_descriptor =
       getDescriptor().getMessageTypes().get(0);
     internal_static_LoginRequest_fieldAccessorTable = new

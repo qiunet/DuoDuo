@@ -2,7 +2,7 @@
 // cmdId  为  1001
 syntax="proto3";
 
-option java_package = "org.qiunet.test.proto";
+option java_package = "org.qiunet.tests.proto";
 
 option java_outer_classname = "PlayerIndexProto";
 
