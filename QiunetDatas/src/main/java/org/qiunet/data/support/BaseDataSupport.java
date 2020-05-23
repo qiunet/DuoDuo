@@ -2,6 +2,10 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.async.IAsyncNode;
 import org.qiunet.data.core.entity.IEntity;
+import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
+import org.qiunet.data.core.support.db.IDatabaseSupport;
+import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -20,6 +24,9 @@ import org.slf4j.Logger;
 	protected String doName;
 	/** 得到mybatis 需要的nameSpace */
 	protected String nameSpace;
+	/**是否是异步*/
+	protected boolean async;
+	protected Table table;
 
 	protected String insertStatement;
 	protected String updateStatement;
@@ -53,5 +60,21 @@ import org.slf4j.Logger;
 	private void init(Class<Do> doClass) throws IllegalAccessException, InstantiationException {
 		this.defaultDo = doClass.newInstance();
 		this.doName = doClass.getSimpleName();
+
+		this.table = doClass.getAnnotation(Table.class);
+		this.async = table.async();
+	}
+
+	/**
+	 * 根据 注解Table 获取数据源
+	 * @param key 传入${@link IEntity#key()}
+	 * @return
+	 */
+	protected IDatabaseSupport databaseSupport(Object key) {
+		if (table.splitDb()) {
+			return MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key));
+		}else {
+			return DefaultDatabaseSupport.getInstance();
+		}
 	}
 }

@@ -3,7 +3,7 @@ package org.qiunet.data.redis;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntityList;
 
-@Table(name = "equip")
+@Table(name = "equip", splitDb = true)
 public class EquipDo extends RedisEntityList<Long, Integer, EquipBo> {
 	private long uid;
 	private int equip_id;

@@ -31,7 +31,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 
 	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key());
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
 		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
 	}
 
@@ -56,7 +56,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 		if (bo == NULL) return null;
 
 		if (bo == null) {
-			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
+			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 
 			Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 			if (aDo == null) {

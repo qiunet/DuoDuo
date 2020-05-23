@@ -32,11 +32,16 @@ public @interface Table {
 	 */
 	boolean splitDb() default false;
 	/**
-	 * 需要分表的 {@link org.qiunet.data.core.entity.IEntityList}
-	 * 加上这个注解 {@link Table#splitTable()} = true
+	 * 需要分表的加上这个注解 {@link Table#splitTable()} = true
 	 * @return
 	 */
 	boolean splitTable() default false;
+	/**
+	 * 是否异步入库.
+	 * false 为同步
+	 * @return
+	 */
+	boolean async() default true;
 	/**
 	 * 注释说明
 	 *

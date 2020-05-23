@@ -13,7 +13,7 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 	}
 
 	public Bo getBo(Key key) {
-		Map<String, Object> map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
+		Map<String, Object> map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 		Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
 		if (aDo == null) return null;
 
@@ -34,7 +34,7 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 	 * @param key
 	 */
 	public void delete(Key key) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
 	}
 }

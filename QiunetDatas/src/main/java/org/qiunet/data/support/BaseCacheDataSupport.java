@@ -1,10 +1,7 @@
 package org.qiunet.data.support;
 
-import org.qiunet.data.async.SyncType;
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
-import org.qiunet.data.util.DbProperties;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,7 +9,6 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	/***对Entity 的操作 **/
 	private enum  EntityOperate {INSERT, UPDATE, DELETE}
 
-	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
 	/***有同步需求的 key*/
 	protected ConcurrentLinkedQueue<SyncEntityElement> syncKeyQueue = new ConcurrentLinkedQueue<>();
 
@@ -22,7 +18,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 	@Override
 	public void syncToDatabase() {
-		if (!async) return;
+		if (! async) return;
 
 		SyncEntityElement element;
 		while ((element = syncKeyQueue.poll()) != null) {
@@ -35,14 +31,14 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 			switch (element.operate) {
 				case INSERT:
 					if (aDo.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
-						DefaultDatabaseSupport.getInstance().insert(insertStatement, aDo);
+						databaseSupport(aDo.key()).insert(insertStatement, aDo);
 					}else {
 						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not insert to db.");
 					}
 					break;
 				case UPDATE:
 					if (aDo.atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
-						DefaultDatabaseSupport.getInstance().update(updateStatement, aDo);
+						databaseSupport(aDo.key()).update(updateStatement, aDo);
 					}else {
 						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not update to db.");
 					}
@@ -65,11 +61,11 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		Bo bo = supplier.get(aDo);
 
 		if (aDo.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
-			if (! async) {
-				DefaultDatabaseSupport.getInstance().insert(insertStatement, aDo);
-				aDo.updateEntityStatus(EntityStatus.NORMAL);
-			}else {
+			if (async) {
 				syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.INSERT));
+			}else {
+				databaseSupport(aDo.key()).insert(insertStatement, aDo);
+				aDo.updateEntityStatus(EntityStatus.NORMAL);
 			}
 			this.addToCache(bo);
 		} else {
@@ -95,7 +91,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		}
 
 		if (! async) {
-			DefaultDatabaseSupport.getInstance().update(updateStatement, aDo);
+			databaseSupport(aDo.key()).update(updateStatement, aDo);
 			return;
 		}
 
@@ -123,12 +119,12 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		// 直接删除缓存. 异步更新时候, 不校验状态
 		aDo.updateEntityStatus(EntityStatus.DELETE);
 
-		if (! async) {
-			this.invalidateCache(aDo);
-			this.deleteDoFromDb(aDo);
-		}else {
+		if (async) {
 			this.asyncInvalidateCache(aDo);
 			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.DELETE));
+		}else {
+			this.invalidateCache(aDo);
+			this.deleteDoFromDb(aDo);
 		}
 	}
 

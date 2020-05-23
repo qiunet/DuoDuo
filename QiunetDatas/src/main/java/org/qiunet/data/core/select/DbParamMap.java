@@ -1,5 +1,6 @@
 package org.qiunet.data.core.select;
 
+import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
 
 import java.util.HashMap;
@@ -14,14 +15,16 @@ public class DbParamMap extends HashMap<String, Object> {
 	private DbParamMap(){
 		super(4);
 	}
-	public static DbParamMap create(){
-		return new DbParamMap();
-	}
-	public static DbParamMap create(String keyName, Object key){
+
+	public static DbParamMap create(Table table, String keyName, Object key){
 		DbParamMap paramMap = new DbParamMap();
 		paramMap.put(keyName, key);
-		paramMap.put("dbName", DbUtil.getDbName(key));
-		paramMap.put("tbIndex", DbUtil.getTbIndex(key));
+		if (table.splitDb()) {
+			paramMap.put("dbName", DbUtil.getDbName(key));
+		}
+		if (table.splitTable()) {
+			paramMap.put("tbIndex", DbUtil.getTbIndex(key));
+		}
 		return paramMap;
 	}
 	public DbParamMap put(String key, Object val) {

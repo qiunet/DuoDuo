@@ -3,7 +3,6 @@ package org.qiunet.data.support;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
-import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -68,8 +67,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 
 	@Override
 	protected void deleteFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key())
-			.put("dbName", aDo.getDbName());
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
 		databaseSupport(aDo.key()).delete(deleteStatement, map);
 	}
 
@@ -120,8 +118,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 		}
 
 		if (aDo == null) {
-			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key)
-				.put("dbName", DbUtil.getDbName(key));
+			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 			aDo = databaseSupport(key).selectOne(selectStatement, map);
 			if (aDo == null) {
 				returnJedis().set(redisKey, PLACE_HOLDER, "nx", "ex", NORMAL_LIFECYCLE);

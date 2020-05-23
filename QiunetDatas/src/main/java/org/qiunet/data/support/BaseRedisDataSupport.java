@@ -1,15 +1,9 @@
 package org.qiunet.data.support;
 
 
-import org.qiunet.data.async.SyncType;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
-import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
-import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
-import org.qiunet.data.redis.util.DbUtil;
-import org.qiunet.data.util.DbProperties;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.HashSet;
@@ -29,21 +23,17 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	/**redis update 同步队列 key**/
 	private String redisUpdateSyncSetKey;
 
-	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
 	protected IRedisUtil redisUtil;
 
-	private Table table;
 	BaseRedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		this.redisUtil = redisUtil;
 		this.redisUpdateSyncSetKey = "SYNC_SET#"+doName;
-
-		table = doClass.getAnnotation(Table.class);
 	}
 
 	@Override
 	public void syncToDatabase() {
-		if (!async) {
+		if (! super.async) {
 			return;
 		}
 		/***
@@ -111,7 +101,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public void update(Do aDo) {
 		this.setDataObjectToRedis(aDo);
-		if (async) {
+		if (super.async) {
 			returnJedis().sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
 		} else {
 			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
@@ -147,18 +137,5 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			sj.add(String.valueOf(key));
 		}
 		return sj.toString();
-	}
-
-	/**
-	 * 根据 注解Table 获取数据源
-	 * @param key
-	 * @return
-	 */
-	protected IDatabaseSupport databaseSupport(Object key) {
-		if (table.splitDb()) {
-			return MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key));
-		}else {
-			return DefaultDatabaseSupport.getInstance();
-		}
 	}
 }
