@@ -6,7 +6,6 @@ import org.qiunet.utils.base.BaseTest;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.concurrent.CountDownLatch;
 
@@ -82,23 +81,18 @@ public class TestDateUtil extends BaseTest {
 		LocalDateTime nowLocalDateTime = DateUtil.nowLocalDateTime();
 		LocalDateTime nowLocalDateTimeUTC = DateUtil.nowLocalDateTime(ZoneOffset.UTC);
 
-//		System.out.println("系统时区:\t" + DateUtil.dateToString(nowLocalDateTime));
-//		System.out.println("UTC时区:\t" + DateUtil.dateToString(nowLocalDateTimeUTC));
-
 		long milliByTime = DateUtil.getMilliByTime(nowLocalDateTime);
 		long milliByTimeUTC = DateUtil.getMilliByTime(nowLocalDateTimeUTC, ZoneOffset.UTC);
 
-//		System.out.println("系统时间戳:\t" + milliByTime);
-//		System.out.println("UTC时间戳:\t" + milliByTimeUTC);
-		Assert.assertEquals(milliByTime, milliByTimeUTC);
+		// 两次调用可能有个1毫秒时间的跨度.
+		Assert.assertTrue(Math.abs(milliByTime - milliByTimeUTC) < 2);
 
 		LocalDateTime localDateTime = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTime));
 		LocalDateTime localDateTimeUTC = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTimeUTC));
 
 		long milliByTime1 = DateUtil.getMilliByTime(localDateTime);
 		long milliByTime2 = DateUtil.getMilliByTime(localDateTimeUTC, ZoneOffset.UTC);
-//		System.out.println("milliByTime1:\t" +milliByTime1);
-//		System.out.println("milliByTime2:\t" +milliByTime2);
+
 		Assert.assertEquals(milliByTime1, milliByTime2);
 	}
 

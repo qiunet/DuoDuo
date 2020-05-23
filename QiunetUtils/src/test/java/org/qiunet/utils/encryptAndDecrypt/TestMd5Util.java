@@ -15,10 +15,10 @@ public class TestMd5Util {
 
 	@Test
 	public void test() throws Exception {
-		URL resource = MD5Util.class.getResource("/ChangeClass.class");
+		URL resource = MD5Util.class.getResource("/db.properties");
 		Path path = Paths.get(resource.toURI());
 
-		Assert.assertEquals("5bb9aa1df90235350bd392b6dba4face", MD5Util.encrypt(path.toFile()));
+		Assert.assertEquals("ebbcf0416182a049109d07f5a1b57cc4", MD5Util.encrypt(path.toFile()));
 	}
 
 }
