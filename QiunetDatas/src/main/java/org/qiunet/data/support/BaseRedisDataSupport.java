@@ -155,10 +155,10 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @return
 	 */
 	protected IDatabaseSupport databaseSupport(Object key) {
-		if (table.defaultDb()) {
-			return DefaultDatabaseSupport.getInstance();
-		}else {
+		if (table.splitDb()) {
 			return MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key));
+		}else {
+			return DefaultDatabaseSupport.getInstance();
 		}
 	}
 }

@@ -41,7 +41,7 @@ public class CreateTableService {
 	 * @param createParam
 	 */
 	public void createTable(TableCreateParam createParam) {
-		this.alter(createParam.getTableName(), createParam.isDefaultDb(), createParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+		this.alter(createParam.getTableName(), createParam.isSplitDb(), createParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
 			createParam.setDbName(newDbName);
 			createParam.setTableName(newTableName);
 			databaseSupport.selectOne(sqlPath + "createTable", createParam);
@@ -67,13 +67,13 @@ public class CreateTableService {
 		return tableNames.contains(tableName);
 	}
 
-	private String getDbName(boolean defaultDb) {
+	private String getDbName(boolean splitDb) {
 		String dbName = "";
-		if (defaultDb) {
-			dbName =  ((DefaultDatabaseSupport) DefaultDatabaseSupport.getInstance()).getDbName();
-		}else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)){
+		if (splitDb) {
 			// 只需要找第一个库就行.
 			dbName = RedisDbConstants.DB_NAME_PREFIX + 0;
+		}else if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)){
+			dbName =  ((DefaultDatabaseSupport) DefaultDatabaseSupport.getInstance()).getDbName();
 		}
 		if (StringUtil.isEmpty(dbName)) {
 			throw new RuntimeException(" can not get dbName for query!");
@@ -93,12 +93,12 @@ public class CreateTableService {
 	 * @param tableName
 	 * @return
 	 */
-	public List<Columns> findTableEnsembleByTableName(String tableName, boolean splitTable, boolean defaultDb) {
+	public List<Columns> findTableEnsembleByTableName(String tableName, boolean splitTable, boolean splitDb) {
 		if (splitTable) {
 			tableName = tableName+"_0";
 		}
 
-		String dbName = getDbName(defaultDb);
+		String dbName = getDbName(splitDb);
 		Map<String, List<Columns>> tableColumns = dbName2TableColumns.computeIfAbsent(dbName, this::findTableColumnsByDbName);
 		return tableColumns.get(tableName);
 	}
@@ -119,7 +119,7 @@ public class CreateTableService {
 	 * @param alterParam
 	 */
 	public void addTableField(TableParam alterParam) {
-		this.alter(alterParam.getTableName(), alterParam.isDefaultDb(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+		this.alter(alterParam.getTableName(), alterParam.isSplitDb(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
 			alterParam.setDbName(newDbName);
 			alterParam.setTableName(newTableName);
 			databaseSupport.selectOne(sqlPath + "addTableField", alterParam);
@@ -132,7 +132,7 @@ public class CreateTableService {
 	 * @param alterParam
 	 */
 	public void modifyTableField(TableParam alterParam) {
-		this.alter(alterParam.getTableName(), alterParam.isDefaultDb(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+		this.alter(alterParam.getTableName(), alterParam.isSplitDb(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
 			alterParam.setDbName(newDbName);
 			alterParam.setTableName(newTableName);
 			databaseSupport.selectOne(sqlPath + "modifyTableField", alterParam);
@@ -143,9 +143,9 @@ public class CreateTableService {
 	 * Db模式和Cache单数据库模式下, 默认的数据库源. 如果没有. 会取第一个(认为配置里也就一个).
 	 */
 	private static final String DEFAULT_DATABASE_SOURCE = "default_database_source";
-	private void alter(String tableName, boolean defaultDb, boolean splitTable, IDbExecutor dbExecutor) {
+	private void alter(String tableName, boolean splitDb, boolean splitTable, IDbExecutor dbExecutor) {
 		String dbName = DbProperties.getInstance().getString(DEFAULT_DATABASE_SOURCE);
-		if (defaultDb) {
+		if (! splitDb) {
 			if (splitTable) {
 				for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
 					String tableName0 = tableName + "_" + tbIndex;

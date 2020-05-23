@@ -25,12 +25,12 @@ public @interface Table {
 	String name();
 
 	/**
-	 * 是否是默认db的表.
-	 * 是的话, 就不会按照分库的方式搞.
-	 * 否则 会判断是否有分库, 没有才会查找默认db
+	 * 是否分库, 不分库就是默认db的表.
+	 * 是的话, 就会按照分库的方式搞.
+	 * 否则查找默认db
 	 * @return
 	 */
-	boolean defaultDb() default false;
+	boolean splitDb() default false;
 	/**
 	 * 需要分表的 {@link org.qiunet.data.core.entity.IEntityList}
 	 * 加上这个注解 {@link Table#splitTable()} = true

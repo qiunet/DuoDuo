@@ -5,7 +5,7 @@ import org.qiunet.data.cache.entity.CacheEntity;
 import org.qiunet.data.core.support.db.Table;
 
 @Alias("GuildDo")
-@Table(name = "guild", defaultDb = true)
+@Table(name = "guild")
 public class GuildDo extends CacheEntity<Long, GuildBo> {
 	private long guildId;
 	private String name;

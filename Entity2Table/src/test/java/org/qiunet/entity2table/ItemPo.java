@@ -13,7 +13,8 @@ import java.io.Serializable;
  * Time: 22:42.
  * To change this template use File | Settings | File Templates.
  */
-@Table(name = "item_po", comment = "道具表") @Alias("ItemPo")
+@Alias("ItemPo")
+@Table(name = "item_po", comment = "道具表", splitDb = true, splitTable = true)
 public class ItemPo implements Serializable {
 
 	private static final long serialVersionUID = 1L;

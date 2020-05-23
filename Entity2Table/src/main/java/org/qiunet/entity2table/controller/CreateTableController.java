@@ -49,7 +49,7 @@ class CreateTableController implements IApplicationContextAware {
 	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<?> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
 		// 已存在时理论上做修改的操作，这里查出该表的结构
-		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name(), table.splitTable(), table.defaultDb());
+		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name(), table.splitTable(), table.splitDb());
 
 		// 从sysColumns中取出我们需要比较的列的List
 		// 先取出name用来筛选出增加和删除的字段
@@ -127,7 +127,7 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 
-		modifyFieldList.forEach(f -> this.modifyTableField(new TableParam(table.name(), f, table.splitTable(), table.defaultDb())));
+		modifyFieldList.forEach(f -> this.modifyTableField(new TableParam(table.name(), f, table.splitTable(), table.splitDb())));
 	}
 
 	/**
@@ -144,7 +144,7 @@ class CreateTableController implements IApplicationContextAware {
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
 				.collect(Collectors.toList());
 
-		addFieldList.forEach(fieldParam -> this.addTableFields(new TableParam(table.name(), fieldParam, table.splitTable(), table.defaultDb())));
+		addFieldList.forEach(fieldParam -> this.addTableFields(new TableParam(table.name(), fieldParam, table.splitTable(), table.splitDb())));
 	}
 
 	/**
@@ -239,9 +239,9 @@ class CreateTableController implements IApplicationContextAware {
 		// 迭代出当前clazz所有fields存到newFieldList中
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-		boolean tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.defaultDb());
+		boolean tableExist = createTableService.findTableCountByTableName(table.name(), table.splitTable(), table.splitDb());
 		if (! tableExist) {
-			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), table.defaultDb());
+			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), table.splitDb());
 			createTable(tableParam);
 		} else {
 			// 验证对比从model中解析的fieldList与从数据库查出来的columnList

@@ -5,7 +5,7 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.db.entity.DbEntityList;
 
 @Alias("ItemDo")
-@Table(name = "item", defaultDb = true)
+@Table(name = "item")
 public class ItemDo extends DbEntityList<Long, Integer, ItemBo> {
 	private long uid;
 	private int item_id;

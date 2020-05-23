@@ -25,22 +25,22 @@ public class TableCreateParam {
 	 * 是的话, 就不会按照分库的方式搞.
 	 * 否则 会判断是否有分库, 没有才会查找默认db
 	 */
-	private boolean defaultDb;
+	private boolean splitDb;
 
 	private List<FieldParam> fields;
 
 	private String dbName;
 
-	public TableCreateParam(String tableName, String comment, List<FieldParam> fields, boolean splitTable, boolean defaultDb) {
+	public TableCreateParam(String tableName, String comment, List<FieldParam> fields, boolean splitTable, boolean splitDb) {
 		this.splitTable = splitTable;
-		this.defaultDb = defaultDb;
 		this.tableName = tableName;
+		this.splitDb = splitDb;
 		this.comment = comment;
 		this.fields = fields;
 	}
 
-	public boolean isDefaultDb() {
-		return defaultDb;
+	public boolean isSplitDb() {
+		return splitDb;
 	}
 
 	public String getDbName() {
