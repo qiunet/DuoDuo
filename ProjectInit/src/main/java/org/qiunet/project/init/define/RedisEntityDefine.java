@@ -19,13 +19,6 @@ public class RedisEntityDefine extends BaseEntityDefine {
 	}
 
 	@Override
-	protected String realTableName() {
-		StringBuilder sb = new StringBuilder("${dbName}.");
-		sb.append(getTableName());
-		return sb.toString();
-	}
-
-	@Override
 	protected String buildWhereCondition() {
 		return "WHERE " + getKey() + " = #{" + getKey()+ "}";
 	}

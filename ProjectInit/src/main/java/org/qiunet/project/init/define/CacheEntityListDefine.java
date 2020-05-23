@@ -16,13 +16,6 @@ public class CacheEntityListDefine extends BaseEntityListDefine {
 	}
 
 	@Override
-	protected String realTableName() {
-		StringBuilder sb = new StringBuilder(getTableName());
-		if (isSplitTable()) sb.append("_${tbIndex}");
-		return sb.toString();
-	}
-
-	@Override
 	protected String buildWhereCondition() {
 		StringBuilder sb = new StringBuilder(" WHERE ");
 		sb.append(key).append(" = #{")

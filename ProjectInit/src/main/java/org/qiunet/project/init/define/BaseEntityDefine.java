@@ -41,10 +41,18 @@ import java.util.stream.Collectors;
 	 * 包名 路径
 	 */
 	protected String packageName;
-	/***
-	 * 是否是默认db的表.
+	/**
+	 * 是否异步 或者同步
 	 */
-	protected boolean defaultDb;
+	protected boolean async = true;
+	/***
+	 * 是否分库
+	 */
+	protected boolean splitDb;
+	/**
+	 * 是否分表
+	 */
+	protected boolean splitTable;
 	/***
 	 * 表名
 	 */
@@ -130,12 +138,28 @@ import java.util.stream.Collectors;
 		constructorDefine.init(this);
 	}
 
-	public boolean isDefaultDb() {
-		return defaultDb;
+	public boolean isAsync() {
+		return async;
 	}
 
-	public void setDefaultDb(boolean defaultDb) {
-		this.defaultDb = defaultDb;
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
+	public boolean isSplitDb() {
+		return splitDb;
+	}
+
+	public void setSplitDb(boolean splitDb) {
+		this.splitDb = splitDb;
+	}
+
+	public boolean isSplitTable() {
+		return splitTable;
+	}
+
+	public void setSplitTable(boolean splitTable) {
+		this.splitTable = splitTable;
 	}
 
 	public String getBaseDir() {
@@ -246,7 +270,13 @@ import java.util.stream.Collectors;
 	 * 包含 库信息 分表信息等
 	 * @return
 	 */
-	protected abstract String realTableName();
+	protected String realTableName() {
+		StringBuilder sb = new StringBuilder();
+		if (isSplitDb()) sb.append("${dbName}.");
+		sb.append(getTableName());
+		if (isSplitTable()) sb.append("_${tbIndex}");
+		return sb.toString();
+	}
 	/**
 	 * 搞定where condition
 	 * @return
