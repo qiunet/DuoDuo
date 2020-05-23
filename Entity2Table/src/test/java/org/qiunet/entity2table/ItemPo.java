@@ -14,7 +14,7 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 @Alias("ItemPo")
-@Table(name = "item_po", comment = "道具表", splitDb = true, splitTable = true)
+@Table(name = "item_po", comment = "道具表")
 public class ItemPo implements Serializable {
 
 	private static final long serialVersionUID = 1L;
