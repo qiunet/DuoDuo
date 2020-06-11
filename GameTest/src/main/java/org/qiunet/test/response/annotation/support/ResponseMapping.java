@@ -13,7 +13,7 @@ import java.util.Map;
  * 17/12/6
  */
 public class ResponseMapping {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
 	private volatile static ResponseMapping instance;
 	private Map<Integer, ILongConnResponse> gameResponses = new HashMap<>();
 

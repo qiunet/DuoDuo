@@ -23,6 +23,8 @@ public enum  LoggerType implements ILoggerType {
 	DUODUO_CREATOR("DuoDuoCreator"),
 	/**用时警告等打印*/
 	DUODUO_USE_TIME("DuoDuoUseTime"),
+	/**游戏测试日志*/
+	DUODUO_GAME_TEST("DuoDuoGameTest"),
 	/** 读配置的日志打印 */
 	DUODUO_CFG_READER("DuoDuoCfgReader"),
 	/** flashHandler 的日志*/

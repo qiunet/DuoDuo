@@ -6,6 +6,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  *
@@ -16,12 +17,14 @@ import java.util.LinkedList;
 public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdownListener {
 	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
+	private AtomicBoolean executing = new AtomicBoolean();
 	private volatile static ShutdownHookThread instance;
 
 	private ShutdownHookThread() {
 		if (instance != null) {
 			throw new RuntimeException("Instance Duplication!");
 		}
+		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownNow));
 		instance = this;
 	}
 
@@ -62,7 +65,9 @@ public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdow
 	 * 提前执行.  并从钩子里面去掉.
 	 */
 	private void shutdownNow() {
-		this.run();
+		if (executing.compareAndSet(false, true)) {
+			this.run();
+		}
 	}
 
 

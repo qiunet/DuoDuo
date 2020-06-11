@@ -1,25 +1,27 @@
 package org.qiunet.test.executor;
 
 
+import com.google.common.collect.Sets;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by qiunet.
  * 17/11/24
  */
 public final class RobotExecutor {
-	private Logger logger = LoggerType.DUODUO.getLogger();
-
+	private Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
+	/**已经测试阶段了. 不能再插入新case*/
+	private boolean testing;
 	private IRobotFactory robotFactory;
 	private IExecutorInitializer initializer;
 	private List<Class<? extends ITestCase>> testCases = new ArrayList<>(128);
@@ -46,6 +48,8 @@ public final class RobotExecutor {
 		initializer.handler();
 		logger.error("-------用户自定义初始化代码结束-------");
 	}
+	private Set<DFuture<Void>> futures = Sets.newConcurrentHashSet();
+	private Thread currThread;
 	/***
 	 * 压测所有
 	 * @param robotCount
@@ -55,33 +59,42 @@ public final class RobotExecutor {
 
 		try {
 			this.init();
+			this.testing = true;
 		} catch (Throwable throwable) {
 			logger.error("初始化异常: ", throwable);
 			return;
 		}
 
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(5, 300, 10 , TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>() , new DefaultThreadFactory("Pressure_Testing_Thread_"));
 		logger.info("===============压测开始===============");
+		currThread = Thread.currentThread();
 		for (int i = 0; i < robotCount; i++) {
-			executor.submit(robotFactory.createRobot(testCases));
+			DFuture<Void> future = TimerManager.getInstance().executorNow(robotFactory.createRobot(testCases));
+			future.whenComplete((res, ex) -> futureComplete(future));
+			futures.add(future);
 		}
-		while (executor.getActiveCount() != 0 || !executor.getQueue().isEmpty()) {
-			try {
-				Thread.sleep(1);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		LockSupport.park();
 		logger.info("===============压测结束===============");
-		executor.shutdown();
+	}
+
+	private void futureComplete(DFuture<Void> future) {
+		futures.remove(future);
+		if (futures.isEmpty()) {
+			LockSupport.unpark(currThread);
+		}
 	}
 
 	public RobotExecutor setInitializer(IExecutorInitializer initializer) {
+		if (testing) {
+			throw new IllegalStateException("Already testing");
+		}
 		this.initializer = initializer;
 		return this;
 	}
 
 	public RobotExecutor addTestCase(Class<? extends ITestCase> testCase) {
+		if (testing) {
+			throw new IllegalStateException("Already testing");
+		}
 		this.testCases.add(testCase);
 		return this;
 	}
