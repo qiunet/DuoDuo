@@ -2,7 +2,6 @@ package org.qiunet.tests;
 
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.test.executor.RobotExecutor;
-import org.qiunet.test.executor.params.ExecutorParams;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.init.DefaultRobotInfo;
 import org.qiunet.test.robot.init.IRobotFactory;
@@ -28,32 +27,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Executor {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Throwable {
 		// 启动服务器
 		ClassScanner.getInstance().scanner();
+		CfgManagers.getInstance().initSetting();
 		ServerStartup server = new ServerStartup();
 		server.startup();
-		new RobotExecutor(ExecutorParams.custom()
-				// 全局扫描的一些东西
-				.setInitializer(() -> {
-					try {
-						CfgManagers.getInstance().initSetting();
-					} catch (Throwable e) {
-						e.printStackTrace();
-					}
-				})
-				// 机器人工厂.  自己定义
-				.setRobotFactory(new RobotFactory())
-				// 测试用例
-				.addTestCase(TestLogin.class)
-				.addTestCase(TestLoginOnline.class)
-				.addTestCase(TestPlayerIndex.class)
-				.addTestCase(TestPlayerInfo.class)
-				.addTestCase(TestJsonPlayerInfo.class)
-				.addTestCase(TestUriPathPlayerInfo.class)
-				.addTestCase(TestLoginRoom.class)
-
-		).pressureTesting(1);
+		// 测试用例
+		RobotExecutor.custom(new RobotFactory())
+		.addTestCase(TestLogin.class)
+		.addTestCase(TestLoginOnline.class)
+		.addTestCase(TestPlayerIndex.class)
+		.addTestCase(TestPlayerInfo.class)
+		.addTestCase(TestJsonPlayerInfo.class)
+		.addTestCase(TestUriPathPlayerInfo.class)
+		.addTestCase(TestLoginRoom.class)
+		.pressureTesting(1);
 		server.shutdown();
 	}
 
