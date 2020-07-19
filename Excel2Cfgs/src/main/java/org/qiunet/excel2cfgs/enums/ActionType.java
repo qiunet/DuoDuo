@@ -129,6 +129,7 @@ public enum ActionType {
 			if (nextDefaultPath != null) {
 				controller.cfgPaths.getSelectionModel().select(nextDefaultPath);
 			}
+			SettingManager.getInstance().update();
 		}
 	},
 
@@ -140,6 +141,7 @@ public enum ActionType {
 		public void handlerAction(Stage primaryStage, ActionEvent event, RootController controller) {
 			boolean selected = ((CheckBox) event.getSource()).isSelected();
 			SettingManager.getInstance().getSetting().setXdChecked(selected);
+			SettingManager.getInstance().update();
 		}
 	},
 
@@ -151,6 +153,7 @@ public enum ActionType {
 		public void handlerAction(Stage primaryStage, ActionEvent event, RootController controller) {
 			boolean selected = ((CheckBox) event.getSource()).isSelected();
 			SettingManager.getInstance().getSetting().setJsonChecked(selected);
+			SettingManager.getInstance().update();
 		}
 	},
 	/***
@@ -161,6 +164,7 @@ public enum ActionType {
 		public void handlerAction(Stage primaryStage, ActionEvent event, RootController controller) {
 			boolean selected = ((CheckBox) event.getSource()).isSelected();
 			SettingManager.getInstance().getSetting().setXmlChecked(selected);
+			SettingManager.getInstance().update();
 		}
 	},
 	/***

@@ -144,6 +144,10 @@ public class SettingManager implements ServerShutdownEventData.ServerShutdownLis
 		this.setting = JsonUtil.getGeneralObject(json, Setting.class);
 	}
 
+	public void update(){
+		this.setting.update();
+	}
+
 	@Override
 	public void onShutdown(ServerShutdownEventData data) {
 		Excel2CfgsUtil.writeToProjectFile(this.setting);

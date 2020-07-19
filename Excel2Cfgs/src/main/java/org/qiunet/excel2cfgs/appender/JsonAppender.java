@@ -24,9 +24,6 @@ public class JsonAppender extends BaseAppender {
 	@Override
 	public void createCfgFile(String sheetName, RoleType roleType, String outPath, AppenderAttachable attachable) {
 		List<List<AppenderData>> appenderDatas = attachable.getAppenderDatas();
-		if (appenderDatas.isEmpty()) {
-			return;
-		}
 
 		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".json");
 		if (! path.toFile().getParentFile().exists()) {

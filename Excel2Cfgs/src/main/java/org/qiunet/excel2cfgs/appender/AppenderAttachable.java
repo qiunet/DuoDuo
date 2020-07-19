@@ -1,7 +1,9 @@
 package org.qiunet.excel2cfgs.appender;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import com.google.common.collect.Lists;
+import org.qiunet.excel2cfgs.enums.OutPutType;
+import org.qiunet.excel2cfgs.enums.RoleType;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,10 +13,26 @@ import java.util.stream.Collectors;
  * 17/10/30
  */
 public class AppenderAttachable {
+	/**
+	 * 文件名
+	 */
 	private String fileName;
+	/**
+	 * 选择的json xml  xd等append
+	 */
 	private List<IAppender> appenders = new LinkedList<>();
-	private List<List<AppenderData>> appenderDatas = new ArrayList<>();
-	private List<AppenderData> rowDatas = new ArrayList<>();
+	/**
+	 * 所有数据
+	 */
+	private List<List<AppenderData>> appenderDatas = Lists.newArrayList();
+	/**
+	 * 每一行的数据
+	 */
+	private List<AppenderData> rowDatas = Lists.newArrayList();
+	/**
+	 * 保存的数值字段名称
+	 */
+	private List<NameAppenderData> nameAppenderDatas = Lists.newArrayList();
 
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;
@@ -24,19 +42,19 @@ public class AppenderAttachable {
 		return fileName;
 	}
 
+	public void addNameAppender(String name, OutPutType outPutType) {
+		this.nameAppenderDatas.add(new NameAppenderData(name, outPutType));
+	}
+
 	/***
 	 * 获得数据的名称
 	 * xd 以后考虑写开始. 方便反射赋值
 	 * @return
 	 */
-	public List<String> getRowNames() {
-		if (appenderDatas.isEmpty())  {
-			return Collections.emptyList();
-		}
-
-		return appenderDatas.get(0).stream()
-			.map(AppenderData::getName)
-			.collect(Collectors.toList());
+	public List<NameAppenderData> getRowNames(RoleType roleType) {
+		return nameAppenderDatas.stream().filter(
+			data -> data.getOutPutType().canWrite(roleType)
+		).collect(Collectors.toList());
 	}
 	/**
 	 * 添加一个Appender
@@ -48,7 +66,7 @@ public class AppenderAttachable {
 
 	public void rowRecordOver() {
 		appenderDatas.add(rowDatas);
-		rowDatas = new ArrayList<>();
+		rowDatas = Lists.newArrayList();
 	}
 
 	public void append(AppenderData appenderData) {

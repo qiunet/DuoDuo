@@ -102,8 +102,15 @@ public class ExcelToCfg {
 			int cellLength = getCellLength(sheet);
 
 			Row dataNameRow = sheet.getRow(1);
-
 			Row dataOutPutTypeRow = sheet.getRow(2);
+
+			for (columnNum = 0; columnNum < cellLength; columnNum++) {
+				// 名称
+				String dataName = dataNameRow.getCell(columnNum).getStringCellValue();
+				OutPutType outPutType = OutPutType.valueOf(dataOutPutTypeRow.getCell(columnNum).getStringCellValue());
+				attachable.addNameAppender(dataName, outPutType);
+			}
+
 
 			for (rowNum = DATA_DEFINE_ROW; rowNum < lastRow; rowNum++) {
 				Row row = sheet.getRow(rowNum);

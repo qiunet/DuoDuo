@@ -1,7 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
 
-import com.google.common.collect.Lists;
 import javafx.scene.control.Alert;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
@@ -40,23 +39,11 @@ public class XdAppender extends BaseAppender {
 				DataOutputStream dos = new DataOutputStream(gos)) {
 				// 写入数据行数
 				dos.writeInt(appenderDatas.size());
-				if (appenderDatas.isEmpty()) {
-					return;
-				}
 
-				// 写入名称
-				List<String> names = Lists.newArrayList();
-				List<AppenderData> appenderData = appenderDatas.get(0);
-				for (AppenderData rowData : appenderData) {
-					OutPutType oType = rowData.getOutPutType();
-					if (oType.canWrite(roleType)) {
-						names.add(rowData.getName());
-					}
-				}
-
-				dos.writeShort(names.size());
-				for (String name : names) {
-					dos.writeUTF(name);
+				List<NameAppenderData> rowNames = attachable.getRowNames(roleType);
+				dos.writeShort(rowNames.size());
+				for (NameAppenderData nameData : rowNames) {
+					dos.writeUTF(nameData.getName());
 				}
 				// 写入数据
 				for (List<AppenderData> rowDatas : appenderDatas) {

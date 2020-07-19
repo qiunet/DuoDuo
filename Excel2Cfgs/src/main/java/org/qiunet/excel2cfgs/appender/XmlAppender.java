@@ -8,6 +8,7 @@ import org.dom4j.io.XMLWriter;
 import org.qiunet.excel2cfgs.enums.RoleType;
 
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -27,9 +28,6 @@ public class XmlAppender extends BaseAppender {
 	@Override
 	public void createCfgFile(String sheetName, RoleType roleType, String outPath, AppenderAttachable attachable) {
 		List<List<AppenderData>> appenderDatas = attachable.getAppenderDatas();
-		if (appenderDatas.isEmpty()) {
-			return;
-		}
 
 		Path path = Paths.get(outPath, outputRelativePath, filePrefix + "_" + sheetName + ".xml");
 		if (! path.toFile().getParentFile().exists()) {
@@ -49,7 +47,7 @@ public class XmlAppender extends BaseAppender {
 		}
 
 		OutputFormat format = OutputFormat.createPrettyPrint();
-		format.setEncoding("UTF-8");
+		format.setEncoding(StandardCharsets.UTF_8.toString());
 
 		try(FileOutputStream fos = new FileOutputStream(path.toFile())) {
 			XMLWriter xmlWriter = new XMLWriter(fos, format);

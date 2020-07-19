@@ -1,6 +1,7 @@
 package org.qiunet.excel2cfgs.setting;
 
 import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -86,5 +87,9 @@ public class Setting {
 
 	public void setRoleType(RoleType roleType) {
 		this.roleType = roleType;
+	}
+
+	public void update(){
+		Excel2CfgsUtil.writeToProjectFile(this);
 	}
 }

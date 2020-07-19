@@ -115,6 +115,7 @@ public class RootController implements Excel2CfgServerStartListenerData.Excel2Cf
 			}
 		);
 		this.roleType.getSelectionModel().select(currRoleType);
+		SettingManager.getInstance().update();
 	}
 	/***
 	 * 初始化左边文件树
