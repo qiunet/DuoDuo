@@ -53,7 +53,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 
 		byte [] bytes = new byte[in.available()];
 		in.read(bytes);
-		CommonUtil.reverse(bytes);
+		CommonUtil.reverse(bytes, 2);
 		bais = new ByteArrayInputStream(bytes);
 		gis = new GZIPInputStream(bais);
 		dis = new DataInputStream(gis);

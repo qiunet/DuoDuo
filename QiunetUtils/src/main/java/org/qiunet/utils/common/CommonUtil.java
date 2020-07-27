@@ -60,13 +60,16 @@ public class CommonUtil {
 	 * @param array
 	 */
 	public static void reverse(byte [] array) {
+		reverse(array, 1);
+	}
+	public static void reverse(byte [] array, int step) {
 		if (array == null || array.length <= 1) {
 			return;
 		}
 		byte temp;
 		int len = array.length;
 		int loopNum = len / 2;
-		for (int i = 0; i < loopNum; i++) {
+		for (int i = 0; i < loopNum; i+=step) {
 			temp = array[i];
 			int last = len - 1 - i;
 			array[i] = array[last];

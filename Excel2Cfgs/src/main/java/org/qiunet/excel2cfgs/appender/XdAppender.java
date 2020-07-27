@@ -57,7 +57,7 @@ public class XdAppender extends BaseAppender {
 			}
 
 			byte [] bytes = bouts.toByteArray();
-			CommonUtil.reverse(bytes);
+			CommonUtil.reverse(bytes, 2);
 			try (FileOutputStream fos = new FileOutputStream(path.toFile())){
 				fos.write(bytes);
 			}
