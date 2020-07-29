@@ -36,6 +36,7 @@ public class MainApplication extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		setUserAgentStylesheet(STYLESHEET_CASPIAN);
 		try {
 			primaryStage.setTitle("配置文件转换工具");
 			primaryStage.setWidth(1053);
