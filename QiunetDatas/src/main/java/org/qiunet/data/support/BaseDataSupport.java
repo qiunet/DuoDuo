@@ -2,9 +2,8 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.async.IAsyncNode;
 import org.qiunet.data.core.entity.IEntity;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
+import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.IDatabaseSupport;
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -67,14 +66,9 @@ import org.slf4j.Logger;
 
 	/**
 	 * 根据 注解Table 获取数据源
-	 * @param key 传入${@link IEntity#key()}
 	 * @return
 	 */
-	protected IDatabaseSupport databaseSupport(Object key) {
-		if (table.splitDb()) {
-			return MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key));
-		}else {
-			return DefaultDatabaseSupport.getInstance();
-		}
+	protected IDatabaseSupport databaseSupport() {
+		return DbSourceDatabaseSupport.getInstance(DbUtil.getDbSource(doClass));
 	}
 }

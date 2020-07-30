@@ -1,6 +1,5 @@
 package org.qiunet.data.support;
 
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.db.entity.IDbEntity;
 
 abstract class BaseDbDataSupport<Do extends IDbEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
@@ -20,12 +19,12 @@ abstract class BaseDbDataSupport<Do extends IDbEntity, Bo extends IEntityBo<Do>>
 	 */
 	@Override
 	public void update(Do aDo) {
-		DefaultDatabaseSupport.getInstance().update(updateStatement, aDo);
+		databaseSupport().update(updateStatement, aDo);
 	}
 
 	 @Override
 	 public Bo insert(Do aDo) {
-		 DefaultDatabaseSupport.getInstance().insert(insertStatement, aDo);
+		 databaseSupport().insert(insertStatement, aDo);
 		 return supplier.get(aDo);
 	 }
 }

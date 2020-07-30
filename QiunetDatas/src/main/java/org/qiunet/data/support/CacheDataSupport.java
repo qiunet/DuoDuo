@@ -4,7 +4,6 @@ import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.cache.LocalCache;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 
 
 public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
@@ -32,7 +31,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	@Override
 	protected void deleteDoFromDb(Do aDo) {
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+		databaseSupport().delete(deleteStatement, map);
 	}
 
 	@Override
@@ -58,7 +57,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 		if (bo == null) {
 			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 
-			Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+			Do aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
 				cache.putIfAbsent(key, NULL);
 				return null;

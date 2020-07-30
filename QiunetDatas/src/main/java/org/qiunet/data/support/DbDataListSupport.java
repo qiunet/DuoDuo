@@ -1,7 +1,6 @@
 package org.qiunet.data.support;
 
 import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.db.entity.IDbEntityList;
 
 import java.util.Collections;
@@ -21,7 +20,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 	 */
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
-		List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
+		List<Do> doList = databaseSupport().selectList(selectStatement, map);
 		if (doList == null) return Collections.emptyMap();
 
 		return doList.stream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
@@ -39,6 +38,6 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key)
 			.put(defaultDo.subKeyFieldName(), subKey);
 
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+		databaseSupport().delete(deleteStatement, map);
 	}
 }

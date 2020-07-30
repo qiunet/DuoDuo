@@ -13,4 +13,33 @@ public class DbProperties extends LoaderProperties {
 	private DbProperties() {
 		super("db.properties");
 	}
+
+	/**
+	 * 取到server的类型.
+	 * 0 为普通功能服
+	 *
+	 * @return
+	 */
+	public int getServerType() {
+		return getInt("serverType", 0);
+	}
+
+	public boolean isFuncServerType() {
+		return getServerType() == 0;
+	}
+	/**
+	 * 得到serverId
+	 * @return
+	 */
+	public int getServerId(){
+		return getInt("serverId");
+	}
+
+	/**
+	 * 得到默认数据源
+	 * @return
+	 */
+	public String getDefaultDbSource(){
+		return getString("default_database_source");
+	}
 }

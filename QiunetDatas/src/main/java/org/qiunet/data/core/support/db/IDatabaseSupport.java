@@ -3,7 +3,11 @@ package org.qiunet.data.core.support.db;
 import java.util.List;
 
 public interface IDatabaseSupport {
-
+	/**
+	 * 得到该dbSource 对应的dbName
+	 * @return
+	 */
+	String dbName();
 	/**
 	 * 删除记录
 	 * @param Statement  Statement

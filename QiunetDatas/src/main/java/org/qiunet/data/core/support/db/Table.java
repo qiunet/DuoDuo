@@ -25,12 +25,11 @@ public @interface Table {
 	String name();
 
 	/**
-	 * 是否分库, 不分库就是默认db的表.
-	 * 是的话, 就会按照分库的方式搞.
-	 * 否则查找默认db
+	 * 适用哪个数据源名.
+	 * 如果 serverType == 0. 取默认数据源
 	 * @return
 	 */
-	boolean splitDb() default false;
+	String dbSource() default "";
 	/**
 	 * 需要分表的加上这个注解 {@link Table#splitTable()} = true
 	 * @return

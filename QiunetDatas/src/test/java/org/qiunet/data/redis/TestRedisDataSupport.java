@@ -3,8 +3,9 @@ package org.qiunet.data.redis;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -69,7 +70,7 @@ public class TestRedisDataSupport {
 	 * 测试异步删除抛异常的情况
 	 *
 	 * 操作步骤:
-	 * {@link org.qiunet.data.core.support.db.BaseDatabaseSupport#delete(String, Object)} 取消注释
+	 * {@link org.qiunet.data.core.support.db.DbSourceDatabaseSupport#delete(String, Object)} 取消注释
 	 * 执行测试方法
 	 */
 	@Test
@@ -83,7 +84,7 @@ public class TestRedisDataSupport {
 
 		Table table = vipDo.getClass().getAnnotation(Table.class);
 		DbParamMap map = DbParamMap.create(table, vipDo.keyFieldName(), vipDo.key());
-		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("deleteVipDo", map);
+		DbSourceDatabaseSupport.getInstance(DbUtil.getDbSource(vipDo.getClass())).insert("deleteVipDo", map);
 
 		vipDo.delete();
 		dataSupport.syncToDatabase();

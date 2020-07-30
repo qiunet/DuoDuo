@@ -8,9 +8,9 @@ import java.util.Map;
 /***
  * 多个数据库源的方式
  */
-public final class MoreDbSourceDatabaseSupport extends BaseDatabaseSupport {
+public final class DbSourceDatabaseSupport extends BaseDatabaseSupport {
 	private volatile static Map<String, IDatabaseSupport> instances = new HashMap<>(128);
-	private MoreDbSourceDatabaseSupport(String dbSourceKey) {
+	private DbSourceDatabaseSupport(String dbSourceKey) {
 		this.dbSourceKey = dbSourceKey;
 	}
 	private String dbSourceKey;
@@ -21,7 +21,12 @@ public final class MoreDbSourceDatabaseSupport extends BaseDatabaseSupport {
 	 * @return
 	 */
 	public static IDatabaseSupport getInstance(String dbSourceKey) {
-		return instances.computeIfAbsent(dbSourceKey, MoreDbSourceDatabaseSupport::new);
+		return instances.computeIfAbsent(dbSourceKey, DbSourceDatabaseSupport::new);
+	}
+
+	@Override
+	public String dbName() {
+		return dbLoader.dbName(dbSourceKey);
 	}
 
 	@Override

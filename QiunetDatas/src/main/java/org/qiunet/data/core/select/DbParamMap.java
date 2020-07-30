@@ -19,9 +19,6 @@ public class DbParamMap extends HashMap<String, Object> {
 	public static DbParamMap create(Table table, String keyName, Object key){
 		DbParamMap paramMap = new DbParamMap();
 		paramMap.put(keyName, key);
-		if (table.splitDb()) {
-			paramMap.put("dbName", DbUtil.getDbName(key));
-		}
 		if (table.splitTable()) {
 			paramMap.put("tbIndex", DbUtil.getTbIndex(key));
 		}

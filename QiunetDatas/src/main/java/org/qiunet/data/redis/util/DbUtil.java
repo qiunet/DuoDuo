@@ -1,14 +1,22 @@
 package org.qiunet.data.redis.util;
 
-import org.qiunet.data.redis.constants.RedisDbConstants;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import org.qiunet.data.core.entity.IEntity;
+import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.util.DbProperties;
+import org.qiunet.utils.string.StringUtil;
+
+import java.util.Map;
 
 public final class DbUtil {
+	/**支持分表数量**/
+	private static final int MAX_TABLE_FOR_TB_SPLIT = 10;
 
-	public static int getDbIndex(Object key) {
+	/**每个entity 对应的源.*/
+	private static Map<Class<? extends IEntity>, String> dbSources = Maps.newConcurrentMap();
 
-		return (hashCode(key) % RedisDbConstants.MAX_DB_COUNT);
-	}
-
+	private static final int [] POW10_NUMS = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 	/***
 	 * hashcode 如果 == Integer.MIN_VALUE 时候, Math.abs 还是等于自己
 	 * @param key
@@ -22,18 +30,44 @@ public final class DbUtil {
 		return Math.abs(hashCode);
 	}
 
-	public static String getDbName(Object key) {
-		return RedisDbConstants.DB_NAME_PREFIX + getDbIndex(key);
-	}
-
-	public static String getDbSourceKey(Object key) {
-		return String.valueOf(getDbIndex(key)
-			/ RedisDbConstants.DB_SIZE_PER_INSTANCE);
-	}
-
 	public static int getTbIndex(Object key) {
-		return (hashCode(key) / RedisDbConstants.MAX_DB_COUNT)
-			% RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT;
+		int serverId = DbProperties.getInstance().getServerId();
+		int length = (int) (Math.log10(serverId));
+		int pow = POW10_NUMS[length + 1];
+
+		return (hashCode(key) / pow)
+			% MAX_TABLE_FOR_TB_SPLIT;
+	}
+
+	/**
+	 * 得到entity 适用的数据库源名
+	 *
+	 * @param clazz
+	 * @return
+	 */
+	public static String getDbSource(Class<? extends IEntity> clazz) {
+		return dbSources.computeIfAbsent(clazz, key -> {
+			Table table = key.getAnnotation(Table.class);
+			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
+			String dbSource = table.dbSource();
+			if (StringUtil.isEmpty(dbSource) && DbProperties.getInstance().isFuncServerType()) {
+				dbSource = DbProperties.getInstance().getDefaultDbSource();
+			}
+			return dbSource;
+		});
+	}
+
+	 /***
+	 * 合成一个唯一的id.
+	 * 适用于: 公会id  玩家id
+	 * @param incrId
+	 * @return
+	 */
+	public static long buildId(int incrId) {
+		int serverId = DbProperties.getInstance().getServerId();
+		int length = (int) (Math.log10(serverId));
+		int pow = POW10_NUMS[length + 1];
+		return (long) (incrId * pow + serverId * 10 + length);
 	}
 
 	/***

@@ -1,7 +1,6 @@
 package org.qiunet.data.support;
 
 
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import redis.clients.jedis.JedisCommands;
@@ -53,7 +52,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 					logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
 					continue;
 				}
-				databaseSupport(aDo.key()).update(updateStatement, aDo);
+				databaseSupport().update(updateStatement, aDo);
 			}catch (Exception e) {
 				logger.error("Sync to Database Exception: ", e);
 				errorSyncParams.add(syncParams);
@@ -76,7 +75,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	@Override
 	public Bo insert(Do aDo) {
 		this.setDataObjectToRedis(aDo);
-		databaseSupport(aDo.getDbSourceKey()).insert(insertStatement, aDo);
+		databaseSupport().insert(insertStatement, aDo);
 		return supplier.get(aDo);
 	}
 
@@ -104,7 +103,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 		if (super.async) {
 			returnJedis().sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
 		} else {
-			MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
+			databaseSupport().update(updateStatement, aDo);
 		}
 	}
 

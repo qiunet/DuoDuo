@@ -48,7 +48,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 		try {
 			return cache.get(key, () -> {
 				DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
-				List<Do> doList = databaseSupport(key).selectList(selectStatement, map);
+				List<Do> doList = databaseSupport().selectList(selectStatement, map);
 
 				return doList.stream()
 					.peek(aDo -> aDo.updateEntityStatus(EntityStatus.NORMAL))
@@ -75,7 +75,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	protected void deleteDoFromDb(Do aDo) {
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key())
 			.put(defaultDo.subKeyFieldName(), aDo.subKey());
-		databaseSupport(aDo.key()).delete(deleteStatement, map);
+		databaseSupport().delete(deleteStatement, map);
 	}
 
 	/***

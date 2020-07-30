@@ -31,14 +31,14 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 			switch (element.operate) {
 				case INSERT:
 					if (aDo.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
-						databaseSupport(aDo.key()).insert(insertStatement, aDo);
+						databaseSupport().insert(insertStatement, aDo);
 					}else {
 						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not insert to db.");
 					}
 					break;
 				case UPDATE:
 					if (aDo.atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
-						databaseSupport(aDo.key()).update(updateStatement, aDo);
+						databaseSupport().update(updateStatement, aDo);
 					}else {
 						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not update to db.");
 					}
@@ -64,7 +64,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 			if (async) {
 				syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.INSERT));
 			}else {
-				databaseSupport(aDo.key()).insert(insertStatement, aDo);
+				databaseSupport().insert(insertStatement, aDo);
 				aDo.updateEntityStatus(EntityStatus.NORMAL);
 			}
 			this.addToCache(bo);
@@ -91,7 +91,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		}
 
 		if (! async) {
-			databaseSupport(aDo.key()).update(updateStatement, aDo);
+			databaseSupport().update(updateStatement, aDo);
 			return;
 		}
 
