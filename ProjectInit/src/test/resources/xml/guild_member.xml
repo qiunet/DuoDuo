@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cache_entity_list key="guildId"
 				subKey="memberId"
+			    dbSource="global"
 				name="GuildMemberDo"
 				baseDir="src/test/java"
 				packageName="org.qiunet.project.init.test.guild_member"

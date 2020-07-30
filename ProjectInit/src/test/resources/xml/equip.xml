@@ -2,7 +2,6 @@
 <redis_entity_list key="uid"
 				subKey="equip_id"
 				name="EquipDo"
-			    splitDb="true"
 			    splitTable="true"
 				baseDir="src/test/java"
 				packageName="org.qiunet.project.init.test.equip"
