@@ -54,8 +54,7 @@ public class CreateTableService {
 		if (splitTable) {
 			tableName = tableName+"_0";
 		}
-		String dbName = getDbName(dbSourceName);
-		List<String> tableNames = dbName2TableNames.computeIfAbsent(dbName, this::findTableNamesByDbName);
+		List<String> tableNames = dbSourceName2TableNames.computeIfAbsent(dbSourceName, this::findTableNamesByDbSourceName);
 		if (tableNames == null) {
 			return false;
 		}
@@ -66,8 +65,8 @@ public class CreateTableService {
 		return DbSourceDatabaseSupport.getInstance(dbSourceName).dbName();
 	}
 
-	private static Map<String, List<String>> dbName2TableNames  = Maps.newHashMap();
-	private List<String> findTableNamesByDbName(String dbSourceName) {
+	private static Map<String, List<String>> dbSourceName2TableNames  = Maps.newHashMap();
+	private List<String> findTableNamesByDbSourceName(String dbSourceName) {
 		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
 		// 从公共库取. 使用默认源就行.
 		return databaseSupport.selectList(sqlPath + "findTableNamesByDbName", databaseSupport.dbName());
@@ -84,15 +83,14 @@ public class CreateTableService {
 			tableName = tableName+"_0";
 		}
 
-		String dbName = getDbName(dbSourceName);
-		Map<String, List<Columns>> tableColumns = dbName2TableColumns.computeIfAbsent(dbName, this::findTableColumnsByDbName);
+		Map<String, List<Columns>> tableColumns = dbSourceName2TableColumns.computeIfAbsent(dbSourceName, this::findTableColumnsByDbSourceName);
 		return tableColumns.get(tableName);
 	}
 
 
 	/**dbName -> table -> columnList**/
-	private static Map<String, Map<String, List<Columns>>> dbName2TableColumns  = Maps.newHashMap();
-	private Map<String, List<Columns>> findTableColumnsByDbName(String dbSourceName) {
+	private static Map<String, Map<String, List<Columns>>> dbSourceName2TableColumns  = Maps.newHashMap();
+	private Map<String, List<Columns>> findTableColumnsByDbSourceName(String dbSourceName) {
 		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
 		// 从公共库取. 使用默认源就行.
 		List<Columns> columns = databaseSupport.selectList(sqlPath + "findColumnByDbName", databaseSupport.dbName());

@@ -1,5 +1,7 @@
 package org.qiunet.entity2table.command;
 
+import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,10 @@ public class TableCreateParam {
 
 	public void setSplitTable(boolean splitTable) {
 		this.splitTable = splitTable;
+	}
+
+	public String getDbName(){
+		return DbSourceDatabaseSupport.getInstance(dbSource).dbName();
 	}
 
 	public String getPriKeyDesc() {

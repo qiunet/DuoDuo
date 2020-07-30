@@ -10,27 +10,30 @@ import java.util.Map;
  */
 public final class DbSourceDatabaseSupport extends BaseDatabaseSupport {
 	private volatile static Map<String, IDatabaseSupport> instances = new HashMap<>(128);
-	private DbSourceDatabaseSupport(String dbSourceKey) {
-		this.dbSourceKey = dbSourceKey;
+	private DbSourceDatabaseSupport(String dbSourceName) {
+		this.dbSourceName = dbSourceName;
 	}
-	private String dbSourceKey;
+	private String dbSourceName;
 
 	/**
 	 * 根据dbSourceKey 取到执行的DatabaseSupport
-	 * @param dbSourceKey
+	 * @param dbSourceName
 	 * @return
 	 */
-	public static IDatabaseSupport getInstance(String dbSourceKey) {
-		return instances.computeIfAbsent(dbSourceKey, DbSourceDatabaseSupport::new);
+	public static IDatabaseSupport getInstance(String dbSourceName) {
+		if (! dbLoader.contains(dbSourceName)) {
+			throw new IllegalArgumentException("Not have db source for name ["+dbSourceName+"]");
+		}
+		return instances.computeIfAbsent(dbSourceName, DbSourceDatabaseSupport::new);
 	}
 
 	@Override
 	public String dbName() {
-		return dbLoader.dbName(dbSourceKey);
+		return dbLoader.dbName(dbSourceName);
 	}
 
 	@Override
 	SqlSession getSqlSession() {
-		return dbLoader.getSqlSession(dbSourceKey);
+		return dbLoader.getSqlSession(dbSourceName);
 	}
 }

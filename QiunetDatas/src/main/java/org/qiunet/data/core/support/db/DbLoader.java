@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.Environment;
@@ -142,6 +143,8 @@ class DbLoader {
 
 			SqlSessionFactory factory = buildSqlSessionFactory(dbSourceName);
 			this.dataSources.put(dbSourceName, factory);
+			String url = ((BasicDataSource) factory.getConfiguration().getEnvironment().getDataSource()).getUrl();
+			dbNameMapping.put(dbSourceName, this.findDataBaseNameByUrl(url));
 			sets.add(dbSourceName);
 		}
 	}
@@ -195,7 +198,6 @@ class DbLoader {
 			if (logger.isInfoEnabled()) {
 				logger.info("Parsed name["+dbSourceName+"] configuration file: '" + this.mybatisConfigFileName + "'");
 			}
-			dbNameMapping.put(dbSourceName, environment.getId());
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
 			logger.error("Failed to parse mapping resource: '" + mybatisConfigFileName + "'", e);
@@ -204,6 +206,10 @@ class DbLoader {
 			ErrorContext.instance().reset();
 		}
 		return builder.build(configuration);
+	}
+
+	boolean contains(String dbSourceName) {
+		return dataSources.containsKey(dbSourceName);
 	}
 
 	String dbName(String dbSource) {
@@ -251,5 +257,49 @@ class DbLoader {
 				this.sqlSession.close();
 			}
 		}
+	}
+
+	private String findDataBaseNameByUrl(String jdbcUrl) {
+		String database = null;
+		int pos, pos1;
+		String connUri;
+
+		if (StringUtils.isBlank(jdbcUrl)) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+
+		jdbcUrl = jdbcUrl.toLowerCase();
+
+		if (jdbcUrl.startsWith("jdbc:impala")) {
+			jdbcUrl = jdbcUrl.replace(":impala", "");
+		}
+
+		if (!jdbcUrl.startsWith("jdbc:")
+			|| (pos1 = jdbcUrl.indexOf(':', 5)) == -1) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+
+		connUri = jdbcUrl.substring(pos1 + 1);
+
+		if (connUri.startsWith("//")) {
+			if ((pos = connUri.indexOf('/', 2)) != -1) {
+				database = connUri.substring(pos + 1);
+			}
+		} else {
+			database = connUri;
+		}
+
+		if (database.contains("?")) {
+			database = database.substring(0, database.indexOf("?"));
+		}
+
+		if (database.contains(";")) {
+			database = database.substring(0, database.indexOf(";"));
+		}
+
+		if (StringUtils.isBlank(database)) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+		return database;
 	}
 }
