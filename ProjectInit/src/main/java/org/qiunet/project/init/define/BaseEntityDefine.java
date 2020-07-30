@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
 	/***
 	 * 是否分库
 	 */
-	protected boolean splitDb;
+	protected String dbSource;
 	/**
 	 * 是否分表
 	 */
@@ -146,12 +146,12 @@ import java.util.stream.Collectors;
 		this.async = async;
 	}
 
-	public boolean isSplitDb() {
-		return splitDb;
+	public String getDbSource() {
+		return dbSource;
 	}
 
-	public void setSplitDb(boolean splitDb) {
-		this.splitDb = splitDb;
+	public void setDbSource(String dbSource) {
+		this.dbSource = dbSource;
 	}
 
 	public boolean isSplitTable() {
@@ -272,7 +272,6 @@ import java.util.stream.Collectors;
 	 */
 	protected String realTableName() {
 		StringBuilder sb = new StringBuilder();
-		if (isSplitDb()) sb.append("${dbName}.");
 		sb.append(getTableName());
 		if (isSplitTable()) sb.append("_${tbIndex}");
 		return sb.toString();
@@ -285,6 +284,10 @@ import java.util.stream.Collectors;
 
 	public boolean isCommentEmpty(){
 		return StringUtil.isEmpty(comment);
+	}
+
+	public boolean isDbSourceEmpty(){
+		return StringUtil.isEmpty(dbSource);
 	}
 	@Override
 	public String getComment() {

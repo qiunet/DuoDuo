@@ -67,7 +67,7 @@
 		<xs:attribute name="tableName" type="xs:normalizedString" />
 		<xs:attribute name="comment" type="xs:NCName" />
 		<xs:attribute name="async" type="xs:boolean" default="true" />
-		<xs:attribute name="splitDb" type="xs:boolean" default="false" />
+		<xs:attribute name="dbSource" type="xs:string" />
 		<xs:attribute name="splitTable" type="xs:boolean" default="false"/>
 		<xs:attribute name="baseDir" type="PathPattern" default="src/main/java" />
 		<xs:attribute name="packageName" type="ClassAndPackagePattern" use="required" />
