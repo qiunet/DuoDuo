@@ -101,4 +101,8 @@ public final class DbUtil {
 		}
 		return sb.toString();
 	}
+
+	public static int getMaxTableForTbSplit(){
+		return MAX_TABLE_FOR_TB_SPLIT;
+	}
 }

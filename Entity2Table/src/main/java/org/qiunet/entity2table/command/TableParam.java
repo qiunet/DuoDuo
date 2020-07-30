@@ -16,17 +16,17 @@ public class TableParam {
 
 	private boolean splitTable;
 
-	private boolean splitDb;
+	private String dbSource;
 
-	public TableParam(String tableName, FieldParam field, boolean splitTable, boolean splitDb) {
+	public TableParam(String tableName, FieldParam field, boolean splitTable, String dbSource) {
 		this.splitTable = splitTable;
-		this.splitDb = splitDb;
+		this.dbSource = dbSource;
 		this.tableName = tableName;
 		this.field = field;
 	}
 
-	public boolean isSplitDb() {
-		return splitDb;
+	public String getDbSource() {
+		return dbSource;
 	}
 
 	public String getTableName() {
