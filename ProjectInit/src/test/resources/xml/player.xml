@@ -10,7 +10,9 @@
 		https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/DbEntity.xsd"
 	>
 	<field name="uid" type="long" comment="玩家id" />
+	<field name="name" type="String" comment="玩家名称" />
 	<field name="level" type="int" comment="等级"/>
+	<field name="exp" type="long" comment="经验" />
 	<constructor>
 		<constructor_arg field="uid"/>
 	</constructor>

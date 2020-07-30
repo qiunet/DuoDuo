@@ -11,6 +11,7 @@
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
+	<field name="exp" type="int" comment="经验" />
 	<constructor>
 		<constructor_arg field="uid" />
 	</constructor>
