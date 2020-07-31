@@ -8,7 +8,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.
@@ -22,7 +21,7 @@ public class WebSocketEncoder extends MessageToByteEncoder<MessageContent> {
 			// 这里不需要release ByteBuf WebSocketFrame 本身会帮你搞定.
 			ctx.write(new BinaryWebSocketFrame(ChannelUtil.messageContentToByteBuf(msg, ctx.channel())));
 		}catch (Exception e) {
-			throw e;
+			logger.error("WebSocketEncoder", e);
 		}
 	}
 }

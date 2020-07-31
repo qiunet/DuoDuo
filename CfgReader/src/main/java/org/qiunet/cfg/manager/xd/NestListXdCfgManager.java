@@ -1,15 +1,12 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.cfg.base.ISimpleMapConfig;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.cfg.manager.base.INestListCfgManager;
 import org.qiunet.utils.collection.safe.SafeList;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.io.DataInputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,36 +15,31 @@ import java.util.Map;
  * @param <ID>
  * @param <Cfg>
  */
-public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> extends BaseXdCfgManager {
-
-	private Class<Cfg> cfgClass;
-
+public class NestListXdCfgManager<ID, Cfg extends INestListCfg<ID>>
+	extends BaseXdCfgManager<Cfg> implements INestListCfgManager<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
-	protected NestListXdCfgManager(String fileName) {
-		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
-	}
-
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public List<Cfg> getCfgListById(ID id) {
-		return cfgMap.get(id);
+	public NestListXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getNestListCfg();
+		this.initCfgSelf();
+	}
+	/***
+	 * 如果cfg 对象是实现了 initCfg接口,
+	 * 就调用init方法实现cfg的二次init.
+	 */
+	private void initCfgSelf() {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
+			return;
+		}
+
+		this.cfgMap.values().stream().flatMap(Collection::stream)
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 	/***
 	 * 得到的map
@@ -56,23 +48,24 @@ public abstract class NestListXdCfgManager<ID, Cfg extends INestListConfig<ID>> 
 	 * @throws Exception
 	 */
 	private Map<ID, List<Cfg>> getNestListCfg() throws Exception{
-		int num = loadXdFileToDataInputStream();
-		SafeHashMap<ID, List<Cfg>> cfgMap = new SafeHashMap<>();
-		for (int i = 0; i < num; i++) {
-			Cfg cfg = generalCfg(cfgClass);
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
+		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
+		for (int i = 0; i < xdInfoData.getNum(); i++) {
+			Cfg cfg = generalCfg();
 
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {
-			((SafeList) cfgList).safeLock();
+			((SafeList) cfgList).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 
-	public Map<ID, List<Cfg>> getCfgs() {
+	@Override
+	public Map<ID, List<Cfg>> allCfgs() {
 		return cfgMap;
 	}
 }

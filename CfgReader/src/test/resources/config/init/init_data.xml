@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configs>
+  <config>
+    <id>1111</id>
+    <val1>1,2,3</val1>
+    <val2>123456</val2>
+    <val3>1.1000000000000001</val3>
+  </config>
+  <config>
+    <id>2222</id>
+    <val1>3,4,5</val1>
+    <val2>123457</val2>
+    <val3>1.2</val3>
+  </config>
+  <config>
+    <id>3333</id>
+    <val1>5,6,7</val1>
+    <val2>123458</val2>
+    <val3>1.3</val3>
+  </config>
+</configs>

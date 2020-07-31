@@ -4,7 +4,6 @@ import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.testcase.ITestCase;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ import java.util.List;
  * 17/12/6
  */
 public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRobotFunc<Info> implements IRobot<Info> {
-	protected Logger logger = LoggerType.DUODUO.getLogger();
+	protected Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
 	private String brokeReason;
 
 	protected int uid;
@@ -54,16 +53,15 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 	public void brokeRobot(String brokeReason) {
 		this.brokeReason = brokeReason;
 	}
+
 	@Override
 	public void run() {
 		for (Class<? extends ITestCase> testCaseClass : testCases) {
 			ITestCase testCase = null;
 			try {
 				testCase = testCaseClass.newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+			} catch (InstantiationException | IllegalAccessException e) {
+				logger.error("Instance Error:", e);
 			}
 
 			if (brokeReason != null) {

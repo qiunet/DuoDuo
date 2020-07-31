@@ -16,32 +16,21 @@ import java.util.Properties;
  *         Created on 16/11/22 16:04.
  */
 public class VelocityFactory {
-
-	private static VelocityFactory instance;
+	private static VelocityFactory instance = new VelocityFactory();
 
 	private VelocityEngine velocity;
 
 	private VelocityFactory() {
 		velocity = new VelocityEngine();
-
 		Properties properties = new Properties();
 		// 设置从classpath下查找
 		properties.setProperty("file.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-//		properties.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.AvalonLogChute,org.apache.velocity.runtime.log.Log4JLogChute,org.apache.velocity.runtime.log.CommonsLogLogChute,org.apache.velocity.runtime.log.ServletLogChute,org.apache.velocity.runtime.log.JdkLogChute");
 		properties.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.NullLogChute");
 
 		velocity.init(properties);
 	}
 
 	public static VelocityFactory getInstance() {
-		if (instance == null) {
-			synchronized (VelocityFactory.class) {
-				if (instance == null)
-				{
-					instance = new VelocityFactory();
-				}
-			}
-		}
 		return instance;
 	}
 	/**

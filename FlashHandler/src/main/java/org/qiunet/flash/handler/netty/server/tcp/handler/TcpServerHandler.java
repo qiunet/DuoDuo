@@ -1,18 +1,22 @@
 package org.qiunet.flash.handler.netty.server.tcp.handler;
 
+import com.google.common.base.Preconditions;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
+import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -30,6 +34,10 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.TCP);
+		ISession iSession = params.getStartupContext().buildSession(ctx.channel());
+
+		SessionManager.getInstance().addSession(iSession);
+		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
 	}
 
 	@Override
@@ -37,21 +45,39 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			ctx.close();
 			return;
 		}
 
-		ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, params);
+		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		Preconditions.checkNotNull(session);
+
+		IPlayerActor playerActor = session.getPlayerActor();
+		if (handler.needAuth() && ! playerActor.isAuth()) {
+			session.close(CloseCause.ERR_REQUEST);
+			return;
+		}
+
 		if (ctx.channel().isActive()) {
-			handler.getHandlerType().processRequest(context);
+			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, playerActor);
+			playerActor.addMessage(context);
 		}
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("Exception : ", cause);
-		ctx.writeAndFlush(params.getErrorMessage().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
-		ctx.close();
+		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
+		logger.error(errMeg, cause);
+
+		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
+			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			if (session != null) {
+				session.close(CloseCause.EXCEPTION);
+			}else {
+				ctx.close();
+			}
+		}
 	}
 }

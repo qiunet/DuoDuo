@@ -28,4 +28,27 @@ public class OSUtil {
 	public static int pid(){
 		return Integer.parseInt(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 	}
+
+	/**
+	 * 系统是否是windows
+	 * @return
+	 */
+	public static boolean isWindows() {
+		return SystemPropertyUtil.getOsName() == SystemPropertyUtil.OSType.WINDOWS;
+	}
+
+	/**
+	 * 系统是否是linux
+	 * @return
+	 */
+	public static boolean isLinux() {
+		return SystemPropertyUtil.getOsName() == SystemPropertyUtil.OSType.LINUX;
+	}
+	/**
+	 * 系统是否是mac
+	 * @return
+	 */
+	public static boolean isMac() {
+		return SystemPropertyUtil.getOsName() == SystemPropertyUtil.OSType.MAC_OS;
+	}
 }

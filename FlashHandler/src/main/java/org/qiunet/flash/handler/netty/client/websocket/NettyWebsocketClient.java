@@ -9,7 +9,10 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.websocketx.*;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
+import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
+import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
+import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
@@ -18,8 +21,8 @@ import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.slf4j.Logger;
 
 /**
@@ -71,7 +74,6 @@ public class NettyWebsocketClient implements ILongConnClient {
 		}
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
-			ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast("HttpClientCodec", new HttpClientCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024*1024*2));
@@ -127,6 +129,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 					System.out.println("WebSocket Client failed to connect");
 					handshakeFuture.setFailure(e);
 				}
+				ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 				ctx.fireChannelRead(msg.retain());
 			}
 		}

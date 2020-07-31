@@ -3,22 +3,22 @@
 <mapper namespace="equip">
     
     <select id="selectEquipDo" parameterType="map" resultType="EquipDo">
-        SELECT * FROM ${dbName}.equip WHERE uid = #{uid};
+        SELECT * FROM equip WHERE uid = #{uid};
     </select>
 
     <update id="updateEquipDo" parameterType="EquipDo" >
-        UPDATE ${dbName}.equip SET
+        UPDATE equip SET
         `level` = ${level}
         WHERE `uid` = #{uid} AND `equip_id` = #{equip_id};
     </update>
 
     <insert id="insertEquipDo" parameterType="EquipDo" >
-        INSERT INTO ${dbName}.equip
+        INSERT INTO equip
         (`uid` , `equip_id`, `level`)
         VALUES (
         #{uid}, #{equip_id}, #{level});
     </insert>
     <delete id="deleteEquipDo" parameterType="map" >
-        DELETE FROM  ${dbName}.equip  WHERE `uid` = #{uid} AND `equip_id` = #{equip_id} ;
+        DELETE FROM  equip  WHERE `uid` = #{uid} AND `equip_id` = #{equip_id} ;
     </delete>
 </mapper>

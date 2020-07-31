@@ -1,5 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.timer.TimerManager;
 
 import java.util.concurrent.Future;
@@ -28,8 +29,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisLock implements AutoCloseable {
 	private String key;
-	private boolean locked;
-	private Future<Void> future;
+	private Future<Long> future;
 	private IRedisUtil redisUtil;
 
 	RedisLock(IRedisUtil redisUtil, String key) {
@@ -43,19 +43,22 @@ public class RedisLock implements AutoCloseable {
 	 */
 	public boolean lock(){
 		String ret = redisUtil.returnJedis().set(key, "", "nx", "ex", 30);
-		this.locked ="OK".equals(ret);
-		if (this.locked) {
+		boolean locked = "OK".equals(ret);
+		if (locked) {
 			this.prolongedTime();
 		}
-		return this.locked;
+		return locked;
 	}
 
 	private void prolongedTime(){
-		this.future = TimerManager.getInstance().scheduleWithDeley(() -> {
-			redisUtil.returnJedis().expire(key, 30);
-			prolongedTime();
-			return null;
-		}, 20, TimeUnit.SECONDS);
+		DFuture<Long> dFuture = TimerManager.getInstance().scheduleWithDeley(() -> redisUtil.returnJedis().expire(key, 30),
+			20, TimeUnit.SECONDS);
+		dFuture.whenComplete((res , e) -> {
+			if (! future.isCancelled()) {
+				this.prolongedTime();
+			}
+		});
+		this.future = dFuture;
 	}
 
 	/***

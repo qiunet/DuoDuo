@@ -1,46 +1,45 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.INestMapConfig;
-import org.qiunet.utils.collection.safe.SafeHashMap;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestMapCfg;
+import org.qiunet.cfg.manager.base.INestMapCfgManager;
+import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Map;
 
-public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<ID, SubId>> extends BaseXdCfgManager {
-	private Class<Cfg> cfgClass;
-
+/**
+ *
+ * @param <ID>
+ * @param <SubId>
+ * @param <Cfg>
+ */
+public class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
+	extends BaseXdCfgManager<Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgs;
 
-	protected NestMapXdCfgManager(String fileName) {
-		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[2];
-		this.checkCfgClass(cfgClass);
+	public NestMapXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
 	void init() throws Exception {
 		this.cfgs = getNestMapCfg();
+		this.initCfgSelf();
+	}
+	/***
+	 * 如果cfg 对象是实现了 initCfg接口,
+	 * 就调用init方法实现cfg的二次init.
+	 */
+	private void initCfgSelf() {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
+			return;
+		}
+
+		this.cfgs.values().stream().flatMap(val -> val.values().stream())
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
-	/***
-	 * 根据id 和 subId 得到一条cfg数据
-	 * @param id
-	 * @param subId
-	 * @return
-	 */
-	public Cfg getCfgByIdAndSubId(ID id, SubId subId) {
-		Map<SubId, Cfg> subIdCfgMap = cfgs.get(id);
-		if (subIdCfgMap == null) return null;
-		return subIdCfgMap.get(subId);
-	}
 	/***
 	 * 得到一个一定格式的嵌套map
 	 * 格式: key 对应 Map<subKey, cfg>
@@ -48,13 +47,11 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 	 * @throws Exception
 	 */
 	private Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
-		this.checkCfgClass(cfgClass);
-
-		SafeHashMap<ID, Map<SubId, Cfg>> cfgMap = new SafeHashMap<>();
-		int num = loadXdFileToDataInputStream();
-		for (int i = 0; i < num; i++) {
-			Cfg cfg = generalCfg(cfgClass);
-			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeHashMap<>());
+		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
+		for (int i = 0; i < xdInfoData.getNum(); i++) {
+			Cfg cfg = generalCfg();
+			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeMap<>());
 
 			if (subMap.containsKey(cfg.getSubId())) {
 				throw new RuntimeException("SubId ["+cfg.getSubId()+"] is duplicate!");
@@ -63,16 +60,16 @@ public abstract class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapConfig<
 			subMap.put(cfg.getSubId(), cfg);
 		}
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
-			((SafeHashMap) subKeyCfgMap).loggerIfAbsent();
-			((SafeHashMap) subKeyCfgMap).safeLock();
+			((SafeMap) subKeyCfgMap).loggerIfAbsent();
+			((SafeMap) subKeyCfgMap).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 
-
-	public Map<ID, Map<SubId, Cfg>> getCfgs() {
+	@Override
+	public Map<ID, Map<SubId, Cfg>> allCfgs() {
 		return cfgs;
 	}
 }

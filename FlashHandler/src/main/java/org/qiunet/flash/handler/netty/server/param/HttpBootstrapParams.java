@@ -1,6 +1,4 @@
 package org.qiunet.flash.handler.netty.server.param;
-import org.qiunet.flash.handler.netty.server.interceptor.HttpInterceptor;
-import org.qiunet.flash.handler.netty.server.interceptor.WebSocketInterceptor;
 
 /**
  * 使用引导类 参数.
@@ -16,20 +14,12 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	private String gameURIPath;
 	/***
-	 * 升级websocket的路径
+	 * 升级websocket的路径 一般 /ws 没有websocket 需求. 不需要设定.
+	 * 根据这个参数判断是不是
 	 */
 	private String websocketPath;
 
-	private HttpInterceptor httpInterceptor;
-
-	private WebSocketInterceptor webSocketInterceptor;
-
-
 	private HttpBootstrapParams(){}
-
-	public WebSocketInterceptor getWebSocketInterceptor() {
-		return webSocketInterceptor;
-	}
 
 	public String getWebsocketPath() {
 		return websocketPath;
@@ -37,10 +27,6 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 	public String getGameURIPath() {
 		return gameURIPath;
-	}
-
-	public HttpInterceptor getHttpInterceptor() {
-		return httpInterceptor;
 	}
 
 	/***
@@ -63,22 +49,8 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 		 */
 		private String websocketPath;
 
-		private HttpInterceptor httpInterceptor;
-
-		private WebSocketInterceptor webSocketInterceptor;
-
-		public Builder setWebSocketInterceptor(WebSocketInterceptor webSocketInterceptor) {
-			this.webSocketInterceptor = webSocketInterceptor;
-			return this;
-		}
-
 		public Builder setWebsocketPath(String websocketPath) {
 			this.websocketPath = websocketPath;
-			return this;
-		}
-
-		public Builder setHttpInterceptor(HttpInterceptor httpInterceptor) {
-			this.httpInterceptor = httpInterceptor;
 			return this;
 		}
 
@@ -94,17 +66,19 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
-			if (httpInterceptor == null) throw new NullPointerException("httpInterceptor can not be Null");
+
 			if (websocketPath != null) {
-				if (websocketPath.equals(gameURIPath)) throw new IllegalArgumentException("gameUrl can not equals websocketPath");
-				if (webSocketInterceptor == null) throw new NullPointerException("webSocketInterceptor can not be Null");
-				if (errorMessage == null) throw new NullPointerException("IClientErrorMessage can not be Null");
-				params.webSocketInterceptor = this.webSocketInterceptor;
+				if (websocketPath.equals(gameURIPath)) {
+					throw new IllegalArgumentException("gameUrl can not equals websocketPath");
+				}
+
+				if (startupContext == null) {
+					throw new NullPointerException("startupContext can not be Null");
+				}
 				params.websocketPath = this.websocketPath;
 			}
 
 			params.gameURIPath = this.gameURIPath;
-			params.httpInterceptor = this.httpInterceptor;
 		}
 	}
 }

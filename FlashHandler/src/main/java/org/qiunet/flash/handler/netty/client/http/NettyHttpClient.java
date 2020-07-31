@@ -25,19 +25,23 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.concurrent.GenericFutureListener;
+import io.netty.util.concurrent.ImmediateEventExecutor;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * 给客户端测试使用的一个HttpClient类
@@ -82,50 +86,46 @@ public final class NettyHttpClient {
 	 * @param content
 	 * @param trigger
 	 */
-	public void sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
+	public Future<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
 		URI uri = clientParams.getURI(pathAndQuery);
-		HttpClientHandler clientHandler = new HttpClientHandler(trigger);
-		try {
-			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
-			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
+		Promise<FullHttpResponse> promise = ImmediateEventExecutor.INSTANCE.newPromise();
+		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
 
+		HttpClientHandler clientHandler = new HttpClientHandler(promise);
+		GenericFutureListener<ChannelFuture> listener = f -> {
 			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
-				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
+			if (! StringUtil.isEmpty(this.clientParams.getUriIPath())
+				&& this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
 			}else {
 				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
 			}
-			future.channel().writeAndFlush(buildRequest(requestContent, uri));
+
+			f.channel().writeAndFlush(buildRequest(requestContent, uri));
+		};
+
+		try {
+			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
+			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri));
+			connectFuture.addListener(listener);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
+		return promise;
 	}
 	/***
 	 * 阻塞的方式请求
 	 * @param content
-	 * @param uri
+	 * @param pathAndQuery
 	 */
 	public FullHttpResponse sendRequest(MessageContent content, String pathAndQuery) {
-		URI uri = clientParams.getURI(pathAndQuery);
-		HttpClientHandler clientHandler = new HttpClientHandler(null);
+		Future<FullHttpResponse> promise = this.sendRequest(content, pathAndQuery, o2 -> {});
 		try {
-			Bootstrap b = createBootstrap(group, clientHandler, clientParams, uri);
-			ChannelFuture future = b.connect(uri.getHost(), getPort(uri)).sync();
-
-			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriIPath()) && this.clientParams.getUriIPath().equals(uri.getRawPath())) {
-				requestContent = ChannelUtil.messageContentToByteBuf(content, future.channel());
-			}else {
-				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
-			}
-			future.channel().writeAndFlush(buildRequest(requestContent, uri));
-			future.channel().closeFuture().sync();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
+			return promise.get();
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-		return clientHandler.response;
+		return null;
 	}
 	/****
 	 * 如果是keepalive 可以重用channel
@@ -182,11 +182,10 @@ public final class NettyHttpClient {
 	}
 
 
-	private class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
-		private IHttpResponseTrigger trigger;
-		private FullHttpResponse response;
-		HttpClientHandler(IHttpResponseTrigger trigger) {
-			this.trigger = trigger;
+	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
+		private Promise<FullHttpResponse> promise;
+		HttpClientHandler(Promise<FullHttpResponse> promise) {
+			this.promise = promise;
 		}
 		@Override
 		public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) {
@@ -194,8 +193,8 @@ public final class NettyHttpClient {
 				ctx.close();
 				return;
 			}
-			this.response = ((FullHttpResponse) msg).copy();
-			if (trigger != null) this.trigger.response(ChannelUtil.getProtolHeaderAdapter(ctx.channel()), response);
+			FullHttpResponse response = ((FullHttpResponse) msg).copy();
+			this.promise.trySuccess(response);
 			ctx.close();
 		}
 

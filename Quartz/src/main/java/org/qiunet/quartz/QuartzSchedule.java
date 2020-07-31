@@ -1,23 +1,16 @@
 package org.qiunet.quartz;
 
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.timer.DelayTask;
+import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 public class QuartzSchedule {
-	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private volatile static QuartzSchedule instance;
 	private List<JobFacade> jobs = new ArrayList<>(4);
@@ -41,22 +34,24 @@ public class QuartzSchedule {
 	 * 添加一个job到线程调度表
 	 * @param job
 	 */
-	public void addJob(IJob job) {
-		this.jobs.add(new JobFacade(job));
+	public DFuture<Boolean> addJob(IJob job) {
+		JobFacade jobFacade = new JobFacade(job);
+		this.jobs.add(jobFacade);
+		return jobFacade.getFuture();
 	}
 
-	private class JobFacade implements DelayTask<Boolean> {
+	private static  class JobFacade implements IDelayTask<Boolean> {
 		private IJob job;
 
-		private LocalDateTime fireTime;
+		private Date fireTime;
 
-		private Future<Boolean> future;
+		private DFuture<Boolean> future;
 
 		private CronExpression expression;
 
-		public JobFacade(IJob job) {
+		 JobFacade(IJob job) {
 			this.job = job;
-			this.fireTime = DateUtil.currentLocalDateTime();
+			this.fireTime = DateUtil.currentDate();
 			try {
 				this.expression = new CronExpression(job.cronExpression());
 			} catch (ParseException e) {
@@ -66,16 +61,20 @@ public class QuartzSchedule {
 		}
 
 		void doNextJob() {
-			Date nextDt = expression.getTimeAfter(new Date(DateUtil.getMilliByTime(this.fireTime)));
+			Date nextDt = expression.getTimeAfter(this.fireTime);
 			if (nextDt != null) {
 				this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
+				this.future.whenComplete((res, e) -> this.doNextJob());
 			}
+		}
+
+		 DFuture<Boolean> getFuture() {
+			return future;
 		}
 
 		@Override
 		public Boolean call() throws Exception {
-			this.fireTime = DateUtil.currentLocalDateTime();
-			this.doNextJob();
+			this.fireTime = DateUtil.currentDate();
 			return this.job.doJob();
 		}
 	}

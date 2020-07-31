@@ -1,16 +1,15 @@
 #set($define=${define})
 package ${define.packageName};
 
+import ${define.entityPackage}.${define.boName};
+import ${define.entityPackage}.${define.doName};
 import ${define.type.DataSupportClass.name};
 #if(${define.type.list})
 import java.util.Map;
 #end
 
-import ${define.entityPackage}.${define.boName};
-import ${define.entityPackage}.${define.doName};
-
-public class ${define.serviceName} {
-	private volatile static ${define.serviceName} instance = new ${define.serviceName}();
+public enum ${define.serviceName} {
+	instance;
 #if(${define.type} == 'CACHE_ENTITY')
 	private static CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY')
@@ -24,25 +23,24 @@ public class ${define.serviceName} {
 #elseif(${define.type} == 'CACHE_ENTITY_LIST')
 	private static CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #end
-
-	private ${define.serviceName} () {
-		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
-		}
-	}
-
-	public static ${define.serviceName} getInstance() {
-		return instance;
-	}
 #if(${define.list})
 
 	/***
-	 * 获得一个 ${define.subKey} -> ${define.boName} Map对象
+	 * 获得一个 ${define.key} -> ${define.boName} Map对象
 	 * @param ${define.keyName} 获取对象的主键
 	 * @return ${define.boName} map对象
 	 **/
 	public Map<${define.subKeyType}, ${define.boName}> get${define.boName}Map(${define.keyType} ${define.keyName}) {
 		return dataSupport.getBoMap(${define.keyName});
+	}
+	/***
+	* 获得一个 ${define.subKey} -> ${define.boName}  的bo对象
+	* @param ${define.keyName} 获取对象的主键
+	* @param ${define.subKeyName} 获取对象的次主键
+	* @return ${define.boName} bo对象
+	**/
+	public ${define.boName} get${define.boName}(${define.keyType} ${define.keyName}, ${define.SubKeyType} ${define.subKeyName}) {
+		return get${define.boName}Map(${define.keyName}).get(${define.subKeyName});
 	}
 #else
 	/***

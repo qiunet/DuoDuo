@@ -26,7 +26,7 @@ abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<R
 	 * 得到当前的server数据
 	 * @return
 	 */
-	protected abstract IServer getServer();
+	protected abstract <T extends Enum<T> & IServer> T getServer();
 
 	@Override
 	public void sendRequest(Robot robot) {

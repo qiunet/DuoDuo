@@ -13,6 +13,11 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cfg {
+	/**
+	 * 配置相对于classpath路径
+	 * @return
+	 */
+	String value();
 	/***
 	 * order越大, 执行越靠前
 	 * @return

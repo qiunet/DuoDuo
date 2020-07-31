@@ -1,13 +1,17 @@
 package org.qiunet.data.util;
 
-import org.qiunet.data.async.SyncType;
+import com.google.common.collect.Sets;
 import org.qiunet.utils.properties.LoaderProperties;
+import org.qiunet.utils.string.StringUtil;
+
+import java.util.Set;
 
 public class DbProperties extends LoaderProperties {
 	private volatile static DbProperties instance = new DbProperties();
 	public static DbProperties getInstance() {
 		return instance;
 	}
+	private Set<String> entity2TableDbSourceRange;
 	/***
 	 * 要求相对 classpath的地址
 	 */
@@ -15,12 +19,46 @@ public class DbProperties extends LoaderProperties {
 		super("db.properties");
 	}
 
-	/***
-	 * 同步 或者 异步
-	 * 仅缓存和 redis 类型支持
+	@Override
+	protected void onReloadOver() {
+		String [] strs = new String[0];
+		String entityToTableRange = getString("entity_to_table_range");
+		if (!StringUtil.isEmpty(entityToTableRange)) {
+			strs = StringUtil.split(entityToTableRange, ",");
+		}
+		this.entity2TableDbSourceRange = Sets.newHashSet(strs);
+	}
+
+
+	public boolean isDbSourceNameInRange(String dbSourceName) {
+		return entity2TableDbSourceRange.contains(dbSourceName);
+	}
+	/**
+	 * 取到server的类型.
+	 * 0 为普通功能服
+	 *
 	 * @return
 	 */
-	public SyncType getSyncType(){
-		return getBoolean("async") ? SyncType.ASYNC : SyncType.SYNC;
+	public int getServerType() {
+		return getInt("serverType", 0);
+	}
+
+	public boolean isFuncServerType() {
+		return getServerType() == 0;
+	}
+	/**
+	 * 得到serverId
+	 * @return
+	 */
+	public int getServerId(){
+		return getInt("serverId");
+	}
+
+	/**
+	 * 得到默认数据源
+	 * @return
+	 */
+	public String getDefaultDbSource(){
+		return getString("default_database_source");
 	}
 }

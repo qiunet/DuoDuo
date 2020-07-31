@@ -8,7 +8,8 @@
 			    redis="org.qiunet.project.init.redis.RedisDataUtil"
 				xmlns="https://github.com/qiunet/DuoDuo/RedisEntityList"
 				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				xsi:schemaLocation="https://github.com/qiunet/DuoDuo/RedisEntityList"
+				xsi:schemaLocation="https://github.com/qiunet/DuoDuo/RedisEntityList
+				https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/RedisEntityList.xsd"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="equip_id" type="int" comment="装备id" />

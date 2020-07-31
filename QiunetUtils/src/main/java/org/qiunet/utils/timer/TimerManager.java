@@ -1,9 +1,12 @@
 package org.qiunet.utils.timer;
 
 
-import org.qiunet.utils.asyncQuene.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.hook.ShutdownHookThread;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.*;
 
@@ -13,13 +16,13 @@ import java.util.concurrent.*;
  * 18/1/26
  */
 public class TimerManager {
-	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(4, new DefaultThreadFactory("Qiunet-TimerManager"));
+	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(2, new DefaultThreadFactory("Qiunet-TimerManager"));
 
 	private volatile static TimerManager instance;
 
 	private TimerManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		ShutdownHookThread.getInstance().addShutdownHook( () -> this.shutdown());
+		ShutdownHookThread.getInstance().addShutdownHook(this::shutdown);
 		instance = this;
 	}
 
@@ -40,15 +43,54 @@ public class TimerManager {
 	public void shutdown(){
 		schedule.shutdownNow();
 	}
+	/**
+	 * 立刻执行
+	 * @param callable
+	 * @param <V>
+	 * @return
+	 */
+	public <V> DFuture<V> executorNow(Callable<V> callable) {
+		DCompletePromise<V> future = new DCompletePromise<>();
+		Future<V> submit = schedule.submit(() -> {
+			V result = null;
+			try {
+				result = callable.call();
+				future.trySuccess(result);
+			} catch (Exception e) {
+				future.tryFailure(e);
+			}
+			return result;
+		});
+		future.setFuture(submit);
+		return future;
+	}
+	/**
+	 * 立刻执行
+	 * @param task
+	 * @return
+	 */
+	public DFuture<Void> executorNow(Runnable task) {
+		DCompletePromise<Void> future = new DCompletePromise<>();
+		Future<Void> submit = schedule.submit(() -> {
+			try {
+				task.run();
+				future.trySuccess(null);
+			} catch (Exception e) {
+				future.tryFailure(e);
+			}
+			return null;
+		});
+		future.setFuture(submit);
+		return future;
+	}
 	/***
 	 * 默认使用毫秒
 	 * @param timerTask 任务
 	 * @param delay 延时毫秒
 	 * @param period 调度周期
 	 */
-	public void scheduleAtFixedRate(AsyncTimerTask timerTask, long delay, long period){
-		ScheduledFuture future = schedule.scheduleAtFixedRate(timerTask, delay, period, TimeUnit.MILLISECONDS);
-		timerTask.setFuture(future);
+	public ScheduledFuture<?> scheduleAtFixedRate(IScheduledTask timerTask, long delay, long period, TimeUnit unit){
+		return schedule.scheduleAtFixedRate(timerTask, delay, period, unit);
 	}
 
 	/***
@@ -58,8 +100,23 @@ public class TimerManager {
 	 * @param unit 时间格式
 	 * @param <T>
 	 */
-	public <T> Future<T> scheduleWithDeley(DelayTask<T> delayTask, long delay, TimeUnit unit) {
-		return schedule.schedule(delayTask, delay, unit);
+	public <T> DFuture<T> scheduleWithDeley(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
+		DCompletePromise<T> promise = new DCompletePromise<>();
+		Callable<T> caller = () -> {
+			try {
+				T result = delayTask.call();
+				promise.trySuccess(result);
+				return result;
+			} catch (Exception e) {
+				LoggerType.DUODUO.error("DelayTask Exception: ", e);
+				promise.tryFailure(e);
+			}
+			return null;
+		};
+
+		ScheduledFuture<T> future = TimerManager.schedule.schedule(caller, delay, unit);
+		promise.setFuture(future);
+		return promise;
 	}
 
 	/***
@@ -69,7 +126,7 @@ public class TimerManager {
 	 * @param <T>
 	 * @return
 	 */
-	public <T> Future<T> scheduleWithTimeMillis(DelayTask<T> delayTask, long timeMillis) {
+	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
 		if (timeMillis < now) {
 			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");

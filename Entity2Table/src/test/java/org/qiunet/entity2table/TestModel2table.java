@@ -10,7 +10,7 @@ import org.qiunet.utils.classScanner.ClassScanner;
  */
 public class TestModel2table {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		ClassScanner.getInstance().scanner();
 	}
 }

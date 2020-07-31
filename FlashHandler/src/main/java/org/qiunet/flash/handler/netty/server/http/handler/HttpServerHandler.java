@@ -4,13 +4,17 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolConfig;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -18,6 +22,7 @@ import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -36,7 +41,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	private HttpBootstrapParams params;
-
 
 	public HttpServerHandler (HttpBootstrapParams params) {
 		this.params = params;
@@ -92,10 +96,15 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(params.getWebsocketPath(), null, false, params.getMaxReceivedLength()));
+		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WebSocketServerProtocolConfig.newBuilder()
+			.maxFramePayloadLength(params.getMaxReceivedLength())
+			.websocketPath(params.getWebsocketPath())
+			.handleCloseFrames(true)
+			.build()));
+		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
-		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(request.headers(), params));
+		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
 		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
 
 		ctx.fireChannelRead(request.retain());
@@ -131,7 +140,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
-		handler.getHandlerType().processRequest(context);
+		context.handlerRequest();
 	}
 	/***
 	 * 处理其它请求
@@ -149,7 +158,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
-		handler.getHandlerType().processRequest(context);
+		context.handlerRequest();
 	}
 
 	/***

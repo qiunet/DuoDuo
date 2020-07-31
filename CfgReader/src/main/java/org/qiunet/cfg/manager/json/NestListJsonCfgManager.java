@@ -1,12 +1,12 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INestListConfig;
-import org.qiunet.utils.collection.safe.SafeHashMap;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.cfg.manager.base.INestListCfgManager;
 import org.qiunet.utils.collection.safe.SafeList;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,64 +16,59 @@ import java.util.Map;
  * Time: 16:06.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class NestListJsonCfgManager <ID, Cfg extends INestListConfig<ID>> extends BaseJsonCfgManager {
-	private Class<Cfg> cfgClass;
-
+public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
+	extends BaseJsonCfgManager<Cfg> implements INestListCfgManager<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
-	protected NestListJsonCfgManager(String fileName) {
-		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
+	public NestListJsonCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public List<Cfg> getCfgListById(ID id) {
-		return cfgMap.get(id);
-	}
 
 	@Override
 	void init() throws Exception {
-		this.cfgMap = getNestListCfg(cfgClass);
+		this.cfgMap = getNestListCfg();
+		this.initCfgSelf();
+	}
+
+	/***
+	 * 如果cfg 对象是实现了 initCfg接口,
+	 * 就调用init方法实现cfg的二次init.
+	 */
+	private void initCfgSelf() {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
+			return;
+		}
+
+		this.cfgMap.values().stream().flatMap(Collection::stream)
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 
 	/***
 	 * 得到嵌套list的map数据
 	 * 一个key  对应一个 cfg list的结构
-	 * @param cfgClass
-	 * @param <Key>
-	 * @param <Cfg>
 	 * @return
 	 * @throws Exception
 	 */
-	protected <Key, Cfg extends INestListConfig<Key>> Map<Key, List<Cfg>> getNestListCfg(Class<Cfg> cfgClass) throws Exception {
-		SafeHashMap<Key, List<Cfg>> cfgMap = new SafeHashMap<>();
-		List<Cfg> cfgs = getSimpleListCfg("", cfgClass);
+	protected Map<ID, List<Cfg>> getNestListCfg() throws Exception {
+		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
+		List<Cfg> cfgs = getSimpleListCfg();
 		for (Cfg cfg : cfgs) {
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {
-			((SafeList) cfgList).safeLock();
+			((SafeList) cfgList).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 
-
-	public Map<ID, List<Cfg>> getCfgs() {
+	@Override
+	public Map<ID, List<Cfg>> allCfgs() {
 		return cfgMap;
 	}
 }

@@ -16,7 +16,7 @@ public class TestSafeList {
 		SafeList<String> list = new SafeList<>();
 		list.add("a");
 		list.add("b");
-		list.safeLock();
+		list.convertToUnmodifiable();
 		Assert.assertTrue(list.contains("a"));
 		boolean exception = false;
 		try {

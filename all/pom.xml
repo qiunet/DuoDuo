@@ -5,12 +5,12 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>5.0-SNAPSHOT</version>
+		<version>6.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
 	<packaging>jar</packaging>
-	<version>5.0.0</version>
+	<version>${modules.version}</version>
 	<name>DuoDuo/All-in-One</name>
 
 	<properties>
@@ -233,6 +233,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
+			<artifactId>EventLog</artifactId>
+			<version>${module.version}</version>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.qiunet</groupId>
 			<artifactId>ProjectInit</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>
@@ -261,10 +268,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
-			<artifactId>LoggerSender</artifactId>
+			<artifactId>EventLog</artifactId>
 			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -273,6 +285,10 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.qiunet</groupId>
@@ -299,10 +315,6 @@
 			<artifactId>mybatis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
 		</dependency>
@@ -327,12 +339,16 @@
 			<artifactId>commons-dbcp2</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.googlecode.protobuf-java-format</groupId>
 			<artifactId>protobuf-java-format</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpasyncclient</artifactId>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
 		</dependency>
 	</dependencies>
 </project>

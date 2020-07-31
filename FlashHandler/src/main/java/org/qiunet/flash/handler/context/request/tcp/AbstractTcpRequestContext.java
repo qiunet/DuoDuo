@@ -2,13 +2,9 @@ package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.response.IResponse;
-import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.SessionManager;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.context.request.BaseRequestContext;
 
 import java.net.InetSocketAddress;
 
@@ -17,29 +13,12 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/7/19
  */
-abstract class AbstractTcpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData>, IResponse {
-	protected TcpBootstrapParams params;
-	protected AbstractTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext,TcpBootstrapParams params) {
+abstract class AbstractTcpRequestContext<RequestData, P extends IPlayerActor> extends BaseRequestContext<RequestData> implements ITcpRequestContext<RequestData, P> {
+	protected P playerActor;
+	protected AbstractTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext,P playerActor) {
 		super(content, channelContext);
-		this.params = params;
+		this.playerActor = playerActor;
 	}
-	@Override
-	public int getQueueIndex() {
-		ISession session = SessionManager.getInstance().getSession(ctx.channel());
-		if (session != null) return session.getQueueIndex();
-		return channel().hashCode();
-	}
-
-	@Override
-	public void response(int protocolId, Object data) {
-		channel().writeAndFlush(getResponseMessage(protocolId, (ResponseData) data).encode());
-	}
-	/***
-	 * 得到responseData的数组数据
-	 * @param responseData
-	 * @return
-	 */
-	protected abstract IMessage getResponseMessage(int protocolId, ResponseData responseData);
 
 	@Override
 	public String getRemoteAddress() {

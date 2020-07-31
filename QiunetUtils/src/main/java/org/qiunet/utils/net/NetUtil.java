@@ -1,5 +1,7 @@
 package org.qiunet.utils.net;
 
+import org.qiunet.utils.common.CommonUtil;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Matcher;
@@ -24,10 +26,7 @@ public class NetUtil {
 	 * @return
 	 */
 	public static boolean isLocalIp(String ip){
-		if (ip.equals("localhost") || ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
-			return true;
-		}
-		return false;
+		return CommonUtil.existInList(ip, "localhost", "0:0:0:0:0:0:0:1", "127.0.0.1");
 	}
 
 	/**
@@ -50,6 +49,38 @@ public class NetUtil {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		return address.getHostAddress();
+		return address != null ? address.getHostAddress() : null;
+	}
+	/***
+	 * 得到主机名
+	 * @return
+	 */
+	public static String getLocalHostName() {
+		InetAddress address = null;
+		try {
+			address = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return address != null ? address.getHostName() : null;
+	}
+
+	/**
+	 * 获得本机所有的ip
+	 * @return
+	 */
+	public static String[] getAllInnerIp(){
+		String localHostName = getLocalHostName();
+		String [] ret = null;
+		try {
+			InetAddress[] inetAddresses = InetAddress.getAllByName(localHostName);
+			ret = new String[inetAddresses.length];
+			for (int i = 0; i < inetAddresses.length; i++) {
+				ret[i] = inetAddresses[i].getHostAddress();
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return ret;
 	}
 }

@@ -2,9 +2,6 @@ package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.common.enums.DataType;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 /**
  * Created by qiunet.
  * 17/7/21

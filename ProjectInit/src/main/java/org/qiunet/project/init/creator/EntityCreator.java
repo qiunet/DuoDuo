@@ -16,13 +16,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /***
+ * 创建Entity 的初始类.
  *
- *
- * qiunet
+ * @author qiunet
  * 2019-08-16 11:56
  ***/
 public class EntityCreator {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
 	private EntityType entityType;
 
 	private File file;
@@ -38,8 +38,8 @@ public class EntityCreator {
 	}
 
 	void validXml(){
-		try {
-			entityType.validate(new FileInputStream(file));
+		try (FileInputStream fis = new FileInputStream(file)){
+			entityType.validate(fis);
 		}catch (Exception e) {
 			logger.error("file ["+file.getName()+"] create exception:", e);
 		}
@@ -60,12 +60,14 @@ public class EntityCreator {
 		// 输出 DoEntity
 		Path outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getDoName()+".java");
 		VelocityFactory.getInstance().parseOutFile("vm/entity_do_create.vm", outputFileName.toString(), this.entityDefine);
+		logger.info("Create Do [{}] Success!", outputFileName.toString());
 
 		// 输出 DoEntity
 		outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getBoName()+".java");
 		File boFile = outputFileName.toFile();
 		if (!boFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_bo_create.vm", outputFileName.toString(), this.entityDefine);
+			logger.info("Create Bo [{}] Success!", boFile.toString());
 		}
 
 		// 输出 Service
@@ -73,11 +75,14 @@ public class EntityCreator {
 		File serviceFile = outputFileName.toFile();
 		if (!serviceFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", outputFileName.toString(), this.entityDefine);
+			logger.info("Create Service [{}] Success!", serviceFile.toString());
 		}
+
 
 		// 输出 mybatis 的mapping xml
 		outputFileName = Paths.get(InitProjectUtil.getRealUserDir().getAbsolutePath(), mybatisConfigPath, entityDefine.getNameSpace()+".xml");
 		VelocityFactory.getInstance().parseOutFile("vm/mybatis_mapping_create.vm", outputFileName.toString(), this.entityDefine);
+		logger.info("Create mapping xml [{}] Success!", outputFileName.toString());
 	}
 
 	public IEntityDefine getEntityDefine() {

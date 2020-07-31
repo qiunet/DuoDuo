@@ -29,7 +29,7 @@ public abstract class HttpJsonHandler extends HttpStringHandler {
 	 */
 	protected abstract JsonResponse handler1(IHttpRequest<JsonRequest> request);
 
-	private class HttpJsonFacaderRequest implements IHttpRequest<JsonRequest>{
+	private static  class HttpJsonFacaderRequest implements IHttpRequest<JsonRequest>{
 		private IHttpRequest<String> request;
 		private JsonRequest requestData;
 		HttpJsonFacaderRequest(IHttpRequest<String> request) {

@@ -1,34 +1,39 @@
 package org.qiunet.utils.properties;
 
+import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.KeyValueData;
+import org.qiunet.utils.file.FileLoader;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
-import java.util.Properties;
 
 /**
  * 加载properties 的工具类. 可以加载中文
  */
 public abstract class LoaderProperties extends KeyValueData<Object, Object> {
 	protected Logger logger = LoggerType.DUODUO.getLogger();
-	protected String fileName;
+	protected File file;
 	/***
 	 * 要求相对 classpath的地址
 	 */
 	public LoaderProperties(String fileName){
 		super(new HashMap<>());
 
-		this.fileName = fileName;
-		this.reload();
+		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
+		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
+		this.file = new File(url.getFile());
+
+		this.reload(file);
+		FileLoader.listener(file, this::reload);
 	}
 	/**
 	 * 重新加载
 	 */
-	public final void reload(){
-		super.load(PropertiesUtil.loadProperties(fileName).returnMap());
+	private void reload(File file){
+		super.load(PropertiesUtil.loadProperties(file).returnMap());
 		this.onReloadOver();
 	}
 

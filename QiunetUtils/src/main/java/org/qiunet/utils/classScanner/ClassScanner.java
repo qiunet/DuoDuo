@@ -1,16 +1,19 @@
 package org.qiunet.utils.classScanner;
 
+import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
-import org.reflections.scanners.Scanner;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -20,33 +23,41 @@ import java.util.stream.Stream;
  */
 public final class ClassScanner implements IApplicationContext {
 	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
+	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
-
+	private ScannerType scannerType;
 	private volatile static ClassScanner instance;
 
-	private ClassScanner() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+	private ClassScanner(ScannerType scannerType) {
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 		this.reflections = new Reflections("org.qiunet", scanners);
+		this.scannerType = scannerType;
 		instance = this;
 	}
 
-	public static ClassScanner getInstance() {
+	public static ClassScanner getInstance(ScannerType scannerType) {
 		if (instance == null) {
 			synchronized (ClassScanner.class) {
 				if (instance == null)
 				{
-					new ClassScanner();
+					new ClassScanner(scannerType);
 				}
 			}
 		}
 		return instance;
 	}
 
+	public static ClassScanner getInstance() {
+		return getInstance(ScannerType.ALL);
+	}
+
 	private AtomicBoolean scannered = new AtomicBoolean();
-	public void scanner(String ... packetPrefix){
+	public void scanner(String ... packetPrefix) throws Exception {
 		if (scannered.get()) {
-			logger.error("Duplicate scanner!!!", new IllegalStateException("Class scanner was initialization, can not scanner again."));
+			logger.warn("ClassScanner was initialization , ignore this!");
 			return;
 		}
 
@@ -55,9 +66,25 @@ public final class ClassScanner implements IApplicationContext {
 				this.reflections.merge(new Reflections(packetPrefix, scanners));
 			}
 			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
-			for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
-				IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
-				instance.setApplicationContext(this);
+			List<IApplicationContextAware> collect = subTypesOf.stream()
+				.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
+				.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
+				.collect(Collectors.toList());
+
+			for (IApplicationContextAware instance : collect) {
+				// 不相同. 并且都不是ALL
+				if (instance.scannerType() != this.scannerType
+				&& instance.scannerType() != ScannerType.ALL
+				&& this.scannerType != ScannerType.ALL) {
+					continue;
+				}
+
+				try {
+					instance.setApplicationContext(this);
+				}catch (Exception e) {
+					logger.error("===========Scanner Exception============:"+e.getMessage());
+					throw e;
+				}
 			}
 		}
 	}
@@ -84,6 +111,16 @@ public final class ClassScanner implements IApplicationContext {
 
 	@Override
 	public Object getInstanceOfClass(Class clazz, Object... params) {
+		if (beanInstances.containsKey(clazz)) {
+			return beanInstances.get(clazz);
+		}
+
+//		if (! Enum.class.isAssignableFrom(clazz)
+//			&& !clazz.isAnnotationPresent(Singleton.class)) {
+//			throw new RuntimeException("["+clazz.getName()+"] Must be Singleton And Set Singleton Annotation");
+//		}
+
+
 		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
 			.filter(f -> Modifier.isStatic(f.getModifiers()))
 			.filter(f -> f.getType() == clazz)
@@ -94,11 +131,15 @@ public final class ClassScanner implements IApplicationContext {
 			field.setAccessible(true);
 			try {
 				Object ret = field.get(null);
-				if (ret != null) return ret;
+				if (ret != null) {
+					beanInstances.put(clazz, ret);
+					return ret;
+				}
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
+
 		Class<?> [] clazzes = new Class[params.length];
 		for (int i = 0; i < params.length; i++) {
 			clazzes[i] = params[i].getClass();
@@ -106,14 +147,20 @@ public final class ClassScanner implements IApplicationContext {
 
 		Constructor[] constructors = clazz.getDeclaredConstructors();
 		for (Constructor constructor : constructors) {
-			if (constructor.getParameterCount() != clazzes.length) continue;
+			if (constructor.getParameterCount() != clazzes.length) {
+				continue;
+			}
 
 			boolean allMatch = IntStream.range(0, clazzes.length).mapToObj(i -> clazzes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
-			if (! allMatch) continue;
+			if (! allMatch) {
+				continue;
+			}
 
 			constructor.setAccessible(true);
 			try {
-				return constructor.newInstance(params);
+				Object ret = constructor.newInstance(params);
+				beanInstances.put(clazz, ret);
+				return ret;
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}

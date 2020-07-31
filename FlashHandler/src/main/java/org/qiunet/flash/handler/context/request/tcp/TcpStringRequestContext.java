@@ -1,30 +1,20 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.utils.string.StringUtil;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * tcp 请求解析成字符串的.
  * Created by qiunet.
  * 17/11/21
  */
-public class TcpStringRequestContext extends AbstractTcpRequestContext<String, String> {
+public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcpRequestContext<String, P> {
 	protected String requestData;
-	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, TcpBootstrapParams params) {
-		super(content, channelContext, params);
-	}
-
-	@Override
-	protected IMessage getResponseMessage(int protocolId, String s) {
-		return new DefaultStringMessage(protocolId, s);
+	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, P playerActor) {
+		super(content, channelContext, playerActor);
 	}
 
 	@Override
@@ -36,14 +26,17 @@ public class TcpStringRequestContext extends AbstractTcpRequestContext<String, S
 	}
 
 	@Override
-	public boolean handler() {
-		FacadeTcpRequest<String> facadeTcpRequest = new FacadeTcpRequest<>(this);
-		params.getTcpInterceptor().handler((ITcpHandler) getHandler(), facadeTcpRequest);
-		return true;
+	public void handlerRequest() {
+		FacadeTcpRequest<String, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
+		try {
+			((ITcpHandler) getHandler()).handler(playerActor, facadeTcpRequest);
+		} catch (Exception e) {
+			logger.error("TcpStringRequestContext Exception", e);
+		}
 	}
 
 	@Override
-	public String toStr() {
-		return null;
+	public void execute(P p) {
+		this.handlerRequest();
 	}
 }

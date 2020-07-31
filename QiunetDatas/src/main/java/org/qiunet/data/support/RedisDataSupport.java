@@ -1,19 +1,25 @@
 package org.qiunet.data.support;
 
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
-import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
+/***
+ *
+ * @param <Key>
+ * @param <Do>
+ * @param <Bo>
+ * @author qiunet
+ *
+ */
 public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 	/**防止缓存击穿的 NULL*/
 	private Do NULL;
 
-	private final String PLACE_HOLDER = "PLACE_HOLDER";
+	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);
@@ -29,9 +35,13 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 	private Do getDataObjectJson(String redisKey, boolean defHit) {
 		return redisUtil.execCommands(jedis -> {
 			String ret = jedis.get(redisKey);
-			if (StringUtil.isEmpty(ret)) return null;
+			if (StringUtil.isEmpty(ret)) {
+				return null;
+			}
 
-			if (PLACE_HOLDER.equals(ret)) return defHit ? NULL: null;
+			if (PLACE_HOLDER.equals(ret)) {
+				return defHit ? NULL: null;
+			}
 
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 			return JsonUtil.getGeneralObject(ret, doClass);
@@ -57,9 +67,8 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 
 	@Override
 	protected void deleteFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key())
-			.put("dbName", aDo.getDbName());
-		MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).delete(deleteStatement, map);
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
+		databaseSupport().delete(deleteStatement, map);
 	}
 
 	@Override
@@ -99,16 +108,18 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 	public Bo getBo(Key key) {
 		String redisKey = getRedisKey(doName, key);
 		Bo bo = ThreadContextData.get(redisKey);
-		if (bo != null) return bo;
+		if (bo != null) {
+			return bo;
+		}
 
 		Do aDo = getDataObjectJson(redisKey, true);
-		if (aDo == NULL) return null;
+		if (aDo == NULL) {
+			return null;
+		}
 
 		if (aDo == null) {
-			String dbSourceKey = DbUtil.getDbSourceKey(key);
-			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key)
-				.put("dbName", DbUtil.getDbName(key));
-			aDo = MoreDbSourceDatabaseSupport.getInstance(dbSourceKey).selectOne(selectStatement, map);
+			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+			aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
 				returnJedis().set(redisKey, PLACE_HOLDER, "nx", "ex", NORMAL_LIFECYCLE);
 				return null;

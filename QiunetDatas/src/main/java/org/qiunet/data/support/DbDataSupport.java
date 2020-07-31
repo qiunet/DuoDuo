@@ -1,8 +1,7 @@
 package org.qiunet.data.support;
 
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
-import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.core.select.DbParamMap;
+import org.qiunet.data.db.entity.IDbEntity;
 
 import java.util.Map;
 
@@ -13,8 +12,8 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 	}
 
 	public Bo getBo(Key key) {
-		Map<String, Object> map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
-		Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+		Map<String, Object> map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+		Do aDo = databaseSupport().selectOne(selectStatement, map);
 		if (aDo == null) return null;
 
 		return supplier.get(aDo);
@@ -34,7 +33,7 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 	 * @param key
 	 */
 	public void delete(Key key) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+		databaseSupport().delete(deleteStatement, map);
 	}
 }

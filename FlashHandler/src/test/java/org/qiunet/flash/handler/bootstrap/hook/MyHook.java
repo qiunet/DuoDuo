@@ -20,7 +20,7 @@ public class MyHook implements Hook {
 	public void reloadCfg() {
 		try {
 			CfgManagers.getInstance().reloadSetting();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}

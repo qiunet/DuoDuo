@@ -1,24 +1,19 @@
 package org.qiunet.flash.handler.context.request.websocket;
 
-import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.IMessage;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
-public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSocketRequestContext<RequestData, GeneratedMessageV3> {
+public class WebSocketProtobufRequestContext<RequestData, P extends IPlayerActor> extends AbstractWebSocketRequestContext<RequestData, P> {
 	private RequestData requestData;
-	public WebSocketProtobufRequestContext(MessageContent content, ChannelHandlerContext ctx, HttpBootstrapParams params, HttpHeaders headers) {
-		super(content, ctx, params, headers);
+	public WebSocketProtobufRequestContext(MessageContent content, ChannelHandlerContext ctx, P playerActor, HttpHeaders headers) {
+		super(content, ctx, playerActor, headers);
 	}
 	@Override
 	public RequestData getRequestData() {
@@ -28,19 +23,17 @@ public class WebSocketProtobufRequestContext<RequestData> extends AbstractWebSoc
 	}
 
 	@Override
-	protected IMessage getResponseMessage(int protocolId, GeneratedMessageV3 generatedMessageV3) {
-		return new DefaultProtobufMessage(protocolId, generatedMessageV3);
+	public void execute(P p) {
+		this.handlerRequest();
 	}
 
 	@Override
-	public boolean handler() {
-		FacadeWebSocketRequest<RequestData> facadeWebSocketRequest = new FacadeWebSocketRequest(this);
-		params.getWebSocketInterceptor().handler((IWebSocketHandler) getHandler(), facadeWebSocketRequest);
-		return true;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
+	public void handlerRequest() {
+		FacadeWebSocketRequest<RequestData, P> facadeWebSocketRequest = new FacadeWebSocketRequest<>(this);
+		try {
+			((IWebSocketHandler) getHandler()).handler(playerActor, facadeWebSocketRequest);
+		} catch (Exception e) {
+			logger.error("WebSocketProtobufRequestContext Exception", e);
+		}
 	}
 }

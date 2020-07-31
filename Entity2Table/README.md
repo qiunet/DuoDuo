@@ -17,6 +17,7 @@
 name        |表名
 spliTable   |是否分表(0-9)
 comment     |描述
+dbSource |使用哪个数据库源操作. serverType == 0时候, 为空使用默认源
 ##### Column
 函数 | 含义
 ---|---
@@ -42,10 +43,8 @@ comment | 注释说明
     mybatis建表,改表语句.
 
 #### 关键逻辑:
-- 多数据源
-    MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne
 - 单数据源
-    DefaultDatabaseSupport.getInstance().selectOne
+    DbDatabaseSupport.getInstance(dbSource).selectOne
 - 分表
     如果是分表,直接在表名上加后缀_(0-9),循环执行多次,同步多张表
 

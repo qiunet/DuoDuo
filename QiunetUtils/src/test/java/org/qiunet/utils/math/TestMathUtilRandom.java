@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +35,7 @@ public class TestMathUtilRandom {
 	@Test
 	public void testRandom(){
 		int rand = MathUtil.random(randStart, randEnd);
-//		System.out.println(randStart +", "+ randEnd+ ", "+rand);
+		LoggerType.DUODUO.info(randStart +", "+ randEnd+ ", "+rand);
 		Assert.assertTrue(rand >= randStart && rand < randEnd);
 	}
 }

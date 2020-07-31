@@ -1,7 +1,9 @@
 package org.qiunet.data.core.support.db;
 
-import com.mysql.jdbc.AbandonedConnectionCleanupThread;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.Environment;
@@ -10,7 +12,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.qiunet.data.redis.constants.RedisDbConstants;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
@@ -32,18 +33,18 @@ class DbLoader {
 
 	/**mybatis 的配置文件名称**/
 	private static final String DEFAULT_MYBATIS_FILENAME = "mybatis/mybatis-config.xml";
-	// DbSourceType 对应的 dataSource
-	private Map<String, SqlSessionFactory> dataSources = new HashMap<>();
-
+	/**
+	 *DbSourceType 对应的 dataSource
+	 */
+	private Map<String, String> dbNameMapping = Maps.newHashMap();
+	private Map<String, SqlSessionFactory> dataSources = Maps.newHashMap();
 	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
 
-	// mybatis 配置文件的名称
+	/**
+	 *mybatis 配置文件的名称
+	 */
 	private static final String MYBATIS_CONFIG_FILENAME = "mybatis_config_filename";
 
-	/***
-	 * Db模式和Cache单数据库模式下, 默认的数据库源. 如果没有. 会取第一个(认为配置里也就一个).
-	 */
-	private static final String DEFAULT_DATABASE_SOURCE = "default_database_source";
 
 	private String mybatisConfigFileName = DEFAULT_MYBATIS_FILENAME;
 
@@ -55,19 +56,19 @@ class DbLoader {
 			add(new DatasourceAttr("password", "", String.class));
 			add(new DatasourceAttr("driverClassName", "", String.class));
 
-			add(new DatasourceAttr("maxIdle", 5, int.class));
+			add(new DatasourceAttr("maxIdle", 10, int.class));
 			add(new DatasourceAttr("minIdle", 2, int.class));
-			add(new DatasourceAttr("maxTotal", 10, int.class));
-			add(new DatasourceAttr("initialSize", 2, int.class));
+			add(new DatasourceAttr("maxTotal", 200, int.class));
+			add(new DatasourceAttr("initialSize", 20, int.class));
 			add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
 			add(new DatasourceAttr("logAbandoned", true, boolean.class));
-			add(new DatasourceAttr("testOnBorrow", false, boolean.class));
+			add(new DatasourceAttr("testOnBorrow", true, boolean.class));
 			add(new DatasourceAttr("testWhileIdle", true, boolean.class));
 			add(new DatasourceAttr("numTestsPerEvictionRun", 10, int.class));
 			add(new DatasourceAttr("removeAbandonedTimeout", 60, int.class));
 			add(new DatasourceAttr("validationQuery", "select 1", String.class));
-			add(new DatasourceAttr("minEvictableIdleTimeMillis", 60000, long.class));
-			add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 30000, long.class));
+			add(new DatasourceAttr("minEvictableIdleTimeMillis", 30000, long.class));
+			add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 10000, long.class));
 			add(new DatasourceAttr("removeAbandonedOnMaintenance", true, boolean.class));
 		}
 	};
@@ -85,7 +86,9 @@ class DbLoader {
 	private volatile static DbLoader instance;
 
 	private DbLoader() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 
 		try {
 			if (dbProperties.containKey(MYBATIS_CONFIG_FILENAME)) {
@@ -94,7 +97,6 @@ class DbLoader {
 			this.loaderDataSource();
 
 			ShutdownHookThread.getInstance().addShutdownHook( () -> {
-				AbandonedConnectionCleanupThread.checkedShutdown();
 				while (DriverManager.getDrivers().hasMoreElements()){
 					Driver driver = DriverManager.getDrivers().nextElement();
 					try {
@@ -129,41 +131,39 @@ class DbLoader {
 	private void loaderDataSource() throws Exception {
 		Set<String> sets = new HashSet<>();
 		for (Object key : dbProperties.returnMap().keySet()) {
-			if (!key.toString().endsWith("driverClassName")) continue;
-			String name = StringUtil.split(key.toString(), ".")[1];
-			if (sets.contains(name)) continue;
-
-			SqlSessionFactory factory = buildSqlSessionFactory(name);
-			this.dataSources.put(name, factory);
-			sets.add(name);
-		}
-
-		if (dbProperties.containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / dbProperties.getInt(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
-			for (int i = 0; i < dbSourceCount; i++) {
-				if (! this.dataSources.containsKey(String.valueOf(i))){
-					throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
-				}
+			if (!key.toString().endsWith("driverClassName")) {
+				continue;
 			}
+			String dbSourceName = StringUtil.split(key.toString(), ".")[1];
+			if (sets.contains(dbSourceName)) {
+				continue;
+			}
+
+			SqlSessionFactory factory = buildSqlSessionFactory(dbSourceName);
+			this.dataSources.put(dbSourceName, factory);
+			String url = ((BasicDataSource) factory.getConfiguration().getEnvironment().getDataSource()).getUrl();
+			dbNameMapping.put(dbSourceName, this.findDataBaseNameByUrl(url));
+			sets.add(dbSourceName);
 		}
 	}
 	/**
 	 * 根据name 构建SqlSessionFactory
-	 * @param prefix
+	 * @param dbSourceName
 	 * @return
 	 * @throws Exception
 	 */
-	private SqlSessionFactory buildSqlSessionFactory(String prefix) throws Exception {
+	private SqlSessionFactory buildSqlSessionFactory(String dbSourceName) throws Exception {
 		BasicDataSource dataSource = new BasicDataSource();
-		dataSource.setConnectionInitSqls(Arrays.asList("set names 'utf8mb4'"));
+		dataSource.setConnectionInitSqls(Collections.singletonList("set names 'utf8mb4'"));
 		for (DatasourceAttr setting : datasourceSettings) {
 			Object val = setting.defaultVal;
-			String dbKey = getConfigKey(prefix, setting.name);
+			String dbKey = getConfigKey(dbSourceName, setting.name);
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
 				val = dbProperties.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
-				boolean contain = dbProperties.containKey(dbKey);
-				if (contain) val = dbProperties.getBoolean(dbKey);
+				if (dbProperties.containKey(dbKey)) {
+					val = dbProperties.getBoolean(dbKey);
+				}
 			}else if(val.getClass() == String.class){
 				val = dbProperties.getString(dbKey, (String) val);
 			}
@@ -181,7 +181,7 @@ class DbLoader {
 			}
 		});
 
-		Environment environment = new Environment.Builder(prefix)
+		Environment environment = new Environment.Builder(dbSourceName)
 				.dataSource(dataSource)
 				.transactionFactory(new JdbcTransactionFactory())
 				.build();
@@ -194,7 +194,7 @@ class DbLoader {
 
 			xmlConfigBuilder.parse();
 			if (logger.isInfoEnabled()) {
-				logger.info("Parsed name["+prefix+"] configuration file: '" + this.mybatisConfigFileName + "'");
+				logger.info("Parsed name["+dbSourceName+"] configuration file: '" + this.mybatisConfigFileName + "'");
 			}
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
@@ -204,6 +204,15 @@ class DbLoader {
 			ErrorContext.instance().reset();
 		}
 		return builder.build(configuration);
+	}
+
+	boolean contains(String dbSourceName) {
+		return dataSources.containsKey(dbSourceName);
+	}
+
+	String dbName(String dbSource) {
+		Preconditions.checkState(dbNameMapping.containsKey(dbSource), "No dbName for dbSource ["+dbSource+"]");
+		return dbNameMapping.get(dbSource);
 	}
 
 	private static class DatasourceAttr {
@@ -221,35 +230,6 @@ class DbLoader {
 			this.methodName = new String(chars);
 		}
 	}
-
-	/***
-	 * 得到默认的sqlFactory
-	 * @return
-	 */
-	private SqlSessionFactory getDefaultSqlSessionFactory(){
-		if (! dbProperties.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
-			throw new NullPointerException("default config size must be 1!");
-		}
-		if (defaultSqlSessionFactory == null) {
-			if (dbProperties.containKey(DEFAULT_DATABASE_SOURCE)) {
-				this.defaultSqlSessionFactory = dataSources.get(dbProperties.getString(DEFAULT_DATABASE_SOURCE));
-			}else {
-				this.defaultSqlSessionFactory = new ArrayList<>(dataSources.values()).get(0);
-			}
-		}
-		return defaultSqlSessionFactory;
-	}
-	private SqlSessionFactory defaultSqlSessionFactory;
-	/***
-	 * 获得一个默认sqlSession
-	 * @return
-	 */
-	SqlSession getDefaultSqlSession(){
-		SqlSessionFactory factory = getDefaultSqlSessionFactory();
-		SqlSession sqlSession = factory.openSession(true);
-		InvocationHandler handler = new SqlSessionTemp(sqlSession);
-		return (SqlSession) Proxy.newProxyInstance(handler.getClass().getClassLoader(), sqlSession.getClass().getInterfaces(), handler);
-	}
 	/***
 	 * 获得一个sqlsession
 	 * @return
@@ -261,7 +241,7 @@ class DbLoader {
 		return (SqlSession) Proxy.newProxyInstance(handler.getClass().getClassLoader(), sqlSession.getClass().getInterfaces(), handler);
 	}
 
-	private class SqlSessionTemp implements InvocationHandler {
+	private static class SqlSessionTemp implements InvocationHandler {
 		private SqlSession sqlSession;
 
 		SqlSessionTemp(SqlSession sqlSession) {
@@ -275,5 +255,49 @@ class DbLoader {
 				this.sqlSession.close();
 			}
 		}
+	}
+
+	private String findDataBaseNameByUrl(String jdbcUrl) {
+		String database = null;
+		int pos, pos1;
+		String connUri;
+
+		if (StringUtils.isBlank(jdbcUrl)) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+
+		jdbcUrl = jdbcUrl.toLowerCase();
+
+		if (jdbcUrl.startsWith("jdbc:impala")) {
+			jdbcUrl = jdbcUrl.replace(":impala", "");
+		}
+
+		if (!jdbcUrl.startsWith("jdbc:")
+			|| (pos1 = jdbcUrl.indexOf(':', 5)) == -1) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+
+		connUri = jdbcUrl.substring(pos1 + 1);
+
+		if (connUri.startsWith("//")) {
+			if ((pos = connUri.indexOf('/', 2)) != -1) {
+				database = connUri.substring(pos + 1);
+			}
+		} else {
+			database = connUri;
+		}
+
+		if (database.contains("?")) {
+			database = database.substring(0, database.indexOf("?"));
+		}
+
+		if (database.contains(";")) {
+			database = database.substring(0, database.indexOf(";"));
+		}
+
+		if (StringUtils.isBlank(database)) {
+			throw new IllegalArgumentException("Invalid JDBC url.");
+		}
+		return database;
 	}
 }

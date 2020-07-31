@@ -2,7 +2,6 @@ package org.qiunet.utils.logger;
 
 import org.junit.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Created by qiunet.
@@ -12,6 +11,6 @@ public class TestSlf4j {
 	@Test
 	public void test(){
 		Logger logger = LoggerType.DUODUO.getLogger();
-		logger.info("12345");
+		logger.info(LogUtils.generatePrintStackTrace("Test"));
 	}
 }

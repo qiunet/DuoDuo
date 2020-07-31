@@ -1,8 +1,8 @@
 package org.qiunet.utils.data;
 
-import org.qiunet.utils.base.BaseTest;
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.base.BaseTest;
 
 /**
  * @author qiunet

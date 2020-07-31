@@ -4,11 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.utils.string.StringUtil;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * 把请求解析为string的对象
@@ -16,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
  * 17/11/21
  */
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
-	private String reqeustData;
+	private String requestData;
 
 	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channelContext, params, request);
@@ -24,10 +20,10 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 
 	@Override
 	public String getRequestData() {
-		if (reqeustData == null) {
-			reqeustData = getHandler().parseRequestData(messageContent.bytes());
+		if (requestData == null) {
+			requestData = getHandler().parseRequestData(messageContent.bytes());
 		}
-		return reqeustData;
+		return requestData;
 	}
 	@Override
 	protected byte[] getResponseDataBytes(String s) {
@@ -35,19 +31,20 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
-	public boolean handler() {
-		FacadeHttpRequest<String> requestData = new FacadeHttpRequest<>(this);
-		String responseData = (String) params.getHttpInterceptor().handler((IHttpHandler) getHandler(), requestData);
-		if (requestData == null){
+	public void handlerRequest() {
+		FacadeHttpRequest<String, String> requestData = new FacadeHttpRequest<>(this);
+		String responseData = null;
+		try {
+			responseData = getHandler().handler(requestData);
+		} catch (Exception e) {
+			logger.error("HttpStringRequestContext Exception", e);
+		}
+
+		if (responseData == null){
 			throw new NullPointerException("Response String can not be null!");
 		}
-		this.response(responseData);
-		return true;
-	}
 
-	@Override
-	public int getQueueIndex() {
-		return 0;
+		this.response(responseData);
 	}
 
 	@Override
@@ -55,8 +52,4 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 		return "text/plain; charset=UTF-8";
 	}
 
-	@Override
-	public String toStr() {
-		return "request: "+reqeustData;
-	}
 }

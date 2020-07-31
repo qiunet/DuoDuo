@@ -5,10 +5,7 @@ import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.system.SystemPropertyUtil;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -44,6 +41,18 @@ import java.util.stream.Collectors;
 	 * 包名 路径
 	 */
 	protected String packageName;
+	/**
+	 * 是否异步 或者同步
+	 */
+	protected boolean async = true;
+	/***
+	 * 是否分库
+	 */
+	protected String dbSource;
+	/**
+	 * 是否分表
+	 */
+	protected boolean splitTable;
 	/***
 	 * 表名
 	 */
@@ -127,6 +136,30 @@ import java.util.stream.Collectors;
 	public void addConstructor(ConstructorDefine constructorDefine){
 		this.constructorDefines.add(constructorDefine);
 		constructorDefine.init(this);
+	}
+
+	public boolean isAsync() {
+		return async;
+	}
+
+	public void setAsync(boolean async) {
+		this.async = async;
+	}
+
+	public String getDbSource() {
+		return dbSource;
+	}
+
+	public void setDbSource(String dbSource) {
+		this.dbSource = dbSource;
+	}
+
+	public boolean isSplitTable() {
+		return splitTable;
+	}
+
+	public void setSplitTable(boolean splitTable) {
+		this.splitTable = splitTable;
 	}
 
 	public String getBaseDir() {
@@ -237,7 +270,12 @@ import java.util.stream.Collectors;
 	 * 包含 库信息 分表信息等
 	 * @return
 	 */
-	protected abstract String realTableName();
+	protected String realTableName() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getTableName());
+		if (isSplitTable()) sb.append("_${tbIndex}");
+		return sb.toString();
+	}
 	/**
 	 * 搞定where condition
 	 * @return
@@ -246,6 +284,10 @@ import java.util.stream.Collectors;
 
 	public boolean isCommentEmpty(){
 		return StringUtil.isEmpty(comment);
+	}
+
+	public boolean isDbSourceEmpty(){
+		return StringUtil.isEmpty(dbSource);
 	}
 	@Override
 	public String getComment() {

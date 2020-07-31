@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
 
-import java.net.InetSocketAddress;
 import java.net.URI;
 
 /**

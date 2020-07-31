@@ -8,19 +8,23 @@ import org.qiunet.utils.classScanner.ClassScanner;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestListener {
-	public static AtomicInteger test1Count = new AtomicInteger();
-	public static AtomicInteger test2Count = new AtomicInteger();
+	public static final AtomicInteger loginEventCount = new AtomicInteger();
+	public static final AtomicInteger levelUpEventCount = new AtomicInteger();
 	@BeforeClass
-	public static void init(){
+	public static void init() throws Exception {
 		ClassScanner.getInstance().scanner();
 	}
 
+	public static final int uid = 100000;
+	public static final int oldLevel = 10;
+	public static final int newLevel = 12;
+
 	@Test
 	public void listener(){
-		new Test1EventData().fireEventHandler();
-		ListenerManager.fireEventHandler(new Test2EventData());
+		new LoginEventData(uid).fireEventHandler();
+		ListenerManager.fireEventHandler(new LevelUpEventData(uid, oldLevel, newLevel));
 
-		Assert.assertEquals(2, test1Count.get());
-		Assert.assertEquals(1, test2Count.get());
+		Assert.assertEquals(3, loginEventCount.get());
+		Assert.assertEquals(1, levelUpEventCount.get());
 	}
 }

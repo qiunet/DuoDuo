@@ -2,13 +2,12 @@ package org.qiunet.quartz.test;
 
 import org.junit.Test;
 import org.qiunet.quartz.CronSchedule;
-import org.qiunet.quartz.QuartzSchedule;
 import org.qiunet.utils.classScanner.ClassScanner;
 import org.qiunet.utils.logger.LoggerType;
 
 public class TestQuartz {
 	@Test
-	public void testCron() throws InterruptedException {
+	public void testCron() throws Exception {
 		ClassScanner.getInstance().scanner();
 		Thread.sleep(10000);
 	}

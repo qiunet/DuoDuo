@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

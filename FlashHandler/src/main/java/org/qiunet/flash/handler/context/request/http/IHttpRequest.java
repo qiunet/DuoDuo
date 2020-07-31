@@ -17,54 +17,54 @@ public interface IHttpRequest<RequestData> extends IRequest<RequestData> {
 	 * 外部请求使用uri
 	 * @return
 	 */
-	public boolean otherRequest();
+	boolean otherRequest();
 	/***
 	 * 得到UriPath
 	 * @return
 	 */
-	public String getUriPath();
+	String getUriPath();
 	/***
 	 * 得到get请求的参数
 	 * @param key
 	 * @return
 	 */
-	public String getParameter(String key);
+	String getParameter(String key);
 
 	/**
 	 * 得到get请求的参数. 返回是一个数组
 	 * @param key
 	 * @return
 	 */
-	public List<String> getParametersByKey(String key);
+	List<String> getParametersByKey(String key);
 
 	/**
 	 * 得到指定header 的值
 	 * @param name
 	 * @return
 	 */
-	public String getHttpHeader(String name);
+	String getHttpHeader(String name);
 	/**
 	 * 得到指定header 的值
 	 * @param name
 	 * @return
 	 */
-	public List<String> getHttpHeadersByName(String name);
+	List<String> getHttpHeadersByName(String name);
 	/***
 	 * 得到协议使用的http版本
 	 * @return
 	 */
-	public HttpVersion getProtocolVersion();
+	HttpVersion getProtocolVersion();
 
 	/**
 	 * 得到所有的cookie
 	 * @return 没有返回一个empty set
 	 */
-	public Set<Cookie> getCookieSet();
+	Set<Cookie> getCookieSet();
 
 	/**
 	 * 得到一个cookie
 	 * @param name cookie的名称
 	 * @return 没有 返回null
 	 */
-	public Cookie getCookieByName(String name);
+	Cookie getCookieByName(String name);
 }

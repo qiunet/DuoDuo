@@ -1,16 +1,13 @@
 package org.qiunet.flash.handler.handler.tcp;
 
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.enums.DataType;
-import org.qiunet.flash.handler.handler.tcp.BaseTcpHandler;
-
-import java.lang.reflect.InvocationTargetException;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
-public abstract class TcpStringHandler extends BaseTcpHandler<String> {
+public abstract class TcpStringHandler<P extends IPlayerActor> extends BaseTcpHandler<P, String> {
 
 	@Override
 	public DataType getDataType() {

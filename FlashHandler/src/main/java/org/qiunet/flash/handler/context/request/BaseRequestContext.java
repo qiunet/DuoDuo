@@ -3,10 +3,11 @@ package org.qiunet.flash.handler.context.request;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -17,9 +18,11 @@ import java.util.Map;
  * 17/11/20
  */
 public abstract class BaseRequestContext<RequestData> implements IRequestContext<RequestData> {
+	protected Logger logger = LoggerType.DUODUO.getLogger();
+
 	protected MessageContent messageContent;
 	protected ChannelHandlerContext ctx;
-	private IHandler<RequestData> handler;
+	protected IHandler<RequestData> handler;
 	private Map<String , Object> attributes;
 
 	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {

@@ -6,10 +6,13 @@
 		packageName="org.qiunet.project.init.test.player"
 		xmlns="https://github.com/qiunet/DuoDuo/DbEntity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntity"
+		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntity
+		https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/DbEntity.xsd"
 	>
 	<field name="uid" type="long" comment="玩家id" />
+	<field name="name" type="String" comment="玩家名称" />
 	<field name="level" type="int" comment="等级"/>
+	<field name="exp" type="long" comment="经验" />
 	<constructor>
 		<constructor_arg field="uid"/>
 	</constructor>

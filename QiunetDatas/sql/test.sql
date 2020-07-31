@@ -16,66 +16,10 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Current Database: `qiunet_0`
---
-
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `qiunet_0` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-
-USE `qiunet_0`;
-
---
--- Table structure for table `equip`
---
-
-DROP TABLE IF EXISTS `equip`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `equip` (
-  `uid` bigint(20) NOT NULL,
-  `equip_id` int(11) NOT NULL,
-  `level` int(11) DEFAULT NULL,
-  PRIMARY KEY (`uid`,`equip_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `equip`
---
-
-LOCK TABLES `equip` WRITE;
-/*!40000 ALTER TABLE `equip` DISABLE KEYS */;
-/*!40000 ALTER TABLE `equip` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `vip`
---
-
-DROP TABLE IF EXISTS `vip`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `vip` (
-  `uid` bigint(20) NOT NULL,
-  `level` int(11) DEFAULT NULL,
-  `exp` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `vip`
---
-
-LOCK TABLES `vip` WRITE;
-/*!40000 ALTER TABLE `vip` DISABLE KEYS */;
-/*!40000 ALTER TABLE `vip` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Current Database: `qiunet_db`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `qiunet_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `qiunet_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
 USE `qiunet_db`;
 
@@ -91,7 +35,7 @@ CREATE TABLE `guild` (
   `name` varchar(255) DEFAULT NULL,
   `level` int(11) DEFAULT NULL,
   PRIMARY KEY (`guildId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +59,7 @@ CREATE TABLE `guild_member` (
   `memberId` bigint(20) NOT NULL,
   `job` int(11) DEFAULT NULL,
   PRIMARY KEY (`guildId`,`memberId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -139,7 +83,7 @@ CREATE TABLE `item` (
   `item_id` int(11) NOT NULL,
   `count` int(11) DEFAULT NULL,
   PRIMARY KEY (`uid`,`item_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,7 +107,7 @@ CREATE TABLE `player` (
   `name` tinytext,
   `level` int(11) DEFAULT NULL,
   `exp` bigint(20) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,6 +119,24 @@ LOCK TABLES `player` WRITE;
 /*!40000 ALTER TABLE `player` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+DROP TABLE IF EXISTS `equip`;
+CREATE TABLE `equip` (
+  `uid` bigint(20) NOT NULL,
+  `equip_id` int(11) NOT NULL,
+  `level` int(11) DEFAULT NULL,
+  PRIMARY KEY (`uid`,`equip_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP TABLE IF EXISTS `vip`;
+CREATE TABLE `vip` (
+  `uid` bigint(20) NOT NULL,
+  `level` int(11) DEFAULT NULL,
+  `exp` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

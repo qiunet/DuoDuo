@@ -1,9 +1,6 @@
 package org.qiunet.flash.handler.handler.http;
 
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.enums.DataType;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.

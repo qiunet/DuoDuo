@@ -5,16 +5,15 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.qiunet.flash.handler.bootstrap.error.DefaultErrorMessage;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.interceptor.DefaultTcpInterceptor;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.net.InetAddress;
@@ -27,23 +26,24 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public abstract class TcpBootStrap implements ILongConnResponseTrigger {
-	protected static String host = "localhost";
-	protected static int port = 8888;
-	protected static Hook hook = new MyHook();
+	protected static final String host = "localhost";
+	protected static final int port = 8888;
+	protected static final Hook hook = new MyHook();
 	protected NettyTcpClient tcpClient;
 	private static Thread currThread;
+
 	@BeforeClass
-	public static void init(){
+	public static void init() throws Exception {
 		ClassScanner.getInstance().scanner();
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-					.setTcpInterceptor(new DefaultTcpInterceptor())
-					.setErrorMessage(new DefaultErrorMessage())
-					.setPort(port)
-					.setEncryption(true)
-					.build();
+				.setStartupContext(new StartupContext())
+				.setEncryption(true)
+				.setPort(port)
+				.build();
+
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
 			LockSupport.unpark(currThread);
 			server.await();

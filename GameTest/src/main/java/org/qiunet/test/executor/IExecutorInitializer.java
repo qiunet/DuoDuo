@@ -9,5 +9,5 @@ public interface IExecutorInitializer {
 	 * 处理下自己的代码.
 	 * 一般不用.
 	 */
-	void handler();
+	void handler() throws Throwable;
 }

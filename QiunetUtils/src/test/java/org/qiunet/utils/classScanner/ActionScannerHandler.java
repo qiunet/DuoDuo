@@ -8,6 +8,7 @@ import java.util.Set;
  * @author qiunet
  *         Created on 17/1/23 19:56.
  */
+@Singleton
 public class ActionScannerHandler implements IApplicationContextAware {
 
 	@Override

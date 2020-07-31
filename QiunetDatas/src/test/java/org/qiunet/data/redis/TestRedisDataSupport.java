@@ -3,7 +3,9 @@ package org.qiunet.data.redis;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.data.core.select.DbParamMap;
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
 import org.qiunet.utils.threadLocal.ThreadContextData;
@@ -53,8 +55,6 @@ public class TestRedisDataSupport {
 		vipDo.setLevel(10);
 		vipDo.setExp(1000);
 
-		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("insertVipDo", vipDo);
-
 		vipDo.insert();
 		dataSupport.syncToDatabase();
 
@@ -70,7 +70,7 @@ public class TestRedisDataSupport {
 	 * 测试异步删除抛异常的情况
 	 *
 	 * 操作步骤:
-	 * {@link org.qiunet.data.core.support.db.BaseDatabaseSupport#delete(String, Object)} 取消注释
+	 * {@link org.qiunet.data.core.support.db.DbSourceDatabaseSupport#delete(String, Object)} 取消注释
 	 * 执行测试方法
 	 */
 	@Test
@@ -82,9 +82,9 @@ public class TestRedisDataSupport {
 		vipDo.insert();
 		dataSupport.syncToDatabase();
 
-		DbParamMap map = DbParamMap.create().put(vipDo.keyFieldName(), vipDo.key())
-			.put("dbName", vipDo.getDbName());
-		MoreDbSourceDatabaseSupport.getInstance(vipDo.getDbSourceKey()).insert("deleteVipDo", map);
+		Table table = vipDo.getClass().getAnnotation(Table.class);
+		DbParamMap map = DbParamMap.create(table, vipDo.keyFieldName(), vipDo.key());
+		DbSourceDatabaseSupport.getInstance(DbUtil.getDbSource(vipDo.getClass())).insert("deleteVipDo", map);
 
 		vipDo.delete();
 		dataSupport.syncToDatabase();

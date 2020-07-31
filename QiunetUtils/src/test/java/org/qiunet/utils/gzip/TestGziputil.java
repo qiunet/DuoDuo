@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.*;
-import java.util.zip.GZIPInputStream;
 
 /**
  * Created by qiunet on 4/6/17.

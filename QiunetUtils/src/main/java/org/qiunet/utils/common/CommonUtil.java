@@ -1,8 +1,9 @@
 package org.qiunet.utils.common;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 其它可以通用逻辑的工具类
@@ -15,14 +16,17 @@ public class CommonUtil {
 	/**
 	 * 检查一个元素是否在数组中
 	 * @param <T>
-	 * @param list
+	 * @param arrays
 	 * @return
 	 */
-	public static <T> boolean existInList(T element,T list[])
+	public static <T> boolean existInList(T element,T ... arrays)
 	{
-		if (list == null || element == null) return false;
-		return Stream.of(list).anyMatch(l -> l.equals(element));
+		if (arrays == null || element == null) {
+			return false;
+		}
+		return Arrays.asList(arrays).contains(element);
 	}
+
 	/**
 	 * 检查一个元素是否在集合中
 	 * @param <T>
@@ -32,7 +36,9 @@ public class CommonUtil {
 	 */
 	public static <T> boolean existInList(T element,Collection<T> list)
 	{
-		if(list.isEmpty() || element == null) return false;
+		if(list.isEmpty() || element == null) {
+			return false;
+		}
 		return list.stream().anyMatch(ele -> ele.equals(element));
 	}
 	/**
@@ -47,5 +53,45 @@ public class CommonUtil {
 			return null;
 		}
 		return list.stream().skip(skip).limit(count).collect(Collectors.toList());
+	}
+
+	/***
+	 * 翻转换整个数组
+	 * @param array
+	 */
+	public static void reverse(byte [] array) {
+		reverse(array, 1);
+	}
+	public static void reverse(byte [] array, int step) {
+		if (array == null || array.length <= 1) {
+			return;
+		}
+		byte temp;
+		int len = array.length;
+		int loopNum = len / 2;
+		for (int i = 0; i < loopNum; i+=step) {
+			temp = array[i];
+			int last = len - 1 - i;
+			array[i] = array[last];
+			array[last] = temp;
+		}
+	}
+	/***
+	 * 翻转换整个数组
+	 * @param array
+	 */
+	public static void reverse(int [] array) {
+		if (array == null || array.length <= 1) {
+			return;
+		}
+		int temp;
+		int len = array.length;
+		int loopNum = len / 2;
+		for (int i = 0; i < loopNum; i++) {
+			int last = len - 1 - i;
+			temp = array[i];
+			array[i] = array[last];
+			array[last] = temp;
+		}
 	}
 }

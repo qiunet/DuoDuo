@@ -18,7 +18,7 @@ public enum  BaseGameStatus implements IGameStatus {
 	;
 	private int status;
 	private String desc;
-	private BaseGameStatus(int status, String desc) {
+	BaseGameStatus(int status, String desc) {
 		this.status = status;
 		this.desc = desc;
 	}

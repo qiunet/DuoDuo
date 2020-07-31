@@ -17,14 +17,6 @@ public class RedisEntityListDefine extends BaseEntityListDefine {
 	}
 
 	@Override
-	protected String realTableName() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("${dbName}.").append(getTableName());
-		if (isSplitTable()) sb.append("_${tbIndex}");
-		return sb.toString();
-	}
-
-	@Override
 	protected String buildWhereCondition() {
 		StringBuilder sb = new StringBuilder(" WHERE ");
 		sb.append(key).append(" = #{")

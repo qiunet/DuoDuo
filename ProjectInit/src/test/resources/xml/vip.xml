@@ -6,10 +6,12 @@
 	    redis="org.qiunet.project.init.redis.RedisDataUtil"
 		xmlns="https://github.com/qiunet/DuoDuo/RedisEntity"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/RedisEntity"
+		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/RedisEntity
+		https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/RedisEntity.xsd"
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
+	<field name="exp" type="int" comment="经验" />
 	<constructor>
 		<constructor_arg field="uid" />
 	</constructor>

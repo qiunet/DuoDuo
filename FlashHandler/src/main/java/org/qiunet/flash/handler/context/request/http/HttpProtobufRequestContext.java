@@ -4,10 +4,7 @@ import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by qiunet.
@@ -37,23 +34,18 @@ public  class HttpProtobufRequestContext<RequestData extends GeneratedMessageV3,
 	}
 
 	@Override
-	public boolean handler() {
-		FacadeHttpRequest<RequestData> request = new FacadeHttpRequest<>(this);
-		ResponseData data = (ResponseData) params.getHttpInterceptor().handler((IHttpHandler)getHandler(), request);
+	public void handlerRequest() {
+		FacadeHttpRequest<RequestData, GeneratedMessageV3> request = new FacadeHttpRequest<>(this);
+		ResponseData data = null;
+		try {
+			data = getHandler().handler(request);
+		} catch (Exception e) {
+			logger.error("HttpProtobufRequestContext Exception: ", e);
+		}
+
 		if (data == null) {
 			throw new NullPointerException("Response Protobuf data can not be null!");
 		}
 		this.response(data);
-		return true;
-	}
-
-	@Override
-	public int getQueueIndex() {
-		return 0;
-	}
-
-	@Override
-	public String toStr() {
-		return null;
 	}
 }

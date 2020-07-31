@@ -3,25 +3,22 @@ package org.qiunet.utils.file;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.timer.AsyncTimerTask;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 public final class FileLoader {
 	private static Logger logger = LoggerType.DUODUO.getLogger();
 	private static final List<FileAlterationObserver> monitor = new CopyOnWriteArrayList<>();
 	static {
-		TimerManager.getInstance().scheduleAtFixedRate(new AsyncTimerTask() {
-			@Override
-			protected void asyncRun() {
-				monitor.forEach(FileAlterationObserver::checkAndNotify);
-			}
-		}, 1000, 10000);
+		TimerManager.getInstance().scheduleAtFixedRate(() -> monitor.forEach(FileAlterationObserver::checkAndNotify),
+			1000, 5000, TimeUnit.MILLISECONDS);
 	}
+	private FileLoader(){}
 	/***
 	 * 指定的文件 或者文件夹变动时候, 会调用callback的call方法. 如果是传入的文件夹, 需要对file进行判断
 	 * @param file
@@ -38,7 +35,11 @@ public final class FileLoader {
 		observer.addListener(new FileAlterationListenerAdaptor() {
 			@Override
 			public void onFileChange(File file) {
-				callback.call(file);
+				try {
+					callback.call(file);
+				}catch (Exception e) {
+					logger.error("FileLoader Exception: ", e);
+				}
 			}
 		});
 		monitor.add(observer);

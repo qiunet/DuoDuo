@@ -26,8 +26,6 @@ public class TestRedisDataListSupport {
 		equipDo2.setLevel(2);
 		equipDo2.insert();
 
-		dataListSupport.syncToDatabase();
-
 		equipDo2.setLevel(3);
 		equipDo2.update();
 		dataListSupport.syncToDatabase();
@@ -66,7 +64,8 @@ public class TestRedisDataListSupport {
 		map = dataListSupport.getBoMap(uid);
 		Assert.assertFalse(map.isEmpty());
 
-		this.expire(uid);
+		map.values().forEach(EquipBo::delete);
+		dataListSupport.syncToDatabase();
 	}
 
 	public void expire(long uid) {

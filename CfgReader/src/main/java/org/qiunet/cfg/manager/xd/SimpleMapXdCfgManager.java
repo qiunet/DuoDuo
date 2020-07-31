@@ -1,11 +1,10 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.base.ISimpleMapConfig;
-import org.qiunet.utils.collection.safe.SafeHashMap;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
+import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 /***
@@ -13,36 +12,32 @@ import java.util.Map;
  * @param <ID>
  * @param <Cfg>
  */
-public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>> extends BaseXdCfgManager {
-
-	private Class<Cfg> cfgClass;
+public class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapCfg<ID>> extends BaseXdCfgManager<Cfg> implements ISimpleMapCfgManager<ID, Cfg> {
 
 	private Map<ID, Cfg> cfgMap;
 
-	protected SimpleMapXdCfgManager(String fileName) {
-		super(fileName);
-
-		Type type = getClass().getGenericSuperclass();
-		if (!ParameterizedType.class.isAssignableFrom(type.getClass())) {
-			throw new RuntimeException("Class ["+getClass().getName()+"] 必须给定泛型!");
-		}
-
-		this.cfgClass = (Class<Cfg>) ((ParameterizedTypeImpl) type).getActualTypeArguments()[1];
-		this.checkCfgClass(cfgClass);
-	}
-
-	/**
-	 * 根据id得到对应的Cfg
-	 * @param id
-	 * @return
-	 */
-	public Cfg getCfgById(ID id) {
-		return cfgMap.get(id);
+	public SimpleMapXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 
 	@Override
 	void init() throws Exception {
 		this.cfgMap = getSimpleMapCfg();
+		this.initCfgSelf();
+	}
+
+	/***
+	 * 如果cfg 对象是实现了 initCfg接口,
+	 * 就调用init方法实现cfg的二次init.
+	 */
+	private void initCfgSelf() {
+		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
+			return;
+		}
+
+		this.cfgMap.values().stream()
+				.map(cfg -> (INeedInitCfg)cfg)
+				.forEach(INeedInitCfg::init);
 	}
 	/***
 	 * 得到的map
@@ -51,10 +46,10 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 	 * @throws Exception
 	 */
 	private Map<ID, Cfg> getSimpleMapCfg() throws Exception{
-		int num = loadXdFileToDataInputStream();
-		SafeHashMap<ID, Cfg> cfgMap = new SafeHashMap<>();
-		for (int i = 0 ; i < num; i++ ) {
-			Cfg cfg = generalCfg(cfgClass);
+		XdInfoData xdInfoData = loadXdFileToDataInputStream();
+		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
+		for (int i = 0 ; i < xdInfoData.getNum(); i++ ) {
+			Cfg cfg = generalCfg();
 
 			if (cfgMap.containsKey(cfg.getId())) {
 				throw new RuntimeException("ID ["+cfg.getId()+"] is duplicate!");
@@ -62,11 +57,12 @@ public abstract class SimpleMapXdCfgManager<ID, Cfg extends ISimpleMapConfig<ID>
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
-		cfgMap.safeLock();
+		cfgMap.convertToUnmodifiable();
 		return cfgMap;
 	}
 
-	public Map<ID, Cfg> getCfgs() {
+	@Override
+	public Map<ID, Cfg> allCfgs() {
 		return cfgMap;
 	}
 }

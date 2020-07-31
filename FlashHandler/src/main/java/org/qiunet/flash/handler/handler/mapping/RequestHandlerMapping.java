@@ -1,16 +1,18 @@
 package org.qiunet.flash.handler.handler.mapping;
 
+import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.exceptions.SingletonException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,24 +54,38 @@ public class RequestHandlerMapping {
 
 	/**
 	 * 通过请求的MessageContent 得到一个Handler
+	 * @param protocolId
+	 * @return
+	 */
+	public IHandler getHandler(int protocolId) {
+		if (! gameHandlers.containsKey(protocolId)) {
+			logger.error("Have not handler For ProtocolId ["+protocolId+"]");
+		}
+		return gameHandlers.get(protocolId);
+	}
+
+	/**
+	 * 通过请求的MessageContent 得到一个Handler
+	 * @param uriPath
+	 * @return
+	 */
+	public IHandler getHandler(String uriPath) {
+		if (! uriPathHandlers.containsKey(uriPath)) {
+			logger.error("Have not handler For UriPath ["+uriPath+"]");
+		}
+		return uriPathHandlers.get(uriPath);
+	}
+
+	/**
+	 * 通过请求的MessageContent 得到一个Handler
 	 * @param content
 	 * @return
 	 */
 	public IHandler getHandler(MessageContent content) {
 		if (content.getProtocolId() > 0) {
-			if (! gameHandlers.containsKey(content.getProtocolId())) {
-				logger.error("Have not handler For ProtocolId ["+content.getProtocolId()+"]");
-			}
-			return gameHandlers.get(content.getProtocolId());
+			return getHandler(content.getProtocolId());
 		}
-
-
-		String uriPath = ((UriHttpMessageContent) content).getUriPath();
-		if (! uriPathHandlers.containsKey(uriPath)) {
-			logger.error("Have not handler For UriPath ["+uriPath+"]");
-		}
-		return uriPathHandlers.get(uriPath);
-
+		return getHandler(((UriHttpMessageContent) content).getUriPath());
 	}
 	/**
 	 * 存一个handler对应mapping
@@ -110,14 +126,29 @@ public class RequestHandlerMapping {
 	 * @param handler
 	 */
 	private void handlerSetRequestDataClass(IHandler handler){
-		Class clazz = handler.getClass();
+		Class oriClazz = handler.getClass();
+		Class clazz = oriClazz;
 		do {
 			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
 				clazz = clazz.getSuperclass();
 				continue;
 			}
-
-			Class requestDataClass = (Class) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
+			// 可能有的第一位是PlayerActor或者PlayerActor泛型类型 第二位才是requestClass类型.
+			Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
+			Type type = types[0];
+			Class requestDataClass = null;
+			if (type instanceof Class) {
+				requestDataClass = (Class) type;
+			}
+			if (requestDataClass == null || IPlayerActor.class.isAssignableFrom(requestDataClass)) {
+				if (types.length > 1) {
+					requestDataClass = (Class) types[1];
+				}else {
+					clazz = clazz.getSuperclass();
+					continue;
+				}
+			}
+			Preconditions.checkNotNull(requestDataClass, "Handler origin class [%s] current class [%s] get requestClass error", oriClazz.getSimpleName(), clazz.getSimpleName());
 			setHandlerField(handler, "requestDataClass", requestDataClass);
 			break;
 		}while (clazz != Object.class);
@@ -146,7 +177,6 @@ public class RequestHandlerMapping {
 		}
 
 		field.setAccessible(true);
-
 		try {
 			field.set(handler, value);
 		} catch (IllegalAccessException e) {

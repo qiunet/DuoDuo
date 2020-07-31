@@ -1,27 +1,31 @@
 package org.qiunet.entity2table.service;
 
+import com.google.common.collect.Maps;
+import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
+import org.qiunet.data.core.support.db.IDatabaseSupport;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.entity2table.command.Columns;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
-import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
-import org.qiunet.data.redis.constants.RedisDbConstants;
-import org.qiunet.data.util.DbProperties;
-import org.qiunet.entity2table.command.FieldParam;
-import org.qiunet.entity2table.command.TableAlterParam;
 import org.qiunet.entity2table.command.TableCreateParam;
+import org.qiunet.entity2table.command.TableParam;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-/**
+/***
+ * 对表的操作的类
  *
+ * @author qiunet
  */
 public class CreateTableService {
 	private static final String sqlPath = "org.qiunet.entity2table.service.CreateTableService.";
 	private volatile static CreateTableService instance = new CreateTableService();
 
 	private CreateTableService() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) {
+			throw new RuntimeException("Instance Duplication!");
+		}
 		instance = this;
 	}
 
@@ -34,90 +38,77 @@ public class CreateTableService {
 	 * @param createParam
 	 */
 	public void createTable(TableCreateParam createParam) {
-		//判断当前项目的数据源是单一数据源还是多个数据源,根据数据源不同,执行不同的处理
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String tableName = createParam.getTableName();
-			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
-				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-
-				createParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-				if (createParam.isSplitTable()) {
-					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
-						createParam.setTableName(tableName + "_" + tbIndex);
-						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", createParam);
-					}
-				} else {
-					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "createTable", createParam);
-				}
-			}
-		} else {
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "createTable", createParam);
-		}
+		this.alter(createParam.getTableName(), createParam.getDbSource(), createParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+			createParam.setTableName(newTableName);
+			databaseSupport.selectOne(sqlPath + "createTable", createParam);
+		});
 	}
 
 	/**
 	 * 查询表是否存在
 	 * @param tableName
+	 * @param splitTable 是否是分库的表
 	 * @return
 	 */
-	public int findTableCountByTableName(String tableName) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableName", tableName);
-			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
-
-			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "findTableCountByTableName", map);
-		} else {
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableName", tableName);
-			return DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "findTableCountByTableName", map);
+	public boolean findTableCountByTableName(String tableName, String dbSourceName, boolean splitTable) {
+		if (splitTable) {
+			tableName = tableName+"_0";
 		}
+		List<String> tableNames = dbSourceName2TableNames.computeIfAbsent(dbSourceName, this::findTableNamesByDbSourceName);
+		if (tableNames == null) {
+			return false;
+		}
+		return tableNames.contains(tableName);
+	}
+
+	private String getDbName(String dbSourceName) {
+		return DbSourceDatabaseSupport.getInstance(dbSourceName).dbName();
+	}
+
+	private static Map<String, List<String>> dbSourceName2TableNames  = Maps.newHashMap();
+	private List<String> findTableNamesByDbSourceName(String dbSourceName) {
+		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
+		// 从公共库取. 使用默认源就行.
+		return databaseSupport.selectList(sqlPath + "findTableNamesByDbName", databaseSupport.dbName());
 	}
 
 	/**
 	 * 扫描一个表的列属性
+	 * 仅扫描 0库的下标为_0的表
 	 * @param tableName
 	 * @return
 	 */
-	public List<Columns> findTableEnsembleByTableName(String tableName) {
-
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String dbSource = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableName", tableName);
-			map.put("dbName", RedisDbConstants.DB_NAME_PREFIX + 0);
-			return MoreDbSourceDatabaseSupport.getInstance(dbSource).selectList(sqlPath + "findTableEnsembleByTableName", map);
-		} else {
-			Map<String, Object> map = new HashMap<>();
-			map.put("tableName", tableName);
-			return DefaultDatabaseSupport.getInstance().selectList(sqlPath + "findTableEnsembleByTableName", map);
+	public List<Columns> findTableEnsembleByTableName(String tableName, String dbSourceName, boolean splitTable) {
+		if (splitTable) {
+			tableName = tableName+"_0";
 		}
+
+		Map<String, List<Columns>> tableColumns = dbSourceName2TableColumns.computeIfAbsent(dbSourceName, this::findTableColumnsByDbSourceName);
+		return tableColumns.get(tableName);
 	}
 
+
+	/**dbName -> table -> columnList**/
+	private static Map<String, Map<String, List<Columns>>> dbSourceName2TableColumns  = Maps.newHashMap();
+	private Map<String, List<Columns>> findTableColumnsByDbSourceName(String dbSourceName) {
+		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
+		// 从公共库取. 使用默认源就行.
+		List<Columns> columns = databaseSupport.selectList(sqlPath + "findColumnByDbName", databaseSupport.dbName());
+		if (columns == null) {
+			return Collections.emptyMap();
+		}
+		return columns.stream().collect(Collectors.groupingBy(Columns::getTable_name));
+	}
 	/**
 	 * 增加列
 	 * @param alterParam
 	 */
-	public void addTableField(TableAlterParam alterParam) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String tableName = alterParam.getTableName();
-			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
-				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-				alterParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-				if (alterParam.isSplitTable()) {
-					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
-						alterParam.setTableName(tableName + "_" + tbIndex);
-						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", alterParam);
-					}
-				} else {
-					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "addTableField", alterParam);
-				}
-			}
-		} else {
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "addTableField", alterParam);
-		}
+	public void addTableField(TableParam alterParam) {
+		this.alter(alterParam.getTableName(), alterParam.getDbSource(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+			alterParam.setDbName(newDbName);
+			alterParam.setTableName(newTableName);
+			databaseSupport.selectOne(sqlPath + "addTableField", alterParam);
+		});
 	}
 
 
@@ -125,23 +116,37 @@ public class CreateTableService {
 	 * 修改列
 	 * @param alterParam
 	 */
-	public void modifyTableField(TableAlterParam alterParam) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			String tableName = alterParam.getTableName();
-			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
-				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
-				alterParam.setDbName(RedisDbConstants.DB_NAME_PREFIX + dbIndex);
-				if (alterParam.isSplitTable()) {
-					for (int tbIndex = 0; tbIndex < RedisDbConstants.MAX_TABLE_FOR_TB_SPLIT; tbIndex++) {
-						alterParam.setTableName(tableName + "_" + tbIndex);
-						MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", alterParam);
-					}
-				} else {
-					MoreDbSourceDatabaseSupport.getInstance(dbSource).selectOne(sqlPath + "modifyTableField", alterParam);
-				}
+	public void modifyTableField(TableParam alterParam) {
+		this.alter(alterParam.getTableName(), alterParam.getDbSource(), alterParam.isSplitTable(), (databaseSupport, newDbName, newTableName) -> {
+			alterParam.setDbName(newDbName);
+			alterParam.setTableName(newTableName);
+			databaseSupport.selectOne(sqlPath + "modifyTableField", alterParam);
+		});
+	}
+
+	/***
+	 * Db模式和Cache单数据库模式下, 默认的数据库源. 如果没有. 会取第一个(认为配置里也就一个).
+	 */
+	private void alter(String tableName, String dbSource, boolean splitTable, IDbExecutor dbExecutor) {
+		String dbName = getDbName(dbSource);
+		if (splitTable) {
+			for (int tbIndex = 0; tbIndex < DbUtil.getMaxTableForTbSplit(); tbIndex++) {
+				String tableName0 = tableName + "_" + tbIndex;
+				dbExecutor.execute(DbSourceDatabaseSupport.getInstance(dbSource), dbName, tableName0);
 			}
-		} else {
-			DefaultDatabaseSupport.getInstance().selectOne(sqlPath + "modifyTableField", alterParam);
+		}else {
+			dbExecutor.execute(DbSourceDatabaseSupport.getInstance(dbSource), dbName, tableName);
 		}
+	}
+
+
+	private interface IDbExecutor {
+		/**
+		 * 使用指定的源执行sql命令
+		 * @param databaseSupport
+		 * @param dbName
+		 * @param tableName
+		 */
+		void execute(IDatabaseSupport databaseSupport, String dbName, String tableName);
 	}
 }

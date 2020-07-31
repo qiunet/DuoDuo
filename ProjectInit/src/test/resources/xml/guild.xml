@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cache_entity key="guildId"
 			  name="GuildDo"
+			  dbSource="global"
 			  tableName="guild"
 			  baseDir="src/test/java"
 			  packageName="org.qiunet.project.init.test.guild"
 			  xmlns="https://github.com/qiunet/DuoDuo/CacheEntity"
 			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-			  xsi:schemaLocation="https://github.com/qiunet/DuoDuo/CacheEntity"
+			  xsi:schemaLocation="https://github.com/qiunet/DuoDuo/CacheEntity
+			   https://raw.githubusercontent.com/qiunet/DuoDuo/master/ProjectInit/src/main/resources/xsd/CacheEntity.xsd"
 >
 	<field name="guildId" type="long" comment="公会id" />
 	<field name="name" type="String" comment="公会名称" jdbcType="VARCHAR1000" />

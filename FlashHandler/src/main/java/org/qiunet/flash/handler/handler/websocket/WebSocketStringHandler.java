@@ -1,15 +1,13 @@
 package org.qiunet.flash.handler.handler.websocket;
 
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.enums.DataType;
-
-import java.lang.reflect.InvocationTargetException;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
-public abstract class WebSocketStringHandler extends BaseWebSocketHandler<String> {
+public abstract class WebSocketStringHandler<P extends IPlayerActor> extends BaseWebSocketHandler<P, String> {
 
 	@Override
 	public DataType getDataType() {

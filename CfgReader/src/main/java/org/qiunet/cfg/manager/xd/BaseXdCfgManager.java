@@ -1,18 +1,14 @@
 package org.qiunet.cfg.manager.xd;
 
-import org.qiunet.cfg.annotation.Cfg;
-import org.qiunet.cfg.annotation.CfgIgnore;
-import org.qiunet.cfg.convert.ICfgTypeConvert;
-import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.cfg.manager.CfgTypeConvertManager;
+import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
+import org.qiunet.utils.common.CommonUtil;
 
 import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 /**
  * 大部分数据可以分为:
@@ -23,51 +19,63 @@ import java.net.URL;
  * Created by qiunet.
  * 17/7/16
  */
-abstract class BaseXdCfgManager extends BaseCfgManager {
-	protected final Logger logger = LoggerType.DUODUO.getLogger();
+abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	private InputStream in;
-	protected String fileName;
+	private ByteArrayInputStream bais;
+	private GZIPInputStream gis;
 	protected DataInputStream dis;
+	protected XdInfoData xdInfoData;
 
-	protected BaseXdCfgManager(String fileName) {
-		Cfg annotation = getClass().getAnnotation(Cfg.class);
-		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
-		this.fileName = fileName;
+	protected BaseXdCfgManager(Class<Cfg> cfgClass) {
+		super(cfgClass);
 	}
 	/**
 	 * 获取xd文件
-	 * @return 该表的行数量
+	 * @return 该表的行数量 和 列名称信息
 	 * @throws IOException
 	 */
-	int loadXdFileToDataInputStream() throws Exception{
+	XdInfoData loadXdFileToDataInputStream() throws Exception{
 		logger.debug("读取配置文件 [ "+fileName+" ]");
 
 		URL url = getClass().getClassLoader().getResource(fileName);
+		if (url == null) {
+			throw new NullPointerException("fileName "+fileName+" is not exist in classpath");
+		}
 		if (url.getPath().contains(".jar!")) {
 			//jar包里面的文件. 只能用这种加载方式. 缺点是有缓存. 不能热加载设定
 			in = getClass().getClassLoader().getResourceAsStream(fileName);
 		}else {
 			in = new FileInputStream(url.getPath());
 		}
+		if (in == null) {
+			throw new NullPointerException("FileInputStream for "+fileName+" is null!");
+		}
 
-		dis = new DataInputStream(in);
-		return dis.readInt();
+		byte [] bytes = new byte[in.available()];
+		in.read(bytes);
+		CommonUtil.reverse(bytes, 2);
+		bais = new ByteArrayInputStream(bytes);
+		gis = new GZIPInputStream(bais);
+		dis = new DataInputStream(gis);
+
+		int rowNum = dis.readInt();
+		List<String> names = new ArrayList<>();
+		int nameLength = dis.readShort();
+		for (int i = 0; i < nameLength; i++) {
+			names.add(dis.readUTF());
+		}
+
+		this.xdInfoData = new XdInfoData(rowNum, names);
+		return this.xdInfoData;
 	}
 	/**
 	 * 初始化设定
 	 */
 	@Override
-	public String loadCfg() {
-		String failFileName = "";
-		try {
-			this.init();
-		} catch (Exception e) {
-			logger.error("读取配置文件"+fileName+"失败 ERROR:", e);
-			failFileName = this.fileName;
-		}finally{
-			this.close();
-			return failFileName;
-		}
+	public void loadCfg() throws Exception{
+		this.init();
+		this.close();
+		this.afterLoad();
 	}
 
 	private void close() {
@@ -78,64 +86,47 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			}catch (EOFException e) {
 				readOver = true;
 			} catch (IOException e) {
-				logger.error("读取配置文件"+fileName+"数据出现问题", e);
+				throw new RuntimeException("读取配置文件"+fileName+"数据出现问题", e);
 			}
 
 			if (! readOver) {
-				logger.error("读取配置文件"+fileName+"数据异常 有残留数据", new EOFException());
+				throw new RuntimeException("读取配置文件"+fileName+"数据异常 有残留数据");
 			}
 		}
 		try {
-			if(dis != null)dis.close();
-			if (in != null) in.close();
+			if(dis != null) {
+				dis.close();
+			}
+			if (gis != null) {
+				gis.close();
+			}
+			if (bais != null) {
+				bais.close();
+			}
+			if (in != null) {
+				in.close();
+			}
 		} catch (IOException e) {
-			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
+			throw new RuntimeException("关闭配置文件"+fileName+"数据出现问题");
 		}
-
-		fileName = null;
+		bais = null;
+		gis = null;
 		dis = null;
 		in = null;
 	}
 
 	abstract void init()throws Exception;
+
 	/***
 	 * 通过反射得到一个cfg
-	 * @param cfgClass
-	 * @param <Cfg>
 	 * @return
 	 */
-	<Cfg> Cfg generalCfg(Class<Cfg> cfgClass) throws Exception {
+	Cfg generalCfg() throws Exception {
 		Cfg cfg = cfgClass.newInstance();
 
-		Field [] fields = cfgClass.getDeclaredFields();
-		for (Field field : fields) {
-			if (Modifier.isPublic(field.getModifiers())
-				|| Modifier.isFinal(field.getModifiers())
-				|| Modifier.isStatic(field.getModifiers())
-				|| Modifier.isTransient(field.getModifiers())
-				|| field.isAnnotationPresent(CfgIgnore.class))
-				continue;
-			Object val;
-			Class<?> type = field.getType();
-			if (type == Integer.TYPE || type == Integer.class) val = dis.readInt();
-			else if (type == Boolean.TYPE || type == Boolean.class) val = dis.readInt() == 1;
-			else if (type == Long.TYPE || type == Long.class) val = dis.readLong();
-			else if (type == Double.TYPE || type == Double.class) val = dis.readDouble();
-			else if (type == String.class) val = dis.readUTF();
-			else {
-				ICfgTypeConvert convert = returnConvert(type);
-				val = convert.returnObject(field.getName(), dis);
-			}
-			field.setAccessible(true);
-			field.set(cfg, val);
+		for (String name: xdInfoData.getNames()) {
+			this.handlerObjConvertAndAssign(cfg, name, dis.readUTF());
 		}
 		return cfg;
-	}
-	private ICfgTypeConvert returnConvert(Class type) {
-		ICfgTypeConvert cfgTypeConvert = CfgTypeConvertManager.getInstance().returnConvert(type);
-		if (cfgTypeConvert == null) {
-			throw new RuntimeException("not define convert for type ["+type.getName()+"]");
-		}
-		return cfgTypeConvert;
 	}
 }

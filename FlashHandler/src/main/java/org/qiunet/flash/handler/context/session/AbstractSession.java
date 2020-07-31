@@ -2,41 +2,41 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import org.qiunet.flash.handler.acceptor.ProcessAcceptor;
-import org.qiunet.flash.handler.context.response.push.IMessage;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.utils.timer.DelayTask;
-import org.qiunet.utils.timer.TimerManager;
+import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
+import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
-import java.util.concurrent.TimeUnit;
+import java.net.InetSocketAddress;
 
 /**
+ * Session 的 父类
  * Created by qiunet.
  * 17/11/26
  */
-public abstract class AbstractSession implements ISession {
+public abstract class AbstractSession<P extends IPlayerActor> implements ISession<P> {
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	protected P playerActor;
 	protected Channel channel;
-	protected int queueIndex;
-	protected long uid;
 
-	public AbstractSession(long uid, Channel channel) {
-		this.uid = uid;
+	public AbstractSession(Channel channel) {
 		this.channel = channel;
-		this.resetQueueIndex();
 	}
-	@Override
-	public int getQueueIndex() {
-		return queueIndex;
+
+	public void setPlayerActor(P playerActor) {
+		this.playerActor = playerActor;
 	}
 
 	@Override
-	public void resetQueueIndex() {
-		this.queueIndex = channel.hashCode();
+	public boolean isAuth() {
+		return getUid() > 0;
 	}
 
 	@Override
-	public void setQueueIndex(int queueIndex) {
-		this.queueIndex = queueIndex;
+	public boolean isActive() {
+		return channel != null && channel.isActive();
 	}
 
 	@Override
@@ -46,32 +46,53 @@ public abstract class AbstractSession implements ISession {
 
 	@Override
 	public long getUid() {
-		return this.uid;
+		if (this.playerActor != null){
+			return this.playerActor.getPlayerId();
+		}
+		return 0;
 	}
 
 	@Override
-	public ChannelFuture writeMessage(IMessage message) {
+	public String getOpenId() {
+		if (this.playerActor != null){
+			return this.playerActor.getOpenId();
+		}
+		return null;
+	}
+
+	@Override
+	public String getIp() {
+		String ip = "";
+		if (channel.remoteAddress() != null && channel.remoteAddress() instanceof InetSocketAddress) {
+			ip = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
+		}
+		return ip;
+	}
+
+	@Override
+	public ChannelFuture writeMessage(IResponseMessage message) {
 		return channel.writeAndFlush(message.encode());
 	}
 
 	@Override
-	public void addProcessMessage(IProcessMessage msg) {
-		ProcessAcceptor.getInstance().process(this.getQueueIndex(), msg);
+	public P getPlayerActor() {
+		return playerActor;
 	}
 
 	@Override
-	public void addProcessMessage(IProcessMessage msg, long delay, TimeUnit unit) {
-		TimerManager.getInstance().scheduleWithDeley(() -> {
-			addProcessMessage(msg);
-			return null;
-			}, delay, unit);
+	public void close(CloseCause cause) {
+		logger.info("Session ["+this.toString()+"] closed by cause ["+cause+"]");
+		new SessionCloseEventData(this, cause).fireEventHandler();
+		playerActor.destroy();
+		if (channel.isActive() || channel.isOpen()) {
+			channel.close();
+		}
 	}
 
 	@Override
-	public void addProcessMessage(IProcessMessage msg, long timeMillis) {
-		TimerManager.getInstance().scheduleWithTimeMillis(() -> {
-			addProcessMessage(msg);
-			return null;
-		}, timeMillis);
+	public String toString() {
+		return "uid=" + getUid() + "\t" +
+			"openId=" + getOpenId() + "\t" +
+			"Ip=" + getIp() + "\t";
 	}
 }

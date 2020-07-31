@@ -1,10 +1,9 @@
 package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntity;
-import org.qiunet.data.core.support.cache.LocalCache;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
+import org.qiunet.data.core.support.cache.LocalCache;
 
 
 public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
@@ -25,9 +24,14 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	}
 
 	@Override
+	protected void asyncInvalidateCache(Do aDo) {
+		cache.put(aDo.key(), NULL);
+	}
+
+	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key());
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
+		databaseSupport().delete(deleteStatement, map);
 	}
 
 	@Override
@@ -51,16 +55,17 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 		if (bo == NULL) return null;
 
 		if (bo == null) {
-			DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
+			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 
-			Do aDo = DefaultDatabaseSupport.getInstance().selectOne(selectStatement, map);
+			Do aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
 				cache.putIfAbsent(key, NULL);
 				return null;
 			}
 
 			aDo.updateEntityStatus(EntityStatus.NORMAL);
-			bo = cache.putIfAbsent(key, supplier.get(aDo));
+			cache.putIfAbsent(key, supplier.get(aDo));
+			bo = cache.get(key);
 		}
 		return bo;
 	}

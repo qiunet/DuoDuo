@@ -1,46 +1,49 @@
 package org.qiunet.cfg.manager;
 
-import org.qiunet.cfg.base.ICfgManager;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Lists;
+import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
+import org.qiunet.cfg.manager.base.ICfgManager;
+import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.properties.LoaderProperties;
-import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
-import java.util.*;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 总管 游戏设定加载
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
+@Singleton
 public class CfgManagers {
-	private Logger qLogger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
-	private static CfgManagers instance = new CfgManagers();
-	private List<Container<ICfgManager>> gameSettingList = new ArrayList<>();
-	private List<Container<LoaderProperties>> propertylist = new ArrayList<>();
+	private static final CfgManagers instance = new CfgManagers();
+	private AtomicBoolean reloading = new AtomicBoolean();
+	private List<ICfgManager> gameSettingList;
 
 	private CfgManagers(){
 		if (instance != null) {
 			throw new IllegalStateException("Already has instance .");
 		}
+		this.gameSettingList = Lists.newArrayListWithCapacity(100);
 	}
 
 	public static CfgManagers getInstance(){
-		if (instance == null) {
-			synchronized (CfgManagers.class){
-				new CfgManagers();
-			}
-		}
 		return instance;
 	}
 
 	/**
 	 * 初始化会比重新加载多一层排序
 	 */
-	public void initSetting() throws Exception{
-		Collections.sort(gameSettingList);
-		Collections.sort(propertylist);
+	public synchronized void initSetting() throws Throwable {
+		gameSettingList.sort(((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result()));
 		this.reloadSetting();
 	}
 
@@ -49,42 +52,29 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public List<String> reloadSetting() throws  Exception{
-		qLogger.error("Game Setting Data Load start.....");
-		this.loadPropertySetting();
-		List<String> failFileNames = this.loadDataSetting();
-		qLogger.error("Game Setting Data Load over.....");
-		return failFileNames;
+	public synchronized void reloadSetting() throws Throwable {
+		if (reloading.get()) {
+			logger.error("Game Setting Data is loading now.....");
+			return;
+		}
+
+		logger.error("Game Setting Data Load start.....");
+		try {
+			reloading.compareAndSet(false, true);
+			this.loadDataSetting();
+		}finally {
+			reloading.compareAndSet(true, false);
+		}
+		logger.error("Game Setting Data Load over.....");
+		new CfgLoadCompleteEventData().fireEventHandler();
 	}
 
-	private Set<Class<? extends ICfgManager>> cfgClasses = new HashSet<>();
 	/**
 	 * 添加 Manager
 	 * @param manager
-	 * @param order
 	 */
-	public void addDataSettingManager(ICfgManager manager, int order) {
-		if (cfgClasses.contains(manager.getClass())) return;
-
-		this.gameSettingList.add(new Container<>(manager, order));
-		cfgClasses.add(manager.getClass());
-	}
-	/**
-	 * 添加 properties
-	 * @param properties
-	 * @param order
-	 */
-	public void addPropertySetting(LoaderProperties properties, int order) {
-		this.propertylist.add(new Container<>(properties, order));
-	}
-	/**
-	 * 加载property
-	 */
-	protected void loadPropertySetting() {
-		for (Container<? extends LoaderProperties> container : propertylist){
-			qLogger.info("Load Properties ["+ container.t.getClass().getSimpleName() +"]");
-			container.t.reload();
-		}
+	public void addCfgManager(ICfgManager manager) {
+		this.gameSettingList.add(manager);
 	}
 
 	/***
@@ -92,50 +82,47 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	protected List<String> loadDataSetting() throws  Exception{
-		List<String> failFileNames = new ArrayList<>(5);
-		for (Container<ICfgManager> container : gameSettingList) {
-			String name = container.t.loadCfg();
-			qLogger.info("Load Game Config Manager["+ container.t.getClass().getSimpleName() +"]");
-
-			if(!StringUtil.isEmpty(name)) {
-				failFileNames.add(name);
+	private synchronized void loadDataSetting() throws Throwable {
+		int size = gameSettingList.size();
+		CountDownLatch latch = new CountDownLatch(size);
+		AtomicReference<Throwable> reference = new AtomicReference<>();
+		for (ICfgManager cfgManager : gameSettingList) {
+			if (cfgManager.order() > 0) {
+				try {
+					cfgManager.loadCfg();
+				}catch (Exception e) {
+					logger.error("读取配置文件 [{}]({}) 失败!", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
+					throw e;
+				}
+				logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
+				latch.countDown();
+				continue;
 			}
-		}
-		return failFileNames;
-	}
 
-	/***
-	 * 得到cfg的数量
-	 * @return
-	 */
-	public int cfgSize(){
-		return this.gameSettingList.size();
-	}
+			DFuture<Void> dFuture = TimerManager.getInstance().executorNow(() -> {
+					cfgManager.loadCfg();
+					return null;
+			});
 
-	/***
-	 * 得到properties的数量
-	 * @return
-	 */
-	public int propertySize(){
-		return propertylist.size();
-	}
-	/***
-	 * IGameSetting  的包装类 包含排序
-	 * @param <T>
-	 */
-	private static class Container<T> implements Comparable<Container<T>> {
-		private T t;
-		private int order ;
+			dFuture.whenComplete((res, ex) -> {
+				if (ex != null) {
+					logger.error("读取配置文件" + cfgManager.getLoadFileName() + "失败!");
+					reference.compareAndSet(null, ex);
 
-		public Container(T t , int order ){
-			this.order = order;
-			this.t = t;
+					for (long i = 0; i < latch.getCount(); i++) {
+						latch.countDown();
+					}
+					return;
+				}
+
+				logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
+				latch.countDown();
+			});
 		}
 
-		@Override
-		public int compareTo(Container<T> o) {
-			return o.order - order;
+		latch.await();
+		if (reference.get() != null) {
+			throw reference.get();
 		}
 	}
 }

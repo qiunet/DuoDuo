@@ -4,7 +4,6 @@ import org.qiunet.utils.math.MathUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +64,7 @@ public class StringUtil {
 				}
 			}
 		}
-		retList.add(srcStr.substring(before, srcStr.length()));
+		retList.add(srcStr.substring(before));
 		return retList.toArray(new String[retList.size()]);
 	}
 	/***
@@ -239,7 +238,6 @@ public class StringUtil {
 	 * 屏蔽两端大部分空白字符
 	 * @return
 	 */
-	private static final Character [] spaceChars = {'ㅤ', '　', '\u007F'};
 	public static String powerfulTrim(String str){
 		if (str == null || str.isEmpty()) return str;
 
@@ -266,14 +264,19 @@ public class StringUtil {
 	 * @return
 	 */
 	private static boolean isAllowChar(char ch) {
-		if (ch > (char) 32 && ch < (char)128) {
+		if (ch >= 'A' && ch <= 'Z') {
+			return true;
+		}
+
+		if (ch >= '0' && ch <= '9') {
+			return true;
+		}
+
+		if (ch >= 'a' && ch <= 'z') {
 			return true;
 		}
 		String chStr = String.valueOf(ch);
-		if (regexChinese(chStr)) {
-			return true;
-		}
-		return false;
+		return regexChinese(chStr);
 	}
 
 	private static int start = Integer.valueOf("4e00", 16);

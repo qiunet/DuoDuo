@@ -11,5 +11,5 @@ public interface ILongConnResponseTrigger {
 	 * 触发的响应
 	 * @param data
 	 */
-	public void response(MessageContent data);
+	void response(MessageContent data);
 }

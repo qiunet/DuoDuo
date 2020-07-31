@@ -1,13 +1,11 @@
 package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntityList;
-import org.qiunet.data.core.support.cache.LocalCache;
-import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
+import org.qiunet.data.core.support.cache.LocalCache;
 
 import java.util.List;
-
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -49,10 +47,10 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		try {
 			return cache.get(key, () -> {
-				DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), key);
-				List<Do> doList = DefaultDatabaseSupport.getInstance().selectList(selectStatement, map);
+				DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+				List<Do> doList = databaseSupport().selectList(selectStatement, map);
 
-				return doList.parallelStream()
+				return doList.stream()
 					.peek(aDo -> aDo.updateEntityStatus(EntityStatus.NORMAL))
 					.collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 			});
@@ -69,9 +67,15 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	}
 
 	@Override
+	protected void asyncInvalidateCache(Do aDo) {
+		this.invalidateCache(aDo);
+	}
+
+	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create().put(defaultDo.keyFieldName(), aDo.key()).put(defaultDo.subKeyFieldName(), aDo.subKey());
-		DefaultDatabaseSupport.getInstance().delete(deleteStatement, map);
+		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key())
+			.put(defaultDo.subKeyFieldName(), aDo.subKey());
+		databaseSupport().delete(deleteStatement, map);
 	}
 
 	/***

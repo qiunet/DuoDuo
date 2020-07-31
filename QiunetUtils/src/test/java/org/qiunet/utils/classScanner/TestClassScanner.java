@@ -11,7 +11,7 @@ import org.qiunet.utils.base.BaseTest;
 public class TestClassScanner extends BaseTest {
 	public  static String clazzName;
 	@Test
-	public void testClassScanner(){
+	public void testClassScanner() throws Exception {
 		ClassScanner.getInstance().scanner();
 		Assert.assertNotNull(clazzName);
 		if (clazzName != null) {

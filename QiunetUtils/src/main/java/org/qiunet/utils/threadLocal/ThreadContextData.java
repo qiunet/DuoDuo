@@ -10,7 +10,7 @@ public class ThreadContextData {
 	private ThreadContextData(){}
 
 	/**servlet 请求 上下文*/
-	private static final ThreadLocal<Map<String,Object>> servletRequestContext =  new MyThreadLocal();
+	private static final ThreadLocal<Map<String,Object>> servletRequestContext =  ThreadLocal.withInitial(HashMap::new);
 	/**
 	 * 得到本地线程变量里面的数据
 	 * @return
@@ -59,13 +59,5 @@ public class ThreadContextData {
 	 */
 	public static void removeAll(){
 		servletRequestContext.remove();
-	}
-
-
-	private static class MyThreadLocal extends ThreadLocal<Map<String, Object>> {
-		@Override
-		protected Map<String, Object> initialValue() {
-			return new HashMap(32);
-		}
 	}
 }

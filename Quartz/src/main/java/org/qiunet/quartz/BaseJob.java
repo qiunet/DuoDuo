@@ -1,23 +1,36 @@
 package org.qiunet.quartz;
 
-import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
+import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Method;
 
 /**
  * Created by qiunet on 4/12/17.
  */
-public abstract class BaseJob implements IJob {
+abstract class BaseJob implements IJob {
 	protected final static Logger logger = LoggerFactory.getLogger(BaseJob.class);
-	protected String jobName = getClass().getSimpleName();
-
 	/**
-	 * 执行工作调度
+	 * job 的名称
 	 */
+	protected String jobName;
+	/**
+	 * 告警的执行时间毫秒
+	 */
+	protected int warnMillis;
+
+	protected BaseJob(Method method, int warnMillis) {
+		this.jobName = method.getDeclaringClass().getName() +
+			"." + method.getName();
+		this.warnMillis = warnMillis;
+	}
+
 	@Override
 	public Boolean doJob(){
-		long start = DateUtil.currentTimeMillis();
+		UseTimer useTimer = new UseTimer(jobName, warnMillis);
+		useTimer.start();
 		try {
 			 return doWork();
 		}catch (Exception e) {
@@ -25,9 +38,7 @@ public abstract class BaseJob implements IJob {
 		}
 		finally {
 			ThreadContextData.removeAll();
-			if (logExecInfo()) {
-				logger.info("Job ["+jobName+"] exec ["+(DateUtil.currentTimeMillis() - start)+"]");
-			}
+			useTimer.printUseTime();
 		}
 		return true;
 	}
@@ -37,11 +48,4 @@ public abstract class BaseJob implements IJob {
 	 */
 	protected abstract Boolean doWork() throws Exception;
 
-	/***
-	 * 是否打印execInfo信息
-	 * @return
-	 */
-	protected boolean logExecInfo(){
-		return true;
-	}
 }

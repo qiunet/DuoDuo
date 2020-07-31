@@ -12,10 +12,10 @@ public interface IRequest<RequestData> extends IAttributeData {
 	 * 得到请求数据
 	 * @return
 	 */
-	public RequestData getRequestData();
+	RequestData getRequestData();
 	/**
 	 * 得到远程的Ip地址
 	 * @return
 	 */
-	public String getRemoteAddress();
+	String getRemoteAddress();
 }
