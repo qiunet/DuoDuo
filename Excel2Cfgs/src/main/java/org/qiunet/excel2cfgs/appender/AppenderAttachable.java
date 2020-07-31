@@ -77,6 +77,7 @@ public class AppenderAttachable {
 		for (IAppender appender : appenders) {
 			appender.sheetOver(sheetName, this);
 		}
+		this.nameAppenderDatas.clear();
 		this.appenderDatas.clear();
 	}
 
