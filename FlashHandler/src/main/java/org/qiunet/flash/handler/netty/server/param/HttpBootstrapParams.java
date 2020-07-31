@@ -66,15 +66,15 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected void buildInner(HttpBootstrapParams params) {
-						if (websocketPath != null) {
+
+			if (websocketPath != null) {
 				if (websocketPath.equals(gameURIPath)) {
-					throw new IllegalArgumentException("gameUrl can equals websocketPath");
+					throw new IllegalArgumentException("gameUrl can not equals websocketPath");
 				}
 
 				if (startupContext == null) {
 					throw new NullPointerException("startupContext can not be Null");
 				}
-
 				params.websocketPath = this.websocketPath;
 			}
 
