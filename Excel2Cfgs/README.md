@@ -1,4 +1,4 @@
-# ExcelToStream
+# ExcelToCfgs
 	自己写的一个Excel转换工具. 可以将Excel转换为字节流格式的文件.
 	
 	优点:
