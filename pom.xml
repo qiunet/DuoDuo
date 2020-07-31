@@ -35,7 +35,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<modules.version>6.0.0</modules.version>
+		<modules.version>6.0.1</modules.version>
 	</properties>
 
 	<distributionManagement>
