@@ -5,6 +5,7 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
+import org.qiunet.data.util.DbProperties;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableCreateParam;
@@ -237,13 +238,18 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param clazz
 	 */
 	private void handlerTable(Class<? extends IEntity> clazz) {
+		String dbSourceName = DbUtil.getDbSource(clazz);
+		if (! DbProperties.getInstance().isDbSourceNameInRange(dbSourceName)) {
+			return;
+		}
+
 		Table table = clazz.getAnnotation(Table.class);
 		// 迭代出当前clazz所有fields存到newFieldList中
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-		boolean tableExist = createTableService.findTableCountByTableName(table.name(), DbUtil.getDbSource(clazz), table.splitTable());
+		boolean tableExist = createTableService.findTableCountByTableName(table.name(), dbSourceName, table.splitTable());
 		if (! tableExist) {
-			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), DbUtil.getDbSource(clazz));
+			TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable(), dbSourceName);
 			createTable(tableParam);
 		} else {
 			// 验证对比从model中解析的fieldList与从数据库查出来的columnList

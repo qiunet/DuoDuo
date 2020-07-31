@@ -2,7 +2,6 @@ package org.qiunet.data.core.support.db;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
@@ -98,7 +97,6 @@ class DbLoader {
 			this.loaderDataSource();
 
 			ShutdownHookThread.getInstance().addShutdownHook( () -> {
-				AbandonedConnectionCleanupThread.checkedShutdown();
 				while (DriverManager.getDrivers().hasMoreElements()){
 					Driver driver = DriverManager.getDrivers().nextElement();
 					try {
