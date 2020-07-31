@@ -37,7 +37,20 @@
 
 ​	![服务器项目结构](all/img/ServerConstructor.png)
 
-
+	思路:
+	 1. 玩家会在Redis有一份简要数据
+     
+     2. 玩家登陆进去路由服, 路由服从GlobalDB判断是否有注册过. 
+    	有直接返回对应的ServerId.没有根据服务器的情况, 分配一个Server.
+     
+     3. 排行榜玩法服数据存Redis, 不落地DB!
+     
+     4. 玩家需要进入某个玩法, 由路由服根据类型进行分配
+     
+     5. PlayerId 由3部分组成. 自增ID+ServerId+ServerId(位数)
+    	例如: 12112 自增id为12  服务id = 11 serverId位数=2
+    
+     6. 每个服务启动时候, 注册状态到Redis. 并且定时更新(ServerId 最后更新时间 服务器在线人数等)
 
 ## 安装环境
 
