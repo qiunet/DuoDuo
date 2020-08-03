@@ -140,9 +140,8 @@ class DbLoader {
 			}
 
 			SqlSessionFactory factory = buildSqlSessionFactory(dbSourceName);
+			dbNameMapping.put(dbSourceName, this.findDataBaseNameByUrl(factory));
 			this.dataSources.put(dbSourceName, factory);
-			String url = ((BasicDataSource) factory.getConfiguration().getEnvironment().getDataSource()).getUrl();
-			dbNameMapping.put(dbSourceName, this.findDataBaseNameByUrl(url));
 			sets.add(dbSourceName);
 		}
 	}
@@ -257,7 +256,8 @@ class DbLoader {
 		}
 	}
 
-	private String findDataBaseNameByUrl(String jdbcUrl) {
+	private String findDataBaseNameByUrl(SqlSessionFactory factory) {
+	 	String jdbcUrl = ((BasicDataSource) factory.getConfiguration().getEnvironment().getDataSource()).getUrl();
 		String database = null;
 		int pos, pos1;
 		String connUri;
