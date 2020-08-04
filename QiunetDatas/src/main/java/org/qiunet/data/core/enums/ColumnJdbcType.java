@@ -1,5 +1,9 @@
 package org.qiunet.data.core.enums;
 
+import org.qiunet.data.core.support.db.Column;
+
+import java.lang.reflect.Field;
+
 /***
  * 数据库的字段类型
  * 指定几个即可
@@ -64,13 +68,23 @@ public enum  ColumnJdbcType {
 			&& this.factor  < jdbcType.factor;
 	}
 
-	public static ColumnJdbcType parse(Class type, ColumnJdbcType jdbcType) {
+	public static ColumnJdbcType parse(Class type, Column column, Field field) {
+		ColumnJdbcType jdbcType = column.jdbcType();
+		boolean key = column.isKey();
+
 		if (type == Integer.class || type == int.class)
 			return INT;
 		else if (type == Long.class || type == long.class)
 			return BIGINT;
 		else if (type == String.class) {
-			if (jdbcType == null || jdbcType == NULL) return VARCHAR255;
+			if (jdbcType == NULL) {
+				if (key) return VARCHAR190;
+				return VARCHAR255;
+			}
+
+			if (key && jdbcType != VARCHAR190) {
+				throw new IllegalArgumentException("Can set jdbcType [" + jdbcType + "] to String PRIMARY KEY ["+field.getDeclaringClass().getName()+"#"+field.getName()+"]!");
+			}
 
 			if (jdbcType == INT || jdbcType == BIGINT)
 				throw new IllegalArgumentException("Can set jdbcType [" + jdbcType + "] to String Column");

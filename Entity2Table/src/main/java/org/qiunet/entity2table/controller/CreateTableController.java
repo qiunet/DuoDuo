@@ -168,7 +168,7 @@ class CreateTableController implements IApplicationContextAware {
 			Column column = field.getAnnotation(Column.class);
 			FieldParam param = new FieldParam();
 			param.setFieldName(field.getName());
-			ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column.jdbcType());
+			ColumnJdbcType columnJdbcType = ColumnJdbcType.parse(field.getType(), column, field);
 			param.setFieldType(columnJdbcType.getJdbcTypeDesc());
 			param.setColumnJdbcType(columnJdbcType);
 			// 主键或唯一键时设置必须不为null
