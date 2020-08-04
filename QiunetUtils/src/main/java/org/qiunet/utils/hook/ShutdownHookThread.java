@@ -1,6 +1,8 @@
 package org.qiunet.utils.hook;
 
 import org.qiunet.utils.classScanner.Singleton;
+import org.qiunet.utils.listener.EventHandlerWeight;
+import org.qiunet.utils.listener.EventHandlerWeightType;
 import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -72,6 +74,7 @@ public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdow
 
 
 	@Override
+	@EventHandlerWeight(EventHandlerWeightType.LESS)
 	public void onShutdown(ServerShutdownEventData data) {
 		this.shutdownNow();
 	}
