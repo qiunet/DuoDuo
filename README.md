@@ -6,6 +6,10 @@
     Duoduo的原则是 理解后,融入自己的代码中. 所以有问题时候,
     能够在第一时间反应过来问题出在哪.
 
+## Git配置
+ - 不对换行符做自动转换<br />
+`git config --global core.autocrlf input`
+
 ## 名词解释
 * Do Data Object 持久化对象(阿里规范) 负责跟数据库交互的对象
 * Bo Business Object 业务对象(阿里规范), 给业务提供支持的对象
