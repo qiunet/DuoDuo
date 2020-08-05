@@ -1,5 +1,7 @@
 package org.qiunet.utils.file;
 
+import com.google.common.base.Preconditions;
+import org.apache.commons.io.FileUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -10,9 +12,11 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author qiunet
@@ -200,5 +204,35 @@ public class FileUtil {
 
 		byte[] bytes = Files.readAllBytes(file.toPath());
 		return new String(bytes, StandardCharsets.UTF_8);
+	}
+
+	public static void listFile(Path path, List<File> retList, Predicate<File> predicate) {
+		Preconditions.checkNotNull(retList);
+
+		File file = path.toFile();
+		if (! file.exists()) return;
+
+		File[] files = file.listFiles();
+		if (files == null) return;
+
+		for (File file2 : files) {
+			if (file2.isFile() && predicate.test(file2)) {
+				retList.add(file2);
+				continue;
+			}
+
+			if (file2.isDirectory()) {
+				listFile(file2.toPath(), retList, predicate);
+			}
+		}
+	}
+
+	/**
+	 * 清理文件夹
+	 * @param directory
+	 * @throws IOException
+	 */
+	public static void cleanDirectory(final File directory) throws IOException {
+		FileUtils.cleanDirectory(directory);
 	}
 }

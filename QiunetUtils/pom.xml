@@ -54,10 +54,6 @@
 			<artifactId>reflections</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
-			<artifactId>JavaAgent</artifactId>
-		</dependency>
-		<dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
