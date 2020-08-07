@@ -48,7 +48,7 @@ public final class JavaAgent {
 	public static void agentmain(String args, Instrumentation ins) {
 		Path path = Paths.get(args);
 		logger("======开始热加载======");
-		List<File> files = new ArrayList<>();
+		logger("=======热加载目录: "+path.toString());
 		List<ClassDefinition> classDefinitions = new ArrayList<>();
 		List<File> fileList = new ArrayList<>();
 		listFile(path, fileList);
@@ -58,9 +58,11 @@ public final class JavaAgent {
 				ClassFile classFile = ClassFile.read(file);
 				String className = classFile.getName();
 				className = className.replaceAll("\\/", ".");
+
+				logger("=======热加载Class名: "+className);
+
 				classDefinitions.add(new ClassDefinition(Class.forName(className),
 					Files.readAllBytes(file.toPath())));
-				files.add(file);
 			} catch (Exception e) {
 				logger("==HotSwap Fail!", e);
 			}
@@ -89,7 +91,9 @@ public final class JavaAgent {
 
 	private static void listFile(Path path, List<File> retList) {
 		File[] files = path.toFile().listFiles();
-		if (files == null) return;
+		if (files == null) {
+			return;
+		}
 
 		for (File file2 : files) {
 			if (file2.isFile() && file2.getName().endsWith(".class")) {
