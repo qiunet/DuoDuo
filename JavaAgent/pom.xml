@@ -22,7 +22,7 @@
 						<manifestEntries>
 							<Can-Set-Native_Method_Prefix>true</Can-Set-Native_Method_Prefix>
 							<Can-Retransform-Classes>true</Can-Retransform-Classes>
-							<Agent-Class>org.qiunet.agent.JavaAgent</Agent-Class>
+							<Agent-Class>org.qAgent.JavaAgent</Agent-Class>
 							<Can-Redefine-Classes>true</Can-Redefine-Classes>
 						</manifestEntries>
 					</archive>
