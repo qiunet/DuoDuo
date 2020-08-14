@@ -24,6 +24,14 @@ public interface IRedisUtil {
 	 * @return
 	 */
 	RedisLock redisLock(String key);
+
+	/**
+	 * 使用指定的key指定一段代码.
+	 * @param key
+	 * @param run
+	 * @return 是否锁定成功. 成功则执行了
+	 */
+	boolean redisLockRun(String key, Runnable run);
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close 默认打印日志

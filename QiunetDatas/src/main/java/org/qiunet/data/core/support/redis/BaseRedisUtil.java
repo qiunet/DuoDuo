@@ -23,6 +23,17 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return new RedisLock(this, key);
 	}
 
+	@Override
+	public boolean redisLockRun(String key, Runnable run) {
+		try (RedisLock lock = redisLock(key)) {
+			if (lock.lock()) {
+				run.run();
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
 		long startDt = System.currentTimeMillis();
 		Object object = method.invoke(jedis, args);
