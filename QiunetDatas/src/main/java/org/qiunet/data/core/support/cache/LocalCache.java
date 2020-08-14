@@ -24,7 +24,7 @@ public class LocalCache<Key, Val> {
 
 	public LocalCache() {
 		this.localCache = CacheBuilder.newBuilder()
-			.expireAfterAccess(2, TimeUnit.HOURS)
+			.expireAfterAccess(12, TimeUnit.HOURS)
 //			.maximumSize(10000)
 			.softValues()
 			.build();
