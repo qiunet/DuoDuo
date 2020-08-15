@@ -1,4 +1,4 @@
-package org.qiunet.utils.encryptAndDecrypt;
+package org.qiunet.utils.secret;
 /**
  * @author Zero
  * @mail baozilaji@126.com

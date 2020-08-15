@@ -1,4 +1,4 @@
-package org.qiunet.utils.encryptAndDecrypt;
+package org.qiunet.utils.secret;
 
 import org.junit.Assert;
 import org.junit.Test;

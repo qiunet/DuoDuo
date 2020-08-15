@@ -1,4 +1,4 @@
-package org.qiunet.utils.encryptAndDecrypt;
+package org.qiunet.utils.secret;
 
 import java.util.zip.CRC32;
 

@@ -1,4 +1,4 @@
-package org.qiunet.utils.encryptAndDecrypt;
+package org.qiunet.utils.secret;
 
 import com.google.common.base.Preconditions;
 
