@@ -5,9 +5,9 @@ import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.data.ServerShutdownEventData;
+import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.List;

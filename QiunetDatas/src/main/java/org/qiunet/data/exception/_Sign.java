@@ -3,8 +3,8 @@ package org.qiunet.data.exception;
 import org.qiunet.utils.classScanner.IApplicationContext;
 import org.qiunet.utils.classScanner.IApplicationContextAware;
 import org.qiunet.utils.classScanner.Singleton;
-import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.secret.StrCodecUtil;
 
 /***
  * 多多签名

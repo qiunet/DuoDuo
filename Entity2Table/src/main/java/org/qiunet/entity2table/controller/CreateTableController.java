@@ -19,10 +19,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -129,8 +126,9 @@ class CreateTableController implements IApplicationContextAware {
 				}
 			}
 		}
-
-		modifyFieldList.forEach(f -> this.modifyTableField(new TableParam(table.name(), f, table.splitTable(), DbUtil.getDbSource(clazz))));
+		if (! modifyFieldList.isEmpty()) {
+			this.modifyTableField(new TableParam(table.name(), modifyFieldList, table.splitTable(), DbUtil.getDbSource(clazz)));
+		}
 	}
 
 	/**
@@ -147,7 +145,9 @@ class CreateTableController implements IApplicationContextAware {
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
 				.collect(Collectors.toList());
 
-		addFieldList.forEach(fieldParam -> this.addTableFields(new TableParam(table.name(), fieldParam, table.splitTable(), DbUtil.getDbSource(clazz))));
+		if (! addFieldList.isEmpty()) {
+			this.addTableFields(new TableParam(table.name(), addFieldList, table.splitTable(), DbUtil.getDbSource(clazz)));
+		}
 	}
 
 	/**
@@ -193,9 +193,10 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param alterParam 用于存需要更新字段类型等的表名+结构
 	 */
 	private void modifyTableField(TableParam alterParam) {
-		logger.info("\n\n========开始修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
+		String [] changedFieldNames = alterParam.getFieldNames();
+		logger.info("========开始修改表" + alterParam.getTableName() + "中的字段" + Arrays.toString(changedFieldNames));
 		createTableService.modifyTableField(alterParam);
-		logger.info("\n\n========完成修改表" + alterParam.getTableName() + "中的字段" + alterParam.getField().getFieldName());
+		logger.info("========完成修改表" + alterParam.getTableName() + "中的字段" + Arrays.toString(changedFieldNames));
 	}
 
 	/**
@@ -204,10 +205,11 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param tableParam 用于存需要增加字段的表名+结构
 	 */
 	private void addTableFields(TableParam tableParam) {
+		String [] changedFieldNames = tableParam.getFieldNames();
 		// 做增加字段操作
-		logger.info("开始为表" + tableParam.getTableName() + "增加字段" + tableParam.getField().getFieldName());
+		logger.info("开始为表" + tableParam.getTableName() + "增加字段" + Arrays.toString(changedFieldNames));
 		createTableService.addTableField(tableParam);
-		logger.info("完成为表" + tableParam.getTableName() + "增加字段" + tableParam.getField().getFieldName());
+		logger.info("完成为表" + tableParam.getTableName() + "增加字段" + Arrays.toString(changedFieldNames));
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package org.qiunet.entity2table.command;
 
+import java.util.List;
+
 /***
  * 修改表结构使用
  *
@@ -10,7 +12,7 @@ public class TableParam {
 
 	private String tableName;
 
-	private FieldParam field;
+	private List<FieldParam> fields;
 
 	private String dbName;
 
@@ -18,11 +20,15 @@ public class TableParam {
 
 	private String dbSource;
 
-	public TableParam(String tableName, FieldParam field, boolean splitTable, String dbSource) {
+	public TableParam(String tableName, List<FieldParam> fields, boolean splitTable, String dbSource) {
 		this.splitTable = splitTable;
 		this.dbSource = dbSource;
 		this.tableName = tableName;
-		this.field = field;
+		this.fields = fields;
+	}
+
+	public String [] getFieldNames(){
+		return fields.stream().map(FieldParam::getFieldName).toArray(String[]::new);
 	}
 
 	public String getDbSource() {
@@ -37,12 +43,8 @@ public class TableParam {
 		this.tableName = tableName;
 	}
 
-	public FieldParam getField() {
-		return field;
-	}
-
-	public void setField(FieldParam field) {
-		this.field = field;
+	public List<FieldParam> getFields() {
+		return fields;
 	}
 
 	public String getDbName() {

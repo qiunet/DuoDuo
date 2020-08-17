@@ -3,7 +3,7 @@ package org.qiunet.utils.string;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
-import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
+import org.qiunet.utils.secret.StrCodecUtil;
 
 /**
  * @author qiunet

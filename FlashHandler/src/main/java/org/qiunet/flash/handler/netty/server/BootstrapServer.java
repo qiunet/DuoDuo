@@ -6,11 +6,11 @@ import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
-import org.qiunet.utils.encryptAndDecrypt.StrCodecUtil;
 import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.data.ServerStartUpEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
+import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 

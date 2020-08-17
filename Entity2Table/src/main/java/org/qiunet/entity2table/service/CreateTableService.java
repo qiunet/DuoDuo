@@ -101,6 +101,11 @@ public class CreateTableService {
 	}
 	/**
 	 * 增加列
+	 *
+	 * ALTER TABLE `qiunet_db`.`equip`
+	 * ADD COLUMN `co1` int NULL,
+	 * ADD COLUMN `co2` varchar(255) NULL;
+	 *
 	 * @param alterParam
 	 */
 	public void addTableField(TableParam alterParam) {
@@ -114,6 +119,9 @@ public class CreateTableService {
 
 	/**
 	 * 修改列
+	 * ALTER TABLE `qiunet_db`.`equip`
+	 * MODIFY COLUMN `equip_id` bigint NOT NULL COMMENT '装备id',
+	 * MODIFY COLUMN `level` int NOT NULL COMMENT '装备等级';
 	 * @param alterParam
 	 */
 	public void modifyTableField(TableParam alterParam) {

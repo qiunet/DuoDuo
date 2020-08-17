@@ -42,25 +42,29 @@
 
 	<!-- 验证表是否存在 -->
 	<select id="findTableNamesByDbName" resultType="String" parameterType="String">
-		select `table_name` from information_schema.tables where table_schema=#{value};
+		SELECT `table_name` FROM information_schema.tables WHERE table_schema=#{value};
 	</select>
 
 	<!-- 根据表名查询表的结构 -->
 	<select id="findColumnByDbName" resultType="org.qiunet.entity2table.command.Columns"
 			parameterType="String">
-		select `table_schema`, `table_name`, `column_name`, `column_default`, `is_nullable`, `column_type`, `extra` from information_schema.columns where table_schema=#{value};
+		SELECT `table_schema`, `table_name`, `column_name`, `column_default`, `is_nullable`, `column_type`, `extra` from information_schema.columns where table_schema=#{value};
 	</select>
 
 	<!-- 增加字段 -->
 	<select id="addTableField" parameterType="org.qiunet.entity2table.command.TableParam">
-		alter table <if test="dbName!=null">${dbName}.</if> `${tableName}` add
-		<include refid="commonSql"></include>
+		ALTER TABLE <if test="dbName!=null">${dbName}.</if> `${tableName}`
+		<foreach collection="fields" item="field" separator="," close=";">
+			ADD COLUMN <include refid="commonSql"></include>
+		</foreach>
 	</select>
 
 
 	<!-- 修改字段 -->
 	<select id="modifyTableField" parameterType="org.qiunet.entity2table.command.TableParam">
-		alter table <if test="dbName!=null">${dbName}.</if>`${tableName}` modify
-		<include refid="commonSql"></include>
+		ALTER TABLE <if test="dbName!=null">${dbName}.</if>`${tableName}`
+		<foreach collection="fields" item="field" separator="," close=";">
+			MODIFY COLUMN <include refid="commonSql"></include>
+		</foreach>
 	</select>
 </mapper>

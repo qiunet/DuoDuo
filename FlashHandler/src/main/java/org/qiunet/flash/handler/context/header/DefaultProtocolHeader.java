@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
