@@ -1,0 +1,12 @@
+*.java 			text diff=java eol=lf
+
+*.vm 			text eol=lf
+*.md 			text eol=lf
+*.sql 			text eol=lf
+
+*.xml 			text eol=lf
+*.json 			text eol=lf
+*.xd 			binary
+
+*.jpg 			binary
+*.png 			binary
