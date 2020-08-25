@@ -1,0 +1,117 @@
+package org.qiunet.utils.collection;
+
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+/***
+ *
+ * 双向map
+ * key val 可以互查 一般用到游戏开始的缓存. 很多东西需要互查.
+ * key val 必须都是可以作为map key的对象. 且值不能重复.
+ *
+ * @author qiunet
+ * 2020-08-24 22:44
+ **/
+public class DuMap<Key, Val> {
+	private Map<Key, Val> map1;
+	private Map<Val, Key> map2;
+
+
+	public DuMap(){
+		this(16);
+	}
+
+	public DuMap(int cap) {
+		this.map1 = new HashMap<>(cap);
+		this.map2 = new HashMap<>(cap);
+	}
+
+	/**
+	 * 添加一堆key val
+	 * @param key
+	 * @param val
+	 */
+	public DuMap<Key, Val> add(Key key, Val val) {
+		if (this.containsKey(key)) {
+			throw new IllegalArgumentException("Key ["+key.toString()+"] is repeated");
+		}
+
+		if (this.containsVal(val)) {
+			throw new IllegalArgumentException("Val ["+val.toString()+"] is repeated");
+		}
+
+		map1.put(key, val);
+		map2.put(val, key);
+		return this;
+	}
+
+	/**
+	 * 对象中.是否有key值
+	 * @param key
+	 * @return
+	 */
+	public boolean containsKey(Key key) {
+		return map1.containsKey(key);
+	}
+
+	/**
+	 * 对象中是否有该val值.
+	 * @param val
+	 * @return
+	 */
+	public boolean containsVal(Val val) {
+		return map2.containsKey(val);
+	}
+
+	/**
+	 * 通过val得到key
+	 * @param val
+	 * @return
+	 */
+	public Key getKey(Val val) {
+		return map2.get(val);
+	}
+
+	/**
+	 * 通过key 得到val
+	 * @param key
+	 * @return
+	 */
+	public Val getVal(Key key) {
+		return map1.get(key);
+	}
+
+	/**
+	 * 是否为空
+	 * @return
+	 */
+	public boolean isEmpty(){
+		return map1.isEmpty();
+	}
+
+	/**
+	 * 得到长度
+	 * @return
+	 */
+	public int size(){
+		return map2.size();
+	}
+
+	/**
+	 * 返回所有的key
+	 * @return
+	 */
+	public Set<Key> keys(){
+		return this.map1.keySet();
+	}
+
+	/**
+	 * 返回所有的val
+	 * @return
+	 */
+	public Set<Val> vals() {
+		return this.map2.keySet();
+	}
+}
