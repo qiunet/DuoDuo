@@ -7,7 +7,7 @@ package org.qiunet.utils.args;
  * @author qiunet
  * 2020-08-26 07:59
  **/
-public interface IArgs {
+public interface IArgsContainer {
 	/**
 	 * 获取 {@link Argument} 没有会默认创建
 	 * @param key

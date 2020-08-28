@@ -11,7 +11,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-08-25 21:50
  **/
-public class ArgsContainer implements IArgs {
+public class ArgsContainer implements IArgsContainer {
 	private Class<? extends IArgKey> keyClass;
 	private Map<String, Argument> attributes = Maps.newConcurrentMap();
 
