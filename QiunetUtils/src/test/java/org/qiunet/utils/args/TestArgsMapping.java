@@ -7,7 +7,7 @@ import org.junit.Test;
  * Created by qiunet.
  * 17/10/10
  */
-public class TestArgs {
+public class TestArgsMapping {
 	@Test
 	public void testArgs(){
 		String [] args = {"--qiunet=qiuyang", "qiu=yang", "--qiunet1=qiuyang1"};
