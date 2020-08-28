@@ -12,10 +12,10 @@ public class LogUtils {
 
 
 	public static void printStackTrace(String message) {
-		LoggerType.DUODUO.error(generatePrintStackTrace(message));
+		LoggerType.DUODUO.error(dumpStack(message));
 	}
 
-	public static String generatePrintStackTrace(String message) {
+	public static String dumpStack(String message) {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 		StringJoiner joiner = new StringJoiner("\r\n");
 		joiner.add("["+message+"] StackTrace");
