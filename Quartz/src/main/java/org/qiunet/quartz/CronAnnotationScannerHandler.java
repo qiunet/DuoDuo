@@ -12,7 +12,8 @@ public class CronAnnotationScannerHandler implements IApplicationContextAware {
 		context.getMethodsAnnotatedWith(CronSchedule.class).stream()
 			.map(m -> {
 				CronSchedule cron = m.getAnnotation(CronSchedule.class);
-				return new CommonCronJob(cron.value(), cron.logExecInfo(), m, context.getInstanceOfClass(m.getDeclaringClass()));
+				return new CommonCronJob(CronConfigProperties.getInstance().getProperty(cron.value()),
+						cron.logExecInfo(), m, context.getInstanceOfClass(m.getDeclaringClass()));
 				}
 			).forEach(QuartzSchedule.getInstance()::addJob);
 	}
