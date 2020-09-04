@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-import org.qiunet.utils.classScanner.ClassScanner;
+import org.qiunet.scanner.ClassScanner;
 
 import java.util.concurrent.locks.LockSupport;
 

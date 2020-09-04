@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.classScanner.Singleton;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
-@Singleton
 public class CfgManagers {
 	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 

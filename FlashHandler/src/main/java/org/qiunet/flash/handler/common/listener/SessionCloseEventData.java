@@ -2,8 +2,7 @@ package org.qiunet.flash.handler.common.listener;
 
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.utils.listener.EventListener;
-import org.qiunet.utils.listener.IEventData;
+import org.qiunet.listener.event.IEventData;
 
 /***
  *
@@ -11,7 +10,6 @@ import org.qiunet.utils.listener.IEventData;
  * @author qiunet
  * 2020-02-06 14:18
  **/
-@EventListener(SessionCloseEventData.SessionCloseListener.class)
 public class SessionCloseEventData implements IEventData {
 	private ISession session;
 	private CloseCause cause;
@@ -28,7 +26,4 @@ public class SessionCloseEventData implements IEventData {
 		return session;
 	}
 
-	public interface SessionCloseListener {
-		void onCloseSession(SessionCloseEventData data);
-	}
 }

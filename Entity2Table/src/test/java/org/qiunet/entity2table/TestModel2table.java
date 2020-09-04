@@ -1,6 +1,6 @@
 package org.qiunet.entity2table;
 
-import org.qiunet.utils.classScanner.ClassScanner;
+import org.qiunet.scanner.ClassScanner;
 
 /**
  * Created by zhengj

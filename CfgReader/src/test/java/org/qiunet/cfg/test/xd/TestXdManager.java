@@ -2,7 +2,7 @@ package org.qiunet.cfg.test.xd;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.utils.classScanner.ClassScanner;
+import org.qiunet.scanner.ClassScanner;
 
 /***
  *

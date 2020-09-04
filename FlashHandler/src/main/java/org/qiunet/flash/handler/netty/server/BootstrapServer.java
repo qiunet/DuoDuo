@@ -6,8 +6,8 @@ import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
-import org.qiunet.utils.listener.data.ServerShutdownEventData;
-import org.qiunet.utils.listener.data.ServerStartUpEventData;
+import org.qiunet.listener.event.data.ServerShutdownEventData;
+import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.secret.StrCodecUtil;
@@ -167,7 +167,7 @@ public class BootstrapServer {
 	 */
 	public void await(){
 		logger.info(StrCodecUtil.decrypt(ICON));
-		ServerStartUpEventData.fireStartEventHandler();
+		ServerStartupEventData.fireStartupEventHandler();
 
 		awaitThread = Thread.currentThread();
 		LockSupport.park();

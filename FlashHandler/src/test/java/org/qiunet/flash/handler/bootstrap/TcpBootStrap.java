@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.startup.context.StartupContext;
-import org.qiunet.utils.classScanner.ClassScanner;
+import org.qiunet.scanner.ClassScanner;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

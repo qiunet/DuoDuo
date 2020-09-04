@@ -1,9 +1,5 @@
 package org.qiunet.utils.hook;
 
-import org.qiunet.utils.classScanner.Singleton;
-import org.qiunet.utils.listener.EventHandlerWeight;
-import org.qiunet.utils.listener.EventHandlerWeightType;
-import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -15,8 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @Author qiunet
  * @Date Create in 2018/5/31 12:04
  **/
-@Singleton
-public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdownListener {
+public class ShutdownHookThread {
 	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private AtomicBoolean executing = new AtomicBoolean();
@@ -71,13 +66,12 @@ public class ShutdownHookThread implements ServerShutdownEventData.ServerShutdow
 			this.run();
 		}
 	}
-
-
-	@Override
-	@EventHandlerWeight(EventHandlerWeightType.LESS)
-	public void onShutdown(ServerShutdownEventData data) {
-		this.shutdownNow();
-	}
+//
+//
+//	@EventListener(EventHandlerWeightType.LESS)
+//	public void onShutdown(ServerShutdownEventData data) {
+//		this.shutdownNow();
+//	}
 
 	private void run() {
 		logger.error("----------------Shutdown now-----------------------");

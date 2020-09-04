@@ -1,6 +1,7 @@
 package org.qiunet.tests;
 
 import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.scanner.ClassScanner;
 import org.qiunet.test.executor.RobotExecutor;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.init.DefaultRobotInfo;
@@ -16,7 +17,6 @@ import org.qiunet.tests.TestCase.room.TestLoginRoom;
 import org.qiunet.tests.robot.Robot;
 import org.qiunet.tests.server.ServerStartup;
 import org.qiunet.tests.server.handler.ServerUidAndTokenBuilder;
-import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

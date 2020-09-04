@@ -1,17 +1,16 @@
 package org.qiunet.data.core.support.db;
 
-import org.qiunet.utils.listener.EventHandlerWeight;
-import org.qiunet.utils.listener.EventHandlerWeightType;
-import org.qiunet.utils.listener.data.ServerStartUpEventData;
+import org.qiunet.listener.event.EventHandlerWeightType;
+import org.qiunet.listener.event.EventListener;
+import org.qiunet.listener.event.data.ServerStartupEventData;
 
 /***
  * db 启动监听处理
  */
-class DbStartHandler implements ServerStartUpEventData.ServerStartUpListener {
+class DbStartHandler {
 
-	@Override
-	@EventHandlerWeight(EventHandlerWeightType.HIGHEST)
-	public void onServerStartUp(ServerStartUpEventData data) {
+	@EventListener(EventHandlerWeightType.HIGHEST)
+	public void onServerStartUp(ServerStartupEventData data) {
 		DbLoader.getInstance();
 	}
 }

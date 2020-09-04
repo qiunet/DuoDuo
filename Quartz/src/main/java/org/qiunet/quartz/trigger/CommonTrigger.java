@@ -1,7 +1,7 @@
 package org.qiunet.quartz.trigger;
 
+import org.qiunet.listener.event.data.NewDayEventData;
 import org.qiunet.quartz.CronSchedule;
-import org.qiunet.quartz.listener.NewDayEventData;
 
 /***
  *
@@ -14,6 +14,6 @@ class CommonTrigger {
 	 */
 	@CronSchedule("0 0 0 * * ?")
 	public void newDayTrigger(){
-		new NewDayEventData().fireEventHandler();
+		NewDayEventData.fireNewDayEventHandler();
 	}
 }

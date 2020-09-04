@@ -3,10 +3,10 @@ package org.qiunet.excel2cfgs.setting;
 
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
-import org.qiunet.utils.classScanner.Singleton;
+import org.qiunet.listener.event.EventListener;
+import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.string.StringUtil;
 
@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2019-11-06 14:57
  ***/
-@Singleton
-public class SettingManager implements ServerShutdownEventData.ServerShutdownListener {
+public class SettingManager {
 	private static SettingManager instance;
 
 	private SettingManager(){
@@ -148,7 +147,7 @@ public class SettingManager implements ServerShutdownEventData.ServerShutdownLis
 		this.setting.update();
 	}
 
-	@Override
+	@EventListener
 	public void onShutdown(ServerShutdownEventData data) {
 		Excel2CfgsUtil.writeToProjectFile(this.setting);
 	}

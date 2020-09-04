@@ -1,7 +1,8 @@
 package org.qiunet.utils.args;
 
-import org.qiunet.utils.classScanner.IApplicationContext;
-import org.qiunet.utils.classScanner.IApplicationContextAware;
+
+import org.qiunet.scanner.IApplicationContext;
+import org.qiunet.scanner.IApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

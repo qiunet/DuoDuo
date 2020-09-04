@@ -6,9 +6,8 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
-import org.qiunet.utils.classScanner.IApplicationContext;
-import org.qiunet.utils.classScanner.IApplicationContextAware;
-import org.qiunet.utils.classScanner.Singleton;
+import org.qiunet.scanner.IApplicationContext;
+import org.qiunet.scanner.IApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -21,7 +20,6 @@ import java.util.Set;
  * @author qiunet
  *         Created on 17/2/9 15:25.
  */
-@Singleton
 public class CfgScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override

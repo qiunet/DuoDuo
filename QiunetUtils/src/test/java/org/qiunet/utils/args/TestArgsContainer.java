@@ -2,7 +2,7 @@ package org.qiunet.utils.args;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.utils.classScanner.ClassScanner;
+import org.qiunet.scanner.ClassScanner;
 
 /***
  *

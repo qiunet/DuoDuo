@@ -1,10 +1,10 @@
 package org.qiunet.data.async;
 
+import org.qiunet.listener.event.EventHandlerWeightType;
+import org.qiunet.listener.event.EventListener;
+import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.hook.ShutdownHookThread;
-import org.qiunet.utils.listener.EventHandlerWeight;
-import org.qiunet.utils.listener.EventHandlerWeightType;
-import org.qiunet.utils.listener.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * Created on 17/2/11 08:04.
  */
- public class AsyncJobSupport implements ServerShutdownEventData.ServerShutdownListener {
+ public class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
 			8,
@@ -54,8 +54,7 @@ import java.util.concurrent.TimeUnit;
 		}, MathUtil.random(0, (int) unit.toMillis(maxDelay)), TimeUnit.MILLISECONDS));
 	}
 
-	@Override
-	@EventHandlerWeight(EventHandlerWeightType.HIGHEST)
+	@EventListener(EventHandlerWeightType.HIGHEST)
 	public void onShutdown(ServerShutdownEventData data) {
 		this.asyncToDb(100, TimeUnit.MILLISECONDS);
 		logger.info("Shutdown async update success!");
