@@ -5,17 +5,15 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.0-SNAPSHOT</version>
+		<version>6.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
 	<packaging>jar</packaging>
-	<version>${modules.version}</version>
 	<name>DuoDuo/All-in-One</name>
 
 	<properties>
 		<generatedSourceDir>${project.build.directory}/src</generatedSourceDir>
-		<module.version>${modules.version}</module.version>
 	</properties>
 
 	<build>
@@ -23,7 +21,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.4</version>
 				<executions>
 					<execution>
 						<id>javadoc</id>
@@ -39,7 +36,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version>
 				<executions>
 					<execution>
 						<id>source</id>
@@ -51,7 +47,6 @@
 
 			<plugin>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
 				<executions>
 					<!-- Populate the properties whose key is groupId:artifactId:type
                                              and whose value is the path to the artifact -->
@@ -109,7 +104,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<id>add-source</id>
@@ -204,72 +198,56 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>FlashHandler</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetUtils</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>Entity2Table</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetDatas</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
-			<artifactId>EventLog</artifactId>
-			<version>${module.version}</version>
-			<optional>true</optional>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ProjectInit</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>CfgReader</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>Quartz</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>GameTest</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>EventLog</artifactId>
-			<version>${module.version}</version>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
@@ -291,7 +269,7 @@
 			<artifactId>xstream</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>JavaAgent</artifactId>
 		</dependency>
 		<dependency>

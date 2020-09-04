@@ -5,19 +5,17 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.0-SNAPSHOT</version>
+		<version>6.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>EventLog</artifactId>
-	<version>${modules.version}</version>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.18.1</version>
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
@@ -38,7 +36,7 @@
 			<artifactId>netty-all</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>

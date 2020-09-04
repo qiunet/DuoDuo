@@ -5,16 +5,15 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.0-SNAPSHOT</version>
+		<version>6.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>Listener</artifactId>
-	<version>${modules.version}</version>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.qiunet</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>Scanner</artifactId>
 		</dependency>
 		<dependency>
