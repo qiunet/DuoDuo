@@ -6,8 +6,8 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;

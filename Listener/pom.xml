@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Scanner</artifactId>
+			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>

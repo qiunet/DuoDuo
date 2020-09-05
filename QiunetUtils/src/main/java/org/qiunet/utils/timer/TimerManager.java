@@ -5,7 +5,6 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.*;
@@ -22,7 +21,6 @@ public class TimerManager {
 
 	private TimerManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
-		ShutdownHookThread.getInstance().addShutdownHook(this::shutdown);
 		instance = this;
 	}
 

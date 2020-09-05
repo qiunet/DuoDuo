@@ -24,7 +24,6 @@
 		<module>all</module>
 		<module>EventLog</module>
 		<module>Listener</module>
-		<module>Scanner</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -182,11 +181,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Listener</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>Scanner</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

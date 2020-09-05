@@ -1,7 +1,7 @@
 package org.qiunet.data.core.support.redis;
 
+import org.qiunet.listener.event.hook.ShutdownHookThread;
 import org.qiunet.utils.data.IKeyValueData;
-import org.qiunet.utils.hook.ShutdownHookThread;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPool;

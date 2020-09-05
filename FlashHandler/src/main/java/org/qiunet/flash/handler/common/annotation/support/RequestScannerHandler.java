@@ -5,8 +5,8 @@ import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 
 import java.lang.reflect.Modifier;
 

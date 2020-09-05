@@ -2,7 +2,7 @@ package org.qiunet.cfg.test.manager;
 
 import org.junit.Test;
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ClassScanner;
 
 /***
  *

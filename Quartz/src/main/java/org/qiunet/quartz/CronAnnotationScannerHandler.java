@@ -1,8 +1,8 @@
 package org.qiunet.quartz;
 
 
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 
 /***
  * 扫描annotation

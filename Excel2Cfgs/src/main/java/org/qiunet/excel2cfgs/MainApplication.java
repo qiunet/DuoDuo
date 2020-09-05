@@ -7,8 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
-import org.qiunet.scanner.ClassScanner;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.ClassScanner;
 
 import java.io.IOException;
 

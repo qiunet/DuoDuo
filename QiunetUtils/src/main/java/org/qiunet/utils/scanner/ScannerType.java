@@ -1,4 +1,4 @@
-package org.qiunet.scanner;
+package org.qiunet.utils.scanner;
 
 /***
  *

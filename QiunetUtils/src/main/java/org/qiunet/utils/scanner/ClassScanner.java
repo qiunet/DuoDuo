@@ -1,4 +1,4 @@
-package org.qiunet.scanner;
+package org.qiunet.utils.scanner;
 
 import com.google.common.collect.ComparisonChain;
 import org.reflections.Reflections;

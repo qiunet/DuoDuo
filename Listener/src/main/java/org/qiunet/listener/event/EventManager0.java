@@ -3,8 +3,8 @@ package org.qiunet.listener.event;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

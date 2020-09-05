@@ -7,7 +7,7 @@ import org.qiunet.cfg.annotation.CfgWrapperAutoWired;
 import org.qiunet.cfg.wrapper.INestListCfgWrapper;
 import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
 import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
-import org.qiunet.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ClassScanner;
 
 /***
  *

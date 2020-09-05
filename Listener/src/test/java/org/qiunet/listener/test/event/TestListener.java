@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.listener.event.EventManager;
-import org.qiunet.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ClassScanner;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

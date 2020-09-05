@@ -1,8 +1,6 @@
-package org.qiunet.scanner.test;
+package org.qiunet.utils.scanner;
 
 import org.junit.Assert;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
 
 import java.util.Set;
 

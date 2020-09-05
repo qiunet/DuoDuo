@@ -1,4 +1,4 @@
-package org.qiunet.scanner.test;
+package org.qiunet.utils.scanner;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

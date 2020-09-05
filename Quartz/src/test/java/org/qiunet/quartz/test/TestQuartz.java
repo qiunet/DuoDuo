@@ -2,8 +2,8 @@ package org.qiunet.quartz.test;
 
 import org.junit.Test;
 import org.qiunet.quartz.CronSchedule;
-import org.qiunet.scanner.ClassScanner;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.ClassScanner;
 
 public class TestQuartz {
 	@Test

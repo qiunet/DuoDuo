@@ -1,8 +1,8 @@
 package org.qiunet.data.exception;
 
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.secret.StrCodecUtil;
 
 /***

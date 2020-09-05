@@ -1,4 +1,4 @@
-package org.qiunet.scanner.test;
+package org.qiunet.utils.scanner;
 
 /**
  * @author qiunet

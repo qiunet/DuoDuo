@@ -1,4 +1,4 @@
-package org.qiunet.scanner;
+package org.qiunet.utils.scanner;
 
 /***
  * 实现接口必须是空构造函数.

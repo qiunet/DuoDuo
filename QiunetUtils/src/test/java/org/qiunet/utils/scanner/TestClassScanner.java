@@ -1,8 +1,7 @@
-package org.qiunet.scanner.test;
+package org.qiunet.utils.scanner;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.scanner.ClassScanner;
 
 /**
  * @author qiunet

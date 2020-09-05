@@ -1,8 +1,8 @@
 package org.qiunet.cfg.convert;
 
 import com.google.common.collect.Lists;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 
 import java.util.List;
 import java.util.Objects;

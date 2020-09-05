@@ -11,10 +11,10 @@ import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
-import org.qiunet.scanner.ScannerType;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;

@@ -1,9 +1,9 @@
 package org.qiunet.test.response.annotation.support;
 
-import org.qiunet.scanner.IApplicationContext;
-import org.qiunet.scanner.IApplicationContextAware;
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.Response;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
 
 import java.lang.reflect.Modifier;
 
