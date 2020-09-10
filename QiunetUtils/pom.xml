@@ -65,8 +65,8 @@
 			<artifactId>okhttp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+			<groupId>com.baidu</groupId>
+			<artifactId>jprotobuf</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.sun</groupId>

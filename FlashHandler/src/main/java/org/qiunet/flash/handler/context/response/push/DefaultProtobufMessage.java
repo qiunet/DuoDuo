@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import com.google.protobuf.GeneratedMessageV3;
-import com.googlecode.protobuf.format.JsonFormat;
 import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
@@ -10,7 +9,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * 17/12/11
  */
 public class DefaultProtobufMessage implements IResponseMessage<GeneratedMessageV3> {
-	private static final JsonFormat jsonFormat = new JsonFormat();
 
 	private int protocolId;
 	private GeneratedMessageV3 message;
@@ -44,7 +42,6 @@ public class DefaultProtobufMessage implements IResponseMessage<GeneratedMessage
 	public String toStr() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("===Response ProtocolID [").append(protocolId).append("] ==DATA: ");
-		sb.append(jsonFormat.printToString(message));
 		return sb.toString();
 	}
 }
