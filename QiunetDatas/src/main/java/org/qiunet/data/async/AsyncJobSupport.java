@@ -25,9 +25,8 @@ import java.util.concurrent.TimeUnit;
 			8,
 			new DefaultThreadFactory("AsyncJobSupport"));
 
-	private volatile static AsyncJobSupport instance = new AsyncJobSupport();
+	private static AsyncJobSupport instance = new AsyncJobSupport();
 	private AsyncJobSupport() {
-		instance = this;
 		ShutdownHookThread.getInstance().addShutdownHook(() -> executor.shutdown());
 	}
 
