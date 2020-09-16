@@ -21,10 +21,6 @@ public class DuMap<Key, Val> {
 
 
 	public DuMap(){
-		this(16);
-	}
-
-	public DuMap(int cap) {
 		this.map1 = HashBiMap.create();
 		this.map2 = this.map1.inverse();
 	}
