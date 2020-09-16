@@ -1,6 +1,9 @@
 package org.qiunet.utils.collection;
 
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -15,8 +18,8 @@ import java.util.Set;
  * 2020-08-24 22:44
  **/
 public class DuMap<Key, Val> {
-	private Map<Key, Val> map1;
-	private Map<Val, Key> map2;
+	private BiMap<Key, Val> map1;
+	private BiMap<Val, Key> map2;
 
 
 	public DuMap(){
@@ -24,8 +27,8 @@ public class DuMap<Key, Val> {
 	}
 
 	public DuMap(int cap) {
-		this.map1 = new HashMap<>(cap);
-		this.map2 = new HashMap<>(cap);
+		this.map1 = HashBiMap.create();
+		this.map2 = this.map1.inverse();
 	}
 
 	/**
@@ -43,7 +46,6 @@ public class DuMap<Key, Val> {
 		}
 
 		map1.put(key, val);
-		map2.put(val, key);
 		return this;
 	}
 
@@ -96,7 +98,7 @@ public class DuMap<Key, Val> {
 	 * @return
 	 */
 	public int size(){
-		return map2.size();
+			return map1.size();
 	}
 
 	/**
