@@ -515,6 +515,7 @@ public class DScheduledThreadPoolExecutor
 										DRejectedExecutionHandler handler) {
         super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
               new DelayedWorkQueue(delayCheckMillis), threadFactory, handler);
+        this.removeOnCancel = true;
     }
 
     /**
