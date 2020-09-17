@@ -59,7 +59,7 @@ public class RequestHandlerMapping {
 	 */
 	public IHandler getHandler(int protocolId) {
 		if (! gameHandlers.containsKey(protocolId)) {
-			logger.error("Have not handler For ProtocolId ["+protocolId+"]");
+			logger.error("Have not handler For ProtocolId [{}]", protocolId);
 		}
 		return gameHandlers.get(protocolId);
 	}
@@ -71,7 +71,7 @@ public class RequestHandlerMapping {
 	 */
 	public IHandler getHandler(String uriPath) {
 		if (! uriPathHandlers.containsKey(uriPath)) {
-			logger.error("Have not handler For UriPath ["+uriPath+"]");
+			logger.error("Have not handler For UriPath [{}]", uriPath);
 		}
 		return uriPathHandlers.get(uriPath);
 	}

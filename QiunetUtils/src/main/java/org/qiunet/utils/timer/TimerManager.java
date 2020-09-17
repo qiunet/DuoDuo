@@ -6,8 +6,12 @@ import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
 
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -15,9 +19,9 @@ import java.util.concurrent.*;
  * 18/1/26
  */
 public class TimerManager {
-	private static final ScheduledThreadPoolExecutor schedule = new ScheduledThreadPoolExecutor(2, new DefaultThreadFactory("Qiunet-TimerManager"));
+	private static final DScheduledThreadPoolExecutor schedule = new DScheduledThreadPoolExecutor(2, 1000, new DefaultThreadFactory("Qiunet-TimerManager"));
 
-	private volatile static TimerManager instance;
+	private static TimerManager instance;
 
 	private TimerManager() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
