@@ -36,6 +36,7 @@
 package org.qiunet.utils.timer.executor;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.utils.date.DateUtil;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -180,7 +181,7 @@ public class DScheduledThreadPoolExecutor
      * Returns current nanosecond time.
      */
     final long now() {
-        return System.currentTimeMillis();
+        return DateUtil.currentTimeMillis();
     }
 
     private class ScheduledFutureTask<V>
@@ -1156,9 +1157,9 @@ public class DScheduledThreadPoolExecutor
                         if (millis <= 0)
                             return null;
                         else{
-                        	long preMillis = System.currentTimeMillis();
+                        	long preMillis = DateUtil.currentTimeMillis();
 							boolean flag = available.await(Math.min(delayCheckMillis, millis), MILLISECONDS);
-							millis -= (System.currentTimeMillis() - preMillis);
+							millis -= (DateUtil.currentTimeMillis() - preMillis);
 							if (! flag) {
 								continue;
 							}
@@ -1176,9 +1177,9 @@ public class DScheduledThreadPoolExecutor
 						try {
 							delay = Math.min(millis, delay);
 							delay = Math.min(delayCheckMillis, delay);
-							long preMillis = System.currentTimeMillis();
+							long preMillis = DateUtil.currentTimeMillis();
 							boolean flag = available.await(delay, MILLISECONDS);
-							millis -= (System.currentTimeMillis() - preMillis);
+							millis -= (DateUtil.currentTimeMillis() - preMillis);
 							if (! flag) {
 								return null;
 							}
