@@ -11,6 +11,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -86,7 +87,10 @@ class PropertiesContext implements IApplicationContextAware {
 			}
 			Preconditions.checkState(keyValueData.containKey(keyName) || !StringUtil.isEmpty(annotation.defaultVal()), "Properties ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
 			String val = keyValueData.getString(keyName, annotation.defaultVal());
-			Object instance = context.getInstanceOfClass(field.getDeclaringClass());
+			Object instance = null;
+			if (!Modifier.isStatic(field.getModifiers())) {
+				instance = context.getInstanceOfClass(field.getDeclaringClass());
+			}
 			try {
 				field.setAccessible(true);
 				field.set(instance, this.convertVal(field.getType(), val));

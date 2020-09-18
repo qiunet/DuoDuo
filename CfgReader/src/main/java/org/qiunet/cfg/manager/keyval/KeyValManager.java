@@ -16,6 +16,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -79,7 +80,11 @@ class KeyValManager implements IApplicationContextAware {
 			Preconditions.checkState(! StringUtil.isEmpty(val) , "No cfg value for KeyName [%s]", keyName);
 			field.setAccessible(true);
 			Object realVal = CfgFieldObjConvertManager.getInstance().covert(field.getType(), val);
-			field.set(context.getInstanceOfClass(field.getDeclaringClass()), realVal);
+			Object instance = null;
+			if (! Modifier.isStatic(field.getModifiers())) {
+				instance = context.getInstanceOfClass(field.getDeclaringClass());
+			}
+			field.set(instance, realVal);
 		}
 	}
 
