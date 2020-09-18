@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * 18/1/26
  */
 public class TimerManager {
-	private static final DScheduledThreadPoolExecutor schedule = new DScheduledThreadPoolExecutor(2, 1000, new DefaultThreadFactory("Qiunet-TimerManager"));
+	private static final DScheduledThreadPoolExecutor schedule = new DScheduledThreadPoolExecutor(4, 1000, new DefaultThreadFactory("Qiunet-TimerManager"));
 
 	private static TimerManager instance;
 
@@ -102,7 +102,7 @@ public class TimerManager {
 	 * @param unit 时间格式
 	 * @param <T>
 	 */
-	public <T> DFuture<T> scheduleWithDeley(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
+	public <T> DFuture<T> scheduleWithDelay(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
 		DCompletePromise<T> promise = new DCompletePromise<>();
 		Callable<T> caller = () -> {
 			try {
@@ -133,6 +133,6 @@ public class TimerManager {
 		if (timeMillis < now) {
 			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");
 		}
-		return scheduleWithDeley(delayTask, (timeMillis - now), TimeUnit.MILLISECONDS);
+		return scheduleWithDelay(delayTask, (timeMillis - now), TimeUnit.MILLISECONDS);
 	}
 }
