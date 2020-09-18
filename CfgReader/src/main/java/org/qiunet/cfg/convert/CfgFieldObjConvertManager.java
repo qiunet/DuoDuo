@@ -39,7 +39,26 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 		}
 		return instance;
 	}
+	/***
+	 * 按照指定的class 类型转换str
+	 * @param clazz
+	 * @param val
+	 * @return 没有转换器将抛出异常
+	 */
+	public Object covert(Class clazz, String val) {
 
+		for (BaseObjConvert convert : CfgFieldObjConvertManager.getInstance().getConverts()) {
+			if (convert.canConvert(clazz)) {
+				return convert.fromString(val);
+			}
+		}
+
+		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
+			return Enum.valueOf(clazz, val);
+		}
+
+		throw new RuntimeException("Can not convert class type for ["+clazz.getName()+"]");
+	}
 
 	@Override
 	public void setApplicationContext(IApplicationContext context) {

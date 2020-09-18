@@ -3,6 +3,7 @@ package org.qiunet.cfg.manager;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
+import org.qiunet.cfg.listener.CfgManagerAddEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
@@ -64,7 +65,7 @@ public class CfgManagers {
 			reloading.compareAndSet(true, false);
 		}
 		logger.error("Game Setting Data Load over.....");
-		new CfgLoadCompleteEventData().fireEventHandler();
+		CfgLoadCompleteEventData.fireEvent();
 	}
 
 	/**
@@ -72,6 +73,7 @@ public class CfgManagers {
 	 * @param manager
 	 */
 	public void addCfgManager(ICfgManager manager) {
+		CfgManagerAddEventData.fireEvent(manager);
 		this.gameSettingList.add(manager);
 	}
 

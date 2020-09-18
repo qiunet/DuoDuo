@@ -10,4 +10,7 @@ import org.qiunet.listener.event.IEventData;
  * 2020-04-24 11:25
  ***/
 public class CfgLoadCompleteEventData implements IEventData {
+	public static void fireEvent(){
+		new CfgLoadCompleteEventData().fireEventHandler();
+	}
 }

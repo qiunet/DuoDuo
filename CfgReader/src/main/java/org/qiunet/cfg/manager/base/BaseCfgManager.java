@@ -2,7 +2,6 @@ package org.qiunet.cfg.manager.base;
 
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.logger.LoggerType;
@@ -127,7 +126,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 				throw new RuntimeException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
 			Class<?> aClass = field.getType();
-			Object obj = this.covert(cfg.getClass(), aClass, val);
+			Object obj = CfgFieldObjConvertManager.getInstance().covert(aClass, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (NoSuchFieldException e) {
@@ -135,26 +134,5 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 		} catch (IllegalAccessException e) {
 			logger.error("Cfg ["+cfg.getClass().getName()+"] name ["+name+"] assign error", e);
 		}
-	}
-
-	/***
-	 * 按照指定的class 类型转换str
-	 * @param clazz
-	 * @param val
-	 * @return 没有转换器将抛出异常
-	 */
-	public Object covert(Class cfg, Class clazz, String val) {
-
-		for (BaseObjConvert convert : CfgFieldObjConvertManager.getInstance().getConverts()) {
-			if (convert.canConvert(clazz)) {
-				return convert.fromString(val);
-			}
-		}
-
-		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
-			return Enum.valueOf(clazz, val);
-		}
-
-		throw new RuntimeException("Can not convert class type for ["+clazz.getName()+"] in class ["+cfg.getName()+"]");
 	}
 }

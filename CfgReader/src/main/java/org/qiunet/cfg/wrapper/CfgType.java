@@ -1,6 +1,7 @@
 package org.qiunet.cfg.wrapper;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.lang.ClassUtils;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.INestListCfg;
@@ -8,8 +9,7 @@ import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.utils.exceptions.EnumParseException;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -51,10 +51,10 @@ public enum  CfgType {
 	public static void createCfgWrapper(Class<? extends ICfg> clazz) {
 		Cfg cfg = clazz.getAnnotation(Cfg.class);
 		CfgFileType fileType = CfgFileType.parse(cfg.value());
+		List<Class> is = ClassUtils.getAllInterfaces(clazz);
 		for (CfgType type : values()) {
-			for (Type genericInterface : clazz.getGenericInterfaces()) {
-				if (genericInterface instanceof ParameterizedType
-					&& ((ParameterizedType) genericInterface).getRawType() == type.clazz){
+			for (Class i : is) {
+				if (i == type.clazz){
 					cfgWrappers.put(clazz, type.getCfgWrapper(fileType, clazz));
 					return;
 				}
