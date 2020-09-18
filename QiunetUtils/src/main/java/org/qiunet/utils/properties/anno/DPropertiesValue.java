@@ -19,7 +19,7 @@ public @interface DPropertiesValue {
 	 * 该字段在properties的对应key
 	 * @return
 	 */
-	String value();
+	String value() default "";
 
 	/**
 	 * 默认值. 如果没定义. 默认值.

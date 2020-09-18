@@ -80,7 +80,12 @@ class PropertiesContext implements IApplicationContextAware {
 		List<Field> fieldList = this.fields.get(name);
 		fieldList.forEach(field -> {
 			DPropertiesValue annotation = field.getAnnotation(DPropertiesValue.class);
-			String val = keyValueData.getString(annotation.value(), annotation.defaultVal());
+			String keyName = annotation.value();
+			if (StringUtil.isEmpty(keyName)) {
+				keyName = field.getName();
+			}
+			Preconditions.checkState(keyValueData.containKey(keyName) || !StringUtil.isEmpty(annotation.defaultVal()), "Properties ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
+			String val = keyValueData.getString(keyName, annotation.defaultVal());
 			Object instance = context.getInstanceOfClass(field.getDeclaringClass());
 			try {
 				field.setAccessible(true);

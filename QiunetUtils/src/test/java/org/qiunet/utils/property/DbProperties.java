@@ -12,7 +12,7 @@ public class DbProperties {
 	/**
 	 * 测试内容
 	 */
-	@DPropertiesValue("content")
+	@DPropertiesValue()
 	private static String content;
 	/**
 	 * 最大数
