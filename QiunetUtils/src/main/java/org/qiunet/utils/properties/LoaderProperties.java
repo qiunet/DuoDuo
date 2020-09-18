@@ -2,7 +2,7 @@ package org.qiunet.utils.properties;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.KeyValueData;
-import org.qiunet.utils.file.FileLoader;
+import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -26,8 +26,8 @@ public abstract class LoaderProperties extends KeyValueData<Object, Object> {
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 		this.file = new File(url.getFile());
 
+		FileUtil.changeListener(file, this::reload);
 		this.reload(file);
-		FileLoader.listener(file, this::reload);
 	}
 	/**
 	 * 重新加载

@@ -3,7 +3,7 @@ package org.qiunet.utils.properties;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.KeyValueData;
-import org.qiunet.utils.file.FileLoader;
+import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.file.IFileChangeCallback;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public final class PropertiesUtil {
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
 		File file = new File(url.getFile());
-		FileLoader.listener(file, changeCallback);
+		FileUtil.changeListener(file, changeCallback);
 		return loadProperties(fileName);
 	}
 }

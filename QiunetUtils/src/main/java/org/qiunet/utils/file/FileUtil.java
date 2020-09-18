@@ -235,4 +235,21 @@ public class FileUtil {
 	public static void cleanDirectory(final File directory) throws IOException {
 		FileUtils.cleanDirectory(directory);
 	}
+
+	/**
+	 * 变动监听
+	 * @param path
+	 * @param changeCallback
+	 */
+	public static void changeListener(Path path, IFileChangeCallback changeCallback) {
+		changeListener(path.toFile(), changeCallback);
+	}
+	/**
+	 * 变动监听
+	 * @param file
+	 * @param changeCallback
+	 */
+	public static void changeListener(File file, IFileChangeCallback changeCallback) {
+		FileChangeListener.listener(file, changeCallback);
+	}
 }
