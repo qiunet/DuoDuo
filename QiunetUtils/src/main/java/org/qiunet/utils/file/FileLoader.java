@@ -2,20 +2,23 @@ package org.qiunet.utils.file;
 
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public final class FileLoader {
-	private static Logger logger = LoggerType.DUODUO.getLogger();
+	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("FileLoader_"));
 	private static final List<FileAlterationObserver> monitor = new CopyOnWriteArrayList<>();
+	private static Logger logger = LoggerType.DUODUO.getLogger();
 	static {
-		TimerManager.getInstance().scheduleAtFixedRate(() -> monitor.forEach(FileAlterationObserver::checkAndNotify)
+		executor.scheduleAtFixedRate(() -> monitor.forEach(FileAlterationObserver::checkAndNotify)
 			, 1, 10, TimeUnit.SECONDS);
 	}
 	private FileLoader(){}
