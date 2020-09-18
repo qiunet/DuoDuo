@@ -72,7 +72,7 @@ public final class ClassHotSwap {
 					e.printStackTrace();
 				}
 			}
-			TimerManager.getInstance().scheduleWithDeley(() -> {
+			TimerManager.getInstance().scheduleWithDelay(() -> {
 				try {
 					FileUtil.cleanDirectory(classDirectory);
 					logger.error("清空热更文件夹成功!");

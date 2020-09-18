@@ -142,7 +142,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 */
 	@Override
 	public DFuture<Void> scheduleMessage(IMessage<H> msg, long delay, TimeUnit unit) {
-		DFuture<Void> future = TimerManager.getInstance().scheduleWithDeley(() -> {
+		DFuture<Void> future = TimerManager.getInstance().scheduleWithDelay(() -> {
 			addMessage(msg);
 			return null;
 		}, delay, unit);

@@ -38,7 +38,7 @@ public class TimerTest {
 		}, 0, 1000, TimeUnit.MILLISECONDS);
 
 
-		Future<String> future = TimerManager.getInstance().scheduleWithDeley(() -> {
+		Future<String> future = TimerManager.getInstance().scheduleWithDelay(() -> {
 			LoggerType.DUODUO.info("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 			Thread.sleep(5000);
 			return "SUCCESS";
