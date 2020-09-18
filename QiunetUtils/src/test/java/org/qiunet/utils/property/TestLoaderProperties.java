@@ -2,6 +2,7 @@ package org.qiunet.utils.property;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.scanner.ClassScanner;
 
 /**
  * @author qiunet
@@ -9,8 +10,10 @@ import org.junit.Test;
  */
 public class TestLoaderProperties {
 	@Test
-	public void testProperties(){
-		String str = DbProperties.getInstance().getString("content");
+	public void testProperties() throws Exception {
+		ClassScanner.getInstance().scanner();
+
+		String str = DbProperties.getContent();
 		Assert.assertEquals(str, "公告测试\n内容");
 	}
 }

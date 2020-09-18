@@ -15,8 +15,8 @@ public final class FileLoader {
 	private static Logger logger = LoggerType.DUODUO.getLogger();
 	private static final List<FileAlterationObserver> monitor = new CopyOnWriteArrayList<>();
 	static {
-		TimerManager.getInstance().scheduleAtFixedRate(() -> monitor.forEach(FileAlterationObserver::checkAndNotify),
-			1000, 5000, TimeUnit.MILLISECONDS);
+		TimerManager.getInstance().scheduleAtFixedRate(() -> monitor.forEach(FileAlterationObserver::checkAndNotify)
+			, 1, 10, TimeUnit.SECONDS);
 	}
 	private FileLoader(){}
 	/***

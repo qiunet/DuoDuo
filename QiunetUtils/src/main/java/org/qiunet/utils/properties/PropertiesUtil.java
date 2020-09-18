@@ -3,6 +3,8 @@ package org.qiunet.utils.properties;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.KeyValueData;
+import org.qiunet.utils.file.FileLoader;
+import org.qiunet.utils.file.IFileChangeCallback;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -45,5 +47,19 @@ public final class PropertiesUtil {
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
 		return loadProperties(new File(url.getFile()));
+	}
+	/***
+	 * 加载一个properties
+	 * @param fileName classpath 目录下的相对地址
+	 * @param changeCallback 文件如果变动的回调.
+	 * @return
+	 */
+	public static IKeyValueData<Object, Object> loadProperties(String fileName, IFileChangeCallback changeCallback) {
+		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
+		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
+
+		File file = new File(url.getFile());
+		FileLoader.listener(file, changeCallback);
+		return loadProperties(fileName);
 	}
 }

@@ -1,5 +1,7 @@
 package org.qiunet.utils.property;
 
+import org.qiunet.utils.scanner.ClassScanner;
+
 /***
  *
  * @author qiunet
@@ -7,11 +9,11 @@ package org.qiunet.utils.property;
  **/
 public class TestFileLoaderProperties {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
+		ClassScanner.getInstance().scanner();
 		for (int i = 0; i < 20; i++) {
-			String content = DbProperties.getInstance().getString("content");
 			// 过程中, 自己去改变target下, db.properties content的内容. 会产生变化即可
-			System.out.println(content);
+			System.out.println(DbProperties.getContent());
 			Thread.sleep(1500);
 		}
 	}
