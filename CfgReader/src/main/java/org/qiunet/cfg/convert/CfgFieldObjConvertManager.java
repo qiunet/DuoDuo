@@ -47,7 +47,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 	 */
 	public Object covert(Class clazz, String val) {
 
-		for (BaseObjConvert convert : CfgFieldObjConvertManager.getInstance().getConverts()) {
+		for (BaseObjConvert convert : converts) {
 			if (convert.canConvert(clazz)) {
 				return convert.fromString(val);
 			}
@@ -74,6 +74,6 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 
 	@Override
 	public int order() {
-		return Integer.MAX_VALUE - 1;
+		return Integer.MAX_VALUE;
 	}
 }

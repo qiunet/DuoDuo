@@ -11,6 +11,8 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +32,7 @@ class PropertiesContext implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override
 	public int order() {
-		return Integer.MAX_VALUE;
+		return Integer.MAX_VALUE - 1;
 	}
 
 	@Override
@@ -107,22 +109,29 @@ class PropertiesContext implements IApplicationContextAware {
 	 * @return
 	 */
 	private Object convertVal(Class fieldType, String val) {
-		if (fieldType == String.class) {
-			return val;
-		}
+		try {
+			Class<?> aClass = Class.forName("org.qiunet.cfg.convert.CfgFieldObjConvertManager");
+			Method method = aClass.getMethod("covert", Class.class, String.class);
+			return method.invoke(context.getInstanceOfClass(aClass), fieldType, val);
+		} catch (ClassNotFoundException e) {
+			if (fieldType == String.class) {
+				return val;
+			}
 
-		if (fieldType == Integer.TYPE || fieldType == Integer.class) {
-			return Integer.parseInt(val);
-		}
+			if (fieldType == Integer.TYPE || fieldType == Integer.class) {
+				return Integer.parseInt(val);
+			}
 
-		if (fieldType == Long.TYPE || fieldType == Long.class) {
-			return Long.parseLong(val);
-		}
+			if (fieldType == Long.TYPE || fieldType == Long.class) {
+				return Long.parseLong(val);
+			}
 
-		if (fieldType.isEnum() || Enum.class.isAssignableFrom(fieldType)) {
-			return Enum.valueOf(fieldType, val);
+			if (fieldType.isEnum() || Enum.class.isAssignableFrom(fieldType)) {
+				return Enum.valueOf(fieldType, val);
+			}
+		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+			e.printStackTrace();
 		}
-
 		throw new RuntimeException("Can not convert class type for ["+fieldType.getName()+"]");
 	}
 }
