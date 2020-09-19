@@ -1,5 +1,6 @@
 package org.qiunet.cfg.manager.base;
 
+import com.baidu.bjf.remoting.protobuf.utils.FieldUtils;
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
@@ -120,8 +121,11 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 	 * @param <Cfg> 配置文件类
 	 */
 	protected <Cfg extends ICfg> void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
+		Field field = FieldUtils.findField(cfgClass, name);
+		if (field == null) {
+			throw new AbstractReflectionConverter.UnknownFieldException(cfgClass.getName(), name);
+		}
 		try {
-			Field field = cfg.getClass().getDeclaredField(name);
 			if (isInvalidField(field)) {
 				throw new RuntimeException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
@@ -129,8 +133,6 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 			Object obj = CfgFieldObjConvertManager.getInstance().covert(aClass, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
-		} catch (NoSuchFieldException e) {
-			throw new AbstractReflectionConverter.UnknownFieldException(cfgClass.getName(), name);
 		} catch (IllegalAccessException e) {
 			logger.error("Cfg ["+cfg.getClass().getName()+"] name ["+name+"] assign error", e);
 		}

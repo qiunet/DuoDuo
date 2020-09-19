@@ -67,7 +67,6 @@ class KeyValManager implements IApplicationContextAware {
 				keyValDatas.put(iKeyValCfg.key(), iKeyValCfg.val());
 			}
 		}
-
 		Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgValAutoWired.class);
 		for (Field field : fieldSet) {
 			CfgValAutoWired annotation = field.getAnnotation(CfgValAutoWired.class);
@@ -86,6 +85,11 @@ class KeyValManager implements IApplicationContextAware {
 			}
 			field.set(instance, realVal);
 		}
+	}
+
+	@Override
+	public int order() {
+		return Integer.MAX_VALUE;
 	}
 
 	@Override
