@@ -13,7 +13,18 @@ public interface IKeyValueData<K, V> {
 	 * @param key
 	 * @return
 	 */
-	boolean containKey(K key);
+	default boolean containKey(K key) {
+		return returnMap().containsKey(key);
+	}
+
+	/**
+	 * 提出合并
+	 * @param map
+	 */
+	default void merge(Map<K, V> map){
+		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
+		this.returnMap().putAll(map);
+	}
 
 	/***
 	 * 得到map
@@ -22,10 +33,12 @@ public interface IKeyValueData<K, V> {
 	Map<K, V> returnMap();
 	/**
 	 * 获得 value
-	 * @param k
+	 * @param key
 	 * @return
 	 */
-	 V getValue(K k);
+	 default V getValue(K key){
+	 	 return returnMap().get(key);
+	 }
 
 	/**
 	 * 获取. 如果没有使用默认值

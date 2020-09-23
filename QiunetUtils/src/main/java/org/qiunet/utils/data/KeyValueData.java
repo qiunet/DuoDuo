@@ -33,30 +33,11 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
 		this.map = map;
 	}
-	/**
-	 * 提出合并
-	 * @param map
-	 */
-	protected void merge(Map<K, V> map){
-		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
-		this.map.putAll(map);
-	}
 
 	@Override
 	public Map<K, V> returnMap() {
 		return map;
 	}
-
-	@Override
-	public boolean containKey(K key) {
-		return map.containsKey(key);
-	}
-
-	@Override
-	public V getValue(K k) {
-		return map.get(k);
-	}
-
 
 	@Override
 	public String getString(K key) {
