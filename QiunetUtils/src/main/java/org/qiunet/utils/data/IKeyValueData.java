@@ -26,13 +26,15 @@ public interface IKeyValueData<K, V> {
 	 * @return
 	 */
 	 V getValue(K k);
+
 	/**
-	 * 获取key的值
+	 * 获取. 如果没有使用默认值
 	 * @param key
-	 * @param defaultVal 如果没有返回的默认值
 	 * @return
 	 */
-	 String getString(K key,String defaultVal);
+	 default V getOrDefault(K key, V defaultVal){
+	 	return returnMap().getOrDefault(key, defaultVal);
+	 }
 
 	/**
 	 * 返回key的值
@@ -40,91 +42,113 @@ public interface IKeyValueData<K, V> {
 	 * @return 默认返回 ""
 	 */
 	 String getString(K key);
-
 	/**
-	 * 返回short
+	 * 获取key的值
 	 * @param key
-	 * @param defaultVal
+	 * @param defaultVal 如果没有返回的默认值
 	 * @return
 	 */
-	 short getShort(K key,int defaultVal);
+	 default String getString(K key,String defaultVal){
+		 String rt=defaultVal;
+		 V v = getValue(key);
+		 if(v != null){
+			 rt=v.toString().trim();
+		 }
+		 return rt;
+	 }
 
-	/**
-	 * 返回short
-	 * @param key
-	 * @return
-	 */
-	 short getShort(K key);
 	/**
 	 * 获得int数据配置
 	 * @param key
 	 * @param defaultVal
 	 * @return
 	 */
-	 int getInt(K key,int defaultVal);
+	default int getInt(K key,int defaultVal){
+		if (! containKey(key)) {
+			return defaultVal;
+		}
+		return getInt(key);
+	}
 	/**
 	 * 获得int数据配置
 	 * @param key
 	 * @return
 	 */
-	 int getInt(K key);
-	/**
-	 * 获得byte数据配置
-	 * @param key
-	 * @param defaultVal
-	 * @return
-	 */
-	 byte getByte(K key,int defaultVal);
-	/**
-	 * 获得byte数据配置
-	 * @param key
-	 * @return
-	 */
-	 byte getByte(K key);
+	default int getInt(K key){
+		return Integer.parseInt(getString(key));
+	}
+
 	/**
 	 * 获得float数据配置
 	 * @param key
 	 * @param defaultVal
 	 * @return
 	 */
-	 float getFloat(K key,float defaultVal);
+	default float getFloat(K key,float defaultVal){
+		if (! containKey(key)) {
+			return defaultVal;
+		}
+		return getFloat(key);
+	}
 	/**
 	 * 获得float数据配置
 	 * @param key
 	 * @return
 	 */
-	 float getFloat(K key);
+	default float getFloat(K key){
+		return Float.parseFloat(getString(key));
+	}
 	/**
 	 * 获得long数据配置
 	 * @param key
 	 * @param defaultVal
 	 * @return
 	 */
-	 long getLong(K key,long defaultVal);
+	default long getLong(K key,long defaultVal){
+		if (! containKey(key)) {
+			return defaultVal;
+		}
+		return getLong(key);
+	}
 	/**
 	 * 获得long数据配置
 	 * @param key
 	 * @return
 	 */
-	 long getLong(K key);
+	default long getLong(K key){
+		return Long.parseLong(getString(key));
+	}
 	/**
 	 * 获得double数据配置
 	 * @param key
 	 * @param defaultVal
 	 * @return
 	 */
-	 double getDouble(K key,double defaultVal);
+	default double getDouble(K key,double defaultVal){
+		if (! containKey(key)) {
+			return defaultVal;
+		}
+		return getDouble(key);
+	}
 	/**
 	 * 获得double数据配置
 	 * @param key
 	 * @return
 	 */
-	 double getDouble(K key);
+	default double getDouble(K key){
+		return Double.parseDouble(getString(key));
+	}
 
 	/***
 	 * 得到boolean 值. 默认false
 	 * @param key
 	 * @return
 	 */
-	 boolean getBoolean(K key);
+	default boolean getBoolean(K key){
+		if (! containKey(key)) {
+			return false;
+		}
+
+		return "true".equals(getString(key));
+	}
 }

@@ -57,15 +57,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 		return map.get(k);
 	}
 
-	@Override
-	public String getString(K key, String defaultVal) {
-		String rt=defaultVal;
-		V v = getValue(key);
-		if(v != null){
-			rt=v.toString().trim();
-		}
-		return rt;
-	}
+
 	@Override
 	public String getString(K key) {
 		V v = getValue(key);
@@ -75,70 +67,5 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 			return null;
 		}
 		return v.toString();
-	}
-
-	@Override
-	public short getShort(K key, int defaultVal) {
-		return Short.parseShort(getString(key, String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public short getShort(K key) {
-		return Short.parseShort(getString(key));
-	}
-
-	@Override
-	public int getInt(K key, int defaultVal) {
-		return Integer.parseInt(getString(key, String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public int getInt(K key) {
-		return Integer.parseInt(getString(key));
-	}
-
-	@Override
-	public byte getByte(K key, int defaultVal) {
-		return Byte.parseByte(getString(key , String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public byte getByte(K key) {
-		return Byte.parseByte(getString(key));
-	}
-
-	@Override
-	public float getFloat(K key, float defaultVal) {
-		return Float.parseFloat(getString(key , String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public float getFloat(K key) {
-		return Float.parseFloat(getString(key));
-	}
-
-	@Override
-	public long getLong(K key, long defaultVal) {
-		return Long.parseLong(getString(key , String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public long getLong(K key) {
-		return Long.parseLong(getString(key));
-	}
-
-	@Override
-	public double getDouble(K key, double defaultVal) {
-		return Double.parseDouble(getString(key , String.valueOf(defaultVal)));
-	}
-
-	@Override
-	public double getDouble(K key) {
-		return Double.parseDouble(getString(key));
-	}
-
-	@Override
-	public boolean getBoolean(K key) {
-		return "true".equals(getString(key, "false"));
 	}
 }
