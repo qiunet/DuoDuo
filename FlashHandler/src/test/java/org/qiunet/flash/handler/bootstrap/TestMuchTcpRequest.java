@@ -1,12 +1,13 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.proto.LoginRequest;
+import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -41,7 +42,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
-					LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
+					LoginRequest request = LoginRequest.valueOf(text, text, 11);
 					MessageContent content = new MessageContent(1004, request.toByteArray());
 					tcpClient.sendMessage(content);
 				}
@@ -56,12 +57,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(MessageContent data) {
-			LoginProto.LoginResponse response = null;
-			try {
-				response = LoginProto.LoginResponse.parseFrom(data.bytes());
-			} catch (InvalidProtocolBufferException e) {
-				e.printStackTrace();
-			}
+			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 			System.out.println(response.getTestString());
 			latch.countDown();
 		}

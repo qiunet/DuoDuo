@@ -33,8 +33,8 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 				for (int i = 0; i < requestCount/threadCount; i++) {
 					final String test = "[测试testHttpProtobuf]"+i;
 
-					MessageContent content = new MessageContent(1000,test.getBytes(CharsetUtil.UTF_8));
-					httpClient.sendRequest(content, "/f", (response) -> {
+					MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
+					httpClient.sendRequest(content, "/f", response -> {
 						Assert.assertEquals(response.status() , HttpResponseStatus.OK);
 						ADAPTER.newHeader(response.content());
 

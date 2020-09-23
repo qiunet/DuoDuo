@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.response.json.JsonResponse;
 @UriPathHandler("/jsonUrl")
 public class UriJsonHandler extends HttpJsonHandler {
 	@Override
-	protected JsonResponse handler1(IHttpRequest<JsonRequest> request) {
+	protected JsonResponse handler0(IHttpRequest<JsonRequest> request) {
 		JsonResponse response = new JsonResponse();
 		response.addAttribute("test", request.getRequestData().getString("test"));
 		return response;

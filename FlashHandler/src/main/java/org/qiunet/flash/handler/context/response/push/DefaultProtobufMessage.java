@@ -1,19 +1,19 @@
 package org.qiunet.flash.handler.context.response.push;
 
-import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 
 /**
  * 默认的protobuf 的message
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IResponseMessage<GeneratedMessageV3> {
+public class DefaultProtobufMessage implements IResponseMessage<IpbResponseData> {
 
 	private int protocolId;
-	private GeneratedMessageV3 message;
+	private IpbResponseData message;
 
-	public DefaultProtobufMessage(int protocolId, GeneratedMessageV3 message) {
+	public DefaultProtobufMessage(int protocolId, IpbResponseData message) {
 		this.message = message;
 		this.protocolId = protocolId;
 	}
@@ -24,7 +24,7 @@ public class DefaultProtobufMessage implements IResponseMessage<GeneratedMessage
 	}
 
 	@Override
-	public GeneratedMessageV3 getContent() {
+	public IpbResponseData getContent() {
 		return message;
 	}
 

@@ -1,11 +1,12 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.proto.LoginProto;
+import org.qiunet.flash.handler.proto.LoginRequest;
+import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /**
  * Created by qiunet.
@@ -24,7 +25,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 	@Test
 	public void testTcpProtobuf(){
 		text = "test [testTcpProtobuf]";
-		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
+		LoginRequest request = LoginRequest.valueOf(text, text, 11);
 		MessageContent content = new MessageContent(1004, request.toByteArray());
 		this.tcpClient.sendMessage(content);
 	}
@@ -36,12 +37,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 				Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));
 				break;
 			case 2001:
-				LoginProto.LoginResponse response = null;
-				try {
-					response = LoginProto.LoginResponse.parseFrom(data.bytes());
-				} catch (InvalidProtocolBufferException e) {
-					e.printStackTrace();
-				}
+				LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 				Assert.assertEquals(text, response.getTestString());
 				break;
 		}

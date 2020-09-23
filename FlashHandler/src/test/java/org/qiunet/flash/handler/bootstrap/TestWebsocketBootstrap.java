@@ -1,14 +1,15 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.proto.LoginRequest;
+import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -44,7 +45,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 			.setAddress("localhost", 8080)
 			.setUriIPath("/ws")
 			.build(), new ResponseTrigger());
-		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(text).build();
+		LoginRequest request = LoginRequest.valueOf(text, text, 11);
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
 
@@ -60,12 +61,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 					Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));
 					break;
 				case 2001:
-					LoginProto.LoginResponse response = null;
-					try {
-						response = LoginProto.LoginResponse.parseFrom(data.bytes());
-					} catch (InvalidProtocolBufferException e) {
-						e.printStackTrace();
-					}
+					LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 					Assert.assertEquals(text, response.getTestString());
 					break;
 			}

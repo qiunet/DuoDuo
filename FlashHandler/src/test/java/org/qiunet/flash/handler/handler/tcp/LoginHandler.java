@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.handler.tcp;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
+import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
 import org.qiunet.flash.handler.startup.context.PlayerActor;
 
 /**
@@ -13,6 +14,6 @@ public class LoginHandler extends TcpStringHandler<PlayerActor> {
 
 	@Override
 	public void handler(PlayerActor playerActor, ITcpRequest<String> context) throws Exception {
-		playerActor.sendResponse(2000, context.getRequestData());
+		playerActor.send(new DefaultStringMessage(2000, context.getRequestData()));
 	}
 }

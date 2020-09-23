@@ -1,11 +1,8 @@
 package org.qiunet.flash.handler.common.enums;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.protobuf.Parser;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.http.HttpProtobufRequestContext;
@@ -19,10 +16,6 @@ import org.qiunet.flash.handler.context.request.websocket.WebSocketProtobufReque
 import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.utils.logger.LoggerType;
-
-import java.lang.reflect.Field;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 传输使用的数据类型
@@ -34,11 +27,6 @@ public enum DataType {
 	 * 字符串
 	 */
 	STRING {
-		@Override
-		public <T> T parseBytes(byte[] bytes, Object... args) {
-			return (T) new String(bytes, CharsetUtil.UTF_8);
-		}
-
 		@Override
 		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
 			return new HttpStringRequestContext(content, channelContext, params, request);
@@ -58,30 +46,6 @@ public enum DataType {
 	 * protobuf
 	 */
 	PROTOBUF {
-		private ConcurrentHashMap<Class<?>, Parser> class2Parse = new ConcurrentHashMap<>(256);
-		@Override
-		public <T> T parseBytes(byte[] bytes, Object... args) {
-			Parser<T> parser = class2Parse.get(args[0]);
-			if (parser == null) {
-				try {
-					Field field = ((Class)args[0]).getDeclaredField("PARSER");
-					field.setAccessible(true);
-					parser = (Parser) field.get(null);
-					class2Parse.putIfAbsent((Class<?>) args[0], parser);
-				} catch (NoSuchFieldException | IllegalAccessException e) {
-					LoggerType.DUODUO.error("parse error: ", e);
-				}
-			}
-			if (parser == null) {
-				throw new NullPointerException("parse is null for class "+ args[0]);
-			}
-			try {
-				return parser.parseFrom(bytes);
-			} catch (InvalidProtocolBufferException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
 
 		@Override
 		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
@@ -100,7 +64,6 @@ public enum DataType {
 	},
 	;
 
-	public abstract <T> T parseBytes(byte [] bytes, Object ... args);
 
 	/**
 	 * 得到一个http的context

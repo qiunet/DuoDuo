@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.handler.websocket;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * Created by qiunet.
  * 17/11/21
@@ -16,6 +18,6 @@ public abstract class WebSocketStringHandler<P extends IPlayerActor> extends Bas
 
 	@Override
 	public String parseRequestData(byte[] bytes) {
-		return getDataType().parseBytes(bytes);
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 }

@@ -1,13 +1,13 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.util.CharsetUtil;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -49,12 +49,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 					System.out.println(new String(data.bytes(), CharsetUtil.UTF_8));
 					break;
 				case 2001:
-					LoginProto.LoginResponse response = null;
-					try {
-						response = LoginProto.LoginResponse.parseFrom(data.bytes());
-					} catch (InvalidProtocolBufferException e) {
-						e.printStackTrace();
-					}
+					LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 					System.out.println(response.getTestString());
 					break;
 			}

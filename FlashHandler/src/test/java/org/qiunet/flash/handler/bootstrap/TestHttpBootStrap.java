@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.bootstrap;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.protobuf.InvalidProtocolBufferException;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
@@ -11,10 +10,12 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
-import org.qiunet.flash.handler.handler.proto.LoginProto;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.proto.LoginRequest;
+import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,20 +35,15 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testOtherHttpProtobuf() {
 		final String test = "测试[testOtherHttpProtobuf]";
-		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
+		LoginRequest request = LoginRequest.valueOf(test, test, 11);
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(new MessageContent(0, request.toByteArray()),
 			"/protobufTest", (httpResponse) -> {
-				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+				Assert.assertSame(httpResponse.status(), HttpResponseStatus.OK);
 
 				byte[] bytes = new byte[httpResponse.content().readableBytes()];
 				httpResponse.content().readBytes(bytes);
-				LoginProto.LoginResponse loginResponse = null;
-				try {
-					loginResponse = LoginProto.LoginResponse.parseFrom(bytes);
-				} catch (InvalidProtocolBufferException e) {
-					e.printStackTrace();
-				}
+				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, bytes);
 				Assert.assertEquals(test, loginResponse.getTestString());
 				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
@@ -57,9 +53,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	}
 
 	@Test
-	public void testHttpProtobuf() throws InvalidProtocolBufferException {
+	public void testHttpProtobuf() {
 		final String test = "[测试testHttpProtobuf]";
-		LoginProto.LoginRequest request = LoginProto.LoginRequest.newBuilder().setTestString(test).build();
+		LoginRequest request = LoginRequest.valueOf(test, test, 11);
 		MessageContent content = new MessageContent(1001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(content, "/f", (httpResponse) -> {
@@ -68,12 +64,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			ADAPTER.newHeader(httpResponse.content());
 			byte [] bytes = new byte[httpResponse.content().readableBytes()];
 			httpResponse.content().readBytes(bytes);
-			LoginProto.LoginResponse loginResponse = null;
-			try {
-				loginResponse = LoginProto.LoginResponse.parseFrom(bytes);
-			} catch (InvalidProtocolBufferException e) {
-				e.printStackTrace();
-			}
+			LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, bytes);
 			Assert.assertEquals(test, loginResponse.getTestString());
 			ReferenceCountUtil.release(httpResponse);
 			LockSupport.unpark(currThread);

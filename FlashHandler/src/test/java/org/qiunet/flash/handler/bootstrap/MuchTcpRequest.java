@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 
 import java.util.concurrent.locks.LockSupport;
@@ -26,6 +27,7 @@ public abstract class MuchTcpRequest {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
+				.setStartupContext(new StartupContext())
 					.setPort(port)
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);

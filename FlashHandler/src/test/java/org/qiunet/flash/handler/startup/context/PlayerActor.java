@@ -1,9 +1,7 @@
 package org.qiunet.flash.handler.startup.context;
 
-import com.google.protobuf.GeneratedMessageV3;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
-import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
+import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +43,7 @@ public class PlayerActor extends AbstractPlayerActor<GameSession, PlayerActor> {
 		return null;
 	}
 
-	public void sendResponse(int protocolId, Object responseData) {
-		// 为了兼容测试. 实际过程不需要这么判断.
-		if (responseData instanceof GeneratedMessageV3) {
-			this.send(new DefaultProtobufMessage(protocolId, ((GeneratedMessageV3) responseData)));
-		}else if(responseData instanceof String){
-			this.send(new DefaultStringMessage(protocolId, (String) responseData));
-		}else {
-			logger.error("ResponseData Type Not Support !!! ");
-		}
+	public void sendResponse(IpbResponseData responseData) {
+		this.send(responseData.buildResponseMessage());
 	}
 }

@@ -123,7 +123,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 		}
 		// 下面的 `writeAndFlush(Unpooled.EMPTY_BUFFER)` 会flush
-		ctx.write(response);
+		ctx.writeAndFlush(response);
 
 		if (! keepAlive) {
 			ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);

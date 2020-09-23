@@ -84,7 +84,8 @@ class EventManager0 implements IApplicationContextAware {
 	void fireEventHandler(IEventData eventData) {
 		List<Wrapper> wrappers = listeners.get(eventData.getClass());
 		if (wrappers == null) {
-			throw new NullPointerException("No listener for class ["+eventData.getClass().getName()+"]");
+//			throw new NullPointerException("No listener for class ["+eventData.getClass().getName()+"]");
+			return;
 		}
 
 		wrappers.forEach(w -> w.fireEventHandler(eventData));

@@ -22,6 +22,22 @@ public class ProtobufDataManager {
 	}
 
 	/**
+	 * 序列化对象成byte数组
+	 * @param clazz
+	 * @param obj
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> byte[] encode(Class<T> clazz, T obj) {
+		try {
+			return getCodec(clazz).encode(obj);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		throw new RuntimeException("Class ["+clazz.getName()+"] encode data error!");
+	}
+
+	/**
 	 * 反序列对象出来.
 	 * @param clazz
 	 * @param bytes

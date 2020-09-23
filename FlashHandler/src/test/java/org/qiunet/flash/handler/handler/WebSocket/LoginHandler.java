@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.handler.WebSocket;
 
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
+import org.qiunet.flash.handler.context.response.push.DefaultStringMessage;
 import org.qiunet.flash.handler.handler.websocket.WebSocketStringHandler;
 import org.qiunet.flash.handler.startup.context.PlayerActor;
 
@@ -14,7 +15,6 @@ public class LoginHandler extends WebSocketStringHandler<PlayerActor> {
 
 	@Override
 	public void handler(PlayerActor playerActor, IWebSocketRequest<String> context) throws Exception {
-
-		playerActor.sendResponse(2000, context.getRequestData());
+		playerActor.send(new DefaultStringMessage(2000, context.getRequestData()));
 	}
 }

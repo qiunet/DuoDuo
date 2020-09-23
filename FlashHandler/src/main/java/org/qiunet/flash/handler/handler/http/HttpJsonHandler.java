@@ -19,7 +19,7 @@ public abstract class HttpJsonHandler extends HttpStringHandler {
 
 	@Override
 	public String handler(IHttpRequest<String> request) throws Exception {
-		JsonResponse response = handler1(new HttpJsonFacaderRequest(request));
+		JsonResponse response = handler0(new HttpJsonFacadeRequest(request));
 		return response.toString();
 	}
 	/***
@@ -27,12 +27,12 @@ public abstract class HttpJsonHandler extends HttpStringHandler {
 	 * @param request
 	 * @return
 	 */
-	protected abstract JsonResponse handler1(IHttpRequest<JsonRequest> request);
+	protected abstract JsonResponse handler0(IHttpRequest<JsonRequest> request);
 
-	private static  class HttpJsonFacaderRequest implements IHttpRequest<JsonRequest>{
+	private static  class HttpJsonFacadeRequest implements IHttpRequest<JsonRequest>{
 		private IHttpRequest<String> request;
 		private JsonRequest requestData;
-		HttpJsonFacaderRequest(IHttpRequest<String> request) {
+		HttpJsonFacadeRequest(IHttpRequest<String> request) {
 			this.request = request;
 			String data = request.getRequestData();
 			if (!StringUtil.isEmpty(data)) {
