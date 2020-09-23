@@ -38,7 +38,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * 17/11/11
  */
 public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
-	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private HttpBootstrapParams params;
 

@@ -20,7 +20,7 @@ import java.net.InetSocketAddress;
  * 17/11/11
  */
 public class NettyHttpServer implements Runnable, INettyServer {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelFuture channelFuture;
 	private HttpBootstrapParams params;
 	/***

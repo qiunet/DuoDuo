@@ -49,7 +49,7 @@ import java.util.concurrent.Future;
  */
 public final class NettyHttpClient {
 	private HttpClientParams clientParams;
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**

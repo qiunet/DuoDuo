@@ -14,7 +14,7 @@ import java.util.Arrays;
  * 17/7/19
  */
 public class DefaultProtocolHeader implements IProtocolHeader {
-	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**包头识别码*/
 	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
 

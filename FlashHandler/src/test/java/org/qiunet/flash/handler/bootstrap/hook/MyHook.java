@@ -37,7 +37,7 @@ public class MyHook implements Hook {
 
 	@Override
 	public void shutdown() {
-		LoggerType.DUODUO.error("Called MyHook");
+		LoggerType.DUODUO_FLASH_HANDLER.error("Called MyHook");
 	}
 
 	@Override

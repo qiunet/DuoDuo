@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H> {
 
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private static final ExecutorService executorService = Executors.newFixedThreadPool(OSUtil.availableProcessors() * 2,
 			new DefaultThreadFactory("MessageHandler"));

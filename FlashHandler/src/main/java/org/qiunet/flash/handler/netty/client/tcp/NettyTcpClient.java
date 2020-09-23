@@ -22,7 +22,7 @@ import org.slf4j.Logger;
  */
 public class NettyTcpClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ILongConnResponseTrigger trigger;
 	private Channel channel;
 	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {

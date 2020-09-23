@@ -56,7 +56,7 @@ public class BootstrapServer {
 		"2020202020202020202020200a2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2ee4bd9be7a596e4bf9de4bd91202ce6b0b8e697a" +
 		"04255472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e";
 
-	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private volatile static BootstrapServer instance;
 
 	private Set<INettyServer> nettyServers = new HashSet<>(8);

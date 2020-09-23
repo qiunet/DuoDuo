@@ -18,7 +18,7 @@ import java.util.Map;
  * 17/11/20
  */
 public abstract class BaseRequestContext<RequestData> implements IRequestContext<RequestData> {
-	protected Logger logger = LoggerType.DUODUO.getLogger();
+	protected Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	protected MessageContent messageContent;
 	protected ChannelHandlerContext ctx;

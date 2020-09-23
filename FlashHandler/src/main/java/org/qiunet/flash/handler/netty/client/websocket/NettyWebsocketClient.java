@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  */
 public class NettyWebsocketClient implements ILongConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
 

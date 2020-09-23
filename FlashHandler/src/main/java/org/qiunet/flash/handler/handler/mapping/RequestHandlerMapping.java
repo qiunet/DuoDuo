@@ -23,7 +23,7 @@ import java.util.Map;
  *         Created on 17/3/3 16:46.
  */
 public class RequestHandlerMapping {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private volatile static RequestHandlerMapping instance;
 	/**所有游戏的 handler*/
