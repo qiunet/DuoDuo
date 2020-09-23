@@ -1,6 +1,9 @@
 package org.qiunet.utils.scanner;
 
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Sets;
+import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
 import org.slf4j.Logger;
@@ -12,7 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -27,7 +32,7 @@ public final class ClassScanner implements IApplicationContext {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Reflections reflections;
 	private ScannerType scannerType;
-	private volatile static ClassScanner instance;
+	private static ClassScanner instance;
 
 	private ClassScanner(ScannerType scannerType) {
 		if (instance != null) {
@@ -71,6 +76,10 @@ public final class ClassScanner implements IApplicationContext {
 				.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
 				.collect(Collectors.toList());
 
+			AtomicReference<Exception> reference = new AtomicReference<>();
+			CountDownLatch latch = new CountDownLatch(subTypesOf.size());
+			Set<DFuture> futures = Sets.newHashSet();
+
 			for (IApplicationContextAware instance : collect) {
 				// 不相同. 并且都不是ALL
 				if (instance.scannerType() != this.scannerType
@@ -79,14 +88,41 @@ public final class ClassScanner implements IApplicationContext {
 					continue;
 				}
 
-				try {
-					instance.setApplicationContext(this);
-				}catch (Exception e) {
-					logger.error("===========Scanner Exception============:"+e.getMessage());
-					throw e;
+				if (instance.order() > 0) {
+					this.run(instance);
+					latch.countDown();
+					continue;
 				}
+
+				DFuture<Boolean> future = TimerManager.getInstance().executorNow(() -> {
+					run(instance);
+					return true;
+				});
+
+				futures.add(future);
+
+				future.whenComplete((res, ex) -> {
+					latch.countDown();
+					if (ex != null) {
+						reference.compareAndSet(null, (Exception) ex);
+						futures.forEach(future0 -> future0.cancel(true));
+						for (long i = 0; i < latch.getCount(); i++) {
+							latch.countDown();
+						}
+					}
+				});
+			}
+
+			latch.await();
+			if (reference.get() != null) {
+				logger.error("ClassScanner Error:", reference.get());
+				throw reference.get();
 			}
 		}
+	}
+
+	private void run(IApplicationContextAware applicationContextAware) throws Exception {
+		applicationContextAware.setApplicationContext(this);
 	}
 
 	@Override
