@@ -7,22 +7,22 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.utils.async.LazyLoader;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
 public class TcpProtobufRequestContext<RequestData, P extends IPlayerActor> extends AbstractTcpRequestContext<RequestData, P> {
-	private RequestData requestData;
+	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
+
 	public TcpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, P plyaerActor) {
 		super(content, channelContext, plyaerActor);
 	}
 
 	@Override
 	public RequestData getRequestData() {
-		if (requestData != null) return requestData;
-		this.requestData = getHandler().parseRequestData(messageContent.bytes());
-		return requestData;
+		return requestData.get();
 	}
 
 	@Override

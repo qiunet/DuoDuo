@@ -10,13 +10,15 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.async.LazyLoader;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
 public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, ResponseData  extends IpbResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
-	private RequestData requestData;
+	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
+
 	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channelContext, params, request);
 	}
@@ -33,9 +35,7 @@ public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, Res
 
 	@Override
 	public RequestData getRequestData() {
-		if (requestData != null) return requestData;
-		this.requestData = getHandler().parseRequestData(messageContent.bytes());
-		return requestData;
+		return requestData.get();
 	}
 
 	@Override

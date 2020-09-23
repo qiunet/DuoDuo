@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.Codec;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.io.IOException;
@@ -13,16 +14,12 @@ import java.io.IOException;
  * 17/7/21
  */
 public abstract class HttpProtobufHandler<RequestData extends IpbRequestData, ResponseData extends IpbResponseData> extends BaseHttpHandler<RequestData, ResponseData> {
-
-	private Codec<RequestData> codec;
+	private LazyLoader<Codec<RequestData>> codec = new LazyLoader<>(() -> ProtobufDataManager.getCodec(getRequestClass()));
 
 	@Override
 	public RequestData parseRequestData(byte[] bytes) {
-		if (codec == null) {
-			codec = ProtobufDataManager.getCodec(getRequestClass());
-		}
 		try {
-			return codec.decode(bytes);
+			return codec.get().decode(bytes);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

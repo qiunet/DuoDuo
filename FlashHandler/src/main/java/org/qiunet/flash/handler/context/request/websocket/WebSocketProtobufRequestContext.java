@@ -8,21 +8,21 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
+import org.qiunet.utils.async.LazyLoader;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
 public class WebSocketProtobufRequestContext<RequestData, P extends IPlayerActor> extends AbstractWebSocketRequestContext<RequestData, P> {
-	private RequestData requestData;
+	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
+
 	public WebSocketProtobufRequestContext(MessageContent content, ChannelHandlerContext ctx, P playerActor, HttpHeaders headers) {
 		super(content, ctx, playerActor, headers);
 	}
 	@Override
 	public RequestData getRequestData() {
-		if (requestData != null) return requestData;
-		this.requestData = getHandler().parseRequestData(messageContent.bytes());
-		return requestData;
+		return requestData.get();
 	}
 
 	@Override
