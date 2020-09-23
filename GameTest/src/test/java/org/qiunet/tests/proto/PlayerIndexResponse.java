@@ -13,7 +13,7 @@ import java.util.List;
  * 2020-09-23 10:22
  */
 @ProtobufClass
-@PbResponse(ID = 1000001)
+@PbResponse(value = 1000001)
 public class PlayerIndexResponse implements IpbResponseData {
 
 	private List<Item> items;

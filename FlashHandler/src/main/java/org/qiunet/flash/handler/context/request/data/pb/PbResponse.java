@@ -18,11 +18,5 @@ public @interface PbResponse {
 	 * 协议id
 	 * @return
 	 */
-	int ID();
-
-	/**
-	 * 不输出响应内容打印.
-	 * @return
-	 */
-	boolean skipDebugOut() default false;
+	int value();
 }

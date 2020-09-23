@@ -20,14 +20,6 @@ public interface IpbResponseData extends IpbData {
 	}
 
 	/**
-	 * 跳过debug输出
-	 * @return
-	 */
-	default boolean skipDebugOut(){
-		return PbResponseDataMapping.skipDebugOut(getClass());
-	}
-
-	/**
 	 * 构造一个IResponseMessage
 	 * @return
 	 */

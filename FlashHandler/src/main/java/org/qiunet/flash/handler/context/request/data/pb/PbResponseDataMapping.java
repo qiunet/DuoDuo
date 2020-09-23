@@ -17,7 +17,7 @@ import java.util.Set;
  */
 class PbResponseDataMapping implements IApplicationContextAware {
 
-	private static final Map<Class<? extends IpbResponseData>, PbResponse> mapping = Maps.newHashMap();
+	private static final Map<Class<? extends IpbResponseData>, Integer> mapping = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(IApplicationContext context) throws Exception {
@@ -38,21 +38,17 @@ class PbResponseDataMapping implements IApplicationContextAware {
 			}
 
 			PbResponse annotation = clazz.getAnnotation(PbResponse.class);
-			if (protocolIds.contains(annotation.ID())) {
-				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol id ["+annotation.ID()+"] is repeated!");
+			if (protocolIds.contains(annotation.value())) {
+				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+annotation.value()+"] is repeated!");
 			}
 
-			protocolIds.add(annotation.ID());
-			mapping.put(clazz, annotation);
+			protocolIds.add(annotation.value());
+			mapping.put(clazz, annotation.value());
 		}
 
 	}
 
 	static int protocolId(Class<? extends IpbResponseData> clazz) {
-		return mapping.get(clazz).ID();
-	}
-
-	static boolean skipDebugOut(Class<? extends IpbResponseData> clazz) {
-		return mapping.get(clazz).skipDebugOut();
+		return mapping.get(clazz);
 	}
 }

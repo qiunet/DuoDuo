@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
  * 2020-09-22 21:00
  */
 @ProtobufClass
-@PbResponse(ID = 1000003)
+@PbResponse(value = 1000003)
 public class LoginRoomResponse implements IpbResponseData {
 
 	private int roomSize;
