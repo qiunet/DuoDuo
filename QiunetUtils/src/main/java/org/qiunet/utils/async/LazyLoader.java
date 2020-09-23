@@ -12,7 +12,7 @@ import java.util.function.Supplier;
  **/
 public class LazyLoader<T> {
 
-	private AtomicReference<T> obj = new AtomicReference<>();
+	private AtomicReference<T> objRef = new AtomicReference<>();
 
 	private Supplier<T> supplier;
 
@@ -21,14 +21,10 @@ public class LazyLoader<T> {
 	}
 
 	public T get(){
-		T ret = obj.get();
+		T ret = objRef.get();
 		if (ret == null) {
-			obj.compareAndSet(null, ret = get0());
+			objRef.compareAndSet(null, ret = supplier.get());
 		}
 		return ret;
-	}
-
-	private T get0() {
-		return supplier.get();
 	}
 }

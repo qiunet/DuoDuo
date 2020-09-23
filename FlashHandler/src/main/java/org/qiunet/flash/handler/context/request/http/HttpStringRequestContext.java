@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.async.LazyLoader;
 
 /**
  * 把请求解析为string的对象
@@ -12,7 +13,7 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  * 17/11/21
  */
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
-	private String requestData;
+	private LazyLoader<String> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
 	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channelContext, params, request);
@@ -20,10 +21,7 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 
 	@Override
 	public String getRequestData() {
-		if (requestData == null) {
-			requestData = getHandler().parseRequestData(messageContent.bytes());
-		}
-		return requestData;
+		return requestData.get();
 	}
 	@Override
 	protected byte[] getResponseDataBytes(String s) {

@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.string.StringUtil;
 
 /**
@@ -12,17 +13,15 @@ import org.qiunet.utils.string.StringUtil;
  * 17/11/21
  */
 public class TcpStringRequestContext<P extends IPlayerActor> extends AbstractTcpRequestContext<String, P> {
-	protected String requestData;
+	private LazyLoader<String> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
+
 	public TcpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, P playerActor) {
 		super(content, channelContext, playerActor);
 	}
 
 	@Override
 	public String getRequestData() {
-		if (StringUtil.isEmpty(requestData)) {
-			this.requestData = getHandler().parseRequestData(messageContent.bytes());
-		}
-		return requestData;
+		return requestData.get();
 	}
 
 	@Override

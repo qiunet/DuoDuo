@@ -66,25 +66,6 @@ public class TimerManager {
 		future.setFuture(submit);
 		return future;
 	}
-	/**
-	 * 立刻执行
-	 * @param task
-	 * @return
-	 */
-	public DFuture<Void> executorNow(Runnable task) {
-		DCompletePromise<Void> future = new DCompletePromise<>();
-		Future<Void> submit = schedule.submit(() -> {
-			try {
-				task.run();
-				future.trySuccess(null);
-			} catch (Exception e) {
-				future.tryFailure(e);
-			}
-			return null;
-		});
-		future.setFuture(submit);
-		return future;
-	}
 	/***
 	 * 默认使用毫秒
 	 * @param timerTask 任务
