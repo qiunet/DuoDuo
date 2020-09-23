@@ -37,12 +37,4 @@ public class DefaultStringMessage implements IResponseMessage<String> {
 	public int getProtocolID() {
 		return protocolId;
 	}
-
-	@Override
-	public String toStr() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("===Response ProtocolID [").append(protocolId).append("] ==DATA: ");
-		sb.append(message);
-		return sb.toString();
-	}
 }

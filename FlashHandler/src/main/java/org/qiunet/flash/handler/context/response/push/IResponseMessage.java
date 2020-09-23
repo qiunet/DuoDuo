@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
@@ -35,5 +37,7 @@ public interface IResponseMessage<T> {
 	 * 转logger 格式字符串
 	 * @return
 	 */
-	String toStr();
+	default String toStr() {
+		return ToStringBuilder.reflectionToString(getContent(), ToStringStyle.SHORT_PREFIX_STYLE);
+	}
 }

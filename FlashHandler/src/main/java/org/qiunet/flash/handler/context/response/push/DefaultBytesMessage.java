@@ -2,8 +2,6 @@ package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
 
-import java.util.Arrays;
-
 /***
  *
  * @Author qiunet
@@ -37,13 +35,5 @@ public class DefaultBytesMessage implements IResponseMessage<byte []> {
 	@Override
 	public byte[] bytes() {
 		return message;
-	}
-
-	@Override
-	public String toStr() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("===Response ProtocolID [").append(protocolId).append("] DATA: ");
-		sb.append(Arrays.toString(message));
-		return sb.toString();
 	}
 }

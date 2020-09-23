@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.listener.SessionCloseEventData;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
@@ -71,6 +72,10 @@ public abstract class AbstractSession<P extends IPlayerActor> implements ISessio
 
 	@Override
 	public ChannelFuture writeMessage(IResponseMessage message) {
+		if ( logger.isInfoEnabled()
+			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+			logger.info("[{}] >>> {}", playerActor.getPlayerId(), message.toStr());
+		}
 		return channel.writeAndFlush(message.encode());
 	}
 
