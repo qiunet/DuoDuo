@@ -1,8 +1,8 @@
 package org.qiunet.test.response;
 
-import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.test.robot.IRobot;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.lang.reflect.ParameterizedType;
 
@@ -26,7 +26,7 @@ public abstract class ProtobufResponse<ResponseData, Robot extends IRobot> imple
 	}
 	@Override
 	public void response(Robot robot, MessageContent content) {
-		ResponseData responseData = DataType.PROTOBUF.parseBytes(content.bytes(), this.responseDataClass);
+		ResponseData responseData = ProtobufDataManager.decode(this.responseDataClass, content.bytes());
 		this.response(robot, responseData);
 	}
 }

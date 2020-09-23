@@ -1,6 +1,6 @@
 package org.qiunet.tests.robot.data;
 
-import org.qiunet.tests.proto.PlayerIndexProto;
+import org.qiunet.tests.proto.Item;
 
 import java.util.List;
 
@@ -10,6 +10,6 @@ import java.util.List;
  */
 public class RobotPackData {
 
-	public List<PlayerIndexProto.Item> items;
+	public List<Item> items;
 
 }

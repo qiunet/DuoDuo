@@ -1,9 +1,10 @@
 package org.qiunet.test.testcase.http;
 
-import com.google.protobuf.GeneratedMessageV3;
-import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.test.robot.IRobot;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.lang.reflect.ParameterizedType;
 
@@ -12,7 +13,7 @@ import java.lang.reflect.ParameterizedType;
  * Created by qiunet.
  * 17/12/8
  */
-public abstract class HttpProtobufTestCase<RequestData extends GeneratedMessageV3, ResponseData extends GeneratedMessageV3, Robot extends IRobot> extends BaseHttpTestCase<RequestData, ResponseData, Robot> {
+public abstract class HttpProtobufTestCase<RequestData extends IpbRequestData, ResponseData extends IpbResponseData, Robot extends IRobot> extends BaseHttpTestCase<RequestData, ResponseData, Robot> {
 	private Class<ResponseData> responseDataClass;
 	public HttpProtobufTestCase(){
 		Class clazz = getClass();
@@ -36,7 +37,7 @@ public abstract class HttpProtobufTestCase<RequestData extends GeneratedMessageV
 
 	@Override
 	public void responseData(Robot robot, MessageContent content) {
-		ResponseData responseData = DataType.PROTOBUF.parseBytes(content.bytes(), this.responseDataClass);
+		ResponseData responseData = ProtobufDataManager.decode(this.responseDataClass, content.bytes());
 		this.responseData(robot, responseData);
 	}
 }

@@ -1,7 +1,7 @@
 package org.qiunet.tests.TestCase.room;
 
 import org.qiunet.tests.TestCase.base.BaseRoomTestCase;
-import org.qiunet.tests.proto.LoginRoomProto;
+import org.qiunet.tests.proto.LoginRoomRequest;
 import org.qiunet.tests.robot.Robot;
 import org.qiunet.utils.string.StringUtil;
 
@@ -9,10 +9,10 @@ import org.qiunet.utils.string.StringUtil;
  * Created by qiunet.
  * 17/12/9
  */
-public class TestLoginRoom extends BaseRoomTestCase<LoginRoomProto.LoginRoomRequest> {
+public class TestLoginRoom extends BaseRoomTestCase<LoginRoomRequest> {
 	@Override
-	protected LoginRoomProto.LoginRoomRequest requestBuild(Robot robot) {
-		return LoginRoomProto.LoginRoomRequest.newBuilder().setHeader(headerBuilder(robot)).build();
+	protected LoginRoomRequest requestBuild(Robot robot) {
+		return new LoginRoomRequest();
 	}
 
 	@Override

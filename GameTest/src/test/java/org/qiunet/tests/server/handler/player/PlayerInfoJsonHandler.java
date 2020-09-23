@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.handler.http.HttpJsonHandler;
 @UriPathHandler("playerInfo")
 public class PlayerInfoJsonHandler extends HttpJsonHandler {
 	@Override
-	protected JsonResponse handler1(IHttpRequest<JsonRequest> request) {
+	protected JsonResponse handler0(IHttpRequest<JsonRequest> request) {
 		JsonResponse response = new JsonResponse();
 
 		return response.addAttribute("token", request.getRequestData().getString("token"));

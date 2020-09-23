@@ -1,9 +1,12 @@
 package org.qiunet.tests.server.handler.player;
 
+import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
 import org.qiunet.flash.handler.handler.websocket.WebSocketProtobufHandler;
-import org.qiunet.tests.proto.PlayerIndexProto;
+import org.qiunet.tests.proto.Item;
+import org.qiunet.tests.proto.PlayerIndexRequest;
+import org.qiunet.tests.proto.PlayerIndexResponse;
 import org.qiunet.tests.server.startup.context.PlayerActor;
 
 /**
@@ -11,18 +14,16 @@ import org.qiunet.tests.server.startup.context.PlayerActor;
  * 17/12/9
  */
 @RequestHandler(ID = 1002, desc = "长连接首页")
-public class PlayerIndexTcpHandler extends WebSocketProtobufHandler<PlayerActor, PlayerIndexProto.PlayerIndexRequest> {
+public class PlayerIndexTcpHandler extends WebSocketProtobufHandler<PlayerActor, PlayerIndexRequest> {
 
 	@Override
-	public void handler(PlayerActor playerActor, IWebSocketRequest<PlayerIndexProto.PlayerIndexRequest> context) throws Exception {
-		playerActor.sendResponse(1000001, PlayerIndexProto.PlayerIndexResponse.newBuilder()
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123450).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123451).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123452).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123453).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123454).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123455).setCount(context.getRequestData().getHeader().getUid()).build())
-			.addItems(PlayerIndexProto.Item.newBuilder().setItemId(123456).setCount(context.getRequestData().getHeader().getUid()).build())
-			.build());
+	public void handler(PlayerActor playerActor, IWebSocketRequest<PlayerIndexRequest> context) throws Exception {
+		playerActor.sendResponse(PlayerIndexResponse.valueOf(Lists.newArrayList(
+			Item.valueOf(123450, 1),
+			Item.valueOf(123451, 2),
+			Item.valueOf(123452, 3),
+			Item.valueOf(123453, 4),
+			Item.valueOf(123454, 5)
+		)));
 	}
 }
