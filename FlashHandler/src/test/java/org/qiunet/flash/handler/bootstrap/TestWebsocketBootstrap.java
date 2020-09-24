@@ -20,23 +20,6 @@ import java.util.concurrent.CountDownLatch;
 public class TestWebsocketBootstrap extends HttpBootStrap {
 	private CountDownLatch latch;
 	private String text;
-	@Test
-	public void testStringWebsocket() throws InterruptedException {
-		NettyWebsocketClient client = new NettyWebsocketClient(
-			WebSocketClientParams.custom()
-				.setAddress("localhost", 8080)
-				.setUriIPath("/ws")
-				.build()
-			, new ResponseTrigger());
-		text = "Hello world";
-		latch = new CountDownLatch(1);
-
-		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
-		MessageContent content = new MessageContent(1005, bytes);
-		client.sendMessage(content);
-
-		latch.await();
-	}
 
 	@Test
 	public void testProtobufWebSocket() throws InterruptedException {

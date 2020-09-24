@@ -10,10 +10,8 @@ import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.request.tcp.TcpProtobufRequestContext;
-import org.qiunet.flash.handler.context.request.tcp.TcpStringRequestContext;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.context.request.websocket.WebSocketProtobufRequestContext;
-import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
@@ -34,12 +32,12 @@ public enum DataType {
 
 		@Override
 		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers) {
-			return new WebSocketStringRequestContext(content, channelContext, playerActor, headers);
+			throw new IllegalStateException("Not Support");
 		}
 
 		@Override
 		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor) {
-			return new TcpStringRequestContext(content, channelContext, playerActor);
+			throw new IllegalStateException("Not Support");
 		}
 	},
 	/**

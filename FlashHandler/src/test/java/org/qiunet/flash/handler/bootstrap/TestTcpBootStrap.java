@@ -14,13 +14,6 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  */
 public class TestTcpBootStrap extends TcpBootStrap {
 	private String text;
-	@Test
-	public void testTcpString(){
-		text = "测试 [testTcpString]";
-		byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
-		MessageContent messageContent  = new MessageContent(1003, bytes);
-		this.tcpClient.sendMessage(messageContent);
-	}
 
 	@Test
 	public void testTcpProtobuf(){
