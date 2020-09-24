@@ -36,7 +36,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.TCP);
 		DSession session = new DSession(ctx.channel());
 
-		SessionManager.getInstance().addSession(session);
+		SessionManager.addSession(session);
 		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(session));
 	}
 
@@ -50,7 +50,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		DSession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
 		IPlayerActor playerActor = session.getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
@@ -67,12 +67,12 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		DSession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getSession(ctx.channel());
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
 			if (session != null) {
 				session.close(CloseCause.EXCEPTION);
 			}else {

@@ -18,8 +18,9 @@ public class NettyIdleCheckHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		if (evt instanceof IdleStateEvent && ((IdleStateEvent) evt).state() == IdleState.READER_IDLE) {
-			DSession session = SessionManager.getInstance().getSession(ctx.channel());
-			logger.info("[NettyIdleCheckHandler] Session ["+session+"] Channel ["+ctx.channel().id()+"] close by idle check");
+			DSession session = SessionManager.getSession(ctx.channel());
+			logger.info("[NettyIdleCheckHandler] Session [{}] Channel [{}] close by idle check", session, ctx
+			.channel().id());
 			if (session != null) {
 				session.close(CloseCause.CHANNEL_IDLE);
 			}else {

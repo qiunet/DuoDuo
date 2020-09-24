@@ -41,7 +41,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 			DSession iSession = new DSession(ctx.channel());
 
 			ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
-			SessionManager.getInstance().addSession(iSession);
+			SessionManager.addSession(iSession);
 		}
 		super.userEventTriggered(ctx, evt);
 	}
@@ -54,12 +54,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			return;
 		}
 
-		DSession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
 		IPlayerActor playerActor = session.getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
@@ -76,12 +76,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		DSession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getSession(ctx.channel());
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "")+"]";
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
 			if (session == null) {
 				ctx.close();
 			}else {

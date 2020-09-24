@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 
@@ -23,12 +24,12 @@ public interface IStartupContext<T extends IPlayerActor<? extends IPlayerActor>>
 	 *  没有找到handler 404
 	 * @return
 	 */
-	IResponseMessage getHandlerNotFound();
+	IResponseMessage<IpbResponseData> getHandlerNotFound();
 
 	/***
 	 * 出现异常
 	 * @param cause
 	 * @return
 	 */
-	IResponseMessage exception(Throwable cause);
+	IResponseMessage<IpbResponseData> exception(Throwable cause);
 }

@@ -12,22 +12,17 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/10/23
  */
-public enum  SessionManager {
-	instance
-	;
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+public class SessionManager {
+	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
 
-
-	public static SessionManager getInstance() {
-		return instance;
-	}
+	private SessionManager(){}
 	/***
 	 * 添加一个Session
 	 * @param val
 	 * @return
 	 */
-	public boolean addSession(DSession val) {
+	public static boolean addSession(DSession val) {
 		Preconditions.checkNotNull(val);
 		Attribute<DSession> attr = val.channel().attr(SESSION_KEY);
 		boolean result = attr.compareAndSet(null, val);
@@ -42,7 +37,7 @@ public enum  SessionManager {
 	 * @param channel
 	 * @return
 	 */
-	public DSession getSession(Channel channel) {
+	public static DSession getSession(Channel channel) {
 		return channel.attr(SESSION_KEY).get();
 	}
 
