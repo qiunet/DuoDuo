@@ -24,6 +24,7 @@
 		<module>all</module>
 		<module>EventLog</module>
 		<module>Listener</module>
+		<module>Cross</module>
 	</modules>
 
 	<packaging>pom</packaging>

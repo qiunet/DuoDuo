@@ -23,7 +23,7 @@ public interface IpbResponseData extends IpbData {
 	 * 构造一个IResponseMessage
 	 * @return
 	 */
-	default IResponseMessage buildResponseMessage(){
+	default IResponseMessage<IpbResponseData> buildResponseMessage(){
 		return new DefaultProtobufMessage(getProtocolId(), this);
 	}
 }
