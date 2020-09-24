@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * @author qiunet
  * 2020/3/8 09:31
  **/
-public interface IStartupContext<T extends IPlayerActor<? extends IPlayerActor>> {
+public interface IStartupContext<T extends IPlayerActor<T>> {
 	/**
 	 * 构造PlayerActor
 	 * http情况不会调用.
