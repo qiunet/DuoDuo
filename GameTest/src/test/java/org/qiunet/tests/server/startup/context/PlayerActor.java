@@ -2,6 +2,7 @@ package org.qiunet.tests.server.startup.context;
 
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,11 +11,11 @@ import org.slf4j.LoggerFactory;
  * @author qiunet
  * 2020-04-12 16:28
  **/
-public class PlayerActor extends AbstractPlayerActor<GameSession, PlayerActor> {
+public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	private Logger logger = LoggerFactory.getLogger("PlayerActor");
 	private long playerId;
 
-	public PlayerActor(GameSession session) {
+	public PlayerActor(DSession session) {
 		super(session);
 		// 测试不需要管鉴权的问题.
 		this.auth(10000);

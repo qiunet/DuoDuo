@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
-import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -34,10 +34,10 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.TCP);
-		ISession iSession = params.getStartupContext().buildSession(ctx.channel());
+		DSession session = new DSession(ctx.channel());
 
-		SessionManager.getInstance().addSession(iSession);
-		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
+		SessionManager.getInstance().addSession(session);
+		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(session));
 	}
 
 	@Override
@@ -50,10 +50,10 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getInstance().getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
-		IPlayerActor playerActor = session.getPlayerActor();
+		IPlayerActor playerActor = session.getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
 		if (handler.needAuth() && ! playerActor.isAuth()) {
 			session.close(CloseCause.ERR_REQUEST);
 			return;
@@ -67,7 +67,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ISession session = SessionManager.getInstance().getSession(ctx.channel());
+		DSession session = SessionManager.getInstance().getSession(ctx.channel());
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
 		logger.error(errMeg, cause);
 

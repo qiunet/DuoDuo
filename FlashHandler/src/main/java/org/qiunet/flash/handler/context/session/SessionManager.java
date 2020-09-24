@@ -16,7 +16,7 @@ public enum  SessionManager {
 	instance
 	;
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private static final AttributeKey<ISession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
+	private static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_KEY");
 
 
 	public static SessionManager getInstance() {
@@ -27,15 +27,14 @@ public enum  SessionManager {
 	 * @param val
 	 * @return
 	 */
-	public boolean addSession(ISession val) {
+	public boolean addSession(DSession val) {
 		Preconditions.checkNotNull(val);
-		Attribute<ISession> attr = val.getChannel().attr(SESSION_KEY);
+		Attribute<DSession> attr = val.channel().attr(SESSION_KEY);
 		boolean result = attr.compareAndSet(null, val);
 		if (! result) {
 			logger.error("Session [{}] Duplicate", val);
 			val.close(CloseCause.LOGIN_REPEATED);
 		}
-		val.getChannel().closeFuture().addListener(future -> logger.warn("Session ["+val+"] closed"));
 		return result;
 	}
 	/***
@@ -43,8 +42,8 @@ public enum  SessionManager {
 	 * @param channel
 	 * @return
 	 */
-	public <T extends ISession> T getSession(Channel channel) {
-		return (T) channel.attr(SESSION_KEY).get();
+	public DSession getSession(Channel channel) {
+		return channel.attr(SESSION_KEY).get();
 	}
 
 }

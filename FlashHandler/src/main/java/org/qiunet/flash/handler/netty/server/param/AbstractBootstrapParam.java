@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
@@ -36,7 +35,7 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected int maxReceivedLength;
 
-	protected IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext;
+	protected IStartupContext<? extends IPlayerActor> startupContext;
 
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
@@ -58,7 +57,7 @@ public abstract class AbstractBootstrapParam {
 		return readIdleCheckSeconds;
 	}
 
-	public IStartupContext<? extends ISession, ? extends IPlayerActor> getStartupContext() {
+	public IStartupContext<? extends IPlayerActor> getStartupContext() {
 		return startupContext;
 	}
 
@@ -78,7 +77,7 @@ public abstract class AbstractBootstrapParam {
 		 */
 		private int readIdleCheckSeconds = 300;
 
-		protected IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext;
+		protected IStartupContext<? extends IPlayerActor> startupContext;
 		/***
 		 * 启动需要的上下文对象
 		 * @param protocolHeaderAdapter
@@ -89,7 +88,7 @@ public abstract class AbstractBootstrapParam {
 			return (B) this;
 		}
 
-		public B setStartupContext(IStartupContext<? extends ISession, ? extends IPlayerActor> startupContext) {
+		public B setStartupContext(IStartupContext<? extends IPlayerActor> startupContext) {
 			this.startupContext = startupContext;
 			return (B) this;
 		}

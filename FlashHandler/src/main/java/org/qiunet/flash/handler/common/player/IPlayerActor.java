@@ -1,14 +1,14 @@
 package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.IMessageHandler;
-import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.DSession;
 
 /***
  *
  * @author qiunet
  * 2020/3/1 21:43
  **/
-public interface IPlayerActor<Session extends ISession, P extends IPlayerActor> extends IMessageHandler<P> {
+public interface IPlayerActor<P extends IPlayerActor> extends IMessageHandler<P> {
 	/***
 	 * 得到playerId 一般是uid
 	 * @return
@@ -19,7 +19,7 @@ public interface IPlayerActor<Session extends ISession, P extends IPlayerActor> 
 	 * 获得session
 	 * @return
 	 */
-	Session getSession();
+	DSession getSession();
 
 	/**
 	 * openId 或者账号account
