@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.handler.mapping;
 
+import com.baidu.bjf.remoting.protobuf.utils.FieldUtils;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
@@ -13,7 +16,6 @@ import org.slf4j.Logger;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -25,11 +27,13 @@ import java.util.Map;
 public class RequestHandlerMapping {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private volatile static RequestHandlerMapping instance;
-	/**所有游戏的 handler*/
-	private Map<Integer, IHandler> gameHandlers = new HashMap<>();
+	private static RequestHandlerMapping instance;
 	/**所有非游戏的 http handler*/
-	private Map<String, IHttpHandler> uriPathHandlers = new HashMap<>();
+	private Map<String, IHttpHandler> uriPathHandlers = Maps.newHashMap();
+	/**所有游戏的 handler*/
+	private Map<Integer, IHandler> gameHandlers = Maps.newHashMapWithExpectedSize(128);
+	/**req Class 到protocolId 的映射关系**/
+	private Map<Class<?>, Integer> req2ProtocolId = Maps.newHashMapWithExpectedSize(128);
 
 	private RequestHandlerMapping() {
 		synchronized (RequestHandlerMapping.class) {
@@ -52,6 +56,17 @@ public class RequestHandlerMapping {
 		return instance;
 	}
 
+	/**
+	 * 通过class得到对应的protocolId
+	 * @param clazz
+	 * @return
+	 */
+	public int getProtocolId(Class clazz) {
+		if (! req2ProtocolId.containsKey(clazz)) {
+			throw new RuntimeException("class ["+clazz.getName()+"] is not mapping any protocolId!");
+		}
+		return req2ProtocolId.get(clazz);
+	}
 	/**
 	 * 通过请求的MessageContent 得到一个Handler
 	 * @param protocolId
@@ -97,10 +112,12 @@ public class RequestHandlerMapping {
 			throw new RuntimeException("protocolId ["+protocolId+"] className ["+handler.getClass().getSimpleName()+"] is already exist!");
 		}
 
-		handlerSetRequestDataClass(handler);
+		Class requestDataClass = handlerSetRequestDataClass(handler);
 		setHandlerField(handler, "protocolId", protocolId);
-		logger.info("ProtocolID ["+protocolId+"] RequestHandler ["+handler.getClass().getSimpleName()+"] was found and mapping.");
+		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		this.gameHandlers.put(protocolId, handler);
+
+		req2ProtocolId.put(requestDataClass, handler.getClass().getAnnotation(RequestHandler.class).ID());
 	}
 
 
@@ -117,7 +134,7 @@ public class RequestHandlerMapping {
 		}
 
 		handlerSetRequestDataClass(handler);
-		logger.info("RequestHandler ["+handler.getClass().getSimpleName()+"] uriPath ["+uriPath+"] was found and add.");
+		logger.info("RequestHandler [{}] uriPath [{}] was found and add.", handler.getClass().getSimpleName(), uriPath);
 		this.uriPathHandlers.put(uriPath, handler);
 	}
 
@@ -125,9 +142,10 @@ public class RequestHandlerMapping {
 	 * 给handler 设置 requestDataClass 属性
 	 * @param handler
 	 */
-	private void handlerSetRequestDataClass(IHandler handler){
+	private Class handlerSetRequestDataClass(IHandler handler){
 		Class oriClazz = handler.getClass();
 		Class clazz = oriClazz;
+		Class requestDataClass = null;
 		do {
 			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
 				clazz = clazz.getSuperclass();
@@ -136,7 +154,6 @@ public class RequestHandlerMapping {
 			// 可能有的第一位是PlayerActor或者PlayerActor泛型类型 第二位才是requestClass类型.
 			Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
 			Type type = types[0];
-			Class requestDataClass = null;
 			if (type instanceof Class) {
 				requestDataClass = (Class) type;
 			}
@@ -152,6 +169,7 @@ public class RequestHandlerMapping {
 			setHandlerField(handler, "requestDataClass", requestDataClass);
 			break;
 		}while (clazz != Object.class);
+		return requestDataClass;
 	}
 
 	/**
@@ -160,18 +178,8 @@ public class RequestHandlerMapping {
 	 * @param handler
 	 */
 	private void setHandlerField(IHandler handler, String fieldName, Object value) {
-		Field field = null;
 		Class clazz = handler.getClass();
-		do {
-			try {
-				field = clazz.getDeclaredField(fieldName);
-			} catch (NoSuchFieldException e) {
-				clazz = clazz.getSuperclass();
-			}
-			if (field != null) break;
-
-		}while (clazz != Object.class);
-
+		Field field = FieldUtils.findField(clazz, fieldName);
 		if (field == null) {
 			throw new NullPointerException("not found field name ["+fieldName+"] in handler ["+handler.getClass().getSimpleName()+"]");
 		}
