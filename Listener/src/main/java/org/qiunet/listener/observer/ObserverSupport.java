@@ -1,10 +1,10 @@
 package org.qiunet.listener.observer;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /***
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
  **/
 public class ObserverSupport {
 
-	private Map<Class<? extends IObserver>, List<Observer>> observerMaps = Maps.newHashMap();
+	private Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
 
 	/**
 	 * 往该support添加一个观察者.
@@ -26,9 +26,9 @@ public class ObserverSupport {
 	 * @return
 	 */
 	public <O extends IObserver> Observer<O> attach(Class<O> clazz, O o) {
-		List<Observer> observers = this.computeIfAbsent(clazz);
+		ObserverList<O> observers = this.computeIfAbsent(clazz);
 		Observer<O> observer = new Observer<>(this, o);
-		observers.add(observer);
+		observers.getObservers().add(observer);
 		return observer;
 	}
 
@@ -60,8 +60,8 @@ public class ObserverSupport {
 	 * @param clazz
 	 * @return
 	 */
-	private List<Observer> computeIfAbsent(Class<? extends IObserver> clazz){
-		return observerMaps.computeIfAbsent(clazz, key-> Lists.newCopyOnWriteArrayList());
+	private <O extends IObserver> ObserverList<O> computeIfAbsent(Class<O> clazz){
+		return (ObserverList<O>) observerMaps.computeIfAbsent(clazz, key-> new ObserverList<O>());
 	}
 
 	/**
@@ -71,7 +71,27 @@ public class ObserverSupport {
 	 * @param <O>
 	 */
 	public <O extends IObserver> void fire(Class<O> clazz, Consumer<O> consumer) {
-		List<Observer> observers = this.computeIfAbsent(clazz);
-		observers.forEach(o -> consumer.accept((O) o.getObserver()));
+		ObserverList<O> observers = this.computeIfAbsent(clazz);
+		observers.forEach(o -> consumer.accept(o.getObserver()));
+	}
+
+	private static class ObserverList<O extends IObserver> {
+		private List<Observer<O>> observers;
+
+		ObserverList() {
+			this.observers = new CopyOnWriteArrayList<>();
+		}
+
+		boolean remove(Observer<O> oObserver) {
+			return this.observers.remove(oObserver);
+		}
+
+		void forEach(Consumer<Observer<O>> consumer) {
+			observers.forEach(consumer);
+		}
+
+		List<Observer<O>> getObservers() {
+			return observers;
+		}
 	}
 }
