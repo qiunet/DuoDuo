@@ -19,9 +19,9 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/11
  */
-public class NettyHttpServer implements Runnable, INettyServer {
+public class NettyHttpServer implements INettyServer {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private ChannelFuture channelFuture;
+	private ChannelFuture closeFuture;
 	private HttpBootstrapParams params;
 	/***
 	 * 启动
@@ -44,9 +44,9 @@ public class NettyHttpServer implements Runnable, INettyServer {
 			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
-			this.channelFuture = bootstrap.bind(params.getAddress()).sync();
-			logger.error("[NettyHttpServer]  Http server is started on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
-			this.channelFuture.channel().closeFuture().sync();
+			this.closeFuture = bootstrap.bind(params.getAddress()).sync();
+			logger.error("[NettyHttpServer]  Http server is started on port [{}]", ((InetSocketAddress) params.getAddress()).getPort());
+			this.closeFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyHttpServer] Exception: ", e);
 		}finally {
@@ -61,6 +61,11 @@ public class NettyHttpServer implements Runnable, INettyServer {
 	 */
 	@Override
 	public void shutdown(){
-		this.channelFuture.channel().close();
+		this.closeFuture.channel().close();
+	}
+
+	@Override
+	public String threadName() {
+		return "BootstrapServer-Http Address ["+params.getAddress().toString()+"]";
 	}
 }

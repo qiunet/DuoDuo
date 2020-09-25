@@ -20,4 +20,10 @@ public @interface DProperties {
 	 * @return
 	 */
 	String value();
+
+	/**
+	 * 监听变动. 变动重新赋值.
+	 * @return
+	 */
+	boolean listenerChange() default false;
 }

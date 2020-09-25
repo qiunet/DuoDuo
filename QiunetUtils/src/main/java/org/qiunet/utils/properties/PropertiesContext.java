@@ -28,7 +28,7 @@ class PropertiesContext implements IApplicationContextAware {
 	/**
 	 * propertie名称对应的所有字段.
 	 */
-	private Map<String, List<Field>> fields = Maps.newHashMap();
+	private Map<String, PropertiesData> datas = Maps.newHashMap();
 	private IApplicationContext context;
 	@Override
 	public int order() {
@@ -57,21 +57,27 @@ class PropertiesContext implements IApplicationContextAware {
 				propertiesName = fieldAnnotation.propertiesName();
 			}
 
-			List<Field> fieldList = this.fields.computeIfAbsent(propertiesName, key -> Lists.newArrayList());
-			fieldList.add(field);
+			PropertiesData data = this.datas.computeIfAbsent(propertiesName, PropertiesData::new);
+			if (annotation != null) data.listenerChanged = annotation.listenerChange();
+			data.fields.add(field);
 		}
 
-		this.fields.keySet().forEach(this::loadFile);
+		this.datas.values().forEach(this::loadFile);
 	}
 
 
 	/**
 	 * 加载指定名文件
-	 * @param name
+	 * @param data
 	 */
-	private void loadFile(String name) {
-		IKeyValueData<Object, Object> keyValueData = PropertiesUtil.loadProperties(name, file -> this.loadFile(name, PropertiesUtil.loadProperties(file)));
-		this.loadFile(name, keyValueData);
+	private void loadFile(PropertiesData data) {
+		IKeyValueData<Object, Object> keyValueData;
+		if (data.listenerChanged) {
+			keyValueData = PropertiesUtil.loadProperties(data.propertyName, file -> this.loadFile(data.propertyName, data.fields, PropertiesUtil.loadProperties(file)));
+		}else {
+			keyValueData = PropertiesUtil.loadProperties(data.propertyName);
+		}
+		this.loadFile(data.propertyName, data.fields, keyValueData);
 	}
 
 	/**
@@ -79,8 +85,7 @@ class PropertiesContext implements IApplicationContextAware {
 	 * @param name
 	 * @param keyValueData
 	 */
-	private void loadFile(String name, IKeyValueData<Object, Object> keyValueData) {
-		List<Field> fieldList = this.fields.get(name);
+	private void loadFile(String name, List<Field> fieldList, IKeyValueData<Object, Object> keyValueData) {
 		fieldList.forEach(field -> {
 			DPropertiesValue annotation = field.getAnnotation(DPropertiesValue.class);
 			String keyName = annotation.value();
@@ -133,5 +138,27 @@ class PropertiesContext implements IApplicationContextAware {
 			e.printStackTrace();
 		}
 		throw new RuntimeException("Can not convert class type for ["+fieldType.getName()+"]");
+	}
+
+	/**
+	 * properties 数据
+	 */
+	private static class PropertiesData {
+		/**
+		 * 名称
+		 */
+		 String propertyName;
+		/**
+		 * 是否监听
+		 */
+		 boolean listenerChanged;
+		/**
+		 * 需要注入的field
+		 */
+		 List<Field> fields = Lists.newLinkedList();
+
+		PropertiesData(String propertyName) {
+			this.propertyName = propertyName;
+		}
 	}
 }

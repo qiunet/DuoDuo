@@ -25,6 +25,7 @@ import java.lang.reflect.Proxy;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.MessageFormat;
 import java.util.*;
 
 class DbLoader {
@@ -83,7 +84,7 @@ class DbLoader {
 	private String getConfigKey(String datasourceName, String key) {
 		return "database."+datasourceName+"."+key;
 	}
-	private volatile static DbLoader instance;
+	private static DbLoader instance;
 
 	private DbLoader() {
 		if (instance != null) {
@@ -197,7 +198,7 @@ class DbLoader {
 			}
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
-			logger.error("Failed to parse mapping resource: '" + mybatisConfigFileName + "'", e);
+			logger.error(MessageFormat.format("Failed to parse mapping resource: ''{0}''", mybatisConfigFileName), e);
 			throw new ExceptionInInitializerError("Failed to parse mapping resource: '" + mybatisConfigFileName + "'");
 		} finally {
 			ErrorContext.instance().reset();
@@ -210,7 +211,7 @@ class DbLoader {
 	}
 
 	String dbName(String dbSource) {
-		Preconditions.checkState(dbNameMapping.containsKey(dbSource), "No dbName for dbSource ["+dbSource+"]");
+		Preconditions.checkState(dbNameMapping.containsKey(dbSource), "No dbName for dbSource [%s]", dbSource);
 		return dbNameMapping.get(dbSource);
 	}
 

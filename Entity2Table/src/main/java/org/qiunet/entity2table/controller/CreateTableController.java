@@ -232,7 +232,12 @@ class CreateTableController implements IApplicationContextAware {
 
 	@EventListener(EventHandlerWeightType.HIGH)
 	public void createTable(DbLoaderOverEventData eventData){
-		context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
+		try {
+			context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
+		}catch (Exception e) {
+			logger.error("Exception", e);
+			System.exit(1);
+		}
 	}
 
 	@Override

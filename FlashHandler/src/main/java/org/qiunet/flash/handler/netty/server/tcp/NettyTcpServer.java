@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/8/13
  */
-public final class NettyTcpServer implements Runnable, INettyServer {
+public final class NettyTcpServer implements INettyServer {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private TcpBootstrapParams params;
@@ -49,7 +49,7 @@ public final class NettyTcpServer implements Runnable, INettyServer {
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
 			this.channelFuture = bootstrap.bind(params.getAddress());
-			logger.error("[NettyTcpServer]  Tcp server is Listener on port ["+ ((InetSocketAddress) params.getAddress()).getPort()+"]");
+			logger.error("[NettyTcpServer]  Tcp server is Listener on port [{}]", ((InetSocketAddress) params.getAddress()).getPort());
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyTcpServer] Exception: ", e);
@@ -62,5 +62,10 @@ public final class NettyTcpServer implements Runnable, INettyServer {
 	@Override
 	public void shutdown(){
 		this.channelFuture.channel().close();
+	}
+
+	@Override
+	public String threadName() {
+		return "BootstrapServer-Tcp Address ["+params.getAddress().toString()+"]";
 	}
 }
