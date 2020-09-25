@@ -22,7 +22,31 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	 */
 	protected BasePoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
 		this.redisName = redisName;
+		// jedisPool 构造
+		this.jedisPool = this.buildJedisPool(redisProperties);
+		// 添加关闭.
+		ShutdownHookThread.getInstance().addLast(this.jedisPool::close);
+	}
 
+	protected BasePoolRedisUtil(JedisPool jedisPool) {
+		this.jedisPool = jedisPool;
+	}
+
+	/**
+	 * 拼接类似: redis.{redisName}.host 的字符串
+	 * @param originConfigKey
+	 * @return
+	 */
+	private String getConfigKey(String originConfigKey) {
+		return "redis."+redisName+"."+originConfigKey;
+	}
+
+	/**
+	 * 构造一个可以用的jedisPool
+	 * @param redisProperties properties 内容
+	 * @return
+	 */
+	private JedisPool buildJedisPool(IKeyValueData<Object, Object> redisProperties){
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
 		poolConfig.setMaxIdle(redisProperties.getInt(getConfigKey("maxIdle"), 30));
 		poolConfig.setMaxTotal(redisProperties.getInt(getConfigKey("maxTotal"), 100));
@@ -39,22 +63,7 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 
 		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
 		int db = redisProperties.getInt(getConfigKey("db"), 0);
-
-		this.jedisPool = new JedisPool(poolConfig, host, port, timeout, password, db, null);
-
-		ShutdownHookThread.getInstance().addLast(() -> {
-			// 添加关闭.
-			this.jedisPool.close();
-		});
-	}
-
-	protected BasePoolRedisUtil(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
-	}
-
-	private String getConfigKey(String originConfigKey) {
-		// 返回类似: redis.{redisName}.host 的字符串
-		return "redis."+redisName+"."+originConfigKey;
+		return new JedisPool(poolConfig, host, port, timeout, password, db, null);
 	}
 
 	private class ClosableJedisProxy implements InvocationHandler {
@@ -69,6 +78,8 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 			}
 		}
 	}
+
+
 	private class NormalJedisProxy implements InvocationHandler {
 		private boolean log;
 		private JedisCommands jedis;
