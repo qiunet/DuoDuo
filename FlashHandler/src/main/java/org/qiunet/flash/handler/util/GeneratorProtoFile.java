@@ -31,7 +31,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
 
-		ClassScanner.getInstance(ScannerType.TESTER).scanner(packetPrefix);
+		ClassScanner.getInstance(ScannerType.SERVER).scanner(packetPrefix);
 		model.generatorProto(directory, pbClasses);
 	}
 
@@ -46,6 +46,6 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.TESTER;
+		return ScannerType.SERVER;
 	}
 }

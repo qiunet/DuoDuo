@@ -4,6 +4,7 @@ import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.entity2table.command.Columns;
@@ -11,6 +12,8 @@ import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
+import org.qiunet.listener.event.EventHandlerWeightType;
+import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -26,10 +29,10 @@ import java.util.stream.Collectors;
  * 19/04/22
  */
 class CreateTableController implements IApplicationContextAware {
-	private static final Logger logger = LoggerType.DUODUO.getLogger();
-	private volatile static CreateTableController instance;
-
 	private CreateTableService createTableService = CreateTableService.getInstance();
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private static CreateTableController instance;
+	private IApplicationContext context;
 
 	private CreateTableController() {
 		if (instance != null) {
@@ -224,6 +227,11 @@ class CreateTableController implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
+		this.context = context;
+	}
+
+	@EventListener(EventHandlerWeightType.HIGH)
+	public void createTable(DbLoaderOverEventData eventData){
 		context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
 	}
 

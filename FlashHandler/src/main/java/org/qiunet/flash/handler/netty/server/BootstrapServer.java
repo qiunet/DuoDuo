@@ -57,7 +57,7 @@ public class BootstrapServer {
 		"04255472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e";
 
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private volatile static BootstrapServer instance;
+	private static BootstrapServer instance;
 
 	private Set<INettyServer> nettyServers = new HashSet<>(8);
 

@@ -85,6 +85,7 @@ public final class ClassScanner implements IApplicationContext {
 				if (instance.scannerType() != this.scannerType
 				&& instance.scannerType() != ScannerType.ALL
 				&& this.scannerType != ScannerType.ALL) {
+					latch.countDown();
 					continue;
 				}
 

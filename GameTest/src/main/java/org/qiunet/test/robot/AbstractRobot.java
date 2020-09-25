@@ -55,7 +55,8 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 	}
 
 	@Override
-	public void run() {
+	public boolean runCases() {
+		boolean result = true;
 		for (Class<? extends ITestCase> testCaseClass : testCases) {
 			ITestCase testCase = null;
 			try {
@@ -65,7 +66,8 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 			}
 
 			if (brokeReason != null) {
-				logger.error("机器人中断错误: "+ brokeReason);
+				logger.error("机器人中断错误: {}", brokeReason);
+				result = false;
 				break;
 			}
 			boolean conditionJudgePass = false;
@@ -78,10 +80,12 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 			if (conditionJudgePass) {
 				testCase.sendRequest(this);
 			}else if (testCase.cancelIfConditionMiss()){
-				logger.info("TestCase["+testCaseClass.getSimpleName()+"]条件不足并且设置了[cancelIfConditionMiss], 机器人终止测试....");
+				logger.info("TestCase[{}]条件不足并且设置了[cancelIfConditionMiss], 机器人终止测试....", testCaseClass.getSimpleName());
 				// 如果条件不满足, 就终止的case
+				result = false;
 				break;
 			}
 		}
+		return result;
 	}
 }

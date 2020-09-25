@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Modifier;
 
@@ -38,5 +39,10 @@ public class RequestScannerHandler implements IApplicationContextAware {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.SERVER;
 	}
 }

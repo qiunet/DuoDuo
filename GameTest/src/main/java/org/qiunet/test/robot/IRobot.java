@@ -8,7 +8,12 @@ import org.qiunet.test.robot.init.IRobotInitInfo;
  * Created by qiunet.
  * 17/11/24
  */
-public interface IRobot<Info extends IRobotInitInfo> extends Runnable, IRobotFunc {
+public interface IRobot<Info extends IRobotInitInfo> extends IRobotFunc {
+	/**
+	 * 运行case
+	 * @return
+	 */
+	boolean runCases();
 	/***
 	 *
 	 * @return

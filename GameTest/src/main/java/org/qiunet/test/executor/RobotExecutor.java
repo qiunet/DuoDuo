@@ -2,6 +2,7 @@ package org.qiunet.test.executor;
 
 
 import com.google.common.collect.Sets;
+import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
 import org.qiunet.utils.async.future.DFuture;
@@ -48,7 +49,7 @@ public final class RobotExecutor {
 		initializer.handler();
 		logger.error("-------用户自定义初始化代码结束-------");
 	}
-	private Set<DFuture<Void>> futures = Sets.newConcurrentHashSet();
+	private Set<DFuture<Boolean>> futures = Sets.newConcurrentHashSet();
 	private Thread currThread;
 	/***
 	 * 压测所有
@@ -68,9 +69,9 @@ public final class RobotExecutor {
 		logger.info("===============压测开始===============");
 		currThread = Thread.currentThread();
 		for (int i = 0; i < robotCount; i++) {
-			DFuture<Void> future = TimerManager.getInstance().executorNow(() -> {
-				robotFactory.createRobot(testCases);
-				return null;
+			DFuture<Boolean> future = TimerManager.getInstance().executorNow(() -> {
+				IRobot robot = robotFactory.createRobot(testCases);
+				return robot.runCases();
 			});
 
 			future.whenComplete((res, ex) -> futureComplete(future));
@@ -80,7 +81,7 @@ public final class RobotExecutor {
 		logger.info("===============压测结束===============");
 	}
 
-	private void futureComplete(DFuture<Void> future) {
+	private void futureComplete(DFuture<Boolean> future) {
 		futures.remove(future);
 		if (futures.isEmpty()) {
 			LockSupport.unpark(currThread);
