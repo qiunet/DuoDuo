@@ -6,10 +6,12 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /***
  *
@@ -34,17 +36,23 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 	}
 
 	private void handlerCodec() {
-		this.context.getTypesAnnotatedWith(ProtobufClass.class)
-			.forEach(clazz -> {
-				if (Modifier.isInterface(clazz.getModifiers())
+		Set<Class<?>> classes = this.context.getTypesAnnotatedWith(ProtobufClass.class);
+		for (Class<?> clazz : classes) {
+			if (clazz.isInterface()
 				|| Modifier.isAbstract(clazz.getModifiers())
 				|| ! Modifier.isPublic(clazz.getModifiers())
-				) {
-					return;
-				}
+				|| clazz.isEnum()
+			) {
+				continue;
+			}
 
-				codecMap.put(clazz, ProtobufProxy.create(clazz));
-			});
+			ProtobufClass protobufClass = clazz.getAnnotation(ProtobufClass.class);
+			if (StringUtil.isEmpty(protobufClass.description())) {
+				throw new IllegalArgumentException("class ["+clazz.getName()+"] need specify description to ProtobufClass annotation!");
+			}
+
+			codecMap.put(clazz, ProtobufProxy.create(clazz));
+		}
 	}
 
 	public <T> Codec<T> codec(Class<T> clazz) {

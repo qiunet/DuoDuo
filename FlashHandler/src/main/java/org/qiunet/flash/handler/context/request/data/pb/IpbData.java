@@ -8,7 +8,7 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  * @author qiunet
  * 2020-09-21 16:07
  */
-interface IpbData {
+public interface IpbData {
 	/**
 	 * 转换为byte[]
 	 * @return

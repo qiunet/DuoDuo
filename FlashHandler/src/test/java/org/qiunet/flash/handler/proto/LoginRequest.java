@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.proto;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 
@@ -9,7 +10,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-09-22 12:30
  */
-@ProtobufClass
+@ProtobufClass(description = "登录协议")
 public class LoginRequest implements IpbRequestData {
 
 	private String account;
@@ -17,6 +18,8 @@ public class LoginRequest implements IpbRequestData {
 	private String secret;
 
 	private int phoneNum;
+	@Protobuf(description = "性别")
+	private GenderType gender;
 
 	public LoginRequest() {
 	}
@@ -27,6 +30,10 @@ public class LoginRequest implements IpbRequestData {
 		request.secret = secret;
 		request.phoneNum = phoneNum;
 		return request;
+	}
+
+	public GenderType getGender() {
+		return gender;
 	}
 
 	public String getAccount() {
