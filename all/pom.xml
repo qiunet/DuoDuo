@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.0.1</version>
+		<version>6.0.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
@@ -236,6 +236,12 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Quartz</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>Cross</artifactId>
 			<optional>true</optional>
 			<scope>compile</scope>
 		</dependency>
