@@ -6,7 +6,6 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
-import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -39,16 +38,11 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 		Set<Class<?>> classes = this.context.getTypesAnnotatedWith(ProtobufClass.class);
 		for (Class<?> clazz : classes) {
 			if (clazz.isInterface()
+				|| clazz.isEnum()
 				|| Modifier.isAbstract(clazz.getModifiers())
 				|| ! Modifier.isPublic(clazz.getModifiers())
-				|| clazz.isEnum()
 			) {
 				continue;
-			}
-
-			ProtobufClass protobufClass = clazz.getAnnotation(ProtobufClass.class);
-			if (StringUtil.isEmpty(protobufClass.description())) {
-				throw new IllegalArgumentException("class ["+clazz.getName()+"] need specify description to ProtobufClass annotation!");
 			}
 
 			codecMap.put(clazz, ProtobufProxy.create(clazz));
