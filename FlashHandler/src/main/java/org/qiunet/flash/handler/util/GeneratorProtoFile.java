@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.pb.IpbData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -37,7 +39,11 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context) throws Exception {
-		Set<Class<? extends IpbData>> collect = context.getSubTypesOf(IpbData.class).stream()
+		Set<Class<? extends IpbData>> classes = Sets.newHashSet();
+		classes.addAll(context.getSubTypesOf(IpbResponseData.class));
+		classes.addAll(context.getSubTypesOf(IpbRequestData.class));
+
+		Set<Class<? extends IpbData>> collect = classes.stream()
 			.filter(clz -> !Modifier.isInterface(clz.getModifiers()))
 			.filter(clz -> !Modifier.isAbstract(clz.getModifiers()))
 			.collect(Collectors.toSet());
