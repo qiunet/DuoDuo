@@ -4,6 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang.ClassUtils;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
@@ -153,12 +154,6 @@ public final class ClassScanner implements IApplicationContext {
 			return beanInstances.get(clazz);
 		}
 
-//		if (! Enum.class.isAssignableFrom(clazz)
-//			&& !clazz.isAnnotationPresent(Singleton.class)) {
-//			throw new RuntimeException("["+clazz.getName()+"] Must be Singleton And Set Singleton Annotation");
-//		}
-
-
 		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
 			.filter(f -> Modifier.isStatic(f.getModifiers()))
 			.filter(f -> f.getType() == clazz)
@@ -166,15 +161,10 @@ public final class ClassScanner implements IApplicationContext {
 
 		if (first.isPresent()) {
 			Field field = first.get();
-			field.setAccessible(true);
-			try {
-				Object ret = field.get(null);
-				if (ret != null) {
-					beanInstances.put(clazz, ret);
-					return ret;
-				}
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+			Object ret = ReflectUtil.getField(field, (Object) null);
+			if (ret != null) {
+				beanInstances.put(clazz, ret);
+				return ret;
 			}
 		}
 
