@@ -37,7 +37,7 @@ class CreateTableController implements IApplicationContextAware {
 
 	private CreateTableController() {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		instance = this;
 	}

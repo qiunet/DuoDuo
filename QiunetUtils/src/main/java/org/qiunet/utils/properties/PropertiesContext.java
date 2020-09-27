@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.properties.anno.DProperties;
 import org.qiunet.utils.properties.anno.DPropertiesValue;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -137,7 +138,7 @@ class PropertiesContext implements IApplicationContextAware {
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException("Can not convert class type for ["+fieldType.getName()+"]");
+		throw new CustomException("Can not convert class type for ["+fieldType.getName()+"]");
 	}
 
 	/**

@@ -11,6 +11,7 @@ import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.support.ResponseMapping;
 import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.server.IServer;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 				connClient = new NettyTcpClient((TcpClientParams) server.getClientConfig(), trigger);
 				break;
 			default:
-				throw new RuntimeException("Type ["+server.getType()+"] is not support");
+				throw new CustomException("Type [{}] is not support", server.getType());
 		}
 		clients.put(server.getName(), connClient);
 		return clients.get(server.getName());

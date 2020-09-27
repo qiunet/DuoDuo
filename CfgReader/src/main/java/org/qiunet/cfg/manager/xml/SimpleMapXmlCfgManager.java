@@ -4,6 +4,7 @@ import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class SimpleMapXmlCfgManager<ID, Cfg extends ISimpleMapCfg<ID>> extends B
 		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
 		for(Cfg cfg : cfgs) {
 			if (cfgMap.containsKey(cfg.getId())) {
-				throw new RuntimeException("ID ["+cfg.getId()+"] is duplicate!");
+				throw new CustomException("ID [{}] is duplicate!", cfg.getId());
 			}
 			cfgMap.put(cfg.getId(), cfg);
 		}

@@ -5,6 +5,7 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
 
@@ -24,7 +25,7 @@ public class TimerManager {
 	private static TimerManager instance;
 
 	private TimerManager() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) throw new CustomException("Instance Duplication!");
 		instance = this;
 	}
 

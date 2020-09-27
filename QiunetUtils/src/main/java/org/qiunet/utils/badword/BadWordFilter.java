@@ -1,5 +1,7 @@
 package org.qiunet.utils.badword;
 
+import org.qiunet.utils.exceptions.CustomException;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +18,7 @@ public class BadWordFilter {
 	private volatile static BadWordFilter instance;
 
 	private BadWordFilter() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) throw new CustomException("Instance Duplication!");
 		instance = this;
 	}
 

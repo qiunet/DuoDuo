@@ -4,6 +4,7 @@ import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.manager.base.INestMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class NestMapXdCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
 			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key-> new SafeMap<>());
 
 			if (subMap.containsKey(cfg.getSubId())) {
-				throw new RuntimeException("SubId ["+cfg.getSubId()+"] is duplicate!");
+				throw new CustomException("SubId ["+cfg.getSubId()+"] is duplicate!");
 			}
 
 			subMap.put(cfg.getSubId(), cfg);

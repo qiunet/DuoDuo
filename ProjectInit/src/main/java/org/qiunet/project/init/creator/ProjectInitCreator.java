@@ -7,6 +7,7 @@ import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.DigesterUtil;
 import org.qiunet.project.init.util.InitProjectUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
@@ -79,10 +80,10 @@ public final class ProjectInitCreator {
 	 */
 	public static void create(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
 		if (! xmlDirectory.isDirectory()) {
-			throw new RuntimeException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
+			throw new CustomException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
 		}
 		if (outputModuleDir!= null && ! outputModuleDir.isDirectory()) {
-			throw new RuntimeException("["+outputModuleDir.getAbsolutePath()+"] is not a directory");
+			throw new CustomException("["+outputModuleDir.getAbsolutePath()+"] is not a directory");
 		}
 
 		try {

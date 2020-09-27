@@ -3,6 +3,8 @@ package org.qiunet.listener.event.hook;
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.file.FileChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +20,11 @@ public class ShutdownHookThread {
 	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private AtomicBoolean executing = new AtomicBoolean();
-	private volatile static ShutdownHookThread instance;
+	private static ShutdownHookThread instance;
 
 	private ShutdownHookThread() {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownNow));
 		instance = this;
@@ -73,6 +75,7 @@ public class ShutdownHookThread {
 
 	@EventListener(EventHandlerWeightType.LESS)
 	public void onShutdown(ServerShutdownEventData data) {
+		FileChangeListener.shutdown();
 		this.shutdownNow();
 	}
 

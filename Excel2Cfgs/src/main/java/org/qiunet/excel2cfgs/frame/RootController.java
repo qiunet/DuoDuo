@@ -18,6 +18,7 @@ import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 
@@ -76,7 +77,7 @@ public class RootController {
 
 	public RootController() {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		instance = this;
 	}

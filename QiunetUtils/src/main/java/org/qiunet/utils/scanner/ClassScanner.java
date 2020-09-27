@@ -3,6 +3,7 @@ package org.qiunet.utils.scanner;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
@@ -38,7 +39,7 @@ public final class ClassScanner implements IApplicationContext {
 
 	private ClassScanner(ScannerType scannerType) {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		this.reflections = new Reflections("org.qiunet", scanners);
 		this.scannerType = scannerType;

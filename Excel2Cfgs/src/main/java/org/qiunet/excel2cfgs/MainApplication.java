@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
 
@@ -48,7 +49,7 @@ public class MainApplication extends Application {
 			new Excel2CfgServerStartListenerData(primaryStage).fireEventHandler();
 		} catch (Exception e) {
 			LoggerType.DUODUO.error("Exception: ", e);
-			throw new RuntimeException(e.getMessage());
+			throw new CustomException(e.getMessage());
 		}finally {
 			primaryStage.setOnCloseRequest(event -> ServerShutdownEventData.fireShutdownEventHandler());
 		}

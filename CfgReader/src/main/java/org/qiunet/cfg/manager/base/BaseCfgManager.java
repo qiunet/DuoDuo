@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverte
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.slf4j.Logger;
@@ -81,7 +82,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 				haveMethod = false;
 			}
 			if (haveMethod) {
-				throw new RuntimeException("Cfg ["+cfgClass.getName()+"] field ["+field.getName()+"] can not define set method");
+				throw new CustomException("Cfg ["+cfgClass.getName()+"] field ["+field.getName()+"] can not define set method");
 			}
 		}
 	}
@@ -127,14 +128,14 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 		}
 		try {
 			if (isInvalidField(field)) {
-				throw new RuntimeException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
+				throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
 			Class<?> aClass = field.getType();
 			Object obj = CfgFieldObjConvertManager.getInstance().covert(aClass, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (IllegalAccessException e) {
-			logger.error("Cfg ["+cfg.getClass().getName()+"] name ["+name+"] assign error", e);
+			throw new CustomException(e, "Cfg [{}] name [{}] assign error", cfg.getClass().getName(), name);
 		}
 	}
 }

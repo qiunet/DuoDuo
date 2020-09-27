@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.bytebuf;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
+import org.qiunet.utils.exceptions.CustomException;
 
 /**
  * Bytebuf 使用堆内内存
@@ -15,7 +16,7 @@ public class PooledBytebufFactory {
 	private volatile static PooledBytebufFactory instance;
 
 	private PooledBytebufFactory() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) throw new CustomException("Instance Duplication!");
 		allocor = PooledByteBufAllocator.DEFAULT;
 		instance = this;
 	}

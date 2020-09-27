@@ -2,6 +2,7 @@ package org.qiunet.event.log.logger;
 
 import org.qiunet.event.log.enums.RecordModel;
 import org.qiunet.event.log.enums.base.IEventLogType;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,7 +41,7 @@ public final class LoggerChoice {
 //			case UDP:
 //				return UdpLogger.instance;
 			default:
-				throw new RuntimeException("not Support for model ["+model+"]");
+				throw new CustomException("not Support for model [{}]", model);
 		}
 	}
 }

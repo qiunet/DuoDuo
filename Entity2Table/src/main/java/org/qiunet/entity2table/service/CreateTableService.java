@@ -7,6 +7,7 @@ import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.TableCreateParam;
 import org.qiunet.entity2table.command.TableParam;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,11 +21,11 @@ import java.util.stream.Collectors;
  */
 public class CreateTableService {
 	private static final String sqlPath = "org.qiunet.entity2table.service.CreateTableService.";
-	private volatile static CreateTableService instance = new CreateTableService();
+	private static CreateTableService instance = new CreateTableService();
 
 	private CreateTableService() {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		instance = this;
 	}

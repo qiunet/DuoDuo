@@ -4,6 +4,7 @@ import org.apache.commons.digester.Digester;
 import org.qiunet.data.support.*;
 import org.qiunet.project.init.define.*;
 import org.qiunet.project.init.util.DigesterUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -130,7 +131,7 @@ public enum  EntityType {
 	private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	public static EntityType parse(File xmlFile) {
 		if (! xmlFile.isFile() || ! xmlFile.getName().endsWith(".xml")) {
-			throw new RuntimeException("file ["+xmlFile.getAbsolutePath()+"] is not xml File");
+			throw new CustomException("file ["+xmlFile.getAbsolutePath()+"] is not xml File");
 		}
 		String rootElementName = null;
 		try {
@@ -147,7 +148,7 @@ public enum  EntityType {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException("file ["+xmlFile.getAbsolutePath()+"] start with ["+rootElementName+"] is not entity xml File");
+		throw new CustomException("file ["+xmlFile.getAbsolutePath()+"] start with ["+rootElementName+"] is not entity xml File");
 	}
 
 	public Class<? extends IDataSupport> getDataSupportClass() {

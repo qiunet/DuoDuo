@@ -1,6 +1,7 @@
 package org.qiunet.utils.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.IOException;
 
@@ -34,7 +35,7 @@ public class ProtobufDataManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException("Class ["+clazz.getName()+"] encode data error!");
+		throw new CustomException("Class ["+clazz.getName()+"] encode data error!");
 	}
 
 	/**
@@ -50,6 +51,6 @@ public class ProtobufDataManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		throw new RuntimeException("Class ["+clazz.getName()+"] decode data error!");
+		throw new CustomException("Class ["+clazz.getName()+"] decode data error!");
 	}
 }

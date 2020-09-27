@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.SingletonException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class RequestHandlerMapping {
 	 */
 	public int getProtocolId(Class clazz) {
 		if (! req2ProtocolId.containsKey(clazz)) {
-			throw new RuntimeException("class ["+clazz.getName()+"] is not mapping any protocolId!");
+			throw new CustomException("class ["+clazz.getName()+"] is not mapping any protocolId!");
 		}
 		return req2ProtocolId.get(clazz);
 	}
@@ -109,7 +110,7 @@ public class RequestHandlerMapping {
 	 */
 	public void addHandler(int protocolId, IHandler handler) {
 		if (this.gameHandlers.containsKey(protocolId)) {
-			throw new RuntimeException("protocolId ["+protocolId+"] className ["+handler.getClass().getSimpleName()+"] is already exist!");
+			throw new CustomException("protocolId ["+protocolId+"] className ["+handler.getClass().getSimpleName()+"] is already exist!");
 		}
 
 		Class requestDataClass = handlerSetRequestDataClass(handler);
@@ -130,7 +131,7 @@ public class RequestHandlerMapping {
 		if(! uriPath.startsWith("/")) uriPath = "/" + uriPath;
 
 		if (this.uriPathHandlers.containsKey(uriPath)) {
-			throw new RuntimeException("uriPath ["+uriPath+"] is already exist!");
+			throw new CustomException("uriPath ["+uriPath+"] is already exist!");
 		}
 
 		handlerSetRequestDataClass(handler);

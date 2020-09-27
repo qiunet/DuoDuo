@@ -6,6 +6,7 @@ import io.netty.channel.group.ChannelMatchers;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -44,41 +45,41 @@ public abstract class ServerChannelGroup extends DefaultChannelGroup {
 
 	@Override
 	public ChannelGroupFuture writeAndFlush(Object message) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture write(Object message) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture write(Object message, ChannelMatcher matcher) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture write(Object message, ChannelMatcher matcher, boolean voidPromise) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture writeAndFlush(Object message, ChannelMatcher matcher) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture writeAndFlush(Object message, ChannelMatcher matcher, boolean voidPromise) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture flushAndWrite(Object message) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 
 	@Override
 	public ChannelGroupFuture flushAndWrite(Object message, ChannelMatcher matcher) {
-		throw new RuntimeException("Can called this method , cause message not encode!");
+		throw new CustomException("Can called this method , cause message not encode!");
 	}
 }

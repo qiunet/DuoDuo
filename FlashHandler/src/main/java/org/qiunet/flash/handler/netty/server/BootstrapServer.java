@@ -39,9 +39,9 @@ public class BootstrapServer {
 
 	private Hook hook;
 	private BootstrapServer(Hook hook) {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) throw new CustomException("Instance Duplication!");
 		if (hook == null) {
-			throw new RuntimeException("hook can not be null");
+			throw new CustomException("hook can not be null");
 		}
 		this.hook = hook;
 		instance = this;

@@ -7,6 +7,7 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.EnumParseException;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public enum  CfgType {
 
 	public static <T extends ICfgWrapper> T getCfgWrapper(Class clazz) {
 		if (! cfgWrappers.containsKey(clazz)) {
-			throw new RuntimeException("No wrapper for class ["+clazz.getName()+"]");
+			throw new CustomException("No wrapper for class [{}]", clazz.getName());
 		}
 		return (T) cfgWrappers.get(clazz);
 	}

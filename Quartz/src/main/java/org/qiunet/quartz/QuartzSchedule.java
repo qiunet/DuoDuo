@@ -2,6 +2,7 @@ package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -15,7 +16,7 @@ public class QuartzSchedule {
 	private volatile static QuartzSchedule instance;
 	private List<JobFacade> jobs = new ArrayList<>(4);
 	private QuartzSchedule() {
-		if (instance != null) throw new RuntimeException("Instance Duplication!");
+		if (instance != null) throw new CustomException("Instance Duplication!");
 		instance = this;
 	}
 

@@ -4,6 +4,7 @@ import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.cache.LocalCache;
+import org.qiunet.utils.exceptions.CustomException;
 
 
 public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
@@ -40,7 +41,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 		if (! cache.replace(key, NULL, bo)) {
 			Bo newBo = this.cache.putIfAbsent(key, bo);
 			if (newBo != null && newBo != bo) {
-				throw new RuntimeException("bo exist, and status is ["+ newBo.getDo().entityStatus()+"]");
+				throw new CustomException("bo exist, and status is [{}]", newBo.getDo().entityStatus());
 			}
 		}
 	}

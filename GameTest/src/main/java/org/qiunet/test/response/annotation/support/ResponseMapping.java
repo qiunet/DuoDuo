@@ -1,6 +1,7 @@
 package org.qiunet.test.response.annotation.support;
 
 import org.qiunet.test.response.ILongConnResponse;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.SingletonException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public class ResponseMapping {
 	 */
 	public void addResponse(int responseId, ILongConnResponse response) {
 		if (this.gameResponses.containsKey(responseId)) {
-			throw new RuntimeException("responseId ["+responseId+"] is already exist!");
+			throw new CustomException("responseId ["+responseId+"] is already exist!");
 		}
 		this.gameResponses.put(responseId, response);
 	}

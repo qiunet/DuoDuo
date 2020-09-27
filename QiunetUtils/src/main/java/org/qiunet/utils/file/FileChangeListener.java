@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-final class FileChangeListener {
+public final class FileChangeListener {
 	private static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory("FileLoader_"));
 	private static final FileChangeMonitor monitor = new FileChangeMonitor();
 	static {
@@ -21,5 +21,9 @@ final class FileChangeListener {
 	 */
 	public static void listener(File file, IFileChangeCallback callback) {
 		monitor.addObserver(file, callback);
+	}
+
+	public static void shutdown(){
+		executor.shutdownNow();
 	}
 }

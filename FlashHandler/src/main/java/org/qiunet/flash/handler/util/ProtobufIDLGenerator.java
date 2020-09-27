@@ -27,6 +27,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.request.data.pb.PbResponseDataMapping;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +166,7 @@ public class ProtobufIDLGenerator {
 			return PbResponseDataMapping.protocolId((Class<? extends IpbResponseData>) clz);
 		}
 //		// 可能业务自己定义的class绕过验证进来了.
-		throw new RuntimeException("class ["+clz.getName()+"] not specify protocolId");
+		throw new CustomException("class ["+clz.getName()+"] not specify protocolId");
 	}
     /**
      * @param code

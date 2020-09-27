@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.request.http.json;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ public class JsonRequest extends JSONObject {
 
 	@Override
 	public void putAll(Map<? extends String, ?> m) {
-		throw new RuntimeException("can call putAll method in JsonRequest");
+		throw new CustomException("can call putAll method in JsonRequest");
 	}
 	public JsonRequest addAttribute(String key, int val) {
 		this.put(key, val);

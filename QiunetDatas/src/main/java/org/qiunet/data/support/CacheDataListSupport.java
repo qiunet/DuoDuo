@@ -4,6 +4,7 @@ import org.qiunet.data.cache.entity.ICacheEntityList;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.cache.LocalCache;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 
 		Bo newBo = map.putIfAbsent(bo.getDo().subKey(), bo);
 		if (newBo != null && newBo != bo) {
-			throw new RuntimeException("bo exist, and status is ["+ newBo.getDo().entityStatus()+"]");
+			throw new CustomException("bo exist, and status is [{}]", newBo.getDo().entityStatus());
 		}
 	}
 

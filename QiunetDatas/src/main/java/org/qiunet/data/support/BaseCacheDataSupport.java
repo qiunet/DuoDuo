@@ -2,6 +2,7 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -47,7 +48,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 					this.deleteDoFromDb(aDo);
 					break;
 				default:
-					throw new RuntimeException("Db Sync Not Support status: [" + aDo.entityStatus() + "]");
+					throw new CustomException("Db Sync Not Support status: [" + aDo.entityStatus() + "]");
 			}
 		}
 	}
@@ -69,7 +70,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 			}
 			this.addToCache(bo);
 		} else {
-			throw new RuntimeException("entity ["+doClass.getName()+"] status ["+ aDo.entityStatus()+"] is error. Not executor insert!");
+			throw new CustomException("entity [{}] status [{}] is error. Not executor insert!", doClass.getName(), aDo.entityStatus());
 		}
 		return bo;
 	}
@@ -87,7 +88,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	@Override
 	public void update(Do aDo) {
 		if (aDo.entityStatus() == EntityStatus.INIT) {
-			throw new RuntimeException("Entity must insert first!");
+			throw new CustomException("Entity must insert first!");
 		}
 
 		if (! async) {
@@ -109,11 +110,11 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	@Override
 	public void delete(Do aDo) {
 		if (aDo.entityStatus() == EntityStatus.INIT) {
-			throw new RuntimeException("Delete entity ["+doClass.getName()+"] It's not insert, Can't delete!");
+			throw new CustomException("Delete entity ["+doClass.getName()+"] It's not insert, Can't delete!");
 		}
 
 		if (aDo.entityStatus() == EntityStatus.DELETE) {
-			throw new RuntimeException("Delete entity ["+doClass.getName()+"] double times!");
+			throw new CustomException("Delete entity ["+doClass.getName()+"] double times!");
 		}
 
 		// 直接删除缓存. 异步更新时候, 不校验状态
