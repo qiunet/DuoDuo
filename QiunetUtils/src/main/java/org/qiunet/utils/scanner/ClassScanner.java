@@ -2,6 +2,7 @@ package org.qiunet.utils.scanner;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
+import org.apache.commons.lang.ClassUtils;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
@@ -177,18 +178,14 @@ public final class ClassScanner implements IApplicationContext {
 			}
 		}
 
-		Class<?> [] clazzes = new Class[params.length];
-		for (int i = 0; i < params.length; i++) {
-			clazzes[i] = params[i].getClass();
-		}
-
+		Class<?> [] classes = ClassUtils.toClass(params);
 		Constructor[] constructors = clazz.getDeclaredConstructors();
 		for (Constructor constructor : constructors) {
-			if (constructor.getParameterCount() != clazzes.length) {
+			if (constructor.getParameterCount() != classes.length) {
 				continue;
 			}
 
-			boolean allMatch = IntStream.range(0, clazzes.length).mapToObj(i -> clazzes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
+			boolean allMatch = IntStream.range(0, classes.length).mapToObj(i -> classes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
 			if (! allMatch) {
 				continue;
 			}
