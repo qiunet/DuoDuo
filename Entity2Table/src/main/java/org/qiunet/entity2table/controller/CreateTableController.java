@@ -14,6 +14,7 @@ import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -235,8 +236,7 @@ class CreateTableController implements IApplicationContextAware {
 		try {
 			context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
 		}catch (Exception e) {
-			logger.error("Exception", e);
-			System.exit(1);
+			throw new CustomException(e, "Create Table Error!");
 		}
 	}
 

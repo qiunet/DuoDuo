@@ -1,6 +1,7 @@
 package org.qiunet.cfg.convert;
 
 import com.google.common.collect.Lists;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
  * 2020-02-04 13:09
  **/
 public class CfgFieldObjConvertManager implements IApplicationContextAware {
-	private volatile static CfgFieldObjConvertManager instance;
+	private static CfgFieldObjConvertManager instance;
 	/***
 	 * 所有的convert
 	 */
@@ -23,7 +24,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 
 	private CfgFieldObjConvertManager() {
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		instance = this;
 	}
@@ -57,7 +58,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 			return Enum.valueOf(clazz, val);
 		}
 
-		throw new RuntimeException("Can not convert class type for ["+clazz.getName()+"]");
+		throw new CustomException("Can not convert class type for [{}]", clazz.getName());
 	}
 
 	@Override

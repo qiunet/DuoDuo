@@ -6,6 +6,7 @@ import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.cfg.listener.CfgManagerAddEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
@@ -28,9 +29,6 @@ public class CfgManagers {
 	private List<ICfgManager> gameSettingList;
 
 	private CfgManagers(){
-		if (instance != null) {
-			throw new IllegalStateException("Already has instance .");
-		}
 		this.gameSettingList = Lists.newArrayListWithCapacity(100);
 	}
 
@@ -41,7 +39,7 @@ public class CfgManagers {
 	/**
 	 * 初始化会比重新加载多一层排序
 	 */
-	public synchronized void initSetting() throws Throwable {
+	public synchronized void initSetting() {
 		gameSettingList.sort(((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result()));
 		this.reloadSetting();
 	}
@@ -51,7 +49,7 @@ public class CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public synchronized void reloadSetting() throws Throwable {
+	public synchronized void reloadSetting() {
 		if (reloading.get()) {
 			logger.error("Game Setting Data is loading now.....");
 			return;
@@ -61,7 +59,10 @@ public class CfgManagers {
 		try {
 			reloading.compareAndSet(false, true);
 			this.loadDataSetting();
-		}finally {
+		}catch (CustomException e) {
+			e.logger(logger);
+			throw e;
+		} finally {
 			reloading.compareAndSet(true, false);
 		}
 		logger.error("Game Setting Data Load over.....");
@@ -80,19 +81,17 @@ public class CfgManagers {
 	/***
 	 * 加载设定文件
 	 * @return 返回加载失败的文件名称
-	 * @throws Exception
 	 */
-	private synchronized void loadDataSetting() throws Throwable {
+	private synchronized void loadDataSetting() {
 		int size = gameSettingList.size();
 		CountDownLatch latch = new CountDownLatch(size);
-		AtomicReference<Throwable> reference = new AtomicReference<>();
+		AtomicReference<CustomException> reference = new AtomicReference<>();
 		for (ICfgManager cfgManager : gameSettingList) {
 			if (cfgManager.order() > 0) {
 				try {
 					cfgManager.loadCfg();
 				}catch (Exception e) {
-					logger.error("读取配置文件 [{}]({}) 失败!", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
-					throw e;
+					throw new CustomException(e, "读取配置文件 [{}]({}) 失败!", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
 				}
 				logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
 				latch.countDown();
@@ -106,8 +105,7 @@ public class CfgManagers {
 
 			dFuture.whenComplete((res, ex) -> {
 				if (ex != null) {
-					logger.error("读取配置文件" + cfgManager.getLoadFileName() + "失败!");
-					reference.compareAndSet(null, ex);
+					reference.compareAndSet(null, new CustomException(ex, "读取配置文件[{}]失败!", cfgManager.getLoadFileName()));
 
 					for (long i = 0; i < latch.getCount(); i++) {
 						latch.countDown();
@@ -120,7 +118,11 @@ public class CfgManagers {
 			});
 		}
 
-		latch.await();
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (reference.get() != null) {
 			throw reference.get();
 		}

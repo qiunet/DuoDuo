@@ -1,7 +1,7 @@
 package org.qiunet.cfg.convert;
 
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,9 +20,8 @@ public class DateConvert extends BaseObjConvert<Date> {
 		try {
 			return sdf.get().parse(str);
 		} catch (ParseException e) {
-			LoggerType.DUODUO_CFG_READER.error("Exception:", e);
+			throw new CustomException(e, "string {} to Date error", str);
 		}
-		return null;
 	}
 
 	@Override

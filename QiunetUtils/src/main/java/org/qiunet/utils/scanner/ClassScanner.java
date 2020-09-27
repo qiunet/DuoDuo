@@ -66,7 +66,7 @@ public final class ClassScanner implements IApplicationContext {
 		try {
 			this.scanner0(packetPrefix);
 		} catch (Exception e) {
-			logger.error("Scanner Exception on server startup! ", e);
+			logger.error("Scanner Exception:", e);
 			System.exit(1);
 		}
 	}
@@ -126,7 +126,6 @@ public final class ClassScanner implements IApplicationContext {
 
 			latch.await();
 			if (reference.get() != null) {
-				logger.error("ClassScanner Error:", reference.get());
 				throw reference.get();
 			}
 		}

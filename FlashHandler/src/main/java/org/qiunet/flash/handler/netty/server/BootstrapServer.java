@@ -8,9 +8,9 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
-import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
@@ -130,8 +130,16 @@ public class BootstrapServer {
 		Thread hookListener = new Thread(new HookListener(this , hook), "HookListener");
 		hookListener.setDaemon(true);
 		hookListener.start();
+		try {
+			ServerStartupEventData.fireStartupEventHandler();
+		}catch (CustomException e) {
+			e.logger(logger);
+			System.exit(1);
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			System.exit(1);
+		}
 
-		ServerStartupEventData.fireStartupEventHandler();
 		for (INettyServer nettyServer : nettyServers) {
 			Thread thread = new Thread(nettyServer, nettyServer.threadName());
 			thread.setDaemon(true);

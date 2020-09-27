@@ -1,6 +1,5 @@
 package org.qiunet.tests;
 
-import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.test.executor.RobotExecutor;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.init.DefaultRobotInfo;
@@ -27,10 +26,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Executor {
 
-	public static void main(String[] args) throws Throwable {
+	public static void main(String[] args) {
 		// 启动服务器
 		ClassScanner.getInstance().scanner();
-		CfgManagers.getInstance().initSetting();
 		ServerStartup server = new ServerStartup();
 		server.startup();
 		// 测试用例

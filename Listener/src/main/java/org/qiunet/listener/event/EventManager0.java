@@ -3,10 +3,9 @@ package org.qiunet.listener.event;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -22,12 +21,11 @@ import java.util.Set;
  */
 class EventManager0 implements IApplicationContextAware {
 	private Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
-	private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 	private static EventManager0 instance;
 	private IApplicationContext context;
 	private EventManager0(){
 		if (instance != null) {
-			throw new RuntimeException("Instance Duplication!");
+			throw new CustomException("Instance Duplication!");
 		}
 		instance = this;
 	}
@@ -84,7 +82,6 @@ class EventManager0 implements IApplicationContextAware {
 	void fireEventHandler(IEventData eventData) {
 		List<Wrapper> wrappers = listeners.get(eventData.getClass());
 		if (wrappers == null) {
-//			throw new NullPointerException("No listener for class ["+eventData.getClass().getName()+"]");
 			return;
 		}
 
@@ -107,7 +104,7 @@ class EventManager0 implements IApplicationContextAware {
 			try {
 				method.invoke(caller, data);
 			} catch (IllegalAccessException | InvocationTargetException e) {
-				logger.error("Fire Event Handler Error: ", e);
+				throw new CustomException(e, "Fire Event Handler [{}.{}] Error!", caller.getClass().getName(), method.getName());
 			}
 		}
 	}

@@ -3,6 +3,7 @@ package org.qiunet.cfg.manager.xd;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.common.CommonUtil;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.*;
 import java.net.URL;
@@ -34,8 +35,8 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	 * @return 该表的行数量 和 列名称信息
 	 * @throws IOException
 	 */
-	XdInfoData loadXdFileToDataInputStream() throws Exception{
-		logger.debug("读取配置文件 [ "+fileName+" ]");
+	XdInfoData loadXdFileToDataInputStream() throws IOException {
+		logger.debug("读取配置文件 [ {}]", fileName);
 
 		URL url = getClass().getClassLoader().getResource(fileName);
 		if (url == null) {
@@ -86,11 +87,11 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			}catch (EOFException e) {
 				readOver = true;
 			} catch (IOException e) {
-				throw new RuntimeException("读取配置文件"+fileName+"数据出现问题", e);
+				throw new CustomException(e, "读取配置文件[{}]数据出现问题", fileName);
 			}
 
 			if (! readOver) {
-				throw new RuntimeException("读取配置文件"+fileName+"数据异常 有残留数据");
+				throw new CustomException("读取配置文件[{}]数据异常 有残留数据", fileName);
 			}
 		}
 		try {
@@ -107,7 +108,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 				in.close();
 			}
 		} catch (IOException e) {
-			throw new RuntimeException("关闭配置文件"+fileName+"数据出现问题");
+			throw new CustomException(e, "关闭配置文件[{}]数据出现问题", fileName);
 		}
 		bais = null;
 		gis = null;

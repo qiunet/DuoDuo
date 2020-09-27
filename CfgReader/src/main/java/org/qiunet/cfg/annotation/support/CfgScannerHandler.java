@@ -6,6 +6,7 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -34,27 +35,23 @@ public class CfgScannerHandler implements IApplicationContextAware {
 			}
 
 			if (! aClass.isAnnotationPresent(Cfg.class)) {
-				throw new RuntimeException("Cfg class ["+aClass.getName()+"] must specify Cfg Annotation!");
+				throw new CustomException("Cfg class [{}] must specify Cfg Annotation!", aClass.getName());
 			}
 
 			CfgType.createCfgWrapper((Class<? extends ICfg>) aClass);
 		}
 
-		try {
-			CfgManagers.getInstance().initSetting();
-		} catch (Throwable throwable) {
-			throw new RuntimeException(throwable);
-		}
+		CfgManagers.getInstance().initSetting();
 
 		Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgWrapperAutoWired.class);
 		for (Field field : fieldSet) {
 			if (!ICfgWrapper.class.isAssignableFrom(field.getType())) {
-				throw new RuntimeException("CfgWrapperAutoWired must use for Some Type extends ICfgWrapper");
+				throw new CustomException("CfgWrapperAutoWired must use for Some Type extends ICfgWrapper");
 			}
 
 			Type genericType = field.getGenericType();
 			if (! ParameterizedType.class.isAssignableFrom(genericType.getClass())){
-				throw new RuntimeException("ICfgWrapper must specify GenericType!");
+				throw new CustomException("ICfgWrapper must specify GenericType!");
 			}
 
 			Object obj = null;
