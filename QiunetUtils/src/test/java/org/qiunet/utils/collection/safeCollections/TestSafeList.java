@@ -1,4 +1,4 @@
-package org.qiunet.utils.safeCollections;
+package org.qiunet.utils.collection.safeCollections;
 
 import org.junit.Assert;
 import org.junit.Test;
