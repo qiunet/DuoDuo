@@ -62,7 +62,15 @@ public final class ClassScanner implements IApplicationContext {
 	}
 
 	private AtomicBoolean scannered = new AtomicBoolean();
-	public void scanner(String ... packetPrefix) throws Exception {
+	public void scanner(String ... packetPrefix) {
+		try {
+			this.scanner0(packetPrefix);
+		} catch (Exception e) {
+			logger.error("Scanner Exception on server startup! ", e);
+			System.exit(1);
+		}
+	}
+	private void scanner0(String ... packetPrefix) throws Exception {
 		if (scannered.get()) {
 			logger.warn("ClassScanner was initialization , ignore this!");
 			return;
