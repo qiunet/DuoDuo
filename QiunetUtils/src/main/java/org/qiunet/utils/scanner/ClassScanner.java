@@ -2,7 +2,6 @@ package org.qiunet.utils.scanner;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang.ClassUtils;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
@@ -12,7 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +22,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -168,28 +168,11 @@ public final class ClassScanner implements IApplicationContext {
 			}
 		}
 
-		Class<?> [] classes = ClassUtils.toClass(params);
-		Constructor[] constructors = clazz.getDeclaredConstructors();
-		for (Constructor constructor : constructors) {
-			if (constructor.getParameterCount() != classes.length) {
-				continue;
-			}
-
-			boolean allMatch = IntStream.range(0, classes.length).mapToObj(i -> classes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
-			if (! allMatch) {
-				continue;
-			}
-
-			constructor.setAccessible(true);
-			try {
-				Object ret = constructor.newInstance(params);
-				beanInstances.put(clazz, ret);
-				return ret;
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
-			}
+		Object ret = ReflectUtil.newInstance(clazz, params);
+		if (ret != null) {
+			beanInstances.put(clazz, ret);
+			return ret;
 		}
-
 		throw new NullPointerException("can not get instance for class ["+clazz.getName()+"]");
 	}
 }

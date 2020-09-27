@@ -1,11 +1,11 @@
 package org.qiunet.cfg.manager.base;
 
-import com.baidu.bjf.remoting.protobuf.utils.FieldUtils;
 import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Field;
@@ -121,7 +121,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 	 * @param <Cfg> 配置文件类
 	 */
 	protected <Cfg extends ICfg> void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
-		Field field = FieldUtils.findField(cfgClass, name);
+		Field field = ReflectUtil.findField(cfgClass, name);
 		if (field == null) {
 			throw new AbstractReflectionConverter.UnknownFieldException(cfgClass.getName(), name);
 		}

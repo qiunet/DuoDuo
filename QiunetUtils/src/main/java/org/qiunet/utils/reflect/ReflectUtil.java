@@ -1,9 +1,13 @@
 package org.qiunet.utils.reflect;
 
+import org.apache.commons.lang.ClassUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.stream.IntStream;
 
 /***
  * 反射工具类
@@ -143,4 +147,61 @@ public final class ReflectUtil {
 		return null;
 	}
 
+	/**
+	 * 生成新的对象
+	 * @param clazz
+	 * @param params
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T newInstance(Class<T> clazz, Object... params) {
+		Constructor<T> constructor = getMatchConstructor(clazz, params);
+		return newInstance(constructor, params);
+	}
+	/**
+	 * 获得匹配的构造
+	 * @param clazz
+	 * @param params
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> Constructor<T> getMatchConstructor(Class<T> clazz, Object... params) {
+		Class<?> [] classes = ClassUtils.toClass(params);
+		Constructor[] constructors = clazz.getDeclaredConstructors();
+		for (Constructor constructor : constructors) {
+			if (constructor.getParameterCount() != classes.length) {
+				continue;
+			}
+
+			boolean allMatch = IntStream.range(0, classes.length).mapToObj(i -> classes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
+			if (! allMatch) {
+				continue;
+			}
+
+			constructor.setAccessible(true);
+			return constructor;
+		}
+		return null;
+	}
+
+	/**
+	 * 生成新的对象.
+	 * @param constructor
+	 * @param params
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T newInstance(Constructor<T> constructor, Object... params) {
+		if (constructor == null) {
+			return null;
+		}
+
+		constructor.setAccessible(true);
+		try {
+			return constructor.newInstance(params);
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
 }
