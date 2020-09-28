@@ -44,7 +44,7 @@ public class TimerManager {
 	 * 停闭
 	 */
 	public void shutdown(){
-		schedule.shutdownNow();
+		schedule.shutdown();
 	}
 	/**
 	 * 立刻执行
