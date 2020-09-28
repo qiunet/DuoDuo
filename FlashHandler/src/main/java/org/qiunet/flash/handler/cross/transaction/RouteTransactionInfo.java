@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.flash.handler.cross.transaction;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;

@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.flash.handler.cross.transaction;
 
 /***
  * 跨服事务请求数据

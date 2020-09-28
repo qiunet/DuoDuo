@@ -24,7 +24,6 @@
 		<module>all</module>
 		<module>EventLog</module>
 		<module>Listener</module>
-		<module>Cross</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -162,11 +161,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Entity2Table</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>Cross</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

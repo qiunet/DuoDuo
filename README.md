@@ -24,7 +24,6 @@
 | -------------------------------------- | -------------------------------------------------------- |
 | [Quartz](Quartz/README.md)             | 定时调度相关的模块                                       |
 | [CfgReader](CfgReader/README.md)       | 配置文件读取的模块                                       |
-| [Cross](Cross/README.md)       		 | 服务与服务之间交互相关内容模块                               |
 | [QiunetUtils](QiunetUtils/README.md)   | 各种基本工具类                                           |
 | [QiunetDatas](QiunetDatas/README.md)   | Mysql和Redis以及本地Cache使用模块, 实现了异步更新等功能. |
 | [Entity2Table](Entity2Table/README.md) | 根据Do对象自动生成和更新数据库结构的模块                 |
