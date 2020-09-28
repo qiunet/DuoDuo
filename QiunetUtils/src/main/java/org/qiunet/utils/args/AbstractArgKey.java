@@ -7,7 +7,8 @@ package org.qiunet.utils.args;
  **/
 public abstract class AbstractArgKey<T> implements IArgKey<T> {
 	private String name;
-	AbstractArgKey(String name) {
+
+	protected AbstractArgKey(String name) {
 		this.name = name;
 	}
 
