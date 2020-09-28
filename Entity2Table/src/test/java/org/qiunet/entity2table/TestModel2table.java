@@ -1,5 +1,6 @@
 package org.qiunet.entity2table;
 
+import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
 import org.qiunet.utils.scanner.ClassScanner;
 
 /**
@@ -10,7 +11,8 @@ import org.qiunet.utils.scanner.ClassScanner;
  */
 public class TestModel2table {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 		ClassScanner.getInstance().scanner();
+		new DbLoaderOverEventData().fireEventHandler();
 	}
 }
