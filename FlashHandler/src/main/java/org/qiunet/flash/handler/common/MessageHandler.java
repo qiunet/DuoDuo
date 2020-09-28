@@ -58,8 +58,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 				logger.error("{}", getClass().getName(), e);
 			}
 
-			int size = this.size.decrementAndGet();
-			if (size  <= 0) {
+			if (this.size.decrementAndGet()  <= 0) {
 				break;
 			}
 
@@ -84,7 +83,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	@Override
 	public void addMessage(IMessage<H> msg) {
 		if (close) {
-			logger.error("MessageHandler ["+getIdent()+"] 已经关闭销毁", new RuntimeException());
+			logger.error("MessageHandler [{}] 已经关闭销毁", getIdent());
 			return;
 		}
 
@@ -122,10 +121,10 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	}
 	/***
 	 * 循环执行某个调度
-	 * @param scheduleName
-	 * @param msg
-	 * @param delay
-	 * @param period
+	 * @param scheduleName 调度名称
+	 * @param msg 消息
+	 * @param delay 延迟
+	 * @param period 间隔
 	 * @return
 	 */
 	public ScheduleFuture scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
@@ -135,9 +134,9 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	/**
 	 * 指定一定的延迟时间后, 执行该消息
-	 * @param msg
-	 * @param delay
-	 * @param unit
+	 * @param msg 消息
+	 * @param delay 延迟数
+	 * @param unit 延迟单位
 	 * @return
 	 */
 	@Override
@@ -156,7 +155,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 			executorService.shutdown();
 			executorService.awaitTermination(2, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			Thread.currentThread().interrupt();
 		}
 	}
 
@@ -164,7 +163,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		private String scheduleName;
 		private Future<?> future;
 
-		public ScheduleFuture(String scheduleName, Future<?> future) {
+		ScheduleFuture(String scheduleName, Future<?> future) {
 			this.scheduleName = scheduleName;
 			this.future = future;
 
