@@ -5,14 +5,12 @@ import org.qiunet.utils.data.IKeyValueData;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisUtil {
-	private static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
 	/** 数据源 */
 	private JedisPool jedisPool;
 	/***
@@ -21,32 +19,18 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	 * @param redisName
 	 */
 	protected BasePoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
-		this.redisName = redisName;
+		super(redisName);
 		// jedisPool 构造
 		this.jedisPool = this.buildJedisPool(redisProperties);
 		// 添加关闭.
 		ShutdownHookUtil.getInstance().addLast(this.jedisPool::close);
 	}
-
-	protected BasePoolRedisUtil(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
-	}
-
-
 	/**
 	 * 构造一个可以用的jedisPool
 	 * @param redisProperties properties 内容
 	 * @return
 	 */
 	private JedisPool buildJedisPool(IKeyValueData<Object, Object> redisProperties){
-		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		poolConfig.setMaxIdle(redisProperties.getInt(getConfigKey("maxIdle"), 30));
-		poolConfig.setMaxTotal(redisProperties.getInt(getConfigKey("maxTotal"), 100));
-		poolConfig.setTestWhileIdle(redisProperties.getBoolean(getConfigKey("testWhileIdle")));
-		poolConfig.setMaxWaitMillis(redisProperties.getInt(getConfigKey("maxWaitMillis"), 3000));
-		poolConfig.setNumTestsPerEvictionRun(redisProperties.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
-		poolConfig.setMinEvictableIdleTimeMillis(redisProperties.getInt(getConfigKey("minEvictableIdleTimeMillis"), 60000));
-		poolConfig.setTimeBetweenEvictionRunsMillis(redisProperties.getInt(getConfigKey("timeBetweenEvictionRunsMillis"), 60000));
 
 		String host = redisProperties.getString(getConfigKey("host"));
 		int port = redisProperties.getInt(getConfigKey("port"));
@@ -55,7 +39,7 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 
 		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
 		int db = redisProperties.getInt(getConfigKey("db"), 0);
-		return new JedisPool(poolConfig, host, port, timeout, password, db, null);
+		return new JedisPool(buildPoolConfig(redisProperties), host, port, timeout, password, db, null);
 	}
 
 	private class ClosableJedisProxy implements InvocationHandler {
@@ -72,27 +56,6 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	}
 
 
-	private class NormalJedisProxy implements InvocationHandler {
-		private boolean log;
-		private JedisCommands jedis;
-		NormalJedisProxy(JedisCommands jedis, boolean log) {
-			this.log = log;
-			this.jedis = jedis;
-		}
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return execCommand(method, args, jedis, log);
-		}
-	}
-	/***
-	 * 返回jedis代理
-	 * 使用完. 会自己close
-	 * @return
-	 */
-	@Override
-	public JedisCommands returnJedis() {
-		return returnJedis(true);
-	}
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close
@@ -115,9 +78,8 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	public <T> T execCommands(IRedisCaller<T> caller) {
 		try (Jedis jedis = jedisPool.getResource()){
 			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());
-			JedisCommands jj = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
-			T ret = caller.call(jj);
-			return ret;
+			JedisCommands jc = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
+			return caller.call(jc);
 		}
 	}
 

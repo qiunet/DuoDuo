@@ -1,18 +1,43 @@
 package org.qiunet.data.core.support.redis;
 
+import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.JedisPoolConfig;
 
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
+	 static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
 	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
-	protected String redisName;
+	private String redisName;
+
+	 BaseRedisUtil(String redisName) {
+		this.redisName = redisName;
+	}
+
+	/**
+	 * 池配置
+	 * @param redisProperties
+	 * @return
+	 */
+	JedisPoolConfig buildPoolConfig(IKeyValueData<Object, Object> redisProperties) {
+		JedisPoolConfig poolConfig = new JedisPoolConfig();
+		poolConfig.setMaxIdle(redisProperties.getInt(getConfigKey("maxIdle"), 30));
+		poolConfig.setMaxTotal(redisProperties.getInt(getConfigKey("maxTotal"), 100));
+		poolConfig.setTestWhileIdle(redisProperties.getBoolean(getConfigKey("testWhileIdle")));
+		poolConfig.setMaxWaitMillis(redisProperties.getInt(getConfigKey("maxWaitMillis"), 3000));
+		poolConfig.setNumTestsPerEvictionRun(redisProperties.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
+		poolConfig.setMinEvictableIdleTimeMillis(redisProperties.getInt(getConfigKey("minEvictableIdleTimeMillis"), 60000));
+		poolConfig.setTimeBetweenEvictionRunsMillis(redisProperties.getInt(getConfigKey("timeBetweenEvictionRunsMillis"), 60000));
+		return poolConfig;
+	}
 	/**
 	 * Redis 锁.
 	 * @param key
@@ -28,10 +53,23 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	 * @param originConfigKey
 	 * @return
 	 */
-	protected String getConfigKey(String originConfigKey) {
+	 String getConfigKey(String originConfigKey) {
 		return "redis."+redisName+"."+originConfigKey;
 	}
 
+
+	protected class NormalJedisProxy implements InvocationHandler {
+		private boolean log;
+		private JedisCommands jedis;
+		NormalJedisProxy(JedisCommands jedis, boolean log) {
+			this.log = log;
+			this.jedis = jedis;
+		}
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			return execCommand(method, args, jedis, log);
+		}
+	}
 
 	@Override
 	public boolean redisLockRun(String key, Runnable run) {
@@ -44,7 +82,7 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return false;
 	}
 
-	protected Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
+	 Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
 		long startDt = System.currentTimeMillis();
 		Object object = method.invoke(jedis, args);
 		if (log && logger.isInfoEnabled()){

@@ -37,5 +37,7 @@ public interface IRedisUtil {
 	 * 使用完. 会自己close 默认打印日志
 	 * @return
 	 */
-	JedisCommands returnJedis();
+	default JedisCommands returnJedis() {
+		return returnJedis(true);
+	}
 }
