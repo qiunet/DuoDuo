@@ -51,29 +51,29 @@ class DbLoader {
 	private String mybatisConfigFileName = DEFAULT_MYBATIS_FILENAME;
 
 	/**需要设定的连接池属性. 以及默认值**/
-	private static final List<DatasourceAttr> datasourceSettings = new ArrayList<DatasourceAttr>() {
-		{
-			add(new DatasourceAttr("url", "", String.class));
-			add(new DatasourceAttr("username", "", String.class));
-			add(new DatasourceAttr("password", "", String.class));
-			add(new DatasourceAttr("driverClassName", "", String.class));
+	private static final List<DatasourceAttr> datasourceSettings = new ArrayList<>();
 
-			add(new DatasourceAttr("maxIdle", 10, int.class));
-			add(new DatasourceAttr("minIdle", 2, int.class));
-			add(new DatasourceAttr("maxTotal", 200, int.class));
-			add(new DatasourceAttr("initialSize", 20, int.class));
-			add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
-			add(new DatasourceAttr("logAbandoned", true, boolean.class));
-			add(new DatasourceAttr("testOnBorrow", true, boolean.class));
-			add(new DatasourceAttr("testWhileIdle", true, boolean.class));
-			add(new DatasourceAttr("numTestsPerEvictionRun", 10, int.class));
-			add(new DatasourceAttr("removeAbandonedTimeout", 60, int.class));
-			add(new DatasourceAttr("validationQuery", "select 1", String.class));
-			add(new DatasourceAttr("minEvictableIdleTimeMillis", 30000, long.class));
-			add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 10000, long.class));
-			add(new DatasourceAttr("removeAbandonedOnMaintenance", true, boolean.class));
-		}
-	};
+	static {
+		datasourceSettings.add(new DatasourceAttr("url", "", String.class));
+		datasourceSettings.add(new DatasourceAttr("username", "", String.class));
+		datasourceSettings.add(new DatasourceAttr("password", "", String.class));
+		datasourceSettings.add(new DatasourceAttr("driverClassName", "", String.class));
+
+		datasourceSettings.add(new DatasourceAttr("maxIdle", 10, int.class));
+		datasourceSettings.add(new DatasourceAttr("minIdle", 2, int.class));
+		datasourceSettings.add(new DatasourceAttr("maxTotal", 200, int.class));
+		datasourceSettings.add(new DatasourceAttr("initialSize", 20, int.class));
+		datasourceSettings.add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
+		datasourceSettings.add(new DatasourceAttr("logAbandoned", true, boolean.class));
+		datasourceSettings.add(new DatasourceAttr("testOnBorrow", true, boolean.class));
+		datasourceSettings.add(new DatasourceAttr("testWhileIdle", true, boolean.class));
+		datasourceSettings.add(new DatasourceAttr("numTestsPerEvictionRun", 10, int.class));
+		datasourceSettings.add(new DatasourceAttr("removeAbandonedTimeout", 60, int.class));
+		datasourceSettings.add(new DatasourceAttr("validationQuery", "select 1", String.class));
+		datasourceSettings.add(new DatasourceAttr("minEvictableIdleTimeMillis", 30000, long.class));
+		datasourceSettings.add(new DatasourceAttr("timeBetweenEvictionRunsMillis", 10000, long.class));
+		datasourceSettings.add(new DatasourceAttr("removeAbandonedOnMaintenance", true, boolean.class));
+	}
 	/***
 	 *
 	 * 拼成这样的串.
@@ -195,7 +195,7 @@ class DbLoader {
 
 			xmlConfigBuilder.parse();
 			if (logger.isInfoEnabled()) {
-				logger.info("Parsed name["+dbSourceName+"] configuration file: '" + this.mybatisConfigFileName + "'");
+				logger.info("Parsed name[{}] configuration file: '{}'", dbSourceName, this.mybatisConfigFileName);
 			}
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
