@@ -13,7 +13,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.util.DbProperties;
-import org.qiunet.listener.event.hook.ShutdownHookThread;
+import org.qiunet.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -98,7 +98,7 @@ class DbLoader {
 			}
 			this.loaderDataSource();
 
-			ShutdownHookThread.getInstance().addShutdownHook( () -> {
+			ShutdownHookUtil.getInstance().addShutdownHook( () -> {
 				while (DriverManager.getDrivers().hasMoreElements()){
 					Driver driver = DriverManager.getDrivers().nextElement();
 					try {
@@ -173,7 +173,7 @@ class DbLoader {
 			method.invoke(dataSource, val);
 		}
 
-		ShutdownHookThread.getInstance().addShutdownHook(() -> {
+		ShutdownHookUtil.getInstance().addShutdownHook(() -> {
 			// 添加关闭.
 			try {
 				dataSource.close();

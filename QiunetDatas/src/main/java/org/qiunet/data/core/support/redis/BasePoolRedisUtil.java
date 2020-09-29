@@ -1,6 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
-import org.qiunet.listener.event.hook.ShutdownHookThread;
+import org.qiunet.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.data.IKeyValueData;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCommands;
@@ -25,7 +25,7 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 		// jedisPool 构造
 		this.jedisPool = this.buildJedisPool(redisProperties);
 		// 添加关闭.
-		ShutdownHookThread.getInstance().addLast(this.jedisPool::close);
+		ShutdownHookUtil.getInstance().addLast(this.jedisPool::close);
 	}
 
 	protected BasePoolRedisUtil(JedisPool jedisPool) {

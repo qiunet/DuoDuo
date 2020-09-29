@@ -1,29 +1,32 @@
-package org.qiunet.listener.event.hook;
+package org.qiunet.listener.hook;
 
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileChangeListener;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
+ * 非单例但是需要关闭. 如RedisDataUtils#redisPool, DbLoader 数据源
+ *
+ * 可以使用该方式关闭资源.
  *
  * @Author qiunet
  * @Date Create in 2018/5/31 12:04
  **/
-public class ShutdownHookThread {
+public class ShutdownHookUtil {
 	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private AtomicBoolean executing = new AtomicBoolean();
-	private static ShutdownHookThread instance;
+	private static ShutdownHookUtil instance;
 
-	private ShutdownHookThread() {
+	private ShutdownHookUtil() {
 		if (instance != null) {
 			throw new CustomException("Instance Duplication!");
 		}
@@ -31,12 +34,12 @@ public class ShutdownHookThread {
 		instance = this;
 	}
 
-	public static ShutdownHookThread getInstance() {
+	public static ShutdownHookUtil getInstance() {
 		if (instance == null) {
-			synchronized (ShutdownHookThread.class) {
+			synchronized (ShutdownHookUtil.class) {
 				if (instance == null)
 				{
-					new ShutdownHookThread();
+					new ShutdownHookUtil();
 				}
 			}
 		}

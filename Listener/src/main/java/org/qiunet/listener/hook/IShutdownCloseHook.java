@@ -1,4 +1,4 @@
-package org.qiunet.listener.event.hook;
+package org.qiunet.listener.hook;
 
 /***
  * hook 时候.需要关闭
