@@ -23,6 +23,16 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return new RedisLock(this, key);
 	}
 
+	/**
+	 * 拼接类似: redis.{redisName}.host 的字符串
+	 * @param originConfigKey
+	 * @return
+	 */
+	protected String getConfigKey(String originConfigKey) {
+		return "redis."+redisName+"."+originConfigKey;
+	}
+
+
 	@Override
 	public boolean redisLockRun(String key, Runnable run) {
 		try (RedisLock lock = redisLock(key)) {

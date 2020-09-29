@@ -32,14 +32,6 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 		this.jedisPool = jedisPool;
 	}
 
-	/**
-	 * 拼接类似: redis.{redisName}.host 的字符串
-	 * @param originConfigKey
-	 * @return
-	 */
-	private String getConfigKey(String originConfigKey) {
-		return "redis."+redisName+"."+originConfigKey;
-	}
 
 	/**
 	 * 构造一个可以用的jedisPool
