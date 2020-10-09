@@ -19,7 +19,7 @@ public class TimerTest {
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		final long createTime = System.currentTimeMillis();
 
-		scheduledFuture = TimerManager.getInstance().scheduleAtFixedRate(() -> {
+		scheduledFuture = TimerManager.instance.scheduleAtFixedRate(() -> {
 			time ++;
 			long diff = (System.currentTimeMillis() - createTime);
 			LoggerType.DUODUO.info("curr[" + diff + "] time: " + time);
@@ -38,7 +38,7 @@ public class TimerTest {
 		}, 0, 1000, TimeUnit.MILLISECONDS);
 
 
-		Future<String> future = TimerManager.getInstance().scheduleWithDelay(() -> {
+		Future<String> future = TimerManager.instance.scheduleWithDelay(() -> {
 			LoggerType.DUODUO.info("========"+DateUtil.dateToString(DateUtil.currentTimeMillis()));
 			Thread.sleep(5000);
 			return "SUCCESS";

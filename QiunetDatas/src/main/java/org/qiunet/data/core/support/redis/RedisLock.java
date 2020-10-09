@@ -51,7 +51,7 @@ public class RedisLock implements AutoCloseable {
 	}
 
 	private void prolongedTime(){
-		DFuture<Long> dFuture = TimerManager.getInstance().scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30),
+		DFuture<Long> dFuture = TimerManager.executor.scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30),
 			20, TimeUnit.SECONDS);
 		dFuture.whenComplete((res , e) -> {
 			if (! future.isCancelled()) {

@@ -6,12 +6,12 @@ import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,10 +21,6 @@ import java.util.concurrent.TimeUnit;
  */
  public class AsyncJobSupport {
 	private Logger logger = LoggerType.DUODUO.getLogger();
-	private ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
-			8,
-			new DefaultThreadFactory("AsyncJobSupport"));
-
 	private static AsyncJobSupport instance = new AsyncJobSupport();
 
 	private AsyncJobSupport() {}
@@ -41,20 +37,15 @@ import java.util.concurrent.TimeUnit;
 	 * 异步更新到db
 	 */
 	public void asyncToDb(int maxDelay, TimeUnit unit){
-		nodes.forEach(node -> executor.schedule(() -> {
+		nodes.forEach(node -> TimerManager.executor.scheduleWithDelay(() -> {
 			try {
 				// 必须try catch 否则导致线程停止
 				node.syncToDatabase();
 			}catch (Exception e) {
 				logger.error(MessageFormat.format("[{0}] Exception: ", getClass().getSimpleName()), e);
 			}
+			return null;
 			// 会延迟一定时间执行 免得凑一块了.
 		}, MathUtil.random(0, (int) unit.toMillis(maxDelay)), TimeUnit.MILLISECONDS));
-	}
-
-	@EventListener(EventHandlerWeightType.HIGHEST)
-	public void onShutdown(ServerShutdownEventData data) {
-		this.asyncToDb(100, TimeUnit.MILLISECONDS);
-		logger.info("Shutdown async update success!");
 	}
 }

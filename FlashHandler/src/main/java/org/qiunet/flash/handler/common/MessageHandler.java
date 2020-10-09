@@ -128,7 +128,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 * @return
 	 */
 	public ScheduleFuture scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
-		ScheduledFuture<?> future = TimerManager.getInstance().scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
+		ScheduledFuture<?> future = TimerManager.instance.scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
 		return new ScheduleFuture(scheduleName, future);
 	}
 
@@ -141,7 +141,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 */
 	@Override
 	public DFuture<Void> scheduleMessage(IMessage<H> msg, long delay, TimeUnit unit) {
-		DFuture<Void> future = TimerManager.getInstance().scheduleWithDelay(() -> {
+		DFuture<Void> future = TimerManager.instance.scheduleWithDelay(() -> {
 			addMessage(msg);
 			return null;
 		}, delay, unit);

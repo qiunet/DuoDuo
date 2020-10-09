@@ -64,7 +64,7 @@ public class QuartzSchedule {
 		void doNextJob() {
 			Date nextDt = expression.getTimeAfter(this.fireTime);
 			if (nextDt != null) {
-				this.future = TimerManager.getInstance().scheduleWithTimeMillis(this, nextDt.getTime());
+				this.future = TimerManager.instance.scheduleWithTimeMillis(this, nextDt.getTime());
 				this.future.whenComplete((res, e) -> this.doNextJob());
 			}
 		}

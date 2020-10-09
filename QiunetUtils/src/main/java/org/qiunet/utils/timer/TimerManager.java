@@ -7,44 +7,40 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.system.OSUtil;
+import org.qiunet.utils.system.SystemPropertyUtil;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  *
  * Created by qiunet.
  * 18/1/26
  */
-public class TimerManager {
-	private static final DScheduledThreadPoolExecutor schedule = new DScheduledThreadPoolExecutor(4, 1000, new DefaultThreadFactory("Qiunet-TimerManager"));
+public enum TimerManager {
+	/**
+	 * 自定义的 ScheduledThreadPool
+	 */
+	instance(new DScheduledThreadPoolExecutor(4, 1000, new DefaultThreadFactory("Qiunet-TimerManager"))),
+	/**
+	 * 系统自带的 ScheduledThreadPool
+	 */
+	executor(new ScheduledThreadPoolExecutor(OSUtil.availableProcessors(), new DefaultThreadFactory("Qiunet-Real-TimerManager"))),
+	;
 
-	private static TimerManager instance;
-
-	private TimerManager() {
-		if (instance != null) throw new CustomException("Instance Duplication!");
-		instance = this;
+	private ScheduledExecutorService schedule;
+	TimerManager(ScheduledExecutorService executorService) {
+		this.schedule = executorService;
 	}
 
-	public static TimerManager getInstance() {
-		if (instance == null) {
-			synchronized (TimerManager.class) {
-				if (instance == null)
-				{
-					new TimerManager();
-				}
-			}
-		}
-		return instance;
-	}
 	/***
 	 * 停闭
 	 */
-	public void shutdown(){
-		schedule.shutdown();
+	public static void shutdown(){
+		for (TimerManager timerManager : values()) {
+			timerManager.schedule.shutdown();
+		}
 	}
 	/**
 	 * 立刻执行
@@ -98,7 +94,7 @@ public class TimerManager {
 			return null;
 		};
 
-		ScheduledFuture<T> future = TimerManager.schedule.schedule(caller, delay, unit);
+		ScheduledFuture<T> future = this.schedule.schedule(caller, delay, unit);
 		promise.setFuture(future);
 		return promise;
 	}

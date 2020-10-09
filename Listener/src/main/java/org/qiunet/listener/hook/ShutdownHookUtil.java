@@ -72,8 +72,7 @@ public class ShutdownHookUtil {
 	 */
 	private void shutdownNow() {
 		if (executing.compareAndSet(false, true)) {
-			this.addShutdownHook(TimerManager.getInstance()::shutdown);
-			this.addShutdownHook(FileChangeListener::shutdown);
+			this.addShutdownHook(TimerManager::shutdown);
 			this.run();
 		}
 	}

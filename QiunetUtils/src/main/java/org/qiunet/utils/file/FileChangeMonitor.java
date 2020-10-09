@@ -2,6 +2,7 @@ package org.qiunet.utils.file;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.qiunet.utils.timer.IScheduledTask;
 
 import java.io.File;
 import java.util.Map;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-09-18 12:33
  */
-class FileChangeMonitor implements Runnable {
+class FileChangeMonitor implements IScheduledTask {
 	/**
 	 * 观察者map
 	 */
@@ -25,7 +26,7 @@ class FileChangeMonitor implements Runnable {
 	}
 
 	@Override
-	public void run() {
+	public void run0() {
 		this.observerMap.values().forEach(FileChangeObserver::checkAndNotify);
 	}
 }

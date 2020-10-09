@@ -98,7 +98,7 @@ public class CfgManagers {
 				continue;
 			}
 
-			DFuture<Void> dFuture = TimerManager.getInstance().executorNow(() -> {
+			DFuture<Void> dFuture = TimerManager.executor.executorNow(() -> {
 					cfgManager.loadCfg();
 					return null;
 			});
