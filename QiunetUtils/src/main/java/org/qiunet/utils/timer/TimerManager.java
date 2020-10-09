@@ -5,10 +5,8 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.system.OSUtil;
-import org.qiunet.utils.system.SystemPropertyUtil;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
 
 import java.util.concurrent.*;
@@ -21,10 +19,12 @@ import java.util.concurrent.*;
 public enum TimerManager {
 	/**
 	 * 自定义的 ScheduledThreadPool
+	 * 需要调时间有效的, 使用该实例
 	 */
 	instance(new DScheduledThreadPoolExecutor(4, 1000, new DefaultThreadFactory("Qiunet-TimerManager"))),
 	/**
 	 * 系统自带的 ScheduledThreadPool
+
 	 */
 	executor(new ScheduledThreadPoolExecutor(OSUtil.availableProcessors(), new DefaultThreadFactory("Qiunet-Real-TimerManager"))),
 	;
