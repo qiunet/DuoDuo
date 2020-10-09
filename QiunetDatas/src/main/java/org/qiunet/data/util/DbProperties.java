@@ -39,12 +39,12 @@ public class DbProperties extends LoaderProperties {
 	 *
 	 * @return
 	 */
-	public int getServerType() {
-		return getInt("serverType", 0);
+	public ServerType getServerType() {
+		return ServerType.parse(getInt("serverType", 0));
 	}
 
-	public boolean isFuncServerType() {
-		return getServerType() == 0;
+	public boolean isLogicServerType() {
+		return getServerType() == ServerType.LOGIC;
 	}
 	/**
 	 * 得到serverId

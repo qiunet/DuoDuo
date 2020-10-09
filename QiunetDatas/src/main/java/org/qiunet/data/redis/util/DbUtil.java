@@ -50,7 +50,7 @@ public final class DbUtil {
 			Table table = key.getAnnotation(Table.class);
 			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
 			String dbSource = table.dbSource();
-			if (StringUtil.isEmpty(dbSource) && DbProperties.getInstance().isFuncServerType()) {
+			if (StringUtil.isEmpty(dbSource) && DbProperties.getInstance().isLogicServerType()) {
 				dbSource = DbProperties.getInstance().getDefaultDbSource();
 			}
 			return dbSource;
