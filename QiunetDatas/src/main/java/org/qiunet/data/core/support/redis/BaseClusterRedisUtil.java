@@ -32,9 +32,12 @@ public class BaseClusterRedisUtil extends BaseRedisUtil {
 			String[] strings = StringUtil.split(string, ":");
 			nodes.add(new HostAndPort(strings[0], Integer.parseInt(strings[1])));
 		}
+		String password = redisProperties.getString(getConfigKey("pass"), null);
+		if ("".equals(password)) password = null;
 
 		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
-		jedisCluster = new JedisCluster(nodes, timeout, buildPoolConfig(redisProperties));
+		int maxAttempts = redisProperties.getInt(getConfigKey("maxAttempts"), 1000);
+		jedisCluster = new JedisCluster(nodes, timeout, timeout, maxAttempts, password, this.buildPoolConfig(redisProperties));
 		ShutdownHookUtil.getInstance().addShutdownHook(() -> {
 			try {
 				jedisCluster.close();
