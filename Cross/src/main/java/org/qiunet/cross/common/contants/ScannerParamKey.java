@@ -11,7 +11,7 @@ import org.qiunet.utils.args.AbstractArgKey;
  */
 public final class ScannerParamKey<T> extends AbstractArgKey<T> {
 
-	public static final ScannerParamKey<IRedisUtil> SERVER_NODE_REDIS_INSTANCE = new ScannerParamKey<>("REDIS_INSTANCE");
+	public static final ScannerParamKey<IRedisUtil> SERVER_NODE_REDIS_INSTANCE = new ScannerParamKey<>("SERVER_NODE_REDIS_INSTANCE");
 
 	private ScannerParamKey(String name) {
 		super(name);
