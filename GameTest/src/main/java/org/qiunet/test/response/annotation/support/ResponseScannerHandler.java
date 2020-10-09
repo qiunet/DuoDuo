@@ -2,6 +2,7 @@ package org.qiunet.test.response.annotation.support;
 
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.Response;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -15,7 +16,7 @@ import java.lang.reflect.Modifier;
 public class ResponseScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.context  = context;
 
 		context.getSubTypesOf(ILongConnResponse.class).stream()

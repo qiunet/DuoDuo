@@ -43,7 +43,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>QiunetUtils</artifactId>
+			<artifactId>QiunetDatas</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -1,6 +1,7 @@
 package org.qiunet.cfg.convert;
 
 import com.google.common.collect.Lists;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -62,7 +63,7 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.converts = context.getSubTypesOf(BaseObjConvert.class).stream()
 			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))
 			.filter(Objects::nonNull)

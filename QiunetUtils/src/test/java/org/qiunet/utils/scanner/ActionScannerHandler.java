@@ -1,6 +1,7 @@
 package org.qiunet.utils.scanner;
 
 import org.junit.Assert;
+import org.qiunet.utils.args.ArgsContainer;
 
 import java.util.Set;
 
@@ -11,7 +12,10 @@ import java.util.Set;
 public class ActionScannerHandler implements IApplicationContextAware {
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
+
+		Assert.assertEquals(10, (int) argsContainer.getArgument(ArgKey.Test).get());
+
 		Set<Class<?>> set = context.getTypesAnnotatedWith(HandlerAction.class);
 		Assert.assertEquals(set.size(), 1);
 		for (Class<?> s : set) {

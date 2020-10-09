@@ -14,6 +14,7 @@ import org.qiunet.entity2table.command.TableParam;
 import org.qiunet.entity2table.service.CreateTableService;
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -227,7 +228,7 @@ class CreateTableController implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.context = context;
 	}
 

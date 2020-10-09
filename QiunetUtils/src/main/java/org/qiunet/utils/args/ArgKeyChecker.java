@@ -18,7 +18,7 @@ import java.util.Set;
  **/
 class ArgKeyChecker implements IApplicationContextAware {
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		Set<Class<? extends IArgKey>> subTypesOf = context.getSubTypesOf(IArgKey.class);
 		for (Class<? extends IArgKey> aClass : subTypesOf) {
 			if (Modifier.isAbstract(aClass.getModifiers())) {

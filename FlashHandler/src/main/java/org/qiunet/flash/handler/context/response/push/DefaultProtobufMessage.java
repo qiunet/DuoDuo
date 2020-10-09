@@ -1,19 +1,24 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbData;
 
 /**
  * 默认的protobuf 的message
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IResponseMessage<IpbResponseData> {
-
+public class DefaultProtobufMessage implements IResponseMessage<IpbData> {
+	/**
+	 * 消息id
+	 */
 	private int protocolId;
-	private IpbResponseData message;
+	/**
+	 * 消息体
+	 */
+	private IpbData message;
 
-	public DefaultProtobufMessage(int protocolId, IpbResponseData message) {
+	public DefaultProtobufMessage(int protocolId, IpbData message) {
 		this.message = message;
 		this.protocolId = protocolId;
 	}
@@ -24,7 +29,7 @@ public class DefaultProtobufMessage implements IResponseMessage<IpbResponseData>
 	}
 
 	@Override
-	public IpbResponseData getContent() {
+	public IpbData getContent() {
 		return message;
 	}
 

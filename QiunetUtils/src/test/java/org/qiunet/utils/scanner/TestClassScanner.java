@@ -11,10 +11,11 @@ public class TestClassScanner {
 	public  static String clazzName;
 	@Test
 	public void testClassScanner() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance()
+			.addParam(ArgKey.Test, 10)
+			.scanner();
+
 		Assert.assertNotNull(clazzName);
-		if (clazzName != null) {
-			Assert.assertEquals("PlayerHandler", clazzName);
-		}
+		Assert.assertEquals("PlayerHandler", clazzName);
 	}
 }

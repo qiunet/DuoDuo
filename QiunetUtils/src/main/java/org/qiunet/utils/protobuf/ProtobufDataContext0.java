@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -24,7 +25,7 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 	private IApplicationContext context;
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 		this.handlerCodec();
 		instance = this;

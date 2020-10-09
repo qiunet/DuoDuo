@@ -3,6 +3,7 @@ package org.qiunet.utils.properties;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.properties.anno.DProperties;
@@ -37,7 +38,7 @@ class PropertiesContext implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 		this.loadField();
 	}

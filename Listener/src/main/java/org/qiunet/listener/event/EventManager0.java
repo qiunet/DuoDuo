@@ -3,6 +3,7 @@ package org.qiunet.listener.event;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -35,7 +36,7 @@ class EventManager0 implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 
 		Set<Method> typesAnnotated = context.getMethodsAnnotatedWith(EventListener.class);

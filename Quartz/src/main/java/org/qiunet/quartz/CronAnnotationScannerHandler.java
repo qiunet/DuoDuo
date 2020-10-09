@@ -1,6 +1,7 @@
 package org.qiunet.quartz;
 
 
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -9,7 +10,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
  */
 public class CronAnnotationScannerHandler implements IApplicationContextAware {
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		context.getMethodsAnnotatedWith(CronSchedule.class).stream()
 			.map(m -> {
 				CronSchedule cron = m.getAnnotation(CronSchedule.class);

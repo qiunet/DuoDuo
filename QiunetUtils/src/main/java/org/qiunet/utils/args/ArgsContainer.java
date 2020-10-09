@@ -15,6 +15,10 @@ public class ArgsContainer implements IArgsContainer {
 	private Class<? extends IArgKey> keyClass;
 	private Map<String, Argument> attributes = Maps.newConcurrentMap();
 
+	public ArgsContainer() {
+		this.keyClass = null;
+	}
+
 	public ArgsContainer(Class<? extends IArgKey> keyClass) {
 		this.keyClass = keyClass;
 	}
@@ -28,7 +32,7 @@ public class ArgsContainer implements IArgsContainer {
 
 	@Override
 	public <T> Argument<T> getArgument(IArgKey<T> key, boolean computeIfAbsent) {
-		if (key.getClass() != keyClass) {
+		if (keyClass != null && key.getClass() != keyClass) {
 			throw new IllegalArgumentException("It,s ArgsMap for class ["+keyClass.getName()+"]");
 		}
 		if (! computeIfAbsent) {

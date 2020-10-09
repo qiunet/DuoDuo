@@ -11,6 +11,7 @@ import org.qiunet.cfg.listener.CfgManagerAddEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -93,7 +94,7 @@ class KeyValManager implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 	}
 

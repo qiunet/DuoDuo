@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.request.data.pb;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -24,7 +25,7 @@ public class PbResponseDataMapping implements IApplicationContextAware {
 	private PbResponseDataMapping(){}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		Set<Integer> protocolIds = Sets.newHashSet();
 		for (Class<? extends IpbData> clazz : context.getSubTypesOf(IpbData.class)) {
 			if (Modifier.isAbstract(clazz.getModifiers())

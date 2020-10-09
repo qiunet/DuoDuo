@@ -2,6 +2,8 @@ package org.qiunet.utils.scanner;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
+import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.args.IArgKey;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -35,6 +37,11 @@ public final class ClassScanner implements IApplicationContext {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 	private Reflections reflections;
 	private ScannerType scannerType;
+	/**
+	 * 存储一些参数
+	 */
+	private ArgsContainer argsContainer = new ArgsContainer();
+
 	private static ClassScanner instance;
 
 	private ClassScanner(ScannerType scannerType) {
@@ -132,8 +139,20 @@ public final class ClassScanner implements IApplicationContext {
 		}
 	}
 
+	/**
+	 * 添加一些参数给applicationContext
+	 * @param argKey
+	 * @param obj
+	 * @param <T>
+	 * @return
+	 */
+	public <T> ClassScanner addParam(IArgKey<T> argKey, T obj) {
+		this.argsContainer.setVal(argKey, obj);
+		return this;
+	}
+
 	private void run(IApplicationContextAware applicationContextAware) throws Exception {
-		applicationContextAware.setApplicationContext(this);
+		applicationContextAware.setApplicationContext(this, argsContainer);
 	}
 
 	@Override

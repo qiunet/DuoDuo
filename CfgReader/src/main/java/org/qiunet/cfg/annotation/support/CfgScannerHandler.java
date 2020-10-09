@@ -6,6 +6,7 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -24,7 +25,7 @@ import java.util.Set;
 public class CfgScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 
 		Set<Class<? extends ICfg>> classSet = context.getSubTypesOf(ICfg.class);

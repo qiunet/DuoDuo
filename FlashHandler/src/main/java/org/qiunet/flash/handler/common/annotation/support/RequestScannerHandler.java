@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -19,7 +20,7 @@ import java.lang.reflect.Modifier;
 public class RequestScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override
-	public void setApplicationContext(IApplicationContext context) {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.context = context;
 		context.getSubTypesOf(IHandler.class).stream()
 			.filter(c -> !Modifier.isAbstract(c.getModifiers()))

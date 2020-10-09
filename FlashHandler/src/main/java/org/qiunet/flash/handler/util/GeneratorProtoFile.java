@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.pb.IpbData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -38,7 +39,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	}
 
 	@Override
-	public void setApplicationContext(IApplicationContext context) throws Exception {
+	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		Set<Class<? extends IpbData>> classes = Sets.newHashSet();
 		classes.addAll(context.getSubTypesOf(IpbResponseData.class));
 		classes.addAll(context.getSubTypesOf(IpbRequestData.class));
