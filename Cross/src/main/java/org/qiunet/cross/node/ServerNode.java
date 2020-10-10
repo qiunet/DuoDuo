@@ -1,5 +1,6 @@
 package org.qiunet.cross.node;
 
+import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
@@ -37,6 +38,14 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		return node;
 
 	}
+
+	@Override
+	public void addMessage(IMessage<ServerNode> msg) {
+		// 是一个服务和另一个服务公用一个channel.
+		// 由业务自己实现线程的安全.
+		this.runMessage(msg);
+	}
+
 	/**
 	 * 获得serverId
 	 * @return

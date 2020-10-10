@@ -94,6 +94,11 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		}
 	}
 
+	@Override
+	public void runMessage(IMessage<H> message) {
+		executorService.submit(() -> message.execute((H) this));
+	}
+
 	public boolean isInThread(){
 		return Thread.currentThread() == currentThread;
 	}

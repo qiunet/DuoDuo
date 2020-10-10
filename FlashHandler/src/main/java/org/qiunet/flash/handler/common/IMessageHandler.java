@@ -16,11 +16,18 @@ public interface IMessageHandler<H extends IMessageHandler> {
 	 */
 	void destroy();
 	/**
-	 *
+	 * 队列运行一个message
+	 * 保证线程安全.
 	 * @param message
 	 */
 	void addMessage(IMessage<H> message);
 
+	/**
+	 * 直接运行 message
+	 * 使用在不需要保证线程安全的地方.
+	 * @param message
+	 */
+	void runMessage(IMessage<H> message);
 	/**
 	 * 在某个毫秒时间戳执行
 	 * @param msg
