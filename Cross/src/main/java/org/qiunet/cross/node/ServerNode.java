@@ -42,7 +42,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
 		// 是一个服务和另一个服务公用一个channel.
-		// 由业务自己实现线程的安全.
+		// 由业务自己实现线程的安全. 一般CommMessageHandler  roomHandler等 重新addMessage 一遍.
 		this.runMessage(msg);
 	}
 

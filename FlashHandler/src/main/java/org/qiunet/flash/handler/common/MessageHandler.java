@@ -96,6 +96,11 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	@Override
 	public void runMessage(IMessage<H> message) {
+		if (close) {
+			logger.error("MessageHandler [{}] 已经关闭销毁", getIdent());
+			return;
+		}
+
 		executorService.submit(() -> message.execute((H) this));
 	}
 
