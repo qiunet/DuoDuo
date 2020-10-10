@@ -20,10 +20,10 @@ public class TestProtobufData {
 	}
 	@Test
 	public void test(){
-		LoginRequest request = LoginRequest.valueOf("qiunet", "qiuyang", 11);
+		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
 		byte[] bytes = request.toByteArray();
 
-		LoginRequest loginRequest = ProtobufDataManager.decode(LoginRequest.class, bytes);
+		WsPbLoginRequest loginRequest = ProtobufDataManager.decode(WsPbLoginRequest.class, bytes);
 		Assert.assertEquals("qiunet", loginRequest.getAccount());
 	}
 }

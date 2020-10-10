@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * 2020-09-22 12:30
  */
 @ProtobufClass(description = "登录协议")
-public class LoginRequest implements IpbRequestData {
+public class TcpPbLoginRequest implements IpbRequestData {
 
 	private String account;
 
@@ -21,11 +21,11 @@ public class LoginRequest implements IpbRequestData {
 	@Protobuf(description = "性别")
 	private GenderType gender;
 
-	public LoginRequest() {
+	public TcpPbLoginRequest() {
 	}
 
-	public static LoginRequest valueOf(String account, String secret, int phoneNum) {
-		LoginRequest request = new LoginRequest();
+	public static TcpPbLoginRequest valueOf(String account, String secret, int phoneNum) {
+		TcpPbLoginRequest request = new TcpPbLoginRequest();
 		request.account = account;
 		request.secret = secret;
 		request.phoneNum = phoneNum;

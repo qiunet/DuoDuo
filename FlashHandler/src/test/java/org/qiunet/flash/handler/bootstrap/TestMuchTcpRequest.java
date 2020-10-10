@@ -6,8 +6,8 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
-import org.qiunet.flash.handler.proto.LoginRequest;
 import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.net.InetAddress;
@@ -43,8 +43,8 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
-					LoginRequest request = LoginRequest.valueOf(text, text, 11);
-					MessageContent content = new MessageContent(1004, request.toByteArray());
+					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11);
+					MessageContent content = new MessageContent(3001, request.toByteArray());
 					tcpClient.sendMessage(content);
 				}
 			}).start();

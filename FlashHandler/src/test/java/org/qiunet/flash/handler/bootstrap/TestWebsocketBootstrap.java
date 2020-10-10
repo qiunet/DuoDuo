@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
-import org.qiunet.flash.handler.proto.LoginRequest;
 import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.flash.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,7 +29,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 			.setAddress("localhost", 8080)
 			.setUriIPath("/ws")
 			.build(), new ResponseTrigger());
-		LoginRequest request = LoginRequest.valueOf(text, text, 11);
+		WsPbLoginRequest request = WsPbLoginRequest.valueOf(text, text, 11);
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
 

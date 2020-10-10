@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
-import org.qiunet.flash.handler.proto.LoginRequest;
+import org.qiunet.flash.handler.proto.HttpPbLoginRequest;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -33,30 +33,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		.build();
 
 	@Test
-	public void testOtherHttpProtobuf() {
-		final String test = "测试[testOtherHttpProtobuf]";
-		LoginRequest request = LoginRequest.valueOf(test, test, 11);
-		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.create(params).sendRequest(new MessageContent(0, request.toByteArray()),
-			"/protobufTest", (httpResponse) -> {
-				Assert.assertSame(httpResponse.status(), HttpResponseStatus.OK);
-
-				byte[] bytes = new byte[httpResponse.content().readableBytes()];
-				httpResponse.content().readBytes(bytes);
-				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, bytes);
-				Assert.assertEquals(test, loginResponse.getTestString());
-				ReferenceCountUtil.release(httpResponse);
-				LockSupport.unpark(currThread);
-		});
-		LockSupport.park();
-
-	}
-
-	@Test
 	public void testHttpProtobuf() {
 		final String test = "[测试testHttpProtobuf]";
-		LoginRequest request = LoginRequest.valueOf(test, test, 11);
-		MessageContent content = new MessageContent(1001, request.toByteArray());
+		HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
+		MessageContent content = new MessageContent(2001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(content, "/f", (httpResponse) -> {
 			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
