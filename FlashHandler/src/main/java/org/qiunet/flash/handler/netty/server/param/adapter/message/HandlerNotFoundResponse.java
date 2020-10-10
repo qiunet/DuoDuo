@@ -1,8 +1,9 @@
-package org.qiunet.cross.common.message;
+package org.qiunet.flash.handler.netty.server.param.adapter.message;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 
 /***
  *
@@ -13,4 +14,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
 @PbResponse(404)
 @ProtobufClass(description = "没有处理protocolID的Handler错误")
 public class HandlerNotFoundResponse implements IpbResponseData {
+	public static final HandlerNotFoundResponse DEFAULT_INSTANCE = new HandlerNotFoundResponse();
+
+	public static final DefaultProtobufMessage DEFAULT_MESSAGE = DEFAULT_INSTANCE.buildResponseMessage();
 }

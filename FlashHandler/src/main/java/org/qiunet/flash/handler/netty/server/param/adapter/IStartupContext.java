@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.netty.server.param.adapter;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
 
 /***
  *
@@ -23,12 +25,16 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 *  没有找到handler 404
 	 * @return
 	 */
-	DefaultProtobufMessage getHandlerNotFound();
+	default DefaultProtobufMessage getHandlerNotFound() {
+		return HandlerNotFoundResponse.DEFAULT_MESSAGE;
+	}
 
 	/***
 	 * 出现异常
 	 * @param cause
 	 * @return
 	 */
-	DefaultProtobufMessage exception(Throwable cause);
+	default DefaultProtobufMessage exception(Throwable cause){
+		return ServerExceptionResponse.DEFAULT_MESSAGE;
+	}
 }
