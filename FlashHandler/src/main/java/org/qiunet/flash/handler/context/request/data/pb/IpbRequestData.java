@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.context.request.data.pb;
 
 
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+
 /***
  * protobuf的请求接口
  *
@@ -9,4 +11,8 @@ package org.qiunet.flash.handler.context.request.data.pb;
  */
 public interface IpbRequestData extends IpbChannelData {
 
+	@Override
+	default int getProtocolId() {
+		return RequestHandlerMapping.getInstance().getProtocolId(this.getClass());
+	}
 }

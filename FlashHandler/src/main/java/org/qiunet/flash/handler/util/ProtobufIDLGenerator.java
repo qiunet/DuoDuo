@@ -160,7 +160,7 @@ public class ProtobufIDLGenerator {
 	 */
 	public static int getProtocolId(Class<? extends IpbChannelData> clz) {
 		if (IpbRequestData.class.isAssignableFrom(clz)) {
-			return RequestHandlerMapping.getInstance().getProtocolId(clz);
+			return RequestHandlerMapping.getInstance().getProtocolId((Class<? extends IpbRequestData>) clz);
 		}
 		if (IpbResponseData.class.isAssignableFrom(clz)) {
 			return PbResponseDataMapping.protocolId((Class<? extends IpbResponseData>) clz);

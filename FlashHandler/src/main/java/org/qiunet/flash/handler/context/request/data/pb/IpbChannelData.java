@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.data.pb;
 
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
@@ -31,7 +30,5 @@ public interface IpbChannelData {
 	 * 得到protocolId
 	 * @return
 	 */
-	default int getProtocolId() {
-		return RequestHandlerMapping.getInstance().getProtocolId(this.getClass());
-	}
+	int getProtocolId();
 }
