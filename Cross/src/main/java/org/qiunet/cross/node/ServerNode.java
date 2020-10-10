@@ -2,6 +2,7 @@ package org.qiunet.cross.node;
 
 import org.qiunet.flash.handler.context.response.push.IResponseMessage;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 
 /***
  *
@@ -15,6 +16,17 @@ public class ServerNode {
 
 	private DSession dSession;
 
+	public static ServerNode valueOf(ServerInfo serverInfo, ILongConnResponseTrigger trigger) {
+		ServerNode node = new ServerNode();
+		node.serverInfo = serverInfo;
+//		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
+//			.setAddress(serverInfo.getHost(), serverInfo.getPort())
+//			.setStartupContextAdapter()
+//			.build(), trigger);
+//		node.dSession = new DSession();
+		return node;
+
+	}
 	/**
 	 * 获得serverId
 	 * @return

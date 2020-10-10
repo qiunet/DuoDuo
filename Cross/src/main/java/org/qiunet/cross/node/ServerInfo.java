@@ -2,6 +2,8 @@ package org.qiunet.cross.node;
 
 import org.qiunet.data.util.ServerType;
 
+import java.util.Objects;
+
 /***
  * 服务节点
  *
@@ -65,5 +67,31 @@ public class ServerInfo {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		ServerInfo that = (ServerInfo) o;
+		return serverId == that.serverId &&
+			port == that.port &&
+			type == that.type &&
+			host.equals(that.host);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(serverId, type, host, port);
+	}
+
+	@Override
+	public String toString() {
+		return "ServerInfo{" +
+			"serverId=" + serverId +
+			", type=" + type +
+			", host='" + host + '\'' +
+			", port=" + port +
+			'}';
 	}
 }

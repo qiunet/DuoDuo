@@ -27,9 +27,10 @@ public enum ServerType implements EnumReadable {
 	 */
 	ROUTE(3),
 	/**
-	 * 后台服务
+	 * 全功能服务
+	 * 即服务包含所有的服务.
 	 */
-	BACK(4),
+	ALL(100),
 	;
 	private int type;
 
