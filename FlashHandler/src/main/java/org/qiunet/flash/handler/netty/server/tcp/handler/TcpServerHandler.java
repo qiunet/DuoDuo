@@ -37,7 +37,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		DSession session = new DSession(ctx.channel());
 
 		SessionManager.addSession(session);
-		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(session));
+		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
 	}
 
 	@Override

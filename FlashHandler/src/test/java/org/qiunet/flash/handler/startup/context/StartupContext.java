@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.startup.context;
 
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
@@ -12,18 +11,18 @@ import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
  **/
 public class StartupContext implements IStartupContext<PlayerActor> {
 	@Override
-	public IChannelMessage<IpbResponseData> getHandlerNotFound() {
+	public DefaultProtobufMessage getHandlerNotFound() {
 		return null;
 	}
 
 	@Override
-	public IChannelMessage<IpbResponseData> exception(Throwable cause) {
+	public DefaultProtobufMessage exception(Throwable cause) {
 		return null;
 	}
 
 
 	@Override
-	public PlayerActor buildPlayerActor(DSession session) {
+	public PlayerActor buildMessageActor(DSession session) {
 		return new PlayerActor(session);
 	}
 }

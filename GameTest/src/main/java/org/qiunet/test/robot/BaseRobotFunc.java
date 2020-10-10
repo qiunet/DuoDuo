@@ -1,6 +1,7 @@
 package org.qiunet.test.robot;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
@@ -63,7 +64,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 	private class LongConnResponseTrigger implements ILongConnResponseTrigger {
 
 		@Override
-		public void response(MessageContent data) {
+		public void response(DSession session, MessageContent data) {
 			ILongConnResponse response = ResponseMapping.getInstance().getResponse(data.getProtocolId());
 			response.response(robot, data);
 

@@ -1,8 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 
 /***
@@ -14,22 +13,22 @@ import org.qiunet.flash.handler.context.session.DSession;
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
 	/**
-	 * 构造PlayerActor
+	 * 构造MessageActor
 	 * http情况不会调用.
 	 * @param session
 	 * @return
 	 */
-	T buildPlayerActor(DSession session);
+	T buildMessageActor(DSession session);
 	/***
 	 *  没有找到handler 404
 	 * @return
 	 */
-	IChannelMessage<IpbResponseData> getHandlerNotFound();
+	DefaultProtobufMessage getHandlerNotFound();
 
 	/***
 	 * 出现异常
 	 * @param cause
 	 * @return
 	 */
-	IChannelMessage<IpbResponseData> exception(Throwable cause);
+	DefaultProtobufMessage exception(Throwable cause);
 }

@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.util;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
-import org.qiunet.flash.handler.context.request.data.pb.IpbData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.utils.args.ArgsContainer;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 2020-09-23 16:34
  */
 public class GeneratorProtoFile implements IApplicationContextAware {
-	private static final Set<Class<? extends IpbData>> pbClasses = Sets.newHashSet();
+	private static final Set<Class<? extends IpbChannelData>> pbClasses = Sets.newHashSet();
 	private GeneratorProtoFile(){}
 	/**
 	 *
@@ -40,11 +40,11 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		Set<Class<? extends IpbData>> classes = Sets.newHashSet();
+		Set<Class<? extends IpbChannelData>> classes = Sets.newHashSet();
 		classes.addAll(context.getSubTypesOf(IpbResponseData.class));
 		classes.addAll(context.getSubTypesOf(IpbRequestData.class));
 
-		Set<Class<? extends IpbData>> collect = classes.stream()
+		Set<Class<? extends IpbChannelData>> collect = classes.stream()
 			.filter(clz -> !Modifier.isInterface(clz.getModifiers()))
 			.filter(clz -> !Modifier.isAbstract(clz.getModifiers()))
 			.collect(Collectors.toSet());

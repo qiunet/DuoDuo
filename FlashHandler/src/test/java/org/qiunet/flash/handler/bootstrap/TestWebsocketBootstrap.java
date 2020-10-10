@@ -4,6 +4,7 @@ import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
@@ -38,7 +39,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 
 	public class ResponseTrigger implements ILongConnResponseTrigger {
 		@Override
-		public void response(MessageContent data) {
+		public void response(DSession session, MessageContent data) {
 			switch (data.getProtocolId()) {
 				case 2000:
 					Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));

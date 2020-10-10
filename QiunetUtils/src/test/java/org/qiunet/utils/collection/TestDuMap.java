@@ -12,7 +12,7 @@ public class TestDuMap {
 	@Test
 	public void test(){
 		DuMap<Integer, String> duMap = new DuMap<>();
-		duMap.add(1, "1").add(2, "2");
+		duMap.put(1, "1").put(2, "2");
 
 		Assert.assertEquals(duMap.size(), 2);
 		Assert.assertTrue(duMap.containsKey(1));

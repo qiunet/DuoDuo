@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
@@ -25,6 +26,7 @@ public class NettyTcpClient implements ILongConnClient {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ILongConnResponseTrigger trigger;
 	private Channel channel;
+	private DSession session;
 	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
@@ -35,6 +37,7 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.handler(new NettyClientInitializer(params));
 		try {
 			this.channel = bootstrap.connect(params.getAddress()).sync().channel();
+			this.session = new DSession(channel);
 		} catch (Exception e) {
 			logger.error("Exception", e);
 		}
@@ -50,6 +53,10 @@ public class NettyTcpClient implements ILongConnClient {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public DSession getSession() {
+		return session;
 	}
 
 	public static void shutdown(){
@@ -80,7 +87,7 @@ public class NettyTcpClient implements ILongConnClient {
 
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(msg);
+			trigger.response(session, msg);
 		}
 	}
 }

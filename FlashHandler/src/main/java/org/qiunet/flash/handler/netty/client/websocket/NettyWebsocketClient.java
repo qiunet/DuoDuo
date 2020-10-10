@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
@@ -34,6 +35,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
+	private DSession session;
 
 	public NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger) {
 		this.trigger = trigger;
@@ -106,6 +108,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) {
 			channelHandlerContext = ctx;
+			session = new DSession(ctx.channel());
 			handshaker.handshake(ctx.channel());
 		}
 
@@ -138,7 +141,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private class NettyWSClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(msg);
+			trigger.response(session, msg);
 		}
 	}
 	public static void shutdown(){

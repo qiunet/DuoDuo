@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
+import org.qiunet.utils.collection.DuMap;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.SingletonException;
 import org.qiunet.utils.logger.LoggerType;
@@ -34,7 +35,7 @@ public class RequestHandlerMapping {
 	/**所有游戏的 handler*/
 	private Map<Integer, IHandler> gameHandlers = Maps.newHashMapWithExpectedSize(128);
 	/**req Class 到protocolId 的映射关系**/
-	private Map<Class<?>, Integer> req2ProtocolId = Maps.newHashMapWithExpectedSize(128);
+	private DuMap<Class<?>, Integer> req2ProtocolId = new DuMap<>(128);
 
 	private RequestHandlerMapping() {
 		synchronized (RequestHandlerMapping.class) {
@@ -66,7 +67,7 @@ public class RequestHandlerMapping {
 		if (! req2ProtocolId.containsKey(clazz)) {
 			throw new CustomException("class ["+clazz.getName()+"] is not mapping any protocolId!");
 		}
-		return req2ProtocolId.get(clazz);
+		return req2ProtocolId.getVal(clazz);
 	}
 	/**
 	 * 通过请求的MessageContent 得到一个Handler
@@ -118,7 +119,15 @@ public class RequestHandlerMapping {
 		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		this.gameHandlers.put(protocolId, handler);
 
-		req2ProtocolId.put(requestDataClass, handler.getClass().getAnnotation(RequestHandler.class).ID());
+		int requestId = handler.getClass().getAnnotation(RequestHandler.class).ID();
+		if (req2ProtocolId.containsKey(requestDataClass)) {
+			throw new CustomException("Already exist class in mapping, Mapping id is {}.", req2ProtocolId.getVal(requestDataClass));
+		}
+
+		if (req2ProtocolId.containsVal(requestId)) {
+			throw new CustomException("Already exist requestId in mapping, Mapping class is {}", req2ProtocolId.getKey(requestId));
+		}
+		req2ProtocolId.put(requestDataClass, requestId);
 	}
 
 

@@ -4,6 +4,7 @@ import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.proto.LoginRequest;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -24,7 +25,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 	}
 
 	@Override
-	public void responseTcpMessage(MessageContent data) {
+	public void responseTcpMessage(DSession session, MessageContent data) {
 		switch (data.getProtocolId()) {
 			case 2000:
 				Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));

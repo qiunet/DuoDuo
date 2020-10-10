@@ -44,7 +44,7 @@ public class DbProperties extends LoaderProperties {
 	}
 
 	public boolean isLogicServerType() {
-		return getServerType() == ServerType.LOGIC;
+		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
 	}
 	/**
 	 * 得到serverId

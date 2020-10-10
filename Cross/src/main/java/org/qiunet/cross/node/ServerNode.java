@@ -1,8 +1,14 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.common.player.AbstractMessageActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+
+import java.text.MessageFormat;
 
 /***
  *
@@ -10,20 +16,24 @@ import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
  * @author qiunet
  * 2020-10-09 11:13
  */
-public class ServerNode {
+public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	private ServerInfo serverInfo;
 
-	private DSession dSession;
+	public ServerNode(DSession session) {
+		super(session);
+	}
 
-	public static ServerNode valueOf(ServerInfo serverInfo, ILongConnResponseTrigger trigger) {
-		ServerNode node = new ServerNode();
+
+	public static ServerNode valueOf(ServerInfo serverInfo) {
+		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
+			.setAddress(serverInfo.getHost(), serverInfo.getPort())
+			.build(), ((session1, data) -> {
+			IMessageActor messageActor = session1.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		}));
+
+		ServerNode node = new ServerNode(tcpClient.getSession());
 		node.serverInfo = serverInfo;
-//		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
-//			.setAddress(serverInfo.getHost(), serverInfo.getPort())
-//			.setStartupContextAdapter()
-//			.build(), trigger);
-//		node.dSession = new DSession();
 		return node;
 
 	}
@@ -39,7 +49,18 @@ public class ServerNode {
 	 * 向服务器发起一个请求
 	 * @param message
 	 */
-	public void writeMessage(IChannelMessage message) {
-		dSession.writeMessage(message);
+	public void writeMessage(IpbChannelData message) {
+		this.send(message.buildResponseMessage());
+	}
+
+	@Override
+	protected String getIdent() {
+		return MessageFormat.format( "ServerNode[{0}:{1}]", serverInfo.getHost(), serverInfo.getPort());
+	}
+
+	@Override
+	public long getId() {
+		if (serverInfo == null) return 0;
+		return getServerId();
 	}
 }

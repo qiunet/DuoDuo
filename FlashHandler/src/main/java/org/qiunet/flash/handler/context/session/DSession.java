@@ -83,6 +83,16 @@ public final class DSession {
 		return channel.attr(key).get();
 	}
 
+	/**
+	 * 往channel上面挂载数据.
+	 * @param key
+	 * @param obj
+	 * @param <T>
+	 */
+	public <T> void attachObj(AttributeKey<T> key, T obj) {
+		channel.attr(key).set(obj);
+	}
+
 	public void close(CloseCause cause) {
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(cause));

@@ -20,9 +20,13 @@ public class DuMap<Key, Val> {
 	private BiMap<Val, Key> map2;
 
 
-	public DuMap(){
-		this.map1 = HashBiMap.create();
+	public DuMap(int expectedSize){
+		this.map1 = HashBiMap.create(expectedSize);
 		this.map2 = this.map1.inverse();
+	}
+
+	public DuMap(){
+		this(16);
 	}
 
 	/**
@@ -30,7 +34,7 @@ public class DuMap<Key, Val> {
 	 * @param key
 	 * @param val
 	 */
-	public DuMap<Key, Val> add(Key key, Val val) {
+	public DuMap<Key, Val> put(Key key, Val val) {
 		if (this.containsKey(key)) {
 			throw new IllegalArgumentException("Key ["+key.toString()+"] is repeated");
 		}

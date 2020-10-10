@@ -22,7 +22,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
-import org.qiunet.flash.handler.context.request.data.pb.IpbData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.request.data.pb.PbResponseDataMapping;
@@ -146,8 +146,8 @@ public class ProtobufIDLGenerator {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("// ").append(annotation.description()).append("\n");
-		if (IpbData.class.isAssignableFrom(clz)) {
-			int protocolId = getProtocolId((Class<? extends IpbData>) clz);
+		if (IpbChannelData.class.isAssignableFrom(clz)) {
+			int protocolId = getProtocolId((Class<? extends IpbChannelData>) clz);
 			sb.append("// ProtocolId = ").append(protocolId).append("\n");
 		}
     	return sb.toString();
@@ -158,7 +158,7 @@ public class ProtobufIDLGenerator {
 	 * @param clz
 	 * @return
 	 */
-	public static int getProtocolId(Class<? extends IpbData> clz) {
+	public static int getProtocolId(Class<? extends IpbChannelData> clz) {
 		if (IpbRequestData.class.isAssignableFrom(clz)) {
 			return RequestHandlerMapping.getInstance().getProtocolId(clz);
 		}

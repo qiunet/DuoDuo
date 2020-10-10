@@ -6,7 +6,10 @@ import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.listener.event.data.ServerShutdownEventData;
+import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -75,7 +78,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@EventListener
-	public void onServerStart(){
+	public void onServerStart(ServerStartupEventData data){
 		if (DbProperties.getInstance().getServerType() == ServerType.ALL) {
 			return;
 		}
@@ -92,5 +95,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+serverInfo.getType().getType(), String.valueOf(serverInfo.getServerId()));
 			return 0;
 		});
+	}
+
+	@EventListener
+	public void onShutdown(ServerShutdownEventData data) {
+		NettyTcpClient.shutdown();
 	}
 }

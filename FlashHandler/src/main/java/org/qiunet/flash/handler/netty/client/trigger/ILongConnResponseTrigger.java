@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.client.trigger;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.DSession;
 
 /**
  * Created by qiunet.
@@ -11,5 +12,5 @@ public interface ILongConnResponseTrigger {
 	 * 触发的响应
 	 * @param data
 	 */
-	void response(MessageContent data);
+	void response(DSession session, MessageContent data);
 }

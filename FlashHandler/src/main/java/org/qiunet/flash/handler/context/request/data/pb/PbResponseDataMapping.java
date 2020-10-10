@@ -27,7 +27,7 @@ public class PbResponseDataMapping implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		Set<Integer> protocolIds = Sets.newHashSet();
-		for (Class<? extends IpbData> clazz : context.getSubTypesOf(IpbData.class)) {
+		for (Class<? extends IpbChannelData> clazz : context.getSubTypesOf(IpbChannelData.class)) {
 			if (Modifier.isAbstract(clazz.getModifiers())
 			 || Modifier.isInterface(clazz.getModifiers())
 			) {

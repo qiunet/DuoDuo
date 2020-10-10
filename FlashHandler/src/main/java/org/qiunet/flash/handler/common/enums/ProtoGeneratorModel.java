@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.enums;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Sets;
-import org.qiunet.flash.handler.context.request.data.pb.IpbData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.util.ProtobufIDLGenerator;
 import org.qiunet.utils.file.FileUtil;
 
@@ -22,8 +22,8 @@ public enum ProtoGeneratorModel {
 	 */
 	ONE_PROTOCOL_ONE_FILE {
 		@Override
-		public void generatorProto(File directory, Set<Class<? extends IpbData>> allPbClass) {
-			for (Class<? extends IpbData> pbClass : allPbClass) {
+		public void generatorProto(File directory, Set<Class<? extends IpbChannelData>> allPbClass) {
+			for (Class<? extends IpbChannelData> pbClass : allPbClass) {
 				ProtobufClass annotation = pbClass.getAnnotation(ProtobufClass.class);
 				int protocolId = ProtobufIDLGenerator.getProtocolId(pbClass);
 				StringJoiner sb = new StringJoiner("_", "", ".proto");
@@ -39,13 +39,13 @@ public enum ProtoGeneratorModel {
 	 */
 	ALL_IN_ONE {
 		@Override
-		public void generatorProto(File directory, Set<Class<?  extends IpbData>> allPbClass) {
+		public void generatorProto(File directory, Set<Class<?  extends IpbChannelData>> allPbClass) {
 			Set<Class<?>> cachedEnumsTypes = Sets.newHashSet();
 			Set<Class<?>> cachedTypes = Sets.newHashSet();
 
 			StringBuilder sb = new StringBuilder(V3_HEADER);
 			sb.append("\n\n");
-			for (Class<? extends IpbData> pbClass : allPbClass) {
+			for (Class<? extends IpbChannelData> pbClass : allPbClass) {
 				String content = ProtoGeneratorModel.generatorProtoContent(pbClass, cachedEnumsTypes, cachedTypes, true);
 				sb.append(content);
 			}
@@ -59,9 +59,9 @@ public enum ProtoGeneratorModel {
 	/**
 	 * 开始生成proto文件
 	 */
-	public abstract void generatorProto(File directory, Set<Class<?  extends IpbData>> allPbClass);
+	public abstract void generatorProto(File directory, Set<Class<?  extends IpbChannelData>> allPbClass);
 
-	private static String generatorProtoContent(Class<? extends IpbData> clazz, Set<Class<?>> cachedEnumsTypes, Set<Class<?>> cachedTypes, boolean ignoreVersion) {
+	private static String generatorProtoContent(Class<? extends IpbChannelData> clazz, Set<Class<?>> cachedEnumsTypes, Set<Class<?>> cachedTypes, boolean ignoreVersion) {
 		return ProtobufIDLGenerator.getIDL(clazz, cachedTypes, cachedEnumsTypes, true, ignoreVersion);
 	}
 }
