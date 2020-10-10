@@ -12,7 +12,6 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.collection.DuMap;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.exceptions.SingletonException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -27,36 +26,20 @@ import java.util.Map;
  * @author qiunet
  *         Created on 17/3/3 16:46.
  */
-public class RequestHandlerMapping {
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+public enum RequestHandlerMapping {
+	INSTANCE;
 
-	private static RequestHandlerMapping instance;
+	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**所有非游戏的 http handler*/
 	private Map<String, IHttpHandler> uriPathHandlers = Maps.newHashMap();
 	/**所有游戏的 handler*/
 	private Map<Integer, IHandler> gameHandlers = Maps.newHashMapWithExpectedSize(128);
 	/**req Class 到protocolId 的映射关系**/
-	private DuMap<Class<?>, Integer> req2ProtocolId = new DuMap<>(128);
+	private DuMap<Class<? extends IpbRequestData>, Integer> req2ProtocolId = new DuMap<>(128);
 
-	private RequestHandlerMapping() {
-		synchronized (RequestHandlerMapping.class) {
-			if (instance != null ){
-				throw new SingletonException("RequestHandlerMapping instance was duplicate");
-			}
-			instance = this;
-		}
-	}
 
 	public static RequestHandlerMapping getInstance() {
-		if (instance == null) {
-			synchronized (RequestHandlerMapping.class) {
-				if (instance == null)
-				{
-					new RequestHandlerMapping();
-				}
-			}
-		}
-		return instance;
+		return INSTANCE;
 	}
 
 	/**
@@ -64,7 +47,7 @@ public class RequestHandlerMapping {
 	 * @param clazz
 	 * @return
 	 */
-	public int getProtocolId(Class clazz) {
+	public int getProtocolId(Class<? extends IpbRequestData> clazz) {
 		if (! req2ProtocolId.containsKey(clazz)) {
 			throw new CustomException("class ["+clazz.getName()+"] is not mapping any protocolId!");
 		}
@@ -110,7 +93,7 @@ public class RequestHandlerMapping {
 	 * @param protocolId
 	 * @param handler
 	 */
-	public void addHandler(int protocolId, IHandler handler) {
+	void addHandler(int protocolId, IHandler handler) {
 		if (this.gameHandlers.containsKey(protocolId)) {
 			throw new CustomException("protocolId ["+protocolId+"] className ["+handler.getClass().getSimpleName()+"] is already exist!");
 		}
@@ -120,7 +103,7 @@ public class RequestHandlerMapping {
 		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		this.gameHandlers.put(protocolId, handler);
 
-		if (IpbRequestData.class.isAssignableFrom(requestDataClass)) {
+		if (requestDataClass != null && IpbRequestData.class.isAssignableFrom(requestDataClass)) {
 			int requestId = handler.getClass().getAnnotation(RequestHandler.class).ID();
 			if (req2ProtocolId.containsKey(requestDataClass)) {
 				throw new CustomException("Already exist class [{}] in mapping, Mapping id is [{}].", requestDataClass.getName(), req2ProtocolId.getVal(requestDataClass));
@@ -129,6 +112,7 @@ public class RequestHandlerMapping {
 			if (req2ProtocolId.containsVal(requestId)) {
 				throw new CustomException("Already exist requestId [{}] in mapping, Mapping class is [{}]", requestId, req2ProtocolId.getKey(requestId));
 			}
+
 			req2ProtocolId.put(requestDataClass, requestId);
 		}
 	}
@@ -139,7 +123,7 @@ public class RequestHandlerMapping {
 	 * @param uriPath
 	 * @param handler
 	 */
-	public void addHandler(String uriPath, IHttpHandler handler) {
+	void addHandler(String uriPath, IHttpHandler handler) {
 		if(! uriPath.startsWith("/")) uriPath = "/" + uriPath;
 
 		if (this.uriPathHandlers.containsKey(uriPath)) {
