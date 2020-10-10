@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
+import org.qiunet.utils.async.LazyLoader;
 
 /***
  *
@@ -14,6 +15,8 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExcepti
  * 2020/3/8 09:31
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
+	LazyLoader<DefaultProtobufMessage> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
+	LazyLoader<DefaultProtobufMessage> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
 	/**
 	 * 构造MessageActor
 	 * http情况不会调用.
@@ -26,7 +29,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @return
 	 */
 	default DefaultProtobufMessage getHandlerNotFound() {
-		return HandlerNotFoundResponse.DEFAULT_MESSAGE;
+		return HANDLER_NOT_FOUND_MESSAGE.get();
 	}
 
 	/***
@@ -35,6 +38,6 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @return
 	 */
 	default DefaultProtobufMessage exception(Throwable cause){
-		return ServerExceptionResponse.DEFAULT_MESSAGE;
+		return SERVER_EXCEPTION_MESSAGE.get();
 	}
 }

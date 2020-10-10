@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.collection.DuMap;
@@ -119,15 +120,17 @@ public class RequestHandlerMapping {
 		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		this.gameHandlers.put(protocolId, handler);
 
-		int requestId = handler.getClass().getAnnotation(RequestHandler.class).ID();
-		if (req2ProtocolId.containsKey(requestDataClass)) {
-			throw new CustomException("Already exist class in mapping, Mapping id is {}.", req2ProtocolId.getVal(requestDataClass));
-		}
+		if (IpbRequestData.class.isAssignableFrom(requestDataClass)) {
+			int requestId = handler.getClass().getAnnotation(RequestHandler.class).ID();
+			if (req2ProtocolId.containsKey(requestDataClass)) {
+				throw new CustomException("Already exist class [{}] in mapping, Mapping id is [{}].", requestDataClass.getName(), req2ProtocolId.getVal(requestDataClass));
+			}
 
-		if (req2ProtocolId.containsVal(requestId)) {
-			throw new CustomException("Already exist requestId in mapping, Mapping class is {}", req2ProtocolId.getKey(requestId));
+			if (req2ProtocolId.containsVal(requestId)) {
+				throw new CustomException("Already exist requestId [{}] in mapping, Mapping class is [{}]", requestId, req2ProtocolId.getKey(requestId));
+			}
+			req2ProtocolId.put(requestDataClass, requestId);
 		}
-		req2ProtocolId.put(requestDataClass, requestId);
 	}
 
 
