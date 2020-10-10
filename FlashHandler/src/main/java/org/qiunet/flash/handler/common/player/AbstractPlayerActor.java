@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.sender.IResponseSender;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
 
 /***
@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * 2020/3/1 21:45
  **/
 public abstract class AbstractPlayerActor<P extends AbstractPlayerActor>
-	extends MessageHandler<P> implements IPlayerActor<P>, IResponseSender {
+	extends MessageHandler<P> implements IPlayerActor<P>, IChannelMessageSender {
 
 	protected DSession session;
 
