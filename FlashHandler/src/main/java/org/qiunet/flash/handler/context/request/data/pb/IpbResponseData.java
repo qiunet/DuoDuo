@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.request.data.pb;
 
 
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 /***
  * protobuf的响应接口
@@ -23,7 +23,7 @@ public interface IpbResponseData extends IpbData {
 	 * 构造一个IResponseMessage
 	 * @return
 	 */
-	default IResponseMessage<IpbResponseData> buildResponseMessage(){
+	default IChannelMessage<IpbResponseData> buildResponseMessage(){
 		return new DefaultProtobufMessage(getProtocolId(), this);
 	}
 }

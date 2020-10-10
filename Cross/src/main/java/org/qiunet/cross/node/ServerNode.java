@@ -1,6 +1,6 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 
@@ -39,7 +39,7 @@ public class ServerNode {
 	 * 向服务器发起一个请求
 	 * @param message
 	 */
-	public void writeMessage(IResponseMessage message) {
+	public void writeMessage(IChannelMessage message) {
 		dSession.writeMessage(message);
 	}
 }

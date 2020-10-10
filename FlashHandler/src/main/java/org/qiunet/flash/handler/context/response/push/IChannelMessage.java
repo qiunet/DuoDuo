@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * @author qiunet.
  * 17/12/11
  */
-public interface IResponseMessage<T> {
+public interface IChannelMessage<T> {
 	/***
 	 * push 消息 编码
 	 * @return

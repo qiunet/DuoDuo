@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.MessageHandler;
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IResponseSender;
 import org.qiunet.flash.handler.context.session.DSession;
 
@@ -31,7 +31,7 @@ public abstract class AbstractPlayerActor<P extends AbstractPlayerActor>
 	}
 
 	@Override
-	public void send(IResponseMessage message) {
+	public void send(IChannelMessage message) {
 		session.writeMessage(message);
 	}
 }

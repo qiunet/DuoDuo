@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * @Author qiunet
  * @Date Create in 2018/5/26 23:49
  **/
-public class DefaultBytesMessage implements IResponseMessage<byte []> {
+public class DefaultBytesMessage implements IChannelMessage<byte []> {
 
 	private int protocolId;
 	private byte [] message;

@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultStringMessage implements IResponseMessage<String> {
+public class DefaultStringMessage implements IChannelMessage<String> {
 
 	private int protocolId;
 	private String message;

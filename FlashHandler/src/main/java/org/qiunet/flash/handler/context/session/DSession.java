@@ -6,7 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IPlayerActor;
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
@@ -63,7 +63,7 @@ public final class DSession {
 	 * @param message
 	 * @return
 	 */
-	public ChannelFuture writeMessage(IResponseMessage message) {
+	public ChannelFuture writeMessage(IChannelMessage message) {
 		if ( logger.isInfoEnabled()
 			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			IPlayerActor playerActor = getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);

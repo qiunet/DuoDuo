@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.context.sender;
 
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 /***
  * 所有发送响应的都实现该接口
@@ -12,5 +12,5 @@ public interface IResponseSender {
 	 * 发送消息.
 	 * @param message
 	 */
-	void send(IResponseMessage message);
+	void send(IChannelMessage message);
 }

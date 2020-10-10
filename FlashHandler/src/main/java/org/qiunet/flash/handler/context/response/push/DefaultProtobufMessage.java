@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbData;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IResponseMessage<IpbData> {
+public class DefaultProtobufMessage implements IChannelMessage<IpbData> {
 	/**
 	 * 消息id
 	 */

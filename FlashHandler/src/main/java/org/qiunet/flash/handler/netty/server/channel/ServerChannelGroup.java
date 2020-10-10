@@ -5,7 +5,7 @@ import io.netty.channel.group.ChannelMatcher;
 import io.netty.channel.group.ChannelMatchers;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import org.qiunet.flash.handler.context.response.push.IResponseMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ public abstract class ServerChannelGroup extends DefaultChannelGroup {
 	 * @param message
 	 * @return
 	 */
-	public ChannelGroupFuture broadcast(IResponseMessage message) {
+	public ChannelGroupFuture broadcast(IChannelMessage message) {
 		return this.broadcast(message, ChannelMatchers.all());
 	}
 	/***
@@ -39,7 +39,7 @@ public abstract class ServerChannelGroup extends DefaultChannelGroup {
 	 * @param matcher 匹配选择对象
 	 * @return
 	 */
-	public ChannelGroupFuture broadcast(IResponseMessage message, ChannelMatcher matcher) {
+	public ChannelGroupFuture broadcast(IChannelMessage message, ChannelMatcher matcher) {
 		return super.writeAndFlush(message.encode(), matcher, false);
 	}
 
