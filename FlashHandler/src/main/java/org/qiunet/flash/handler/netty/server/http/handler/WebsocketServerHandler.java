@@ -8,7 +8,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
@@ -40,7 +40,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 			DSession iSession = new DSession(ctx.channel());
 
-			ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
+			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(iSession));
 			SessionManager.addSession(iSession);
 		}
 		super.userEventTriggered(ctx, evt);
@@ -62,15 +62,15 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		DSession session = SessionManager.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
-		IPlayerActor playerActor = session.getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
-		if (handler.needAuth() && ! playerActor.isAuth()) {
+		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (handler.needAuth() && ! messageActor.isAuth()) {
 			session.close(CloseCause.ERR_REQUEST);
 			return;
 		}
 
 		if (ctx.channel().isActive()) {
-			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, playerActor, headers);
-			playerActor.addMessage(context);
+			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, messageActor, headers);
+			messageActor.addMessage(context);
 		}
 	}
 

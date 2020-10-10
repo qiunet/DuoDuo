@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * @author qiunet
  * 2020/3/8 09:31
  **/
-public interface IStartupContext<T extends IPlayerActor<T>> {
+public interface IStartupContext<T extends IMessageActor<T>> {
 	/**
 	 * 构造PlayerActor
 	 * http情况不会调用.

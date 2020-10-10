@@ -1,6 +1,6 @@
 package org.qiunet.tests.server.startup.context;
 
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.slf4j.Logger;
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  * @author qiunet
  * 2020-04-12 16:28
  **/
-public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
+public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 	private Logger logger = LoggerFactory.getLogger("PlayerActor");
 	private long playerId;
 
@@ -23,7 +23,7 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 
 	@Override
 	protected String getIdent() {
-		return "PlayerActor["+getPlayerId()+"]";
+		return "PlayerActor["+ getId()+"]";
 	}
 
 	/**
@@ -35,11 +35,10 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	public long getPlayerId() {
+	public long getId() {
 		return playerId;
 	}
 
-	@Override
 	public String getOpenId() {
 		return null;
 	}

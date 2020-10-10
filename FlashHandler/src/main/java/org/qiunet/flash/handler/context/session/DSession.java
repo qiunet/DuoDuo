@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -66,9 +66,9 @@ public final class DSession {
 	public ChannelFuture writeMessage(IChannelMessage message) {
 		if ( logger.isInfoEnabled()
 			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			IPlayerActor playerActor = getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
-			if (playerActor != null) {
-				logger.info("[{}] >>> {}", playerActor.getPlayerId(), message.toStr());
+			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			if (messageActor != null) {
+				logger.info("[{}] >>> {}", messageActor.getId(), message.toStr());
 			}
 		}
 		return channel.writeAndFlush(message.encode());
@@ -94,9 +94,9 @@ public final class DSession {
 	@Override
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
-		IPlayerActor playerActor = getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
-		if (playerActor != null) {
-			sj.add("PlayerId = "+playerActor.getPlayerId());
+		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (messageActor != null) {
+			sj.add("PlayerId = "+messageActor.getId());
 		}
 		sj.add("ID = " + channel.id().asShortText());
 		sj.add("Ip = " + getIp());

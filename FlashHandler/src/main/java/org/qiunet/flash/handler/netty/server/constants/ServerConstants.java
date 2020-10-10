@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.netty.server.constants;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.HandlerType;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
@@ -27,9 +27,9 @@ public final class ServerConstants {
 	 */
 	public static final AttributeKey<HandlerType> HANDLER_TYPE_KEY = AttributeKey.newInstance("HANDLER_TYPE_KEY");
 	/***
-	 * 玩家的playerActor 存储在channel的key
+	 * messageActor 存储在channel的key
 	 */
-	public static final AttributeKey<IPlayerActor> PLAYER_ACTOR_KEY = AttributeKey.newInstance("PLAYER_ACTOR_KEY");
+	public static final AttributeKey<IMessageActor> MESSAGE_ACTOR_KEY = AttributeKey.newInstance("MESSAGE_ACTOR_KEY");
 	/***
 	 * 使用的header adapter
 	 */

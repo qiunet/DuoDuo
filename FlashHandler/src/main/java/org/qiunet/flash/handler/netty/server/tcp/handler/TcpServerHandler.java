@@ -6,7 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
@@ -37,7 +37,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		DSession session = new DSession(ctx.channel());
 
 		SessionManager.addSession(session);
-		ctx.channel().attr(ServerConstants.PLAYER_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(session));
+		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildPlayerActor(session));
 	}
 
 	@Override
@@ -53,15 +53,15 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		DSession session = SessionManager.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
-		IPlayerActor playerActor = session.getAttachObj(ServerConstants.PLAYER_ACTOR_KEY);
-		if (handler.needAuth() && ! playerActor.isAuth()) {
+		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (handler.needAuth() && ! messageActor.isAuth()) {
 			session.close(CloseCause.ERR_REQUEST);
 			return;
 		}
 
 		if (ctx.channel().isActive()) {
-			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, playerActor);
-			playerActor.addMessage(context);
+			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, messageActor);
+			messageActor.addMessage(context);
 		}
 	}
 

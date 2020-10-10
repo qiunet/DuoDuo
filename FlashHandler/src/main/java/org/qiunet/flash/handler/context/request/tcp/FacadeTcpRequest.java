@@ -1,14 +1,14 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 
 /**
  * tcp request 的外观类
  * Created by qiunet.
  * 17/11/21
  */
-class FacadeTcpRequest<RequestData, P extends IPlayerActor> implements ITcpRequest<RequestData> {
+class FacadeTcpRequest<RequestData, P extends IMessageActor> implements ITcpRequest<RequestData> {
 	private AbstractTcpRequestContext<RequestData, P> context;
 
 	public FacadeTcpRequest (AbstractTcpRequestContext context) {

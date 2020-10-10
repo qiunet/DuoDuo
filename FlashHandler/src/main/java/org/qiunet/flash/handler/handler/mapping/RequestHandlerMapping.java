@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.exceptions.CustomException;
@@ -158,7 +158,7 @@ public class RequestHandlerMapping {
 			if (type instanceof Class) {
 				requestDataClass = (Class) type;
 			}
-			if (requestDataClass == null || IPlayerActor.class.isAssignableFrom(requestDataClass)) {
+			if (requestDataClass == null || IMessageActor.class.isAssignableFrom(requestDataClass)) {
 				if (types.length > 1) {
 					requestDataClass = (Class) types[1];
 				}else {

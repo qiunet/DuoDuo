@@ -4,7 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.IPlayerActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.http.HttpProtobufRequestContext;
 import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
@@ -31,12 +31,12 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers) {
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
 			throw new IllegalStateException("Not Support");
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor) {
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor) {
 			throw new IllegalStateException("Not Support");
 		}
 	},
@@ -51,13 +51,13 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers) {
-			return new WebSocketProtobufRequestContext(content, channelContext, playerActor, headers);
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
+			return new WebSocketProtobufRequestContext(content, channelContext, messageActor, headers);
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor) {
-			return new TcpProtobufRequestContext(content, channelContext, playerActor);
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor) {
+			return new TcpProtobufRequestContext(content, channelContext, messageActor);
 		}
 	},
 	;
@@ -77,12 +77,12 @@ public enum DataType {
 	 * @param channelContext
 	 * @return
 	 */
-	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor, HttpHeaders headers);
+	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers);
 	/**
 	 * 得到一个tcp使用的context
 	 * @param content
 	 * @param channelContext
 	de * @return
 	 */
-	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IPlayerActor playerActor);
+	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor);
 }
