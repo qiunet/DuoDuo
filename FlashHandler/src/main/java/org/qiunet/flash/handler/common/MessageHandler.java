@@ -1,10 +1,8 @@
 package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
@@ -25,8 +23,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private static final ExecutorService executorService = Executors.newFixedThreadPool(OSUtil.availableProcessors() * 2,
-			new DefaultThreadFactory("MessageHandler"));
+	private static final ExecutorService executorService = TimerManager.executor.__schedule();
 
 	private AtomicInteger size = new AtomicInteger();
 
@@ -158,15 +155,6 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		future.whenComplete((res, e) -> this.scheduleFutures.remove(future));
 		this.scheduleFutures.add(future);
 		return future;
-	}
-
-	public static void shutdown() {
-		try {
-			executorService.shutdown();
-			executorService.awaitTermination(2, TimeUnit.SECONDS);
-		} catch (InterruptedException e) {
-			Thread.currentThread().interrupt();
-		}
 	}
 
 	private class ScheduleFuture implements Future<Object> {

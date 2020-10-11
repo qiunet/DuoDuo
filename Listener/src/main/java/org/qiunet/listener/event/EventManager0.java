@@ -104,8 +104,14 @@ class EventManager0 implements IApplicationContextAware {
 		void fireEventHandler(IEventData data) {
 			try {
 				method.invoke(caller, data);
-			} catch (IllegalAccessException | InvocationTargetException e) {
+			} catch (IllegalAccessException e) {
 				throw new CustomException(e, "Fire Event Handler [{}.{}] Error!", caller.getClass().getName(), method.getName());
+			} catch (InvocationTargetException e) {
+				if (!(e.getTargetException() instanceof CustomException)) {
+					throw new CustomException(e.getTargetException(), "Fire Event Handler [{}.{}] Error!", caller.getClass().getName(), method.getName());
+				}else {
+					throw ((CustomException) e.getTargetException());
+				}
 			}
 		}
 	}

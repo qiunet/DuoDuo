@@ -4,26 +4,24 @@ import org.slf4j.Logger;
 import org.slf4j.helpers.MessageFormatter;
 
 /***
- *
+ * 自定义的一个运行异常. 主要拼消息会方便很多.
  *
  * @author qiunet
  * 2020-09-27 17:19
  */
 public class CustomException extends RuntimeException {
-	private Throwable ex;
 
 	public CustomException(String message, Object... params) {
 		this(null, message, params);
 	}
 
-	public CustomException(Throwable ex, String message, Object... params) {
-		super(MessageFormatter.arrayFormat(message, params).getMessage());
-		this.ex = ex;
+	public CustomException(Throwable cause, String message, Object... params) {
+		super(MessageFormatter.arrayFormat(message, params).getMessage(), cause);
 	}
 
 	public void logger(Logger logger) {
-		if (ex != null) {
-			logger.error(getMessage(), ex);
+		if (getCause() != null) {
+			logger.error(getMessage(), getCause());
 		}else {
 			logger.error(getMessage());
 		}
