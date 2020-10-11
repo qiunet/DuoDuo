@@ -11,26 +11,26 @@ import org.qiunet.utils.exceptions.EnumParseException;
  */
 public enum ServerType implements EnumReadable {
 	/**
-	 * 普通逻辑服务
-	 */
-	LOGIC(0),
-	/**
-	 * 跨服服务
-	 */
-	CROSS(1),
-	/**
-	 * 登录服务
-	 */
-	LOGIN(2),
-	/**
-	 *  路由服务
-	 */
-	ROUTE(3),
-	/**
 	 * 全功能服务
 	 * 即服务包含所有的服务.
 	 */
-	ALL(100),
+	ALL(0),
+	/**
+	 * 普通逻辑服务
+	 */
+	LOGIC(1),
+	/**
+	 * 跨服服务
+	 */
+	CROSS(2),
+	/**
+	 * 登录服务
+	 */
+	LOGIN(3),
+	/**
+	 *  路由服务
+	 */
+	ROUTE(4),
 	;
 	private int type;
 
