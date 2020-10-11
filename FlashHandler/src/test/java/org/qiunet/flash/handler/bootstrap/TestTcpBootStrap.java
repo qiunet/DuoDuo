@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.proto.GenderType;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -19,7 +20,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 	@Test
 	public void testTcpProtobuf(){
 		text = "test [testTcpProtobuf]";
-		TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11);
+		TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, GenderType.FAMALE);
 		MessageContent content = new MessageContent(3001, request.toByteArray());
 		this.tcpClient.sendMessage(content);
 	}

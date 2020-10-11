@@ -6,8 +6,8 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.util.Set;
 
-public class DbProperties extends LoaderProperties {
-	private volatile static DbProperties instance = new DbProperties();
+public final class DbProperties extends LoaderProperties {
+	private static DbProperties instance = new DbProperties();
 	public static DbProperties getInstance() {
 		return instance;
 	}

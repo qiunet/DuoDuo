@@ -24,11 +24,12 @@ public class TcpPbLoginRequest implements IpbRequestData {
 	public TcpPbLoginRequest() {
 	}
 
-	public static TcpPbLoginRequest valueOf(String account, String secret, int phoneNum) {
+	public static TcpPbLoginRequest valueOf(String account, String secret, int phoneNum, GenderType gender) {
 		TcpPbLoginRequest request = new TcpPbLoginRequest();
 		request.account = account;
 		request.secret = secret;
 		request.phoneNum = phoneNum;
+		request.gender = gender;
 		return request;
 	}
 

@@ -234,6 +234,10 @@ class CreateTableController implements IApplicationContextAware {
 
 	@EventListener(EventHandlerWeightType.HIGH)
 	public void createTable(DbLoaderOverEventData eventData){
+		// 没有context说明没有setApplication. ScannerType 设置不对.
+		if (context == null) {
+			return;
+		}
 		try {
 			context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
 		}catch (Exception e) {
