@@ -27,5 +27,13 @@ public interface IProtocolId {
 		int HANDLER_NOT_FIND = 404;
 		/** 500 **/
 		int SERVER_EXCEPTION = 500;
+
+		/**跨服事件**/
+		int CROSS_EVENT = 600;
+
+		/** 事务请求 **/
+		int TRANSACTION_REQ = 601;
+		/** 事务响应 **/
+		int TRANSACTION_RESP = 602;
 	}
 }
