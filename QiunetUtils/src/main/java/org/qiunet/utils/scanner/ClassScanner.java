@@ -3,7 +3,7 @@ package org.qiunet.utils.scanner;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.args.IArgKey;
+import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -145,7 +145,7 @@ public final class ClassScanner implements IApplicationContext {
 	 * @param <T>
 	 * @return
 	 */
-	public <T> ClassScanner addParam(IArgKey<T> argKey, T obj) {
+	public <T> ClassScanner addParam(ArgumentKey<T> argKey, T obj) {
 		this.argsContainer.setVal(argKey, obj);
 		return this;
 	}

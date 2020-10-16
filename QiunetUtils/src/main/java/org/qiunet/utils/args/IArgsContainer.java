@@ -14,7 +14,7 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	default <T> Argument<T> getArgument(IArgKey<T> key){
+	default <T> Argument<T> getArgument(ArgumentKey<T> key){
 		return getArgument(key, true);
 	}
 
@@ -25,18 +25,18 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	<T> Argument<T> getArgument(IArgKey<T> key, boolean computeIfAbsent);
+	<T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent);
 	/**
 	 * 删除自身
 	 */
-	default void removeArg(IArgKey key) {
+	default void removeArg(ArgumentKey key) {
 		Argument argument = getArgument(key, false);
 		if (argument != null) argument.remove();
 	}
 	/**
 	 * 清除自身存储的数值
 	 */
-	default void clear(IArgKey key) {
+	default void clear(ArgumentKey key) {
 		Argument argument = getArgument(key, false);
 		if (argument != null) argument.clear();
 	}
@@ -47,7 +47,7 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	default <T> T getVal(IArgKey<T> key) {
+	default <T> T getVal(ArgumentKey<T> key) {
 		return getArgument(key).get();
 	}
 
@@ -58,7 +58,7 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	default <T> T setVal(IArgKey<T> key, T newVal) {
+	default <T> T setVal(ArgumentKey<T> key, T newVal) {
 		return getArgument(key).set(newVal);
 	}
 
@@ -69,7 +69,7 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	default <T> T getVal(IArgKey<T> key, T defaultVal) {
+	default <T> T getVal(ArgumentKey<T> key, T defaultVal) {
 		return getArgument(key).get(defaultVal);
 	}
 
@@ -81,7 +81,7 @@ public interface IArgsContainer {
 	 * @param <T>
 	 * @return
 	 */
-	default <T> boolean compareAndSet(IArgKey<T> key, T expect, T newVal) {
+	default <T> boolean compareAndSet(ArgumentKey<T> key, T expect, T newVal) {
 		return getArgument(key).compareAndSet(expect, newVal);
 	}
 
@@ -89,7 +89,7 @@ public interface IArgsContainer {
 	 * 是否有存储值
 	 * @return
 	 */
-	default boolean isEmpty(IArgKey key) {
+	default boolean isEmpty(ArgumentKey key) {
 		Argument argument = getArgument(key, false);
 		return argument == null || argument.isEmpty();
 	}

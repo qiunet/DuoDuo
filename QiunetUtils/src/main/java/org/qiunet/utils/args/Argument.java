@@ -18,8 +18,8 @@ public class Argument<T> {
 	 */
 	private AtomicReference<T> refData;
 
-	private IArgKey<T> key;
-	Argument(IArgKey<T> key) {
+	private ArgumentKey<T> key;
+	Argument(ArgumentKey<T> key) {
 		this.key = key;
 		this.refData = new AtomicReference<>();
 	}

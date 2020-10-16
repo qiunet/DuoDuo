@@ -8,16 +8,11 @@ package org.qiunet.utils.args;
  * 2020-08-25 21:50
  **/
 public class ArgsContainer implements IArgsContainer {
-	private Class<? extends IArgKey> keyClass;
-	private ArgsDataMap attributes = new ArgsDataMap();
+	/**
+	 * 能根绝container 保存不同的Argument.
+	 */
+	private ArgsDataMap argumentMap = new ArgsDataMap();
 
-	public ArgsContainer() {
-		this.keyClass = null;
-	}
-
-	public ArgsContainer(Class<? extends IArgKey> keyClass) {
-		this.keyClass = keyClass;
-	}
 
 	/**
 	 * 得到一个Attribute对象
@@ -27,14 +22,11 @@ public class ArgsContainer implements IArgsContainer {
 	 */
 
 	@Override
-	public <T> Argument<T> getArgument(IArgKey<T> key, boolean computeIfAbsent) {
-		if (keyClass != null && key.getClass() != keyClass) {
-			throw new IllegalArgumentException("It,s ArgsDataMap for class ["+keyClass.getName()+"]");
-		}
+	public <T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent) {
 		if (! computeIfAbsent) {
-			return attributes.get(key);
+			return argumentMap.get(key);
 		}
-		return attributes.computeIfAbsent(key);
+		return argumentMap.computeIfAbsent(key);
 	}
 
 }

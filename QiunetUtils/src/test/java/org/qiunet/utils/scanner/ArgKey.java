@@ -1,6 +1,6 @@
 package org.qiunet.utils.scanner;
 
-import org.qiunet.utils.args.IArgKey;
+import org.qiunet.utils.args.ArgumentKey;
 
 /***
  *
@@ -8,9 +8,8 @@ import org.qiunet.utils.args.IArgKey;
  * @author qiunet
  * 2020-10-09 12:08
  */
-public class ArgKey<T> implements IArgKey<T> {
+public class ArgKey {
 
-	public static ArgKey<Integer> Test = new ArgKey<>();
+	public static ArgumentKey<Integer> Test = new ArgumentKey<>();
 
-	private ArgKey() {}
 }
