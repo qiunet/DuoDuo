@@ -16,17 +16,19 @@ import java.util.Map;
  * @author qiunet
  * 2020-10-16 10:25
  */
-public class UserActorManager {
-	private static final UserActorManager instance = new UserActorManager();
-	private UserActorManager(){}
+public class UserOnlineManager {
+	private static final UserOnlineManager instance = new UserOnlineManager();
+	private UserOnlineManager(){}
 
 	private static Map<Long, AbstractUserActor> datas = Maps.newConcurrentMap();
 
 	@EventListener
 	private void addPlayerActor(AuthEventData eventData) {
-		Preconditions.checkState(eventData.getUserActor().isAuth());
+		AbstractUserActor userActor = eventData.getUserActor();
+		Preconditions.checkState(userActor.isAuth());
 
-		datas.put(eventData.getUserActor().getId(), eventData.getUserActor());
+		userActor.getSession().addCloseListener(cause -> datas.remove(userActor.getId()));
+		datas.put(userActor.getId(), userActor);
 	}
 
 	/**
