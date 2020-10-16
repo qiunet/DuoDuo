@@ -1,6 +1,7 @@
-package org.qiunet.utils.shell;
+package org.qiunet.utils.system;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +46,10 @@ public class ShellUtil {
 				sbError.add(line);
 			}
 	       	if(sbError.length() > 0){
-	       		sb.add("脚本错误输出:");
-	       		sb.add(sbError.toString());
+	       		throw new CustomException(sbError.toString());
 	       	}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new CustomException(e, "执行异常");
 		}
 		return sb.toString();
 	}

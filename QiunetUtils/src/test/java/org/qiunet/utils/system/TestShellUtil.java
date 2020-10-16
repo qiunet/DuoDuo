@@ -1,4 +1,4 @@
-package org.qiunet.utils.shell;
+package org.qiunet.utils.system;
 
 import org.junit.Assert;
 import org.junit.Test;
