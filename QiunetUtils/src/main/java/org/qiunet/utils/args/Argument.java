@@ -1,6 +1,5 @@
 package org.qiunet.utils.args;
 
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /***
@@ -13,15 +12,15 @@ public class Argument<T> {
 	/**
 	 * 保留一个map引用. 方便自删除
  	 */
-	private Map<String, Argument> allArgsRef;
+	private ArgsDataMap allArgsRef;
 	/***
 	 * 引用对象存储
 	 */
 	private AtomicReference<T> refData;
 
-	private String name;
-	Argument(String name) {
-		this.name = name;
+	private IArgKey<T> key;
+	Argument(IArgKey<T> key) {
+		this.key = key;
 		this.refData = new AtomicReference<>();
 	}
 
@@ -53,7 +52,7 @@ public class Argument<T> {
 	 * 删除自身
 	 */
 	public void remove() {
-		this.allArgsRef.remove(name);
+		this.allArgsRef.remove(key);
 	}
 	/**
 	 * 获得存储值
@@ -88,18 +87,18 @@ public class Argument<T> {
 	 * @return
 	 */
 	public String getName() {
-		return name;
+		return key.toString();
 	}
 
 	@Override
 	public String toString() {
 		return "Argument {" +
 			"refData=" + refData.get() +
-			", name='" + name + '\'' +
+			", name='" + key + '\'' +
 			'}';
 	}
 
-	void setAllArgsRef(Map<String, Argument> allArgsRef) {
+	void setAllArgsRef(ArgsDataMap allArgsRef) {
 		this.allArgsRef = allArgsRef;
 	}
 }

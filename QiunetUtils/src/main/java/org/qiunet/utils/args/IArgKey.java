@@ -7,17 +7,12 @@ package org.qiunet.utils.args;
  * 2020-08-25 21:34
  **/
 public interface IArgKey<T> {
-	/**
-	 * key 的名称
-	 * @return
-	 */
-	String name();
 
 	/**
 	 * new 一个Attribute对象
 	 * @return
 	 */
 	default Argument<T> newAttribute() {
-		return new Argument<>(name());
+		return new Argument<>(this);
 	}
 }

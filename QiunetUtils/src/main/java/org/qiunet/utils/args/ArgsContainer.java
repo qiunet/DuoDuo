@@ -1,9 +1,5 @@
 package org.qiunet.utils.args;
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-
 /***
  *
  * 存储所有Attribute对象的地方.
@@ -13,7 +9,7 @@ import java.util.Map;
  **/
 public class ArgsContainer implements IArgsContainer {
 	private Class<? extends IArgKey> keyClass;
-	private Map<String, Argument> attributes = Maps.newConcurrentMap();
+	private ArgsDataMap attributes = new ArgsDataMap();
 
 	public ArgsContainer() {
 		this.keyClass = null;
@@ -33,17 +29,12 @@ public class ArgsContainer implements IArgsContainer {
 	@Override
 	public <T> Argument<T> getArgument(IArgKey<T> key, boolean computeIfAbsent) {
 		if (keyClass != null && key.getClass() != keyClass) {
-			throw new IllegalArgumentException("It,s ArgsMap for class ["+keyClass.getName()+"]");
+			throw new IllegalArgumentException("It,s ArgsDataMap for class ["+keyClass.getName()+"]");
 		}
 		if (! computeIfAbsent) {
-			return attributes.get(key.name());
+			return attributes.get(key);
 		}
-
-		return attributes.computeIfAbsent(key.name(), k -> {
-			Argument<T> tArgument = key.newAttribute();
-			tArgument.setAllArgsRef(attributes);
-			return tArgument;
-		});
+		return attributes.computeIfAbsent(key);
 	}
 
 }

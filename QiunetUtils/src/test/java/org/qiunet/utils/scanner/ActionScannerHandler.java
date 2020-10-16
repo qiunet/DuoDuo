@@ -13,9 +13,6 @@ public class ActionScannerHandler implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
-
-		Assert.assertEquals(10, (int) argsContainer.getArgument(ArgKey.Test).get());
-
 		Set<Class<?>> set = context.getTypesAnnotatedWith(HandlerAction.class);
 		Assert.assertEquals(set.size(), 1);
 		for (Class<?> s : set) {
