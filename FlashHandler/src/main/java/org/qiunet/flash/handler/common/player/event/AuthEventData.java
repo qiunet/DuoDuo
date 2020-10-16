@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player.event;
 
 import com.google.common.base.Preconditions;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.listener.event.IEventData;
 
 /***
@@ -12,16 +12,16 @@ import org.qiunet.listener.event.IEventData;
  */
 public class AuthEventData implements IEventData {
 
-	private AbstractPlayerActor playerActor;
+	private AbstractUserActor userActor;
 
-	public static AuthEventData valueOf(AbstractPlayerActor playerActor) {
-		Preconditions.checkState(playerActor.isAuth(), "actor need auth!");
+	public static AuthEventData valueOf(AbstractUserActor userActor) {
+		Preconditions.checkState(userActor.isAuth(), "actor need auth!");
 		AuthEventData eventData = new AuthEventData();
-		eventData.playerActor = playerActor;
+		eventData.userActor = userActor;
 		return eventData;
 	}
 
-	public AbstractPlayerActor getPlayerActor() {
-		return playerActor;
+	public AbstractUserActor getUserActor() {
+		return userActor;
 	}
 }

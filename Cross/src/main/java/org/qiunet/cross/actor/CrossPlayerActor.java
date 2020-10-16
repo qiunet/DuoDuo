@@ -1,6 +1,6 @@
 package org.qiunet.cross.actor;
 
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 
@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * @author qiunet
  * 2020-10-14 17:20
  */
-public class CrossPlayerActor extends AbstractPlayerActor<CrossPlayerActor> {
+public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	private long playerId;
 
 	public CrossPlayerActor(DSession session) {

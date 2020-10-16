@@ -9,9 +9,9 @@ import org.qiunet.flash.handler.context.session.DSession;
  * @author qiunet
  * 2020-10-13 20:51
  */
-public abstract class AbstractPlayerActor<T extends AbstractPlayerActor> extends AbstractMessageActor<T> {
+public abstract class AbstractUserActor<T extends AbstractUserActor> extends AbstractMessageActor<T> {
 
-	public AbstractPlayerActor(DSession session) {
+	public AbstractUserActor(DSession session) {
 		super(session);
 	}
 

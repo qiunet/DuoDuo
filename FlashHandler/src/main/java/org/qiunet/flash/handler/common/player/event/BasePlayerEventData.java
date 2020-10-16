@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player.event;
 
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.listener.event.IEventData;
 
 /***
@@ -9,7 +9,7 @@ import org.qiunet.listener.event.IEventData;
  * @author qiunet
  * 2020-10-13 20:27
  */
-public abstract class BasePlayerEventData<T extends AbstractPlayerActor<T>> implements IEventData {
+public abstract class BasePlayerEventData<T extends AbstractUserActor<T>> implements IEventData {
 	/**
 	 * 玩家的对象.
 	 */
