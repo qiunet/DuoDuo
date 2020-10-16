@@ -79,63 +79,62 @@ public final class ClassScanner implements IApplicationContext {
 		}
 	}
 	private void scanner0(String ... packetPrefix) throws Exception {
-		if (scannered.get()) {
+		if (scannered.get() || ! scannered.compareAndSet(false, true)) {
 			logger.warn("ClassScanner was initialization , ignore this!");
 			return;
 		}
 
-		if (scannered.compareAndSet(false, true)) {
-			if (packetPrefix != null && packetPrefix.length > 0) {
-				this.reflections.merge(new Reflections(packetPrefix, scanners));
+		if (packetPrefix != null && packetPrefix.length > 0) {
+			this.reflections.merge(new Reflections(packetPrefix, scanners));
+		}
+
+		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
+		List<IApplicationContextAware> collect = subTypesOf.stream()
+			.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
+			.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
+			.collect(Collectors.toList());
+
+		AtomicReference<Exception> reference = new AtomicReference<>();
+		CountDownLatch latch = new CountDownLatch(subTypesOf.size());
+		Set<DFuture> futures = Sets.newHashSet();
+
+		for (IApplicationContextAware instance : collect) {
+			// 不相同. 并且都不是ALL
+			if (instance.scannerType() != this.scannerType
+			&& instance.scannerType() != ScannerType.ALL
+			&& this.scannerType != ScannerType.ALL) {
+				latch.countDown();
+				continue;
 			}
-			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
-			List<IApplicationContextAware> collect = subTypesOf.stream()
-				.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
-				.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
-				.collect(Collectors.toList());
 
-			AtomicReference<Exception> reference = new AtomicReference<>();
-			CountDownLatch latch = new CountDownLatch(subTypesOf.size());
-			Set<DFuture> futures = Sets.newHashSet();
+			if (instance.order() > 0) {
+				this.run(instance);
+				latch.countDown();
+				continue;
+			}
 
-			for (IApplicationContextAware instance : collect) {
-				// 不相同. 并且都不是ALL
-				if (instance.scannerType() != this.scannerType
-				&& instance.scannerType() != ScannerType.ALL
-				&& this.scannerType != ScannerType.ALL) {
-					latch.countDown();
-					continue;
-				}
+			DFuture<Boolean> future = TimerManager.executor.executorNow(() -> {
+				run(instance);
+				return true;
+			});
 
-				if (instance.order() > 0) {
-					this.run(instance);
-					latch.countDown();
-					continue;
-				}
+			futures.add(future);
 
-				DFuture<Boolean> future = TimerManager.executor.executorNow(() -> {
-					run(instance);
-					return true;
-				});
-
-				futures.add(future);
-
-				future.whenComplete((res, ex) -> {
-					latch.countDown();
-					if (ex != null) {
-						reference.compareAndSet(null, (Exception) ex);
-						futures.forEach(future0 -> future0.cancel(true));
-						for (long i = 0; i < latch.getCount(); i++) {
-							latch.countDown();
-						}
+			future.whenComplete((res, ex) -> {
+				latch.countDown();
+				if (ex != null) {
+					reference.compareAndSet(null, (Exception) ex);
+					futures.forEach(future0 -> future0.cancel(true));
+					for (long i = 0; i < latch.getCount(); i++) {
+						latch.countDown();
 					}
-				});
-			}
+				}
+			});
+		}
 
-			latch.await();
-			if (reference.get() != null) {
-				throw reference.get();
-			}
+		latch.await();
+		if (reference.get() != null) {
+			throw reference.get();
 		}
 	}
 
