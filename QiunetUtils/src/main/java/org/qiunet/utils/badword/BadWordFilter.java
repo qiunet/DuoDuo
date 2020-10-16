@@ -1,7 +1,5 @@
 package org.qiunet.utils.badword;
 
-import org.qiunet.utils.exceptions.CustomException;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,26 +9,10 @@ import java.util.regex.Pattern;
  * @Author qiunet
  * @Date Create in 2018/6/27 16:04
  **/
-public class BadWordFilter {
-
+public enum  BadWordFilter {
+	instance,;
 	private INode rootNode;
-
-	private volatile static BadWordFilter instance;
-
-	private BadWordFilter() {
-		if (instance != null) throw new CustomException("Instance Duplication!");
-		instance = this;
-	}
-
 	public static BadWordFilter getInstance() {
-		if (instance == null) {
-			synchronized (BadWordFilter.class) {
-				if (instance == null)
-				{
-					new BadWordFilter();
-				}
-			}
-		}
 		return instance;
 	}
 
