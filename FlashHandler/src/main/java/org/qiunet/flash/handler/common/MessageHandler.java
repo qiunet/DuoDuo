@@ -39,6 +39,14 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	@Override
 	public void run() {
+		try {
+			run0();
+		}finally {
+			ThreadContextData.removeAll();
+		}
+	}
+
+	private void run0() {
 		this.currentThread = Thread.currentThread();
 		long startTime = System.currentTimeMillis();
 		boolean taskUseTimeToMuch = false;
@@ -65,8 +73,6 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 			}
 		}
 		this.currentThread = null;
-
-		ThreadContextData.removeAll();
 		if (taskUseTimeToMuch) {
 			// 重新进入排队队列， 如果线程池空闲, 会接着继续执行该Handler
 			executorService.execute(this);
