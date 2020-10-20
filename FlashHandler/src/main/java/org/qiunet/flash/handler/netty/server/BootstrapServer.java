@@ -36,14 +36,14 @@ public class BootstrapServer {
 	private static BootstrapServer instance;
 
 	private Set<INettyServer> nettyServers = new HashSet<>(8);
+	private HookListener hookListener;
 
-	private Hook hook;
 	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new CustomException("Instance Duplication!");
 		if (hook == null) {
 			throw new CustomException("hook can not be null");
 		}
-		this.hook = hook;
+		hookListener = new HookListener(hook);
 	}
 	/***
 	 * 可以自己添加给hook.
@@ -97,7 +97,7 @@ public class BootstrapServer {
 	/**
 	 * 启动http监听
 	 * @param params 启动http的参数
-	 * @return
+	 * @return server实例
 	 */
 	public BootstrapServer httpListener(HttpBootstrapParams params) {
 		NettyHttpServer httpServer = new NettyHttpServer(params);
@@ -107,7 +107,7 @@ public class BootstrapServer {
 	/**
 	 * 启动tcp监听
 	 * @param params Tcp 启动参数
-	 * @return
+	 * @return server实例
 	 */
 	public BootstrapServer tcpListener(TcpBootstrapParams params) {
 
@@ -115,13 +115,12 @@ public class BootstrapServer {
 		this.nettyServers.add(tcpServer);
 		return this;
 	}
-	private HookListener hookListener;
+
 	private Thread awaitThread;
 	/***
 	 * 阻塞线程 最后调用阻塞当前线程
 	 */
 	public void await(){
-		hookListener = new HookListener(this, hook);
 		Thread hookThread = new Thread(hookListener, "HookListener");
 		hookThread.setDaemon(true);
 		hookThread.start();
@@ -144,119 +143,106 @@ public class BootstrapServer {
 		LockSupport.park();
 	}
 
-	/**
-	 * 通过shutdown 监听. 停止服务
-	 */
-	private void shutdown(){
-		ServerShutdownEventData.fireShutdownEventHandler();
-		try {
-			hookListener.serverSocketChannel.close();
-		} catch (IOException e) {}
-
-		if (hook != null) {
-			hook.shutdown();
-		}
-
-		for (INettyServer server : this.nettyServers) {
-			server.shutdown();
-		}
-
-		LockSupport.unpark(awaitThread);
-	}
-
 	/***
 	 * Hook的监听
 	 */
-	private static class HookListener implements Runnable {
+	private class HookListener implements Runnable {
 		private Hook hook;
-		private Selector selector;
 		private boolean running = true;
-		private BootstrapServer server;
-		private ServerSocketChannel serverSocketChannel;
-		HookListener(BootstrapServer bootstrapServer, Hook hook) {
+		HookListener(Hook hook) {
 			this.hook = hook;
-			this.server = bootstrapServer;
-
-			try {
-				serverSocketChannel = ServerSocketChannel.open();
-				serverSocketChannel.configureBlocking(false);
-				this.selector = Selector.open();
-
-				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
-				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
-			} catch (IOException e) {
-				this.running = false;
-				server.shutdown();
-				throw new CustomException(e, "Start up hook listener error!");
-			}
 		}
+
+		/**
+		 * 通过shutdown 监听. 停止服务
+		 */
+		private void shutdown(){
+			ServerShutdownEventData.fireShutdownEventHandler();
+
+			if (hook != null) {
+				hook.shutdown();
+			}
+
+			for (INettyServer server : nettyServers) {
+				server.shutdown();
+			}
+
+			LockSupport.unpark(awaitThread);
+		}
+
 		/***
 		 * 处理现有的消息. 可以用户自定义
 		 * @param byteBuffer 消息buffer
 		 */
-		private boolean handlerMsg(ByteBuffer byteBuffer) {
+		private void handlerMsg(ByteBuffer byteBuffer) {
 			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.running = false;
-				server.shutdown();
-				return true;
+				this.shutdown();
 			}else if (msg.equals(hook.getReloadCfgMsg())){
 				hook.reloadCfg();
 			}else {
 				hook.custom(msg);
 			}
-			return false;
+		}
+
+
+		private void handlerAccept(Selector selector) {
+			try {
+				selector.select(1000);
+				Iterator<SelectionKey> itr = selector.selectedKeys().iterator();
+				while (itr.hasNext()) {
+					SelectionKey key = itr.next();
+					itr.remove();
+
+					if (key.isAcceptable()) {
+						logger.error("[HookListener]服务端: ProcessAcceptor Msg");
+						SocketChannel channel = ((ServerSocketChannel) key.channel()).accept();
+
+						String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
+						if (!NetUtil.isInnerIp(ip) && !NetUtil.isLocalIp(ip)) {
+							logger.error("[HookListener]服务端: Remote ip [{}] is not allow !", ip);
+							channel.close();
+							continue;
+						}
+
+						channel.configureBlocking(false);
+						channel.register(selector, SelectionKey.OP_READ);
+					}else if( key.isReadable()){
+						SocketChannel channel = (SocketChannel) key.channel();
+						ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
+						channel.read(byteBuffer);
+						byteBuffer.flip();
+						try {
+							handlerMsg(byteBuffer);
+						}finally {
+							channel.close();
+						}
+					}
+				}
+			}catch (Exception e) {
+				logger.error("HookListener Exception:", e);
+			}
 		}
 
 		@Override
 		public void run() {
 			logger.error("[HookListener]服务端 Hook Listener on port [{}]", hook.getHookPort());
-			try {
-			while (running) {
-					try {
-						this.selector.select(1000);
-						Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator();
-						while (itr.hasNext()) {
-							SelectionKey key = itr.next();
-							itr.remove();
+			try(ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
+				Selector selector = Selector.open()){
 
-							if (key.isAcceptable()) {
-								logger.error("[HookListener]服务端: ProcessAcceptor Msg");
-								SocketChannel channel = ((ServerSocketChannel) key.channel()).accept();
+				serverSocketChannel.configureBlocking(false);
+				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+				serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
-								if (!NetUtil.isInnerIp(ip) && !NetUtil.isLocalIp(ip)) {
-									logger.error("[HookListener]服务端: Remote ip [{}] is not allow !", ip);
-									channel.close();
-									continue;
-								}
-
-								channel.configureBlocking(false);
-								channel.register(this.selector, SelectionKey.OP_READ);
-							}else if( key.isReadable()){
-								SocketChannel channel = (SocketChannel) key.channel();
-								ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
-								channel.read(byteBuffer);
-								byteBuffer.flip();
-								try {
-									handlerMsg(byteBuffer);
-								}finally {
-									channel.close();
-								}
-							}
-						}
-					}catch (Exception e) {
-						logger.error("[HookListener]", e);
-					}
+				while (running) {
+					this.handlerAccept(selector);
 				}
-			}finally {
-				try {
-					this.selector.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+
+			} catch (IOException e) {
+				logger.error("[HookListener]", e);
 			}
 		}
 	}
