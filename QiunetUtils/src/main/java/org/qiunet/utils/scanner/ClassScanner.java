@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -176,29 +177,24 @@ public final class ClassScanner implements IApplicationContext {
 
 	@Override
 	public Object getInstanceOfClass(Class clazz, Object... params) {
-		if (beanInstances.containsKey(clazz)) {
-			return beanInstances.get(clazz);
-		}
+		return beanInstances.computeIfAbsent(clazz, key -> {
+			Optional<Object> first = Stream.of(key.getDeclaredFields())
+				.filter(f -> Modifier.isStatic(f.getModifiers()))
+				.filter(f -> f.getType() == key)
+				.map(f -> ReflectUtil.getField(f, (Object) null))
+				.filter(Objects::nonNull)
+				.findFirst();
 
-		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
-			.filter(f -> Modifier.isStatic(f.getModifiers()))
-			.filter(f -> f.getType() == clazz)
-			.findFirst();
+			if (first.isPresent()) {
+				return first.get();
+			}
 
-		if (first.isPresent()) {
-			Field field = first.get();
-			Object ret = ReflectUtil.getField(field, (Object) null);
+			Object ret = ReflectUtil.newInstance(key, params);
 			if (ret != null) {
-				beanInstances.put(clazz, ret);
 				return ret;
 			}
-		}
 
-		Object ret = ReflectUtil.newInstance(clazz, params);
-		if (ret != null) {
-			beanInstances.put(clazz, ret);
-			return ret;
-		}
-		throw new NullPointerException("can not get instance for class ["+clazz.getName()+"]");
+			throw new NullPointerException("can not get instance for class ["+key.getName()+"]");
+		});
 	}
 }
