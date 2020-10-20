@@ -21,19 +21,14 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author qiunet
  *         Created on 17/2/9 12:15.
  */
-public class CfgManagers {
+public enum CfgManagers {
+	INSTANCE,;
+	private List<ICfgManager> gameSettingList = Lists.newArrayListWithCapacity(100);
 	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
-
-	private static final CfgManagers instance = new CfgManagers();
 	private AtomicBoolean reloading = new AtomicBoolean();
-	private List<ICfgManager> gameSettingList;
-
-	private CfgManagers(){
-		this.gameSettingList = Lists.newArrayListWithCapacity(100);
-	}
 
 	public static CfgManagers getInstance(){
-		return instance;
+		return INSTANCE;
 	}
 
 	/**
