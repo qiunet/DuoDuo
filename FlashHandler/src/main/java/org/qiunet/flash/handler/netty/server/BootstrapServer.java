@@ -44,12 +44,11 @@ public class BootstrapServer {
 			throw new CustomException("hook can not be null");
 		}
 		this.hook = hook;
-		instance = this;
 	}
 	/***
 	 * 可以自己添加给hook.
 	 * @param hook  钩子 关闭时候,先执行你的代码
-	 * @return
+	 * @return 实例
 	 */
 	public static BootstrapServer createBootstrap(Hook hook) {
 		if (StringUtil.isEmpty(hook.getShutdownMsg())) {
@@ -59,7 +58,7 @@ public class BootstrapServer {
 		synchronized (BootstrapServer.class) {
 			if (instance == null)
 			{
-				new BootstrapServer(hook);
+				instance = new BootstrapServer(hook);
 			}
 		}
 		return instance;
@@ -68,8 +67,8 @@ public class BootstrapServer {
 	/***
 	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
 	 * 默认给本地的端口发送
-	 * @param hookPort
-	 * @param msg
+	 * @param hookPort 钩子端口
+	 * @param msg 发送消息内容
 	 */
 	public static void sendHookMsg(int hookPort, String msg) {
 		sendHookMsg("localhost", hookPort, msg);
@@ -77,32 +76,27 @@ public class BootstrapServer {
 
 	/***
 	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
-	 * @param hookPort
-	 * @param msg
+	 * @param hookPort 钩子端口
+	 * @param msg 发送消息内容
 	 */
 	public static void sendHookMsg(String serverIp, int hookPort, String msg) {
-		try {
+		try (SocketChannel channel = SocketChannel.open(new InetSocketAddress(serverIp, hookPort))){
 			if (hookPort <= 0) {
 				logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
 				System.exit(1);
 			}
-			logger.error("BootstrapServer sendHookMsg ["+msg+"]!");
+			logger.error("BootstrapServer sendHookMsg [{}]!", msg);
 
-			SocketChannel channel = SocketChannel.open(new InetSocketAddress(serverIp, hookPort));
 			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
-			Thread.sleep(1000);
-			channel.close();
 		} catch (IOException e) {
 			logger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 
 	/**
 	 * 启动http监听
-	 * @param params
+	 * @param params 启动http的参数
 	 * @return
 	 */
 	public BootstrapServer httpListener(HttpBootstrapParams params) {
@@ -112,7 +106,7 @@ public class BootstrapServer {
 	}
 	/**
 	 * 启动tcp监听
-	 * @param params
+	 * @param params Tcp 启动参数
 	 * @return
 	 */
 	public BootstrapServer tcpListener(TcpBootstrapParams params) {
@@ -121,15 +115,16 @@ public class BootstrapServer {
 		this.nettyServers.add(tcpServer);
 		return this;
 	}
+	private HookListener hookListener;
 	private Thread awaitThread;
-
 	/***
 	 * 阻塞线程 最后调用阻塞当前线程
 	 */
 	public void await(){
-		Thread hookListener = new Thread(new HookListener(this , hook), "HookListener");
-		hookListener.setDaemon(true);
-		hookListener.start();
+		hookListener = new HookListener(this, hook);
+		Thread hookThread = new Thread(hookListener, "HookListener");
+		hookThread.setDaemon(true);
+		hookThread.start();
 		try {
 			ServerStartupEventData.fireStartupEventHandler();
 		}catch (CustomException e) {
@@ -154,6 +149,9 @@ public class BootstrapServer {
 	 */
 	private void shutdown(){
 		ServerShutdownEventData.fireShutdownEventHandler();
+		try {
+			hookListener.serverSocketChannel.close();
+		} catch (IOException e) {}
 
 		if (hook != null) {
 			hook.shutdown();
@@ -161,12 +159,6 @@ public class BootstrapServer {
 
 		for (INettyServer server : this.nettyServers) {
 			server.shutdown();
-		}
-		try {
-			// 业务需要时间停止.
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 
 		LockSupport.unpark(awaitThread);
@@ -195,14 +187,12 @@ public class BootstrapServer {
 			} catch (IOException e) {
 				this.RUNNING = false;
 				server.shutdown();
-				logger.error("[HookListener] Start Exception", e);
-				Thread.currentThread().interrupt();
+				throw new CustomException(e, "Start up hook listener error!");
 			}
 		}
 		/***
 		 * 处理现有的消息. 可以用户自定义
-		 * @param byteBuffer
-		 * @throws IOException
+		 * @param byteBuffer 消息buffer
 		 */
 		private boolean handlerMsg(ByteBuffer byteBuffer) {
 			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
@@ -234,8 +224,7 @@ public class BootstrapServer {
 
 							if (key.isAcceptable()) {
 								logger.error("[HookListener]服务端: ProcessAcceptor Msg");
-								ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-								SocketChannel channel = serverSocketChannel.accept();
+								SocketChannel channel = ((ServerSocketChannel) key.channel()).accept();
 
 								String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
 								if (!NetUtil.isInnerIp(ip) && !NetUtil.isLocalIp(ip)) {
