@@ -170,7 +170,7 @@ public class BootstrapServer {
 	private static class HookListener implements Runnable {
 		private Hook hook;
 		private Selector selector;
-		private boolean RUNNING = true;
+		private boolean running = true;
 		private BootstrapServer server;
 		private ServerSocketChannel serverSocketChannel;
 		HookListener(BootstrapServer bootstrapServer, Hook hook) {
@@ -185,7 +185,7 @@ public class BootstrapServer {
 				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
 				serverSocketChannel.register(this.selector, SelectionKey.OP_ACCEPT);
 			} catch (IOException e) {
-				this.RUNNING = false;
+				this.running = false;
 				server.shutdown();
 				throw new CustomException(e, "Start up hook listener error!");
 			}
@@ -199,7 +199,7 @@ public class BootstrapServer {
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
 			if (msg.equals(hook.getShutdownMsg())) {
-				this.RUNNING = false;
+				this.running = false;
 				server.shutdown();
 				return true;
 			}else if (msg.equals(hook.getReloadCfgMsg())){
@@ -214,7 +214,7 @@ public class BootstrapServer {
 		public void run() {
 			logger.error("[HookListener]服务端 Hook Listener on port [{}]", hook.getHookPort());
 			try {
-			while (RUNNING) {
+			while (running) {
 					try {
 						this.selector.select(1000);
 						Iterator<SelectionKey> itr = this.selector.selectedKeys().iterator();
