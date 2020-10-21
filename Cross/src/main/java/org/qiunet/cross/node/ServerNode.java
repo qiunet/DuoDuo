@@ -27,7 +27,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 
-	public static ServerNode valueOf(ServerInfo serverInfo) {
+	static ServerNode valueOf(ServerInfo serverInfo) {
 		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
 			.setAddress(serverInfo.getHost(), serverInfo.getPort())
 			.build(), ((session1, data) -> {
@@ -49,10 +49,23 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	/**
+	 * 必须设置serverInfo
+	 *
+	 * @param serverInfo
+	 */
+	public void auth(ServerInfo serverInfo) {
+		this.serverInfo = serverInfo;
+		ServerNodeManager0.instance.addNode(this);
+	}
+
+	/**
 	 * 获得serverId
 	 * @return
 	 */
 	public int getServerId() {
+		if (serverInfo == null) {
+			return 0;
+		}
 		return serverInfo.getServerId();
 	}
 
@@ -71,7 +84,6 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	@Override
 	public long getId() {
-		if (serverInfo == null) return 0;
 		return getServerId();
 	}
 }

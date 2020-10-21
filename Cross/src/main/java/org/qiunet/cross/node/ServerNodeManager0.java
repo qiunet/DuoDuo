@@ -1,5 +1,6 @@
 package org.qiunet.cross.node;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.common.config.ServerConfig;
 import org.qiunet.cross.common.contants.ScannerParamKey;
@@ -17,6 +18,7 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 
 import java.util.Map;
@@ -45,7 +47,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	private IRedisUtil redisUtil;
 
-	private ServerInfo serverInfo;
+	private ServerInfo currServerInfo;
 
 	private IApplicationContext context;
 
@@ -56,10 +58,21 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param node
 	 */
 	void addNode(ServerNode node) {
+		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
 		nodes.put(node.getServerId(), node);
 	}
 
+	ServerNode getNode(int serverId) {
+		return nodes.computeIfAbsent(serverId, key -> {
+			String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(key));
+			if (StringUtil.isEmpty(serverInfoStr)) {
+				throw new CustomException("ServerId {} is not online!", serverId);
+			}
 
+			ServerInfo serverInfo = JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);
+			return ServerNode.valueOf(serverInfo);
+		});
+	}
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -71,7 +84,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE'");
 		}
 
-		this.serverInfo = ServerInfo.valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(),
+		this.currServerInfo = ServerInfo.valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(),
 			NetUtil.getInnerIp(), ServerConfig.getCommnicationPort());
 
 		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
@@ -87,13 +100,18 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, 0, 1, TimeUnit.MINUTES);
 	}
 
+	private String serverInfoRedisKey(int serverId) {
+		return SERVER_NODE_INFO_REDIS_KEY + serverId;
+	}
+
+
 	/**
 	 * 每一分钟, 刷新server info
 	 */
 	public void refreshServerInfo() {
 		redisUtil.execCommands(jedis -> {
-			jedis.setex(SERVER_NODE_INFO_REDIS_KEY + serverInfo.getServerId(), 110, JsonUtil.toJsonString(serverInfo));
-			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+serverInfo.getType().getType(), String.valueOf(serverInfo.getServerId()));
+			jedis.setex(serverInfoRedisKey(currServerInfo.getServerId()), 110, JsonUtil.toJsonString(currServerInfo));
+			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType().getType(), String.valueOf(currServerInfo.getServerId()));
 			return 0;
 		});
 	}
