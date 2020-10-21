@@ -69,7 +69,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		}
 
 		if (ctx.channel().isActive()) {
-			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx, handler, messageActor, headers);
+			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor, headers);
 			messageActor.addMessage(context);
 		}
 	}

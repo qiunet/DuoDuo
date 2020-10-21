@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.context.request.http;
 
 import com.google.protobuf.GeneratedMessageV3;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -19,8 +19,8 @@ import org.qiunet.utils.async.LazyLoader;
 public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, ResponseData  extends IpbResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
-	public HttpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
-		super(content, channelContext, params, request);
+	public HttpProtobufRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+		super(content, channel, params, request);
 	}
 
 	@Override

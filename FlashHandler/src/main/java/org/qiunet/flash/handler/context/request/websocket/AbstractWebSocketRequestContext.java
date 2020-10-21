@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.request.websocket;
 
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -16,15 +15,15 @@ abstract class AbstractWebSocketRequestContext<RequestData, P extends IMessageAc
 	protected HttpHeaders headers;
 	protected P messageActor;
 
-	protected AbstractWebSocketRequestContext(MessageContent content, ChannelHandlerContext ctx,P messageActor, HttpHeaders headers) {
-		super(content, ctx);
+	protected AbstractWebSocketRequestContext(MessageContent content, Channel channel, P messageActor, HttpHeaders headers) {
+		super(content, channel);
 		this.headers = headers;
 		this.messageActor = messageActor;
 	}
 
 	@Override
 	public Channel channel() {
-		return ctx.channel();
+		return channel;
 	}
 
 	@Override

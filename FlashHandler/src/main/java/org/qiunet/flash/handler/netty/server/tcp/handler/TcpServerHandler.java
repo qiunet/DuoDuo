@@ -60,7 +60,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		}
 
 		if (ctx.channel().isActive()) {
-			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx, handler, messageActor);
+			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
 		}
 	}

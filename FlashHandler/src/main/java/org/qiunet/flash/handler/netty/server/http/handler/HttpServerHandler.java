@@ -139,7 +139,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
 		context.handlerRequest();
 	}
 	/***
@@ -157,7 +157,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx, handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
 		context.handlerRequest();
 	}
 

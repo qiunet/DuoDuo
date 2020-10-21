@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.context.request.http;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
@@ -31,8 +31,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;
 
-	public AbstractHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request)  {
-		super(content, channelContext);
+	public AbstractHttpRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
+		super(content, channel);
 		this.request = request;
 		this.params = params;
 	}
@@ -105,7 +105,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		ByteBuf content;
 		if (getUriPath().equals(params.getGameURIPath())) {
 			// 不是游戏业务. 不写业务头.
-			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), ctx.channel());
+			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), channel);
 		}else {
 			content = PooledBytebufFactory.getInstance().alloc(data);
 		}
@@ -123,10 +123,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 		}
 		// 下面的 `writeAndFlush(Unpooled.EMPTY_BUFFER)` 会flush
-		ctx.writeAndFlush(response);
+		channel.writeAndFlush(response);
 
 		if (! keepAlive) {
-			ctx.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+			channel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
 		}
 	}
 

@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.enums;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -26,17 +26,17 @@ public enum DataType {
 	 */
 	STRING {
 		@Override
-		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
-			return new HttpStringRequestContext(content, channelContext, params, request);
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+			return new HttpStringRequestContext(content, channel, params, request);
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
 			throw new IllegalStateException("Not Support");
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor) {
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
 			throw new IllegalStateException("Not Support");
 		}
 	},
@@ -46,18 +46,18 @@ public enum DataType {
 	PROTOBUF {
 
 		@Override
-		public IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
-			return new HttpProtobufRequestContext(content, channelContext, params, request);
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+			return new HttpProtobufRequestContext(content, channel, params, request);
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
-			return new WebSocketProtobufRequestContext(content, channelContext, messageActor, headers);
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
+			return new WebSocketProtobufRequestContext(content, channel, messageActor, headers);
 		}
 
 		@Override
-		public ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor) {
-			return new TcpProtobufRequestContext(content, channelContext, messageActor);
+		public ITcpRequestContext createTcpRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
+			return new TcpProtobufRequestContext(content, channel, messageActor);
 		}
 	},
 	;
@@ -66,23 +66,23 @@ public enum DataType {
 	/**
 	 * 得到一个http的context
 	 * @param content
-	 * @param channelContext
+	 * @param channel
 	 * @param request
 	 * @return
 	 */
-	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request);
+	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request);
 	/**
 	 * 得到一个webSocket使用的context
 	 * @param content
-	 * @param channelContext
+	 * @param channel
 	 * @return
 	 */
-	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor, HttpHeaders headers);
+	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers);
 	/**
 	 * 得到一个tcp使用的context
 	 * @param content
-	 * @param channelContext
+	 * @param channel
 	de * @return
 	 */
-	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, IMessageActor messageActor);
+	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor);
 }

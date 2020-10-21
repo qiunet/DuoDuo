@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.context.request.http;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -15,8 +15,8 @@ import org.qiunet.utils.async.LazyLoader;
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
 	private LazyLoader<String> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
-	public HttpStringRequestContext(MessageContent content, ChannelHandlerContext channelContext, HttpBootstrapParams params, HttpRequest request) {
-		super(content, channelContext, params, request);
+	public HttpStringRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+		super(content, channel, params, request);
 	}
 
 	@Override

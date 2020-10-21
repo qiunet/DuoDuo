@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.context.request.tcp;
 
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.Channel;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
@@ -16,8 +16,8 @@ import org.qiunet.utils.async.LazyLoader;
 public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> extends AbstractTcpRequestContext<RequestData, P> {
 	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
-	public TcpProtobufRequestContext(MessageContent content, ChannelHandlerContext channelContext, P messageActor) {
-		super(content, channelContext, messageActor);
+	public TcpProtobufRequestContext(MessageContent content, Channel channel, P messageActor) {
+		super(content, channel, messageActor);
 	}
 
 	@Override
