@@ -1,10 +1,14 @@
 package org.qiunet.cross.node;
 
 import org.qiunet.flash.handler.common.IMessage;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -30,16 +34,21 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	static ServerNode valueOf(ServerInfo serverInfo) {
 		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
 			.setAddress(serverInfo.getHost(), serverInfo.getPort())
-			.build(), ((session1, data) -> {
-			IMessageActor messageActor = session1.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-
-		}));
+			.build(), ServerNode::handlerMessage);
 
 		ServerNode node = new ServerNode(tcpClient.getSession());
 		node.serverInfo = serverInfo;
 		return node;
 
 	}
+
+	private static void handlerMessage(DSession session, MessageContent data) {
+		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(data);
+		ITcpRequestContext tcpRequestContext = handler.getDataType().createTcpRequestContext(data, session.channel(), handler, messageActor);
+		messageActor.addMessage(tcpRequestContext);
+	}
+
 
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {

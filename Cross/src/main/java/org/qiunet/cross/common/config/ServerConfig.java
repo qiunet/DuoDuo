@@ -25,7 +25,7 @@ public class ServerConfig {
 	 * 服务之间通讯的端口.
 	 */
 	@DPropertiesValue("communication.port")
-	private static int commnicationPort;
+	private static int communicationPort;
 
 	public static int getHookPort() {
 		return hookPort;
@@ -35,7 +35,7 @@ public class ServerConfig {
 		return serverPort;
 	}
 
-	public static int getCommnicationPort() {
-		return commnicationPort;
+	public static int getCommunicationPort() {
+		return communicationPort;
 	}
 }
