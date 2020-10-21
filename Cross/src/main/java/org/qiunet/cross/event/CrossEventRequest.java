@@ -12,27 +12,16 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  */
 @ProtobufClass(description = "跨服的事件")
 public class CrossEventRequest implements IpbRequestData {
-	@Protobuf(description = "跨服后的玩家id")
-	private long playerId;
 	@Protobuf(description = "事件的className")
 	private String className;
 	@Protobuf(description = "事件反序列化的数据.")
 	private byte[] datas;
 
-	public static CrossEventRequest valueOf(long playerId, String className, byte[] datas) {
+	public static CrossEventRequest valueOf(String className, byte[] datas) {
 		CrossEventRequest request = new CrossEventRequest();
-		request.playerId = playerId;
 		request.className = className;
 		request.datas = datas;
 		return request;
-	}
-
-	public long getPlayerId() {
-		return playerId;
-	}
-
-	public void setPlayerId(long playerId) {
-		this.playerId = playerId;
 	}
 
 	public String getClassName() {

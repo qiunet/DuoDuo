@@ -47,6 +47,10 @@ public enum CloseCause {
 	 * 账号被封禁
 	 */
 	FORBID_ACCOUNT("账号被封禁"),
+	/**
+	 * 退出登录
+	 */
+	LOGOUT("退出登录"),
 	;
 	private String desc;
 

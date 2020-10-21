@@ -32,10 +32,9 @@ public class ProtobufDataManager {
 	public static <T> byte[] encode(Class<T> clazz, T obj) {
 		try {
 			return getCodec(clazz).encode(obj);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new CustomException(e, "Class [{}] encode exception", clazz.getName());
 		}
-		throw new CustomException("Class ["+clazz.getName()+"] encode data error!");
 	}
 
 	/**

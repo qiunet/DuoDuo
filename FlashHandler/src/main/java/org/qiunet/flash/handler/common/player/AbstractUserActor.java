@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.common.player;
 
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 
 /***
@@ -21,10 +20,4 @@ public abstract class AbstractUserActor<T extends AbstractUserActor> extends Abs
 	 * @return
 	 */
 	public abstract boolean isCrossStatus();
-	/**
-	 * 对事件的处理.
-	 * 跨服的提交跨服那边. 本服调用自己的
-	 * @param eventData
-	 */
-	protected abstract <T extends BasePlayerEventData> void submitEvent(T eventData);
 }

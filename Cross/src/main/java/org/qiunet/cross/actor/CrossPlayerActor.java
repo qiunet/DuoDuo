@@ -1,11 +1,15 @@
 package org.qiunet.cross.actor;
 
+import com.google.common.base.Preconditions;
+import org.qiunet.cross.event.BaseCrossPlayerEventData;
+import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.listener.event.EventManager;
 
 /***
- * CrossPlayerActor 的父类
+ * 跨服服务的playerActor
  *
  * @author qiunet
  * 2020-10-14 17:20
@@ -19,12 +23,18 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 
 	@Override
 	public boolean isCrossStatus() {
-		return false;
+		// 进入跨服了. 必然是跨服状态. 在另一个服有PlayerActor
+		return true;
 	}
 
-	@Override
-	protected <T1 extends BasePlayerEventData> void submitEvent(T1 eventData) {
+	public  <T extends BaseCrossPlayerEventData> void fireEvent(T eventData) {
+		eventData.setPlayer(this);
+		EventManager.fireEventHandler(eventData);
+	}
 
+	public  <T extends BasePlayerEventData> void fireEvent(T eventData) {
+		Preconditions.checkState(isAuth(), "Need auth!");
+		CrossEventManager.fireCrossEvnet(getPlayerId(), getSession(), eventData);
 	}
 
 	@Override
