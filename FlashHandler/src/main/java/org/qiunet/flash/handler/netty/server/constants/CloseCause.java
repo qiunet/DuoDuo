@@ -51,6 +51,10 @@ public enum CloseCause {
 	 * 退出登录
 	 */
 	LOGOUT("退出登录"),
+	/**
+	 * 服务关闭
+	 */
+	SERVER_SHUTDOWN("服务关闭"),
 	;
 	private String desc;
 

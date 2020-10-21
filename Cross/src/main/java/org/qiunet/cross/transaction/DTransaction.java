@@ -8,7 +8,7 @@ import java.util.function.Function;
  * @author qiunet
  * 2020-09-24 09:29
  */
-public final class DTransaction<REQ extends ITransactionRequest, RESP extends ITransactionResponse> {
+public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends BaseTransactionResponse> {
 
 
 	public void handler(Function<REQ, RESP> dataHandler) {

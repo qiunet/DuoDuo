@@ -26,7 +26,7 @@ public class RouteTransactionInfo {
 	 * 请求数据
 	 */
 	@Protobuf(description = "请求数据")
-	private ITransactionRequest reqData;
+	private BaseTransactionRequest reqData;
 	/**
 	 * 请求的ServerId
 	 */
@@ -49,11 +49,11 @@ public class RouteTransactionInfo {
 		this.reqClassName = reqClassName;
 	}
 
-	public ITransactionRequest getReqData() {
+	public BaseTransactionRequest getReqData() {
 		return reqData;
 	}
 
-	public void setReqData(ITransactionRequest reqData) {
+	public void setReqData(BaseTransactionRequest reqData) {
 		this.reqData = reqData;
 	}
 

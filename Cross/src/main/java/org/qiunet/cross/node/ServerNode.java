@@ -12,7 +12,8 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import java.text.MessageFormat;
 
 /***
- *
+ * 单独启动tcp连接, 提供其它服务公用的一个actor
+ * 一个服务与一个服务之间只会有一个 连接.不会存在多个.
  *
  * @author qiunet
  * 2020-10-09 11:13
@@ -31,6 +32,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 			.setAddress(serverInfo.getHost(), serverInfo.getPort())
 			.build(), ((session1, data) -> {
 			IMessageActor messageActor = session1.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+
 		}));
 
 		ServerNode node = new ServerNode(tcpClient.getSession());

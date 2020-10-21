@@ -7,6 +7,7 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.listener.event.data.ServerStartupEventData;
@@ -99,6 +100,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	public void onShutdown(ServerShutdownEventData data) {
+		nodes.values().forEach(node -> node.getSession().close(CloseCause.SERVER_SHUTDOWN));
 		NettyTcpClient.shutdown();
 	}
 }
