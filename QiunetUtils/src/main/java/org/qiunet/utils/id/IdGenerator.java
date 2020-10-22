@@ -12,5 +12,5 @@ public interface IdGenerator {
 	 * 生成id
 	 * @return
 	 */
-	int makeId();
+	long makeId();
 }
