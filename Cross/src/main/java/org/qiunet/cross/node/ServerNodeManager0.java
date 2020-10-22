@@ -15,7 +15,6 @@ import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -48,8 +47,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	private IRedisUtil redisUtil;
 
 	private ServerInfo currServerInfo;
-
-	private IApplicationContext context;
 
 	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 
@@ -84,11 +81,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE'");
 		}
 
-		this.currServerInfo = ServerInfo.valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(),
-			NetUtil.getInnerIp(), ServerConfig.getCommnicationPort());
+		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
+			? ServerInfo.valueOf(ServerConfig.getCommunicationPort())
+			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
 		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
-		this.context = context;
 	}
 
 	@EventListener
@@ -104,6 +101,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return SERVER_NODE_INFO_REDIS_KEY + serverId;
 	}
 
+	ServerInfo getCurrServerInfo() {
+		return currServerInfo;
+	}
 
 	/**
 	 * 每一分钟, 刷新server info

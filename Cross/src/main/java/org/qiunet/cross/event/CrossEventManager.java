@@ -2,10 +2,12 @@ package org.qiunet.cross.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.listener.event.IEventData;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
@@ -23,7 +25,7 @@ public class CrossEventManager {
 	 * @param crossSession
 	 * @param eventData
 	 */
-	public static  <T extends BasePlayerEventData> void fireCrossEvnet(long playerId, DSession crossSession, T eventData) {
+	public static  <T extends BasePlayerEventData> void fireCrossEvent(long playerId, DSession crossSession, T eventData) {
 		// 当前服的playerActor
 		AbstractUserActor playerActor = UserOnlineManager.getPlayerActor(playerId);
 
@@ -33,5 +35,20 @@ public class CrossEventManager {
 		byte[] bytes = ProtobufDataManager.encode((Class<T>)eventData.getClass(), eventData);
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData.getClass().getName(), bytes);
 		crossSession.writeMessage(request.buildResponseMessage());
+	}
+
+	/**
+	 * 服务与服务之间的事件触发 .走cross通道.
+	 * @param serverId 对方serverId
+	 * @param eventData 事件
+	 * @param <T>
+	 */
+	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
+		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
+
+
+		byte[] bytes = ProtobufDataManager.encode((Class<T>)eventData.getClass(), eventData);
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData.getClass().getName(), bytes);
+		ServerNodeManager.getNode(serverId).send(request.buildResponseMessage());
 	}
 }

@@ -1,6 +1,8 @@
 package org.qiunet.cross.node;
 
+import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.utils.net.NetUtil;
 
 import java.util.Objects;
 
@@ -27,6 +29,14 @@ public class ServerInfo {
 	 * 端口
 	 */
 	private int port;
+
+	public static ServerInfo valueOf(int port) {
+		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), port);
+	}
+
+	public static ServerInfo valueOf(int serverId, ServerType type, int port) {
+		return valueOf(serverId, type, NetUtil.getInnerIp(), port);
+	}
 
 	public static ServerInfo valueOf(int serverId, ServerType type, String host, int port) {
 		ServerInfo node = new ServerInfo();

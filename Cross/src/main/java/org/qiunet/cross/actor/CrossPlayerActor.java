@@ -34,7 +34,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 
 	public  <T extends BasePlayerEventData> void fireEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
-		CrossEventManager.fireCrossEvnet(getPlayerId(), getSession(), eventData);
+		CrossEventManager.fireCrossEvent(getPlayerId(), getSession(), eventData);
 	}
 
 	@Override
