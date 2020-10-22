@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.websocket;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
@@ -17,8 +16,8 @@ import org.qiunet.utils.async.LazyLoader;
 public class WebSocketProtobufRequestContext<RequestData, P extends IMessageActor> extends AbstractWebSocketRequestContext<RequestData, P> {
 	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
-	public WebSocketProtobufRequestContext(MessageContent content, Channel channel, P messageActor, HttpHeaders headers) {
-		super(content, channel, messageActor, headers);
+	public WebSocketProtobufRequestContext(MessageContent content, Channel channel, P messageActor) {
+		super(content, channel, messageActor);
 	}
 	@Override
 	public RequestData getRequestData() {

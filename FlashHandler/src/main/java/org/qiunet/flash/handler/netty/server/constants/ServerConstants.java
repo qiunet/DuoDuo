@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.constants;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.HandlerType;
@@ -30,6 +31,10 @@ public final class ServerConstants {
 	 * messageActor 存储在channel的key
 	 */
 	public static final AttributeKey<IMessageActor> MESSAGE_ACTOR_KEY = AttributeKey.newInstance("MESSAGE_ACTOR_KEY");
+	/***
+	 * http ws 的header
+	 */
+	public static final AttributeKey<HttpHeaders> HTTP_WS_HEADER_KEY = AttributeKey.newInstance("HTTP_WS_HEADER_KEY");
 	/***
 	 * 使用的header adapter
 	 */

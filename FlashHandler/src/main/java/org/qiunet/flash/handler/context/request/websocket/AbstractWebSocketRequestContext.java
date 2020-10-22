@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /**
  * Created by qiunet.
@@ -15,10 +16,10 @@ abstract class AbstractWebSocketRequestContext<RequestData, P extends IMessageAc
 	protected HttpHeaders headers;
 	protected P messageActor;
 
-	protected AbstractWebSocketRequestContext(MessageContent content, Channel channel, P messageActor, HttpHeaders headers) {
+	protected AbstractWebSocketRequestContext(MessageContent content, Channel channel, P messageActor) {
 		super(content, channel);
-		this.headers = headers;
 		this.messageActor = messageActor;
+		this.headers = channel.attr(ServerConstants.HTTP_WS_HEADER_KEY).get();
 	}
 
 	@Override

@@ -28,19 +28,19 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private HttpBootstrapParams params;
-	private HttpHeaders headers;
 
 
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
-			this.headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
+			HttpHeaders headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
 			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
 
 			DSession iSession = new DSession(ctx.channel());
 
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(iSession));
+			ctx.channel().attr(ServerConstants.HTTP_WS_HEADER_KEY).set(headers);
 			SessionManager.addSession(iSession);
 		}
 		super.userEventTriggered(ctx, evt);
@@ -69,7 +69,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		}
 
 		if (ctx.channel().isActive()) {
-			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor, headers);
+			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
 		}
 	}

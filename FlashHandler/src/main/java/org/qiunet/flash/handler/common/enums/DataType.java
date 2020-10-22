@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.common.enums;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -31,7 +30,7 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
 			throw new IllegalStateException("Not Support");
 		}
 
@@ -51,8 +50,8 @@ public enum DataType {
 		}
 
 		@Override
-		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers) {
-			return new WebSocketProtobufRequestContext(content, channel, messageActor, headers);
+		public IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
+			return new WebSocketProtobufRequestContext(content, channel, messageActor);
 		}
 
 		@Override
@@ -77,7 +76,7 @@ public enum DataType {
 	 * @param channel
 	 * @return
 	 */
-	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor, HttpHeaders headers);
+	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor);
 	/**
 	 * 得到一个tcp使用的context
 	 * @param content
