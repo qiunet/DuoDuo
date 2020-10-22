@@ -24,7 +24,7 @@ public class UserOnlineManager {
 
 	@EventListener
 	private void addPlayerActor(AuthEventData eventData) {
-		AbstractUserActor userActor = eventData.getUserActor();
+		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
 
 		userActor.getSession().addCloseListener(cause -> datas.remove(userActor.getId()));
