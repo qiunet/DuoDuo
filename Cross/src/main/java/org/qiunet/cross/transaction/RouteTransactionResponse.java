@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.FieldType;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
  * 传输过程的信息.
@@ -11,7 +12,8 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-09-24 09:34
  */
-@ProtobufClass
+@SkipProtoGenerator
+@ProtobufClass(description = "事务响应数据")
 public class RouteTransactionResponse implements IpbRequestData {
 	/**
 	 * 响应端维护自增的id, 需要带着返回给请求服务器.

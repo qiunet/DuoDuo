@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Sets;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.util.ProtobufIDLGenerator;
+import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
@@ -24,6 +25,10 @@ public enum ProtoGeneratorModel {
 		@Override
 		public void generatorProto(File directory, Set<Class<? extends IpbChannelData>> allPbClass) {
 			for (Class<? extends IpbChannelData> pbClass : allPbClass) {
+				if (pbClass.isAnnotationPresent(SkipProtoGenerator.class)) {
+					continue;
+				}
+
 				ProtobufClass annotation = pbClass.getAnnotation(ProtobufClass.class);
 				int protocolId = ProtobufIDLGenerator.getProtocolId(pbClass);
 				StringJoiner sb = new StringJoiner("_", "", ".proto");
@@ -46,6 +51,10 @@ public enum ProtoGeneratorModel {
 			StringBuilder sb = new StringBuilder(V3_HEADER);
 			sb.append("\n\n");
 			for (Class<? extends IpbChannelData> pbClass : allPbClass) {
+				if (pbClass.isAnnotationPresent(SkipProtoGenerator.class)) {
+					continue;
+				}
+
 				String content = ProtoGeneratorModel.generatorProtoContent(pbClass, cachedEnumsTypes, cachedTypes, true);
 				sb.append(content);
 			}

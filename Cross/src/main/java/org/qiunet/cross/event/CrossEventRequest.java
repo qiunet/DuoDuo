@@ -3,6 +3,7 @@ package org.qiunet.cross.event;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
  *
@@ -10,6 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-10-15 17:00
  */
+@SkipProtoGenerator
 @ProtobufClass(description = "跨服的事件")
 public class CrossEventRequest implements IpbRequestData {
 	@Protobuf(description = "事件的className")
