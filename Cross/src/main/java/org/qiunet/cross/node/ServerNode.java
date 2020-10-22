@@ -12,8 +12,7 @@ import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-
-import java.text.MessageFormat;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -24,7 +23,8 @@ import java.text.MessageFormat;
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
 
-	private ServerInfo serverInfo;
+
+	private int serverId;
 
 	public ServerNode(DSession session) {
 		super(session);
@@ -37,7 +37,9 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 			.build(), ServerNode::handlerMessage);
 
 		ServerNode node = new ServerNode(tcpClient.getSession());
-		node.serverInfo = serverInfo;
+		node.serverId = serverInfo.getServerId();
+
+		node.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
 		return node;
 
 	}
@@ -58,12 +60,12 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	/**
-	 * 必须设置serverInfo
+	 * 必须设置 serverId
 	 *
-	 * @param serverInfo
+	 * @param serverId
 	 */
-	public void auth(ServerInfo serverInfo) {
-		this.serverInfo = serverInfo;
+	public void auth(int serverId) {
+		this.serverId = serverId;
 		ServerNodeManager0.instance.addNode(this);
 	}
 
@@ -72,10 +74,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * @return
 	 */
 	public int getServerId() {
-		if (serverInfo == null) {
-			return 0;
-		}
-		return serverInfo.getServerId();
+		return serverId;
 	}
 
 	/**
@@ -88,11 +87,12 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	@Override
 	protected String getIdent() {
-		return MessageFormat.format( "ServerNode[{0}:{1}]", serverInfo.getHost(), serverInfo.getPort());
+		return StringUtil.format( "ServerNode[{0}]", serverId);
 	}
 
 	@Override
 	public long getId() {
 		return getServerId();
 	}
+
 }

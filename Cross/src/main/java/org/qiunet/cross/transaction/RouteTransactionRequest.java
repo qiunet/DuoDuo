@@ -1,7 +1,9 @@
 package org.qiunet.cross.transaction;
 
+import com.baidu.bjf.remoting.protobuf.FieldType;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 
 /***
  * 传输过程的信息.
@@ -10,7 +12,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * 2020-09-24 09:34
  */
 @ProtobufClass
-public class RouteTransactionInfo {
+public class RouteTransactionRequest implements IpbRequestData {
 	/**
 	 * 请求端维护自增的id, 需要带着返回给请求服务器.
 	 */
@@ -25,13 +27,17 @@ public class RouteTransactionInfo {
 	/**
 	 * 请求数据
 	 */
-	@Protobuf(description = "请求数据")
-	private BaseTransactionRequest reqData;
-	/**
-	 * 请求的ServerId
-	 */
-	@Protobuf
-	private int reqServerId;
+	@Protobuf(description = "请求数据", fieldType = FieldType.BYTES)
+	private byte [] reqData;
+
+
+	static RouteTransactionRequest valueOf(long id, String reqClassName, byte[] reqData) {
+		RouteTransactionRequest request = new RouteTransactionRequest();
+		request.id = id;
+		request.reqData = reqData;
+		request.reqClassName = reqClassName;
+		return request;
+	}
 
 	public long getId() {
 		return id;
@@ -49,19 +55,11 @@ public class RouteTransactionInfo {
 		this.reqClassName = reqClassName;
 	}
 
-	public BaseTransactionRequest getReqData() {
+	public byte [] getReqData() {
 		return reqData;
 	}
 
-	public void setReqData(BaseTransactionRequest reqData) {
+	public void setReqData(byte [] reqData) {
 		this.reqData = reqData;
-	}
-
-	public int getReqServerId() {
-		return reqServerId;
-	}
-
-	public void setReqServerId(int reqServerId) {
-		this.reqServerId = reqServerId;
 	}
 }
