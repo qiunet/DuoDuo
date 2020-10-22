@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -47,8 +46,8 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private static void handlerMessage(DSession session, MessageContent data) {
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(data);
-		ITcpRequestContext tcpRequestContext = handler.getDataType().createTcpRequestContext(data, session.channel(), handler, messageActor);
-		messageActor.addMessage(tcpRequestContext);
+		IMessage message = handler.getHandlerType().createRequestContext(data, session.channel(), handler, messageActor);
+		messageActor.addMessage(message);
 	}
 
 

@@ -28,22 +28,22 @@ public class ServerInfo {
 	/**
 	 * 端口
 	 */
-	private int port;
+	private int communicationPort;
 
-	public static ServerInfo valueOf(int port) {
-		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), port);
+	public static ServerInfo valueOf(int communicationPort) {
+		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), communicationPort);
 	}
 
-	public static ServerInfo valueOf(int serverId, ServerType type, int port) {
-		return valueOf(serverId, type, NetUtil.getInnerIp(), port);
+	public static ServerInfo valueOf(int serverId, ServerType type, int communicationPort) {
+		return valueOf(serverId, type, NetUtil.getInnerIp(), communicationPort);
 	}
 
-	public static ServerInfo valueOf(int serverId, ServerType type, String host, int port) {
+	public static ServerInfo valueOf(int serverId, ServerType type, String host, int communicationPort) {
 		ServerInfo node = new ServerInfo();
+		node.communicationPort = communicationPort;
 		node.serverId = serverId;
 		node.type = type;
 		node.host = host;
-		node.port = port;
 		return node;
 	}
 
@@ -72,11 +72,11 @@ public class ServerInfo {
 	}
 
 	public int getPort() {
-		return port;
+		return communicationPort;
 	}
 
-	public void setPort(int port) {
-		this.port = port;
+	public void setPort(int communicationPort) {
+		this.communicationPort = communicationPort;
 	}
 
 	@Override
@@ -85,14 +85,14 @@ public class ServerInfo {
 		if (o == null || getClass() != o.getClass()) return false;
 		ServerInfo that = (ServerInfo) o;
 		return serverId == that.serverId &&
-			port == that.port &&
+			communicationPort == that.communicationPort &&
 			type == that.type &&
 			host.equals(that.host);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(serverId, type, host, port);
+		return Objects.hash(serverId, type, host, communicationPort);
 	}
 
 	@Override
@@ -101,7 +101,7 @@ public class ServerInfo {
 			"serverId=" + serverId +
 			", type=" + type +
 			", host='" + host + '\'' +
-			", port=" + port +
+			", port=" + communicationPort +
 			'}';
 	}
 }

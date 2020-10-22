@@ -59,16 +59,27 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		nodes.put(node.getServerId(), node);
 	}
 
-	ServerNode getNode(int serverId) {
-		return nodes.computeIfAbsent(serverId, key -> {
-			String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(key));
-			if (StringUtil.isEmpty(serverInfoStr)) {
-				throw new CustomException("ServerId {} is not online!", serverId);
-			}
+	/**
+	 * 获得serverInfo
+	 * @param serverId
+	 * @return
+	 */
+	ServerInfo getServerInfo(int serverId) {
+		String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(serverId));
+		if (StringUtil.isEmpty(serverInfoStr)) {
+			throw new CustomException("ServerId {} is not online!", serverId);
+		}
 
-			ServerInfo serverInfo = JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);
-			return ServerNode.valueOf(serverInfo);
-		});
+		return JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);
+	}
+
+	/**
+	 * 获得serverNode
+	 * @param serverId
+	 * @return
+	 */
+	ServerNode getNode(int serverId) {
+		return nodes.computeIfAbsent(serverId, key -> ServerNode.valueOf(getServerInfo(key)));
 	}
 
 	@Override

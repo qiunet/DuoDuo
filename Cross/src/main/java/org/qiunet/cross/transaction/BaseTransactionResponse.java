@@ -8,6 +8,6 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
  * @author qiunet
  * 2020-09-24 09:28
  */
-@ProtobufClass
+@ProtobufClass(description = "业务使用的事务响应数据基类")
 public abstract class BaseTransactionResponse {
 }
