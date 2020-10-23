@@ -63,11 +63,6 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler.needAuth() && ! messageActor.isAuth()) {
-			session.close(CloseCause.ERR_REQUEST);
-			return;
-		}
-
 		if (ctx.channel().isActive()) {
 			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);

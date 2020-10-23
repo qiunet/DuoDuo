@@ -46,19 +46,12 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
-			ctx.close();
 			return;
 		}
-
 		DSession session = SessionManager.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler.needAuth() && ! messageActor.isAuth()) {
-			session.close(CloseCause.ERR_REQUEST);
-			return;
-		}
-
 		if (ctx.channel().isActive()) {
 			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);

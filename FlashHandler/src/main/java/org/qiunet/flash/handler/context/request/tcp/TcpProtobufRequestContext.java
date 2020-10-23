@@ -6,7 +6,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.async.LazyLoader;
 
 /**
@@ -32,6 +34,11 @@ public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> ext
 
 	@Override
 	public void handlerRequest() {
+		if (handler.needAuth() && ! messageActor.isAuth()) {
+			SessionManager.getSession(channel).close(CloseCause.ERR_REQUEST);
+			return;
+		}
+
 		FacadeTcpRequest<RequestData, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
 		if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("[{}] <<< {}", messageActor.getId(), ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));

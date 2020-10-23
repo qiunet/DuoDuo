@@ -37,6 +37,12 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		node.serverId = serverInfo.getServerId();
 
 		node.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
+		try {
+			// 因为ServerNode执行时不确定的 所以必须等auth请求执行完毕.再执行其它.
+			Thread.sleep(10);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return node;
 
 	}
