@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player.event;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.listener.event.IEventData;
 
@@ -13,6 +14,7 @@ public class BaseUserEventData<T extends AbstractUserActor<T>> implements IEvent
 	/**
 	 * 玩家的对象.
 	 */
+	@Ignore
 	private T player;
 
 	public T getPlayer() {

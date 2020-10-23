@@ -11,8 +11,8 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
  */
 public class AuthEventData<T extends AbstractUserActor<T>> extends BaseUserEventData<T> {
 
-	public static AuthEventData valueOf() {
-		return new AuthEventData();
+	public AuthEventData(T player) {
+		this.setPlayer(player);
 	}
 
 	@Override

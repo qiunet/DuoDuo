@@ -67,7 +67,6 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	public void closeConnect(){
 		currThread = Thread.currentThread();
 		LockSupport.park();
-		tcpClient.close();
 	}
 
 	@Override

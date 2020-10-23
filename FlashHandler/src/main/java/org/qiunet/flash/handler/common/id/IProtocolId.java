@@ -35,7 +35,9 @@ public interface IProtocolId {
 		int TRANSACTION_REQ = 601;
 		/** 事务响应 **/
 		int TRANSACTION_RESP = 602;
-		/** server Node 鉴权*/
+		/** server Node 鉴权 */
 		int SERVER_NODE_AUTH = 603;
+		/** 跨服玩家鉴权. */
+		int CROSS_PLAYER_AUTH = 604;
 	}
 }

@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -36,23 +37,19 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyClientInitializer(params));
 		try {
-			this.channel = bootstrap.connect(params.getAddress()).sync().channel();
-			this.session = new DSession(channel);
+			ChannelFuture channelFuture = bootstrap.connect(params.getAddress());
+			channelFuture.addListener(f -> {
+				this.channel = channelFuture.channel();
+				this.session = new DSession(channel);
+			});
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			throw new CustomException(e, "Connect to server error!");
 		}
+
 	}
 	@Override
 	public void sendMessage(MessageContent content){
 		channel.writeAndFlush(content);
-	}
-	@Override
-	public void close(){
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public DSession getSession() {
