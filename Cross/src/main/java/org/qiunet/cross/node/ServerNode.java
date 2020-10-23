@@ -37,21 +37,20 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		node.serverId = serverInfo.getServerId();
 
 		node.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
-		try {
-			// 因为ServerNode执行时不确定的 所以必须等auth请求执行完毕.再执行其它.
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		return node;
 
 	}
 
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
-		// 是一个服务和另一个服务公用一个channel.
-		// 由业务自己实现线程的安全. 一般CommMessageHandler  roomHandler等 重新addMessage 一遍.
-		this.runMessage(msg);
+		if (isAuth()) {
+			// 是一个服务和另一个服务公用一个channel.
+			// 由业务自己实现线程的安全. 一般CommMessageHandler  roomHandler等 重新addMessage 一遍.
+			this.runMessage(msg);
+		}else {
+			// 没有鉴权. 需要按照队列. 先执行鉴权操作.
+			super.addMessage(msg);
+		}
 	}
 
 	/**
