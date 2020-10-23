@@ -17,6 +17,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -93,7 +94,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		}
 
 		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
-			? ServerInfo.valueOf(ServerConfig.getCommunicationPort())
+			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getCommunicationPort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
 		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
@@ -125,6 +126,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType().getType(), String.valueOf(currServerInfo.getServerId()));
 			return 0;
 		});
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.SERVER;
 	}
 
 	@EventListener

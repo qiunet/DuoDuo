@@ -26,21 +26,26 @@ public class ServerInfo {
 	 */
 	private String host;
 	/**
-	 * 端口
+	 * 服务间交互端口
 	 */
 	private int communicationPort;
+	/**
+	 * 对外服务端口
+	 */
+	private int serverPort;
 
-	public static ServerInfo valueOf(int communicationPort) {
-		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), communicationPort);
+	public static ServerInfo valueOf(int serverPort, int communicationPort) {
+		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), serverPort, communicationPort);
 	}
 
-	public static ServerInfo valueOf(int serverId, ServerType type, int communicationPort) {
-		return valueOf(serverId, type, NetUtil.getInnerIp(), communicationPort);
+	public static ServerInfo valueOf(int serverId, ServerType type, int serverPort, int communicationPort) {
+		return valueOf(serverId, type, NetUtil.getInnerIp(), serverPort, communicationPort);
 	}
 
-	public static ServerInfo valueOf(int serverId, ServerType type, String host, int communicationPort) {
+	public static ServerInfo valueOf(int serverId, ServerType type, String host, int serverPort, int communicationPort) {
 		ServerInfo node = new ServerInfo();
 		node.communicationPort = communicationPort;
+		node.serverPort = serverPort;
 		node.serverId = serverId;
 		node.type = type;
 		node.host = host;
@@ -71,12 +76,20 @@ public class ServerInfo {
 		this.host = host;
 	}
 
-	public int getPort() {
+	public int getCommunicationPort() {
 		return communicationPort;
 	}
 
-	public void setPort(int communicationPort) {
+	public void setCommunicationPort(int communicationPort) {
 		this.communicationPort = communicationPort;
+	}
+
+	public int getServerPort() {
+		return serverPort;
+	}
+
+	public void setServerPort(int serverPort) {
+		this.serverPort = serverPort;
 	}
 
 	@Override
@@ -85,6 +98,7 @@ public class ServerInfo {
 		if (o == null || getClass() != o.getClass()) return false;
 		ServerInfo that = (ServerInfo) o;
 		return serverId == that.serverId &&
+			serverPort == that.serverPort &&
 			communicationPort == that.communicationPort &&
 			type == that.type &&
 			host.equals(that.host);
@@ -92,7 +106,7 @@ public class ServerInfo {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(serverId, type, host, communicationPort);
+		return Objects.hash(serverId, type, host, serverPort, communicationPort);
 	}
 
 	@Override
@@ -101,7 +115,8 @@ public class ServerInfo {
 			"serverId=" + serverId +
 			", type=" + type +
 			", host='" + host + '\'' +
-			", port=" + communicationPort +
+			", serverPort=" + serverPort +
+			", communicationPort=" + communicationPort +
 			'}';
 	}
 }

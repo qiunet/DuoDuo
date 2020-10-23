@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.listener.event.EventManager;
@@ -25,6 +26,10 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	public boolean isCrossStatus() {
 		// 进入跨服了. 必然是跨服状态. 在另一个服有PlayerActor
 		return true;
+	}
+	public void auth(long playerId) {
+		this.playerId = playerId;
+		EventManager.fireEventHandler(new AuthEventData<>(this));
 	}
 
 	public  <T extends BaseCrossPlayerEventData> void fireEvent(T eventData) {
