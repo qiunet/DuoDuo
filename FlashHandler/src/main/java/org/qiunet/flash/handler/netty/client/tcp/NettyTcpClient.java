@@ -15,6 +15,8 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -34,9 +36,8 @@ public class NettyTcpClient implements ILongConnClient {
 	 *
 	 * @param params
 	 * @param trigger
-	 * @param connectedThing 连接后需要做的事情.
 	 */
-	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger, GenericFutureListener<ChannelFuture> connectedThing) {
+	private NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger, DPromise<NettyTcpClient> promise) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
@@ -47,21 +48,33 @@ public class NettyTcpClient implements ILongConnClient {
 		GenericFutureListener<ChannelFuture> listener = f -> {
 			this.channel = f.channel();
 			this.session = new DSession(channel);
+			promise.trySuccess(this);
 		};
 		try {
 			ChannelFuture channelFuture = bootstrap.connect(params.getAddress());
 			channelFuture.addListener(listener);
-			if (connectedThing != null) {
-				channelFuture.addListener(connectedThing);
-			}
 		} catch (Exception e) {
+			promise.tryFailure(e);
 			throw new CustomException(e, "Connect to server error!");
 		}
 	}
 
-	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
-		this(params, trigger, null);
+	/**
+	 * 阻塞 直到连接成功后返回.
+	 * @param params
+	 * @param trigger
+	 * @return
+	 */
+	public static NettyTcpClient create(TcpClientParams params, ILongConnResponseTrigger trigger) {
+		DPromise<NettyTcpClient> promise = new DCompletePromise<>();
+		new NettyTcpClient(params, trigger, promise);
+		try {
+			return promise.get();
+		} catch (Exception e) {
+			throw new CustomException(e, "TCP CONNECT ERROR!");
+		}
 	}
+
 	@Override
 	public void sendMessage(MessageContent content){
 		channel.writeAndFlush(content);

@@ -23,7 +23,7 @@ public class Client {
 	@BeforeClass
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.TESTER).scanner();
-		websocketClient = new NettyWebsocketClient(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
+		websocketClient = NettyWebsocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
 			System.out.println("--------------------");
 		});
 	}

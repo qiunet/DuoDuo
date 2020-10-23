@@ -35,19 +35,19 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 		session.addCloseListener(cause -> crossing.set(false));
 	}
 
-	public void cross(int serverId) {
+	public boolean cross(int serverId) {
 		if (isCrossStatus()) {
-			return;
+			return false;
 		}
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
-		new NettyTcpClient(TcpClientParams.custom()
+		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
 			.setAddress("localhost", serverInfo.getServerPort())
-			.build(), new TcpNodeClientTrigger(), future -> {
-			this.crossSession = new DSession(future.channel());
-			this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId()));
-			this.crossSession.addCloseListener(cause -> this.crossing.set(false));
-			this.crossing.compareAndSet(false, true);
-		});
+			.build(), new TcpNodeClientTrigger());
+
+		this.crossSession = tcpClient.getSession();
+		this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId()));
+		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
+		return this.crossing.compareAndSet(false, true);
 	}
 
 	public <D extends BaseCrossPlayerEventData> void fireCrossEvent(D eventData) {

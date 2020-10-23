@@ -56,7 +56,7 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	public void connect(){
 		currThread = Thread.currentThread();
 		try {
-			tcpClient = new NettyTcpClient(TcpClientParams.custom()
+			tcpClient = NettyTcpClient.create(TcpClientParams.custom()
 				.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
 				.build(), this);
 		} catch (UnknownHostException e) {

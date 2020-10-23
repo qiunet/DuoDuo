@@ -23,6 +23,9 @@ import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -37,7 +40,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private ILongConnResponseTrigger trigger;
 	private DSession session;
 
-	public NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger) {
+	private NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
 		this.trigger = trigger;
 
 		Bootstrap bootstrap = new Bootstrap();
@@ -47,12 +50,27 @@ public class NettyWebsocketClient implements ILongConnClient {
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer(params));
 		try {
-			ChannelFuture future = bootstrap.connect(params.getAddress()).sync();
-			((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture().sync();
+			ChannelFuture future = bootstrap.connect(params.getAddress());
+			future.addListener(f -> {
+				ChannelFuture nettyClientHandler = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
+				nettyClientHandler.addListener(future1 -> promise.trySuccess(this));
+			});
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			promise.tryFailure(e);
+			throw new CustomException(e, "WS connect error!");
 		}
 	}
+
+	public static NettyWebsocketClient create(WebSocketClientParams params, ILongConnResponseTrigger trigger){
+		DPromise<NettyWebsocketClient> promise = new DCompletePromise<>();
+		new NettyWebsocketClient(params, trigger, promise);
+		try {
+			return promise.get();
+		} catch (Exception e) {
+			throw new CustomException(e, "WS CONNECT ERROR!!!");
+		}
+	}
+
 	@Override
 	public void sendMessage(MessageContent content){
 		channelHandlerContext.channel().writeAndFlush(content);

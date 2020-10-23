@@ -25,7 +25,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	@Test
 	public void testProtobufWebSocket() throws InterruptedException {
 		text = "test [testProtobufWebSocket]";
-		NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
+		NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
 			.setAddress("localhost", 8080)
 			.setUriIPath("/ws")
 			.build(), new ResponseTrigger());

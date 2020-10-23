@@ -27,7 +27,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 
 	static ServerNode valueOf(ServerInfo serverInfo) {
-		NettyTcpClient tcpClient = new NettyTcpClient(TcpClientParams.custom()
+		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
 			.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
 			.build(), new TcpNodeClientTrigger());
 

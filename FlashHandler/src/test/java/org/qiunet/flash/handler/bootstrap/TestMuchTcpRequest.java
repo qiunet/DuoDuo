@@ -31,7 +31,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 			new Thread(() -> {
 				NettyTcpClient tcpClient = null;
 				try {
-					tcpClient = new NettyTcpClient(
+					tcpClient = NettyTcpClient.create(
 						TcpClientParams.custom()
 							.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
 							.build()

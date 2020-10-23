@@ -25,7 +25,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {
-				NettyWebsocketClient client = new NettyWebsocketClient(WebSocketClientParams.custom()
+				NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
 					.setAddress("localhost", 8080)
 					.setUriIPath("/ws")
 					.build(), new Trigger());

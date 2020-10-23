@@ -49,10 +49,10 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 		ILongConnClient connClient = null;
 		switch (server.getType()) {
 			case WEB_SOCKET:
-				connClient = new NettyWebsocketClient(((WebSocketClientParams) server.getClientConfig()), trigger);
+				connClient = NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
 				break;
 			case TCP:
-				connClient = new NettyTcpClient((TcpClientParams) server.getClientConfig(), trigger);
+				connClient = NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger);
 				break;
 			default:
 				throw new CustomException("Type [{}] is not support", server.getType());
