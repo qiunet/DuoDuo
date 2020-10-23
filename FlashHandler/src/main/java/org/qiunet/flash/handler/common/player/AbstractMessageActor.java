@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -31,8 +32,8 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor>
 	}
 
 	@Override
-	public void send(IChannelMessage message) {
-		session.writeMessage(message);
+	public ChannelFuture send(IChannelMessage message) {
+		return session.writeMessage(message);
 	}
 
 	@Override

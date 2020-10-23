@@ -13,7 +13,6 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.listener.event.EventManager;
-import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -47,12 +46,8 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 			.build(), new TcpNodeClientTrigger());
 
 		this.crossSession = tcpClient.getSession();
-		try {
-			this.crossSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
-			this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId())).sync();
-		} catch (InterruptedException e) {
-			throw new CustomException(e, "PlayerId {} Auth error!", playerId);
-		}
+		this.crossSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+		this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId()));
 		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
 		return this.crossing.compareAndSet(false, true);
 	}

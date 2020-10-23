@@ -33,13 +33,13 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 
 		IProtocolHeader header = adapter.newHeader(in);
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ header);
+			logger.error("Invalid message, magic is error! {}", header);
 			ctx.channel().close();
 			return;
 		}
 
 		if (header.getLength() < 0 || header.getLength() > maxReceivedLength) {
-			logger.error("Invalid message, length is error! length is : "+ header.getLength());
+			logger.error("Invalid message, length is error! length is : {}",  header.getLength());
 			ctx.channel().close();
 			return;
 		}
@@ -56,7 +56,6 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		MessageContent context = new MessageContent(header.getProtocolId(), bytes);
-		out.add(context);
+		out.add(new MessageContent(header.getProtocolId(), bytes));
 	}
 }

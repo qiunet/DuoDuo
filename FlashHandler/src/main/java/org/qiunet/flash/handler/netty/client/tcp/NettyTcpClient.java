@@ -46,17 +46,17 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyClientInitializer(params));
 		GenericFutureListener<ChannelFuture> listener = f -> {
-			this.channel = f.channel();
-			this.session = new DSession(channel);
-			promise.trySuccess(this);
+			if (f.isSuccess()) {
+				this.channel = f.channel();
+				this.session = new DSession(channel);
+				promise.trySuccess(this);
+			}else {
+				promise.tryFailure(new CustomException("Tcp Connect fail!"));
+			}
 		};
-		try {
-			ChannelFuture channelFuture = bootstrap.connect(params.getAddress());
-			channelFuture.addListener(listener);
-		} catch (Exception e) {
-			promise.tryFailure(e);
-			throw new CustomException(e, "Connect to server error!");
-		}
+
+		ChannelFuture channelFuture = bootstrap.connect(params.getAddress());
+		channelFuture.addListener(listener);
 	}
 
 	/**

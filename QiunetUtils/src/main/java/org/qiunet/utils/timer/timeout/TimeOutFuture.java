@@ -1,7 +1,6 @@
 package org.qiunet.utils.timer.timeout;
 
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -72,11 +71,7 @@ public class TimeOutFuture {
 			return;
 		}
 
-		try {
-			caller.run(this);
-		}catch (Exception e) {
-			LoggerType.DUODUO.error("TimeOut caller error", e);
-		}
+		caller.run(this);
 	}
 
 

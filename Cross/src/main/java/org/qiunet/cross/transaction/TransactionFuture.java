@@ -7,7 +7,6 @@ import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.TimeOutManager;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 /***
@@ -29,7 +28,9 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 		this.id = id;
 
 		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
-			future.tryFailure(new TimeoutException());
+			CustomException transaction_timeout = new CustomException("Transaction Timeout");
+			future.tryFailure(transaction_timeout);
+			throw transaction_timeout;
 		}, timeout, unit);
 
 		this.future.whenComplete((res, ex) -> {

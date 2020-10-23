@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.sender;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 /***
@@ -12,5 +13,5 @@ public interface IChannelMessageSender {
 	 * 发送消息.
 	 * @param message
 	 */
-	void send(IChannelMessage message);
+	ChannelFuture send(IChannelMessage message);
 }
