@@ -49,16 +49,11 @@ public class NettyWebsocketClient implements ILongConnClient {
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer(params));
-		try {
-			ChannelFuture future = bootstrap.connect(params.getAddress());
-			future.addListener(f -> {
-				ChannelFuture nettyClientHandler = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
-				nettyClientHandler.addListener(future1 -> promise.trySuccess(this));
-			});
-		} catch (Exception e) {
-			promise.tryFailure(e);
-			throw new CustomException(e, "WS connect error!");
-		}
+		ChannelFuture future = bootstrap.connect(params.getAddress());
+		future.addListener(f1 -> {
+			ChannelFuture nettyClientHandler = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
+			nettyClientHandler.addListener(f2 -> promise.trySuccess(this));
+		});
 	}
 
 	public static NettyWebsocketClient create(WebSocketClientParams params, ILongConnResponseTrigger trigger){
