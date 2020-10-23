@@ -5,6 +5,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
@@ -28,7 +29,14 @@ public class NettyTcpClient implements ILongConnClient {
 	private ILongConnResponseTrigger trigger;
 	private Channel channel;
 	private DSession session;
-	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
+
+	/**
+	 *
+	 * @param params
+	 * @param trigger
+	 * @param connectedThing 连接后需要做的事情.
+	 */
+	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger, GenericFutureListener<ChannelFuture> connectedThing) {
 		this.trigger = trigger;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
@@ -36,16 +44,23 @@ public class NettyTcpClient implements ILongConnClient {
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		bootstrap.handler(new NettyClientInitializer(params));
+		GenericFutureListener<ChannelFuture> listener = f -> {
+			this.channel = f.channel();
+			this.session = new DSession(channel);
+		};
 		try {
 			ChannelFuture channelFuture = bootstrap.connect(params.getAddress());
-			channelFuture.addListener(f -> {
-				this.channel = channelFuture.channel();
-				this.session = new DSession(channel);
-			});
+			channelFuture.addListener(listener);
+			if (connectedThing != null) {
+				channelFuture.addListener(connectedThing);
+			}
 		} catch (Exception e) {
 			throw new CustomException(e, "Connect to server error!");
 		}
+	}
 
+	public NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
+		this(params, trigger, null);
 	}
 	@Override
 	public void sendMessage(MessageContent content){
