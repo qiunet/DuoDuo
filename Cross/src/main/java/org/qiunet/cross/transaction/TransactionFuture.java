@@ -1,10 +1,11 @@
 package org.qiunet.cross.transaction;
 
+import com.google.common.base.Preconditions;
 import org.qiunet.utils.async.future.DPromise;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.TimeOutManager;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
@@ -23,10 +24,13 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 	private DPromise<T> future;
 
 	TransactionFuture(long id, DPromise<T> future, int timeout, TimeUnit unit) {
+		Preconditions.checkNotNull(future);
 		this.future = future;
 		this.id = id;
 
-		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> future.tryFailure(new TimeoutException()), timeout, unit);
+		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
+			future.tryFailure(new TimeoutException());
+		}, timeout, unit);
 
 		this.future.whenComplete((res, ex) -> {
 			timeOutFuture.cancel();
@@ -42,12 +46,20 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 		return id;
 	}
 
-	public T get() throws ExecutionException, InterruptedException {
-		return future.get();
+	public T get() {
+		try {
+			return future.get();
+		} catch (Exception e) {
+			throw new CustomException(e, "TransactionFuture.get Exception");
+		}
 	}
 
-	public T get(long milliseconds) throws InterruptedException, ExecutionException, TimeoutException {
-		return future.get(milliseconds, TimeUnit.MILLISECONDS);
+	public T get(long milliseconds){
+		try {
+			return future.get(milliseconds, TimeUnit.MILLISECONDS);
+		} catch (Exception e) {
+			throw new CustomException(e, "TransactionFuture.get Exception");
+		}
 	}
 
 	public boolean isDone(){

@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Session 的 父类
@@ -103,7 +104,12 @@ public final class DSession {
 		channel.attr(key).set(obj);
 	}
 
+	private AtomicBoolean closed = new AtomicBoolean();
 	public void close(CloseCause cause) {
+		if (! closed.compareAndSet(false, true)) {
+			// 避免多次调用close. 多次调用监听.
+			return;
+		}
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(cause));
 		if (channel.isActive() || channel.isOpen()) {

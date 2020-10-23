@@ -1,5 +1,10 @@
 package org.qiunet.cross.test.event;
 
+import org.qiunet.cross.test.common.Constants;
+import org.qiunet.cross.test.transaction.TestTransactionRequest;
+import org.qiunet.cross.test.transaction.TestTransactionResponse;
+import org.qiunet.cross.transaction.TransactionFuture;
+import org.qiunet.cross.transaction.TransactionManager;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -20,5 +25,10 @@ public enum EventAcceptService {
 	@EventListener
 	public void crossLogin(CrossPlayerLoginEventData eventData) {
 		LoggerType.DUODUO_CROSS.info("PlayerId: {},跨服登录事件", eventData.getPlayer().getId());
+
+		TransactionFuture<TestTransactionResponse> transactionFuture = TransactionManager.instance.beginTransaction(Constants.LOGIC_SERVER_ID, TestTransactionRequest.valueOf(eventData.getPlayer().getPlayerId()));
+		TestTransactionResponse response = transactionFuture.get();
+
+		LoggerType.DUODUO_CROSS.info("PlayerId: {},跨服事务", response.getPlayerId());
 	}
 }

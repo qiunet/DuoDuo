@@ -27,6 +27,8 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 		// 进入跨服了. 必然是跨服状态. 在另一个服有PlayerActor
 		return true;
 	}
+
+	@Override
 	public void auth(long playerId) {
 		this.playerId = playerId;
 		EventManager.fireEventHandler(new AuthEventData<>(this));

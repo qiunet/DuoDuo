@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.string.StringUtil;
 
 /***
@@ -32,6 +33,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 			.build(), new TcpNodeClientTrigger());
 
 		ServerNode node = new ServerNode(tcpClient.getSession());
+		node.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, node);
 		node.serverId = serverInfo.getServerId();
 
 		node.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
@@ -51,8 +53,9 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 *
 	 * @param serverId
 	 */
-	public void auth(int serverId) {
-		this.serverId = serverId;
+	@Override
+	public void auth(long serverId) {
+		this.serverId = (int)serverId;
 		ServerNodeManager0.instance.addNode(this);
 	}
 

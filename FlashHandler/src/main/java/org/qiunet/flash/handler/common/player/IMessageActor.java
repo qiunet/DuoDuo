@@ -30,4 +30,9 @@ public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<
 	default boolean isAuth() {
 		return getId() > 0;
 	}
+	/**
+	 * 鉴权后赋值
+	 * @param id
+	 */
+	void auth(long id);
 }
