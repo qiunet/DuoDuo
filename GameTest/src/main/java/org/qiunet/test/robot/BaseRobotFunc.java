@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.test.response.ILongConnResponse;
 import org.qiunet.test.response.annotation.support.ResponseMapping;
 import org.qiunet.test.robot.init.IRobotInitInfo;
@@ -66,6 +67,12 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 		@Override
 		public void response(DSession session, MessageContent data) {
 			ILongConnResponse response = ResponseMapping.getInstance().getResponse(data.getProtocolId());
+			if (response == null) {
+				session.close(CloseCause.LOGOUT);
+				robot.brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");
+				LockSupport.unpark(currThread);
+				return;
+			}
 			response.response(robot, data);
 
 			if (data.getProtocolId() == BaseRobotFunc.this.parkResponseId) {

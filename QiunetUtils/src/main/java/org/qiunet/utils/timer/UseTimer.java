@@ -50,9 +50,7 @@ public class UseTimer {
 	public long printUseTime(){
 		long useTime = countUseTime();
 		if (useTime > warnUseTime) {
-			logger.warn("{} use {} ms", name, useTime);
-		}else {
-			logger.info("{} use {} ms", name, useTime);
+			logger.error("{} use {} ms", name, useTime);
 		}
 		return useTime;
 	}

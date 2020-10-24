@@ -35,7 +35,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	private volatile boolean close;
 
-	private UseTimer useTimer = new UseTimer(getClass().getName(), 500);
+	private UseTimer useTimer = new UseTimer(getIdent(), 500);
 
 	@Override
 	public void run() {
