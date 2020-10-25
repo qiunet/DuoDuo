@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -33,7 +34,11 @@ enum TransactionManager0 implements IApplicationContextAware {
 		for (Class<? extends ITransactionHandler> clazz : classes) {
 			Method method = clazz.getMethod("handler", DTransaction.class);
 			ParameterizedType type = (ParameterizedType) method.getGenericParameterTypes()[0];
-			handles.put((Class)type.getActualTypeArguments()[0], (ITransactionHandler)context.getInstanceOfClass(clazz));
+			Class requestClass = (Class) type.getActualTypeArguments()[0];
+			if (handles.containsKey(requestClass)) {
+				throw new CustomException("Request Class [{}] in transaction handles is repeated!", requestClass.getName());
+			}
+			handles.put(requestClass, (ITransactionHandler)context.getInstanceOfClass(clazz));
 		}
 	}
 
