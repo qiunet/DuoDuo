@@ -4,11 +4,10 @@ import com.google.common.base.Preconditions;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import org.qiunet.flash.handler.common.annotation.TransmitHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.player.IMessageToCross;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
@@ -17,6 +16,8 @@ import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -46,7 +47,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
-		System.out.println("----------========--------------------"+((MessageContent) msg).getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			return;
@@ -55,10 +55,10 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler.getClass().isAnnotationPresent(TransmitHandler.class)
-			&& messageActor instanceof IMessageToCross
-			&& ((IMessageToCross) messageActor).isCrossStatus()) {
-			((IMessageToCross) messageActor).writeToCross(content);
+		if (handler instanceof ITransmitHandler
+			&& messageActor instanceof ICrossStatusActor
+			&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
+			((ICrossStatusActor) messageActor).crossSession().writeMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 		if (ctx.channel().isActive()) {

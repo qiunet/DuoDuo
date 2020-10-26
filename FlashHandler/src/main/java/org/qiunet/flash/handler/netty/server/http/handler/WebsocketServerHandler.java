@@ -6,11 +6,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import org.qiunet.flash.handler.common.annotation.TransmitHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.player.IMessageToCross;
 import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
@@ -19,6 +18,8 @@ import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -65,10 +66,10 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler.getClass().isAnnotationPresent(TransmitHandler.class)
-		&& messageActor instanceof IMessageToCross
-		&& ((IMessageToCross) messageActor).isCrossStatus()) {
-			((IMessageToCross) messageActor).writeToCross(content);
+		if (handler instanceof ITransmitHandler
+		&& messageActor instanceof ICrossStatusActor
+		&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
+			((ICrossStatusActor) messageActor).crossSession().writeMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 

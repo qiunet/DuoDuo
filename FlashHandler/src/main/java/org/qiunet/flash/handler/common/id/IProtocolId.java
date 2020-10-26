@@ -25,6 +25,8 @@ public interface IProtocolId {
 	interface System {
 		/**跨服服务 直接发给玩家的数据. netty直接转发即可 **/
 		int CROSS_2_PLAYER_MSG = 1;
+		/**玩家发送的请求 .转发到Cross*/
+		int PLAYER_2_CROSS_TEANSMIT_REQ = 2;
 
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;

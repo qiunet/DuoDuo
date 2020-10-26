@@ -1,13 +1,11 @@
 package org.qiunet.cross.test.common.actor;
 
-import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -70,11 +68,8 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	public ChannelFuture writeToCross(MessageContent content) {
-		if (! isCrossStatus()) {
-			return null;
-		}
-		return crossSession.channel().writeAndFlush(content);
+	public DSession crossSession() {
+		return crossSession;
 	}
 
 	@Override
