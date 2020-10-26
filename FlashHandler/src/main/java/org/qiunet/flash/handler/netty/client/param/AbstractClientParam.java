@@ -15,11 +15,12 @@ public abstract class AbstractClientParam implements IClientConfig {
 	 */
 	protected InetSocketAddress address;
 
-	protected boolean encryption;
+	protected boolean encryption = true;
 
-	protected int maxReceivedLength;
+	protected int maxReceivedLength = 1024 * 1024 * 8;
 
-	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+	protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
+
 	@Override
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
@@ -43,37 +44,31 @@ public abstract class AbstractClientParam implements IClientConfig {
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	public abstract static class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
-		protected IProtocolHeaderAdapter startupContextAdapter = new DefaultProtocolHeaderAdapter();
-		protected int maxReceivedLength = 1024 * 1024 * 8;
-		protected InetSocketAddress address;
-		protected boolean encryption = true;
-
+	public abstract class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
 		public B setAddress(InetSocketAddress address) {
-			this.address = address;
+			AbstractClientParam.this.address = address;
 			return (B) this;
 		}
 		public B setAddress(String host, int port) {
 			return setAddress(new InetSocketAddress(host, port));
 		}
-
 		/**
-		 * 设置启动需要的一些东西上下文
-		 * @param startupContextAdapter
+		 * 设置
+		 * @param protocolHeaderAdapter
 		 * @return
 		 */
-		public B setStartupContextAdapter(IProtocolHeaderAdapter startupContextAdapter) {
-			this.startupContextAdapter = startupContextAdapter;
+		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
+			AbstractClientParam.this.protocolHeaderAdapter = protocolHeaderAdapter;
 			return (B) this;
 		}
 
 		public B setMaxReceivedLength(int maxReceivedLength) {
-			this.maxReceivedLength = maxReceivedLength;
+			AbstractClientParam.this.maxReceivedLength = maxReceivedLength;
 			return (B) this;
 		}
 
 		public B setEncryption(boolean encryption) {
-			this.encryption = encryption;
+			AbstractClientParam.this.encryption = encryption;
 			return (B) this;
 		}
 
@@ -85,11 +80,10 @@ public abstract class AbstractClientParam implements IClientConfig {
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 
 			P p = newParams();
-			p.protocolHeaderAdapter = startupContextAdapter;
+			p.protocolHeaderAdapter = protocolHeaderAdapter;
 			p.maxReceivedLength = maxReceivedLength;
 			p.address = address;
 			p.encryption = encryption;
-			this.buildInner(p);
 			return p;
 		}
 
@@ -98,10 +92,5 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @return
 		 */
 		protected abstract P newParams();
-		/**
-		 * 隐藏的构造
-		 * @return
-		 */
-		protected abstract void buildInner(P p);
 	}
 }

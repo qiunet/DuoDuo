@@ -26,9 +26,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	public void testProtobufWebSocket() throws InterruptedException {
 		text = "test [testProtobufWebSocket]";
 		NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
-			.setAddress("localhost", 8080)
-			.setUriIPath("/ws")
-			.build(), new ResponseTrigger());
+			.setAddress("localhost", 8080).build(), new ResponseTrigger());
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf(text, text, 11);
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);

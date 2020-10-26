@@ -29,7 +29,7 @@ import java.util.concurrent.locks.LockSupport;
 public class TestHttpBootStrap extends HttpBootStrap {
 	private HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", 8080)
-		.setStartupContextAdapter(ADAPTER)
+		.setProtocolHeaderAdapter(ADAPTER)
 		.build();
 
 	@Test

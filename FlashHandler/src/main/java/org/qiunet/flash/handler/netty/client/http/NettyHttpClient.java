@@ -94,8 +94,8 @@ public final class NettyHttpClient {
 		HttpClientHandler clientHandler = new HttpClientHandler(promise);
 		GenericFutureListener<ChannelFuture> listener = f -> {
 			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriIPath())
-				&& this.clientParams.getUriIPath().equals(uri.getRawPath())) {
+			if (! StringUtil.isEmpty(this.clientParams.getUriPath())
+				&& this.clientParams.getUriPath().equals(uri.getRawPath())) {
 				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
 			}else {
 				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());

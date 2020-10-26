@@ -21,7 +21,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 	private CountDownLatch latch = new CountDownLatch(requestCount);
 	private HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", 8080)
-		.setStartupContextAdapter(ADAPTER)
+		.setProtocolHeaderAdapter(ADAPTER)
 		.build();
 	@Test
 	public void muchRequest() throws InterruptedException {

@@ -22,21 +22,18 @@ public final class TcpClientParams extends AbstractClientParam {
 	 * @return
 	 */
 	public static Builder custom(){
-		return new Builder();
+		TcpClientParams params = new TcpClientParams();
+		return params.new Builder();
 	}
 
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 */
-	public static class Builder extends SuperBuilder<TcpClientParams, Builder> {
+	public class Builder extends SuperBuilder<TcpClientParams, Builder> {
 
 		@Override
 		protected TcpClientParams newParams() {
-			return new TcpClientParams();
-		}
-
-		@Override
-		protected void buildInner(TcpClientParams tcpClientParams) {
+			return TcpClientParams.this;
 		}
 	}
 }

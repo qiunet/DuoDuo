@@ -21,7 +21,7 @@ abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot>
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
-		FullHttpResponse httpResponse = NettyHttpClient.create((HttpClientParams) getServer().getClientConfig()).sendRequest(content , ((HttpClientParams) getServer().getClientConfig()).getUriIPath());
+		FullHttpResponse httpResponse = NettyHttpClient.create((HttpClientParams) getServer().getClientConfig()).sendRequest(content , ((HttpClientParams) getServer().getClientConfig()).getUriPath());
 		if (httpResponse == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;

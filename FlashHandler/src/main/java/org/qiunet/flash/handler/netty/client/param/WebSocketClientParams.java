@@ -16,7 +16,7 @@ public final class WebSocketClientParams extends AbstractClientParam {
 	 * 游戏的uriPath
 	 * ws://localhost:8080/ws 后面的/ws
 	 */
-	private String uriIPath;
+	private String uriPath = "/ws";
 
 	/**
 	 * 是否使用ssl
@@ -34,8 +34,8 @@ public final class WebSocketClientParams extends AbstractClientParam {
 		return ssl;
 	}
 
-	public String getUriIPath() {
-		return uriIPath;
+	public String getUriPath() {
+		return uriPath;
 	}
 
 	public URI getURI(){
@@ -46,7 +46,7 @@ public final class WebSocketClientParams extends AbstractClientParam {
 			|| (!ssl && address.getPort() != 80)) {
 			sb.append(":").append(address.getPort());
 		}
-		sb.append(uriIPath);
+		sb.append(uriPath);
 		return URI.create(sb.toString());
 	}
 	/***
@@ -54,30 +54,24 @@ public final class WebSocketClientParams extends AbstractClientParam {
 	 * @return
 	 */
 	public static Builder custom(){
-		return new Builder();
+		WebSocketClientParams params = new WebSocketClientParams();
+		return params.new Builder();
 	}
 
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	public static class Builder extends SuperBuilder<WebSocketClientParams, Builder> {
+	public class Builder extends SuperBuilder<WebSocketClientParams, Builder> {
 		private Builder(){}
-		// 默认 /f
-		private String uriIPath = "/ws";
 
-		public Builder setUriIPath(String uriIPath) {
-			this.uriIPath = uriIPath;
+		public Builder setUriPath(String uriPath) {
+			WebSocketClientParams.this.uriPath = uriPath;
 			return this;
 		}
 
 		@Override
 		protected WebSocketClientParams newParams() {
-			return new WebSocketClientParams();
-		}
-
-		@Override
-		protected void buildInner(WebSocketClientParams params) {
-			params.uriIPath = uriIPath;
+			return WebSocketClientParams.this;
 		}
 	}
 }
