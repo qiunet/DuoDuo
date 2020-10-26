@@ -22,7 +22,7 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 	}
 
 	@Override
-	protected String getIdent() {
+	public String getIdent() {
 		return "PlayerActor["+ getId()+"]";
 	}
 

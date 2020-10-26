@@ -15,7 +15,12 @@ public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<
 	 * @return
 	 */
 	long getId();
-
+	/**
+	 * 一个标识.
+	 * 最好能明确的找到问题的id. 比如玩家id什么的.
+	 * @return
+	 */
+	String getIdent();
 	/**
 	 * 获得session
 	 * @return

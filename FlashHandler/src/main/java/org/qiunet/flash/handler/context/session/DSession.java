@@ -122,7 +122,7 @@ public final class DSession {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (messageActor != null) {
-			sj.add("PlayerId = "+messageActor.getId());
+			sj.add(messageActor.getIdent());
 		}
 		sj.add("ID = " + channel.id().asShortText());
 		sj.add("Ip = " + getIp());

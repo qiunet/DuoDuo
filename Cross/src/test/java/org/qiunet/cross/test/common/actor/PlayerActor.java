@@ -68,7 +68,7 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	protected String getIdent() {
+	public String getIdent() {
 		return "PlayerActor_"+getId();
 	}
 

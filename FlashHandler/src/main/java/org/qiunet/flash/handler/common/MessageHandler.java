@@ -116,7 +116,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 * 最好能明确的找到问题的id. 比如玩家id什么的.
 	 * @return
 	 */
-	protected abstract String getIdent();
+	public abstract String getIdent();
 	/**
 	 * 销毁时候调用
 	 */

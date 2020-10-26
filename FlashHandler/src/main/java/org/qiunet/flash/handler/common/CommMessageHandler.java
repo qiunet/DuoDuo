@@ -8,7 +8,7 @@ package org.qiunet.flash.handler.common;
  */
 public class CommMessageHandler extends MessageHandler<CommMessageHandler> {
 	@Override
-	protected String getIdent() {
+	public String getIdent() {
 		return "CommMessageHandler_"+hashCode();
 	}
 }

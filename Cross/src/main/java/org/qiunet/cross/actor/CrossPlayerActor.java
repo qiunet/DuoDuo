@@ -45,7 +45,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	}
 
 	@Override
-	protected String getIdent() {
+	public String getIdent() {
 		return "CrossPlayerActor_"+playerId;
 	}
 

@@ -81,7 +81,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	@Override
-	protected String getIdent() {
+	public String getIdent() {
 		return StringUtil.format( "ServerNode[{0}]", serverId);
 	}
 
