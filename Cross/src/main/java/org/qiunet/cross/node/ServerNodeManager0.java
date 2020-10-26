@@ -68,7 +68,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	ServerInfo getServerInfo(int serverId) {
 		String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(serverId));
 		if (StringUtil.isEmpty(serverInfoStr)) {
-			throw new CustomException("ServerId {} is not online!", serverId);
+			throw new CustomException("ServerId [{}] is not online!", serverId);
 		}
 
 		return JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);

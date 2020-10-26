@@ -1,9 +1,11 @@
 package org.qiunet.flash.handler.common.player;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.collection.enums.ForEachResult;
 
 import java.util.Map;
 
@@ -31,6 +33,19 @@ public class UserOnlineManager {
 		datas.put(userActor.getId(), userActor);
 	}
 
+	/**
+	 * 遍历在线玩家.
+	 * @param consume
+	 * @param <T>
+	 */
+	public <T extends AbstractUserActor<T>> void foreach(Function<T, ForEachResult> consume) {
+		for (AbstractUserActor actor : datas.values()) {
+			ForEachResult result = consume.apply((T) actor);
+			if (result == ForEachResult.BREAK) {
+				break;
+			}
+		}
+	}
 	/**
 	 * 获得 Actor
 	 * @param playerId
