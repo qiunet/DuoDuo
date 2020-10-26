@@ -28,9 +28,7 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 		this.id = id;
 
 		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
-			CustomException transaction_timeout = new CustomException("Transaction Timeout");
-			future.tryFailure(transaction_timeout);
-			throw transaction_timeout;
+			future.tryFailure(new CustomException("Transaction Timeout"));
 		}, timeout, unit);
 
 		this.future.whenComplete((res, ex) -> {
