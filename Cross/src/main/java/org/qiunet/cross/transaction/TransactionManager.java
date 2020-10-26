@@ -2,10 +2,12 @@ package org.qiunet.cross.transaction;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.id.DefaultIdGenerator;
 import org.qiunet.utils.id.IdGenerator;
 import org.qiunet.utils.json.JsonUtil;
@@ -62,9 +64,16 @@ public enum TransactionManager {
 		ServerNode node = ServerNodeManager.getNode(serverId);
 		byte[] bytes = ProtobufDataManager.encode((Class<Req>)req.getClass(), req);
 		RouteTransactionRequest routeTransactionRequest = RouteTransactionRequest.valueOf(reqId, req.getClass().getName(), bytes);
-		node.writeMessage(routeTransactionRequest);
-
-		return new TransactionFuture<>(reqId, promise, timeout, unit);
+		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
+		ChannelFuture channelFuture = node.writeMessage(routeTransactionRequest);
+		channelFuture.addListener(f -> {
+			if (f.isSuccess()) {
+				respTransactionFuture.beginCalTimeOut(timeout, unit);
+			}else {
+				promise.tryFailure(new CustomException("Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
+			}
+		});
+		return respTransactionFuture;
 	}
 
 	/**

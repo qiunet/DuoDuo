@@ -22,22 +22,21 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 
 	private DPromise<T> future;
 
-	TransactionFuture(long id, DPromise<T> future, int timeout, TimeUnit unit) {
+	TransactionFuture(long id, DPromise<T> future) {
 		Preconditions.checkNotNull(future);
 		this.future = future;
 		this.id = id;
+		this.future.whenComplete((res, ex) -> this.clear());
+	}
 
+	void beginCalTimeOut(int timeout, TimeUnit unit) {
 		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
 			future.tryFailure(new CustomException("Transaction Timeout"));
 		}, timeout, unit);
-
-		this.future.whenComplete((res, ex) -> {
-			timeOutFuture.cancel();
-			this.clear();
-		});
+		this.future.whenComplete((res, ex) -> timeOutFuture.cancel());
 	}
 
-	private void clear() {
+	void clear() {
 		TransactionManager.instance.removeTransaction(id);
 	}
 

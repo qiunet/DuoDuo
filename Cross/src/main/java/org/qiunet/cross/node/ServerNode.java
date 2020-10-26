@@ -1,5 +1,6 @@
 package org.qiunet.cross.node;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -76,8 +77,8 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * 向服务器发起一个请求
 	 * @param message
 	 */
-	public void writeMessage(IpbChannelData message) {
-		this.send(message.buildResponseMessage());
+	public ChannelFuture writeMessage(IpbChannelData message) {
+		return this.send(message.buildResponseMessage());
 	}
 
 	@Override
