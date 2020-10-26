@@ -16,7 +16,7 @@ public abstract class AbstractBootstrapParam {
 	/**
 	 * 可以自定义协议头
 	 */
-	protected IProtocolHeaderAdapter protocolHeaderAdapter;
+	protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
 	/***
 	 * 接收端口
 	 */
@@ -24,16 +24,16 @@ public abstract class AbstractBootstrapParam {
 	/***
 	 * 读超时处理.默认300秒 (单位秒)
 	 */
-	protected int readIdleCheckSeconds;
+	protected int readIdleCheckSeconds = 300;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
 	 */
-	protected boolean encryption;
+	protected boolean encryption = true;
 	/**
 	 * 最大接受的数据长度
 	 */
-	protected int maxReceivedLength;
+	protected int maxReceivedLength = 1024 * 1024;
 
 	protected IStartupContext<? extends IMessageActor> startupContext;
 
@@ -64,51 +64,38 @@ public abstract class AbstractBootstrapParam {
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	public abstract static class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder> {
-		protected SocketAddress address;
-		// 最大上行1M的长度(HTTP 同样有满足)
-		protected int maxReceivedLength = 1024 * 1024;
-
-		protected boolean encryption = true;
-
-		protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
-		/***
-		 * 读超时处理.默认300秒 (单位秒)
-		 */
-		private int readIdleCheckSeconds = 300;
-
-		protected IStartupContext<? extends IMessageActor> startupContext;
+	public abstract class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder> {
 		/***
 		 * 启动需要的上下文对象
 		 * @param protocolHeaderAdapter
 		 * @return
 		 */
 		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
-			this.protocolHeaderAdapter = protocolHeaderAdapter;
+			AbstractBootstrapParam.this.protocolHeaderAdapter = protocolHeaderAdapter;
 			return (B) this;
 		}
 
 		public B setStartupContext(IStartupContext<? extends IMessageActor> startupContext) {
-			this.startupContext = startupContext;
+			AbstractBootstrapParam.this.startupContext = startupContext;
 			return (B) this;
 		}
 
 		public B setMaxReceivedLength(int maxReceivedLength) {
-			this.maxReceivedLength = maxReceivedLength;
+			AbstractBootstrapParam.this.maxReceivedLength = maxReceivedLength;
 			return (B) this;
 		}
 
 		public B setEncryption(boolean encryption) {
-			this.encryption = encryption;
+			AbstractBootstrapParam.this.encryption = encryption;
 			return (B) this;
 		}
 		public B setPort(int port) {
-			this.address = new InetSocketAddress(port);
+			AbstractBootstrapParam.this.address = new InetSocketAddress(port);
 			return (B)this;
 		}
 
 		public B setReadIdleCheckSeconds(int readIdleCheckSeconds) {
-			this.readIdleCheckSeconds = readIdleCheckSeconds;
+			AbstractBootstrapParam.this.readIdleCheckSeconds = readIdleCheckSeconds;
 			return (B)this;
 		}
 
@@ -118,15 +105,7 @@ public abstract class AbstractBootstrapParam {
 		 */
 		public P build(){
 			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
-			P p = newParams();
-			p.maxReceivedLength = maxReceivedLength;
-			p.readIdleCheckSeconds = readIdleCheckSeconds;
-			p.protocolHeaderAdapter = protocolHeaderAdapter;
-			p.startupContext = startupContext;
-			p.encryption = encryption;
-			p.address = address;
-			this.buildInner(p);
-			return p;
+			return newParams();
 		}
 
 		/**
@@ -134,10 +113,5 @@ public abstract class AbstractBootstrapParam {
 		 * @return
 		 */
 		protected abstract P newParams();
-		/**
-		 * 隐藏的构造
-		 * @return
-		 */
-		protected abstract void buildInner(P p);
 	}
 }
