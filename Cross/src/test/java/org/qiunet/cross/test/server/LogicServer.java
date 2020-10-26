@@ -1,7 +1,7 @@
 package org.qiunet.cross.test.server;
 
+import org.qiunet.cross.common.contants.CrossConstants;
 import org.qiunet.cross.common.contants.ScannerParamKey;
-import org.qiunet.cross.common.start.DefaultCommunicationStartUpContext;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.common.actor.PlayerActor;
@@ -37,7 +37,7 @@ public class LogicServer {
 						return new PlayerActor(session);
 					}
 				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(new DefaultCommunicationStartUpContext()).setPort(9002).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(9002).build())
 				.await();
 	}
 

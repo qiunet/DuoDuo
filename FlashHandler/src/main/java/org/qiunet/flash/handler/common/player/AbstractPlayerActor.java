@@ -10,7 +10,8 @@ import org.qiunet.listener.event.EventManager;
  * @author qiunet
  * 2020-10-21 10:08
  */
-public abstract class AbstractPlayerActor<T extends AbstractPlayerActor> extends AbstractUserActor<T> {
+public abstract class AbstractPlayerActor<T extends AbstractPlayerActor>
+	extends AbstractUserActor<T> implements IMessageToCross {
 
 
 	public AbstractPlayerActor(DSession session) {

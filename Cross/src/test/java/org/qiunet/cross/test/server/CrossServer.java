@@ -1,8 +1,7 @@
 package org.qiunet.cross.test.server;
 
+import org.qiunet.cross.common.contants.CrossConstants;
 import org.qiunet.cross.common.contants.ScannerParamKey;
-import org.qiunet.cross.common.start.DefaultCommunicationStartUpContext;
-import org.qiunet.cross.common.start.DefaultCrossStartUpContext;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.redis.RedisDataUtil;
@@ -28,8 +27,8 @@ public class CrossServer {
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(new DefaultCrossStartUpContext()).setPort(8001).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(new DefaultCommunicationStartUpContext()).setPort(8002).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_START_CONTEXT).setPort(8001).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(8002).build())
 				.await();
 	}
 

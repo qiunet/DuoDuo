@@ -15,4 +15,8 @@ public final class ProtocolId implements IProtocolId {
 
 		int CROSS_PLAYER_LOGIN_SUCCESS = 1000001;
 	}
+
+	public interface Equip {
+		int EQUIP_INDEX = 1100;
+	}
 }

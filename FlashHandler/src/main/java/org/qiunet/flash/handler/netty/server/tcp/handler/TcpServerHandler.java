@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import org.qiunet.flash.handler.common.annotation.TransmitHandler;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.IMessageToCross;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.SessionManager;
@@ -44,6 +46,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
+		System.out.println("----------========--------------------"+((MessageContent) msg).getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			return;
@@ -52,6 +55,12 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (handler.getClass().isAnnotationPresent(TransmitHandler.class)
+			&& messageActor instanceof IMessageToCross
+			&& ((IMessageToCross) messageActor).isCrossStatus()) {
+			((IMessageToCross) messageActor).writeToCross(content);
+			return;
+		}
 		if (ctx.channel().isActive()) {
 			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
