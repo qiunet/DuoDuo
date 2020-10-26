@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.IMessageHandler;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
 
 /***
@@ -8,7 +9,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * @author qiunet
  * 2020/3/1 21:43
  **/
-public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<P> {
+public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<P>, IChannelMessageSender {
 	/***
 	 * 得到 Id playerActor一般是playerId
 	 * crossActor 是 serverId

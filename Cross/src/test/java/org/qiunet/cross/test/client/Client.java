@@ -24,7 +24,7 @@ public class Client {
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.TESTER).scanner();
 		websocketClient = NettyWebsocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
-			System.out.println("--------------------");
+			System.out.println("--------------------------"+data.getProtocolId());
 		});
 	}
 

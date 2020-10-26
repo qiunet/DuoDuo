@@ -12,5 +12,7 @@ public final class ProtocolId implements IProtocolId {
 
 	public interface Player {
 		int PLAYER_LOGIN = 1000;
+
+		int CROSS_PLAYER_LOGIN_SUCCESS = 1000001;
 	}
 }

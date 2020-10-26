@@ -6,7 +6,9 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.TimeOutManager;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 /***
@@ -44,20 +46,12 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 		return id;
 	}
 
-	public T get() {
-		try {
-			return future.get();
-		} catch (Exception e) {
-			throw new CustomException(e, "TransactionFuture.get Exception");
-		}
+	public T get() throws ExecutionException, InterruptedException {
+		return future.get();
 	}
 
-	public T get(long milliseconds){
-		try {
-			return future.get(milliseconds, TimeUnit.MILLISECONDS);
-		} catch (Exception e) {
-			throw new CustomException(e, "TransactionFuture.get Exception");
-		}
+	public T get(long milliseconds) throws InterruptedException, ExecutionException, TimeoutException {
+		return future.get(milliseconds, TimeUnit.MILLISECONDS);
 	}
 
 	public boolean isDone(){
