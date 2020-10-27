@@ -76,7 +76,7 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 			}catch (Exception e) {
 				logger.error("conditionJudgeError: ", e);
 			}
-			logger.info("OpenId ["+info.getOpenId()+"]("+uid+") ["+(conditionJudgePass?"Running":"Miss..........")+"] TestCase ["+testCase.getClass().getSimpleName()+"]");
+			logger.info("OpenId [{}]({}) [{}] TestCase [{}]", info.getOpenId(), uid, (conditionJudgePass?"Running":"Miss.........."), testCase.getClass().getSimpleName());
 			if (conditionJudgePass) {
 				testCase.sendRequest(this);
 			}else if (testCase.cancelIfConditionMiss()){
@@ -84,6 +84,12 @@ public abstract class AbstractRobot< Info extends IRobotInitInfo> extends BaseRo
 				// 如果条件不满足, 就终止的case
 				result = false;
 				break;
+			}
+			try {
+				// 发送协议间隔N毫秒
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		return result;
