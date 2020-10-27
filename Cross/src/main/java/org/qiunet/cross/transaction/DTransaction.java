@@ -2,7 +2,6 @@ package org.qiunet.cross.transaction;
 
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.TimeOutManager;
 
@@ -46,8 +45,7 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		this.timeOutFuture.cancel();
 
 		RESP response = dataHandler.apply(reqData);
-		byte[] bytes = ProtobufDataManager.encode((Class<RESP>) response.getClass(), response);
-		RouteTransactionResponse transactionResponse = RouteTransactionResponse.valueOf(reqId, response.getClass().getName(), bytes);
+		RouteTransactionResponse transactionResponse = RouteTransactionResponse.valueOf(reqId, response);
 		serverNode.writeMessage(transactionResponse);
 	}
 

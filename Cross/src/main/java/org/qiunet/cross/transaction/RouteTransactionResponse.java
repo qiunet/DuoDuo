@@ -1,10 +1,13 @@
 package org.qiunet.cross.transaction;
 
 import com.baidu.bjf.remoting.protobuf.FieldType;
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
+import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
  * 传输过程的信息.
@@ -31,12 +34,18 @@ public class RouteTransactionResponse implements IpbRequestData {
 	 */
 	@Protobuf(description = "响应数据", fieldType = FieldType.BYTES)
 	private byte[] respData;
+	/**
+	 * 供打印使用的data
+	 */
+	@Ignore
+	private BaseTransactionResponse data;
 
-	public static RouteTransactionResponse valueOf(long id, String respClassName, byte[] respData) {
+	public static RouteTransactionResponse valueOf(long id, BaseTransactionResponse data) {
 		RouteTransactionResponse response = new RouteTransactionResponse();
+		response.respData = ProtobufDataManager.encode(data);
+		response.respClassName = data.getClass().getName();
+		response.data = data;
 		response.id = id;
-		response.respClassName = respClassName;
-		response.respData = respData;
 		return response;
 	}
 
@@ -62,5 +71,11 @@ public class RouteTransactionResponse implements IpbRequestData {
 
 	public void setRespData(byte[] respData) {
 		this.respData = respData;
+	}
+
+
+	@Override
+	public String _toString() {
+		return "Transaction: ["+data.getClass().getSimpleName()+": " + JsonUtil.toJsonString(data)+"]";
 	}
 }

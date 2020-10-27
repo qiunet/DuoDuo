@@ -25,6 +25,6 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 
 	@Override
 	public void crossHandler(CrossPlayerActor actor, EquipIndexRequest equipIndexRequest) {
-		actor.sendMessage(new CrossLoginResponse());
+		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"));
 	}
 }

@@ -15,8 +15,8 @@ public interface IpbChannelData extends IDataToString {
 	 * 转换为byte[]
 	 * @return
 	 */
-	default <T extends IpbChannelData> byte [] toByteArray(){
-		return ProtobufDataManager.encode((Class<T>)this.getClass(), (T)this);
+	default byte [] toByteArray(){
+		return ProtobufDataManager.encode(this);
 	}
 
 	/**
@@ -24,12 +24,12 @@ public interface IpbChannelData extends IDataToString {
 	 * @return
 	 */
 	default DefaultProtobufMessage buildResponseMessage(){
-		return new DefaultProtobufMessage(getProtocolId(), this);
+		return new DefaultProtobufMessage(protocolId(), this);
 	}
 
 	/**
 	 * 得到protocolId
 	 * @return
 	 */
-	int getProtocolId();
+	int protocolId();
 }

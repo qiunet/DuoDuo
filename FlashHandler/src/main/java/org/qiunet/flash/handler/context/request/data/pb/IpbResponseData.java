@@ -12,7 +12,7 @@ public interface IpbResponseData extends IpbChannelData {
 	 * 得到protocolId
 	 * @return
 	 */
-	default int getProtocolId() {
+	default int protocolId() {
 		return PbResponseDataMapping.protocolId(getClass());
 	}
 }

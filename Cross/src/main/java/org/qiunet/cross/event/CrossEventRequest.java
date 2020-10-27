@@ -1,9 +1,14 @@
 package org.qiunet.cross.event;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
+import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
  *
@@ -18,11 +23,16 @@ public class CrossEventRequest implements IpbRequestData {
 	private String className;
 	@Protobuf(description = "事件反序列化的数据.")
 	private byte[] datas;
+	@Ignore
+	private IEventData data;
 
-	public static CrossEventRequest valueOf(String className, byte[] datas) {
+	public static CrossEventRequest valueOf(IEventData data) {
+		Preconditions.checkNotNull(data);
+
 		CrossEventRequest request = new CrossEventRequest();
-		request.className = className;
-		request.datas = datas;
+		request.className = data.getClass().getName();
+		request.datas = ProtobufDataManager.encode(data);
+		request.data = data;
 		return request;
 	}
 
@@ -40,5 +50,10 @@ public class CrossEventRequest implements IpbRequestData {
 
 	public void setDatas(byte[] datas) {
 		this.datas = datas;
+	}
+
+	@Override
+	public String _toString() {
+		return "CrossEvent: ["+data.getClass().getSimpleName()+": " + JsonUtil.toJsonString(data)+"]";
 	}
 }

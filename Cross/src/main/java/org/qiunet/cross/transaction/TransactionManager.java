@@ -62,15 +62,14 @@ public enum TransactionManager {
 		long reqId = idGenerator.makeId();
 		this.cacheRequests.put(reqId, promise);
 		ServerNode node = ServerNodeManager.getNode(serverId);
-		byte[] bytes = ProtobufDataManager.encode((Class<Req>)req.getClass(), req);
-		RouteTransactionRequest routeTransactionRequest = RouteTransactionRequest.valueOf(reqId, req.getClass().getName(), bytes);
+		RouteTransactionRequest routeTransactionRequest = RouteTransactionRequest.valueOf(reqId, req);
 		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
 		ChannelFuture channelFuture = node.writeMessage(routeTransactionRequest);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
 				respTransactionFuture.beginCalTimeOut(timeout, unit);
 			}else {
-				promise.tryFailure(new CustomException("Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
+				promise.tryFailure(new CustomException(f.cause(), "Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
 			}
 		});
 		return respTransactionFuture;

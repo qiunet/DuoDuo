@@ -1,6 +1,7 @@
 package org.qiunet.utils.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.google.common.base.Preconditions;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.IOException;
@@ -24,16 +25,16 @@ public class ProtobufDataManager {
 
 	/**
 	 * 序列化对象成byte数组
-	 * @param clazz
 	 * @param obj
-	 * @param <T>
 	 * @return
 	 */
-	public static <T> byte[] encode(Class<T> clazz, T obj) {
+	public static byte[] encode(Object obj) {
+		Preconditions.checkNotNull(obj);
+		Class objClass = obj.getClass();
 		try {
-			return getCodec(clazz).encode(obj);
+			return getCodec(objClass).encode(obj);
 		} catch (Exception e) {
-			throw new CustomException(e, "Class [{}] encode exception", clazz.getName());
+			throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
 		}
 	}
 

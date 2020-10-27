@@ -8,7 +8,6 @@ import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.listener.event.IEventData;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
  * 跨服事件处理
@@ -33,8 +32,7 @@ public class CrossEventManager {
 		Preconditions.checkState(playerActor.isCrossStatus(), "player actor must be cross status");
 		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 
-		byte[] bytes = ProtobufDataManager.encode((Class<T>)eventData.getClass(), eventData);
-		CrossEventRequest request = CrossEventRequest.valueOf(eventData.getClass().getName(), bytes);
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		crossSession.writeMessage(request.buildResponseMessage());
 	}
 
@@ -47,9 +45,7 @@ public class CrossEventManager {
 	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
 		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 
-
-		byte[] bytes = ProtobufDataManager.encode((Class<T>)eventData.getClass(), eventData);
-		CrossEventRequest request = CrossEventRequest.valueOf(eventData.getClass().getName(), bytes);
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		ServerNodeManager.getNode(serverId).send(request.buildResponseMessage());
 	}
 }

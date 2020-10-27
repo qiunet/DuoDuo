@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 public interface IpbRequestData extends IpbChannelData {
 
 	@Override
-	default int getProtocolId() {
+	default int protocolId() {
 		return RequestHandlerMapping.getInstance().getProtocolId(this.getClass());
 	}
 }

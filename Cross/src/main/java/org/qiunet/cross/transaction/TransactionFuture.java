@@ -58,6 +58,10 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 		return future.isDone();
 	}
 
+	public boolean isSuccess(){
+		return future.isSuccess();
+	}
+
 	/**
 	 * 异步. 完成后的通知
 	 * @param action
