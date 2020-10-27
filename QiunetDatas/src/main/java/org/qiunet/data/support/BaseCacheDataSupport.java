@@ -34,14 +34,14 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 					if (aDo.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
 						databaseSupport().insert(insertStatement, aDo);
 					}else {
-						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not insert to db.");
+						logger.error("Entity status [{}] is error, can not insert to db.", aDo.entityStatus());
 					}
 					break;
 				case UPDATE:
 					if (aDo.atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
 						databaseSupport().update(updateStatement, aDo);
 					}else {
-						logger.error("Entity status ["+ aDo.entityStatus()+"] is error, can not update to db.");
+						logger.error("Entity status [{}] is error, can not update to db.", aDo.entityStatus());
 					}
 					break;
 				case DELETE:
@@ -110,11 +110,11 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	@Override
 	public void delete(Do aDo) {
 		if (aDo.entityStatus() == EntityStatus.INIT) {
-			throw new CustomException("Delete entity ["+doClass.getName()+"] It's not insert, Can't delete!");
+			throw new CustomException("Delete entity [{}] It's not insert, Can't delete!", doClass.getName());
 		}
 
 		if (aDo.entityStatus() == EntityStatus.DELETE) {
-			throw new CustomException("Delete entity ["+doClass.getName()+"] double times!");
+			throw new CustomException("Delete entity [{}] double times!", doClass.getName());
 		}
 
 		// 直接删除缓存. 异步更新时候, 不校验状态
@@ -153,7 +153,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 		private Do aDo;
 		private EntityOperate operate;
 
-		protected SyncEntityElement(Do aDo, EntityOperate operate) {
+		SyncEntityElement(Do aDo, EntityOperate operate) {
 			this.aDo = aDo;
 			this.operate = operate;
 		}

@@ -49,7 +49,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			try {
 				Do aDo = getDoBySyncParams(syncParams);
 				if (aDo == null) {
-					logger.error("Do ["+syncParams+"] is not exist, Maybe is expire by somebody!");
+					logger.error("Do [{}] is not exist, Maybe is expire by somebody!", syncParams);
 					continue;
 				}
 				databaseSupport().update(updateStatement, aDo);

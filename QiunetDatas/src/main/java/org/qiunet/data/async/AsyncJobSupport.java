@@ -3,7 +3,7 @@ package org.qiunet.data.async;
 import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.timer.TimerManager;
@@ -19,12 +19,9 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * Created on 17/2/11 08:04.
  */
- public class AsyncJobSupport {
+ public enum AsyncJobSupport {
+	instance;
 	private Logger logger = LoggerType.DUODUO.getLogger();
-	private static AsyncJobSupport instance = new AsyncJobSupport();
-
-	private AsyncJobSupport() {}
-
 	public static AsyncJobSupport getInstance() {
 		return instance;
 	}
@@ -36,7 +33,8 @@ import java.util.concurrent.TimeUnit;
 	/***
 	 * 异步更新到db
 	 */
-	public void asyncToDb(int maxDelay, TimeUnit unit){
+	@CronSchedule("0 * * * * ?")
+	public void asyncToDb(){
 		nodes.forEach(node -> TimerManager.executor.scheduleWithDelay(() -> {
 			try {
 				// 必须try catch 否则导致线程停止
@@ -46,6 +44,12 @@ import java.util.concurrent.TimeUnit;
 			}
 			return null;
 			// 会延迟一定时间执行 免得凑一块了.
-		}, MathUtil.random(0, (int) unit.toMillis(maxDelay)), TimeUnit.MILLISECONDS));
+		}, MathUtil.random(0, 200), TimeUnit.MILLISECONDS));
+	}
+
+	@EventListener(EventHandlerWeightType.HIGHEST)
+	public void onShutdown(ServerShutdownEventData data) {
+		this.asyncToDb();
+		logger.info("Shutdown async update success!");
 	}
 }
