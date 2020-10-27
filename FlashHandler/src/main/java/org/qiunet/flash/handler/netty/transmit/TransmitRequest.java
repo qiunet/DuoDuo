@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.netty.transmit;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
  * 客户端请求的转发
@@ -10,6 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-10-26 18:29
  */
+@SkipProtoGenerator
 @ProtobufClass(description = "客户端请求的转发")
 public class TransmitRequest implements IpbRequestData {
 	@Protobuf(description = "协议id")

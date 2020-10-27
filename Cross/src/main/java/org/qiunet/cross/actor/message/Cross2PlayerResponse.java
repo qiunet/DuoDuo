@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.json.JsonUtil;
 
 /***
@@ -15,6 +16,7 @@ import org.qiunet.utils.json.JsonUtil;
  * @author qiunet
  * 2020-10-26 12:15
  */
+@SkipProtoGenerator
 @ProtobufClass(description = "跨服给客户端的包")
 @PbResponse(IProtocolId.System.CROSS_2_PLAYER_MSG)
 public class Cross2PlayerResponse implements IpbResponseData {
