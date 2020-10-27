@@ -52,8 +52,19 @@ public class CrossEventRequest implements IpbRequestData {
 		this.datas = datas;
 	}
 
+	public IEventData getData() {
+		if (data == null) {
+			try {
+				Class<? extends IEventData>aClass = (Class<? extends IEventData>) Class.forName(className);
+				data = ProtobufDataManager.decode(aClass, datas);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return data;
+	}
 	@Override
 	public String _toString() {
-		return "CrossEvent: ["+data.getClass().getSimpleName()+": " + JsonUtil.toJsonString(data)+"]";
+		return "CrossEvent: ["+getData().getClass().getSimpleName()+": " + JsonUtil.toJsonString(getData())+"]";
 	}
 }

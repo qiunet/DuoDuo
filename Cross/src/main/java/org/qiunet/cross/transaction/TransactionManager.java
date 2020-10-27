@@ -12,7 +12,6 @@ import org.qiunet.utils.id.DefaultIdGenerator;
 import org.qiunet.utils.id.IdGenerator;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -89,15 +88,7 @@ public enum TransactionManager {
 	 * @param response
 	 */
 	void completeTransaction(RouteTransactionResponse response) {
-		Class<?> aClass;
-		try {
-			 aClass = Class.forName(response.getRespClassName());
-		} catch (ClassNotFoundException e) {
-			logger.error("Class {} is not exist!", response.getRespClassName());
-			return;
-		}
-
-		Object obj = ProtobufDataManager.decode(aClass, response.getRespData());
+		Object obj = response.getData();
 		Preconditions.checkNotNull(obj);
 
 		DPromise dPromise = cacheRequests.get(response.getId());

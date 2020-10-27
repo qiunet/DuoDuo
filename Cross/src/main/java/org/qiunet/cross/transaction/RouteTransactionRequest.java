@@ -74,8 +74,20 @@ public class RouteTransactionRequest implements IpbRequestData {
 		this.reqData = reqData;
 	}
 
+	public BaseTransactionRequest getData() {
+		if (data == null) {
+			try {
+				Class<? extends BaseTransactionRequest>aClass = (Class<? extends BaseTransactionRequest>) Class.forName(reqClassName);
+				data = ProtobufDataManager.decode(aClass, reqData);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		return data;
+	}
+
 	@Override
 	public String _toString() {
-		return "Transaction: ["+data.getClass().getSimpleName()+": " + JsonUtil.toJsonString(data)+"]";
+		return "Transaction: ["+getData().getClass().getSimpleName()+": " + JsonUtil.toJsonString(getData())+"]";
 	}
 }

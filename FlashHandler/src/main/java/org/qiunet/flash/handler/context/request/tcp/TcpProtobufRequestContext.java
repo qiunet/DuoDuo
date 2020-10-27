@@ -6,6 +6,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -41,7 +42,12 @@ public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> ext
 
 		FacadeTcpRequest<RequestData, P> facadeTcpRequest = new FacadeTcpRequest<>(this);
 		if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("[{}] <<< {}", messageActor.getIdent(), ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
+			RequestData requestData = getRequestData();
+			if (requestData instanceof IDataToString) {
+				logger.info("[{}] <<< {}", messageActor.getIdent(), ((IDataToString) requestData)._toString());
+			}else {
+				logger.info("[{}] <<< {}", messageActor.getIdent(), ToStringBuilder.reflectionToString(requestData, ToStringStyle.SHORT_PREFIX_STYLE));
+			}
 		}
 
 		try {

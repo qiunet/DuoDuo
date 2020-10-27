@@ -1,6 +1,5 @@
 package org.qiunet.cross.event;
 
-import com.baidu.bjf.remoting.protobuf.Codec;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -10,7 +9,6 @@ import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
 import org.qiunet.listener.event.EventManager;
 import org.qiunet.listener.event.IEventData;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
  * 跨服事件请求
@@ -24,10 +22,7 @@ public class CrossEventHandler extends TcpProtobufHandler<AbstractMessageActor, 
 	@Override
 	public void handler(AbstractMessageActor actor, ITcpRequest<CrossEventRequest> context) throws Exception {
 		CrossEventRequest requestData = context.getRequestData();
-
-		Class<? extends IEventData> aClass = (Class<? extends IEventData>) Class.forName(requestData.getClassName());
-		Codec<?  extends IEventData> codec = ProtobufDataManager.getCodec(aClass);
-		IEventData obj = codec.decode(requestData.getDatas());
+		IEventData obj = requestData.getData();
 		if (obj instanceof BaseUserEventData) {
 			((BaseUserEventData) obj).setPlayer((AbstractUserActor) actor);
 		}
