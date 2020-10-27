@@ -82,14 +82,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
-		return nodes.computeIfAbsent(serverId, key -> {
-			ServerInfo serverInfo = getServerInfo(key);
+		return nodes.computeIfAbsent(serverId, serverId0 -> {
+			ServerInfo serverInfo = getServerInfo(serverId0);
 			NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
 				.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
 				.build(), new TcpNodeClientTrigger());
 
-			ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), key);
-			serverNode.getSession().addCloseListener(cause -> nodes.remove(serverId));
+			ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), serverId0);
+			serverNode.getSession().addCloseListener(cause -> nodes.remove(serverId0));
 			serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
 			return serverNode;
 		});
