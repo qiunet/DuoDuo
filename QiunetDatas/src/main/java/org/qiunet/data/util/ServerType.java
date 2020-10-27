@@ -6,6 +6,9 @@ import org.qiunet.utils.exceptions.EnumParseException;
 /***
  * 服务类型
  *
+ * 建议ALL LOGIC 的serverId 可以0 - 99999
+ * 其它按照serverType * 10000 + 自增
+ *
  * @author qiunet
  * 2020-10-09 11:08
  */
@@ -14,39 +17,28 @@ public enum ServerType implements EnumReadable {
 	 * 全功能服务
 	 * 即服务包含所有的服务.
 	 */
-	ALL(0, true),
+	ALL(0),
 	/**
 	 * 普通逻辑服务
 	 */
-	LOGIC(1, true),
+	LOGIC(1),
 	/**
 	 * 跨服服务
 	 */
-	CROSS(2, false),
+	CROSS(2),
 	/**
 	 * 登录服务
 	 */
-	LOGIN(3, true),
+	LOGIN(3),
 	/**
 	 *  路由服务
 	 */
-	ROUTE(4, true),
+	ROUTE(4),
 	;
 	private int type;
-	/**
-	 * 服务到服务之间的session是否复用.
-	 * 玩家去跨服的. 不需要复用.
-	 * 服务去另一个服务取数据, 可以复用.
-	 */
-	private boolean sessionReUse;
 
-	ServerType(int type, boolean sessionReUse) {
-		this.sessionReUse = sessionReUse;
+	ServerType(int type) {
 		this.type = type;
-	}
-
-	public boolean isSessionReUse() {
-		return sessionReUse;
 	}
 
 	public int getType() {
