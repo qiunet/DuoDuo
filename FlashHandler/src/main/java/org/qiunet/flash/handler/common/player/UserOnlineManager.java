@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.common.player;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
@@ -8,6 +7,7 @@ import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.collection.enums.ForEachResult;
 
 import java.util.Map;
+import java.util.function.Function;
 
 /***
  * 用户的actor管理.
