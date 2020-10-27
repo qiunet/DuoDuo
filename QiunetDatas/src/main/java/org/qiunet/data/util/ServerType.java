@@ -6,8 +6,8 @@ import org.qiunet.utils.exceptions.EnumParseException;
 /***
  * 服务类型
  *
- * 建议ALL LOGIC 的serverId 可以0 - 99999
- * 其它按照serverType * 10000 + 自增
+ * 建议ALL LOGIC 的serverId 可以1 - 99999
+ * 其它按照serverType * 100000 + 自增
  *
  * @author qiunet
  * 2020-10-09 11:08
