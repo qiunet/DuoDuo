@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common;
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
@@ -116,7 +117,13 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	 * 最好能明确的找到问题的id. 比如玩家id什么的.
 	 * @return
 	 */
-	public abstract String getIdent();
+	public String getIdent(){
+		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
+	}
+
+	public long getId(){
+		return 0;
+	}
 	/**
 	 * 销毁时候调用
 	 */

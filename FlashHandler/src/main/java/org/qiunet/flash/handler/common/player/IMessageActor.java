@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  *
@@ -21,7 +22,9 @@ public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<
 	 * 最好能明确的找到问题的id. 比如玩家id什么的.
 	 * @return
 	 */
-	String getIdent();
+	default String getIdent(){
+		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
+	}
 	/**
 	 * 获得session
 	 * @return

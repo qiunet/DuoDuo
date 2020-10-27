@@ -54,11 +54,6 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 		this.send(Cross2PlayerResponse.valueOf(responseData).buildResponseMessage());
 	}
 
-	@Override
-	public String getIdent() {
-		return "CrossPlayerActor_"+playerId;
-	}
-
 	public long getPlayerId() {
 		return playerId;
 	}

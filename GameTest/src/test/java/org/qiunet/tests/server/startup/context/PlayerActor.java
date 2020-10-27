@@ -21,11 +21,6 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 		this.auth(10000);
 	}
 
-	@Override
-	public String getIdent() {
-		return "PlayerActor["+ getId()+"]";
-	}
-
 	/**
 	 * 如果已经鉴权. 调用该方法. playerId > 0
 	 * @param playerId

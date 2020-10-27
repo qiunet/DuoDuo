@@ -9,7 +9,6 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.utils.string.StringUtil;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -79,11 +78,6 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 */
 	public ChannelFuture writeMessage(IpbChannelData message) {
 		return this.send(message.buildResponseMessage());
-	}
-
-	@Override
-	public String getIdent() {
-		return StringUtil.format( "ServerNode[{0}]", serverId);
 	}
 
 	@Override

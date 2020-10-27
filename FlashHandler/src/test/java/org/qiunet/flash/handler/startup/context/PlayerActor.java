@@ -20,12 +20,6 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 		// 测试不需要管鉴权的问题.
 		this.auth(10000);
 	}
-
-	@Override
-	public String getIdent() {
-		return "PlayerActor["+ getId()+"]";
-	}
-
 	/**
 	 * 如果已经鉴权. 调用该方法. playerId > 0
 	 * @param playerId

@@ -79,7 +79,7 @@ public final class DSession {
 			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			if (messageActor != null) {
-				logger.info("[{}] >>> {}", messageActor.getId(), message.toStr());
+				logger.info("[{}] >>> {}", messageActor.getIdent(), message.toStr());
 			}
 		}
 		return channel.writeAndFlush(message.encode());

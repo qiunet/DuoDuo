@@ -44,7 +44,7 @@ public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, Res
 		ResponseData data = null;
 		try {
 			if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-				logger.info(" <<< {}", ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
+				logger.info("HTTP <<< {}", ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
 			}
 			data = getHandler().handler(request);
 		} catch (Exception e) {
@@ -55,7 +55,7 @@ public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, Res
 			throw new NullPointerException("Response Protobuf data can not be null!");
 		}
 		if (logger.isInfoEnabled() && ! data.getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info(">>> {}", ToStringBuilder.reflectionToString(data, ToStringStyle.SHORT_PREFIX_STYLE));
+			logger.info("HTTP >>> {}", ToStringBuilder.reflectionToString(data, ToStringStyle.SHORT_PREFIX_STYLE));
 		}
 		this.response(data);
 	}

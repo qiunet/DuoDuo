@@ -72,10 +72,6 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 		return crossSession;
 	}
 
-	@Override
-	public String getIdent() {
-		return "PlayerActor_"+getId();
-	}
 
 	@Override
 	public long getId() {
