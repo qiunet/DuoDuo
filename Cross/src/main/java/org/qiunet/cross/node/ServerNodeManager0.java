@@ -4,9 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.common.config.ServerConfig;
 import org.qiunet.cross.common.contants.ScannerParamKey;
+import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.listener.event.EventListener;
@@ -80,7 +82,17 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
-		return nodes.computeIfAbsent(serverId, key -> ServerNode.valueOf(getServerInfo(key)));
+		return nodes.computeIfAbsent(serverId, key -> {
+			ServerInfo serverInfo = getServerInfo(key);
+			NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
+				.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
+				.build(), new TcpNodeClientTrigger());
+
+			ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), key);
+			serverNode.getSession().addCloseListener(cause -> nodes.remove(serverId));
+			serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
+			return serverNode;
+		});
 	}
 
 	@Override

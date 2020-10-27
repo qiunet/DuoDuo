@@ -1,13 +1,10 @@
 package org.qiunet.cross.node;
 
 import io.netty.channel.ChannelFuture;
-import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
@@ -26,18 +23,11 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		super(session);
 	}
 
-
-	static ServerNode valueOf(ServerInfo serverInfo) {
-		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
-			.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
-			.build(), new TcpNodeClientTrigger());
-
-		ServerNode node = new ServerNode(tcpClient.getSession());
-		node.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, node);
-		node.serverId = serverInfo.getServerId();
-
-		node.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
-		return node;
+	static ServerNode valueOf(DSession session, int serverId) {
+		ServerNode serverNode = new ServerNode(session);
+		serverNode.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, serverNode);
+		serverNode.serverId = serverId;
+		return serverNode;
 
 	}
 

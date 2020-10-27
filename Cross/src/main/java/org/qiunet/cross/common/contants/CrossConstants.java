@@ -27,6 +27,7 @@ public final class CrossConstants {
 	public static final TcpBootstrapParams CROSS_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_START_CONTEXT)
 		.setPort(ServerConfig.getServerPort())
+		.setReadIdleCheckSeconds(60 * 10)
 		.build();
 	/**
 	 * 服务与服务之间通讯的启动参数
@@ -34,5 +35,6 @@ public final class CrossConstants {
 	public static final TcpBootstrapParams COMMUNICATION_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_NODE_START_CONTEXT)
 		.setPort(ServerConfig.getCommunicationPort())
+		.setReadIdleCheckSeconds(60 * 10)
 		.build();
 }
