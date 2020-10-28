@@ -6,6 +6,7 @@ import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
@@ -56,7 +57,7 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 
 		this.crossSession = tcpClient.getSession();
 		this.crossSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
-		this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId()));
+		this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerConfig.getServerId()));
 		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
 		return this.crossing.compareAndSet(false, true);
 	}
