@@ -6,12 +6,12 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 public final class ClassScanner implements IApplicationContext {
 	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
 	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
 	private ScannerType scannerType;
 	/**
@@ -99,7 +99,9 @@ public final class ClassScanner implements IApplicationContext {
 		CountDownLatch latch = new CountDownLatch(subTypesOf.size());
 		Set<DFuture> futures = Sets.newHashSet();
 
+		logger.debug("scanner start: {}", collect.size());
 		for (IApplicationContextAware instance : collect) {
+			logger.debug("scanner start detail: {}", instance.getClass().getName());
 			// 不相同. 并且都不是ALL
 			if (instance.scannerType() != this.scannerType
 			&& instance.scannerType() != ScannerType.ALL

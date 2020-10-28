@@ -3,6 +3,7 @@ package org.qiunet.cfg.convert;
 import com.google.common.collect.Lists;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -16,29 +17,14 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-02-04 13:09
  **/
-public class CfgFieldObjConvertManager implements IApplicationContextAware {
-	private static CfgFieldObjConvertManager instance;
+public enum CfgFieldObjConvertManager implements IApplicationContextAware {
+	instance;
 	/***
 	 * 所有的convert
 	 */
 	private List<? extends BaseObjConvert> converts = Lists.newArrayList();
 
-	private CfgFieldObjConvertManager() {
-		if (instance != null) {
-			throw new CustomException("Instance Duplication!");
-		}
-		instance = this;
-	}
-
 	public static CfgFieldObjConvertManager getInstance() {
-		if (instance == null) {
-			synchronized (CfgFieldObjConvertManager.class) {
-				if (instance == null)
-				{
-					new CfgFieldObjConvertManager();
-				}
-			}
-		}
 		return instance;
 	}
 	/***
@@ -68,6 +54,8 @@ public class CfgFieldObjConvertManager implements IApplicationContextAware {
 			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
+
+		LoggerType.DUODUO_CFG_READER.info("find {} cfg field convert!", this.converts.size());
 	}
 
 	public List<? extends BaseObjConvert> getConverts() {
