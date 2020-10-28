@@ -6,6 +6,7 @@ import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -13,6 +14,8 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,6 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2020-10-22 21:32
  */
 public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
+	private Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/**跨服标记*/
 	private AtomicBoolean crossing = new AtomicBoolean();
 
@@ -41,6 +45,11 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 			return false;
 		}
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
+		if (serverInfo.getType() != ServerType.CROSS) {
+			logger.error("ServerId {} is not a cross server!", serverInfo.getType());
+			return false;
+		}
+
 		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
 			.setAddress("localhost", serverInfo.getServerPort())
 			.build(), new TcpNodeClientTrigger());
