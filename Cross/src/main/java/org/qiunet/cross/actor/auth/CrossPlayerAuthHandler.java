@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
 public class CrossPlayerAuthHandler extends TcpProtobufHandler<CrossPlayerActor, CrossPlayerAuthRequest> {
 	@Override
 	public void handler(CrossPlayerActor playerActor, ITcpRequest<CrossPlayerAuthRequest> context) throws Exception {
+		playerActor.setServerId(context.getRequestData().getServerId());
 		playerActor.auth(context.getRequestData().getPlayerId());
 	}
 

@@ -49,6 +49,10 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		serverNode.writeMessage(transactionResponse);
 	}
 
+	public REQ getReqData() {
+		return reqData;
+	}
+
 	private boolean compareAndSet(Status expect, Status update) {
 		return status.compareAndSet(expect, update);
 	}

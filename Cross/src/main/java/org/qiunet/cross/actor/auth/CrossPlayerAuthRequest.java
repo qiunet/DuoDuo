@@ -16,11 +16,22 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
 public class CrossPlayerAuthRequest implements IpbRequestData {
 	@Protobuf(description = "玩家id")
 	private long playerId;
+	@Protobuf(description = "玩家的serverId")
+	private int serverId;
 
-	public static CrossPlayerAuthRequest valueOf(long playerId) {
+	public static CrossPlayerAuthRequest valueOf(long playerId, int serverId) {
 		CrossPlayerAuthRequest request = new CrossPlayerAuthRequest();
 		request.playerId = playerId;
+		request.serverId = serverId;
 		return request;
+	}
+
+	public int getServerId() {
+		return serverId;
+	}
+
+	public void setServerId(int serverId) {
+		this.serverId = serverId;
 	}
 
 	public long getPlayerId() {
