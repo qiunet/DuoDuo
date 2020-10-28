@@ -1,6 +1,6 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.net.NetUtil;
 
@@ -35,7 +35,7 @@ public class ServerInfo {
 	private int serverPort;
 
 	public static ServerInfo valueOf(int serverPort, int communicationPort) {
-		return valueOf(DbProperties.getInstance().getServerId(), DbProperties.getInstance().getServerType(), serverPort, communicationPort);
+		return valueOf(ServerConfig.getServerId(), ServerConfig.getServerType(), serverPort, communicationPort);
 	}
 
 	public static ServerInfo valueOf(int serverId, ServerType type, int serverPort, int communicationPort) {

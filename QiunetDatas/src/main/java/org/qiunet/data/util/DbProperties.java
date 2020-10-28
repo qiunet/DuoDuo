@@ -33,26 +33,6 @@ public final class DbProperties extends LoaderProperties {
 	public boolean isDbSourceNameInRange(String dbSourceName) {
 		return entity2TableDbSourceRange.contains(dbSourceName);
 	}
-	/**
-	 * 取到server的类型.
-	 * 0 为普通功能服
-	 *
-	 * @return
-	 */
-	public ServerType getServerType() {
-		return ServerType.parse(getInt("serverType", 0));
-	}
-
-	public boolean isLogicServerType() {
-		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
-	}
-	/**
-	 * 得到serverId
-	 * @return
-	 */
-	public int getServerId(){
-		return getInt("serverId");
-	}
 
 	/**
 	 * 得到默认数据源

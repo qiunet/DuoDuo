@@ -2,11 +2,10 @@ package org.qiunet.cross.node;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.qiunet.cross.common.config.ServerConfig;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.data.core.support.redis.IRedisUtil;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -97,7 +96,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (DbProperties.getInstance().getServerType() == ServerType.ALL) {
+		if (ServerConfig.getServerType() == ServerType.ALL) {
 			return;
 		}
 
@@ -114,7 +113,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	public void onServerStart(ServerStartupEventData data){
-		if (DbProperties.getInstance().getServerType() == ServerType.ALL) {
+		if (ServerConfig.getServerType() == ServerType.ALL) {
 			return;
 		}
 

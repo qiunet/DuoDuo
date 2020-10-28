@@ -1,7 +1,7 @@
 package org.qiunet.cross.transaction;
 
 import com.google.common.collect.Maps;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
@@ -26,7 +26,7 @@ enum TransactionManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (DbProperties.getInstance().getServerType() == ServerType.ALL) {
+		if (ServerConfig.getServerType() == ServerType.ALL) {
 			return;
 		}
 

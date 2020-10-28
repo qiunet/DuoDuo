@@ -1,4 +1,4 @@
-package org.qiunet.cross.common.config;
+package org.qiunet.data.util;
 
 import org.qiunet.utils.properties.anno.DProperties;
 import org.qiunet.utils.properties.anno.DPropertiesValue;
@@ -11,6 +11,12 @@ import org.qiunet.utils.properties.anno.DPropertiesValue;
  ***/
 @DProperties("server.properties")
 public class ServerConfig {
+
+	@DPropertiesValue("server.id")
+	private static int serverId;
+
+	@DPropertiesValue("server.type")
+	private static ServerType serverType;
 	/**
 	 * hook 的端口
 	 */
@@ -26,6 +32,18 @@ public class ServerConfig {
 	 */
 	@DPropertiesValue("communication.port")
 	private static int communicationPort;
+
+	public static int getServerId() {
+		return serverId;
+	}
+
+	public static ServerType getServerType() {
+		return serverType;
+	}
+
+	public static boolean isLogicServerType() {
+		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
+	}
 
 	public static int getHookPort() {
 		return hookPort;

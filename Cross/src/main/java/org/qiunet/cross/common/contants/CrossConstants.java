@@ -1,8 +1,8 @@
 package org.qiunet.cross.common.contants;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.cross.common.config.ServerConfig;
 import org.qiunet.cross.node.ServerNode;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 

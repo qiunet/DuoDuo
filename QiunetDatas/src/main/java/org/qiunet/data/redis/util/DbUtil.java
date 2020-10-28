@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.Map;
@@ -31,7 +32,7 @@ public final class DbUtil {
 	}
 
 	public static int getTbIndex(Object key) {
-		int serverId = DbProperties.getInstance().getServerId();
+		int serverId = ServerConfig.getServerId();
 		int length = (int) (Math.log10(serverId));
 		int pow = POW10_NUMS[length + 1];
 
@@ -50,7 +51,7 @@ public final class DbUtil {
 			Table table = key.getAnnotation(Table.class);
 			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
 			String dbSource = table.dbSource();
-			if (StringUtil.isEmpty(dbSource) && DbProperties.getInstance().isLogicServerType()) {
+			if (StringUtil.isEmpty(dbSource) && ServerConfig.isLogicServerType()) {
 				dbSource = DbProperties.getInstance().getDefaultDbSource();
 			}
 			return dbSource;
@@ -64,7 +65,7 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static long buildId(int incrId) {
-		int serverId = DbProperties.getInstance().getServerId();
+		int serverId = ServerConfig.getServerId();
 		int length = (int) (Math.log10(serverId));
 		int pow = POW10_NUMS[length + 1];
 		return (long) (incrId * pow + serverId * 10 + length);

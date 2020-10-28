@@ -1,15 +1,21 @@
 package org.qiunet.data.redis;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
+import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
 import java.util.Map;
 
 public class TestRedisDataListSupport {
 	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
+	@BeforeClass
+	public static void init(){
+		ClassScanner.getInstance().scanner();
+	}
 
 	private long uid = 100000;
 	@Test

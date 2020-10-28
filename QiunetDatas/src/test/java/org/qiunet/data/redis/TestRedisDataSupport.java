@@ -1,6 +1,7 @@
 package org.qiunet.data.redis;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
@@ -8,10 +9,16 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
+import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.threadLocal.ThreadContextData;
 
 public class TestRedisDataSupport {
 	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
+
+	@BeforeClass
+	public static void init(){
+		ClassScanner.getInstance().scanner();
+	}
 
 	public void expire(long uid) {
 		String redisKey = "VipDo#"+uid;
