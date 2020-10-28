@@ -20,17 +20,10 @@ import java.util.Set;
  *
  * @author qiunet
  */
-class EventManager0 implements IApplicationContextAware {
+enum EventManager0 implements IApplicationContextAware {
+	instance;
 	private Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
-	private static EventManager0 instance;
 	private IApplicationContext context;
-	private EventManager0(){
-		if (instance != null) {
-			throw new CustomException("Instance Duplication!");
-		}
-		instance = this;
-	}
-
 	static EventManager0 getInstance() {
 		return instance;
 	}
