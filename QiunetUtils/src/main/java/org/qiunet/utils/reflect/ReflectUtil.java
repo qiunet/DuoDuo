@@ -1,17 +1,16 @@
 package org.qiunet.utils.reflect;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang.ClassUtils;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.springframework.util.Assert;
-import org.springframework.util.ConcurrentReferenceHashMap;
-import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -47,8 +46,8 @@ public final class ReflectUtil {
 	 * @return the corresponding Field object, or {@code null} if not found
 	 */
 	public static Field findField(Class<?> clazz, String name, Class<?> type) {
-		Assert.notNull(clazz, "Class must not be null");
-		Assert.isTrue(name != null || type != null, "Either name or type of the field must be specified");
+		Preconditions.checkNotNull(clazz, "Class must not be null");
+		Preconditions.checkState(name != null || type != null, "Either name or type of the field must be specified");
 		Class<?> searchType = clazz;
 		while (Object.class != searchType && searchType != null) {
 			Field[] fields = getDeclaredFields(searchType);
@@ -270,7 +269,7 @@ public final class ReflectUtil {
 	/**
 	 * Cache for {@link Class#getDeclaredFields()}, allowing for fast iteration.
 	 */
-	private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentReferenceHashMap<>(256);
+	private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentHashMap<>(256);
 	/**
 	 * This variant retrieves {@link Class#getDeclaredFields()} from a local cache
 	 * in order to avoid the JVM's SecurityManager check and defensive array copying.
@@ -280,7 +279,7 @@ public final class ReflectUtil {
 	 * @see Class#getDeclaredFields()
 	 */
 	public static Field[] getDeclaredFields(Class<?> clazz) {
-		Assert.notNull(clazz, "Class must not be null");
+		Preconditions.checkNotNull(clazz, "Class must not be null");
 		return declaredFieldsCache.computeIfAbsent(clazz, key -> {
 			Field[] declaredFields = key.getDeclaredFields();
 			return (declaredFields.length == 0 ? EMPTY_FIELD_ARRAY : declaredFields);
@@ -305,7 +304,7 @@ public final class ReflectUtil {
 	 * Perform the given callback operation on all matching methods of the given
 	 * class and superclasses (or given interface and super-interfaces).
 	 * <p>The same named method occurring on subclass and superclass will appear
-	 * twice, unless excluded by the specified {@link ReflectionUtils.MethodFilter}.
+	 * twice, unless excluded by the specified {@link Predicate}.
 	 * @param clazz the class to introspect
 	 * @param mc the callback to invoke for each method
 	 * @param mf the filter that determines the methods to apply the callback to
@@ -357,7 +356,7 @@ public final class ReflectUtil {
 	 * Cache for {@link Class#getDeclaredMethods()} plus equivalent default methods
 	 * from Java 8 based interfaces, allowing for fast iteration.
 	 */
-	private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentReferenceHashMap<>(256);
+	private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentHashMap<>(256);
 
 	/**
 	 * Variant of {@link Class#getDeclaredMethods()} that uses a local cache in
@@ -376,7 +375,7 @@ public final class ReflectUtil {
 	}
 
 	private static Method[] getDeclaredMethods(Class<?> clazz, boolean defensive) {
-		Assert.notNull(clazz, "Class must not be null");
+		Preconditions.checkNotNull(clazz, "Class must not be null");
 		Method[] result = declaredMethodsCache.get(clazz);
 		if (result == null) {
 			try {
