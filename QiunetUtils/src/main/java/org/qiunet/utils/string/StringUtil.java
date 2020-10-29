@@ -1,6 +1,7 @@
 package org.qiunet.utils.string;
 
 import org.qiunet.utils.math.MathUtil;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -200,13 +201,27 @@ public class StringUtil {
 	}
 	 /**
 	 * 格式化输出字符串
-	 * @param s
-	 * @param p
+	 * 格式: format("xx{0}x{1}xx{0}x", "参数1", "参数2")
+	 * 跟sformat比较, 这里的参数占位符可以重复使用.
+	 * @param string
+	 * @param params
 	 * @return
 	 */
-	public static String format(String s, Object... p) {
-		return MessageFormat.format(s, p);
+	public static String format(String string, Object... params) {
+		return MessageFormat.format(string, params);
 	}
+
+	/**
+	 * 格式化字符串
+	 * 格式: sformat("xx{}xxx{}xx", "参数1", "参数2")
+	 * @param string
+	 * @param params
+	 * @return
+	 */
+	public static String sformat(String string, Object ... params) {
+		return MessageFormatter.arrayFormat(string, params).getMessage();
+	}
+
 
 	public static String getIntHexVal(int val){
 		return String.format("%08x", val).toUpperCase();
