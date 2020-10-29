@@ -1,12 +1,19 @@
 package org.qiunet.utils.reflect;
 
 import org.apache.commons.lang.ClassUtils;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
+import org.springframework.util.Assert;
+import org.springframework.util.ConcurrentReferenceHashMap;
+import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
 /***
@@ -20,50 +27,34 @@ public final class ReflectUtil {
 	private ReflectUtil(){}
 
 	/**
-	 * Attempt to find a {@link Field field} on the supplied {@link Class} with
-	 * the supplied <code>name</code>. Searches all superclasses up to
-	 * {@link Object}.
-	 *
-	 * @param clazz
-	 *            the class to introspect
-	 * @param name
-	 *            the name of the field
-	 * @return the corresponding Field object, or <code>null</code> if not found
+	 * Attempt to find a {@link Field field} on the supplied {@link Class} with the
+	 * supplied {@code name}. Searches all superclasses up to {@link Object}.
+	 * @param clazz the class to introspect
+	 * @param name the name of the field
+	 * @return the corresponding Field object, or {@code null} if not found
 	 */
-	public static Field findField(Class clazz, String name) {
+	public static Field findField(Class<?> clazz, String name) {
 		return findField(clazz, name, null);
 	}
 
 	/**
-	 * Attempt to find a {@link Field field} on the supplied {@link Class} with
-	 * the supplied <code>name</code> and/or {@link Class type}. Searches all
-	 * superclasses up to {@link Object}.
-	 *
-	 * @param clazz
-	 *            the class to introspect
-	 * @param name
-	 *            the name of the field (may be <code>null</code> if type is
-	 *            specified)
-	 * @param type
-	 *            the type of the field (may be <code>null</code> if name is
-	 *            specified)
-	 * @return the corresponding Field object, or <code>null</code> if not found
+	 * Attempt to find a {@link Field field} on the supplied {@link Class} with the
+	 * supplied {@code name} and/or {@link Class type}. Searches all superclasses
+	 * up to {@link Object}.
+	 * @param clazz the class to introspect
+	 * @param name the name of the field (may be {@code null} if type is specified)
+	 * @param type the type of the field (may be {@code null} if name is specified)
+	 * @return the corresponding Field object, or {@code null} if not found
 	 */
-	public static Field findField(Class clazz, String name, Class type) {
-		if (clazz == null) {
-			throw new IllegalArgumentException("Class must not be null");
-		}
-		if (name == null && type == null) {
-			throw new IllegalArgumentException(
-				"Either name or type of the field must be specified");
-		}
-		Class searchType = clazz;
-		while (!Object.class.equals(searchType) && searchType != null) {
-			Field[] fields = searchType.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				Field field = fields[i];
-				if ((name == null || name.equals(field.getName()))
-					&& (type == null || type.equals(field.getType()))) {
+	public static Field findField(Class<?> clazz, String name, Class<?> type) {
+		Assert.notNull(clazz, "Class must not be null");
+		Assert.isTrue(name != null || type != null, "Either name or type of the field must be specified");
+		Class<?> searchType = clazz;
+		while (Object.class != searchType && searchType != null) {
+			Field[] fields = getDeclaredFields(searchType);
+			for (Field field : fields) {
+				if ((name == null || name.equals(field.getName())) &&
+					(type == null || type.equals(field.getType()))) {
 					return field;
 				}
 			}
@@ -93,7 +84,37 @@ public final class ReflectUtil {
 		}
 		return getField(field, t);
 	}
-
+	/**
+	 * Make the given method accessible, explicitly setting it accessible if
+	 * necessary. The {@code setAccessible(true)} method is only called
+	 * when actually necessary, to avoid unnecessary conflicts with a JVM
+	 * SecurityManager (if active).
+	 * @param method the method to make accessible
+	 * @see java.lang.reflect.Method#setAccessible
+	 */
+	@SuppressWarnings("deprecation")  // on JDK 9
+	public static void makeAccessible(Method method) {
+		if ((!Modifier.isPublic(method.getModifiers()) ||
+			!Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
+			method.setAccessible(true);
+		}
+	}
+	/**
+	 * Make the given field accessible, explicitly setting it accessible if
+	 * necessary. The {@code setAccessible(true)} method is only called
+	 * when actually necessary, to avoid unnecessary conflicts with a JVM
+	 * SecurityManager (if active).
+	 * @param field the field to make accessible
+	 * @see java.lang.reflect.Field#setAccessible
+	 */
+	@SuppressWarnings("deprecation")  // on JDK 9
+	public static void makeAccessible(Field field) {
+		if ((!Modifier.isPublic(field.getModifiers()) ||
+			!Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
+			Modifier.isFinal(field.getModifiers())) && !field.isAccessible()) {
+			field.setAccessible(true);
+		}
+	}
 	/**
 	 * Set the field represented by the supplied {@link Field field object} on
 	 * the specified {@link Object target object} to the specified
@@ -115,7 +136,7 @@ public final class ReflectUtil {
 		if (field == null) {
 			return;
 		}
-		field.setAccessible(true);
+		makeAccessible(field);
 		try {
 			field.set(t, value);
 		} catch (Exception e) {
@@ -138,7 +159,7 @@ public final class ReflectUtil {
 		if (field == null) {
 			return null;
 		}
-		field.setAccessible(true);
+		makeAccessible(field);
 		try {
 			return field.get(obj);
 		} catch (Exception e) {
@@ -167,8 +188,8 @@ public final class ReflectUtil {
 	 */
 	public static <T> Constructor<T> getMatchConstructor(Class<T> clazz, Object... params) {
 		Class<?> [] classes = ClassUtils.toClass(params);
-		Constructor[] constructors = clazz.getDeclaredConstructors();
-		for (Constructor constructor : constructors) {
+		Constructor<T>[] constructors = (Constructor<T>[]) clazz.getDeclaredConstructors();
+		for (Constructor<T> constructor : constructors) {
 			if (constructor.getParameterCount() != classes.length) {
 				continue;
 			}
@@ -203,5 +224,199 @@ public final class ReflectUtil {
 			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	/**
+	 * Invoke the given callback on all fields in the target class, going up the
+	 * class hierarchy to get all declared fields.
+	 * @param clazz the target class to analyze
+	 * @param consumer the callback to invoke for each field
+	 * @throws IllegalStateException if introspection fails
+	 */
+	public static void doWithFields(Class<?> clazz, Consumer<Field> consumer) {
+		doWithFields(clazz, consumer, null);
+	}
+
+	/**
+	 * Invoke the given callback on all fields in the target class, going up the
+	 * class hierarchy to get all declared fields.
+	 * @param clazz the target class to analyze
+	 * @param consumer the callback to invoke for each field
+	 * @param predicate the filter that determines the fields to apply the callback to
+	 * @throws IllegalStateException if introspection fails
+	 */
+	public static void doWithFields(Class<?> clazz, Consumer<Field> consumer, Predicate<Field> predicate) {
+		// Keep backing up the inheritance hierarchy.
+		Class<?> targetClass = clazz;
+		do {
+			Field[] fields = getDeclaredFields(targetClass);
+			for (Field field : fields) {
+				if (predicate != null && !predicate.test(field)) {
+					continue;
+				}
+				try {
+					consumer.accept(field);
+				}
+				catch (Exception ex) {
+					throw new CustomException(ex, "Not allowed to access field '{}'! " , field.getName());
+				}
+			}
+			targetClass = targetClass.getSuperclass();
+		}
+		while (targetClass != null && targetClass != Object.class);
+	}
+
+	private static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
+	/**
+	 * Cache for {@link Class#getDeclaredFields()}, allowing for fast iteration.
+	 */
+	private static final Map<Class<?>, Field[]> declaredFieldsCache = new ConcurrentReferenceHashMap<>(256);
+	/**
+	 * This variant retrieves {@link Class#getDeclaredFields()} from a local cache
+	 * in order to avoid the JVM's SecurityManager check and defensive array copying.
+	 * @param clazz the class to introspect
+	 * @return the cached array of fields
+	 * @throws IllegalStateException if introspection fails
+	 * @see Class#getDeclaredFields()
+	 */
+	public static Field[] getDeclaredFields(Class<?> clazz) {
+		Assert.notNull(clazz, "Class must not be null");
+		return declaredFieldsCache.computeIfAbsent(clazz, key -> {
+			Field[] declaredFields = key.getDeclaredFields();
+			return (declaredFields.length == 0 ? EMPTY_FIELD_ARRAY : declaredFields);
+		});
+	}
+
+	/**
+	 * Perform the given callback operation on all matching methods of the given
+	 * class and superclasses.
+	 * <p>The same named method occurring on subclass and superclass will appear
+	 * twice, unless excluded by a {@link Predicate}.
+	 * @param clazz the class to introspect
+	 * @param mc the callback to invoke for each method
+	 * @throws IllegalStateException if introspection fails
+	 * @see #doWithMethods(Class, Consumer, Predicate)
+	 */
+	public static void doWithMethods(Class<?> clazz, Consumer<Method> mc) {
+		doWithMethods(clazz, mc, null);
+	}
+
+	/**
+	 * Perform the given callback operation on all matching methods of the given
+	 * class and superclasses (or given interface and super-interfaces).
+	 * <p>The same named method occurring on subclass and superclass will appear
+	 * twice, unless excluded by the specified {@link ReflectionUtils.MethodFilter}.
+	 * @param clazz the class to introspect
+	 * @param mc the callback to invoke for each method
+	 * @param mf the filter that determines the methods to apply the callback to
+	 * @throws IllegalStateException if introspection fails
+	 */
+	public static void doWithMethods(Class<?> clazz, Consumer<Method> mc, Predicate<Method> mf) {
+		// Keep backing up the inheritance hierarchy.
+		Method[] methods = getDeclaredMethods(clazz, false);
+		for (Method method : methods) {
+			if (mf != null && !mf.test(method)) {
+				continue;
+			}
+			try {
+				mc.accept(method);
+			}
+			catch (Exception ex) {
+				throw new CustomException(ex, "Not allowed to access method [{}]", method.getName());
+			}
+		}
+		if (clazz.getSuperclass() != null && (mf != USER_DECLARED_METHODS || clazz.getSuperclass() != Object.class)) {
+			doWithMethods(clazz.getSuperclass(), mc, mf);
+		}
+		else if (clazz.isInterface()) {
+			for (Class<?> superIfc : clazz.getInterfaces()) {
+				doWithMethods(superIfc, mc, mf);
+			}
+		}
+	}
+
+	/**
+	 * Get all declared methods on the leaf class and all superclasses.
+	 * Leaf class methods are included first.
+	 * @param leafClass the class to introspect
+	 * @throws IllegalStateException if introspection fails
+	 */
+	public static Method[] getAllDeclaredMethods(Class<?> leafClass) {
+		final List<Method> methods = new ArrayList<>(32);
+		doWithMethods(leafClass, methods::add);
+		return methods.toArray(EMPTY_METHOD_ARRAY);
+	}
+	private static final Method[] EMPTY_METHOD_ARRAY = new Method[0];
+	/**
+	 * Pre-built MethodFilter that matches all non-bridge non-synthetic methods
+	 * which are not declared on {@code java.lang.Object}.
+	 * @since 3.0.5
+	 */
+	public static final Predicate<Method> USER_DECLARED_METHODS = (method -> !method.isBridge() && !method.isSynthetic());
+	/**
+	 * Cache for {@link Class#getDeclaredMethods()} plus equivalent default methods
+	 * from Java 8 based interfaces, allowing for fast iteration.
+	 */
+	private static final Map<Class<?>, Method[]> declaredMethodsCache = new ConcurrentReferenceHashMap<>(256);
+
+	/**
+	 * Variant of {@link Class#getDeclaredMethods()} that uses a local cache in
+	 * order to avoid the JVM's SecurityManager check and new Method instances.
+	 * In addition, it also includes Java 8 default methods from locally
+	 * implemented interfaces, since those are effectively to be treated just
+	 * like declared methods.
+	 * @param clazz the class to introspect
+	 * @return the cached array of methods
+	 * @throws IllegalStateException if introspection fails
+	 * @since 5.2
+	 * @see Class#getDeclaredMethods()
+	 */
+	public static Method[] getDeclaredMethods(Class<?> clazz) {
+		return getDeclaredMethods(clazz, true);
+	}
+
+	private static Method[] getDeclaredMethods(Class<?> clazz, boolean defensive) {
+		Assert.notNull(clazz, "Class must not be null");
+		Method[] result = declaredMethodsCache.get(clazz);
+		if (result == null) {
+			try {
+				Method[] declaredMethods = clazz.getDeclaredMethods();
+				List<Method> defaultMethods = findConcreteMethodsOnInterfaces(clazz);
+				if (defaultMethods != null) {
+					result = new Method[declaredMethods.length + defaultMethods.size()];
+					System.arraycopy(declaredMethods, 0, result, 0, declaredMethods.length);
+					int index = declaredMethods.length;
+					for (Method defaultMethod : defaultMethods) {
+						result[index] = defaultMethod;
+						index++;
+					}
+				}
+				else {
+					result = declaredMethods;
+				}
+				declaredMethodsCache.put(clazz, (result.length == 0 ? EMPTY_METHOD_ARRAY : result));
+			}
+			catch (Throwable ex) {
+				throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
+					"] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+			}
+		}
+		return (result.length == 0 || !defensive) ? result : result.clone();
+	}
+
+
+	private static List<Method> findConcreteMethodsOnInterfaces(Class<?> clazz) {
+		List<Method> result = null;
+		for (Class<?> ifc : clazz.getInterfaces()) {
+			for (Method ifcMethod : ifc.getMethods()) {
+				if (!Modifier.isAbstract(ifcMethod.getModifiers())) {
+					if (result == null) {
+						result = new ArrayList<>();
+					}
+					result.add(ifcMethod);
+				}
+			}
+		}
+		return result;
 	}
 }
