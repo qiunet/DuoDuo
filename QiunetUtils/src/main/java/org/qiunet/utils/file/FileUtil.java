@@ -2,6 +2,7 @@ package org.qiunet.utils.file;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.FileUtils;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -67,7 +68,7 @@ public class FileUtil {
 		try (FileOutputStream fs = new FileOutputStream(newPath)) {
 			fs.write(Files.readAllBytes(oldFile.toPath()));
 		} catch (Exception e) {
-			logger.error("Exception" , e);
+			throw new CustomException(e, "File Copy exception!");
 		}
 	}
 
@@ -97,11 +98,11 @@ public class FileUtil {
 	 */
 	public static void writeStringToFile(final File file, final String data, final Charset charset, final boolean append, String endChar){
 		if (file.isDirectory()) {
-			logger.error("File '" + file + "' exists but is a directory");
+			logger.error("File '{}' exists but is a directory", file);
 			return;
 		}
 		if (! file.exists() && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
-			logger.error("Directory '" + file.getParent() + "' could not be created");
+			logger.error("Directory '{}' could not be created", file.getParent());
 			return;
 		}
 
@@ -162,7 +163,11 @@ public class FileUtil {
 	 * @return
 	 */
 	public static long getFileLength(File file) {
-		if (file == null || file.isDirectory() || !file.exists() || !file.canRead()) {
+		if (file == null || file.isDirectory() || !file.exists()) {
+			throw new CustomException("File is empty or null");
+		}
+
+		if (!file.canRead()) {
 			return 0;
 		}
 		return file.length();
@@ -200,7 +205,13 @@ public class FileUtil {
 	 * @throws IOException
 	 */
 	public static String getFileContent(File file) throws IOException {
-		if (! file.exists() || !file.isFile()) return null;
+		if (file == null) {
+			throw new NullPointerException();
+		}
+
+		if (! file.exists() || !file.isFile()) {
+			throw new CustomException("File {} is not file or empty!", file.getAbsolutePath());
+		}
 
 		byte[] bytes = Files.readAllBytes(file.toPath());
 		return new String(bytes, StandardCharsets.UTF_8);
