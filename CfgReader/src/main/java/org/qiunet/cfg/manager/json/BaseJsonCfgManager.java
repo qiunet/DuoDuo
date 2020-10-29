@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
 
@@ -48,11 +49,12 @@ abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> 
 	 */
 	protected List<Cfg> getSimpleListCfg() {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
-		String json = null;
+		String json;
+		File file = getFile(fileName);
 		try {
-			json = FileUtil.getFileContent(getFile(fileName));
+			json = FileUtil.getFileContent(file);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CustomException(e, "读取[{}]异常!", file.getAbsolutePath());
 		}
 
 		List<JSONObject> generalList = JsonUtil.getGeneralList(json, JSONObject.class);
