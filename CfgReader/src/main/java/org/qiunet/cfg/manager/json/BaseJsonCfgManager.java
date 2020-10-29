@@ -7,7 +7,6 @@ import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,9 +53,6 @@ abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> 
 		File file = getFile(fileName);
 		try {
 			json = FileUtil.getFileContent(getFile(fileName));
-			if(StringUtil.isEmpty(json)){
-				logger.debug("读取配置文件 [ " + fileName + " ] content is null , path:" + file.getAbsolutePath());
-			}
 		} catch (IOException e) {
 			throw new CustomException(e, "读取[{}]异常!", file.getAbsolutePath());
 		}

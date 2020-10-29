@@ -47,21 +47,10 @@ abstract class BaseXmlCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			throw new NullPointerException("File ["+fileName+"] is not exist in classpath");
 		}
 
-		InputStream in = null;
-		try {
-			if (url.getPath().contains(".jar!")) {
-				//jar包里面的文件. 只能用这种加载方式. 缺点是有缓存. 不能热加载设定
-				in = getClass().getClassLoader().getResourceAsStream(fileName);
-			}else {
-				in = new FileInputStream(url.getPath());
-			}
+		try (InputStream in = new FileInputStream(url.getPath())){
 			this.cfgs = (List<Cfg>) xStream.fromXML(in);
 			this.init();
 			this.afterLoad();
-		} finally {
-			if (in != null) {
-				in.close();
-			}
 		}
 	}
 
