@@ -55,7 +55,7 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());
 
-		LoggerType.DUODUO_CFG_READER.info("find {} cfg field convert!", this.converts.size());
+		LoggerType.DUODUO_CFG_READER.debug("find {} cfg field convert!", this.converts.size());
 	}
 
 	public List<? extends BaseObjConvert> getConverts() {

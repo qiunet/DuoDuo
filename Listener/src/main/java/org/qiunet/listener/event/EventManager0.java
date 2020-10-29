@@ -41,7 +41,7 @@ enum EventManager0 implements IApplicationContextAware {
 		}
 
 		this.listeners.values().forEach(list -> list.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()));
-		LoggerType.DUODUO.info("EventManager find {} event!", this.listeners.size());
+		LoggerType.DUODUO.debug("EventManager find {} event!", this.listeners.size());
 	}
 
 	@Override
