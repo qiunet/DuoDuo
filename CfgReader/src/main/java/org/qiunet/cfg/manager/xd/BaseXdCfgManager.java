@@ -9,6 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,7 +40,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	 * @return 该表的行数量 和 列名称信息
 	 * @throws IOException
 	 */
-	XdInfoData loadXdFileToDataInputStream() throws IOException {
+	XdInfoData loadXdFileToDataInputStream() throws IOException, URISyntaxException {
 		logger.debug("读取配置文件 [ {}]", fileName);
 
 		URL url = getClass().getClassLoader().getResource(fileName);
@@ -47,7 +48,7 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 			throw new NullPointerException("fileName "+fileName+" is not exist in classpath");
 		}
 
-		byte [] bytes = Files.readAllBytes(Paths.get(url.getPath()));
+		byte [] bytes = Files.readAllBytes(Paths.get(url.toURI()));
 		CommonUtil.reverse(bytes, 2);
 		bais = new ByteArrayInputStream(bytes);
 		gis = new GZIPInputStream(bais);
