@@ -26,6 +26,7 @@ public class CrossEventHandler extends TcpProtobufHandler<AbstractMessageActor, 
 		if (obj instanceof BaseUserEventData) {
 			((BaseUserEventData) obj).setPlayer((AbstractUserActor) actor);
 		}
-		EventManager.fireEventHandler(obj);
+		// 可能是PlayerActor CrossPlayerActor . 也可能是ServerNode
+		actor.addMessage(a -> EventManager.fireEventHandler(obj));
 	}
 }
