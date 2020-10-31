@@ -95,6 +95,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@Override
+	public int order() {
+		return 1;
+	}
+
+	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
 			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getCommunicationPort())
@@ -110,6 +115,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 
 		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
+		// 启动检测 redis 是否通畅.
+		this.redisUtil.returnJedis().exists("");
 	}
 
 	@EventListener
