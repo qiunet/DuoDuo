@@ -36,7 +36,17 @@ public class JsonAppender extends BaseAppender {
 			JSONObject jsonObject = new JSONObject();
 			for (AppenderData rowData : rowDatas) {
 				if (rowData.getOutPutType().canWrite(roleType)) {
-					jsonObject.put(rowData.getName(), rowData.getVal());
+					switch (rowData.getDataType()){
+						case INT:
+							jsonObject.put(rowData.getName(), Integer.parseInt(rowData.getVal()));
+							break;
+						case LONG:
+							jsonObject.put(rowData.getName(), Long.parseLong(rowData.getVal()));
+							break;
+						case STRING:
+							jsonObject.put(rowData.getName(), rowData.getVal());
+							break;
+					}
 				}
 			}
 			jsonArray.add(jsonObject);
