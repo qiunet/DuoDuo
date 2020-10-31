@@ -96,7 +96,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (ServerConfig.getServerType() == ServerType.ALL) {
+		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
+			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getCommunicationPort())
+			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
+
+		if (currServerInfo.getType() == ServerType.ALL) {
 			return;
 		}
 
@@ -104,16 +108,13 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE'");
 		}
 
-		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
-			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getCommunicationPort())
-			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
 		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
 	}
 
 	@EventListener
 	public void onServerStart(ServerStartupEventData data){
-		if (ServerConfig.getServerType() == ServerType.ALL) {
+		if (currServerInfo.getType() == ServerType.ALL) {
 			return;
 		}
 

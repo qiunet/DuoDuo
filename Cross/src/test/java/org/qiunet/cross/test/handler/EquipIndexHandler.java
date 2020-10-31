@@ -3,6 +3,8 @@ package org.qiunet.cross.test.handler;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.common.actor.PlayerActor;
+import org.qiunet.cross.test.data.PlayerCrossData;
+import org.qiunet.cross.test.data.TestCrossDataCross;
 import org.qiunet.cross.test.event.CrossPlayerLoginEventData;
 import org.qiunet.cross.test.proto.req.EquipIndexRequest;
 import org.qiunet.cross.test.proto.resp.CrossLoginResponse;
@@ -25,6 +27,8 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 
 	@Override
 	public void crossHandler(CrossPlayerActor actor, EquipIndexRequest equipIndexRequest) {
+		TestCrossDataCross crossData = actor.getCrossData(PlayerCrossData.TEST_CROSS_DATA);
+		logger.info("取到CrossData: PlayerId: {} playerName: {}", crossData.getUid(), crossData.getPlayerName());
 		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"));
 	}
 }

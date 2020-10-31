@@ -1,12 +1,15 @@
 package org.qiunet.cross.transaction;
 
 import com.google.common.collect.Maps;
-import org.qiunet.data.util.ServerConfig;
+import com.google.common.collect.Sets;
+import org.qiunet.cross.actor.data.CrossData;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -26,7 +29,7 @@ enum TransactionManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (ServerConfig.getServerType() == ServerType.ALL) {
+		if (ServerNodeManager.getCurrServerType() == ServerType.ALL) {
 			return;
 		}
 
@@ -40,6 +43,17 @@ enum TransactionManager0 implements IApplicationContextAware {
 			}
 			handles.put(requestClass, (ITransactionHandler)context.getInstanceOfClass(clazz));
 		}
+
+		Set<Class<? extends CrossData>> subTypesOf = context.getSubTypesOf(CrossData.class);
+		Set<String> classNames = Sets.newHashSet();
+		for (Class<? extends CrossData> aClass : subTypesOf) {
+			String realClass = aClass.getName().substring(0, aClass.getName().indexOf("$"));
+			if (classNames.contains(realClass)) {
+				continue;
+			}
+			Class.forName(realClass);
+			classNames.add(realClass);
+		}
 	}
 
 	/**
@@ -49,5 +63,15 @@ enum TransactionManager0 implements IApplicationContextAware {
 	 */
 	void handler(Class reqClass, DTransaction transaction) {
 		handles.get(reqClass).handler(transaction);
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.SERVER;
+	}
+
+	@Override
+	public int order() {
+		return -1;
 	}
 }

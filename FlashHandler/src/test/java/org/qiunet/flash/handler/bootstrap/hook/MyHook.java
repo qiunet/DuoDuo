@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.bootstrap.hook;
 
 
-import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -18,11 +17,6 @@ public class MyHook implements Hook {
 
 	@Override
 	public void reloadCfg() {
-		try {
-			CfgManagers.getInstance().reloadSetting();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
