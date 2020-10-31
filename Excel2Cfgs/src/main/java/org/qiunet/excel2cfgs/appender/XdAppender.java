@@ -9,6 +9,7 @@ import org.qiunet.utils.common.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,8 +23,8 @@ import java.util.zip.GZIPOutputStream;
  */
 public class XdAppender extends BaseAppender {
 
-	public XdAppender(String outputRelativePath, String filePrefix) {
-		super(outputRelativePath, filePrefix);
+	public XdAppender(File sourceFile,  String outputRelativePath, String filePrefix) {
+		super(sourceFile, outputRelativePath, filePrefix);
 	}
 
 	@Override

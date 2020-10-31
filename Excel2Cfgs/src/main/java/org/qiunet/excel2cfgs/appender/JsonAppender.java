@@ -7,6 +7,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.utils.file.FileUtil;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class JsonAppender extends BaseAppender {
 
-	public JsonAppender(String relativeDirPath, String filePrefix) {
-		super(relativeDirPath, filePrefix);
+	public JsonAppender(File sourceFile, String relativeDirPath, String filePrefix) {
+		super(sourceFile, relativeDirPath, filePrefix);
 	}
 
 	@Override

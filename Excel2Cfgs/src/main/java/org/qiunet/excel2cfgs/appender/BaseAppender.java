@@ -20,9 +20,14 @@ abstract class BaseAppender implements IAppender {
 	 */
 	protected String filePrefix;
 
-	protected BaseAppender(String outputRelativePath, String filePrefix) {
+	/**
+	 * 源文件
+	 */
+	protected File sourceFile;
+	protected BaseAppender(File sourceFile, String outputRelativePath, String filePrefix) {
 		this.outputRelativePath = outputRelativePath;
 		this.filePrefix = filePrefix;
+		this.sourceFile = sourceFile;
 	}
 
 	/**

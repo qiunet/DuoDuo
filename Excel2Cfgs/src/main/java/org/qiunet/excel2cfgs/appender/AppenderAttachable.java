@@ -1,6 +1,7 @@
 package org.qiunet.excel2cfgs.appender;
 
 import com.google.common.collect.Lists;
+import org.qiunet.excel2cfgs.enums.DataType;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 
@@ -42,8 +43,8 @@ public class AppenderAttachable {
 		return fileName;
 	}
 
-	public void addNameAppender(String name, OutPutType outPutType) {
-		this.nameAppenderDatas.add(new NameAppenderData(name, outPutType));
+	public void addNameAppender(String desc, String name, DataType dataType, OutPutType outPutType) {
+		this.nameAppenderDatas.add(new NameAppenderData(desc, name, dataType, outPutType));
 	}
 
 	/***

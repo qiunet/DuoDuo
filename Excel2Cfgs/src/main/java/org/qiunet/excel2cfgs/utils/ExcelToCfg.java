@@ -2,6 +2,7 @@ package org.qiunet.excel2cfgs.utils;
 
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.excel2cfgs.appender.*;
+import org.qiunet.excel2cfgs.enums.DataType;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.Setting;
@@ -10,6 +11,8 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 /**
@@ -28,7 +31,7 @@ public class ExcelToCfg {
 	/**
 	 * 定义数据的行数-行号
 	 */
-	private static final int DATA_DEFINE_ROW = 3;
+	private static final int DATA_DEFINE_ROW = 4;
 	/***
 	 * 从根目录开始的文件名
 	 */
@@ -91,7 +94,8 @@ public class ExcelToCfg {
 	private void SheetToStream(Sheet sheet, AppenderAttachable attachable) throws Exception {
 		/*设定excel 行数据的规则
 		 * 第一行：说明	        		实际对应的row 为 0 加下划线_{en_name} 英文名表示需要的意思
-		 * 第二行：数据类型				    实际对应的row 为 1
+		 * 第二行 数据类型 				客户端用居多.
+		 * 第二行：角色类型				    实际对应的row 为 2
 		 */
 		int rowNum = 0, columnNum = 0;
 		int lastRow = getSheetLastRow(sheet);
@@ -101,14 +105,18 @@ public class ExcelToCfg {
 		try {
 			int cellLength = getCellLength(sheet);
 
+			Row descRow = sheet.getRow(0);
 			Row dataNameRow = sheet.getRow(1);
-			Row dataOutPutTypeRow = sheet.getRow(2);
+			Row dateTypeRow = sheet.getRow(2);
+			Row dataOutPutTypeRow = sheet.getRow(3);
 
 			for (columnNum = 0; columnNum < cellLength; columnNum++) {
 				// 名称
+				String desc = descRow.getCell(columnNum).getStringCellValue();
 				String dataName = dataNameRow.getCell(columnNum).getStringCellValue();
 				OutPutType outPutType = OutPutType.valueOf(dataOutPutTypeRow.getCell(columnNum).getStringCellValue());
-				attachable.addNameAppender(dataName, outPutType);
+				DataType dataType = DataType.parse(dateTypeRow.getCell(columnNum).getStringCellValue());
+				attachable.addNameAppender(desc, dataName, dataType, outPutType);
 			}
 
 
@@ -125,7 +133,8 @@ public class ExcelToCfg {
 					String dataName = dataNameRow.getCell(columnNum).getStringCellValue();
 
 					OutPutType outPutType = OutPutType.valueOf(dataOutPutTypeRow.getCell(columnNum).getStringCellValue());
-					attachable.append(new AppenderData(dataName, c.getStringCellValue().trim(), outPutType));
+					DataType dataType = DataType.parse(dateTypeRow.getCell(columnNum).getStringCellValue());
+					attachable.append(new AppenderData(dataName, c.getStringCellValue().trim(), dataType, outPutType));
 				}
 				// 行结束
 				attachable.rowRecordOver();
@@ -148,13 +157,13 @@ public class ExcelToCfg {
 
 			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
 			if (setting.isXdChecked()){
-				appenderAttachable.addAppender(new XdAppender(relativeDirPath, fileNamePrefix));
+				appenderAttachable.addAppender(new XdAppender(sourceFile, relativeDirPath, fileNamePrefix));
 			}
 			if (setting.isJsonChecked()) {
-				appenderAttachable.addAppender(new JsonAppender(relativeDirPath, fileNamePrefix));
+				appenderAttachable.addAppender(new JsonAppender(sourceFile, relativeDirPath, fileNamePrefix));
 			}
 			if (setting.isXmlChecked()) {
-				appenderAttachable.addAppender(new XmlAppender(relativeDirPath, fileNamePrefix));
+				appenderAttachable.addAppender(new XmlAppender(sourceFile, relativeDirPath, fileNamePrefix));
 			}
 
 			if (appenderAttachable.getAppenderSize() == 0){
@@ -165,6 +174,14 @@ public class ExcelToCfg {
 			if (SettingManager.getInstance().roleType() != RoleType.SCHEMER && appenderAttachable.getAppenderSize() != 1){
 				FxUIUtil.alterError("非策划人员只能选择一种文件输出格式! ");
 				return;
+			}
+
+			if (SettingManager.getInstance().roleType() != RoleType.SERVER) {
+				appenderAttachable.addAppender(new ProtoAppender(sourceFile, relativeDirPath, fileNamePrefix));
+				Path path = Paths.get(SettingManager.getInstance().getFirstCfgPath(), relativeDirPath, fileNamePrefix + ".proto");
+				if (path.toFile().exists()) {
+					path.toFile().delete();
+				}
 			}
 
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ) {

@@ -7,6 +7,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.qiunet.excel2cfgs.enums.RoleType;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -21,8 +22,8 @@ import java.util.List;
  ***/
 public class XmlAppender extends BaseAppender {
 
-	public XmlAppender(String relativeDirPath, String filePrefix) {
-		super(relativeDirPath, filePrefix);
+	public XmlAppender(File sourceFile, String relativeDirPath, String filePrefix) {
+		super(sourceFile, relativeDirPath, filePrefix);
 	}
 
 	@Override

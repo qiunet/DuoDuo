@@ -1,5 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
+import org.qiunet.excel2cfgs.enums.DataType;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 
 
@@ -15,8 +16,8 @@ public class AppenderData extends NameAppenderData{
 	 */
 	private String val;
 
-	public AppenderData(String name, String val, OutPutType outPutType) {
-		super(name, outPutType);
+	public AppenderData(String name, String val, DataType dataType, OutPutType outPutType) {
+		super("", name, dataType, outPutType);
 		this.val = val;
 	}
 
