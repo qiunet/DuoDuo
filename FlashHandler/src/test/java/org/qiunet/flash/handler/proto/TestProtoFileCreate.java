@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 public class TestProtoFileCreate {
 
 	public static void main(String[] args) throws Exception {
-		Path path = Paths.get("C:\\Users\\qiune\\workSpace");
+		Path path = Paths.get("/Users/qiunet/Desktop");
 		File file = path.toFile();
 
 		GeneratorProtoFile.generator(file, ProtoGeneratorModel.ALL_IN_ONE, "org.qiunet");
