@@ -3,10 +3,12 @@ package org.qiunet.cross.event;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.listener.event.EventManager;
 import org.qiunet.listener.event.IEventData;
 
 /***
@@ -43,8 +45,12 @@ public class CrossEventManager {
 	 * @param <T>
 	 */
 	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
-		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
+		if (serverId == ServerConfig.getServerId()) {
+			EventManager.fireEventHandler(eventData);
+			return;
+		}
 
+		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		ServerNodeManager.getNode(serverId).send(request.buildResponseMessage());
 	}
