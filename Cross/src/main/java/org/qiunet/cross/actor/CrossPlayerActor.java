@@ -2,7 +2,7 @@ package org.qiunet.cross.actor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.qiunet.cross.actor.data.BaseTransferData;
+import org.qiunet.cross.actor.data.BaseCrossTransferData;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
 import org.qiunet.cross.actor.message.Cross2PlayerResponse;
@@ -24,10 +24,19 @@ import java.util.Map;
  * 2020-10-14 17:20
  */
 public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
-	private Map<CrossData, CrossDataGetter> crossDataContainer = Maps.newConcurrentMap();
-
+	/***
+	 * 跨服的数据持有者
+	 */
+	private Map<CrossData, CrossDataGetter> crossDataHolder = Maps.newConcurrentMap();
+	/**
+	 * 玩家id
+	 */
 	private long playerId;
+	/**
+	 * 玩家的服务器
+	 */
 	private int serverId;
+
 
 	public CrossPlayerActor(DSession session) {
 		super(session);
@@ -83,15 +92,14 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	public void setServerId(int serverId) {
 		this.serverId = serverId;
 	}
-
 	/**
 	 * 获得CrossData定义的数据
 	 * @param key
 	 * @param <Data>
 	 * @return
 	 */
-	public <Data extends BaseTransferData> Data getCrossData(CrossData<Data> key) {
-		CrossDataGetter<Data> getter = crossDataContainer.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
+	public <Data extends BaseCrossTransferData> Data getCrossData(CrossData<Data> key) {
+		CrossDataGetter<Data> getter = crossDataHolder.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
 		return getter.get();
 	}
 }

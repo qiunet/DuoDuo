@@ -13,23 +13,23 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  */
 public class CrossDataTransactionResponse extends BaseTransactionResponse {
 	@Ignore
-	private BaseTransferData data;
+	private BaseCrossTransferData data;
 
 	@JSONField(serialize = false)
 	private byte [] bytes;
 
-	public static CrossDataTransactionResponse valueOf(BaseTransferData data) {
+	public static CrossDataTransactionResponse valueOf(BaseCrossTransferData data) {
 		CrossDataTransactionResponse request = new CrossDataTransactionResponse();
 		request.data = data;
 		request.bytes = ProtobufDataManager.encode(data);
 		return request;
 	}
 
-	public BaseTransferData getData() {
+	public BaseCrossTransferData getData() {
 		return data;
 	}
 
-	public void setData(BaseTransferData data) {
+	public void setData(BaseCrossTransferData data) {
 		this.data = data;
 	}
 

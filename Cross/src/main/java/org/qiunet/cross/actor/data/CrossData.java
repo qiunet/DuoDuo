@@ -15,7 +15,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-10-28 10:50
  */
-public abstract class CrossData<Data extends BaseTransferData> {
+public abstract class CrossData<Data extends BaseCrossTransferData> {
 	private static final Map<String, CrossData> cacheDatas = Maps.newHashMap();
 	private Class<Data> clazz;
 	private String key;

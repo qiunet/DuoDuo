@@ -14,7 +14,7 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  * @author qiunet
  * 2020-10-28 11:35
  */
-public final class CrossDataGetter<Data extends BaseTransferData> {
+public final class CrossDataGetter<Data extends BaseCrossTransferData> {
 	private LazyLoader<Data> loader;
 
 	private CrossData<Data> crossData;

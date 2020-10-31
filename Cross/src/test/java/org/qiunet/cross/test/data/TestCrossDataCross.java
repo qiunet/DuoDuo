@@ -1,6 +1,6 @@
 package org.qiunet.cross.test.data;
 
-import org.qiunet.cross.actor.data.BaseTransferData;
+import org.qiunet.cross.actor.data.BaseCrossTransferData;
 
 /***
  *
@@ -8,14 +8,14 @@ import org.qiunet.cross.actor.data.BaseTransferData;
  * @author qiunet
  * 2020-10-28 12:19
  */
-public class TestCrossData extends BaseTransferData {
+public class TestCrossDataCross extends BaseCrossTransferData {
 
 	private String playerName;
 
 	private long uid;
 
-	public static TestCrossData valueOf(String playerName, long uid) {
-		TestCrossData crossData = new TestCrossData();
+	public static TestCrossDataCross valueOf(String playerName, long uid) {
+		TestCrossDataCross crossData = new TestCrossDataCross();
 		crossData.playerName = playerName;
 		crossData.uid = uid;
 		return crossData;

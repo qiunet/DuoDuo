@@ -20,7 +20,7 @@ public class CrossDataTransactionHandler implements ITransactionHandler<CrossDat
 		AbstractUserActor playerActor = UserOnlineManager.getPlayerActor(request.getPlayerId());
 		playerActor.addMessage(p -> transaction.handler(req -> {
 			CrossData crossData = CrossData.get(req.getKey());
-			BaseTransferData data = crossData.create((AbstractPlayerActor) p);
+			BaseCrossTransferData data = crossData.create((AbstractPlayerActor) p);
 			return CrossDataTransactionResponse.valueOf(data);
 		}));
 	}
