@@ -30,6 +30,9 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 	private TimeOutFuture timeOutFuture;
 	private AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
+	DTransaction(long reqId, REQ reqData) {
+		this(reqId, reqData, null);
+	}
 	DTransaction(long reqId, REQ reqData, ServerNode serverNode) {
 		this.reqId = reqId;
 		this.reqData = reqData;
@@ -46,7 +49,11 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 
 		RESP response = dataHandler.apply(reqData);
 		RouteTransactionResponse transactionResponse = RouteTransactionResponse.valueOf(reqId, response);
-		serverNode.writeMessage(transactionResponse);
+		if (serverNode != null) {
+			serverNode.writeMessage(transactionResponse);
+		}else {
+			TransactionManager.instance.completeTransaction(transactionResponse);
+		}
 	}
 
 	public REQ getReqData() {

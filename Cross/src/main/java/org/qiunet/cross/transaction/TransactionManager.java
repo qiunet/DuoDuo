@@ -60,9 +60,15 @@ public enum TransactionManager {
 
 		long reqId = idGenerator.makeId();
 		this.cacheRequests.put(reqId, promise);
-		ServerNode node = ServerNodeManager.getNode(serverId);
 		RouteTransactionRequest routeTransactionRequest = RouteTransactionRequest.valueOf(reqId, req);
 		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
+		if (serverId == ServerNodeManager.getCurrServerId()) {
+			DTransaction<Req, Resp> dTransaction = new DTransaction<>(reqId, req);
+			TransactionManager0.instance.handler(req.getClass(), dTransaction);
+			return respTransactionFuture;
+		}
+
+		ServerNode node = ServerNodeManager.getNode(serverId);
 		ChannelFuture channelFuture = node.writeMessage(routeTransactionRequest);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
