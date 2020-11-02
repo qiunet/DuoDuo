@@ -6,8 +6,8 @@ import org.slf4j.helpers.MessageFormatter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
@@ -44,8 +44,8 @@ public class StringUtil {
 	public static String [] split(String srcStr , String splitStr){
 		if(srcStr == null || srcStr.length() == 0) return new String[0];
 
-		List<String > retList = new ArrayList<String>();
-		int before = 0 , cursor = 0 ,validCursor = srcStr.length() ;
+		List<String > retList = new LinkedList<>();
+		int before = 0 , cursor = 0 ,validCursor;
 		boolean splitValid = false;
 		for(int i = 0 ; i < srcStr.length(); i ++){
 			if(!splitValid && srcStr.charAt(i) == splitStr.charAt(0)) {
@@ -66,7 +66,7 @@ public class StringUtil {
 			}
 		}
 		retList.add(srcStr.substring(before));
-		return retList.toArray(new String[retList.size()]);
+		return retList.toArray(new String[0]);
 	}
 	/***
 	 * 字符串数组 转 基础数据类型数组

@@ -15,18 +15,18 @@ public class TestStringUtil extends BaseTest{
 		String[] strs = StringUtil.split(str, ",");
 		Assert.assertEquals("",strs[2]);
 
-		str = ",1,2";
+		str = ",1344,2";
 		strs  = StringUtil.split(str, ",");
-		Assert.assertTrue(strs.length == 3);
+		Assert.assertEquals(3, strs.length);
 		Assert.assertEquals("", strs[0]);
 
 		str = "1,2";
 		strs  = StringUtil.split(str, ",");
-		Assert.assertTrue(strs.length == 2);
+		Assert.assertEquals(2, strs.length);
 
 		str = ",1,2,";
 		strs  = StringUtil.split(str, ",");
-		Assert.assertTrue(strs.length == 4);
+		Assert.assertEquals(4, strs.length);
 	}
 	@Test
 	public void testPowerfullTrim() {
