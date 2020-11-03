@@ -93,7 +93,7 @@ public enum CfgManagers {
 				continue;
 			}
 
-			DFuture<Void> dFuture = TimerManager.executor.executorNow(() -> {
+			DFuture<Void> dFuture = TimerManager.executorNow(() -> {
 					cfgManager.loadCfg();
 					return null;
 			});

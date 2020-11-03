@@ -6,7 +6,7 @@ import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.system.OSUtil;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
 
 import java.util.concurrent.*;
@@ -26,7 +26,7 @@ public enum TimerManager {
 	 * 系统自带的 ScheduledThreadPool
 
 	 */
-	executor(new ScheduledThreadPoolExecutor(OSUtil.availableProcessors()*2, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
+	executor(new ScheduledThreadPoolExecutor(4, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
 	;
 
 	private ScheduledExecutorService schedule;
@@ -42,25 +42,15 @@ public enum TimerManager {
 			timerManager.schedule.shutdown();
 		}
 	}
-
-	/**
-	 * 获得timerManager使用的schedule. 不推荐业务使用.
-	 *
-	 * @return
-	 */
-	public ScheduledExecutorService __schedule() {
-		return schedule;
-	}
-
 	/**
 	 * 立刻执行
 	 * @param callable
 	 * @param <V>
 	 * @return
 	 */
-	public <V> DFuture<V> executorNow(Callable<V> callable) {
+	public static  <V> DFuture<V> executorNow(Callable<V> callable) {
 		DCompletePromise<V> future = new DCompletePromise<>();
-		Future<V> submit = schedule.submit(() -> {
+		Future<V> submit = ThreadPoolManager.NORMAL.submit(() -> {
 			V result = null;
 			try {
 				result = callable.call();

@@ -97,7 +97,7 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 
 		if (now - monitorData.getStartCheckTime() < this.getTriggerTime(subType)) {
 			TempMonitorData<Type, SubType> data = new TempMonitorData<>(monitorData.getType(), monitorData.getSubType(), newNum, monitorData.delayTimes());
-			DFuture<Boolean> future = TimerManager.executor.executorNow(() -> trigger.trigger(data));
+			DFuture<Boolean> future = TimerManager.executorNow(() -> trigger.trigger(data));
 			future.whenComplete((ret, e) -> {
 				if (e != null) {
 					LoggerType.DUODUO.error("DefaultMonitor Exception: ", e);

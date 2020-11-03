@@ -4,8 +4,8 @@ import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.file.FileChangeListener;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
@@ -72,6 +72,7 @@ public class ShutdownHookUtil {
 	 */
 	private void shutdownNow() {
 		if (executing.compareAndSet(false, true)) {
+			this.addShutdownHook(ThreadPoolManager::shutdownPool);
 			this.addShutdownHook(TimerManager::shutdown);
 			this.run();
 		}

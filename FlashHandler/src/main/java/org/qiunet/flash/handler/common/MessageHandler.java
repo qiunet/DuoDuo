@@ -5,6 +5,7 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadContextData;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
@@ -24,7 +25,7 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private static final ExecutorService executorService = TimerManager.executor.__schedule();
+	private static final ExecutorService executorService = ThreadPoolManager.MESSAGE_HANDLER;
 
 	private AtomicInteger size = new AtomicInteger();
 

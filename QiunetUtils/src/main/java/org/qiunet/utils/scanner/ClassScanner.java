@@ -116,7 +116,7 @@ public final class ClassScanner implements IApplicationContext {
 				continue;
 			}
 
-			DFuture<Boolean> future = TimerManager.executor.executorNow(() -> {
+			DFuture<Boolean> future = TimerManager.executorNow(() -> {
 				run(instance);
 				return true;
 			});

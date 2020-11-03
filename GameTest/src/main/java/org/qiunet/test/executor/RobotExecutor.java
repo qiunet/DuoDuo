@@ -69,7 +69,7 @@ public final class RobotExecutor {
 		logger.info("===============压测开始===============");
 		currThread = Thread.currentThread();
 		for (int i = 0; i < robotCount; i++) {
-			DFuture<Boolean> future = TimerManager.executor.executorNow(() -> {
+			DFuture<Boolean> future = TimerManager.executorNow(() -> {
 				IRobot robot = robotFactory.createRobot(testCases);
 				return robot.runCases();
 			});
