@@ -25,6 +25,7 @@
 		<module>EventLog</module>
 		<module>Listener</module>
 		<module>Cross</module>
+		<module>Profile</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -167,6 +168,11 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Cross</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>Profile</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

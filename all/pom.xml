@@ -223,6 +223,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>Profile</artifactId>
+			<optional>true</optional>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>ProjectInit</artifactId>
 			<optional>true</optional>
 			<scope>compile</scope>
