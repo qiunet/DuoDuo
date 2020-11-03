@@ -6,7 +6,7 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntityList;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.threadLocal.ThreadContextData;
+import org.qiunet.utils.thread.ThreadContextData;
 
 import java.util.List;
 import java.util.Map;

@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
 import org.qiunet.utils.scanner.ClassScanner;
-import org.qiunet.utils.threadLocal.ThreadContextData;
+import org.qiunet.utils.thread.ThreadContextData;
 
 import java.util.Map;
 

@@ -1,4 +1,4 @@
-package org.qiunet.utils.threadLocal;
+package org.qiunet.utils.thread;
 
 import java.util.HashMap;
 import java.util.Map;

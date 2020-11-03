@@ -1,6 +1,6 @@
 package org.qiunet.quartz;
 
-import org.qiunet.utils.threadLocal.ThreadContextData;
+import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

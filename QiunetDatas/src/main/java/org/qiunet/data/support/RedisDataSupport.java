@@ -5,7 +5,7 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.threadLocal.ThreadContextData;
+import org.qiunet.utils.thread.ThreadContextData;
 
 /***
  *
