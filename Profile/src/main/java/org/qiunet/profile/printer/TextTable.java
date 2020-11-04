@@ -30,17 +30,17 @@ public class TextTable<O> {
 	private List<TextTableColumnInfo<O>> columnInfos = Lists.newArrayList();
 	
 	
-	public TextTable setDataList(List<O> dataList) {
+	public TextTable<O> setDataList(List<O> dataList) {
 		this.dataList = dataList;
 		return this;
 	}
 
-	public TextTable setComparator(Comparator<O> comparator) {
+	public TextTable<O> setComparator(Comparator<O> comparator) {
 		this.comparator = comparator;
 		return this;
 	}
 
-	public TextTable addColumnInfo(TextTableColumnInfo<O> columnInfo) {
+	public TextTable<O> addColumnInfo(TextTableColumnInfo<O> columnInfo) {
 		this.columnInfos.add(columnInfo);
 		return this;
 	}

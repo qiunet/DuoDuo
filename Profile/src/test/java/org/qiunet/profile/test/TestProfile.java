@@ -2,7 +2,6 @@ package org.qiunet.profile.test;
 
 import org.junit.Test;
 import org.qiunet.profile.Profile;
-import org.qiunet.profile.ProfilePrinter;
 
 /***
  *
@@ -20,6 +19,6 @@ public class TestProfile {
 		profile.createRow("pt1").add(ProfileType.Test1, 5000).add(ProfileType.Test2, 8000).submit();
 
 		profile.createRow("pt2").add(ProfileType.Test1, 5000).add(ProfileType.Test2, 8000).submit();
-		ProfilePrinter.valueOf(profile).print(System.out);
+		profile.print(System.out);
 	}
 }

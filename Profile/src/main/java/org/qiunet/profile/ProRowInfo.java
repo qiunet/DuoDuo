@@ -4,12 +4,12 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 /***
- *
+ *  监控的行信息
  *
  * @author qiunet
  * 2020-11-04 11:36
  */
-public class ProRowInfo<Key, Column extends Enum<Column> & IProColumn> {
+class ProRowInfo<Key, Column extends Enum<Column> & IProColumn> {
 	private Key key;
 	private Column [] columns;
 	private AtomicLongArray values;

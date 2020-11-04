@@ -11,7 +11,7 @@ import java.io.PrintStream;
  * @author qiunet
  * 2020-11-04 12:36
  */
-public class ProfilePrinter<Key, Column extends Enum<Column> & IProColumn> {
+ class ProfilePrinter<Key, Column extends Enum<Column> & IProColumn> {
 
 	private Profile<Key, Column> profile;
 
@@ -19,7 +19,7 @@ public class ProfilePrinter<Key, Column extends Enum<Column> & IProColumn> {
 		this.profile = profile;
 	}
 
-	public static <Key, Column extends Enum<Column> & IProColumn> ProfilePrinter<Key, Column> valueOf(Profile<Key, Column> profile){
+	static <Key, Column extends Enum<Column> & IProColumn> ProfilePrinter<Key, Column> valueOf(Profile<Key, Column> profile){
 		return new ProfilePrinter<>(profile);
 	}
 
@@ -27,16 +27,19 @@ public class ProfilePrinter<Key, Column extends Enum<Column> & IProColumn> {
 	 * 打印
 	 * @param printer
 	 */
-	public void print(PrintStream printer) {
+	void print(PrintStream printer) {
 		TextTable<ProRowInfo<Key, Column>> textTable = new TextTable<>();
-		textTable.setDataList(profile.toList());
-		textTable.addColumnInfo(new TextTableColumnInfo<>("key", ProRowInfo::getKey));
+		textTable.setDataList(profile.toList())
+		.addColumnInfo(new TextTableColumnInfo<>("key", ProRowInfo::getKey));
 		for (Column column : profile.getColumns()) {
-			textTable.addColumnInfo(new TextTableColumnInfo<>(column.name(), row -> row.getValue(column.ordinal())));
+			TextTableColumnInfo<ProRowInfo<Key, Column>> columnInfo =
+				new TextTableColumnInfo<>(column.name(), row -> row.getValue(column.ordinal()));
+
+			textTable.addColumnInfo(columnInfo);
 		}
 
 		textTable.print(printer);
-		printer.print("UseTime:");
+		printer.print("Use Time:");
 		printer.print((System.currentTimeMillis() - profile.getStartDt()));
 		printer.println("ms");
 	}

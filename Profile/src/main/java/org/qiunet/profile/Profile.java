@@ -2,7 +2,9 @@ package org.qiunet.profile;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.qiunet.utils.async.LazyLoader;
 
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +15,12 @@ import java.util.Map;
  * 2020-11-04 11:13
  */
 public class Profile<Key, Column extends Enum<Column> & IProColumn> {
+	private LazyLoader<ProfilePrinter<Key, Column>> lazyLoader = new LazyLoader<>(() -> ProfilePrinter.valueOf(this));
 
 	private Map<Key, ProRowInfo<Key, Column>> rowDatas = Maps.newConcurrentMap();
 
 	private long startDt = System.currentTimeMillis();
+
 
 	private Column[] columns;
 
@@ -39,6 +43,10 @@ public class Profile<Key, Column extends Enum<Column> & IProColumn> {
 
 	public Row createRow(Key key) {
 		return new Row(key);
+	}
+
+	public void print(PrintStream printer) {
+		lazyLoader.get().print(printer);
 	}
 
 	public long getStartDt() {
