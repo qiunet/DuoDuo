@@ -249,6 +249,20 @@ public class StringUtil {
 		}
 		return sb.toString();
 	}
+
+	/**
+	 * 对string 重复 count次
+	 * @param string
+	 * @param count
+	 * @return
+	 */
+	public static String repeated(String string, int count) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < count; i++) {
+			sb.append(string);
+		}
+		return sb.toString();
+	}
 	/**
 	 * 屏蔽两端大部分空白字符
 	 * @return
