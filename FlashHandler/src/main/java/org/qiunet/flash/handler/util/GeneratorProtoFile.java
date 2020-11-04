@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.util;
 
+import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -26,6 +27,10 @@ import java.util.stream.Collectors;
  */
 public class GeneratorProtoFile implements IApplicationContextAware {
 	private static final List<Class<?>> pbClasses = Lists.newArrayList();
+	static {
+		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("$");
+		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("_");
+	}
 	private GeneratorProtoFile(){}
 	/**
 	 *
@@ -34,7 +39,6 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	public static void generator(File directory, ProtoGeneratorModel model, String packetPrefix) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-
 		ClassScanner.getInstance(ScannerType.SERVER).scanner(packetPrefix);
 		model.generatorProto(directory, pbClasses);
 	}
