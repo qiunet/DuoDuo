@@ -100,8 +100,14 @@ public class ProtobufIDLGenerator {
         // define outer name class
 
         types.add(cls);
-
-        generateIDL(code, cls, types, enumTypes);
+		if (cls.isEnum()) {
+			if (! enumTypes.contains(cls)) {
+				enumTypes.add(cls);
+				generateEnumIDL(code, (Class<Enum>) cls);
+			}
+		}else {
+        	generateIDL(code, cls, types, enumTypes);
+		}
 
         return code.toString();
     }
