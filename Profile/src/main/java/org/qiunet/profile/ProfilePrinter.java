@@ -39,8 +39,6 @@ import java.io.PrintStream;
 		}
 
 		textTable.print(printer);
-		printer.print("Use Time:");
-		printer.print((System.currentTimeMillis() - profile.getStartDt()));
-		printer.println("ms");
+		printer.println("Use Time:"+(System.currentTimeMillis() - profile.getStartDt())+"ms");
 	}
 }

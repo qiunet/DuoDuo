@@ -59,24 +59,21 @@ public class TextTable<O> {
 		}
 
 		for (TextTableColumnInfo<O> columnInfo : columnInfos) {
-			for (O data : dataList) {
-				columnInfo.addData(data);
-			}
+			dataList.forEach(columnInfo::addData);
 		}
 
 		String separate = this.buildRowSeparate();
-		StringBuilder sb = new StringBuilder(512);
-
 		for (int i = 0; i <= dataList.size(); i++) {
-			sb.append(separate).append("\n");
+			printer.println(separate);
+			StringBuilder sb = new StringBuilder(128);
 			for (TextTableColumnInfo<O> columnInfo : columnInfos) {
 				TextTableColumnValue columnValue = columnInfo.getColumnValue(i);
 				sb.append("|").append(columnValue.getValue()).append(StringUtil.repeated(" ", columnInfo.getMaxLength() - columnValue.getLength()));
 			}
-			sb.append("|\n");
+			sb.append("|");
+			printer.println(sb.toString());
 		}
-		sb.append(separate);
-		printer.println(sb.toString());
+		printer.println(separate);
 	}
 
 	/**
