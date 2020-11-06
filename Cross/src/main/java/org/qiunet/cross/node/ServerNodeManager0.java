@@ -14,6 +14,8 @@ import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -56,9 +58,20 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 添加一个服务器节点
 	 * @param node
 	 */
-	void addNode(ServerNode node) {
+	synchronized boolean addNode(ServerNode node) {
 		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
+		ServerNode serverNode = nodes.get(node.getServerId());
+		if (serverNode != null && serverNode.getSession().isActive()) {
+			return false;
+		}
+
+		if (serverNode != null) {
+			serverNode.getSession().close(CloseCause.INACTIVE);
+		}
+
 		nodes.put(node.getServerId(), node);
+		node.getSession().addCloseListener(cause -> nodes.remove(node.getServerId()));
+		return true;
 	}
 
 	/**
@@ -81,17 +94,27 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
-		return nodes.computeIfAbsent(serverId, serverId0 -> {
-			ServerInfo serverInfo = getServerInfo(serverId0);
-			NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
-				.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
-				.build(), new TcpNodeClientTrigger());
+		ServerNode node = nodes.get(serverId);
+		if (node != null) {
+			if (node.getSession().isActive()) {
+				return node;
+			}
+			node.getSession().close(CloseCause.INACTIVE);
+		}
+		ServerInfo serverInfo = getServerInfo(serverId);
+		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
+			.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
+			.build(), new TcpNodeClientTrigger());
 
-			ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), serverId0);
-			serverNode.getSession().addCloseListener(cause -> nodes.remove(serverId0));
-			serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
-			return serverNode;
-		});
+
+		DPromise<ServerNode> authPromise = new DCompletePromise<>();
+		ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), authPromise, serverId);
+		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
+		try {
+			return authPromise.get(5, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			throw new CustomException(e, "Connect to ServerId {} error!", serverId);
+		}
 	}
 
 	@Override

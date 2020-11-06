@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.async.future.DPromise;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -15,17 +16,17 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  * 2020-10-09 11:13
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
-
-
+	DPromise<ServerNode> authPromise;
 	private int serverId;
 
 	public ServerNode(DSession session) {
 		super(session);
 	}
 
-	static ServerNode valueOf(DSession session, int serverId) {
+	static ServerNode valueOf(DSession session, DPromise<ServerNode> authPromise, int serverId) {
 		ServerNode serverNode = new ServerNode(session);
 		serverNode.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, serverNode);
+		serverNode.authPromise = authPromise;
 		serverNode.serverId = serverId;
 		return serverNode;
 
@@ -51,7 +52,8 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	@Override
 	public void auth(long serverId) {
 		this.serverId = (int)serverId;
-		ServerNodeManager0.instance.addNode(this);
+		boolean ret = ServerNodeManager0.instance.addNode(this);
+		this.writeMessage(ServerNodeAuthResponse.valueOf(ret));
 	}
 
 	/**
