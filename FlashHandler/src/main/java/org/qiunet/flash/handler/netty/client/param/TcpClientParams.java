@@ -2,6 +2,8 @@ package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
 
+import java.net.InetSocketAddress;
+
 /**
  * 使用引导类 参数.
  * 建造者模式
@@ -17,6 +19,12 @@ public final class TcpClientParams extends AbstractClientParam {
 		return HandlerType.TCP;
 	}
 
+
+	@Override
+	public InetSocketAddress getAddress() {
+		throw new IllegalStateException("Tcp not have address!");
+	}
+
 	/***
 	 * 得到
 	 * @return
@@ -30,6 +38,15 @@ public final class TcpClientParams extends AbstractClientParam {
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 */
 	public class Builder extends SuperBuilder<TcpClientParams, Builder> {
+		@Override
+		public Builder setAddress(String host, int port) {
+			throw new IllegalStateException("Tcp not need set address!");
+		}
+
+		@Override
+		public Builder setAddress(InetSocketAddress address) {
+			throw new IllegalStateException("Tcp not need set address!");
+		}
 
 		@Override
 		protected TcpClientParams newParams() {

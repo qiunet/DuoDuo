@@ -16,10 +16,19 @@ public enum ServerType implements IServer {
 	/**长链接 在线服*/
 	LC_ONLINE(WebSocketClientParams.custom().setAddress("localhost", 8080).setUriPath("/ws").build()),
 	/**长链接 房间服*/
-	LC_ROOM(TcpClientParams.custom().setAddress("localhost", 8081).build()),
+	LC_ROOM(TcpClientParams.DEFAULT_PARAMS) {
+		@Override
+		public String host() {
+			return "localhost";
+		}
+
+		@Override
+		public int port() {
+			return 8081;
+		}
+	},
 	;
 	private IClientConfig config;
-
 	ServerType(IClientConfig config) {
 		this.config = config;
 	}
