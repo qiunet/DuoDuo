@@ -46,7 +46,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 
 	@Override
 	public ILongConnClient getLongConnClient(IServer server) {
-		return clients.computeIfAbsent(server.getName(), serverName -> {
+		return clients.computeIfAbsent(server.name(), serverName -> {
 			switch (server.getType()) {
 				case WEB_SOCKET:
 					return NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
