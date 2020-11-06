@@ -1,6 +1,5 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.cross.common.exception.AuthFailException;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
@@ -17,11 +16,6 @@ public class ServerNodeAuthRespHandler extends TcpProtobufHandler<ServerNode, Se
 
 	@Override
 	public void handler(ServerNode serverNode, ITcpRequest<ServerNodeAuthResponse> context) throws Exception {
-		ServerNodeAuthResponse requestData = context.getRequestData();
-		if(requestData.isResult()) {
-			serverNode.authPromise.trySuccess(serverNode);
-		}else {
-			serverNode.authPromise.tryFailure(new AuthFailException());
-		}
+		ServerNodeManager0.instance.authResponse(serverNode, context.getRequestData());
 	}
 }
