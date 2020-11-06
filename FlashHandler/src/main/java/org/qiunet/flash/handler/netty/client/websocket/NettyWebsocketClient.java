@@ -38,17 +38,19 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
 	private ILongConnResponseTrigger trigger;
+	private WebSocketClientParams params;
 	private DSession session;
 
 	private NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
 		this.trigger = trigger;
+		this.params = params;
 
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer(params));
+		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer());
 		ChannelFuture future = bootstrap.connect(params.getAddress());
 		future.addListener(f1 -> {
 			ChannelFuture nettyClientHandler = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
@@ -72,16 +74,12 @@ public class NettyWebsocketClient implements ILongConnClient {
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
-		private WebSocketClientParams params;
-		public NettyClientInitializer(WebSocketClientParams params) {
-			this.params = params;
-		}
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast("HttpClientCodec", new HttpClientCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024*1024*2));
-			pipeline.addLast("NettyClientHandler", new NettyClientHandler(params));
+			pipeline.addLast("NettyClientHandler", new NettyClientHandler());
 		}
 	}
 
@@ -89,14 +87,11 @@ public class NettyWebsocketClient implements ILongConnClient {
 	private class NettyClientHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 		private WebSocketClientHandshaker handshaker;
 		private ChannelPromise handshakeFuture;
-		private WebSocketClientParams params;
 		public ChannelFuture handshakeFuture() {
 			return handshakeFuture;
 		}
 
-		public NettyClientHandler(WebSocketClientParams params){
-			this.params = params;
-
+		public NettyClientHandler(){
 			this.handshaker = WebSocketClientHandshakerFactory.newHandshaker(
 				params.getURI(), WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
 		}
