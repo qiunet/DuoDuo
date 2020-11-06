@@ -62,7 +62,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 
 		@Override
 		public void response(DSession session, MessageContent data) {
-			ILongConnResponse response = ResponseMapping.getInstance().getResponse(data.getProtocolId());
+			ILongConnResponse response = ResponseMapping.instance.getResponse(data.getProtocolId());
 			if (response == null) {
 				session.close(CloseCause.LOGOUT);
 				robot.brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");

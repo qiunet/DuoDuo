@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by qiunet.
@@ -20,9 +21,9 @@ import java.util.concurrent.CountDownLatch;
 public final class RobotExecutor {
 	private Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
 	/**已经测试阶段了. 不能再插入新case*/
-	private boolean testing;
 	private IRobotFactory robotFactory;
 	private IExecutorInitializer initializer;
+	private AtomicBoolean testing = new AtomicBoolean();
 	private List<Class<? extends ITestCase>> testCases = new ArrayList<>(128);
 
 	/**
@@ -47,7 +48,6 @@ public final class RobotExecutor {
 		initializer.handler();
 		logger.error("-------用户自定义初始化代码结束-------");
 	}
-	private Thread currThread;
 	/***
 	 * 压测所有
 	 * @param robotCount
@@ -55,9 +55,17 @@ public final class RobotExecutor {
 	public void pressureTesting(int robotCount) {
 		if (robotCount < 1) throw new IllegalArgumentException("robot count can not less than 1! ");
 
+		if (robotFactory == null) {
+			throw new IllegalStateException("Need robotFactory");
+		}
+
+		if (! this.testing.compareAndSet(false, true)){
+			logger.error("Current is testing!");
+			return;
+		}
+
 		try {
 			this.init();
-			this.testing = true;
 		} catch (Throwable throwable) {
 			logger.error("初始化异常: ", throwable);
 			return;
@@ -81,7 +89,7 @@ public final class RobotExecutor {
 	}
 
 	public RobotExecutor setInitializer(IExecutorInitializer initializer) {
-		if (testing) {
+		if (testing.get()) {
 			throw new IllegalStateException("Already testing");
 		}
 		this.initializer = initializer;
@@ -89,7 +97,7 @@ public final class RobotExecutor {
 	}
 
 	public RobotExecutor addTestCase(Class<? extends ITestCase> testCase) {
-		if (testing) {
+		if (testing.get()) {
 			throw new IllegalStateException("Already testing");
 		}
 		this.testCases.add(testCase);
