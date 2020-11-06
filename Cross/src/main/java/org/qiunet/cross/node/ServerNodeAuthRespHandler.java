@@ -19,7 +19,6 @@ public class ServerNodeAuthRespHandler extends TcpProtobufHandler<ServerNode, Se
 	public void handler(ServerNode serverNode, ITcpRequest<ServerNodeAuthResponse> context) throws Exception {
 		ServerNodeAuthResponse requestData = context.getRequestData();
 		if(requestData.isResult()) {
-			ServerNodeManager0.instance.addNode(serverNode);
 			serverNode.authPromise.trySuccess(serverNode);
 		}else {
 			serverNode.authPromise.tryFailure(new AuthFailException());

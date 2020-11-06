@@ -115,6 +115,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		DPromise<ServerNode> authPromise = new DCompletePromise<>();
 		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), authPromise, serverId);
 		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
+		authPromise.whenComplete((res, ex) -> {
+			if (authPromise.isSuccess()) this.addNode(res);
+		});
 		try {
 			return authPromise.get(5, TimeUnit.SECONDS);
 		} catch (Exception e) {
