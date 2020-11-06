@@ -10,8 +10,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
  * @author qiunet
  * 2020-09-22 20:45
  */
-@ProtobufClass
 @PbResponse(value = 2000)
+@ProtobufClass(description = "登录响应")
 public class LoginResponse implements IpbResponseData {
 
 	private int uid;

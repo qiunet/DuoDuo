@@ -1,7 +1,6 @@
 package org.qiunet.test.executor;
 
 
-import com.google.common.collect.Sets;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.robot.init.IRobotFactory;
 import org.qiunet.test.testcase.ITestCase;
@@ -12,8 +11,7 @@ import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.locks.LockSupport;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by qiunet.
@@ -49,7 +47,6 @@ public final class RobotExecutor {
 		initializer.handler();
 		logger.error("-------用户自定义初始化代码结束-------");
 	}
-	private Set<DFuture<Boolean>> futures = Sets.newConcurrentHashSet();
 	private Thread currThread;
 	/***
 	 * 压测所有
@@ -65,27 +62,22 @@ public final class RobotExecutor {
 			logger.error("初始化异常: ", throwable);
 			return;
 		}
-
+		CountDownLatch latch = new CountDownLatch(robotCount);
 		logger.info("===============压测开始===============");
-		currThread = Thread.currentThread();
 		for (int i = 0; i < robotCount; i++) {
 			DFuture<Boolean> future = TimerManager.executorNow(() -> {
 				IRobot robot = robotFactory.createRobot(testCases);
 				return robot.runCases();
 			});
 
-			future.whenComplete((res, ex) -> futureComplete(future));
-			futures.add(future);
+			future.whenComplete((res, ex) -> latch.countDown());
 		}
-		LockSupport.park();
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			logger.error("压测异常", e);
+		}
 		logger.info("===============压测结束===============");
-	}
-
-	private void futureComplete(DFuture<Boolean> future) {
-		futures.remove(future);
-		if (futures.isEmpty()) {
-			LockSupport.unpark(currThread);
-		}
 	}
 
 	public RobotExecutor setInitializer(IExecutorInitializer initializer) {
