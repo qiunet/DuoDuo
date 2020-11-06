@@ -97,14 +97,20 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	ServerNode getNode(int serverId) {
 		ServerNode node = nodes.get(serverId);
-		if (node != null) {
-			if (node.getSession().isActive()) {
-				return node;
-			}
-			node.getSession().close(CloseCause.INACTIVE);
+		if (node != null && node.getSession().isActive()) {
+			return node;
 		}
-		ServerInfo serverInfo = getServerInfo(serverId);
+		return this.createServerNode(serverId);
+	}
 
+	private synchronized ServerNode createServerNode(int serverId) {
+		ServerNode node = nodes.get(serverId);
+		if (node != null && node.getSession().isActive()) {
+			return node;
+		}
+
+		nodes.remove(serverId);
+		ServerInfo serverInfo = getServerInfo(serverId);
 		TcpClientConnector connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort());
 		DPromise<ServerNode> authPromise = new DCompletePromise<>();
 		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), authPromise, serverId);
