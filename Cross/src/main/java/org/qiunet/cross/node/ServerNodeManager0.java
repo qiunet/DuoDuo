@@ -9,6 +9,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeUnit;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
 	/***
 	 * server Node 在redis中的 key
 	 * 主要查找某一个类型所有服务
@@ -102,13 +104,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			node.getSession().close(CloseCause.INACTIVE);
 		}
 		ServerInfo serverInfo = getServerInfo(serverId);
-		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
-			.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
-			.build(), new TcpNodeClientTrigger());
 
-
+		TcpClientConnector connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort());
 		DPromise<ServerNode> authPromise = new DCompletePromise<>();
-		ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), authPromise, serverId);
+		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), authPromise, serverId);
 		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
 		try {
 			return authPromise.get(5, TimeUnit.SECONDS);

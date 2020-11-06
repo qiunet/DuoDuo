@@ -55,6 +55,10 @@ public enum CloseCause {
 	 * 服务关闭
 	 */
 	SERVER_SHUTDOWN("服务关闭"),
+	/***
+	 * 不活跃了.
+	 */
+	INACTIVE("不活跃了"),
 	;
 	private String desc;
 

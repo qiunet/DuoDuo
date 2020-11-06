@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.enums.HandlerType;
  * 17/7/19
  */
 public final class TcpClientParams extends AbstractClientParam {
-
+	public static final TcpClientParams DEFAULT_PARAMS = TcpClientParams.custom().build();
 	private TcpClientParams(){}
 
 	@Override

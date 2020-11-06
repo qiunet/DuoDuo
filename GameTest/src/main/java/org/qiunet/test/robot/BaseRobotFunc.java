@@ -1,5 +1,6 @@
 package org.qiunet.test.robot;
 
+import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
@@ -15,7 +16,6 @@ import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.server.IServer;
 import org.qiunet.utils.exceptions.CustomException;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
 
@@ -28,7 +28,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 	/***
 	 * 长连接的session map
 	 */
-	private Map<String, ILongConnClient> clients = new HashMap<>();
+	private Map<String, ILongConnClient> clients = Maps.newConcurrentMap();
 
 	private IRobot robot;
 	public BaseRobotFunc(){
@@ -46,20 +46,16 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 
 	@Override
 	public ILongConnClient getLongConnClient(IServer server) {
-		if (clients.containsKey(server.getName())) return clients.get(server.getName());
-		ILongConnClient connClient = null;
-		switch (server.getType()) {
-			case WEB_SOCKET:
-				connClient = NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
-				break;
-			case TCP:
-				connClient = NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger);
-				break;
-			default:
-				throw new CustomException("Type [{}] is not support", server.getType());
-		}
-		clients.put(server.getName(), connClient);
-		return clients.get(server.getName());
+		return clients.computeIfAbsent(server.getName(), serverName -> {
+			switch (server.getType()) {
+				case WEB_SOCKET:
+					return NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
+				case TCP:
+					return NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger).connect(server.host(), server.port());
+				default:
+					throw new CustomException("Type [{}] is not support", server.getType());
+			}
+		});
 	}
 
 	private class LongConnResponseTrigger implements ILongConnResponseTrigger {

@@ -77,7 +77,6 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @return
 		 */
 		public P build(){
-			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
 			return newParams();
 		}
 
