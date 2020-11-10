@@ -6,9 +6,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 
 /**
@@ -34,7 +34,7 @@ public class WebSocketProtobufRequestContext<RequestData, P extends IMessageActo
 	@Override
 	public void handlerRequest() {
 		if (handler.needAuth() && ! messageActor.isAuth()) {
-			SessionManager.getSession(channel).close(CloseCause.ERR_REQUEST);
+			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
 
