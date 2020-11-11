@@ -32,7 +32,7 @@ public interface IProtocolHeader {
 	 * @param bytes 原始的byte数组
 	 * @return 如果校验成功, 返回解密的bytes 否则null
 	 */
-	byte[] validAndDecryptBytes(byte [] bytes);
+	boolean validEncryption(byte [] bytes);
 
 	/***
 	 * 对剩余bytes的数据进行加密.并富含校验信息(可选)

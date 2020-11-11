@@ -58,13 +58,12 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public byte[] validAndDecryptBytes(byte [] bytes) {
+	public boolean validEncryption(byte [] bytes) {
 		boolean ret = (int)CrcUtil.getCrc32Value(bytes) == this.crc;
 		if (! ret) {
 			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+ this.crc);
 		}
-		// 仅仅使用crc32校验了, 没有进行加密
-		return bytes;
+		return ret;
 	}
 
 	@Override

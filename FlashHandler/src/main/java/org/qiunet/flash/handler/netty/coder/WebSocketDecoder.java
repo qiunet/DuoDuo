@@ -44,7 +44,7 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 		byte [] bytes = new byte[header.getLength()];
 		in.readBytes(bytes);
 
-		if (encryption && (bytes = header.validAndDecryptBytes(bytes)) == null) {
+		if (encryption && !header.validEncryption(bytes)) {
 			ctx.channel().close();
 			return;
 		}
