@@ -59,7 +59,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	@Test
 	public void testHttpString() {
 		final String test = "测试[testHttpString]";
-		MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
+		MessageContent content = new MessageContent(5000, test.getBytes(CharsetUtil.UTF_8));
 		final Thread currThread = Thread.currentThread();
 		NettyHttpClient.create(params).sendRequest(content, "/f", (response) -> {
 			Assert.assertEquals(response.status(), HttpResponseStatus.OK);
