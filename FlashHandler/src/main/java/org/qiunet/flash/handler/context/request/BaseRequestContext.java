@@ -1,15 +1,12 @@
 package org.qiunet.flash.handler.context.request;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.HttpHeaders;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,35 +40,5 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	public void setAttribute(String key, Object val) {
 		if (attributes == null) attributes = new HashMap<>();
 		attributes.put(key, val);
-	}
-
-	/**
-	 * 得到真实ip. http类型的父类
-	 * @param headers
-	 * @return
-	 */
-	protected String getRealIp(HttpHeaders headers) {
-		String ip;
-		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
 	}
 }

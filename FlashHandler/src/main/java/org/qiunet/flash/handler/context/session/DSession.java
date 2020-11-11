@@ -10,10 +10,10 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,11 +53,7 @@ public final class DSession {
 	 * @return
 	 */
 	public String getIp() {
-		String ip = "";
-		if (channel.remoteAddress() instanceof InetSocketAddress) {
-			ip = ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
-		}
-		return ip;
+		return ChannelUtil.getIp(channel);
 	}
 
 	/**

@@ -1,11 +1,13 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
 import com.google.common.base.Preconditions;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
@@ -55,6 +57,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
+		if (! ServerConfig.isServerOpen() && ! ServerConfig.getIpWhiteList().contains(ChannelUtil.getIp(ctx.channel()))) {
+			ChannelFuture channelFuture = ctx.writeAndFlush(params.getStartupContext().serverClose());
+			channelFuture.addListener(f -> ctx.close());
+			return;
+		}
+
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());

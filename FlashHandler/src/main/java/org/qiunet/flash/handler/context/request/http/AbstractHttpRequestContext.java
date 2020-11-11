@@ -75,7 +75,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getRemoteAddress() {
-		return getRealIp(request.headers());
+		return ChannelUtil.getIp(request.headers(), channel);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ public class ServerConfig {
 	public static final String SERVER_TYPE = "server.type";
 	public static final String SERVER_PORT = "server.port";
 	public static final String SERVER_OPEN = "server.open";
+	public static final String SERVER_CLOSE_MSG = "server.close_msg";
 	public static final String COMMUNICATION_PORT = "communication.port";
 	public static final String PROPERTIES_FILE_NAME = "server.properties";
 	public static final String SERVER_IP_WHITE_LIST = "server.ip.white.list";
@@ -46,12 +47,16 @@ public class ServerConfig {
 	 */
 	@DPropertiesValue(value = SERVER_OPEN, defaultVal = "TRUE")
 	private static boolean serverOpen;
-
+	/**
+	 * 服务没有开启提示
+	 */
+	@DPropertiesValue(value = SERVER_CLOSE_MSG, defaultVal = "-")
+	private static String serverCloseMsg;
 	/**
 	 * 白名单ip. 如果serverOpen = false
 	 * 允许指定的ip进入.
 	 */
-	@DPropertiesValue(value = SERVER_IP_WHITE_LIST, defaultVal = "")
+	@DPropertiesValue(value = SERVER_IP_WHITE_LIST, defaultVal = "127.0.0.1")
 	private static StringSet ipWhiteList;
 
 	public static int getServerId() {
@@ -64,6 +69,10 @@ public class ServerConfig {
 
 	public static boolean isLogicServerType() {
 		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
+	}
+
+	public static String getServerCloseMsg() {
+		return serverCloseMsg;
 	}
 
 	public static StringSet getIpWhiteList() {
