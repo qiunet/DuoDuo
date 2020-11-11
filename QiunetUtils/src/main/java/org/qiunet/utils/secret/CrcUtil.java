@@ -1,5 +1,6 @@
 package org.qiunet.utils.secret;
 
+import java.nio.ByteBuffer;
 import java.util.zip.CRC32;
 
 /**
@@ -15,6 +16,17 @@ public class CrcUtil {
 	public static long getCrc32Value(byte [] bytes) {
 		CRC32 crc32 = new CRC32();
 		crc32.update(bytes);
+		return crc32.getValue();
+	}
+
+	/**
+	 * 得到crc32计算的crc值
+	 * @param byteBuffer
+	 * @return
+	 */
+	public static long getCrc32Value(ByteBuffer byteBuffer) {
+		CRC32 crc32 = new CRC32();
+		crc32.update(byteBuffer);
 		return crc32.getValue();
 	}
 }
