@@ -66,7 +66,7 @@ public enum ProtoGeneratorModel {
 	},
 	;
 	/** The Constant V3_HEADER. */
-	private static final String V3_HEADER = "syntax=\"proto3\"";
+	private static final String V3_HEADER = "syntax=\"proto3\";\npackage pro;";
 
 	/**
 	 * 开始生成proto文件
