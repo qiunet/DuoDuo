@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -106,7 +106,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			// 不是游戏业务. 不写业务头.
 			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), channel);
 		}else {
-			content = PooledBytebufFactory.getInstance().alloc(data);
+			content = ByteBufFactory.getInstance().alloc(data);
 		}
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
