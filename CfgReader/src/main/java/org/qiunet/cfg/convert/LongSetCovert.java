@@ -1,6 +1,6 @@
 package org.qiunet.cfg.convert;
 
-import org.qiunet.cfg.convert.generics.LongSet;
+import org.qiunet.utils.collection.generics.LongSet;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.stream.Collectors;

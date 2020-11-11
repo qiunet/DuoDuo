@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
-import org.qiunet.cfg.convert.generics.IntegerSet;
+import org.qiunet.utils.collection.generics.IntegerSet;
 import org.qiunet.utils.scanner.ClassScanner;
 
 /***

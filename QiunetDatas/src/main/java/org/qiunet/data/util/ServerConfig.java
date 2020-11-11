@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.properties.anno.DProperties;
 import org.qiunet.utils.properties.anno.DPropertiesValue;
 
@@ -9,14 +10,16 @@ import org.qiunet.utils.properties.anno.DPropertiesValue;
  * @author qiunet
  * 2020-08-04 10:50
  ***/
-@DProperties(ServerConfig.PROPERTIES_FILE_NAME)
+@DProperties(value = ServerConfig.PROPERTIES_FILE_NAME, listenerChange = true)
 public class ServerConfig {
-	public static final String PROPERTIES_FILE_NAME = "server.properties";
 	public static final String HORT_PORT = "hook.port";
 	public static final String SERVER_ID = "server.id";
 	public static final String SERVER_TYPE = "server.type";
 	public static final String SERVER_PORT = "server.port";
+	public static final String SERVER_OPEN = "server.open";
 	public static final String COMMUNICATION_PORT = "communication.port";
+	public static final String PROPERTIES_FILE_NAME = "server.properties";
+	public static final String SERVER_IP_WHITE_LIST = "server.ip.white.list";
 
 	@DPropertiesValue(SERVER_ID)
 	private static int serverId;
@@ -38,6 +41,18 @@ public class ServerConfig {
 	 */
 	@DPropertiesValue(COMMUNICATION_PORT)
 	private static int communicationPort;
+	/**
+	 * 服务器是否开启
+	 */
+	@DPropertiesValue(value = SERVER_OPEN, defaultVal = "TRUE")
+	private static boolean serverOpen;
+
+	/**
+	 * 白名单ip. 如果serverOpen = false
+	 * 允许指定的ip进入.
+	 */
+	@DPropertiesValue(value = SERVER_IP_WHITE_LIST, defaultVal = "")
+	private static StringSet ipWhiteList;
 
 	public static int getServerId() {
 		return serverId;
@@ -49,6 +64,14 @@ public class ServerConfig {
 
 	public static boolean isLogicServerType() {
 		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
+	}
+
+	public static StringSet getIpWhiteList() {
+		return ipWhiteList;
+	}
+
+	public static boolean isServerOpen() {
+		return serverOpen;
 	}
 
 	public static int getHookPort() {
