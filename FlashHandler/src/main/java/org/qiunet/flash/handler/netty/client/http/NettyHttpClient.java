@@ -113,7 +113,7 @@ public final class NettyHttpClient {
 			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri)).sync();
 			connectFuture.addListener(listener);
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error("Netty Http Client Connect Exception", e);
 		}
 		return promise;
 	}
@@ -205,7 +205,7 @@ public final class NettyHttpClient {
 
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-			cause.printStackTrace();
+			LoggerType.DUODUO_FLASH_HANDLER.error("HttpClientHandler Exception: ", cause);
 			ctx.close();
 		}
 	}
