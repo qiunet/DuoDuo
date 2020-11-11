@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
@@ -9,7 +10,6 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
@@ -42,12 +42,9 @@ public final class ChannelUtil {
 		IProtocolHeaderAdapter adapter = getProtolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.newHeader(content);
 		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
-		byte[] bytes = header.encodeBytes(content.bytes());
-
-		ByteBuf byteBuf = PooledBytebufFactory.getInstance().alloc(header.getLength() + adapter.getHeaderLength());
-		header.writeToByteBuf(byteBuf);
-		byteBuf.writeBytes(bytes);
-		return byteBuf;
+		byte[] bodyBytes = header.encodeBytes(content.bytes());
+		byte[] headerBytes = header.dataBytes();
+		return Unpooled.wrappedBuffer(headerBytes, bodyBytes);
 	}
 
 	/***

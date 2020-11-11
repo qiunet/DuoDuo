@@ -6,6 +6,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
@@ -82,11 +83,13 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public  void writeToByteBuf(ByteBuf out) {
-		out.writeBytes(magic);
-		out.writeInt(length);
-		out.writeInt(protocolId);
-		out.writeInt(crc);
+	public  byte[] dataBytes() {
+		ByteBuffer out = ByteBuffer.allocate(REQUEST_HEADER_LENGTH);
+		out.put(magic);
+		out.putInt(length);
+		out.putInt(protocolId);
+		out.putInt(crc);
+		return out.array();
 	}
 
 	@Override
