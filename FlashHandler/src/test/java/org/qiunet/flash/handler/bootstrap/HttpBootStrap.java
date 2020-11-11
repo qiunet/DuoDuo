@@ -19,7 +19,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class HttpBootStrap {
 	protected static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
-
+	protected static final int port = 8080;
 	private static Hook hook = new MyHook();
 	private static Thread currThread;
 	@BeforeClass
@@ -31,7 +31,7 @@ public class HttpBootStrap {
 			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
 					.setStartupContext(new StartupContext())
 					.setWebsocketPath("/ws")
-					.setPort(8080)
+					.setPort(port)
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
 			LockSupport.unpark(currThread);

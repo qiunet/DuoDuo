@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import io.netty.util.CharsetUtil;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -8,6 +7,7 @@ import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.flash.handler.proto.LoginResponse;
+import org.qiunet.flash.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,8 +29,8 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 					.setAddress("localhost", 8080).build(), new Trigger());
 				for (int j = 0; j < requestCount; j++) {
 					String text = "testMuchWebSocket: "+j;
-					byte [] bytes = text.getBytes(CharsetUtil.UTF_8);
-					MessageContent content = new MessageContent(1005, bytes);
+					WsPbLoginRequest wsPbLoginRequest = WsPbLoginRequest.valueOf(text, text, 1000);
+					MessageContent content = new MessageContent(1006, wsPbLoginRequest.toByteArray());
 					client.sendMessage(content);
 				}
 			}).start();
@@ -43,15 +43,8 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
-			switch (data.getProtocolId()) {
-				case 2000:
-					System.out.println(new String(data.bytes(), CharsetUtil.UTF_8));
-					break;
-				case 2001:
-					LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
-					System.out.println(response.getTestString());
-					break;
-			}
+			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+			System.out.println(response.getTestString());
 			latch.countDown();
 		}
 	}

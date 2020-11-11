@@ -28,7 +28,7 @@ public final class ChannelUtil {
 	 * @param channel
 	 * @return
 	 */
-	public static IProtocolHeaderAdapter getProtolHeaderAdapter(Channel channel) {
+	public static IProtocolHeaderAdapter getProtocolHeaderAdapter(Channel channel) {
 		return channel.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).get();
 	}
 
@@ -39,7 +39,7 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static ByteBuf messageContentToByteBuf(MessageContent content, Channel channel) {
-		IProtocolHeaderAdapter adapter = getProtolHeaderAdapter(channel);
+		IProtocolHeaderAdapter adapter = getProtocolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.newHeader(content);
 		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
 		byte[] bodyBytes = header.encodeBytes(content.bytes());

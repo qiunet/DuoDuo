@@ -16,10 +16,10 @@ import java.util.concurrent.CountDownLatch;
  * 17/11/27
  */
 public class TestMuchHttpRequest extends HttpBootStrap {
-	private int requestCount = 10000;
+	private int requestCount = 5000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
 	private HttpClientParams params = HttpClientParams.custom()
-		.setAddress("localhost", 8080)
+		.setAddress("localhost", port)
 		.setProtocolHeaderAdapter(ADAPTER)
 		.build();
 	@Test
@@ -32,7 +32,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 				for (int i = 0; i < requestCount/threadCount; i++) {
 					final String test = "[测试testHttpProtobuf]"+i;
 
-					MessageContent content = new MessageContent(1000, test.getBytes(CharsetUtil.UTF_8));
+					MessageContent content = new MessageContent(5000, test.getBytes(CharsetUtil.UTF_8));
 					httpClient.sendRequest(content, "/f", response -> {
 						Assert.assertEquals(response.status() , HttpResponseStatus.OK);
 						ADAPTER.newHeader(response.content());

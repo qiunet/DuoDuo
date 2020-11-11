@@ -1,5 +1,6 @@
 package org.qiunet.utils.json;
 
+import com.alibaba.fastjson.TypeReference;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
@@ -16,18 +17,18 @@ import java.util.Map;
 public class TestJsonUtil extends BaseTest{
 	@Test
 	public void testGetGeneralObject(){
-		Map<String,Object> map = new HashMap();
-		map.put("qiunet", "qiuyang");
+		Map<String,Integer> map = new HashMap<>();
+		map.put("qiunet", 111);
 
 		String json = JsonUtil.toJsonString(map);
 		logger.info(json);
 
-		Map<String,Object> ret = JsonUtil.getGeneralObject(json, Map.class);
-		Assert.assertEquals("qiuyang", ret.get("qiunet"));
+		Map<String,Integer> ret = JsonUtil.getGeneralObject(json, new TypeReference<Map<String,Integer>>(){});
+		Assert.assertEquals(111, ret.get("qiunet").intValue());
 	}
 	@Test
 	public void testGetGeneralList(){
-		List<Integer> ls = new ArrayList();
+		List<Integer> ls = new ArrayList<>();
 		ls.add(1);
 		ls.add(2);
 		ls.add(3);
@@ -35,7 +36,7 @@ public class TestJsonUtil extends BaseTest{
 		String json = JsonUtil.toJsonString(ls);
 		logger.info(json);
 		List<Integer> ret = JsonUtil.getGeneralList(json, Integer.class);
-		Assert.assertTrue(ret.size() == 3);
+		Assert.assertEquals(3, ret.size());
 		Assert.assertTrue(ret.contains(3));
 		Assert.assertFalse(ret.contains(5));
 	}
@@ -51,7 +52,7 @@ public class TestJsonUtil extends BaseTest{
 
 		String json = JsonUtil.toJsonString(map);
 		Assert.assertEquals("{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
-		map = JsonUtil.getGeneralObject(json, Map.class);
+		map = JsonUtil.getGeneralObject(json, new TypeReference<Map<Integer, Map<String, String>>>(){});
 		subMap = map.get(2);
 		Assert.assertNotNull(subMap);
 		Assert.assertEquals("bb", subMap.get("DEF"));

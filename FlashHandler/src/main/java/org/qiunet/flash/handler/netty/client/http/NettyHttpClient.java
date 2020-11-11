@@ -93,6 +93,10 @@ public final class NettyHttpClient {
 
 		HttpClientHandler clientHandler = new HttpClientHandler(promise);
 		GenericFutureListener<ChannelFuture> listener = f -> {
+			if (! f.isSuccess()) {
+				logger.error("Http connect error!");
+			}
+
 			ByteBuf requestContent;
 			if (! StringUtil.isEmpty(this.clientParams.getUriPath())
 				&& this.clientParams.getUriPath().equals(uri.getRawPath())) {
@@ -106,7 +110,7 @@ public final class NettyHttpClient {
 
 		try {
 			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
-			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri));
+			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri)).sync();
 			connectFuture.addListener(listener);
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -177,7 +181,8 @@ public final class NettyHttpClient {
 						p.addLast(clientHandler);
 					}
 				});
-		b.option(ChannelOption.TCP_NODELAY, true);
+		b.option(ChannelOption.TCP_NODELAY, true)
+		.option(ChannelOption.SO_REUSEADDR, true);
 		return b;
 	}
 
