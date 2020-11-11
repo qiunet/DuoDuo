@@ -26,7 +26,9 @@ public interface IProtocolId {
 		/**跨服服务 直接发给玩家的数据. netty直接转发即可 **/
 		int CROSS_2_PLAYER_MSG = 1;
 		/**玩家发送的请求 .转发到Cross*/
-		int PLAYER_2_CROSS_TEANSMIT_REQ = 2;
+		int PLAYER_2_CROSS_TRANSMIT_REQ = 2;
+		/**服务没有开启*/
+		int SERVER_NOT_OPEN_RESP = 3;
 
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;
@@ -42,7 +44,9 @@ public interface IProtocolId {
 		int TRANSACTION_RESP = 602;
 		/** server Node 鉴权 */
 		int SERVER_NODE_AUTH = 603;
+
+		int SERVER_NODE_AUTH_RESP = 604;
 		/** 跨服玩家鉴权. */
-		int CROSS_PLAYER_AUTH = 604;
+		int CROSS_PLAYER_AUTH = 605;
 	}
 }

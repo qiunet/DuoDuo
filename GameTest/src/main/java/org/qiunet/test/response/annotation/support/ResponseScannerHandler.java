@@ -13,7 +13,7 @@ import java.lang.reflect.Modifier;
  * @author qiunet
  * Created on 17/3/3 16:42.
  */
-public class ResponseScannerHandler implements IApplicationContextAware {
+class ResponseScannerHandler implements IApplicationContextAware {
 	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
@@ -30,7 +30,7 @@ public class ResponseScannerHandler implements IApplicationContextAware {
 		try {
 			ILongConnResponse response = (ILongConnResponse) context.getInstanceOfClass(clazz);
 			if (response != null) {
-				ResponseMapping.getInstance().addResponse(responseAnnotation.ID(), response);
+				ResponseMapping.instance.addResponse(responseAnnotation.ID(), response);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

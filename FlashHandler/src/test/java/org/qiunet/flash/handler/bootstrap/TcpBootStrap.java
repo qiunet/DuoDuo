@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -17,9 +18,6 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -30,7 +28,7 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	protected static final String host = "localhost";
 	protected static final int port = 8888;
 	protected static final Hook hook = new MyHook();
-	protected NettyTcpClient tcpClient;
+	protected TcpClientConnector tcpClientConnector;
 	private static Thread currThread;
 
 	@BeforeClass
@@ -55,13 +53,8 @@ public abstract class TcpBootStrap implements ILongConnResponseTrigger {
 	@Before
 	public void connect(){
 		currThread = Thread.currentThread();
-		try {
-			tcpClient = NettyTcpClient.create(TcpClientParams.custom()
-				.setAddress(new InetSocketAddress(InetAddress.getByName(host), port))
-				.build(), this);
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
+		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, this);
+		tcpClientConnector = tcpClient.connect(host, port);
 	}
 	@After
 	public void closeConnect(){

@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-09-22 20:28
  */
-@ProtobufClass
+@ProtobufClass(description = "登录请求")
 public class LoginRequest implements IpbRequestData {
 
 	private String openId;

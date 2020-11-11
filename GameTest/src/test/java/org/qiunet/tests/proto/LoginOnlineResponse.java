@@ -10,8 +10,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
  * @author qiunet
  * 2020-09-22 20:56
  */
-@ProtobufClass
 @PbResponse(1000000)
+@ProtobufClass(description = "登录Online响应")
 public class LoginOnlineResponse implements IpbResponseData {
 	private int day;
 

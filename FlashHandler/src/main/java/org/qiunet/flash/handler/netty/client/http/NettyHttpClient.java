@@ -29,7 +29,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -98,7 +98,7 @@ public final class NettyHttpClient {
 				&& this.clientParams.getUriPath().equals(uri.getRawPath())) {
 				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
 			}else {
-				requestContent = PooledBytebufFactory.getInstance().alloc(content.bytes());
+				requestContent = ByteBufFactory.getInstance().alloc(content.bytes());
 			}
 
 			f.channel().writeAndFlush(buildRequest(requestContent, uri));

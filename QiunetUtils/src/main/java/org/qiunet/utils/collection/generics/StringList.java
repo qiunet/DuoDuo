@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert.generics;
+package org.qiunet.utils.collection.generics;
 
 import org.qiunet.utils.collection.safe.SafeList;
 

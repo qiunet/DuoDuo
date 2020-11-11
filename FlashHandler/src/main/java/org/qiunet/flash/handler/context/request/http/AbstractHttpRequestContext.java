@@ -8,11 +8,10 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
-import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
+import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -62,20 +61,20 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getUriPath() {
-		if (messageContent.getProtocolId() == 0) {
-			return ((UriHttpMessageContent) messageContent).getUriPath();
+		if (messageContent.isUriPathMsg()) {
+			return messageContent.getUriPath();
 		}
 		return params.getGameURIPath();
 	}
 
 	@Override
 	public boolean otherRequest() {
-		return messageContent.getProtocolId() == 0;
+		return messageContent.isUriPathMsg();
 	}
 
 	@Override
 	public String getRemoteAddress() {
-		return getRealIp(request.headers());
+		return ChannelUtil.getIp(request.headers(), channel);
 	}
 
 	@Override
@@ -107,7 +106,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			// 不是游戏业务. 不写业务头.
 			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), channel);
 		}else {
-			content = PooledBytebufFactory.getInstance().alloc(data);
+			content = ByteBufFactory.getInstance().alloc(data);
 		}
 
 		FullHttpResponse response = new DefaultFullHttpResponse(

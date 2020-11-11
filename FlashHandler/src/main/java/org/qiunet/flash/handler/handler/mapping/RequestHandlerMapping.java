@@ -5,7 +5,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -83,10 +82,10 @@ public enum RequestHandlerMapping {
 	 * @return
 	 */
 	public IHandler getHandler(MessageContent content) {
-		if (content.getProtocolId() > 0) {
+		if (content.isProtocolMsg()) {
 			return getHandler(content.getProtocolId());
 		}
-		return getHandler(((UriHttpMessageContent) content).getUriPath());
+		return getHandler(content.getUriPath());
 	}
 	/**
 	 * 存一个handler对应mapping

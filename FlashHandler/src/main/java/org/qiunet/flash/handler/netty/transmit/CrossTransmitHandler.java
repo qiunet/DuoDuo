@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
  * @author qiunet
  * 2020-10-26 20:22
  */
-@RequestHandler(ID = IProtocolId.System.PLAYER_2_CROSS_TEANSMIT_REQ, desc = "玩家请求转发到Cross")
+@RequestHandler(ID = IProtocolId.System.PLAYER_2_CROSS_TRANSMIT_REQ, desc = "玩家请求转发到Cross")
 public class CrossTransmitHandler extends TcpProtobufHandler<AbstractUserActor, TransmitRequest> {
 
 	@Override

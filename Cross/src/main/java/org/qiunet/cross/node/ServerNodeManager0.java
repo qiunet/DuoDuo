@@ -2,25 +2,32 @@ package org.qiunet.cross.node;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import io.netty.util.AttributeKey;
 import org.qiunet.cross.common.contants.ScannerParamKey;
+import org.qiunet.cross.common.exception.AuthFailException;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
+import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +42,9 @@ import java.util.concurrent.TimeUnit;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
+	private static final AttributeKey<DPromise<ServerNode>> SERVER_NODE_PROMISE_ATTRIBUTE = AttributeKey.newInstance("SERVER_NODE_PROMISE_ATTRIBUTE");
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
+	private Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/***
 	 * server Node 在redis中的 key
 	 * 主要查找某一个类型所有服务
@@ -56,9 +66,20 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 添加一个服务器节点
 	 * @param node
 	 */
-	void addNode(ServerNode node) {
+	synchronized boolean addNode(ServerNode node) {
 		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
+		ServerNode serverNode = nodes.get(node.getServerId());
+		if (serverNode != null && serverNode.getSession().isActive()) {
+			return false;
+		}
+
+		if (serverNode != null) {
+			serverNode.getSession().close(CloseCause.INACTIVE);
+		}
+
 		nodes.put(node.getServerId(), node);
+		node.getSession().addCloseListener(cause -> nodes.remove(node.getServerId()));
+		return true;
 	}
 
 	/**
@@ -81,17 +102,63 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
-		return nodes.computeIfAbsent(serverId, serverId0 -> {
-			ServerInfo serverInfo = getServerInfo(serverId0);
-			NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom()
-				.setAddress(serverInfo.getHost(), serverInfo.getCommunicationPort())
-				.build(), new TcpNodeClientTrigger());
+		ServerNode node = nodes.get(serverId);
+		if (node != null && node.getSession().isActive()) {
+			return node;
+		}
+		return this.createServerNode(serverId);
+	}
 
-			ServerNode serverNode = ServerNode.valueOf(tcpClient.getSession(), serverId0);
-			serverNode.getSession().addCloseListener(cause -> nodes.remove(serverId0));
-			serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
-			return serverNode;
+	/**
+	 * 创建一个serverNode 如果响应回来. 并且result == true . 即可加入nodes
+	 * @param serverId
+	 * @return
+	 */
+	private synchronized ServerNode createServerNode(int serverId) {
+		ServerNode node = nodes.get(serverId);
+		if (node != null && node.getSession().isActive()) {
+			return node;
+		}
+
+		nodes.remove(serverId);
+		ServerInfo serverInfo = getServerInfo(serverId);
+		TcpClientConnector connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort());
+		DPromise<ServerNode> authPromise = new DCompletePromise<>();
+		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), serverId);
+		serverNode.getSession().attachObj(SERVER_NODE_PROMISE_ATTRIBUTE, authPromise);
+		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
+		authPromise.whenComplete((res, ex) -> {
+			if (authPromise.isSuccess()) this.addNode(res);
 		});
+		try {
+			return authPromise.get(5, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			throw new CustomException(e, "Connect to ServerId {} error!", serverId);
+		}
+	}
+
+	/**
+	 * 鉴权响应
+	 * @param serverNode
+	 * @param response
+	 */
+	void authResponse(ServerNode serverNode, ServerNodeAuthResponse response) {
+		DPromise<ServerNode> dPromise = serverNode.getSession().channel().attr(SERVER_NODE_PROMISE_ATTRIBUTE).get();
+		if (dPromise == null) {
+			logger.error("call serverNode auth response . But promise is null!");
+			return;
+		}
+
+		if (! dPromise.isDone()) {
+			if(response.isResult()) {
+				dPromise.trySuccess(serverNode);
+			}else {
+				dPromise.tryFailure(new AuthFailException());
+			}
+		} else {
+			logger.error("call serverNode auth response . But promise is Done!");
+		}
+		serverNode.getSession().channel().attr(SERVER_NODE_PROMISE_ATTRIBUTE).compareAndSet(dPromise, null);
 	}
 
 	@Override

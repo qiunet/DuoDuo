@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert.generics;
+package org.qiunet.utils.collection.generics;
 
 import org.qiunet.utils.collection.safe.SafeList;
 
@@ -10,16 +10,16 @@ import java.util.Collection;
  * @author qiunet
  * 2020/3/11 08:24
  **/
-public class IntegerList extends SafeList<Integer> {
+public class LongList extends SafeList<Long> {
 
-	public IntegerList(int initialCapacity) {
+	public LongList(int initialCapacity) {
 		super(initialCapacity);
 	}
 
-	public IntegerList() {
+	public LongList() {
 	}
 
-	public IntegerList(Collection<? extends Integer> c) {
+	public LongList(Collection<? extends Long> c) {
 		super(c);
 	}
 }

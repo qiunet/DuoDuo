@@ -12,8 +12,8 @@ import java.util.List;
  * @author qiunet
  * 2020-09-23 10:22
  */
-@ProtobufClass
 @PbResponse(value = 1000001)
+@ProtobufClass(description = "玩家首页响应")
 public class PlayerIndexResponse implements IpbResponseData {
 
 	private List<Item> items;

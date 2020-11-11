@@ -13,7 +13,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -149,7 +148,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		byte [] bytes = new byte[request.content().readableBytes()];
 		request.content().readBytes(bytes);
-		MessageContent content = new UriHttpMessageContent(uriPath, bytes);
+		MessageContent content = new MessageContent(uriPath, bytes);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");

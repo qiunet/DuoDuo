@@ -10,7 +10,6 @@ import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.tcp.ITcpRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -18,6 +17,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -39,7 +39,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.TCP);
 		DSession session = new DSession(ctx.channel());
 
-		SessionManager.addSession(session);
+		ChannelUtil.bindSession(session);
 		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
 	}
 
@@ -51,7 +51,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			return;
 		}
-		DSession session = SessionManager.getSession(ctx.channel());
+		DSession session = ChannelUtil.getSession(ctx.channel());
 		Preconditions.checkNotNull(session);
 
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
@@ -69,7 +69,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		DSession session = SessionManager.getSession(ctx.channel());
+		DSession session = ChannelUtil.getSession(ctx.channel());
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
 		logger.error(errMeg, cause);
 

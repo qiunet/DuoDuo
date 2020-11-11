@@ -15,8 +15,6 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  * 2020-10-09 11:13
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
-
-
 	private int serverId;
 
 	public ServerNode(DSession session) {
@@ -51,7 +49,8 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	@Override
 	public void auth(long serverId) {
 		this.serverId = (int)serverId;
-		ServerNodeManager0.instance.addNode(this);
+		boolean ret = ServerNodeManager0.instance.addNode(this);
+		this.writeMessage(ServerNodeAuthResponse.valueOf(ret));
 	}
 
 	/**

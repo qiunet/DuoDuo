@@ -7,9 +7,9 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.IDataToString;
-import org.qiunet.flash.handler.context.session.SessionManager;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 
 /**
@@ -36,7 +36,7 @@ public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> ext
 	@Override
 	public void handlerRequest() {
 		if (handler.needAuth() && ! messageActor.isAuth()) {
-			SessionManager.getSession(channel).close(CloseCause.ERR_REQUEST);
+			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
 
