@@ -26,7 +26,9 @@ public class CrcUtil {
 	 */
 	public static long getCrc32Value(ByteBuffer byteBuffer) {
 		CRC32 crc32 = new CRC32();
+		byteBuffer.mark();
 		crc32.update(byteBuffer);
+		byteBuffer.reset();
 		return crc32.getValue();
 	}
 }
