@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.bootstrap;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
-import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -39,7 +38,6 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 						ADAPTER.newHeader(response.content());
 
 						Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
-						ReferenceCountUtil.release(response);
 						latch.countDown();
 					});
 				}

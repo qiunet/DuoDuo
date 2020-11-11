@@ -66,7 +66,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 
 			ADAPTER.newHeader(response.content());
 			Assert.assertEquals(test, response.content().toString(CharsetUtil.UTF_8));
-			ReferenceCountUtil.release(response);
 			LockSupport.unpark(currThread);
 		});
 		LockSupport.park();
@@ -83,7 +82,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			"/back?a=b", (httpResponse) -> {
 				Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
 				Assert.assertEquals(httpResponse.content().toString(CharsetUtil.UTF_8), test);
-				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
 
 		});
@@ -104,7 +102,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			ADAPTER.newHeader(httpResponse.content());
 			JsonResponse response = JsonResponse.parse(httpResponse.content().toString(CharsetUtil.UTF_8));
 			Assert.assertEquals(test, response.getString("test"));
-			ReferenceCountUtil.release(httpResponse);
 			LockSupport.unpark(currThread);
 
 		});
@@ -125,7 +122,6 @@ public class TestHttpBootStrap extends HttpBootStrap {
 				JsonResponse response = JsonResponse.parse(responseString);
 				Assert.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
 				Assert.assertEquals(response.get("test"), test);
-				ReferenceCountUtil.release(httpResponse);
 				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();
