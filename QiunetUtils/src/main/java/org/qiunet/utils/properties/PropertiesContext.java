@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.properties.anno.DProperties;
@@ -16,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -133,9 +135,19 @@ class PropertiesContext implements IApplicationContextAware {
 				return Long.parseLong(val);
 			}
 
+			if (fieldType == Boolean.TYPE || fieldType == Boolean.class) {
+				return Boolean.getBoolean(val);
+			}
+
+			if (fieldType == StringSet.class) {
+				return new StringSet(Arrays.asList(StringUtil.split(val, ",")));
+			}
+
 			if (fieldType.isEnum() || Enum.class.isAssignableFrom(fieldType)) {
 				return Enum.valueOf(fieldType, val);
 			}
+
+
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
