@@ -198,7 +198,7 @@ public final class NettyHttpClient {
 				ctx.close();
 				return;
 			}
-			FullHttpResponse response = ((FullHttpResponse) msg);
+			FullHttpResponse response = ((FullHttpResponse) msg).retain();
 			this.promise.trySuccess(response);
 			ctx.close();
 		}
