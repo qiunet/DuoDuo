@@ -46,11 +46,13 @@ import java.util.concurrent.Future;
 /**
  * 给客户端测试使用的一个HttpClient类
  * A simple HTTP client that prints out the content of the HTTP response to
+ *
+ * see {@link org.qiunet.utils.http.HttpRequest}
  */
+@Deprecated
 public final class NettyHttpClient {
 	private HttpClientParams clientParams;
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
 	 * 需要关闭NioEventLoop
@@ -87,34 +89,34 @@ public final class NettyHttpClient {
 	 * @param trigger
 	 */
 	public Future<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
-		URI uri = clientParams.getURI(pathAndQuery);
+		String uri = clientParams.getURI(pathAndQuery);
 		Promise<FullHttpResponse> promise = ImmediateEventExecutor.INSTANCE.newPromise();
 		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
 
 		HttpClientHandler clientHandler = new HttpClientHandler(promise);
-		GenericFutureListener<ChannelFuture> listener = f -> {
-			if (! f.isSuccess()) {
-				logger.error("Http connect error!");
-			}
-
-			ByteBuf requestContent;
-			if (! StringUtil.isEmpty(this.clientParams.getUriPath())
-				&& this.clientParams.getUriPath().equals(uri.getRawPath())) {
-				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
-			}else {
-				requestContent = ByteBufFactory.getInstance().alloc(content.bytes());
-			}
-
-			f.channel().writeAndFlush(buildRequest(requestContent, uri));
-		};
-
-		try {
-			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
-			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri)).sync();
-			connectFuture.addListener(listener);
-		} catch (Exception e) {
-			logger.error("Netty Http Client Connect Exception", e);
-		}
+//		GenericFutureListener<ChannelFuture> listener = f -> {
+//			if (! f.isSuccess()) {
+//				logger.error("Http connect error!");
+//			}
+//
+//			ByteBuf requestContent;
+//			if (! StringUtil.isEmpty(this.clientParams.getUriPath())
+//				&& this.clientParams.getUriPath().equals(uri.getRawPath())) {
+//				requestContent = ChannelUtil.messageContentToByteBuf(content, f.channel());
+//			}else {
+//				requestContent = ByteBufFactory.getInstance().alloc(content.bytes());
+//			}
+//
+//			f.channel().writeAndFlush(buildRequest(requestContent, uri));
+//		};
+//
+//		try {
+//			Bootstrap b = createBootstrap(group, clientHandler, this.clientParams, uri);
+//			ChannelFuture connectFuture = b.connect(uri.getHost(), getPort(uri)).sync();
+//			connectFuture.addListener(listener);
+//		} catch (Exception e) {
+//			logger.error("Netty Http Client Connect Exception", e);
+//		}
 		return promise;
 	}
 	/***

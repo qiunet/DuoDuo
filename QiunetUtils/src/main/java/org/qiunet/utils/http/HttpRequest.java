@@ -4,9 +4,11 @@ import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -65,7 +67,6 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	/**
 	 * 异步执行请求
 	 * @param callBack
-	 * @throws Exception
 	 */
 	public void asyncExecutor(IHttpCallBack callBack) {
 		Request request = buildRequest();
@@ -74,24 +75,24 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	/**
 	 * 执行请求
 	 * @return
-	 * @throws Exception
 	 */
-	public <T> T executor(IResultSupplier<T> supplier) throws Exception {
+	public <T> T executor(IResultSupplier<T> supplier) {
 		Request request = buildRequest();
-		Response response = client.newCall(request).execute();
-		if (response.isSuccessful()) {
+		try {
+			Response response = client.newCall(request).execute();
+			if (! response.isSuccessful()) {
+				throw new CustomException("Request: {} Fail, StatusCode {}", request, response.code());
+			}
 			return supplier.result(response);
-		}else {
-			logger.error("Request: {} Fail, StatusCode {}", request, response.code());
-			return null;
+		} catch (Exception e) {
+			throw new CustomException(e, "http client send request error!");
 		}
 	}
 	/**
 	 * 执行请求
 	 * @return
-	 * @throws Exception
 	 */
-	public String executor() throws Exception {
+	public String executor() {
 		return executor(DEFAULT_SUPPLIER);
 	}
 

@@ -17,4 +17,12 @@ public interface IResultSupplier<T> {
 	 * @throws Exception
 	 */
 	T result(Response response) throws Exception;
+
+	/**
+	 * 返回response 自身
+	 * @return
+	 */
+	static IResultSupplier<Response> identity() {
+		return response -> response;
+	}
 }

@@ -1,11 +1,13 @@
 package org.qiunet.test.testcase.http;
 
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import okhttp3.Response;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.robot.IRobot;
+import org.qiunet.utils.http.HttpRequest;
+import org.qiunet.utils.http.IResultSupplier;
+
+import java.io.IOException;
 
 /**
  * Created by qiunet.
@@ -25,20 +27,22 @@ abstract class BaseUriHttpTestCase<RequestData, ResponseData, Robot extends IRob
 	protected  abstract byte[] buildRequest(Robot robot);
 	@Override
 	public void sendRequest(Robot robot) {
-		FullHttpResponse httpResponse = NettyHttpClient.create(((HttpClientParams) getServer().getClientConfig()))
-			.sendRequest(new MessageContent(0, buildRequest(robot)), this.getUriPath());
-		if (httpResponse == null) {
+		Response response = HttpRequest.post(((HttpClientParams) getServer().getClientConfig()).getURI(getUriPath()))
+			.withBytes(buildRequest(robot)).executor(IResultSupplier.identity());
+		if (response == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;
 		}
 
-		if (! httpResponse.status().equals(HttpResponseStatus.OK)) {
+		if (response.code() != HttpResponseStatus.OK.code()) {
 			robot.brokeRobot("http status not 200");
 			return;
 		}
-		byte [] bytes = new byte[httpResponse.content().readableBytes()];
-		httpResponse.content().readBytes(bytes);
-		responseData(robot, bytes);
+		try {
+			responseData(robot, response.body().bytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * 下行

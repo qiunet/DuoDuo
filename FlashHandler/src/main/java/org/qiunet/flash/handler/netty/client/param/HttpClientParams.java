@@ -31,11 +31,11 @@ public class HttpClientParams extends AbstractClientParam {
 		return uriPath;
 	}
 
-	public URI getURI(){
+	public String getURI(){
 		return getURI(this.uriPath);
 	}
 
-	public URI getURI(String pathAndParam){
+	public String getURI(String pathAndParam){
 		StringBuilder sb = new StringBuilder("http");
 		if (ssl) sb.append("s");
 		sb.append("://").append(address.getHostString());
@@ -45,7 +45,7 @@ public class HttpClientParams extends AbstractClientParam {
 		}
 		if (! pathAndParam.startsWith("/")) pathAndParam = "/" + pathAndParam;
 		sb.append(pathAndParam);
-		return URI.create(sb.toString());
+		return sb.toString();
 	}
 
 	@Override

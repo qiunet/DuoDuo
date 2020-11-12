@@ -1,11 +1,17 @@
 package org.qiunet.test.testcase.http;
 
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import okhttp3.Response;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.http.NettyHttpClient;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.robot.IRobot;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.http.HttpRequest;
+import org.qiunet.utils.http.IResultSupplier;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Created by qiunet.
@@ -21,19 +27,30 @@ abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot>
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);
-		FullHttpResponse httpResponse = NettyHttpClient.create((HttpClientParams) getServer().getClientConfig()).sendRequest(content , ((HttpClientParams) getServer().getClientConfig()).getUriPath());
-		if (httpResponse == null) {
+		Response response;
+		response = HttpRequest.post(((HttpClientParams) getServer().getClientConfig()).getURI())
+			.withBytes(getServer().getClientConfig().getProtocolHeaderAdapter().getAllBytes(content))
+			.executor(IResultSupplier.identity());
+
+		if (response == null) {
 			robot.brokeRobot("http response is null .server maybe was shutdown!");
 			return;
 		}
 
-		if (! httpResponse.status().equals(HttpResponseStatus.OK)) {
+		if (response.code() != HttpResponseStatus.OK.code()) {
 			robot.brokeRobot("http status not 200");
 			return;
 		}
-		getServer().getClientConfig().getProtocolHeaderAdapter().newHeader(httpResponse.content());
-		byte [] bytes = new byte[httpResponse.content().readableBytes()];
-		httpResponse.content().readBytes(bytes);
+
+		ByteBuffer buffer;
+		try {
+			buffer = ByteBuffer.wrap(response.body().bytes());
+		} catch (IOException e) {
+			throw new CustomException(e, "http client response error!");
+		}
+		IProtocolHeader header = getServer().getClientConfig().getProtocolHeaderAdapter().newHeader(buffer);
+		byte [] bytes = new byte[header.getLength()];
+		buffer.get(bytes);
 		content = new MessageContent(0, bytes);
 		responseData(robot, content);
 	}
