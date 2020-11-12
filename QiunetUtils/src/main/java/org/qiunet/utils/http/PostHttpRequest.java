@@ -1,9 +1,6 @@
 package org.qiunet.utils.http;
 
-import okhttp3.FormBody;
-import okhttp3.MediaType;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 import org.qiunet.utils.json.JsonUtil;
 
 import java.util.Collections;
@@ -58,7 +55,16 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
 		return this;
 	}
-
+	/**
+	 * 使用byte数组的方式提交数据
+	 *
+	 * @param bytes
+	 * @return
+	 */
+	public PostHttpRequest withBytes(byte [] bytes) {
+		this.requestBody = MultipartBody.create(MultipartBody.FORM, bytes);
+		return this;
+	}
 	/**
 	 * 自定义body格式类型
 	 *

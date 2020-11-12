@@ -52,6 +52,14 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 		this.crc = in.readInt();
 	}
 
+	public DefaultProtocolHeader(ByteBuffer in) {
+		this.magic = new byte[MAGIC_CONTENTS.length];
+		in.get(magic);
+		this.length = in.getInt();
+		this.protocolId = in.getInt();
+		this.crc = in.getInt();
+	}
+
 	@Override
 	public int getLength() {
 		return length;

@@ -1,12 +1,14 @@
 package org.qiunet.flash.handler.bootstrap;
 
 import com.alibaba.fastjson.JSONObject;
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.http.json.JsonRequest;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
@@ -17,6 +19,8 @@ import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.LockSupport;
@@ -38,17 +42,17 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 		MessageContent content = new MessageContent(2001, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
-		NettyHttpClient.create(params).sendRequest(content, "/f", (httpResponse) -> {
-			Assert.assertEquals(httpResponse.status(), HttpResponseStatus.OK);
+		HttpRequest.post(params.getURI().toString())
+			.withBytes(ADAPTER.getAllBytes(content))
+			.asyncExecutor((call, resp) -> {
+				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
+				IProtocolHeader header = ADAPTER.newHeader(buffer);
 
-			ADAPTER.newHeader(httpResponse.content());
-			byte [] bytes = new byte[httpResponse.content().readableBytes()];
-			httpResponse.content().readBytes(bytes);
-			LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, bytes);
-			Assert.assertEquals(test, loginResponse.getTestString());
-			ReferenceCountUtil.release(httpResponse);
-			LockSupport.unpark(currThread);
-
+				byte [] bytes = new byte[header.getLength()];
+				buffer.get(bytes);
+				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, bytes);
+				Assert.assertEquals(test, loginResponse.getTestString());
+				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();
 	}
