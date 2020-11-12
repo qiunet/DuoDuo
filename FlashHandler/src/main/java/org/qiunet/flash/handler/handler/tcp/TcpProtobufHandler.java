@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.handler.tcp;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.google.protobuf.CodedInputStream;
+import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -10,6 +12,7 @@ import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * Created by qiunet.
@@ -24,9 +27,9 @@ public abstract class TcpProtobufHandler<P extends IMessageActor, RequestData ex
 	}
 
 	@Override
-	public RequestData parseRequestData(byte[] bytes){
+	public RequestData parseRequestData(ByteBuffer buffer){
 		try {
-			return codec.get().decode(bytes);
+			return codec.get().readFrom(CodedInputStream.newInstance(buffer));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -27,6 +27,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 
 	@Override
 	public void responseTcpMessage(DSession session, MessageContent data) {
+		// test 的地方.直接使用bytes 解析. 免得release
 		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 		LoggerType.DUODUO_FLASH_HANDLER.info("=TCP Response Text:[{}]" , response.getTestString());
 		Assert.assertEquals(text, response.getTestString());

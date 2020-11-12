@@ -2,9 +2,11 @@ package org.qiunet.utils.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.google.common.base.Preconditions;
+import com.google.protobuf.CodedInputStream;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /***
  * 管理protobuf codec的类.
@@ -41,16 +43,23 @@ public class ProtobufDataManager {
 	/**
 	 * 反序列对象出来.
 	 * @param clazz
-	 * @param bytes
+	 * @param buffer
 	 * @param <T>
 	 * @return
 	 */
+	public static <T> T decode(Class<T> clazz, ByteBuffer buffer) {
+		try {
+			return getCodec(clazz).readFrom(CodedInputStream.newInstance(buffer));
+		} catch (IOException e) {
+			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
+		}
+	}
+
 	public static <T> T decode(Class<T> clazz, byte [] bytes) {
 		try {
 			return getCodec(clazz).decode(bytes);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
 		}
-		throw new CustomException("Class ["+clazz.getName()+"] decode data error!");
 	}
 }

@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.common.message;
 
+import io.netty.buffer.ByteBuf;
 import org.qiunet.utils.string.StringUtil;
+
+import java.nio.ByteBuffer;
 
 /**
  *  上下行消息的封装类.
@@ -10,18 +13,32 @@ import org.qiunet.utils.string.StringUtil;
  *         Created on 17/3/13 19:50.
  */
 public class MessageContent {
-	protected byte [] bytes;
-	protected int protocolId;
+	private ByteBuffer byteBuffer;
+	private ByteBuf buffer;
+	private byte [] bytes;
+	private int protocolId;
 	private String uriPath;
 
 	public MessageContent(int protocolId, byte [] bytes) {
-		this.bytes = bytes;
 		this.protocolId = protocolId;
+		this.bytes = bytes;
+	}
+
+	public MessageContent(int protocolId, ByteBuf buffer) {
+		this.buffer = buffer;
+		this.protocolId = protocolId;
+		this.byteBuffer = buffer.nioBuffer();
 	}
 
 	public MessageContent(String uriPath, byte[] bytes) {
-		this.bytes = bytes;
 		this.uriPath = uriPath;
+		this.bytes = bytes;
+	}
+
+	public MessageContent(String uriPath, ByteBuf buffer) {
+		this.byteBuffer = buffer.nioBuffer();
+		this.uriPath = uriPath;
+		this.buffer = buffer;
 	}
 
 	public boolean isProtocolMsg(){
@@ -40,7 +57,55 @@ public class MessageContent {
 		return protocolId;
 	}
 
-	public byte [] bytes() {
-		return bytes;
+	public ByteBuffer byteBuffer(){
+		return byteBuffer;
+	}
+
+	/***
+	 * 如果自己处理ByteBuf 需要release.
+	 * @return
+	 */
+	public ByteBuf byteBuf() {
+		return buffer;
+	}
+
+	public void release(){
+		if (buffer != null) {
+			buffer.release();
+		}
+	}
+
+	public boolean hasArray(){
+		return bytes != null;
+	}
+
+	/**
+	 * 获得数据
+	 * @return
+	 */
+	public byte[] bytes(){
+		if (this.hasArray()) {
+			return bytes;
+		}
+
+		return getBufferBytes();
+	}
+
+	/**
+	 * 从buffer中获取bytes
+	 * @return
+	 */
+	private synchronized byte[] getBufferBytes(){
+		if (hasArray()) {
+			return bytes;
+		}
+
+		try {
+			this.bytes = new byte[buffer.readableBytes()];
+			buffer.readBytes(bytes);
+			return bytes;
+		}finally {
+			buffer.release();
+		}
 	}
 }

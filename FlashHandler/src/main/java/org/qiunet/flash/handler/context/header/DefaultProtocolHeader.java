@@ -66,10 +66,10 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public boolean validEncryption(byte [] bytes) {
-		boolean ret = (int)CrcUtil.getCrc32Value(bytes) == this.crc;
+	public boolean validEncryption(ByteBuffer buffer) {
+		boolean ret = (int)CrcUtil.getCrc32Value(buffer) == this.crc;
 		if (! ret) {
-			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(bytes) +" client is "+ this.crc);
+			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(buffer) +" client is "+ this.crc);
 		}
 		return ret;
 	}

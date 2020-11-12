@@ -1,7 +1,9 @@
 package org.qiunet.flash.handler.handler.http;
 
+import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.enums.DataType;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -16,7 +18,7 @@ public abstract class HttpStringHandler extends BaseHttpHandler<String, String> 
 	}
 
 	@Override
-	public String parseRequestData(byte[] bytes) {
-		return new String(bytes, StandardCharsets.UTF_8);
+	public String parseRequestData(ByteBuffer buffer) {
+		return StandardCharsets.UTF_8.decode(buffer).toString();
 	}
 }

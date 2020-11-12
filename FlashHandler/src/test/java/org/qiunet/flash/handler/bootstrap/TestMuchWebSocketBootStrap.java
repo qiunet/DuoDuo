@@ -17,8 +17,8 @@ import java.util.concurrent.CountDownLatch;
  * 17/12/2
  */
 public class TestMuchWebSocketBootStrap extends HttpBootStrap {
-	private int clientCount = 10;
-	private int requestCount = 100;
+	private int clientCount = 100;
+	private int requestCount = 1000;
 	private CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
 	@Test
 	public void testMuchWebSocket() throws InterruptedException {
@@ -26,7 +26,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {
 				NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
-					.setAddress("localhost", 8080).build(), new Trigger());
+					.setAddress("localhost", port).build(), new Trigger());
 				for (int j = 0; j < requestCount; j++) {
 					String text = "testMuchWebSocket: "+j;
 					WsPbLoginRequest wsPbLoginRequest = WsPbLoginRequest.valueOf(text, text, 1000);
@@ -43,6 +43,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 	public class Trigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
+			// test 的地方.直接使用bytes 解析. 免得release
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 			System.out.println(response.getTestString());
 			latch.countDown();

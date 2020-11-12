@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -124,14 +125,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		byte [] bytes = new byte[request.content().readableBytes()];
-		request.content().readBytes(bytes);
-		if (params.isEncryption() && ! header.validEncryption(bytes)) {
+		ByteBuf byteBuf = request.content().readRetainedSlice(header.getLength());
+		MessageContent content = new MessageContent(header.getProtocolId(), byteBuf);
+		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}
-		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
@@ -146,9 +146,8 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
-		byte [] bytes = new byte[request.content().readableBytes()];
-		request.content().readBytes(bytes);
-		MessageContent content = new MessageContent(uriPath, bytes);
+		ByteBuf byteBuf = request.content();
+		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");

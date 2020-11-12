@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.transmit;
 
 import com.google.common.base.Preconditions;
+import io.netty.buffer.Unpooled;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
@@ -8,6 +9,8 @@ import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
+
+import java.nio.ByteBuffer;
 
 /***
  *
@@ -25,7 +28,7 @@ public class CrossTransmitHandler extends TcpProtobufHandler<AbstractUserActor, 
 
 		Preconditions.checkState(handler0 instanceof ITransmitHandler,
 			"protocolId [%s] handler[%s] not a transmit handler", requestData.getPid(), handler0 == null ? "": handler0.getClass().getName());
-		Object data = handler0.parseRequestData(requestData.getBytes());
+		Object data = handler0.parseRequestData(ByteBuffer.wrap(requestData.getBytes()));
 		((ITransmitHandler) handler0).crossHandler(playerActor, data);
 	}
 }

@@ -1,7 +1,10 @@
 package org.qiunet.flash.handler.handler;
 
+import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
+
+import java.nio.ByteBuffer;
 
 /**
  * Handler 的接口, 下面会分两个分支出来
@@ -45,8 +48,8 @@ public interface IHandler<RequestData> {
 
 	/***
 	 * 得到自己的RequestData
-	 * @param bytes
+	 * @param buffer
 	 * @return
 	 */
-	RequestData parseRequestData(byte[] bytes);
+	RequestData parseRequestData(ByteBuffer buffer);
 }

@@ -10,15 +10,12 @@ import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.handler.tcp.ITcpHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.async.LazyLoader;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
 public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> extends AbstractTcpRequestContext<RequestData, P> {
-	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
-
 	public TcpProtobufRequestContext(MessageContent content, Channel channel, P messageActor) {
 		super(content, channel, messageActor);
 	}

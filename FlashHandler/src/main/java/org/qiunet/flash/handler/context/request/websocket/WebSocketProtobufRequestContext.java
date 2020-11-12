@@ -9,14 +9,12 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.handler.websocket.IWebSocketHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.async.LazyLoader;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
 public class WebSocketProtobufRequestContext<RequestData, P extends IMessageActor> extends AbstractWebSocketRequestContext<RequestData, P> {
-	private LazyLoader<RequestData> requestData = new LazyLoader<>(() -> getHandler().parseRequestData(messageContent.bytes()));
 
 	public WebSocketProtobufRequestContext(MessageContent content, Channel channel, P messageActor) {
 		super(content, channel, messageActor);

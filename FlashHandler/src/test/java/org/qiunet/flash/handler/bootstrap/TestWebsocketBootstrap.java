@@ -26,7 +26,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	public void testProtobufWebSocket() throws InterruptedException {
 		text = "test [testProtobufWebSocket]";
 		NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
-			.setAddress("localhost", 8080).build(), new ResponseTrigger());
+			.setAddress("localhost", port).build(), new ResponseTrigger());
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf(text, text, 11);
 		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
@@ -38,6 +38,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	public class ResponseTrigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
+			// test 的地方.直接使用bytes 解析. 免得release
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 			LoggerType.DUODUO_FLASH_HANDLER.info("=WS Response Text:[{}]" , response.getTestString());
 			Assert.assertEquals(text, response.getTestString());
