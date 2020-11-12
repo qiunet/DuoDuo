@@ -21,11 +21,6 @@ public class TcpProtobufRequestContext<RequestData, P extends IMessageActor> ext
 	}
 
 	@Override
-	public RequestData getRequestData() {
-		return requestData.get();
-	}
-
-	@Override
 	public void execute(P p) {
 		this.handlerRequest();
 	}

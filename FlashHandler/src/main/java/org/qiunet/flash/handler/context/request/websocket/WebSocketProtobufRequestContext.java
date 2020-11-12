@@ -19,10 +19,6 @@ public class WebSocketProtobufRequestContext<RequestData, P extends IMessageActo
 	public WebSocketProtobufRequestContext(MessageContent content, Channel channel, P messageActor) {
 		super(content, channel, messageActor);
 	}
-	@Override
-	public RequestData getRequestData() {
-		return requestData.get();
-	}
 
 	@Override
 	public void execute(P p) {

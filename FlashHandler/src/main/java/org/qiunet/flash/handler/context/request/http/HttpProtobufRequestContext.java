@@ -31,11 +31,6 @@ public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, Res
 	}
 
 	@Override
-	public RequestData getRequestData() {
-		return requestData.get();
-	}
-
-	@Override
 	public void handlerRequest() {
 		FacadeHttpRequest<RequestData, GeneratedMessageV3> request = new FacadeHttpRequest<>(this);
 		ResponseData data = null;

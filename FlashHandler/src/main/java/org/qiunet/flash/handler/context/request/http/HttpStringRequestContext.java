@@ -18,10 +18,6 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
-	public String getRequestData() {
-		return requestData.get();
-	}
-	@Override
 	protected byte[] getResponseDataBytes(String s) {
 		return s.getBytes(CharsetUtil.UTF_8);
 	}
