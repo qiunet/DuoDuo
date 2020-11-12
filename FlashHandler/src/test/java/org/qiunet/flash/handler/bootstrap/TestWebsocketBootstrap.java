@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -10,6 +9,7 @@ import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.WsPbLoginRequest;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
@@ -38,15 +38,9 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 	public class ResponseTrigger implements ILongConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
-			switch (data.getProtocolId()) {
-				case 2000:
-					Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));
-					break;
-				case 2001:
-					LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
-					Assert.assertEquals(text, response.getTestString());
-					break;
-			}
+			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+			LoggerType.DUODUO_FLASH_HANDLER.info("=WS Response Text:[{}]" , response.getTestString());
+			Assert.assertEquals(text, response.getTestString());
 			latch.countDown();
 		}
 	}

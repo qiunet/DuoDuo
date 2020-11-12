@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.bootstrap;
 
-import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -8,6 +7,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.proto.GenderType;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /**
@@ -27,14 +27,8 @@ public class TestTcpBootStrap extends TcpBootStrap {
 
 	@Override
 	public void responseTcpMessage(DSession session, MessageContent data) {
-		switch (data.getProtocolId()) {
-			case 2000:
-				Assert.assertEquals(text, new String(data.bytes(), CharsetUtil.UTF_8));
-				break;
-			case 2001:
-				LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
-				Assert.assertEquals(text, response.getTestString());
-				break;
-		}
+		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+		LoggerType.DUODUO_FLASH_HANDLER.info("=TCP Response Text:[{}]" , response.getTestString());
+		Assert.assertEquals(text, response.getTestString());
 	}
 }
