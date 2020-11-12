@@ -42,9 +42,8 @@ public final class ChannelUtil {
 		IProtocolHeaderAdapter adapter = getProtocolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.newHeader(content);
 		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
-		byte[] bodyBytes = header.encodeBytes(content.bytes());
 		byte[] headerBytes = header.dataBytes();
-		return Unpooled.wrappedBuffer(headerBytes, bodyBytes);
+		return Unpooled.wrappedBuffer(headerBytes, content.bytes());
 	}
 
 	/***
