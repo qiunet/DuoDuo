@@ -25,7 +25,7 @@ public class DCompletePromise<V> extends CompletableFuture<V> implements DFuture
 	public DCompletePromise() {
 	}
 
-	public DCompletePromise(Future<V> future) {
+	DCompletePromise(Future<V> future) {
 		this.future = future;
 	}
 

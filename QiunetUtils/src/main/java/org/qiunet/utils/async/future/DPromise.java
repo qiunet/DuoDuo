@@ -1,5 +1,7 @@
 package org.qiunet.utils.async.future;
 
+import java.util.concurrent.Future;
+
 /***
  *
  * @author qiunet
@@ -25,4 +27,21 @@ public interface DPromise<V> extends DFuture<V> {
 	DPromise<V> await() throws InterruptedException;
 	@Override
 	DPromise<V> awaitUninterruptibly();
+
+	/**
+	 * 使用指定的future生成.
+	 * cancel时候. 会cancel 该future
+	 * 生成新的Promise
+	 * @return
+	 */
+	static <V> DPromise<V> create(Future<V> future) {
+		return new DCompletePromise<>(future);
+	}
+	/**
+	 * 生成新的Promise
+	 * @return
+	 */
+	static <V> DPromise<V> create() {
+		return new DCompletePromise<>();
+	}
 }

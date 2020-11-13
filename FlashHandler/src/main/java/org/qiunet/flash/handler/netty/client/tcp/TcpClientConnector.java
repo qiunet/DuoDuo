@@ -7,7 +7,6 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.ILongConnClient;
-import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -24,7 +23,7 @@ public class TcpClientConnector implements ILongConnClient {
 	private DSession session;
 
 	TcpClientConnector(Bootstrap bootstrap, String host, int port) {
-		DPromise<DSession> promise = new DCompletePromise<>();
+		DPromise<DSession> promise = DPromise.create();
 		GenericFutureListener<ChannelFuture> listener = f -> {
 			if (f.isSuccess()) {
 				f.channel().attr(NettyTcpClient.SESSION).set(new DSession(f.channel()));

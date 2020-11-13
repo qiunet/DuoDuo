@@ -23,7 +23,6 @@ import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
-import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -59,7 +58,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 	}
 
 	public static NettyWebsocketClient create(WebSocketClientParams params, ILongConnResponseTrigger trigger){
-		DPromise<NettyWebsocketClient> promise = new DCompletePromise<>();
+		DPromise<NettyWebsocketClient> promise = DPromise.create();
 		new NettyWebsocketClient(params, trigger, promise);
 		try {
 			return promise.get();

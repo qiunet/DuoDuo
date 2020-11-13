@@ -2,7 +2,7 @@ package org.qiunet.utils.async;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 
 /***
  *
@@ -14,7 +14,7 @@ public class TestFuture {
 	private static String val = "";
 	@Test
 	public void testFuture() {
-		DCompletePromise<String> promise = new DCompletePromise<>();
+		DPromise<String> promise = DPromise.create();
 		promise.whenComplete((res, err) -> val = res);
 
 		String result = "qiunet";

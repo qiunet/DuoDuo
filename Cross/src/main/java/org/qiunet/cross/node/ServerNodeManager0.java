@@ -17,7 +17,6 @@ import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -123,7 +122,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		nodes.remove(serverId);
 		ServerInfo serverInfo = getServerInfo(serverId);
 		TcpClientConnector connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort());
-		DPromise<ServerNode> authPromise = new DCompletePromise<>();
+		DPromise<ServerNode> authPromise = DPromise.create();
 		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), serverId);
 		serverNode.getSession().attachObj(SERVER_NODE_PROMISE_ATTRIBUTE, authPromise);
 		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
