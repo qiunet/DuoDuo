@@ -70,7 +70,7 @@ public class MessageContent {
 	}
 
 	public void release(){
-		if (buffer != null) {
+		if (buffer != null && buffer.refCnt() > 0) {
 			buffer.release();
 		}
 	}
