@@ -9,7 +9,6 @@
 |----|----|
 | args 			|`处理参数的`|
 | asyncQueue 			|`异步队列的一些通用类`|
-| badWord 			|`使用单词查找树进行脏字过滤的类`|
 | classloader	|`类加载器  热更新工具包`|
 | classScanner	|`类的扫描 可以扫描一些特定的class 避免需要配置来确定关系.`|
 | collection.safe |`安全的集合类, 使用后. 不允许修改内容.`|
@@ -24,7 +23,6 @@
 | hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
 | http 			|`Http 的工具类`|
 | json 			|`json相关的操作`|
-| listener 			|`一个监听工具类. 可以实现监听接口后, 处理对应的监听事件.`|
 | math 			|`随机啊什么的工具相关`|
 | net 			|`网络相关的操作 得到内网ip什么`|
 | property 		|`加载properties 相关的工具`|
