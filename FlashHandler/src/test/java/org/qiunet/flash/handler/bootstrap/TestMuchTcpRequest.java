@@ -19,7 +19,7 @@ import java.util.concurrent.CountDownLatch;
  * 17/11/27
  */
 public class TestMuchTcpRequest extends MuchTcpRequest {
-	private int requestCount = 1000000;
+	private int requestCount = 100000;
 	private CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InterruptedException {

@@ -33,6 +33,18 @@ public final class ChannelUtil {
 	}
 
 	/***
+	 * 将一个MessageContent 写入byteBuf
+	 * @param content
+	 * @param channel
+	 * @return
+	 */
+	public static void messageContentToByteBuf(MessageContent content, Channel channel, ByteBuf out) {
+		IProtocolHeaderAdapter adapter = getProtocolHeaderAdapter(channel);
+		IProtocolHeader header = adapter.newHeader(content);
+		out.writeBytes(header.dataBytes());
+		out.writeBytes(content.bytes());
+	}
+	/***
 	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
 	 * @param content
 	 * @param channel

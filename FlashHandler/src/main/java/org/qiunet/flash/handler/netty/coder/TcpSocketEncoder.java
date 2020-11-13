@@ -13,11 +13,6 @@ import org.qiunet.flash.handler.util.ChannelUtil;
 public class TcpSocketEncoder extends MessageToByteEncoder<MessageContent> {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, ByteBuf out) throws Exception {
-		ByteBuf srcMsg = ChannelUtil.messageContentToByteBuf(msg, ctx.channel());
-		try {
-			out.writeBytes(srcMsg);
-		}finally {
-			srcMsg.release();
-		}
+		ChannelUtil.messageContentToByteBuf(msg, ctx.channel(), out);
 	}
 }
