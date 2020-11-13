@@ -1,4 +1,4 @@
-package org.qiunet.utils.monitor;
+package org.qiunet.function.monitor;
 
 /***
  * 监视器. 长连接时候用比较合适.

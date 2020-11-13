@@ -1,4 +1,4 @@
-package org.qiunet.utils.badword;
+package org.qiunet.function.badword;
 
 import java.util.*;
 import java.util.regex.Matcher;

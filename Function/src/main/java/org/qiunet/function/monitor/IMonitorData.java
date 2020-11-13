@@ -1,4 +1,4 @@
-package org.qiunet.utils.monitor;
+package org.qiunet.function.monitor;
 
 /***
  * 每个具体的监控对象

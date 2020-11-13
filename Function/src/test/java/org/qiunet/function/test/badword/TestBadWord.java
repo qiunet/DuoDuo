@@ -1,7 +1,9 @@
-package org.qiunet.utils.badword;
+package org.qiunet.function.test.badword;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.function.badword.BadWordFilter;
+import org.qiunet.function.badword.DefaultBadWord;
 
 /***
  *

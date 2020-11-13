@@ -1,4 +1,4 @@
-package org.qiunet.utils.monitor;
+package org.qiunet.function.monitor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;

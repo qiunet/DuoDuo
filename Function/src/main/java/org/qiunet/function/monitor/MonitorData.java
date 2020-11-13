@@ -1,4 +1,4 @@
-package org.qiunet.utils.monitor;
+package org.qiunet.function.monitor;
 
 import org.qiunet.utils.date.DateUtil;
 

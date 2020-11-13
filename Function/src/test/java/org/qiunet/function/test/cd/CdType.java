@@ -1,4 +1,6 @@
-package org.qiunet.utils.timer.cd;
+package org.qiunet.function.test.cd;
+
+import org.qiunet.function.cd.ICdType;
 
 import java.util.concurrent.TimeUnit;
 

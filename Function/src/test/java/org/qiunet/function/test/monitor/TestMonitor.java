@@ -1,5 +1,7 @@
-package org.qiunet.utils.monitor;
+package org.qiunet.function.test.monitor;
 
+import org.qiunet.function.monitor.DefaultMonitor;
+import org.qiunet.function.monitor.IMonitor;
 import org.qiunet.utils.date.DateUtil;
 
 import java.util.concurrent.TimeUnit;

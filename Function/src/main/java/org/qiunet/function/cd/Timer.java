@@ -1,4 +1,4 @@
-package org.qiunet.utils.timer.cd;
+package org.qiunet.function.cd;
 
 import org.qiunet.utils.date.DateUtil;
 
