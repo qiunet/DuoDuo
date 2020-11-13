@@ -49,6 +49,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
+			content.release();
 			return;
 		}
 		DSession session = ChannelUtil.getSession(ctx.channel());
@@ -64,6 +65,8 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		if (ctx.channel().isActive()) {
 			ITcpRequestContext context = handler.getDataType().createTcpRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
+		}else{
+			content.release();
 		}
 	}
 

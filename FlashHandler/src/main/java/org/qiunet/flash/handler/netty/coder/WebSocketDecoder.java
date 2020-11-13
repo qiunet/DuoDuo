@@ -43,6 +43,7 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 		ByteBuf byteBuf = in.readRetainedSlice(header.getLength());
 		MessageContent context = new MessageContent(header.getProtocolId(), byteBuf);
 		if (encryption && !header.validEncryption(context.byteBuffer())) {
+			context.release();
 			ctx.channel().close();
 			return;
 		}

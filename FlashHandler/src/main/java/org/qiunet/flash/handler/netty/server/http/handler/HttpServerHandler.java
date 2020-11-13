@@ -130,11 +130,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			content.release();
 			return;
 		}
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			content.release();
 			return;
 		}
 
@@ -152,6 +154,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			content.release();
 			return;
 		}
 

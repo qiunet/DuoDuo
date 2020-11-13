@@ -60,6 +60,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		if (! ServerConfig.isServerOpen() && ! ServerConfig.getIpWhiteList().contains(ChannelUtil.getIp(ctx.channel()))) {
 			ChannelFuture channelFuture = ctx.writeAndFlush(params.getStartupContext().serverClose());
 			channelFuture.addListener(f -> ctx.close());
+			content.release();
 			return;
 		}
 
@@ -67,6 +68,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
+			content.release();
 			return;
 		}
 
@@ -84,6 +86,8 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		if (ctx.channel().isActive()) {
 			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
+		}else {
+			content.release();
 		}
 	}
 
