@@ -3,6 +3,7 @@ package org.qiunet.utils.common;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -93,5 +94,13 @@ public class CommonUtil {
 			array[i] = array[last];
 			array[last] = temp;
 		}
+	}
+	/**
+	 * map 是否是空
+	 * @param map
+	 * @return
+	 */
+	public static boolean isEmptyMap(Map map) {
+		return map == null || map.isEmpty();
 	}
 }
