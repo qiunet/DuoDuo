@@ -29,10 +29,10 @@ import java.nio.ByteBuffer;
 @Measurement(iterations = 5)
 @Warmup(iterations = 1, time = 5)
 public class TestMuchHttpRequest {
-	protected static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
-	private static final Hook hook = new MyHook();
-	protected static final int port = 8080;
-
+	private static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
+	public static final Hook hook = new MyHook();
+	private static final int threadCount = 16;
+	public static final int port = 8080;
 	private static final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
 		.setProtocolHeaderAdapter(ADAPTER)
@@ -40,21 +40,20 @@ public class TestMuchHttpRequest {
 
 
 	@Benchmark
-	public String httpRequest() throws InterruptedException {
+	@Threads(threadCount)
+	public String httpRequest() {
 		final String test = "[测试testHttpProtobuf]";
 		MessageContent content = new MessageContent(5000, test.getBytes(CharsetUtil.UTF_8));
-		String executor = HttpRequest.post(params.getURI())
+		return HttpRequest.post(params.getURI())
 			.withBytes(ADAPTER.getAllBytes(content))
 			.executor(resp -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				ADAPTER.newHeader(buffer);
 				return CharsetUtil.UTF_8.decode(buffer).toString();
 			});
-		return executor;
 	}
 
-	@Setup
-	public void init(){
+	public static void serverStartup(){
 		ClassScanner.getInstance().scanner();
 
 		HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
@@ -69,19 +68,17 @@ public class TestMuchHttpRequest {
 		}).start();
 	}
 
-	@TearDown
-	public void shutdownServer(){
-		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
-	}
-
-	public static void main(String[] args) throws RunnerException {
+	public static void main(String[] args) throws RunnerException, InterruptedException {
+		serverStartup();
 		new Runner(
 			new OptionsBuilder()
 				.include(TestMuchHttpRequest.class.getSimpleName())
 				.jvmArgsAppend("-Dfile.encoding=UTF-8")
+				.addProfiler(HttpJmhProfile.class)
 				.jvmArgs("-server")
 				.syncIterations(false)
 				.build()
 		).run();
+
 	}
 }
