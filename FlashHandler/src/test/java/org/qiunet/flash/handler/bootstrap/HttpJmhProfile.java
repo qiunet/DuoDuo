@@ -34,7 +34,7 @@ public class HttpJmhProfile implements ExternalProfiler {
 
 	@Override
 	public Collection<? extends Result> afterTrial(BenchmarkResult br, long pid, File stdOut, File stdErr) {
-		BootstrapServer.sendHookMsg(TestMuchHttpRequest.hook.getHookPort(), TestMuchHttpRequest.hook.getShutdownMsg());
+		BootstrapServer.sendHookMsg(HttpRequestProfile.hook.getHookPort(), HttpRequestProfile.hook.getShutdownMsg());
 		return Collections.emptyList();
 	}
 
