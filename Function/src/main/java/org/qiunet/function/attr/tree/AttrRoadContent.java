@@ -31,11 +31,11 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * 路径
 	 */
-	private AttrNodeRoad road;
+	private AttrRoad road;
 	/**
 	 * buff 变动时候, 需要通知到的road
 	 */
-	private Set<AttrNodeRoad> buffRoads;
+	private Set<AttrRoad> buffRoads;
 
 	/**
 	 * 基础属性
@@ -46,7 +46,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	private Map<Attr, Long> finalAttrMap;
 
-	AttrRoadContent(AttrBox<Attr> attrBox, AttrNodeRoad road) {
+	AttrRoadContent(AttrBox<Attr> attrBox, AttrRoad road) {
 		this.road = road;
 		this.attrBox = attrBox;
 	 	this.buffMap = new HashMap<>(4);
@@ -59,7 +59,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 增加buff影响路径
 	 * @param road 路径
 	 */
-	public void markRoad(AttrNodeRoad road) {
+	public void markRoad(AttrRoad road) {
 		writeLock().lock();
 		try {
 			buffRoads.add(road);
@@ -72,7 +72,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 删除buff影响路径
 	 * @param road 路径
 	 */
-	public void removeRoad(AttrNodeRoad road) {
+	public void removeRoad(AttrRoad road) {
 		writeLock().lock();
 		try {
 			buffRoads.remove(road);
@@ -159,7 +159,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 				oldBuffData = buffMap.put(buffType, buffData);
 			}
 
-			for (AttrNodeRoad buffRoad : buffRoads) {
+			for (AttrRoad buffRoad : buffRoads) {
 				AttrRoadContent<Attr> content = attrBox.getRoadContent(buffRoad);
 				if (content.baseAttrMap == null || content.baseAttrMap.isEmpty()) {
 					continue;

@@ -2,6 +2,7 @@ package org.qiunet.function.attr.manager;
 
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.attr.tree.AttrBox;
+import org.qiunet.function.attr.tree.AttrRoad;
 import org.qiunet.function.attr.tree.AttrTree;
 import org.qiunet.function.attr.tree.IAttrNodeType;
 import org.qiunet.utils.args.ArgsContainer;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @author qiunet
  * 2020-11-20 15:34
  */
-public enum AttrManager0 implements IApplicationContextAware {
+enum AttrManager0 implements IApplicationContextAware {
 	instance;
 
 	private AttrTree attrTree;
@@ -33,7 +34,7 @@ public enum AttrManager0 implements IApplicationContextAware {
 		return attrTree.buildAttrBox();
 	}
 
-	public enum AttrRoot implements IAttrNodeType {
+	enum AttrRoot implements IAttrNodeType {
 		ROOT(null, "Root");
 		private Class<?> keyClass;
 		private String desc;
@@ -52,6 +53,15 @@ public enum AttrManager0 implements IApplicationContextAware {
 		public String desc() {
 			return desc;
 		}
+	}
+
+	/**
+	 * 构建属性路径
+	 * @param keys
+	 * @return
+	 */
+	AttrRoad builderRoad(IAttrNodeType nodeType, Object ... keys){
+		return attrTree.getNode(nodeType).buildRoad(keys);
 	}
 
 	/**

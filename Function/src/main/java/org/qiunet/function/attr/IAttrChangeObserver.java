@@ -1,7 +1,7 @@
 package org.qiunet.function.attr;
 
 import org.qiunet.function.attr.enums.IAttrEnum;
-import org.qiunet.function.attr.tree.AttrNodeRoad;
+import org.qiunet.function.attr.tree.AttrRoad;
 import org.qiunet.listener.observer.IObserver;
 
 import java.util.Map;
@@ -18,5 +18,5 @@ public interface IAttrChangeObserver extends IObserver {
 	 * @param changed
 	 * @param <Attr>
 	 */
-	<Attr extends Enum<Attr> & IAttrEnum<Attr>> void attrChange(AttrNodeRoad road, Map<Attr, Long> changed);
+	<Attr extends Enum<Attr> & IAttrEnum<Attr>> void attrChange(AttrRoad road, Map<Attr, Long> changed);
 }

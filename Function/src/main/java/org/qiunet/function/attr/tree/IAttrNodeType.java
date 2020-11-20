@@ -1,5 +1,7 @@
 package org.qiunet.function.attr.tree;
 
+import org.qiunet.function.attr.manager.AttrManager;
+
 /***
  * 属性节点.
  * 添加到{@link AttrTree}上
@@ -27,4 +29,13 @@ public interface IAttrNodeType {
 	 * @return
 	 */
 	String desc();
+
+	/**
+	 * 构建属性路径
+	 * @param keys
+	 * @return
+	 */
+	default AttrRoad builderRoad(Object ... keys){
+		return AttrManager.builderRoad(this, keys);
+	}
 }

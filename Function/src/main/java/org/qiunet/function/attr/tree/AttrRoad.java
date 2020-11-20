@@ -13,8 +13,8 @@ import java.util.Objects;
  * @author qiunet
  * 2020-11-16 18:42
  */
-public class AttrNodeRoad {
-	private static final Map<IAttrNodeType, AttrNodeRoad> cache = Maps.newConcurrentMap();
+public class AttrRoad {
+	private static final Map<IAttrNodeType, AttrRoad> cache = Maps.newConcurrentMap();
 	/**
 	 * 对应的节点
 	 */
@@ -24,15 +24,15 @@ public class AttrNodeRoad {
 	 */
 	private Object[] keys;
 
-	private AttrNodeRoad(AttrNode node) {
+	private AttrRoad(AttrNode node) {
 		this.node = node;
 	}
 
-	public static AttrNodeRoad valueOf(AttrNode node, Object...keys){
+	public static AttrRoad valueOf(AttrNode node, Object...keys){
 		if (keys == null) {
-			return cache.computeIfAbsent(node.getNodeType(), key -> new AttrNodeRoad(node));
+			return cache.computeIfAbsent(node.getNodeType(), key -> new AttrRoad(node));
 		}
-		AttrNodeRoad nodeRoad = new AttrNodeRoad(node);
+		AttrRoad nodeRoad = new AttrRoad(node);
 		nodeRoad.keys = keys;
 		return nodeRoad;
 	}
@@ -50,7 +50,7 @@ public class AttrNodeRoad {
 	 * @param road 要检查的路径
 	 * @return true 是子路径
 	 */
-	public boolean isParentOfRoad(AttrNodeRoad road) {
+	public boolean isParentOfRoad(AttrRoad road) {
 		if (ArrayUtils.getLength(road.keys.length) < ArrayUtils.getLength(this.keys.length)) {
 			return false;
 		}
@@ -78,7 +78,7 @@ public class AttrNodeRoad {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		AttrNodeRoad that = (AttrNodeRoad) o;
+		AttrRoad that = (AttrRoad) o;
 		return node.getId() == that.node.getId() &&
 			Arrays.equals(keys, that.keys);
 	}

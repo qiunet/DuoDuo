@@ -2,6 +2,8 @@ package org.qiunet.function.attr.manager;
 
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.attr.tree.AttrBox;
+import org.qiunet.function.attr.tree.AttrRoad;
+import org.qiunet.function.attr.tree.IAttrNodeType;
 
 /***
  *
@@ -23,5 +25,15 @@ public class AttrManager {
 	 */
 	public static void printAttrTree(){
 		AttrManager0.instance.printAttrTree();
+	}
+
+	/**
+	 * 构造属性路径
+	 * @param nodeType 节点类型
+	 * @param keys 参数
+	 * @return
+	 */
+	public static AttrRoad builderRoad(IAttrNodeType nodeType, Object ... keys) {
+		return AttrManager0.instance.builderRoad(nodeType, keys);
 	}
 }

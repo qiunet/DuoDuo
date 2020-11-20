@@ -103,14 +103,14 @@ public class AttrNode {
 	 * @param keys 路径参数.
 	 * @return 节点对应的唯一路径
 	 */
-	public AttrNodeRoad buildRoad(Object ... keys) {
+	public AttrRoad buildRoad(Object ... keys) {
 		int index = keys.length - 1;
 		AttrNode node = this;
 		while (node != null) {
 
 			node = node.parent;
 		}
-		return AttrNodeRoad.valueOf(this, keys);
+		return AttrRoad.valueOf(this, keys);
 	}
 
 	/**

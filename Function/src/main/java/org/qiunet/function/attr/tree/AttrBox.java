@@ -38,7 +38,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * 路径上的数据
 	 */
-	Map<AttrNodeRoad, AttrRoadContent<Attr>> roadContentMap = Maps.newConcurrentMap();
+	Map<AttrRoad, AttrRoadContent<Attr>> roadContentMap = Maps.newConcurrentMap();
 
 	AttrBox(AttrTree rootTree) {
 		this.rootTree = rootTree;
@@ -57,7 +57,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param road 路径
 	 * @param attrs 属性
 	 */
-	public void replace(AttrNodeRoad road, Map<Attr, Long> attrs) {
+	public void replace(AttrRoad road, Map<Attr, Long> attrs) {
 		if (! roadContentMap.containsKey(road) && attrs == null) {
 			return;
 		}
@@ -72,7 +72,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param buffType buff类型
 	 * @param nodeBuff buff数据
 	 */
-	public void replace(AttrNodeRoad road, IAttrBuff buffType, IAttrNodeBuff<Attr, ?> nodeBuff) {
+	public void replace(AttrRoad road, IAttrBuff buffType, IAttrNodeBuff<Attr, ?> nodeBuff) {
 		if (! roadContentMap.containsKey(road) && nodeBuff == null) {
 			return;
 		}
@@ -86,7 +86,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param road 路径
 	 * @return
 	 */
-	AttrRoadContent<Attr> getRoadContent(AttrNodeRoad road) {
+	AttrRoadContent<Attr> getRoadContent(AttrRoad road) {
 		return roadContentMap.get(road);
 	}
 
@@ -128,7 +128,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 清理 指定的road
 	 * @param road 路径
 	 */
-	public void clearByAttrRoad(AttrNodeRoad road) {
+	public void clearByAttrRoad(AttrRoad road) {
 		this.clearByAttrNode(road.getNode());
 	}
 
@@ -138,7 +138,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param keys 参数
 	 * @return 节点对应的唯一路径
 	 */
-	public AttrNodeRoad buildRoad(IAttrNodeType nodeType, Object ... keys) {
+	public AttrRoad buildRoad(IAttrNodeType nodeType, Object ... keys) {
 		return rootTree.getNode(nodeType).buildRoad(keys);
 	}
 }
