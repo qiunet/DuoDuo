@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -26,6 +27,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public final class DSession {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	/**
+	 * 默认flush延时毫秒时间
+	 */
+	private int flush_delay_ms = 50;
+	/**
+	 * 是否默认flush
+	 */
+	private boolean default_flush;
+
 	protected Channel channel;
 	/**
 	 * 判断是否已经在计时flush
@@ -33,8 +43,16 @@ public final class DSession {
 	private AtomicBoolean flushScheduling = new AtomicBoolean();
 
 	public DSession(Channel channel) {
-		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		this(50, false, channel);
+	}
+
+	public DSession(int flush_delay_ms, boolean default_flush, Channel channel) {
+		Preconditions.checkState(flush_delay_ms >= 5 && flush_delay_ms < 1000);
+		this.flush_delay_ms = flush_delay_ms;
+		this.default_flush = default_flush;
 		this.channel = channel;
+
+		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
 	}
 
 	/**
@@ -76,7 +94,7 @@ public final class DSession {
 	 */
 
 	public ChannelFuture writeMessage(IChannelMessage message) {
-		return this.writeMessage(message, false);
+		return this.writeMessage(message, default_flush);
 	}
 
 	/**
@@ -101,7 +119,7 @@ public final class DSession {
 			channel.eventLoop().schedule(() -> {
 				flushScheduling.set(false);
 				channel.flush();
-			}, 50, TimeUnit.MILLISECONDS);
+			}, flush_delay_ms, TimeUnit.MILLISECONDS);
 		}
 		return future;
 	}
