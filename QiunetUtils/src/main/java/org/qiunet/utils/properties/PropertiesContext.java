@@ -28,12 +28,27 @@ import java.util.Set;
  * @author qiunet
  * 2020-09-18 10:17
  */
-class PropertiesContext implements IApplicationContextAware {
+enum PropertiesContext implements IApplicationContextAware {
+	instance;
+
 	/**
 	 * propertie名称对应的所有字段.
 	 */
 	private Map<String, PropertiesData> datas = Maps.newHashMap();
 	private IApplicationContext context;
+	/**
+	 * reflections bug. 必须有定义. 才不会抛出异常.
+	 */
+	@DPropertiesValue
+	private String field_holder;
+	private Field field_holder_field;
+	PropertiesContext() {
+		try {
+			field_holder_field = PropertiesContext.class.getDeclaredField("field_holder");
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public int order() {
 		return Integer.MAX_VALUE - 1;
@@ -51,6 +66,10 @@ class PropertiesContext implements IApplicationContextAware {
 	private void loadField(){
 		Set<Field> fieldSet = this.context.getFieldsAnnotatedWith(DPropertiesValue.class);
 		for (Field field : fieldSet) {
+			if (field.equals(field_holder_field)) {
+				continue;
+			}
+
 			DProperties annotation = field.getDeclaringClass().getAnnotation(DProperties.class);
 			String propertiesName;
 			if (annotation != null) {

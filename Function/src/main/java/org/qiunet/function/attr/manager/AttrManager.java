@@ -18,4 +18,10 @@ public class AttrManager {
 	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Attr> buildAttrBox() {
 		return AttrManager0.instance.buildAttrBox();
 	}
+	/**
+	 * 打印attrTree
+	 */
+	public static void printAttrTree(){
+		AttrManager0.instance.printAttrTree();
+	}
 }

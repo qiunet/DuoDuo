@@ -53,4 +53,11 @@ public enum AttrManager0 implements IApplicationContextAware {
 			return desc;
 		}
 	}
+
+	/**
+	 * 打印attrTree
+	 */
+	void printAttrTree(){
+		attrTree.printTree();
+	}
 }

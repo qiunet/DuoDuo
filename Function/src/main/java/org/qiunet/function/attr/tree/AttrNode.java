@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import org.qiunet.function.attr.buff.IAttrBuff;
 import org.qiunet.utils.id.IntIdGenerator;
+import org.qiunet.utils.string.StringUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -127,6 +128,21 @@ public class AttrNode {
 		}
 		return false;
 	}
+
+	/**
+	 * 打印节点
+	 * @param prefix 前缀 就是 \t
+	 */
+	void printNode(String prefix) {
+		String format = StringUtil.format("{0}{1}({2})", prefix, nodeType, nodeType.desc());
+		System.out.println(format);
+
+		if (childNodes != null) {
+			String finalPrefix = prefix + "\t";
+			childNodes.values().forEach(node -> node.printNode(finalPrefix));
+		}
+	}
+
 
 	/**
 	 * 循环子节点

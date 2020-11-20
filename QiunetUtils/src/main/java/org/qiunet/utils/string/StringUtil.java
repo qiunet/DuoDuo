@@ -218,7 +218,7 @@ public class StringUtil {
 	 * @param params
 	 * @return
 	 */
-	public static String sformat(String string, Object ... params) {
+	public static String slf4jFormat(String string, Object ... params) {
 		return MessageFormatter.arrayFormat(string, params).getMessage();
 	}
 

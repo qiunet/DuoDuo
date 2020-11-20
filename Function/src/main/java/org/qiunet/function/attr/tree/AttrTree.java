@@ -2,6 +2,8 @@ package org.qiunet.function.attr.tree;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.qiunet.function.attr.buff.IAttrBuff;
+import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.utils.id.IntIdGenerator;
 
 import java.util.Map;
@@ -33,11 +35,11 @@ public class AttrTree {
 	 * @param nodeType root类型
 	 * @return
 	 */
-	public static AttrTreeBuilder newBuilder(IAttrNodeType nodeType) {
+	public static <NodeType extends IAttrNodeType, Buff extends IAttrBuff> AttrTreeBuilder<NodeType, Buff> newBuilder(IAttrNodeType nodeType) {
 		AttrTree attrTree = new AttrTree();
 		attrTree.rootNode = new AttrNode(null, nodeType);
 		attrTree.addNode(attrTree.rootNode);
-		return new AttrTreeBuilder(attrTree, attrTree.rootNode);
+		return new AttrTreeBuilder<>(attrTree, attrTree.rootNode);
 	}
 
 	/**
@@ -81,7 +83,14 @@ public class AttrTree {
 	 * 得到AttrBox
 	 * @return
 	 */
-	public AttrBox buildAttrBox() {
-		return new AttrBox(this);
+	public <Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Attr> buildAttrBox() {
+		return new AttrBox<>(this);
+	}
+
+	/**
+	 * 打印数
+	 */
+	public void printTree() {
+		rootNode.printNode("");
 	}
 }

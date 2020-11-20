@@ -33,7 +33,13 @@ import java.util.stream.Stream;
  *         Created on 17/1/23 18:22.
  */
 public final class ClassScanner implements IApplicationContext {
-	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
+	private static final Scanner [] scanners = new Scanner[]{
+		new FieldAnnotationsScanner(),
+		new MethodAnnotationsScanner(),
+		new TypeAnnotationsScanner(),
+		new SubTypesScanner()
+	};
+
 	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
