@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -26,6 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class DSession {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	protected Channel channel;
+	/**
+	 * 判断是否已经在计时flush
+	 */
+	private AtomicBoolean flushScheduling = new AtomicBoolean();
 
 	public DSession(Channel channel) {
 		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
@@ -71,6 +76,16 @@ public final class DSession {
 	 */
 
 	public ChannelFuture writeMessage(IChannelMessage message) {
+		return this.writeMessage(message, false);
+	}
+
+	/**
+	 * 写入消息. 自己定义是否需要立即刷新
+	 * @param message
+	 * @param flush
+	 * @return
+	 */
+	public ChannelFuture writeMessage(IChannelMessage message, boolean flush) {
 		if ( logger.isInfoEnabled()
 			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
@@ -78,7 +93,17 @@ public final class DSession {
 				logger.info("[{}] >>> {}", messageActor.getIdent(), message.toStr());
 			}
 		}
-		return channel.writeAndFlush(message.encode());
+		if (flush) {
+			return channel.writeAndFlush(message.encode());
+		}
+		ChannelFuture future = channel.write(message.encode());
+		if (flushScheduling.compareAndSet(false, true)) {
+			channel.eventLoop().schedule(() -> {
+				flushScheduling.set(false);
+				channel.flush();
+			}, 50, TimeUnit.MILLISECONDS);
+		}
+		return future;
 	}
 	/**
 	 * 获得channel里面的对象.
