@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Session 的 父类
@@ -28,13 +30,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class DSession {
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
-	 * 默认flush延时毫秒时间
+	 * 写次数计数
 	 */
-	private int flush_delay_ms = 50;
+	private AtomicInteger counter = new AtomicInteger();
 	/**
 	 * 是否默认flush
 	 */
 	private boolean default_flush;
+	/**
+	 * 默认flush延时毫秒时间
+	 */
+	private int flush_delay_ms = 50;
+
 
 	protected Channel channel;
 	/**
@@ -43,16 +50,19 @@ public final class DSession {
 	private AtomicBoolean flushScheduling = new AtomicBoolean();
 
 	public DSession(Channel channel) {
-		this(50, false, channel);
+		this.channel = channel;
+		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
 	}
-
-	public DSession(int flush_delay_ms, boolean default_flush, Channel channel) {
-		Preconditions.checkState(flush_delay_ms >= 5 && flush_delay_ms < 1000);
+	/**
+	 * 设置flush的参数
+	 * @param default_flush 是否默认flush. 是. 每个message都flush, 否 则需要设置下面的参数
+	 * @param flush_delay_ms flush延迟毫秒数.
+	 */
+	public DSession flushConfig(boolean default_flush, int flush_delay_ms) {
+		Preconditions.checkState(default_flush || (flush_delay_ms >= 5 && flush_delay_ms < 1000));
 		this.flush_delay_ms = flush_delay_ms;
 		this.default_flush = default_flush;
-		this.channel = channel;
-
-		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		return this;
 	}
 
 	/**
@@ -111,18 +121,37 @@ public final class DSession {
 				logger.info("[{}] >>> {}", messageActor.getIdent(), message.toStr());
 			}
 		}
+
 		if (flush) {
 			return channel.writeAndFlush(message.encode());
 		}
+
 		ChannelFuture future = channel.write(message.encode());
+		if (counter.incrementAndGet() >= 10) {
+			// 次数够也flush
+			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
+				this.flushSchedule.cancel(false);
+			}
+			this.flush0();
+			return future;
+		}
+
 		if (flushScheduling.compareAndSet(false, true)) {
-			channel.eventLoop().schedule(() -> {
-				flushScheduling.set(false);
-				channel.flush();
-			}, flush_delay_ms, TimeUnit.MILLISECONDS);
+			this.flushSchedule = channel.eventLoop().schedule(this::flush0, flush_delay_ms, TimeUnit.MILLISECONDS);
 		}
 		return future;
 	}
+	private ScheduledFuture<?> flushSchedule;
+	/**
+	 * flush
+	 */
+	private void flush0(){
+		flushScheduling.set(false);
+		this.flushSchedule = null;
+		counter.set(0);
+		channel.flush();
+	}
+
 	/**
 	 * 获得channel里面的对象.
 	 * @param key

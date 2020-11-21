@@ -18,7 +18,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private int serverId;
 
 	public ServerNode(DSession session) {
-		super(session);
+		super(session.flushConfig(true, 0));
 	}
 
 	static ServerNode valueOf(DSession session, int serverId) {
