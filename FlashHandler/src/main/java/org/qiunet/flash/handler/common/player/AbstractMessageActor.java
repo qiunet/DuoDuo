@@ -24,6 +24,7 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor>
 	protected DSession session;
 
 	public AbstractMessageActor(DSession session) {
+		session.addCloseListener(cause -> this.destroy());
 		this.session = session;
 	}
 
