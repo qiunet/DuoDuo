@@ -8,26 +8,26 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.LongStream;
 
 /***
- * length     	list  		skipList
- * 5		 14249796	    5149923
- * 10 		 12227953		4024316
- * 50		 3058060		2526415
- * 100		 2378609	    2297986
- * 150		 1702089		2175690
- * 200		 1262084		2152967
- * 1000 	 163446			1796576
+ * length     	list  		skipList		treeSet
+ * 5		 14249796	    5149923			10016575
+ * 10 		 11841343		4024316			8217781
+ * 40		 4846603		2820356			5807853
+ * 50		 3852095		2526415			5601629
+ * 100		 2378609	    2297986			4752844
+ * 150		 1702089		2175690			4621291
+ * 200		 1262084		2152967			4331126
+ * 1000 	 128862			1796576			3117137
  *
  * list 数据越多. 排序越慢. 这个符合我们的预期.
- * skipList 的性能在数据100以后, 逐渐出现优势
+ * skipList 的性能在数据100以后, 相比数组逐渐出现优势
+ * treeSet 在长度40后, 优势开始出现.
+ * 所以如果你的排行长度40以上. 就可以使用TreeSet, 当然得保证线程安全.
  *
  * @author qiunet
  * 2020-11-21 06:55
@@ -44,10 +44,13 @@ public class TestSkipListAndListProfile {
 				.result();
 
 	private static final int length = 1000;
-	private Map<Long, RankListObj> dataList = Maps.newHashMapWithExpectedSize((int)(1.4 * length));
-	private Map<Long, RankListObj> dataSlist = Maps.newHashMapWithExpectedSize((int)(1.4 * length));
-	private List<RankListObj> list = Lists.newArrayListWithCapacity(length);
-	private ConcurrentSkipListSet<RankListObj> slist = new ConcurrentSkipListSet<>(comparator);
+	private  static final Map<Long, RankListObj> dataList = Maps.newHashMapWithExpectedSize((int)(1.4 * length));
+	private  static final Map<Long, RankListObj> dataSlist = Maps.newHashMapWithExpectedSize((int)(1.4 * length));
+	private  static final Map<Long, RankListObj> dataTreeSet = Maps.newHashMapWithExpectedSize((int)(1.4 * length));
+
+	private static final Set<RankListObj> treeSet = new TreeSet<>(comparator);
+	private static final List<RankListObj> list = Lists.newArrayListWithCapacity(length);
+	private static final ConcurrentSkipListSet<RankListObj> slist = new ConcurrentSkipListSet<>(comparator);
 
 	@Benchmark
 	public void testSkipList() {
@@ -56,6 +59,15 @@ public class TestSkipListAndListProfile {
 		slist.remove(obj);
 		obj.alterScore(ThreadLocalRandom.current().nextLong(10));
 		slist.add(obj);
+	}
+
+	@Benchmark
+	public void testTreeSet() {
+		long playerId = ThreadLocalRandom.current().nextLong(length);
+		RankListObj obj = dataTreeSet.get(playerId);
+		treeSet.remove(obj);
+		obj.alterScore(ThreadLocalRandom.current().nextLong(10));
+		treeSet.add(obj);
 	}
 
 	@Benchmark
@@ -70,6 +82,7 @@ public class TestSkipListAndListProfile {
 	public void init(){
 		list.clear();
 		slist.clear();
+		treeSet.clear();
 		LongStream.range(0, length).forEach(i -> {
 			RankListObj obj1 = RankListObj.valueOf(i, i);
 			list.add(obj1);
@@ -78,6 +91,10 @@ public class TestSkipListAndListProfile {
 			RankListObj obj2 = RankListObj.valueOf(i, i);
 			dataSlist.put(i, obj2);
 			slist.add(obj2);
+
+			RankListObj obj3 = RankListObj.valueOf(i, i);
+			dataTreeSet.put(i, obj3);
+			treeSet.add(obj2);
 		});
 		list.sort(comparator);
 	}
@@ -107,10 +124,6 @@ public class TestSkipListAndListProfile {
 		public void alterScore(long score) {
 			this.dt = System.nanoTime();
 			this.score += score;
-		}
-
-		public long getDt() {
-			return dt;
 		}
 
 		public long getPlayerId() {
