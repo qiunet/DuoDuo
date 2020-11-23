@@ -54,14 +54,14 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 
 	/***
 	 * 创建任务的Targets. 并且开启监听
-	 * @param targetList 目标的配置列表
+	 * @param targetDefGetter 目标的配置列表getter
 	 * @param consumer
 	 * @param id
 	 */
-	public void createAndWatchTargets(TargetDefList targetList, Consumer<Targets> consumer, int id) {
+	public void createAndWatchTargets(ITargetDefGetter targetDefGetter, Consumer<Targets> consumer, int id) {
 		writeLock.lock();
 		try {
-			Targets targets = Targets.valueOf(this, targetList, consumer, id);
+			Targets targets = Targets.valueOf(this, targetDefGetter, consumer, id);
 			targets.forEachTarget(this::watch);
 		}finally {
 			writeLock.unlock();
