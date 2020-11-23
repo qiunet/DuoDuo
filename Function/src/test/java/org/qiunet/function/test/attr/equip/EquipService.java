@@ -2,6 +2,7 @@ package org.qiunet.function.test.attr.equip;
 
 import org.qiunet.function.attr.manager.IAttrTreeInit;
 import org.qiunet.function.attr.tree.AttrTree;
+import org.qiunet.function.test.attr.AttrBuffType;
 
 /***
  *
@@ -15,8 +16,12 @@ public enum EquipService implements IAttrTreeInit {
 	@Override
 	public AttrTree buildAttrTree() {
 		return AttrTree.newBuilder(EquipAttrNode.EQUIP_ROOT)
-			.addLeaf(EquipAttrNode.BASE)
-			.addLeaf(EquipAttrNode.GEM)
+			.addChildNode(EquipAttrNode.BASE, builder -> {
+				builder.addLeaf(EquipAttrNode.EQUIP_BASE_POSITION);
+			}, AttrBuffType.allEquipBaseRct)
+			.addChildNode(EquipAttrNode.GEM, builder -> {
+				builder.addLeaf(EquipAttrNode.GEM_POSITION, AttrBuffType.EquipGemLegRct);
+			})
 			.build();
 	}
 }

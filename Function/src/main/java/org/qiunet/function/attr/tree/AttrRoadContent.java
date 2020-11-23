@@ -2,7 +2,6 @@ package org.qiunet.function.attr.tree;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.qiunet.function.attr.AttrUtil;
 import org.qiunet.function.attr.IAttrChangeObserver;
 import org.qiunet.function.attr.buff.IAttrBuff;
 import org.qiunet.function.attr.buff.IAttrNodeBuff;
@@ -11,6 +10,7 @@ import org.qiunet.function.attr.enums.IAttrEnum;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -104,7 +104,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param attrs
 	 */
 	void replace(Map<Attr, Long> attrs) {
-		if (baseAttrMap == attrs || baseAttrMap.equals(attrs)) {
+		if (Objects.equals(baseAttrMap, attrs)) {
 			//  没有变化.  两个都是null, 也能比较.
 			return;
 		}

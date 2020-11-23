@@ -12,11 +12,11 @@ import java.util.Map;
  * @author qiunet
  * 2020-11-16 12:47
  */
-public interface IAttrChangeObserver extends IObserver {
+@FunctionalInterface
+public interface IAttrChangeObserver<Attr extends Enum<Attr> & IAttrEnum<Attr>> extends IObserver {
 	/**
 	 * 返回改变的类型以及数值
 	 * @param changed
-	 * @param <Attr>
 	 */
-	<Attr extends Enum<Attr> & IAttrEnum<Attr>> void attrChange(AttrRoad road, Map<Attr, Long> changed);
+	 void attrChange(AttrRoad road, Map<Attr, Long> changed);
 }

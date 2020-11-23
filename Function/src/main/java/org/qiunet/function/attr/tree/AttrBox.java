@@ -5,11 +5,14 @@ import org.qiunet.function.attr.AttrValue;
 import org.qiunet.function.attr.buff.IAttrBuff;
 import org.qiunet.function.attr.buff.IAttrNodeBuff;
 import org.qiunet.function.attr.enums.IAttrEnum;
+import org.qiunet.listener.observer.IObserver;
+import org.qiunet.listener.observer.Observer;
 import org.qiunet.listener.observer.ObserverSupport;
 
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 /***
  * 属性树根节点包装对象 以及真实的属性数据.
@@ -50,6 +53,17 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	public ObserverSupport getObserver() {
 		return observer;
+	}
+
+	/**
+	 * 挂载观察者.
+	 * @param clazz
+	 * @param o
+	 * @param <O>
+	 * @return
+	 */
+	public <O extends IObserver> Observer<O> attach(Class<O> clazz, O o) {
+		return getObserver().attach(clazz, o);
 	}
 
 	/**
@@ -103,7 +117,16 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 获得总属性map
 	 * @return
 	 */
-	public Map<Attr, AttrValue> getTotalAttrs() {
+	public Map<Attr, Long> getTotalAttrs() {
+		return this.getAllAttrValues().entrySet().stream().collect(
+			Collectors.toMap(Map.Entry::getKey, en -> en.getValue().getTotalVal())
+		);
+	}
+	/**
+	 * 获得总属性value map
+	 * @return
+	 */
+	public Map<Attr, AttrValue> getAllAttrValues(){
 		return totalAttrs;
 	}
 
@@ -130,15 +153,5 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	public void clearByAttrRoad(AttrRoad road) {
 		this.clearByAttrNode(road.getNode());
-	}
-
-	/**
-	 * 构造一个节点路径
-	 * @param nodeType 路径类型
-	 * @param keys 参数
-	 * @return 节点对应的唯一路径
-	 */
-	public AttrRoad buildRoad(IAttrNodeType nodeType, Object ... keys) {
-		return rootTree.getNode(nodeType).buildRoad(keys);
 	}
 }

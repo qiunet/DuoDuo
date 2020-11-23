@@ -5,6 +5,7 @@ import org.qiunet.utils.math.MathUtil;
 
 /***
  * 给属性加万分比
+ * 可以自己继承接口. 实现自定义的功能.
  *
  * @author qiunet
  * 2020-11-20 10:56

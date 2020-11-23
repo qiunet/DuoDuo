@@ -1,8 +1,7 @@
-package org.qiunet.function.attr;
+package org.qiunet.function.attr.tree;
 
 import com.google.common.collect.Maps;
 import org.qiunet.function.attr.enums.IAttrEnum;
-import org.qiunet.function.attr.tree.AttrBox;
 
 import java.util.Collections;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-11-16 11:54
  */
-public final class AttrUtil {
+final class AttrUtil {
 
 	private AttrUtil(){}
 
@@ -28,7 +27,7 @@ public final class AttrUtil {
 	 * @param <Attr>
 	 * @return
 	 */
-	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> Map<Attr, Long> diff(Map<Attr, Long> oldMap, Map<Attr, Long> newMap) {
+	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> Map<Attr, Long> diff(Map<Attr, Long> oldMap, Map<Attr, Long> newMap) {
 		if (oldMap == null) oldMap = Collections.emptyMap();
 		if (newMap == null) newMap = Collections.emptyMap();
 
@@ -49,12 +48,12 @@ public final class AttrUtil {
 	 * @param <Attr> 属性枚举类
 	 * @return
 	 */
-	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeToBox(AttrBox<Attr> box, Map<Attr, Long> addAttr, Map<Attr, Long> change) {
+	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeToBox(AttrBox<Attr> box, Map<Attr, Long> addAttr, Map<Attr, Long> change) {
 		addAttr.forEach((type, value) -> {
 			if (value == 0) {
 				return;
 			}
-			type.valueType().merge(box.getTotalAttrs(), change, type, value);
+			type.valueType().merge(box.getAllAttrValues(), change, type, value);
 		});
 	}
 
@@ -64,7 +63,7 @@ public final class AttrUtil {
 	 * @param toMap 合并目标map
 	 * @param <Attr> 属性枚举类.
 	 */
-	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeMap(Map<Attr, Long> fromMap, Map<Attr, Long> toMap){
+	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeMap(Map<Attr, Long> fromMap, Map<Attr, Long> toMap){
 		fromMap.forEach((type, value) -> {
 			if (value == 0) {
 				return;
@@ -77,7 +76,7 @@ public final class AttrUtil {
 	 * @param map
 	 * @param <Attr>
 	 */
-	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void removeZeroValue(Map<Attr, Long> map){
+	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void removeZeroValue(Map<Attr, Long> map){
 		map.entrySet().removeIf(en -> en.getValue() == 0);
 	}
 }

@@ -12,6 +12,12 @@ public interface IAttrEnum<AttrEnum extends Enum<AttrEnum> & IAttrEnum<AttrEnum>
 	 * @return
 	 */
 	int type();
+
+	/**
+	 * 描述
+	 * @return
+	 */
+	String desc();
 	/**
 	 * 枚举名.
 	 * @return

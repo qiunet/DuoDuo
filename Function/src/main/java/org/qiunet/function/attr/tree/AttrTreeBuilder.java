@@ -39,7 +39,7 @@ public class AttrTreeBuilder<NodeEnum extends IAttrNodeType, Buff extends IAttrB
 	 * @param consumer 子节点需要继续添加的一个接口.
 	 * @param buffs buff列表
 	 */
-	public AttrTreeBuilder<NodeEnum, Buff> addChildNode(NodeEnum nodeType, Consumer<AttrTreeBuilder> consumer, Buff ... buffs) {
+	public AttrTreeBuilder<NodeEnum, Buff> addChildNode(NodeEnum nodeType, Consumer<AttrTreeBuilder<NodeEnum, Buff>> consumer, Buff ... buffs) {
 		AttrNode childNode = new AttrNode(parent, nodeType, buffs);
 		parent.addChildNode(childNode);
 		attrTree.addNode(childNode);

@@ -10,8 +10,10 @@ import org.qiunet.function.attr.tree.IAttrNodeType;
  */
 public enum EquipAttrNode implements IAttrNodeType {
 	EQUIP_ROOT(null, "装备根节点"),
-	BASE(EquipPostion.class, "装备基础属性"),
-	GEM(EquipPostion.class, "装备部位镶嵌宝石属性")
+	BASE(null, "装备基础属性父节点"),
+	EQUIP_BASE_POSITION(EquipPostion.class, "装备基础属性"),
+	GEM(null, "装备部位镶嵌宝石父节点"),
+	GEM_POSITION(EquipPostion.class, "装备部位镶嵌宝石属性"),
 	;
 
 	private Class<?> keyClass;

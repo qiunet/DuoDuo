@@ -1,5 +1,6 @@
 package org.qiunet.function.attr.tree;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import org.qiunet.function.attr.buff.IAttrBuff;
@@ -97,7 +98,7 @@ public class AttrNode {
 	 * 构造一个节点路径
 	 * 比如: 角色 -> 战神装备 -> 铸魂石玩法 -> 腰带
 	 * 其中 角色 -> 战神装备 -> 铸魂石玩法 是确定路径. 腰带是[铸魂石玩法]变量. 则keyClass需要指出腰带的key类型.
-	 * keys 第一个参数应该是腰带类型.
+	 * keys 倒数第一个参数应该是腰带类型. keyClass == null 不需要判断. 剩下的从root开始一路下来分歧点的参数.
 	 * 后面的参数. 如果角色有多个角色.战神装备确定. 则第二个参数应该是角色的标识.
 	 *
 	 * @param keys 路径参数.
@@ -107,7 +108,14 @@ public class AttrNode {
 		int index = keys.length - 1;
 		AttrNode node = this;
 		while (node != null) {
-
+			if (node.nodeType.keyClass() != null) {
+				Preconditions.checkState(index >= 0, "keys is not a full road from root!");
+				Object key = keys[index];
+				Preconditions.checkNotNull(key, "key can not be null");
+				Preconditions.checkState(node.nodeType.keyClass().isAssignableFrom(key.getClass()),
+					"key[%s] is not assignable from keyClass[%s]", key, node.getNodeType().keyClass().getName());
+				index --;
+			}
 			node = node.parent;
 		}
 		return AttrRoad.valueOf(this, keys);

@@ -2,6 +2,7 @@ package org.qiunet.function.attr.tree;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.ArrayUtils;
+import org.qiunet.utils.async.LazyLoader;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -51,7 +52,7 @@ public class AttrRoad {
 	 * @return true 是子路径
 	 */
 	public boolean isParentOfRoad(AttrRoad road) {
-		if (ArrayUtils.getLength(road.keys.length) < ArrayUtils.getLength(this.keys.length)) {
+		if (ArrayUtils.getLength(road.keys) < ArrayUtils.getLength(this.keys)) {
 			return false;
 		}
 
@@ -82,13 +83,22 @@ public class AttrRoad {
 		return node.getId() == that.node.getId() &&
 			Arrays.equals(keys, that.keys);
 	}
-	private int hashCode;
+	private LazyLoader<Integer> hashCodeLoader = new LazyLoader<>(()-> {
+		int hashCode = Objects.hash(node.getId());
+		hashCode = 31 * hashCode + Arrays.hashCode(keys);
+		return hashCode;
+	});
 	@Override
 	public int hashCode() {
-		if (hashCode == 0) {
-			hashCode = Objects.hash(node.getId());
-			hashCode = 31 * hashCode + Arrays.hashCode(keys);
-		}
-		return hashCode;
+		return hashCodeLoader.get();
+	}
+
+	@Override
+	public String toString() {
+		return "AttrRoad{" +
+			"node=" + node.getNodeType().getClass().getSimpleName() + "."+ node.getNodeType() +
+			", keys=" + Arrays.toString(keys) +
+			", hashCode=" + hashCode() +
+			'}';
 	}
 }
