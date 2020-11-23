@@ -3,7 +3,7 @@ package org.qiunet.function.targets;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.utils.args.Argument;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /***
  * 目标处理基础类
@@ -22,10 +22,10 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType, P
 	 * @param player 玩家
 	 * @param consumer target
 	 */
-	protected void process(Player player, Consumer<Target> consumer) {
+	protected void process(Player player, BiConsumer<Target, ITargetDef> consumer) {
 		Argument<TargetContainer> argument = player.getArgument(TargetContainer.TARGET_CONTAINER_KEY);
 		TargetContainer<Type, Player> targetContainer = argument.get();
-		targetContainer.forEatchByType(getType(), consumer);
+		targetContainer.forEachByType(getType(), consumer);
 	}
 
 	/**
@@ -35,6 +35,6 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType, P
 	 * @param target
 	 */
 	void onStartWatch(Player player, Target target){
-
+		// do nothing
 	}
 }
