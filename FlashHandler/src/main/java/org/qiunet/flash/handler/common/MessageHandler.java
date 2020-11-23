@@ -122,9 +122,11 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
 	}
 
-	public long getId(){
-		return 0;
-	}
+	/**
+	 * 获得id
+	 * @return
+	 */
+	public abstract long getId();
 	/**
 	 * 销毁时候调用
 	 */
