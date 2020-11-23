@@ -36,7 +36,7 @@ public class Targets {
 						   int id) {
 		Targets targets0 = new Targets();
 		targets0.targets = Lists.newArrayListWithCapacity(targetDefGetter.getTargetList().size());
-		targetDefGetter.getTargetList().forEatch((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, index)));
+		targetDefGetter.getTargetList().forEach((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, index)));
 		targets0.container = container;
 		targets0.consumer = consumer;
 		targets0.id = id;

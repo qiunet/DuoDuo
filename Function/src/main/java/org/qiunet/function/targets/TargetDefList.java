@@ -28,7 +28,7 @@ public class TargetDefList {
 		return defs.size();
 	}
 
-	public void forEatch(BiConsumer<Integer, ITargetDef> consumer) {
+	public void forEach(BiConsumer<Integer, ITargetDef> consumer) {
 		for (int i = 0; i < defs.size(); i++) {
 			consumer.accept(i, defs.get(i));
 		}
