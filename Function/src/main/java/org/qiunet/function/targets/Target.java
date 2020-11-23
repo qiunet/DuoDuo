@@ -11,10 +11,10 @@ import com.google.common.base.Preconditions;
  */
 public class Target {
 	@JSONField(serialize = false)
-	private transient ITargetDef targetDef;
+	transient ITargetDef targetDef;
 
 	@JSONField(serialize = false)
-	private transient Targets targets;
+	transient Targets targets;
 	/**
 	 * 目标的配置定义索引
 	 */
@@ -28,6 +28,7 @@ public class Target {
 		Target target = new Target();
 		target.targetDef = targetDefGetter.getTargetDef(index);
 		target.targets = targets;
+		target.index = index;
 		return target;
 	}
 
@@ -45,6 +46,7 @@ public class Target {
 	public synchronized void addCount(int count){
 		Preconditions.checkState(count > 0);
 		this.value += count;
+		targets.updateCallback(this);
 		tryComplete();
 	}
 
@@ -52,10 +54,10 @@ public class Target {
 	 * 设置进度 并且 尝试完成
 	 * @param count 数量
 	 */
-	@JSONField(deserialize = false)
-	public synchronized void setCount(int count) {
+	public synchronized void alterToCount(int count) {
 		Preconditions.checkState(count > 0);
-		this.value += count;
+		this.value = count;
+		targets.updateCallback(this);
 		tryComplete();
 	}
 
@@ -65,9 +67,6 @@ public class Target {
 	void tryComplete() {
 		if (isFinished()) {
 			targets.getContainer().unWatch(this);
-			if (targets.isFinished()) {
-				targets.finishCallback();
-			}
 		}
 	}
 	@JSONField(serialize = false)

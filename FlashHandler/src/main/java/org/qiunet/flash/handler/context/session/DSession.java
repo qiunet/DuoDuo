@@ -51,7 +51,10 @@ public final class DSession {
 
 	public DSession(Channel channel) {
 		this.channel = channel;
-		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		if (channel != null) {
+			// 除了测试. 这里不会为null
+			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		}
 	}
 	/**
 	 * 设置flush的参数

@@ -2,6 +2,7 @@ package org.qiunet.function.targets;
 
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -28,8 +29,12 @@ enum TargetHandlerManager implements IApplicationContextAware {
 			if (Modifier.isAbstract(clazz.getModifiers())) {
 				continue;
 			}
+
 			BaseTargetHandler obj = (BaseTargetHandler) context.getInstanceOfClass(clazz);
-			handlerMap.put((ITargetType) obj.getType(), obj);
+			BaseTargetHandler old = handlerMap.put((ITargetType) obj.getType(), obj);
+			if (old != null) {
+				throw new CustomException("Type {} TargetHandler is repeated", obj.getType());
+			}
 		}
 	}
 

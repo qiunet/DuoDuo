@@ -7,9 +7,8 @@ import org.qiunet.utils.args.ArgumentKey;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Consumer;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 
 /***
  *
@@ -27,13 +26,9 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	 */
 	private Map<Type, List<Target>> targetMap = Maps.newConcurrentMap();
 	/**
-	 * 写入锁
+	 * 锁
 	 */
-	private Lock writeLock;
-	/**
-	 * 读取锁
-	 */
-	private Lock readLock;
+	private ReentrantLock lock = new ReentrantLock();
 	/**
 	 * 该container持有的玩家id.
 	 */
@@ -46,25 +41,52 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	public TargetContainer(Player player) {
 		player.setVal(TARGET_CONTAINER_KEY, this);
 		this.player = player;
-
-		ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-		this.writeLock = lock.writeLock();
-		this.readLock = lock.readLock();
 	}
 
 	/***
 	 * 创建任务的Targets. 并且开启监听
+	 *
 	 * @param targetDefGetter 目标的配置列表getter
-	 * @param consumer
+	 * @param updateCallback 更新回调
 	 * @param id
 	 */
-	public void createAndWatchTargets(ITargetDefGetter targetDefGetter, Consumer<Targets> consumer, int id) {
-		writeLock.lock();
+	public Targets createAndWatchTargets(ITargetDefGetter targetDefGetter, BiConsumer<Targets, Target> updateCallback, int id) {
+		lock.lock();
 		try {
-			Targets targets = Targets.valueOf(this, targetDefGetter, consumer, id);
-			targets.forEachTarget(this::watch);
+			Targets targets = Targets.valueOf(this, targetDefGetter, updateCallback, id);
+			targets.forEachTarget(target -> this.watch(target, true));
+			return targets;
 		}finally {
-			writeLock.unlock();
+			lock.unlock();
+		}
+	}
+
+	/**
+	 * 初始化时候, 从存储的数据库取出来的targets. 添加到容器里面.
+	 * @param targetDefGetter 目标的配置列表getter
+	 * @param updateCallback 更新回调.
+	 * @param targets 任务集合
+	 */
+	public void addTargets(ITargetDefGetter targetDefGetter, BiConsumer<Targets, Target> updateCallback, Targets targets) {
+		lock.lock();
+		try {
+			targets.updateCallback = updateCallback;
+			targets.container = this;
+			targets.forEachTarget(target -> {
+				target.targetDef = targetDefGetter.getTargetDef(target.getIndex());
+				target.targets = targets;
+			});
+
+			targets.forEachTarget(target -> {
+				if (target.isFinished()) {
+					updateCallback.accept(targets, target);
+					return;
+				}
+				this.watch(target, false);
+			});
+
+		}finally {
+			lock.unlock();
 		}
 	}
 
@@ -72,18 +94,20 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	 * 监听目标进度
 	 * @param target
 	 */
-	private void watch(Target target) {
-		writeLock.lock();
+	private void watch(Target target, boolean needInit) {
+		lock.lock();
 		try {
 			Type targetType = (Type) target.getTargetDef().getTargetType();
 			List<Target> targets = targetMap.computeIfAbsent(targetType, key -> new LinkedList<>());
 			BaseTargetHandler<Type, Player> handler = TargetHandlerManager.instance.getHandler(targetType);
 			targets.add(target);
-			// onStartWatch中调用 set 和 addCount 都会调用该方法.
-//			target.tryComplete();
-			handler.onStartWatch(player, target);
+			if (needInit) {
+				// onStartWatch中调用 set 和 addCount 都会调用该方法.
+				// target.tryComplete();
+				handler.onStartWatch(player, target);
+			}
 		}finally {
-			writeLock.unlock();
+			lock.unlock();
 		}
 	}
 
@@ -92,7 +116,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	 * @param target
 	 */
 	void unWatch(Target target) {
-		writeLock.lock();
+		lock.lock();
 		try {
 			Type targetType = (Type) target.getTargetDef().getTargetType();
 			List<Target> targets = targetMap.get(targetType);
@@ -100,7 +124,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 				targets.remove(target);
 			}
 		}finally {
-			writeLock.unlock();
+			lock.unlock();
 		}
 	}
 
@@ -109,13 +133,15 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	 * @param type
 	 * @param consumer
 	 */
-	void forEatchByType(Type type, Consumer<Target> consumer) {
-		readLock.lock();
+	void forEachByType(Type type, BiConsumer<Target, ITargetDef> consumer) {
+		lock.lock();
 		try {
 			List<Target> targets = targetMap.computeIfAbsent(type, key -> new LinkedList<>());
-			targets.forEach(consumer);
+			for (Target target : targets) {
+				consumer.accept(target, target.targetDef);
+			}
 		}finally {
-			readLock.unlock();
+			lock.unlock();
 		}
 	}
 }

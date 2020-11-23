@@ -4,7 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /***
@@ -14,31 +14,40 @@ import java.util.function.Consumer;
  * 2020-11-23 12:58
  */
 public class Targets {
-	private AtomicBoolean finished = new AtomicBoolean();
-	private transient TargetContainer container;
-	private transient Consumer<Targets> consumer;
-
+	/**
+	 * 更新回调
+	 */
+	transient BiConsumer<Targets, Target> updateCallback;
+	/**
+	 * 目标容器
+	 */
+	transient TargetContainer container;
+	/**
+	 * 本任务的目标
+	 */
 	private List<Target> targets;
-
+	/**
+	 * 对应的id
+	 */
 	private int id;
 	public Targets() {}
 
 	/**
 	 * 创建一个Targets
-	 * @param consumer 配置列表getter
-	 * @param consumer 完成通知
+	 * @param targetDefGetter 配置列表getter
+	 * @param updateCallback 更新通知
 	 * @param id 任务的id
 	 * @return
 	 */
 	static Targets valueOf(TargetContainer container,
 						   ITargetDefGetter targetDefGetter,
-						   Consumer<Targets> consumer,
+						   BiConsumer<Targets, Target> updateCallback,
 						   int id) {
 		Targets targets0 = new Targets();
 		targets0.targets = Lists.newArrayListWithCapacity(targetDefGetter.getTargetList().size());
 		targetDefGetter.getTargetList().forEach((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, index)));
+		targets0.updateCallback = updateCallback;
 		targets0.container = container;
-		targets0.consumer = consumer;
 		targets0.id = id;
 		return targets0;
 	}
@@ -55,10 +64,8 @@ public class Targets {
 	/**
 	 * 完成回调.
 	 */
-	void finishCallback(){
-		if (finished.compareAndSet(false, true)) {
-			consumer.accept(this);
-		}
+	void updateCallback(Target target){
+		updateCallback.accept(this, target);
 	}
 
 	/**
@@ -75,6 +82,18 @@ public class Targets {
 	 */
 	public void forEachTarget(Consumer<Target> targetConsumer) {
 		this.targets.forEach(targetConsumer);
+	}
+
+	public List<Target> getTargets() {
+		return targets;
+	}
+
+	public void setTargets(List<Target> targets) {
+		this.targets = targets;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public int getId() {

@@ -6,7 +6,7 @@ package org.qiunet.function.targets;
  * @author qiunet
  * 2020-11-23 12:58
  */
-public interface ITargetDef<T extends Enum<T> & ITargetType, Param extends ITargetParam> {
+public interface ITargetDef<T extends Enum<T> & ITargetType> {
 	/**
 	 * 任务类型
 	 * @return
@@ -17,7 +17,7 @@ public interface ITargetDef<T extends Enum<T> & ITargetType, Param extends ITarg
 	 * 任务参数
 	 * @return
 	 */
-	Param getTargetParam();
+	String getTargetParam();
 
 	/**
 	 * 完成任务的参数

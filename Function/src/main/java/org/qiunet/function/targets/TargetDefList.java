@@ -1,5 +1,7 @@
 package org.qiunet.function.targets;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -17,7 +19,12 @@ public class TargetDefList {
 	private List<ITargetDef> defs;
 
 	public TargetDefList(List<ITargetDef> defs) {
-		this.defs = defs;
+		this.defs = ImmutableList.copyOf(defs);
+	}
+
+
+	public TargetDefList(ITargetDef... defs) {
+		this.defs = ImmutableList.copyOf(defs);
 	}
 
 	public ITargetDef get(int index) {
