@@ -2,8 +2,10 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.data.support.anno.LoadAllData;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
@@ -15,6 +17,10 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 	protected BaseCacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
+		if (doClass.isAnnotationPresent(LoadAllData.class)) {
+			List<Do> objects = databaseSupport().selectList(selectAllStatement, null);
+			objects.forEach(aDo -> this.addToCache(supplier.get(aDo)));
+		}
 	}
 
 	@Override

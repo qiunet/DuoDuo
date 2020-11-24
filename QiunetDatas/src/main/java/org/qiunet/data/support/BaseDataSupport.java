@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 	protected String updateStatement;
 	protected String deleteStatement;
 	protected String selectStatement;
+	protected String selectAllStatement;
 
 	 BaseDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier){
 		DataSupportMapping.addMapping(doClass, this);
@@ -44,6 +45,7 @@ import org.slf4j.Logger;
 		this.nameSpace = DbUtil.getNameSpace(doName);
 
 		// select 区分 entity 和 list 在子类处理.
+		this.selectAllStatement = nameSpace+".selectAll"+ doName;
 		this.selectStatement = nameSpace+".select"+ doName;
 		this.insertStatement = nameSpace+".insert"+ doName;
 		this.updateStatement = nameSpace+".update"+ doName;

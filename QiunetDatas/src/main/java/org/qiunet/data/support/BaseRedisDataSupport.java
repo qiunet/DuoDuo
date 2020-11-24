@@ -3,9 +3,11 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
+import org.qiunet.data.support.anno.LoadAllData;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -28,6 +30,11 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 		super(doClass, supplier);
 		this.redisUtil = redisUtil;
 		this.redisUpdateSyncSetKey = "SYNC_SET#"+doName;
+
+		if (doClass.isAnnotationPresent(LoadAllData.class)) {
+			List<Do> objects = databaseSupport().selectList(selectAllStatement, null);
+			objects.forEach(this::setDataObjectToRedis);
+		}
 	}
 
 	@Override
