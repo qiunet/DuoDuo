@@ -12,6 +12,16 @@ import org.qiunet.project.init.enums.EntityType;
  ***/
 public class CacheEntityDefine extends BaseEntityDefine {
 
+	private boolean loadAllData;
+
+	public boolean isLoadAllData() {
+		return loadAllData;
+	}
+
+	public void setLoadAllData(boolean loadAllData) {
+		this.loadAllData = loadAllData;
+	}
+
 	@Override
 	protected String buildWhereCondition() {
 		return "WHERE " + getKey() + " = #{" + getKey()+ "}";

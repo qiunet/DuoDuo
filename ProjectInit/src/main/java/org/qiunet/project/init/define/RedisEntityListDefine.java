@@ -11,7 +11,7 @@ import org.qiunet.project.init.enums.EntityType;
  ***/
 public class RedisEntityListDefine extends BaseEntityListDefine {
 	private String redis;
-
+	private boolean loadAllData;
 	public RedisEntityListDefine() {
 		super(EntityType.REDIS_ENTITY_LIST, RedisEntityList.class);
 	}
@@ -26,6 +26,13 @@ public class RedisEntityListDefine extends BaseEntityListDefine {
 		return sb.toString();
 	}
 
+	public boolean isLoadAllData() {
+		return loadAllData;
+	}
+
+	public void setLoadAllData(boolean loadAllData) {
+		this.loadAllData = loadAllData;
+	}
 	public String getRedis() {
 		return redis;
 	}

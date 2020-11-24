@@ -10,11 +10,20 @@ import org.qiunet.project.init.enums.EntityType;
  * 2019-08-20 10:26
  ***/
 public class CacheEntityListDefine extends BaseEntityListDefine {
+	private boolean loadAllData;
 
 	public CacheEntityListDefine() {
 		super(EntityType.CACHE_ENTITY_LIST, CacheEntityList.class);
 	}
 
+
+	public boolean isLoadAllData() {
+		return loadAllData;
+	}
+
+	public void setLoadAllData(boolean loadAllData) {
+		this.loadAllData = loadAllData;
+	}
 	@Override
 	protected String buildWhereCondition() {
 		StringBuilder sb = new StringBuilder(" WHERE ");

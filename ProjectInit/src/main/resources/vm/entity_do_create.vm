@@ -6,6 +6,9 @@ import ${define.entityClass.name};
 #if(${define.needImportColumnJdbcType})
 import org.qiunet.data.core.enums.ColumnJdbcType;
 #end
+#if(${define.loadAllData})
+import org.qiunet.data.support.anno.LoadAllData;
+#end
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 /**
@@ -13,6 +16,9 @@ import org.qiunet.data.core.support.db.Table;
 *
 * 对象为自动创建 不要修改
 */
+#if(${define.loadAllData})
+@LoadAllData
+#end
 @Alias("${define.DoName}")
 @Table(name = "${define.tableName}"#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end#if(!${define.dbSourceEmpty}), dbSource = "${define.dbSource}"#end#if(!${define.async}), async = false#end)
 public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}#if(${define.list}), ${define.subKeyType}#end, ${define.BoName}> {

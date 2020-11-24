@@ -24,6 +24,7 @@
 				<xs:element name="field" minOccurs="2" maxOccurs="unbounded" type="base:field_content" />
 				<xs:element name="constructor" minOccurs="0" maxOccurs="5" type="entity:constructor_content"/>
 			</xs:sequence>
+			<xs:attribute name="loadAllData" type="xs:boolean" default="false" />
 			<xs:attributeGroup ref="base:EntityAttributeGroup" />
 		</xs:complexType>
 
