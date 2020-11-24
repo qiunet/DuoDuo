@@ -46,6 +46,15 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	/***
 	 * 创建任务的Targets. 并且开启监听
 	 *
+	 * @param targetSupply 任务目标提供接口
+	 * @param id 任务id
+	 */
+	public Targets createAndWatchTargets(ITargetSupply targetSupply, int id) {
+		return this.createAndWatchTargets(targetSupply.getTargetGetter(id), targetSupply.updateCallback(), id);
+	}
+	/***
+	 * 创建任务的Targets. 并且开启监听
+	 *
 	 * @param targetDefGetter 目标的配置列表getter
 	 * @param updateCallback 更新回调
 	 * @param id
