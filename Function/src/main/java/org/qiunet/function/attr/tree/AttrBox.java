@@ -23,14 +23,15 @@ import java.util.stream.Collectors;
  */
 public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	private static final AttrValue EMPTY_VALUE = new AttrValue();
+	Lock readLock;
+	/**
+	 * 锁
+	 */
+	Lock writeLock;
 	/**
 	 * 根树
 	 */
 	private AttrTree rootTree;
-	/**
-	 * 锁
-	 */
-	Lock lock = new ReentrantReadWriteLock().writeLock();
 	/**
 	 * 观察者
 	 */
@@ -38,7 +39,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * 总的属性
 	 */
-	Map<Attr, AttrValue> totalAttrs = Maps.newConcurrentMap();
+	private Map<Attr, AttrValue> totalAttrs = Maps.newConcurrentMap();
 	/**
 	 * 路径上的数据
 	 */
@@ -46,6 +47,9 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 
 	AttrBox(AttrTree rootTree) {
 		this.rootTree = rootTree;
+		ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+		this.writeLock = lock.writeLock();
+		this.readLock = lock.readLock();
 	}
 
 	/**
@@ -160,7 +164,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @param node 节点
 	 */
 	public void clearByAttrNode(AttrNode node) {
-		lock.lock();
+		writeLock.lock();
 		try {
 			roadContentMap.forEach((road, content) -> {
 				if (node.isParentOfNode(road.getNode())) {
@@ -168,7 +172,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 				}
 			});
 		}finally {
-			lock.unlock();
+			writeLock.unlock();
 		}
 	}
 

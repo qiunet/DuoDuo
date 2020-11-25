@@ -232,7 +232,12 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @return
 	 */
 	public Map<Attr, Long> getFinalAttrMap() {
-		return Maps.newHashMap(finalAttrMap);
+		readLock().lock();
+		try {
+			return Maps.newHashMap(finalAttrMap);
+		}finally {
+			readLock().unlock();
+		}
 	}
 
 	/**
@@ -240,10 +245,18 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * @return
 	 */
 	public Map<Attr, Long> getBaseAttrMap(){
-		return Maps.newHashMap(baseAttrMap);
+		readLock().lock();
+		try {
+			return Maps.newHashMap(baseAttrMap);
+		}finally {
+			readLock().unlock();
+		}
 	}
 
 	private Lock writeLock(){
-		return attrBox.lock;
+		return attrBox.writeLock;
+	}
+	private Lock readLock(){
+		return attrBox.readLock;
 	}
 }
