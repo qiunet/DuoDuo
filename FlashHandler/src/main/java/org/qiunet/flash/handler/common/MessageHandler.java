@@ -109,6 +109,12 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		executorService.submit(() -> message.execute((H) this));
 	}
 
+	/**
+	 * 判断线程是否安全.
+	 * 如果执行不是在当前对象的线程. 可能有线程安全风险.
+	 * 所以像消耗. 发奖. 需要判断下.
+	 * @return
+	 */
 	public boolean isInThread(){
 		return Thread.currentThread() == currentThread;
 	}
