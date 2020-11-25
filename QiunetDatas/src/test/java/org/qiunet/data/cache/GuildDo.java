@@ -3,7 +3,9 @@ package org.qiunet.data.cache;
 import org.apache.ibatis.type.Alias;
 import org.qiunet.data.cache.entity.CacheEntity;
 import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.support.anno.LoadAllData;
 
+@LoadAllData
 @Alias("GuildDo")
 @Table(name = "guild")
 public class GuildDo extends CacheEntity<Long, GuildBo> {

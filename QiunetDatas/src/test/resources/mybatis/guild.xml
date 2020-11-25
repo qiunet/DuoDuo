@@ -6,7 +6,13 @@
         SELECT * FROM guild WHERE guildId = #{guildId};
     </select>
 
-    <update id="updateGuildDo" parameterType="GuildDo" >
+
+	<select id="selectAllGuildDo" parameterType="map" resultType="GuildDo">
+        SELECT * FROM guild;
+    </select>
+
+
+	<update id="updateGuildDo" parameterType="GuildDo" >
         UPDATE guild SET
         `level` = #{level},
         `name` = #{name}

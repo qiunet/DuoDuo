@@ -1,24 +1,18 @@
 package org.qiunet.data.cache;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.qiunet.data.BaseTest;
 import org.qiunet.data.support.CacheDataListSupport;
 import org.qiunet.data.support.CacheDataSupport;
-import org.qiunet.utils.scanner.ClassScanner;
 
 import java.util.Map;
 
-public class TestCacheDataSupport {
+public class TestCacheDataSupport extends BaseTest {
 	private static CacheDataSupport<Long, GuildDo, GuildBo> dataSupport = new CacheDataSupport<>(GuildDo.class, GuildBo::new);
 
 	private static CacheDataListSupport<Long, Long, GuildMemberDo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberDo.class, GuildMemberBo::new);
 	private long guildId = 100000;
-
-	@BeforeClass
-	public static void init(){
-		ClassScanner.getInstance().scanner();
-	}
 
 	@Test
 	public void testEntity(){
