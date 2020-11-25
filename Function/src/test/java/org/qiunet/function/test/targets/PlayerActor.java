@@ -13,9 +13,12 @@ import org.qiunet.function.targets.TargetContainer;
 public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	private TargetContainer<TargetType, PlayerActor> targetContainer;
 	private long id;
-	public PlayerActor(DSession session) {
-		super(session);
+	private String name;
+	public PlayerActor(long id, String name) {
+		super(new DSession(null));
 		this.targetContainer = new TargetContainer<>(this);
+		this.name = name;
+		this.id = id;
 	}
 
 	public TargetContainer<TargetType, PlayerActor> getTargetContainer() {
@@ -35,6 +38,10 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	@Override
 	public long getId() {
 		return id;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package org.qiunet.function.test.targets;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.function.targets.ITargetDefGetter;
 import org.qiunet.function.targets.TargetDefList;
 import org.qiunet.function.targets.Targets;
@@ -30,7 +29,7 @@ public class TestTarget {
 		ITargetDefGetter targetDefGetter = () ->
 			new TargetDefList(TargetDef.valueOf(TargetType.LEVEL, 10),
 				TargetDef.valueOf(TargetType.KILL_BOSS, 2, "111"));
-		PlayerActor playerActor = new PlayerActor(new DSession(null));
+		PlayerActor playerActor = new PlayerActor(100000, "测试1");
 
 		Targets targets = playerActor.getTargetContainer().createAndWatchTargets(targetDefGetter,
 			(targets0, target) -> {
