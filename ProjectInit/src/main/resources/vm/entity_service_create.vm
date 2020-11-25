@@ -11,17 +11,17 @@ import java.util.Map;
 public enum ${define.serviceName} {
 	instance;
 #if(${define.type} == 'CACHE_ENTITY')
-	private static CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
+	private CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY')
-	private static DbDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataSupport<>(${define.doName}.class, ${define.boName}::new);
+	private DbDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'REDIS_ENTITY')
-	private static RedisDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
+	private RedisDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'REDIS_ENTITY_LIST')
-	private static RedisDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataListSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
+	private RedisDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataListSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY_LIST')
-	private static DbDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataListSupport<>(${define.doName}.class, ${define.boName}::new);
+	private DbDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'CACHE_ENTITY_LIST')
-	private static CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
+	private CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #end
 #if(${define.list})
 
