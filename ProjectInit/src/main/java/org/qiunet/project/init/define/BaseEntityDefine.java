@@ -250,6 +250,11 @@ import java.util.stream.Collectors;
 	}
 
 	@Override
+	public String getSelectAllSql() {
+		return "SELECT * FROM " + realTableName()+';';
+	}
+
+	@Override
 	public String getUpdateSql() {
 		StringBuilder sb = new StringBuilder("UPDATE ");
 		sb.append(realTableName()).append(" SET ");

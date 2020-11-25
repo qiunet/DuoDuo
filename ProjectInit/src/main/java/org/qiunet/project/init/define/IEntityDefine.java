@@ -86,7 +86,11 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	String getSelectSql();
-
+	/**
+	 * 获得所有数据
+	 * @return
+	 */
+	String getSelectAllSql();
 	/**
 	 * 得到数据库插入语句
 	 * @return

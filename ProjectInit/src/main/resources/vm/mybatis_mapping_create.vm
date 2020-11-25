@@ -7,6 +7,10 @@
 		${define.SelectSql}
 	</select>
 
+	<select id="selectAll${define.doName}" parameterType="map" resultType="${define.doName}">
+		${define.SelectAllSql}
+	</select>
+
 	<update id="update${define.doName}" parameterType="${define.doName}" >
 		${define.UpdateSql}
 	</update>
