@@ -227,6 +227,22 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 		return retMap;
 	}
 
+	/**
+	 * 获得节点路径最终属性
+	 * @return
+	 */
+	public Map<Attr, Long> getFinalAttrMap() {
+		return Maps.newHashMap(finalAttrMap);
+	}
+
+	/**
+	 * 获得节点路径基础属性
+	 * @return
+	 */
+	public Map<Attr, Long> getBaseAttrMap(){
+		return Maps.newHashMap(baseAttrMap);
+	}
+
 	private Lock writeLock(){
 		return attrBox.lock;
 	}

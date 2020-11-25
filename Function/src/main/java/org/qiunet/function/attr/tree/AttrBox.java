@@ -9,6 +9,7 @@ import org.qiunet.listener.observer.IObserver;
 import org.qiunet.listener.observer.Observer;
 import org.qiunet.listener.observer.ObserverSupport;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -114,6 +115,30 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	}
 
 	/**
+	 * 根据路径获取路径对应的总属性
+	 * @return
+	 */
+	public Map<Attr, Long> getRoadFinalAttrs(AttrRoad road) {
+		AttrRoadContent<Attr> content = roadContentMap.get(road);
+		if (content != null) {
+			return content.getFinalAttrMap();
+		}
+		return Collections.emptyMap();
+	}
+
+	/**
+	 * 根据路径获取路径对应的总属性
+	 * @return
+	 */
+	public Map<Attr, Long> getRoadBaseAttrs(AttrRoad road) {
+		AttrRoadContent<Attr> content = roadContentMap.get(road);
+		if (content != null) {
+			return content.getBaseAttrMap();
+		}
+		return Collections.emptyMap();
+	}
+
+	/**
 	 * 获得总属性map
 	 * @return
 	 */
@@ -126,7 +151,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 获得总属性value map
 	 * @return
 	 */
-	public Map<Attr, AttrValue> getAllAttrValues(){
+	Map<Attr, AttrValue> getAllAttrValues(){
 		return totalAttrs;
 	}
 
