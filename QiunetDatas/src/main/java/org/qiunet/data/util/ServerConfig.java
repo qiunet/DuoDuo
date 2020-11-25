@@ -68,7 +68,10 @@ public class ServerConfig {
 	}
 
 	public static boolean isLogicServerType() {
-		return getServerType() == ServerType.LOGIC || getServerType() == ServerType.ALL;
+		return
+			getServerType() == null
+			|| getServerType() == ServerType.LOGIC
+			|| getServerType() == ServerType.ALL;
 	}
 
 	public static String getServerCloseMsg() {
