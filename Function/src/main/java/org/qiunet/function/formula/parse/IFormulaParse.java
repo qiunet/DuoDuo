@@ -27,6 +27,6 @@ public interface IFormulaParse<Obj> {
 	}
 
 	default IFormula<Obj> _Parse(FormulaParseContext<Obj> context, String formulaString) {
-		return FormulaParseManager0.instance.parse(context, formulaString);
+		return FormulaParseManager.FormulaParseManager0.instance.parse(context, formulaString);
 	}
 }
