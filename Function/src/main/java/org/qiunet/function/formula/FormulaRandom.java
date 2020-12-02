@@ -1,5 +1,6 @@
 package org.qiunet.function.formula;
 
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.math.MathUtil;
 
 /***
@@ -19,7 +20,12 @@ public class FormulaRandom<Obj> implements IFormula<Obj> {
 
 	@Override
 	public double cal(Obj self, Obj target, double... vars) {
-		return MathUtil.random(left.cal(self, target, vars), right.cal(self, target, vars));
+		double val1 = left.cal(self, target, vars);
+		double val2 = right.cal(self, target, vars);
+		if (val1 > val2) {
+			throw new CustomException("FormulaRandom {} is error!", this.toString());
+		}
+		return MathUtil.random(val1, val2);
 	}
 
 	@Override

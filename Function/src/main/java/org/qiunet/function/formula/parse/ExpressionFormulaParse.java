@@ -21,8 +21,9 @@ public class ExpressionFormulaParse<Obj> implements IFormulaParse<Obj> {
 
 			String left = formulaString.substring(0, index);
 			String right = formulaString.substring(index + 1);
-			return new FormulaExpression<>(FormulaParseManager0.instance.parse(context, left),
-				FormulaParseManager0.instance.parse(context, right), sign);
+			return new FormulaExpression<>(
+				this._Parse(context, left),
+				this._Parse(context, right), sign);
 		}
 		return null;
 	}

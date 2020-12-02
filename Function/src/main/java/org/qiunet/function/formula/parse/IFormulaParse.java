@@ -25,4 +25,8 @@ public interface IFormulaParse<Obj> {
 	default int order(){
 		return 0;
 	}
+
+	default IFormula<Obj> _Parse(FormulaParseContext<Obj> context, String formulaString) {
+		return FormulaParseManager0.instance.parse(context, formulaString);
+	}
 }

@@ -1,9 +1,12 @@
 package org.qiunet.function.formula.parse;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -38,7 +41,10 @@ import java.util.Set;
 	}
 
 	<Obj> IFormula<Obj> parse(String formulaString) {
-//		formulaString = formulaString.replace(" ", "");
+		int count1 = StringUtils.countMatches(formulaString, "(");
+		int count2 = StringUtils.countMatches(formulaString, ")");
+		Preconditions.checkState(count1 == count2, "Formula [%s] brackets is not match!", formulaString);
+
 		FormulaParseContext<Obj> context = new FormulaParseContext<>();
 		String formula = this.bracketPreHandler(context, formulaString, 0);
 		return this.parse(context, formula);
@@ -50,6 +56,7 @@ import java.util.Set;
 	 * (5 + 2) * (3 + 3)
 	 */
 	private <Obj> String bracketPreHandler(FormulaParseContext<Obj> context, String string, int cursor) {
+		String originString = string;
 		int begin = string.indexOf("(", cursor);
 		if (begin  < 0) {
 			return string;
@@ -69,6 +76,9 @@ import java.util.Set;
 				}
 				break;
 			}
+		}
+		if (originString.equals(string)){
+			throw new CustomException("Data {} Brackets is not match!", originString);
 		}
 		return this.bracketPreHandler(context, string, 0);
 	}

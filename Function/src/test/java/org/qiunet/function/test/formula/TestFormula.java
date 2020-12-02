@@ -21,10 +21,16 @@ public class TestFormula {
 
 
 	@Test
-	public void test(){
+	public void testExpression(){
 		String str = "(5 * (3 + 2*6)) / (2 + 3)";
 		IFormula<Object> parse = FormulaParseManager.parse(str);
 		double cal = parse.cal(null, null);
 		Assert.assertTrue(cal > 14.9d && cal < 15.1);
+	}
+	@Test
+	public void testRandom(){
+		String str = "[(3 + 6), (5 + 20)]";
+		IFormula<Object> parse = FormulaParseManager.parse(str);
+		Assert.assertEquals("[(3.0 + 6.0),(5.0 + 20.0)]", parse.toString());
 	}
 }
