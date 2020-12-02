@@ -44,6 +44,15 @@ public class MathUtil {
 		return random(start, end, RandomType.K);
 	}
 	/**
+	 * 随机数计算 [start,end)
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	public static double random(double start,double end){
+		return ThreadLocalRandom.current().nextDouble(start, end);
+	}
+	/**
 	 * 随机数计算 [0,i)
 	 * @param i
 	 * @return
