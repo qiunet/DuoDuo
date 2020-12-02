@@ -7,13 +7,19 @@ package org.qiunet.function.formula;
  * @author qiunet
  * 2020-12-01 18:13
  */
-public interface IFormula<Obj> {
+public interface IFormula<Obj extends IFormulaParam> {
 	/**
 	 * 计算数值.
-	 * @param self 需要的对象 self
-	 * @param target 需要的对象 target
-	 * @param vars 其它参数
+	 * @param params 需要的参数
 	 * @return
 	 */
-	double cal(Obj self, Obj target, double ... vars);
+	double cal(Obj params);
+
+	/**
+	 * 不需要对象的计算.
+	 * @return
+	 */
+	default double cal() {
+		return this.cal( null);
+	}
 }

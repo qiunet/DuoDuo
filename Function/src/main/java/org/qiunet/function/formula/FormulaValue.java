@@ -6,7 +6,7 @@ package org.qiunet.function.formula;
  * @author qiunet
  * 2020-12-01 18:28
  */
-public class FormulaValue<Obj> implements IFormula<Obj> {
+public class FormulaValue<Obj extends IFormulaParam> implements IFormula<Obj> {
 	private double value;
 
 	public FormulaValue(double value) {
@@ -14,7 +14,7 @@ public class FormulaValue<Obj> implements IFormula<Obj> {
 	}
 
 	@Override
-	public double cal(Obj self, Obj target, double... vars) {
+	public double cal(Obj params) {
 		return value;
 	}
 

@@ -9,7 +9,7 @@ import org.qiunet.utils.math.MathUtil;
  * @author qiunet
  * 2020-12-02 10:15
  */
-public class FormulaRandom<Obj> implements IFormula<Obj> {
+public class FormulaRandom<Obj extends IFormulaParam> implements IFormula<Obj> {
 	private IFormula<Obj> left;
 	private IFormula<Obj> right;
 
@@ -19,9 +19,9 @@ public class FormulaRandom<Obj> implements IFormula<Obj> {
 	}
 
 	@Override
-	public double cal(Obj self, Obj target, double... vars) {
-		double val1 = left.cal(self, target, vars);
-		double val2 = right.cal(self, target, vars);
+	public double cal(Obj params) {
+		double val1 = left.cal(params);
+		double val2 = right.cal(params);
 		if (val1 > val2) {
 			throw new CustomException("FormulaRandom {} is error!", this.toString());
 		}

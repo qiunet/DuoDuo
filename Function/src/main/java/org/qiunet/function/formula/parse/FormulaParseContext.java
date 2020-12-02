@@ -2,6 +2,7 @@ package org.qiunet.function.formula.parse;
 
 import com.google.common.collect.Lists;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author qiunet
  * 2020-12-02 10:58
  */
-class FormulaParseContext<Obj> {
+class FormulaParseContext<Obj extends IFormulaParam> {
 	private List<IFormula<Obj>> brackets = Lists.newArrayListWithCapacity(2);
 
 	FormulaParseContext(){}

@@ -2,6 +2,7 @@ package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.FormulaExpression;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.function.formula.Sign;
 
 /***
@@ -10,7 +11,7 @@ import org.qiunet.function.formula.Sign;
  * @author qiunet
  * 2020-12-02 11:33
  */
-public class ExpressionFormulaParse<Obj> implements IFormulaParse<Obj> {
+public class ExpressionFormulaParse<Obj extends IFormulaParam> implements IFormulaParse<Obj> {
 	@Override
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 		for (Sign sign : Sign.values) {

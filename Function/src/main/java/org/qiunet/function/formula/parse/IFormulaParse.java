@@ -1,6 +1,7 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 
 /***
  *
@@ -8,7 +9,7 @@ import org.qiunet.function.formula.IFormula;
  * @author qiunet
  * 2020-12-02 10:26
  */
-public interface IFormulaParse<Obj> {
+public interface IFormulaParse<Obj extends IFormulaParam> {
 	/**
 	 * 解析公式.
 	 * @param context 解析上下文

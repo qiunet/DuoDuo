@@ -2,6 +2,7 @@ package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.FormulaRandom;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +13,7 @@ import java.util.regex.Pattern;
  * @author qiunet
  * 2020-12-02 16:47
  */
-public class RandomFormulaParse<Obj> implements IFormulaParse<Obj> {
+public class RandomFormulaParse<Obj extends IFormulaParam> implements IFormulaParse<Obj> {
 	private static final Pattern pattern = Pattern.compile("\\[(.+),(.+)\\]");
 	@Override
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {

@@ -6,7 +6,7 @@ package org.qiunet.function.formula;
  * @author qiunet
  * 2020-12-01 18:29
  */
-public class FormulaExpression<Obj> implements IFormula<Obj> {
+public class FormulaExpression<Obj extends IFormulaParam> implements IFormula<Obj> {
 	private IFormula<Obj> left;
 	private IFormula<Obj> right;
 	private Sign sign;
@@ -18,8 +18,8 @@ public class FormulaExpression<Obj> implements IFormula<Obj> {
 	}
 
 	@Override
-	public double cal(Obj self, Obj target, double... vars) {
-		return sign.cal(left.cal(self, target, vars), right.cal(self, target, vars));
+	public double cal(Obj params) {
+		return sign.cal(left.cal(params), right.cal(params));
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -26,7 +27,7 @@ public class FormulaParseManager {
 	 * @param <Obj>
 	 * @return
 	 */
-	public static <Obj>IFormula<Obj> parse(String formulaString) {
+	public static <Obj extends IFormulaParam> IFormula<Obj> parse(String formulaString) {
 		return FormulaParseManager0.instance.parse(formulaString);
 	}
 
@@ -48,7 +49,7 @@ public class FormulaParseManager {
 			parses.sort((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result());
 		}
 
-		<Obj> IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
+		<Obj extends IFormulaParam> IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 			for (IFormulaParse parse : parses) {
 				IFormula<Obj> formula = parse.parse(context, formulaString);
 				if (formula != null) {
@@ -58,7 +59,7 @@ public class FormulaParseManager {
 			return null;
 		}
 
-		<Obj> IFormula<Obj> parse(String formulaString) {
+		<Obj extends IFormulaParam> IFormula<Obj> parse(String formulaString) {
 			int count1 = StringUtils.countMatches(formulaString, "(");
 			int count2 = StringUtils.countMatches(formulaString, ")");
 			Preconditions.checkState(count1 == count2, "Formula [%s] brackets is not match!", formulaString);
@@ -73,7 +74,7 @@ public class FormulaParseManager {
 		 * (5 * (3 +  2)) / 5
 		 * (5 + 2) * (3 + 3)
 		 */
-		private <Obj> String bracketPreHandler(FormulaParseContext<Obj> context, String string, int cursor) {
+		private <Obj extends IFormulaParam> String bracketPreHandler(FormulaParseContext<Obj> context, String string, int cursor) {
 			String originString = string;
 			int begin = string.indexOf("(", cursor);
 			if (begin  < 0) {

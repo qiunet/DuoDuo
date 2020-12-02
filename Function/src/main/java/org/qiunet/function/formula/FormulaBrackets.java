@@ -6,7 +6,7 @@ package org.qiunet.function.formula;
  * @author qiunet
  * 2020-12-02 10:24
  */
-public class FormulaBrackets<Obj> implements IFormula<Obj> {
+public class FormulaBrackets<Obj extends IFormulaParam> implements IFormula<Obj> {
 	private IFormula<Obj> formula;
 
 	public FormulaBrackets(IFormula<Obj> formula) {
@@ -14,8 +14,8 @@ public class FormulaBrackets<Obj> implements IFormula<Obj> {
 	}
 
 	@Override
-	public double cal(Obj self, Obj target, double... vars) {
-		return formula.cal(self, target, vars);
+	public double cal(Obj params) {
+		return formula.cal(params);
 	}
 
 	@Override

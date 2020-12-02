@@ -2,6 +2,7 @@ package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.FormulaBrackets;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 
 import java.util.regex.Pattern;
 
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
  * @author qiunet
  * 2020-12-02 11:03
  */
-public class BracketsFormulaParse<Obj> implements IFormulaParse<Obj> {
+public class BracketsFormulaParse<Obj extends IFormulaParam> implements IFormulaParse<Obj> {
 	private static final Pattern pattern = Pattern.compile("\\$\\{[0-9]+}");
 
 	@Override
