@@ -39,7 +39,7 @@ public class TestFormula {
 	 */
 	@Test
 	public void testRadio() {
-		String str = "1000%%% * 10000%";
+		String str = "1000%% * 10000%";
 		IFormula parse = FormulaParseManager.parse(str);
 		double cal = parse.cal();
 		Assert.assertTrue(cal > 9.9d && cal < 10.1);
