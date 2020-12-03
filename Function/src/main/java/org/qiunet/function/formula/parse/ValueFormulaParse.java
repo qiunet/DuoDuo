@@ -15,8 +15,17 @@ public class ValueFormulaParse<Obj extends IFormulaParam> implements IFormulaPar
 	@Override
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 		String value = formulaString.trim();
-		if (value.matches("[0-9]+")){
-			return new FormulaValue<>(Double.parseDouble(value));
+		if (value.matches("[0-9]+%{0,2}")){
+			int length = value.length();
+			double val = 0;
+			if (value.endsWith("%%")) {
+				val = Double.parseDouble(value.substring(0, length - 2)) / 10000;
+			}else if (value.endsWith("%")) {
+				val = Double.parseDouble(value.substring(0, length - 1)) / 100;
+			}else {
+				val = Double.parseDouble(value);
+			}
+			return new FormulaValue<>(val, value);
 		}
 		return null;
 	}
