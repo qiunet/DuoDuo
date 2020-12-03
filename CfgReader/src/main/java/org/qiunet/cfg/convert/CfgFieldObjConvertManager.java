@@ -1,6 +1,7 @@
 package org.qiunet.cfg.convert;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -8,6 +9,7 @@ import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,8 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	public static CfgFieldObjConvertManager getInstance() {
 		return instance;
 	}
+
+	private static final Map<Class<?>, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
 	/***
 	 * 按照指定的class 类型转换str
 	 * @param clazz
@@ -34,11 +38,16 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	 * @return 没有转换器将抛出异常
 	 */
 	public Object covert(Class clazz, String val) {
-
-		for (BaseObjConvert convert : converts) {
-			if (convert.canConvert(clazz)) {
-				return convert.fromString(val);
+		BaseObjConvert objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
+			for (BaseObjConvert convert : converts) {
+				if (convert.canConvert(clazz)) {
+					return convert;
+				}
 			}
+			return null;
+		});
+		if (objConvert != null) {
+			return objConvert.fromString(val);
 		}
 
 		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {

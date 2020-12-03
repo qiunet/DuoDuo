@@ -24,7 +24,7 @@ public class BracketsFormulaParse<Obj extends IFormulaParam> implements IFormula
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 		String value = formulaString.trim();
 		if (pattern.matcher(value).matches()) {
-			String realValue = value.replace("${", "").replace("}", "");
+			String realValue = value.substring(2, value.length() - 1);
 			return new FormulaBrackets<>(context.get(Integer.parseInt(realValue)));
 		}
 		return null;
