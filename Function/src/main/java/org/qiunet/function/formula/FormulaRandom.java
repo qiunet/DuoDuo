@@ -10,8 +10,8 @@ import org.qiunet.utils.math.MathUtil;
  * 2020-12-02 10:15
  */
 public class FormulaRandom<Obj extends IFormulaParam> implements IFormula<Obj> {
-	private IFormula<Obj> left;
-	private IFormula<Obj> right;
+	private final IFormula<Obj> left;
+	private final IFormula<Obj> right;
 
 	public FormulaRandom(IFormula<Obj> left, IFormula<Obj> right) {
 		this.left = left;
@@ -30,6 +30,6 @@ public class FormulaRandom<Obj extends IFormulaParam> implements IFormula<Obj> {
 
 	@Override
 	public String toString() {
-		return "["+ left.toString() +"," + right.toString()+"]";
+		return "["+ left.toString() +", " + right.toString()+"]";
 	}
 }
