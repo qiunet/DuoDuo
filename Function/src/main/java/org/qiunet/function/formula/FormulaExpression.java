@@ -7,9 +7,9 @@ package org.qiunet.function.formula;
  * 2020-12-01 18:29
  */
 public class FormulaExpression<Obj extends IFormulaParam> implements IFormula<Obj> {
-	private IFormula<Obj> left;
-	private IFormula<Obj> right;
-	private Sign sign;
+	private final IFormula<Obj> left;
+	private final IFormula<Obj> right;
+	private final Sign sign;
 
 	public FormulaExpression(IFormula<Obj> left, IFormula<Obj> right, Sign sign) {
 		this.left = left;

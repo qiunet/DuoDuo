@@ -7,7 +7,7 @@ package org.qiunet.function.formula;
  * 2020-12-02 10:24
  */
 public class FormulaBrackets<Obj extends IFormulaParam> implements IFormula<Obj> {
-	private IFormula<Obj> formula;
+	private final IFormula<Obj> formula;
 
 	public FormulaBrackets(IFormula<Obj> formula) {
 		this.formula = formula;
