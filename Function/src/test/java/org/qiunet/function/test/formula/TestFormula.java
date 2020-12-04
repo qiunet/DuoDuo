@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.parse.FormulaParseManager;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  *
@@ -16,7 +17,7 @@ import org.qiunet.utils.scanner.ClassScanner;
 public class TestFormula {
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.TESTER).scanner();
 	}
 
 
