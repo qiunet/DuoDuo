@@ -31,15 +31,15 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * 根树
 	 */
-	private AttrTree rootTree;
+	private final AttrTree rootTree;
 	/**
 	 * 观察者
 	 */
-	private ObserverSupport observer = new ObserverSupport();
+	private final ObserverSupport observer = new ObserverSupport();
 	/**
 	 * 总的属性
 	 */
-	private Map<Attr, AttrValue> totalAttrs = Maps.newConcurrentMap();
+	private final Map<Attr, AttrValue> totalAttrs = Maps.newConcurrentMap();
 	/**
 	 * 路径上的数据
 	 */
@@ -149,6 +149,16 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	public Map<Attr, Long> getTotalAttrs() {
 		return this.getAllAttrValues().entrySet().stream().collect(
 			Collectors.toMap(Map.Entry::getKey, en -> en.getValue().getTotalVal())
+		);
+	}
+	/**
+	 * 获得总属性map
+	 * key 为int 类型.
+	 * @return
+	 */
+	public Map<Integer, Long> getIntKeyTotalAttrs() {
+		return this.getAllAttrValues().entrySet().stream().collect(
+				Collectors.toMap(en -> en.getKey().type(), en -> en.getValue().getTotalVal())
 		);
 	}
 	/**
