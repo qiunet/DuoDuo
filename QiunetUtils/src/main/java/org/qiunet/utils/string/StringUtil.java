@@ -308,8 +308,8 @@ public class StringUtil {
 		return regexChinese(chStr);
 	}
 
-	private static int start = Integer.valueOf("4e00", 16);
-	private static int end = Integer.valueOf("9fa5", 16);
+	private static final int start = Integer.valueOf("4e00", 16);
+	private static final int end = Integer.valueOf("9fa5", 16);
 	/***
 	 * 计算中英文混合情况下的真实字数
 	 * 汉字 占长度 2
@@ -325,4 +325,28 @@ public class StringUtil {
 		}
 		return length;
 	}
+	/**
+	 * <p>Compares two Strings, returning <code>true</code> if they are equal.</p>
+	 *
+	 * <p><code>null</code>s are handled without exceptions. Two <code>null</code>
+	 * references are considered to be equal. The comparison is case sensitive.</p>
+	 *
+	 * <pre>
+	 * StringUtils.equals(null, null)   = true
+	 * StringUtils.equals(null, "abc")  = false
+	 * StringUtils.equals("abc", null)  = false
+	 * StringUtils.equals("abc", "abc") = true
+	 * StringUtils.equals("abc", "ABC") = false
+	 * </pre>
+	 *
+	 * @see java.lang.String#equals(Object)
+	 * @param str1  the first String, may be null
+	 * @param str2  the second String, may be null
+	 * @return <code>true</code> if the Strings are equal, case sensitive, or
+	 *  both <code>null</code>
+	 */
+	public static boolean equals(String str1, String str2) {
+		return str1 == null ? str2 == null : str1.equals(str2);
+	}
+
 }
