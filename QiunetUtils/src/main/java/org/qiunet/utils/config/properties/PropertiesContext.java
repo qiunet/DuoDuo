@@ -1,14 +1,14 @@
-package org.qiunet.utils.properties;
+package org.qiunet.utils.config.properties;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.generics.StringSet;
+import org.qiunet.utils.config.properties.anno.DProperties;
+import org.qiunet.utils.config.properties.anno.DPropertiesValue;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.properties.anno.DProperties;
-import org.qiunet.utils.properties.anno.DPropertiesValue;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -34,7 +34,7 @@ enum PropertiesContext implements IApplicationContextAware {
 	/**
 	 * propertie名称对应的所有字段.
 	 */
-	private Map<String, PropertiesData> datas = Maps.newHashMap();
+	private final Map<String, PropertiesData> datas = Maps.newHashMap();
 	private IApplicationContext context;
 	/**
 	 * reflections bug. 必须有定义. 才不会抛出异常.

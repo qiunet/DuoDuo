@@ -1,4 +1,4 @@
-package org.qiunet.utils.properties.anno;
+package org.qiunet.utils.config.properties.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

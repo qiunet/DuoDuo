@@ -2,8 +2,8 @@ package org.qiunet.utils.property;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.config.properties.PropertiesUtil;
 import org.qiunet.utils.data.IKeyValueData;
-import org.qiunet.utils.properties.PropertiesUtil;
 
 public class TestProperty {
 	@Test

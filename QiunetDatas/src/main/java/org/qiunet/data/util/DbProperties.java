@@ -1,13 +1,13 @@
 package org.qiunet.data.util;
 
 import com.google.common.collect.Sets;
-import org.qiunet.utils.properties.LoaderProperties;
+import org.qiunet.utils.config.properties.LoaderProperties;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.Set;
 
 public final class DbProperties extends LoaderProperties {
-	private static DbProperties instance = new DbProperties();
+	private static final DbProperties instance = new DbProperties();
 	public static DbProperties getInstance() {
 		return instance;
 	}

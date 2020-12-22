@@ -1,4 +1,4 @@
-package org.qiunet.utils.properties;
+package org.qiunet.utils.config.properties;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.IKeyValueData;
@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 public final class PropertiesUtil {
-	private static Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/***
 	 * 加载一个properties

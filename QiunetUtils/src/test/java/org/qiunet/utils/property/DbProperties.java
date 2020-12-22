@@ -1,7 +1,7 @@
 package org.qiunet.utils.property;
 
-import org.qiunet.utils.properties.anno.DProperties;
-import org.qiunet.utils.properties.anno.DPropertiesValue;
+import org.qiunet.utils.config.properties.anno.DProperties;
+import org.qiunet.utils.config.properties.anno.DPropertiesValue;
 
 /**
  * @author qiunet

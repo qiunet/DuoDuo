@@ -1,4 +1,4 @@
-package org.qiunet.utils.properties;
+package org.qiunet.utils.config.properties;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.data.KeyValueData;
