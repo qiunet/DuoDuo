@@ -24,7 +24,7 @@ public final class PropertiesUtil {
 	 * @param propertiesFile classpath 目录下的文件
 	 * @return
 	 */
-	public static IKeyValueData<Object, Object> loadProperties(File propertiesFile) {
+	public static Properties loaderProperties(File propertiesFile) {
 		Preconditions.checkNotNull(propertiesFile);
 		Preconditions.checkArgument(propertiesFile.getName().endsWith("properties"), "file must be a properties file");
 
@@ -35,7 +35,15 @@ public final class PropertiesUtil {
 		} catch (Exception e) {
 			logger.error("[LoaderProperties] Exception: ", e);
 		}
-		return new KeyValueData<>(tempProperties);
+		return tempProperties;
+	}
+	/***
+	 * 加载一个properties
+	 * @param propertiesFile classpath 目录下的文件
+	 * @return
+	 */
+	public static IKeyValueData<Object, Object> loadProperties(File propertiesFile) {
+		return new KeyValueData<>(loaderProperties(propertiesFile));
 	}
 	/***
 	 * 加载一个properties

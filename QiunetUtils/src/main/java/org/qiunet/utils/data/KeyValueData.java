@@ -9,7 +9,7 @@ import java.util.Map;
  *         Created on 16/12/21 07:52.
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
-	private Map<K, V> map = new HashMap<>();
+	private Map<K, V> map;
 
 	/***
 	 * 构建一个空的Keyval map

@@ -1,4 +1,4 @@
-package org.qiunet.utils.property;
+package org.qiunet.utils.config.property;
 
 import org.qiunet.utils.scanner.ClassScanner;
 
