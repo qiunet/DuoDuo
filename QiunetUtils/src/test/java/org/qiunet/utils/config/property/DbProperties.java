@@ -1,23 +1,23 @@
 package org.qiunet.utils.config.property;
 
-import org.qiunet.utils.config.properties.anno.DProperties;
-import org.qiunet.utils.config.properties.anno.DPropertiesValue;
+import org.qiunet.utils.config.anno.DConfig;
+import org.qiunet.utils.config.anno.DConfigValue;
 
 /**
  * @author qiunet
  *         Created on 17/1/5 16:55.
  */
-@DProperties("db.properties")
+@DConfig("db.properties")
 public class DbProperties {
 	/**
 	 * 测试内容
 	 */
-	@DPropertiesValue()
+	@DConfigValue()
 	private static String content;
 	/**
 	 * 最大数
 	 */
-	@DPropertiesValue("db_max_count")
+	@DConfigValue("db_max_count")
 	private int dbMaxCount;
 
 	public int getDbMaxCount() {

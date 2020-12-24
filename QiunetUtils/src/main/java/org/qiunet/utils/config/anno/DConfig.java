@@ -1,4 +1,4 @@
-package org.qiunet.utils.config.properties.anno;
+package org.qiunet.utils.config.anno;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DProperties {
+public @interface DConfig {
 	/**
-	 * properties 文件名.
+	 * config 文件名.
 	 * 需要包含后缀以及在classpath目录的相对路径
 	 * @return
 	 */

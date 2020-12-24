@@ -1,12 +1,14 @@
-package org.qiunet.utils.config.properties;
+package org.qiunet.utils.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.generics.StringSet;
-import org.qiunet.utils.config.properties.anno.DProperties;
-import org.qiunet.utils.config.properties.anno.DPropertiesValue;
+import org.qiunet.utils.config.anno.DConfig;
+import org.qiunet.utils.config.anno.DConfigValue;
+import org.qiunet.utils.config.hocon.DHocon;
+import org.qiunet.utils.config.properties.DProperties;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -28,23 +30,23 @@ import java.util.Set;
  * @author qiunet
  * 2020-09-18 10:17
  */
-enum PropertiesContext implements IApplicationContextAware {
+enum ConfigContext implements IApplicationContextAware {
 	instance;
 
 	/**
 	 * propertie名称对应的所有字段.
 	 */
-	private final Map<String, PropertiesData> datas = Maps.newHashMap();
+	private final Map<String, ConfigData> datas = Maps.newHashMap();
 	private IApplicationContext context;
 	/**
 	 * reflections bug. 必须有定义. 才不会抛出异常.
 	 */
-	@DPropertiesValue
+	@DConfigValue
 	private String field_holder;
 	private Field field_holder_field;
-	PropertiesContext() {
+	ConfigContext() {
 		try {
-			field_holder_field = PropertiesContext.class.getDeclaredField("field_holder");
+			field_holder_field = ConfigContext.class.getDeclaredField("field_holder");
 		} catch (NoSuchFieldException e) {
 			e.printStackTrace();
 		}
@@ -64,23 +66,23 @@ enum PropertiesContext implements IApplicationContextAware {
 	 * 加载字段
 	 */
 	private void loadField(){
-		Set<Field> fieldSet = this.context.getFieldsAnnotatedWith(DPropertiesValue.class);
+		Set<Field> fieldSet = this.context.getFieldsAnnotatedWith(DConfigValue.class);
 		for (Field field : fieldSet) {
 			if (field.equals(field_holder_field)) {
 				continue;
 			}
 
-			DProperties annotation = field.getDeclaringClass().getAnnotation(DProperties.class);
-			String propertiesName;
+			DConfig annotation = field.getDeclaringClass().getAnnotation(DConfig.class);
+			String configName;
 			if (annotation != null) {
-				propertiesName = annotation.value();
+				configName = annotation.value();
 			}else {
-				DPropertiesValue fieldAnnotation = field.getAnnotation(DPropertiesValue.class);
-				Preconditions.checkState(! StringUtil.isEmpty(fieldAnnotation.propertiesName()), "properties name is require!");
-				propertiesName = fieldAnnotation.propertiesName();
+				DConfigValue fieldAnnotation = field.getAnnotation(DConfigValue.class);
+				Preconditions.checkState(! StringUtil.isEmpty(fieldAnnotation.configName()), "config name is require!");
+				configName = fieldAnnotation.configName();
 			}
 
-			PropertiesData data = this.datas.computeIfAbsent(propertiesName, PropertiesData::new);
+			ConfigData data = this.datas.computeIfAbsent(configName, ConfigData::new);
 			if (annotation != null) data.listenerChanged = annotation.listenerChange();
 			data.fields.add(field);
 		}
@@ -93,14 +95,8 @@ enum PropertiesContext implements IApplicationContextAware {
 	 * 加载指定名文件
 	 * @param data
 	 */
-	private void loadFile(PropertiesData data) {
-		IKeyValueData<Object, Object> keyValueData;
-		if (data.listenerChanged) {
-			keyValueData = PropertiesUtil.loadProperties(data.propertyName, file -> this.loadFile(data.propertyName, data.fields, PropertiesUtil.loadProperties(file)));
-		}else {
-			keyValueData = PropertiesUtil.loadProperties(data.propertyName);
-		}
-		this.loadFile(data.propertyName, data.fields, keyValueData);
+	private void loadFile(ConfigData data) {
+		this.loadFile(data.configName, data.fields, data.loadData());
 	}
 
 	/**
@@ -108,9 +104,9 @@ enum PropertiesContext implements IApplicationContextAware {
 	 * @param name
 	 * @param keyValueData
 	 */
-	private void loadFile(String name, List<Field> fieldList, IKeyValueData<Object, Object> keyValueData) {
+	private void loadFile(String name, List<Field> fieldList, IKeyValueData<String, String> keyValueData) {
 		fieldList.forEach(field -> {
-			DPropertiesValue annotation = field.getAnnotation(DPropertiesValue.class);
+			DConfigValue annotation = field.getAnnotation(DConfigValue.class);
 			String keyName = annotation.value();
 			if (StringUtil.isEmpty(keyName)) {
 				keyName = field.getName();
@@ -176,11 +172,11 @@ enum PropertiesContext implements IApplicationContextAware {
 	/**
 	 * properties 数据
 	 */
-	private static class PropertiesData {
+	private static class ConfigData {
 		/**
 		 * 名称
 		 */
-		 String propertyName;
+		 String configName;
 		/**
 		 * 是否监听
 		 */
@@ -190,8 +186,18 @@ enum PropertiesContext implements IApplicationContextAware {
 		 */
 		 List<Field> fields = Lists.newLinkedList();
 
-		PropertiesData(String propertyName) {
-			this.propertyName = propertyName;
+		ConfigData(String configName) {
+			this.configName = configName;
+		}
+
+		IKeyValueData<String, String> loadData(){
+			if (configName.endsWith(".properties")) {
+				return new DProperties(configName, listenerChanged);
+			}else if (configName.endsWith(".conf")) {
+				return new DHocon(configName, listenerChanged);
+			}else {
+				throw new CustomException("Not support config for [{}]", configName);
+			}
 		}
 	}
 }

@@ -1,8 +1,8 @@
 package org.qiunet.data.util;
 
 import org.qiunet.utils.collection.generics.StringSet;
-import org.qiunet.utils.config.properties.anno.DProperties;
-import org.qiunet.utils.config.properties.anno.DPropertiesValue;
+import org.qiunet.utils.config.anno.DConfig;
+import org.qiunet.utils.config.anno.DConfigValue;
 
 /***
  *
@@ -10,7 +10,7 @@ import org.qiunet.utils.config.properties.anno.DPropertiesValue;
  * @author qiunet
  * 2020-08-04 10:50
  ***/
-@DProperties(value = ServerConfig.PROPERTIES_FILE_NAME, listenerChange = true)
+@DConfig(value = ServerConfig.PROPERTIES_FILE_NAME, listenerChange = true)
 public class ServerConfig {
 	public static final String HORT_PORT = "hook.port";
 	public static final String SERVER_ID = "server.id";
@@ -22,41 +22,41 @@ public class ServerConfig {
 	public static final String PROPERTIES_FILE_NAME = "server.properties";
 	public static final String SERVER_IP_WHITE_LIST = "server.ip.white.list";
 
-	@DPropertiesValue(SERVER_ID)
+	@DConfigValue(SERVER_ID)
 	private static int serverId;
 
-	@DPropertiesValue(SERVER_TYPE)
+	@DConfigValue(SERVER_TYPE)
 	private static ServerType serverType;
 	/**
 	 * hook 的端口
 	 */
-	@DPropertiesValue(HORT_PORT)
+	@DConfigValue(HORT_PORT)
 	private static int hookPort;
 	/**
 	 * 对外服务的端口.
 	 */
-	@DPropertiesValue(SERVER_PORT)
+	@DConfigValue(SERVER_PORT)
 	private static int serverPort;
 	/**
 	 * 服务之间通讯的端口.
 	 */
-	@DPropertiesValue(COMMUNICATION_PORT)
+	@DConfigValue(COMMUNICATION_PORT)
 	private static int communicationPort;
 	/**
 	 * 服务器是否开启
 	 */
-	@DPropertiesValue(value = SERVER_OPEN, defaultVal = "TRUE")
+	@DConfigValue(value = SERVER_OPEN, defaultVal = "TRUE")
 	private static boolean serverOpen;
 	/**
 	 * 服务没有开启提示
 	 */
-	@DPropertiesValue(value = SERVER_CLOSE_MSG, defaultVal = "-")
+	@DConfigValue(value = SERVER_CLOSE_MSG, defaultVal = "-")
 	private static String serverCloseMsg;
 	/**
 	 * 白名单ip. 如果serverOpen = false
 	 * 允许指定的ip进入.
 	 */
-	@DPropertiesValue(value = SERVER_IP_WHITE_LIST, defaultVal = "127.0.0.1")
+	@DConfigValue(value = SERVER_IP_WHITE_LIST, defaultVal = "127.0.0.1")
 	private static StringSet ipWhiteList;
 
 	public static int getServerId() {
