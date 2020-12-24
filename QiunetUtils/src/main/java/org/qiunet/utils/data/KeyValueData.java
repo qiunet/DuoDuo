@@ -1,8 +1,5 @@
 package org.qiunet.utils.data;
 
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +9,6 @@ import java.util.Map;
  *         Created on 16/12/21 07:52.
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
-	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Map<K, V> map = new HashMap<>();
 
 	/***
@@ -37,16 +33,5 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	@Override
 	public Map<K, V> returnMap() {
 		return map;
-	}
-
-	@Override
-	public String getString(K key) {
-		V v = getValue(key);
-		if (v == null) {
-			// 这里需要打印缺少的key.
-			logger.error("=================Key ["+key+"] is not in map.=============== ");
-			return null;
-		}
-		return v.toString();
 	}
 }

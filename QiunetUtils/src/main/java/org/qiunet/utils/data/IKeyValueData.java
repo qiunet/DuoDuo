@@ -1,5 +1,7 @@
 package org.qiunet.utils.data;
 
+import org.qiunet.utils.logger.LoggerType;
+
 import java.util.Map;
 
 /**
@@ -54,7 +56,15 @@ public interface IKeyValueData<K, V> {
 	 * @param key
 	 * @return 默认返回 ""
 	 */
-	 String getString(K key);
+	 default String getString(K key) {
+		 V v = getValue(key);
+		 if (v == null) {
+			 // 这里需要打印缺少的key.
+			 LoggerType.DUODUO.error("=================Key ["+key+"] is not in map.=============== ");
+			 return null;
+		 }
+		 return v.toString();
+	 }
 	/**
 	 * 获取key的值
 	 * @param key
