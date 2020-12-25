@@ -11,13 +11,14 @@ import org.qiunet.utils.thread.ThreadContextData;
 import java.util.Map;
 
 public class TestRedisDataListSupport {
-	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
+	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport;
 	@BeforeClass
 	public static void init(){
 		ClassScanner.getInstance().scanner();
+		 dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
 	}
 
-	private long uid = 100000;
+	private final long uid = 100000;
 	@Test
 	public void testNormalList(){
 		EquipDo equipDo1 = new EquipDo();

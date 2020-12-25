@@ -13,11 +13,12 @@ import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.thread.ThreadContextData;
 
 public class TestRedisDataSupport {
-	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
+	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport;
 
 	@BeforeClass
 	public static void init(){
 		ClassScanner.getInstance().scanner();
+		dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
 	}
 
 	public void expire(long uid) {
@@ -25,7 +26,7 @@ public class TestRedisDataSupport {
 		RedisDataUtil.jedis().expire(redisKey, 0);
 		ThreadContextData.removeKey(redisKey);
 	}
-	private long uid = 10000;
+	private final long uid = 10000;
 	@Test
 	public void testEntity(){
 		VipDo vipDo = new VipDo();
