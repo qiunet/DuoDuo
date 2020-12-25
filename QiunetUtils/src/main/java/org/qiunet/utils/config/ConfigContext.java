@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 /***
- * 处理properties的context
+ * 处理配置文件的context
  *
  * @author qiunet
  * 2020-09-18 10:17
@@ -36,7 +36,7 @@ enum ConfigContext implements IApplicationContextAware {
 	instance;
 
 	/**
-	 * propertie名称对应的所有字段.
+	 * 配置文件名称对应的所有字段.
 	 */
 	private final Map<String, ConfigData> datas = Maps.newHashMap();
 	private IApplicationContext context;
@@ -131,7 +131,7 @@ enum ConfigContext implements IApplicationContextAware {
 			if (StringUtil.isEmpty(keyName)) {
 				keyName = field.getName();
 			}
-			Preconditions.checkState(keyValueData.containKey(keyName) || !StringUtil.isEmpty(annotation.defaultVal()), "Properties ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
+			Preconditions.checkState(keyValueData.containKey(keyName) || !StringUtil.isEmpty(annotation.defaultVal()), "Config ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
 			String val = keyValueData.getString(keyName, annotation.defaultVal());
 			Object instance = null;
 			if (!Modifier.isStatic(field.getModifiers())) {
@@ -190,7 +190,7 @@ enum ConfigContext implements IApplicationContextAware {
 	}
 
 	/**
-	 * properties 数据
+	 * 配置文件的 数据
 	 */
 	private class ConfigData {
 		/**
