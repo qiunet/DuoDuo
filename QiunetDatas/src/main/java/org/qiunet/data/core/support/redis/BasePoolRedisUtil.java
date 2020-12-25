@@ -12,38 +12,38 @@ import java.lang.reflect.Proxy;
 
 public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisUtil {
 	/** 数据源 */
-	private JedisPool jedisPool;
+	private final JedisPool jedisPool;
 	/***
 	 * 构造redisUtil 需要的JedisPool
-	 * @param redisProperties
+	 * @param redisConfig
 	 * @param redisName
 	 */
-	protected BasePoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
+	protected BasePoolRedisUtil(IKeyValueData<String, String> redisConfig, String redisName) {
 		super(redisName);
 		// jedisPool 构造
-		this.jedisPool = this.buildJedisPool(redisProperties);
+		this.jedisPool = this.buildJedisPool(redisConfig);
 		// 添加关闭.
 		ShutdownHookUtil.getInstance().addLast(this.jedisPool::close);
 	}
 	/**
 	 * 构造一个可以用的jedisPool
-	 * @param redisProperties properties 内容
+	 * @param redisConfig properties 内容
 	 * @return
 	 */
-	private JedisPool buildJedisPool(IKeyValueData<Object, Object> redisProperties){
+	private JedisPool buildJedisPool(IKeyValueData<String, String> redisConfig){
 
-		String host = redisProperties.getString(getConfigKey("host"));
-		int port = redisProperties.getInt(getConfigKey("port"));
-		String password = redisProperties.getString(getConfigKey("pass"), null);
+		String host = redisConfig.getString(getConfigKey("host"));
+		int port = redisConfig.getInt(getConfigKey("port"));
+		String password = redisConfig.getString(getConfigKey("pass"), null);
 		if ("".equals(password)) password = null;
 
-		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
-		int db = redisProperties.getInt(getConfigKey("db"), 0);
-		return new JedisPool(buildPoolConfig(redisProperties), host, port, timeout, password, db, null);
+		int timeout = redisConfig.getInt(getConfigKey("timeout"), 2000);
+		int db = redisConfig.getInt(getConfigKey("db"), 0);
+		return new JedisPool(buildPoolConfig(redisConfig), host, port, timeout, password, db, null);
 	}
 
 	private class ClosableJedisProxy implements InvocationHandler {
-		private boolean log;
+		private final boolean log;
 		ClosableJedisProxy(boolean log) {
 			this.log = log;
 		}

@@ -1,4 +1,4 @@
-package org.qiunet.utils.config.hocon;
+package org.qiunet.utils.config.conf;
 
 import com.typesafe.config.Config;
 import org.junit.Assert;

@@ -34,7 +34,7 @@ public final class CrossConstants {
 	 */
 	public static final TcpBootstrapParams COMMUNICATION_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_NODE_START_CONTEXT)
-		.setPort(ServerConfig.getCommunicationPort())
+		.setPort(ServerConfig.getNodePort())
 		.setReadIdleCheckSeconds(60 * 10)
 		.build();
 }

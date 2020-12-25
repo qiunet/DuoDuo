@@ -16,7 +16,7 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	 static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
 	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
-	private String redisName;
+	private final String redisName;
 
 	 BaseRedisUtil(String redisName) {
 		this.redisName = redisName;
@@ -24,18 +24,18 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 
 	/**
 	 * 池配置
-	 * @param redisProperties
+	 * @param redisConfig
 	 * @return
 	 */
-	JedisPoolConfig buildPoolConfig(IKeyValueData<Object, Object> redisProperties) {
+	JedisPoolConfig buildPoolConfig(IKeyValueData<String, String> redisConfig) {
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		poolConfig.setMaxIdle(redisProperties.getInt(getConfigKey("maxIdle"), 30));
-		poolConfig.setMaxTotal(redisProperties.getInt(getConfigKey("maxTotal"), 100));
-		poolConfig.setTestWhileIdle(redisProperties.getBoolean(getConfigKey("testWhileIdle")));
-		poolConfig.setMaxWaitMillis(redisProperties.getInt(getConfigKey("maxWaitMillis"), 3000));
-		poolConfig.setNumTestsPerEvictionRun(redisProperties.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
-		poolConfig.setMinEvictableIdleTimeMillis(redisProperties.getInt(getConfigKey("minEvictableIdleTimeMillis"), 60000));
-		poolConfig.setTimeBetweenEvictionRunsMillis(redisProperties.getInt(getConfigKey("timeBetweenEvictionRunsMillis"), 60000));
+		poolConfig.setMaxIdle(redisConfig.getInt(getConfigKey("maxIdle"), 30));
+		poolConfig.setMaxTotal(redisConfig.getInt(getConfigKey("maxTotal"), 100));
+		poolConfig.setTestWhileIdle(redisConfig.getBoolean(getConfigKey("testWhileIdle")));
+		poolConfig.setMaxWaitMillis(redisConfig.getInt(getConfigKey("maxWaitMillis"), 3000));
+		poolConfig.setNumTestsPerEvictionRun(redisConfig.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
+		poolConfig.setMinEvictableIdleTimeMillis(redisConfig.getInt(getConfigKey("minEvictableIdleTimeMillis"), 60000));
+		poolConfig.setTimeBetweenEvictionRunsMillis(redisConfig.getInt(getConfigKey("timeBetweenEvictionRunsMillis"), 60000));
 		return poolConfig;
 	}
 	/**
@@ -59,8 +59,8 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 
 
 	protected class NormalJedisProxy implements InvocationHandler {
-		private boolean log;
-		private JedisCommands jedis;
+		private final boolean log;
+		private final JedisCommands jedis;
 		NormalJedisProxy(JedisCommands jedis, boolean log) {
 			this.log = log;
 			this.jedis = jedis;

@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.support.db.Table;
-import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.string.StringUtil;
 
@@ -15,7 +14,7 @@ public final class DbUtil {
 	private static final int MAX_TABLE_FOR_TB_SPLIT = 10;
 
 	/**每个entity 对应的源.*/
-	private static Map<Class<? extends IEntity>, String> dbSources = Maps.newConcurrentMap();
+	private static final Map<Class<? extends IEntity>, String> dbSources = Maps.newConcurrentMap();
 
 	private static final int [] POW10_NUMS = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 	/***
@@ -52,7 +51,7 @@ public final class DbUtil {
 			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
 			String dbSource = table.dbSource();
 			if (StringUtil.isEmpty(dbSource) && ServerConfig.isLogicServerType()) {
-				dbSource = DbProperties.getInstance().getDefaultDbSource();
+				dbSource = ServerConfig.getDefaultSource();
 			}
 			return dbSource;
 		});
@@ -68,7 +67,7 @@ public final class DbUtil {
 		int serverId = ServerConfig.getServerId();
 		int length = (int) (Math.log10(serverId));
 		int pow = POW10_NUMS[length + 1];
-		return (long) (incrId * pow + serverId * 10 + length);
+		return incrId * pow + serverId * 10 + length;
 	}
 
 	/***

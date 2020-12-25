@@ -20,24 +20,24 @@ import java.util.Set;
  */
 public class BaseClusterRedisUtil extends BaseRedisUtil {
 
-	private JedisCluster jedisCluster;
+	private final JedisCluster jedisCluster;
 
-	public BaseClusterRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
+	public BaseClusterRedisUtil(IKeyValueData<String, String> redisConfig, String redisName) {
 		super(redisName);
 
 		Set<HostAndPort> nodes = Sets.newHashSet();
-		String nodesString = redisProperties.getString(getConfigKey("nodes"));
+		String nodesString = redisConfig.getString(getConfigKey("nodes"));
 		String[] nodesStrings = StringUtil.split(nodesString, ";");
 		for (String string : nodesStrings) {
 			String[] strings = StringUtil.split(string, ":");
 			nodes.add(new HostAndPort(strings[0], Integer.parseInt(strings[1])));
 		}
-		String password = redisProperties.getString(getConfigKey("pass"), null);
+		String password = redisConfig.getString(getConfigKey("pass"), null);
 		if ("".equals(password)) password = null;
 
-		int timeout = redisProperties.getInt(getConfigKey("timeout"), 2000);
-		int maxAttempts = redisProperties.getInt(getConfigKey("maxAttempts"), 1000);
-		jedisCluster = new JedisCluster(nodes, timeout, timeout, maxAttempts, password, this.buildPoolConfig(redisProperties));
+		int timeout = redisConfig.getInt(getConfigKey("timeout"), 2000);
+		int maxAttempts = redisConfig.getInt(getConfigKey("maxAttempts"), 1000);
+		jedisCluster = new JedisCluster(nodes, timeout, timeout, maxAttempts, password, this.buildPoolConfig(redisConfig));
 		ShutdownHookUtil.getInstance().addShutdownHook(() -> {
 			try {
 				jedisCluster.close();

@@ -1,4 +1,4 @@
-package org.qiunet.utils.config.hocon;
+package org.qiunet.utils.config.conf;
 
 import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;

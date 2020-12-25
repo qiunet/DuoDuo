@@ -1,4 +1,4 @@
-package org.qiunet.utils.config.hocon;
+package org.qiunet.utils.config.conf;
 
 import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;
@@ -46,7 +46,7 @@ public final class DHocon extends KeyValueData<String, String> {
 	private void load0(File file) {
 		Config config = ConfigFactory.parseFile(file);
 		Map<String, String> collect = config.entrySet().stream()
-				.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().render()));
+				.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
 		super.load(collect);
 	}
 }

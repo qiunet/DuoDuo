@@ -43,7 +43,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
 	private static final AttributeKey<DPromise<ServerNode>> SERVER_NODE_PROMISE_ATTRIBUTE = AttributeKey.newInstance("SERVER_NODE_PROMISE_ATTRIBUTE");
 	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
-	private Logger logger = LoggerType.DUODUO_CROSS.getLogger();
+	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/***
 	 * server Node 在redis中的 key
 	 * 主要查找某一个类型所有服务
@@ -168,7 +168,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.currServerInfo = argsContainer.isEmpty(ScannerParamKey.CUSTOM_SERVER_INFO)
-			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getCommunicationPort())
+			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getNodePort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
 		if (currServerInfo.getType() == ServerType.ALL) {

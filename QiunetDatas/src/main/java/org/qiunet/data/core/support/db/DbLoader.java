@@ -12,7 +12,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -30,7 +30,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 class DbLoader {
-	private DbProperties dbProperties = DbProperties.getInstance();
+	private final ServerConfig serverConfig = ServerConfig.instance;
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/**mybatis 的配置文件名称**/
@@ -38,8 +38,8 @@ class DbLoader {
 	/**
 	 *DbSourceType 对应的 dataSource
 	 */
-	private Map<String, String> dbNameMapping = Maps.newHashMap();
-	private Map<String, SqlSessionFactory> dataSources = Maps.newHashMap();
+	private final Map<String, String> dbNameMapping = Maps.newHashMap();
+	private final Map<String, SqlSessionFactory> dataSources = Maps.newHashMap();
 	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
 
 	/**
@@ -83,7 +83,7 @@ class DbLoader {
 	 * @param key 想取的对应的key
 	 */
 	private String getConfigKey(String datasourceName, String key) {
-		return "database."+datasourceName+"."+key;
+		return "db."+datasourceName+"."+key;
 	}
 	private static DbLoader instance;
 
@@ -93,8 +93,8 @@ class DbLoader {
 		}
 
 		try {
-			if (dbProperties.containKey(MYBATIS_CONFIG_FILENAME)) {
-				mybatisConfigFileName = dbProperties.getString(MYBATIS_CONFIG_FILENAME);
+			if (serverConfig.containKey(MYBATIS_CONFIG_FILENAME)) {
+				mybatisConfigFileName = serverConfig.getString(MYBATIS_CONFIG_FILENAME);
 			}
 			this.loaderDataSource();
 
@@ -132,7 +132,7 @@ class DbLoader {
 	 */
 	private void loaderDataSource() throws Exception {
 		Set<String> sets = new HashSet<>();
-		for (Object key : dbProperties.returnMap().keySet()) {
+		for (Object key : serverConfig.returnMap().keySet()) {
 			if (!key.toString().endsWith("driverClassName")) {
 				continue;
 			}
@@ -160,13 +160,13 @@ class DbLoader {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(dbSourceName, setting.name);
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
-				val = dbProperties.getInt(dbKey, (Integer) val);
+				val = serverConfig.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
-				if (dbProperties.containKey(dbKey)) {
-					val = dbProperties.getBoolean(dbKey);
+				if (serverConfig.containKey(dbKey)) {
+					val = serverConfig.getBoolean(dbKey);
 				}
 			}else if(val.getClass() == String.class){
-				val = dbProperties.getString(dbKey, (String) val);
+				val = serverConfig.getString(dbKey, (String) val);
 			}
 
 			Method method = BasicDataSource.class.getDeclaredMethod(setting.methodName, setting.clazz);
@@ -217,10 +217,10 @@ class DbLoader {
 	}
 
 	private static class DatasourceAttr {
-		private String name;
-		private Object defaultVal;
-		private Class<?> clazz;
-		private String methodName;
+		private final String name;
+		private final Object defaultVal;
+		private final Class<?> clazz;
+		private final String methodName;
 		DatasourceAttr (String name , Object defaultVal, Class<?> clazz) {
 			this.name = name;
 			this.clazz = clazz;
@@ -243,7 +243,7 @@ class DbLoader {
 	}
 
 	private static class SqlSessionTemp implements InvocationHandler {
-		private SqlSession sqlSession;
+		private final SqlSession sqlSession;
 
 		SqlSessionTemp(SqlSession sqlSession) {
 			this.sqlSession = sqlSession;

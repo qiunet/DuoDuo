@@ -1,4 +1,4 @@
-package org.qiunet.utils.config.hocon;
+package org.qiunet.utils.config.conf;
 
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigValue;

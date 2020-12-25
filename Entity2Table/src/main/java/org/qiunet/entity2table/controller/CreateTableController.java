@@ -6,7 +6,7 @@ import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
 import org.qiunet.data.redis.util.DbUtil;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableCreateParam;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * 19/04/22
  */
 class CreateTableController implements IApplicationContextAware {
-	private CreateTableService createTableService = CreateTableService.getInstance();
+	private final CreateTableService createTableService = CreateTableService.getInstance();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private static CreateTableController instance;
 	private IApplicationContext context;
@@ -257,7 +257,7 @@ class CreateTableController implements IApplicationContextAware {
 	 */
 	private void handlerTable(Class<? extends IEntity> clazz) {
 		String dbSourceName = DbUtil.getDbSource(clazz);
-		if (! DbProperties.getInstance().isDbSourceNameInRange(dbSourceName)) {
+		if (! ServerConfig.isDbSourceNameInRange(dbSourceName)) {
 			return;
 		}
 

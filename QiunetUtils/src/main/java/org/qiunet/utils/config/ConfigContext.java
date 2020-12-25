@@ -7,7 +7,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigValue;
-import org.qiunet.utils.config.hocon.DHocon;
+import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.config.properties.DProperties;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;

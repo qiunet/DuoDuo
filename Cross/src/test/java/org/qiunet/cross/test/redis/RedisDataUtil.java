@@ -1,7 +1,7 @@
 package org.qiunet.cross.test.redis;
 
 import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import redis.clients.jedis.JedisCommands;
 
 /***
@@ -15,7 +15,7 @@ public class RedisDataUtil extends BasePoolRedisUtil {
 	 * 构造redisUtil 需要的JedisPool
 	 */
 	private RedisDataUtil() {
-		super(DbProperties.getInstance(), "data");
+		super(ServerConfig.getInstance(), "data");
 	}
 
 	private static final RedisDataUtil instance = new RedisDataUtil();

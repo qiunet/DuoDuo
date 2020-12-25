@@ -3,29 +3,34 @@ package org.qiunet.data.util;
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigValue;
+import org.qiunet.utils.config.conf.DHocon;
+import org.qiunet.utils.data.IKeyValueData;
+
+import java.util.Map;
 
 /***
- *
+ * 服务配置
  *
  * @author qiunet
  * 2020-08-04 10:50
  ***/
-@DConfig(value = ServerConfig.PROPERTIES_FILE_NAME, listenerChange = true)
-public class ServerConfig {
-	public static final String HORT_PORT = "hook.port";
-	public static final String SERVER_ID = "server.id";
-	public static final String SERVER_TYPE = "server.type";
-	public static final String SERVER_PORT = "server.port";
-	public static final String SERVER_OPEN = "server.open";
-	public static final String SERVER_CLOSE_MSG = "server.close_msg";
-	public static final String COMMUNICATION_PORT = "communication.port";
-	public static final String PROPERTIES_FILE_NAME = "server.properties";
-	public static final String SERVER_IP_WHITE_LIST = "server.ip.white.list";
+@DConfig(value = ServerConfig.CONFIG_FILE_NAME, listenerChange = true)
+public enum ServerConfig implements IKeyValueData<String, String> {
+	instance;
+	// 部分的配置字段名. 外部需要. 所以需要定义.
+	public static final String CONFIG_FILE_NAME = "server.conf";
+	public static final String HORT_PORT = "server.hook_port";
 
-	@DConfigValue(SERVER_ID)
+	private static final DHocon config = new DHocon(CONFIG_FILE_NAME);
+
+	public static ServerConfig getInstance() {
+		return instance;
+	}
+
+	@DConfigValue("server.id")
 	private static int serverId;
 
-	@DConfigValue(SERVER_TYPE)
+	@DConfigValue("server.type")
 	private static ServerType serverType;
 	/**
 	 * hook 的端口
@@ -35,29 +40,37 @@ public class ServerConfig {
 	/**
 	 * 对外服务的端口.
 	 */
-	@DConfigValue(SERVER_PORT)
+	@DConfigValue("server.server_port")
 	private static int serverPort;
 	/**
 	 * 服务之间通讯的端口.
 	 */
-	@DConfigValue(COMMUNICATION_PORT)
-	private static int communicationPort;
+	@DConfigValue("server.node_port")
+	private static int nodePort;
 	/**
 	 * 服务器是否开启
 	 */
-	@DConfigValue(value = SERVER_OPEN, defaultVal = "TRUE")
+	@DConfigValue(value = "server.open", defaultVal = "TRUE")
 	private static boolean serverOpen;
 	/**
 	 * 服务没有开启提示
 	 */
-	@DConfigValue(value = SERVER_CLOSE_MSG, defaultVal = "-")
+	@DConfigValue(value = "server.close_msg", defaultVal = "-")
 	private static String serverCloseMsg;
 	/**
 	 * 白名单ip. 如果serverOpen = false
 	 * 允许指定的ip进入.
 	 */
-	@DConfigValue(value = SERVER_IP_WHITE_LIST, defaultVal = "127.0.0.1")
+	@DConfigValue(value = "server.ip_white_list", defaultVal = "127.0.0.1")
 	private static StringSet ipWhiteList;
+	/**
+	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
+	 */
+	@DConfigValue("db.entity_to_table_range")
+	private static StringSet entity2TableSourceRange;
+
+	@DConfigValue("db.default_source")
+	private static String defaultSource;
 
 	public static int getServerId() {
 		return serverId;
@@ -94,7 +107,20 @@ public class ServerConfig {
 		return serverPort;
 	}
 
-	public static int getCommunicationPort() {
-		return communicationPort;
+	public static int getNodePort() {
+		return nodePort;
+	}
+
+	public static boolean isDbSourceNameInRange(String dbSource) {
+		return entity2TableSourceRange.contains(dbSource);
+	}
+
+	public static String getDefaultSource() {
+		return defaultSource;
+	}
+
+	@Override
+	public Map<String, String> returnMap() {
+		return config.returnMap();
 	}
 }
