@@ -8,6 +8,7 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /***
@@ -116,4 +117,18 @@ public class CustomValueMap<DATA extends Enum<DATA> & ICustomValue> {
 		return dataMap.keySet();
 	}
 
+	public void forEach(BiConsumer<DATA, Object> consumer) {
+		this.dataMap.forEach(consumer);
+	}
+
+	@Override
+	public CustomValueMap<DATA> clone() {
+		try {
+			return (CustomValueMap<DATA>) super.clone();
+		} catch (CloneNotSupportedException e) {
+			CustomValueMap<DATA> data = new CustomValueMap<>(aClass);
+			data.dataMap.putAll(this.dataMap);
+			return data;
+		}
+	}
 }
