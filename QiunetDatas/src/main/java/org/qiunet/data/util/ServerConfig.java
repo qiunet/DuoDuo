@@ -2,6 +2,7 @@ package org.qiunet.data.util;
 
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
+import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.data.IKeyValueData;
@@ -21,7 +22,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	public static final String CONFIG_FILE_NAME = "server.conf";
 	public static final String HORT_PORT = "server.hook_port";
 
-	private static final DHocon config = new DHocon(CONFIG_FILE_NAME);
+	@DConfigInstance(CONFIG_FILE_NAME)
+	private static DHocon config;
 
 	public static ServerConfig getInstance() {
 		return instance;
@@ -117,6 +119,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static String getDefaultSource() {
 		return defaultSource;
+	}
+
+	public static DHocon getConfig() {
+		return config;
 	}
 
 	@Override

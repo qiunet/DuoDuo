@@ -6,11 +6,13 @@ import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
+import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.config.properties.DProperties;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -40,6 +42,7 @@ enum ConfigContext implements IApplicationContextAware {
 	private IApplicationContext context;
 	/**
 	 * reflections bug. 必须有定义. 才不会抛出异常.
+	 * reflections 在完全没有使用字段注解时候, 调用getFieldsAnnotatedWith 会抛出异常
 	 */
 	@DConfigValue
 	private String field_holder;
@@ -59,7 +62,24 @@ enum ConfigContext implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
+		this.loadInstanceFields();
 		this.loadField();
+
+		this.datas.values().forEach(this::loadFile);
+	}
+
+	/**
+	 * 找出需要实例的fields
+	 */
+	private void loadInstanceFields () {
+		Set<Field> fields = this.context.getFieldsAnnotatedWith(DConfigInstance.class);
+		fields.forEach(field -> {
+			DConfigInstance annotation = field.getAnnotation(DConfigInstance.class);
+			Preconditions.checkState(! StringUtil.isEmpty(annotation.value()), "config name is require!");
+
+			ConfigData configData = this.datas.computeIfAbsent(annotation.value(), ConfigData::new);
+			configData.instanceFields.add(field);
+		});
 	}
 
 	/**
@@ -83,17 +103,15 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 
 			ConfigData data = this.datas.computeIfAbsent(configName, ConfigData::new);
-			if (annotation != null) data.listenerChanged = annotation.listenerChange();
+			if (annotation != null && annotation.listenerChange()) data.listenerChanged = true;
 			data.fields.add(field);
 		}
-
-		this.datas.values().forEach(this::loadFile);
 	}
 
 
 	/**
 	 * 加载指定名文件
-	 * @param data
+	 * @param data configData
 	 */
 	private void loadFile(ConfigData data) {
 		this.loadFile(data.configName, data.fields, data.loadData(keyVal -> {
@@ -103,8 +121,8 @@ enum ConfigContext implements IApplicationContextAware {
 
 	/**
 	 * 加载文件
-	 * @param name
-	 * @param keyValueData
+	 * @param name 配置文件名称
+	 * @param keyValueData 数据
 	 */
 	private void loadFile(String name, List<Field> fieldList, IKeyValueData<String, String> keyValueData) {
 		fieldList.forEach(field -> {
@@ -174,7 +192,7 @@ enum ConfigContext implements IApplicationContextAware {
 	/**
 	 * properties 数据
 	 */
-	private static class ConfigData {
+	private class ConfigData {
 		/**
 		 * 名称
 		 */
@@ -187,6 +205,10 @@ enum ConfigContext implements IApplicationContextAware {
 		 * 需要注入的field
 		 */
 		 List<Field> fields = Lists.newLinkedList();
+		/**
+		 * 需要注入实例的fields
+		 */
+		 List<Field> instanceFields = Lists.newArrayListWithCapacity(3);
 
 		ConfigData(String configName) {
 			this.configName = configName;
@@ -196,13 +218,30 @@ enum ConfigContext implements IApplicationContextAware {
 			if (! listenerChanged) {
 				changeListener = null;
 			}
+
+			IKeyValueData<String, String> data;
 			if (configName.endsWith(".properties")) {
-				return new DProperties(configName, changeListener);
+				data = new DProperties(configName, changeListener);
 			}else if (configName.endsWith(".conf")) {
-				return new DHocon(configName, changeListener);
+				data = new DHocon(configName, changeListener);
 			}else {
 				throw new CustomException("Not support config for [{}]", configName);
 			}
+
+			for (Field instanceField : instanceFields) {
+				Object instance = null;
+				if (!Modifier.isStatic(instanceField.getModifiers())) {
+					instance = context.getInstanceOfClass(instanceField.getDeclaringClass());
+				}
+				try {
+					instanceField.setAccessible(true);
+					instanceField.set(instance, data);
+				} catch (IllegalAccessException e) {
+					LoggerType.DUODUO.error("Exception", e);
+				}
+			}
+
+			return data;
 		}
 	}
 }

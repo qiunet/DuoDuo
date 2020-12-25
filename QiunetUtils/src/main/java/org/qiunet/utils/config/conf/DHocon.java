@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  * 2020-12-24 20:26
  */
 public final class DHocon extends KeyValueData<String, String> {
+	private Config config;
 	/**
 	 * @param fileName 基于classpath的文件名和路径
 	 */
@@ -44,9 +45,17 @@ public final class DHocon extends KeyValueData<String, String> {
 	}
 
 	private void load0(File file) {
-		Config config = ConfigFactory.parseFile(file);
+		this.config = ConfigFactory.parseFile(file);
 		Map<String, String> collect = config.entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
 		super.load(collect);
+	}
+
+	/**
+	 * 得到对应的config
+	 * @return
+	 */
+	public Config getConfig() {
+		return config;
 	}
 }
