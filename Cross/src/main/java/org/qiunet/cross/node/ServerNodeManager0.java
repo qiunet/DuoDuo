@@ -175,12 +175,12 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return;
 		}
 
-		if (argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).isEmpty()) {
-			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE'");
+		if (argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).isEmpty()) {
+			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER'");
 		}
 
 
-		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE).get();
+		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).get().get();
 		// 启动检测 redis 是否通畅.
 		this.redisUtil.returnJedis().exists("");
 	}

@@ -26,7 +26,7 @@ public class LogicServer {
 
 	public static void main(String[] args) {
 		ClassScanner.getInstance()
-			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE, RedisDataUtil.getInstance())
+			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
 			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, ServerType.CROSS, Constants.LOGIC_SERVER_PORT, 9002))
 			.scanner();
 

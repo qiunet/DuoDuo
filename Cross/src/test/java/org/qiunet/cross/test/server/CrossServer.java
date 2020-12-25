@@ -22,7 +22,7 @@ public class CrossServer {
 
 	public static void main(String[] args) {
 		ClassScanner.getInstance()
-			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE, RedisDataUtil.getInstance())
+			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
 			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, ServerType.CROSS, 8001, 8002))
 			.scanner();
 
