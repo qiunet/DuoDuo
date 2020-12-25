@@ -1,6 +1,7 @@
 package org.qiunet.utils.data;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 /**
@@ -10,16 +11,27 @@ import java.util.Map;
  */
 public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	private Map<K, V> map;
+	private final DataChangeListener<K, V> changeListener;
 
 	/***
 	 * 构建一个空的Keyval map
 	 */
 	public KeyValueData() {
-		this.load(new HashMap<>());
+		this(Maps.newHashMap());
+	}
+
+	public KeyValueData(DataChangeListener<K, V> changeListener) {
+		this(Maps.newHashMap(), changeListener);
 	}
 
 	public KeyValueData(Map<K, V> map) {
-		this.load(map);
+		this(map, null);
+	}
+
+	public KeyValueData(Map<K, V> map, DataChangeListener<K, V> changeListener) {
+		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
+		this.changeListener = changeListener;
+		this.map = map;
 	}
 	/***
 	 * 热加载, 重新替换map
@@ -28,6 +40,10 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	protected void load(Map<K, V> map){
 		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
 		this.map = map;
+
+		if (changeListener != null) {
+			changeListener.accept(this);
+		}
 	}
 
 	@Override

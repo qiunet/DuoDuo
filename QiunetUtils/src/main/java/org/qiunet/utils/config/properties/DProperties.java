@@ -20,19 +20,21 @@ public final class DProperties extends KeyValueData<String, String> {
 	 * @param fileName 基于classpath的文件名和路径
 	 */
 	public DProperties(String fileName) {
-		this(fileName, false);
+		this(fileName, null);
 	}
 	/**
 	 *
 	 * @param fileName 基于classpath的文件名和路径
-	 * @param watch 文件变动监听.
+	 * @param changeListener 文件变动监听.
 	 */
-	public DProperties(String fileName, boolean watch) {
+	public DProperties(String fileName, DataChangeListener<String, String> changeListener) {
+		super(changeListener);
+
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
 		File file = new File(url.getFile());
-		if (watch) {
+		if (changeListener != null) {
 			FileUtil.changeListener(file, this::load0);
 		}
 		load0(file);

@@ -14,7 +14,7 @@ public class TestFileLoaderProperties {
 		for (int i = 0; i < 20; i++) {
 			// 过程中, 自己去改变target下, db.properties content的内容. 会产生变化即可
 			System.out.println(DbProperties.getContent());
-			Thread.sleep(1500);
+			Thread.sleep(1000);
 		}
 	}
 }

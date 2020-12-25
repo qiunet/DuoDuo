@@ -7,7 +7,7 @@ import org.qiunet.utils.config.anno.DConfigValue;
  * @author qiunet
  *         Created on 17/1/5 16:55.
  */
-@DConfig("db.properties")
+@DConfig(value = "db.properties", listenerChange = true)
 public class DbProperties {
 	/**
 	 * 测试内容

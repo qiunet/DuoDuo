@@ -174,4 +174,14 @@ public interface IKeyValueData<K, V> {
 
 		return "true".equals(getString(key));
 	}
+
+	/**
+	 * 数据变更接口
+	 * @param <K>
+	 * @param <V>
+	 */
+	@FunctionalInterface
+	interface DataChangeListener<K, V> {
+		void accept(IKeyValueData<K, V> data);
+	}
 }

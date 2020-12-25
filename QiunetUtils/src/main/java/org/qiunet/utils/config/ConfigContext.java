@@ -96,7 +96,9 @@ enum ConfigContext implements IApplicationContextAware {
 	 * @param data
 	 */
 	private void loadFile(ConfigData data) {
-		this.loadFile(data.configName, data.fields, data.loadData());
+		this.loadFile(data.configName, data.fields, data.loadData(keyVal -> {
+			this.loadFile(data.configName, data.fields, keyVal);
+		}));
 	}
 
 	/**
@@ -190,11 +192,14 @@ enum ConfigContext implements IApplicationContextAware {
 			this.configName = configName;
 		}
 
-		IKeyValueData<String, String> loadData(){
+		IKeyValueData<String, String> loadData(IKeyValueData.DataChangeListener<String, String> changeListener){
+			if (! listenerChanged) {
+				changeListener = null;
+			}
 			if (configName.endsWith(".properties")) {
-				return new DProperties(configName, listenerChanged);
+				return new DProperties(configName, changeListener);
 			}else if (configName.endsWith(".conf")) {
-				return new DHocon(configName, listenerChanged);
+				return new DHocon(configName, changeListener);
 			}else {
 				throw new CustomException("Not support config for [{}]", configName);
 			}
