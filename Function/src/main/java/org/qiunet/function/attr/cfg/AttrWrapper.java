@@ -12,14 +12,14 @@ import java.util.Set;
  * 子类继承. 然后实现parse方法
  * @param <Type>
  */
-public abstract class AttrWrapper<Type extends Enum<Type> & IAttrEnum<Type>> {
-	private final Map<Type, Long> attrs = Maps.newHashMap();
+public abstract class AttrWrapper<Type extends Enum<Type> & IAttrEnum<Type>, WRAPPER extends AttrWrapper<Type, WRAPPER>> {
+	protected final Map<Type, Long> attrs = Maps.newHashMap();
 
 	public AttrWrapper() {
 		this(Maps.newHashMap());
 	}
 
-	public AttrWrapper(AttrWrapper<Type> fightAttr) {
+	public AttrWrapper(WRAPPER fightAttr) {
 		this(fightAttr.attrs);
 	}
 
@@ -56,7 +56,7 @@ public abstract class AttrWrapper<Type extends Enum<Type> & IAttrEnum<Type>> {
 	 * 合并某个FightAttr
 	 * @param fightAttr
 	 */
-	public void merge(AttrWrapper<Type> fightAttr) {
+	public void merge(WRAPPER fightAttr) {
 		fightAttr.attrs.forEach(this::addAttr);
 	}
 
@@ -91,7 +91,7 @@ public abstract class AttrWrapper<Type extends Enum<Type> & IAttrEnum<Type>> {
 	 * 从当前的属性扣减另一个fightAttr
 	 * @param fightAttr
 	 */
-	public void deduct(AttrWrapper<Type> fightAttr) {
+	public void deduct(WRAPPER fightAttr) {
 		fightAttr.attrs.forEach(this::deduct);
 	}
 
