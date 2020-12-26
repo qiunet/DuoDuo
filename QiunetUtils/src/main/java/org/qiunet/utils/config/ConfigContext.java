@@ -227,20 +227,22 @@ enum ConfigContext implements IApplicationContextAware {
 			}else {
 				throw new CustomException("Not support config for [{}]", configName);
 			}
-
-			for (Field instanceField : instanceFields) {
-				Object instance = null;
-				if (!Modifier.isStatic(instanceField.getModifiers())) {
-					instance = context.getInstanceOfClass(instanceField.getDeclaringClass());
+			if (instanceFields != null) {
+				for (Field instanceField : instanceFields) {
+					Object instance = null;
+					if (!Modifier.isStatic(instanceField.getModifiers())) {
+						instance = context.getInstanceOfClass(instanceField.getDeclaringClass());
+					}
+					try {
+						instanceField.setAccessible(true);
+						instanceField.set(instance, data);
+					} catch (IllegalAccessException e) {
+						LoggerType.DUODUO.error("Exception", e);
+					}
 				}
-				try {
-					instanceField.setAccessible(true);
-					instanceField.set(instance, data);
-				} catch (IllegalAccessException e) {
-					LoggerType.DUODUO.error("Exception", e);
-				}
+				// 释放该处内存
+				instanceFields = null;
 			}
-
 			return data;
 		}
 	}
