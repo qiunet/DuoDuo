@@ -69,10 +69,16 @@ abstract class BaseXdCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
 	 */
 	@Override
 	public void loadCfg() throws Exception{
+		boolean exception = false;
 		try {
 			this.init();
+		} catch (Exception e) {
+			exception = true;
+			throw new CustomException(e, "读取异常: ");
 		}finally {
-			this.close();
+			if (! exception) {
+				this.close();
+			}
 		}
 		this.afterLoad();
 	}
