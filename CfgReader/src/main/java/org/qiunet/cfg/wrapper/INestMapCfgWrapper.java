@@ -25,7 +25,11 @@ public interface INestMapCfgWrapper<ID, SubID, Cfg extends INestMapCfg<ID, SubID
 	 * @return
 	 */
 	default Cfg getCfgById(ID id, SubID subID){
-		return allCfgs().get(id).get(subID);
+		Map<SubID, Cfg> subIDCfgMap = allCfgs().get(id);
+		if (subIDCfgMap == null) {
+			return null;
+		}
+		return subIDCfgMap.get(subID);
 	}
 
 	/**
