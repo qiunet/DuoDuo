@@ -57,4 +57,15 @@ public class TestJsonUtil extends BaseTest{
 		Assert.assertNotNull(subMap);
 		Assert.assertEquals("bb", subMap.get("DEF"));
 	}
+
+	@Test
+	public void testBaseField(){
+		Map<String, Object> map = new HashMap<>();
+		map.put("userId", 123456);
+		map.put("name", "qiunet");
+		String jsonString = JsonUtil.toJsonString(map);
+
+		User user = JsonUtil.getGeneralObjWithField(jsonString, User.class);
+		Assert.assertEquals(123456, user.getUserId());
+	}
 }
