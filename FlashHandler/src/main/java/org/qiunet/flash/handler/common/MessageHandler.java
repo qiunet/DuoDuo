@@ -21,23 +21,24 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public abstract class MessageHandler<H extends IMessageHandler> implements Runnable, IMessageHandler<H> {
+public abstract class MessageHandler<H extends IMessageHandler>
+		implements Runnable, IMessageHandler<H>, IThreadSafe {
 
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private static final ExecutorService executorService = ThreadPoolManager.MESSAGE_HANDLER;
 
-	private AtomicInteger size = new AtomicInteger();
+	private final AtomicInteger size = new AtomicInteger();
 
-	private Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
+	private final Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
 
-	private Set<Future> scheduleFutures = Sets.newConcurrentHashSet();
+	private final Set<Future> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private volatile Thread currentThread;
 
 	private volatile boolean close;
 
-	private UseTimer useTimer = new UseTimer(getIdent(), 500);
+	private final UseTimer useTimer = new UseTimer(getIdent(), 500);
 
 	@Override
 	public void run() {
@@ -109,13 +110,9 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 		executorService.submit(() -> message.execute((H) this));
 	}
 
-	/**
-	 * 判断线程是否安全.
-	 * 如果执行不是在当前对象的线程. 可能有线程安全风险.
-	 * 所以像消耗. 发奖. 需要判断下.
-	 * @return
-	 */
-	public boolean isInThread(){
+
+	@Override
+	public boolean inSelfThread() {
 		return Thread.currentThread() == currentThread;
 	}
 
@@ -180,8 +177,8 @@ public abstract class MessageHandler<H extends IMessageHandler> implements Runna
 	}
 
 	private class ScheduleFuture implements Future<Object> {
-		private String scheduleName;
-		private Future<?> future;
+		private final String scheduleName;
+		private final Future<?> future;
 
 		ScheduleFuture(String scheduleName, Future<?> future) {
 			this.scheduleName = scheduleName;

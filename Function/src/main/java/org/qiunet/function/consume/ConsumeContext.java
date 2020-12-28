@@ -1,7 +1,7 @@
 package org.qiunet.function.consume;
 
 import com.google.common.collect.Maps;
-import org.qiunet.function.base.IMainObject;
+import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *  消耗的上下文
  * @param <Obj>
  */
-public class ConsumeContext<Obj extends IMainObject> {
+public class ConsumeContext<Obj extends IThreadSafe> {
 	/**
 	 * 记录真实消耗.
 	 * 可能底层使用替代资源了.
@@ -46,7 +46,7 @@ public class ConsumeContext<Obj extends IMainObject> {
 	private ConsumeContext(){}
 
 
-	static <Obj extends IMainObject> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IConsumeType consumeType) {
+	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IConsumeType consumeType) {
 		ConsumeContext<Obj> context = new ConsumeContext<>();
 		context.obj = obj;
 		context.multi = multi;

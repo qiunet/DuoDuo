@@ -1,7 +1,7 @@
 package org.qiunet.function.consume;
 
 import com.google.common.collect.ImmutableList;
-import org.qiunet.function.base.IMainObject;
+import org.qiunet.flash.handler.common.IThreadSafe;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @author qiunet
  * 2020-12-28 11:59
  */
-public final class UnmodifiableConsumes<Obj extends IMainObject> extends Consumes<Obj> {
+public final class UnmodifiableConsumes<Obj extends IThreadSafe> extends Consumes<Obj> {
 	/**
 	 * 创建不可变更修改的消耗
 	 * @param consumeList 列表

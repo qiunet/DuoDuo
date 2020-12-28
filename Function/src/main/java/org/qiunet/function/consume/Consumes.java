@@ -2,14 +2,14 @@ package org.qiunet.function.consume;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.function.base.IMainObject;
+import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Consumes<Obj extends IMainObject> {
+public class Consumes<Obj extends IThreadSafe> {
 	/**
 	 * 主要的消耗内容
 	 */
@@ -41,7 +41,7 @@ public class Consumes<Obj extends IMainObject> {
 	 * @return 上下文对象
 	 */
 	public ConsumeContext<Obj> verify(Obj obj, int multi, IConsumeType consumeType) {
-		if (! obj.inSafeThread()) {
+		if (! obj.inSelfThread()) {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
@@ -61,7 +61,7 @@ public class Consumes<Obj extends IMainObject> {
 	 * @param context 上下文对象
 	 */
 	void act(ConsumeContext<Obj> context) {
-		if (! context.getObj().inSafeThread()) {
+		if (! context.getObj().inSelfThread()) {
 			throw new CustomException("Need verify in safe thread!");
 		}
 

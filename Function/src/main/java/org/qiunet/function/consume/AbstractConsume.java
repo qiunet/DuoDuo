@@ -1,13 +1,13 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.IMainObject;
+import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.utils.exceptions.CustomException;
 
 /**
  * 消耗父类
  * @param <Obj>
  */
-public abstract class AbstractConsume<Obj extends IMainObject> {
+public abstract class AbstractConsume<Obj extends IThreadSafe> {
 	/**
 	 * 消耗资源的id
 	 */
