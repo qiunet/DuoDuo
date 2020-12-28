@@ -1,12 +1,13 @@
 package org.qiunet.function.consume;
 
+import org.qiunet.function.base.IMainObject;
 import org.qiunet.utils.exceptions.CustomException;
 
 /**
  * 消耗父类
  * @param <Obj>
  */
-public abstract class AbstractConsume<Obj> {
+public abstract class AbstractConsume<Obj extends IMainObject> {
 	/**
 	 * 消耗资源的id
 	 */
@@ -68,7 +69,8 @@ public abstract class AbstractConsume<Obj> {
 	 */
 	 boolean canMerge(AbstractConsume<Obj> consume) {
 	 	return this.getClass() == consume.getClass()
-				&& this.getCfgId() == consume.getCfgId();
+				&& this.getCfgId() == consume.getCfgId()
+				&& banReplace == consume.banReplace;
 	 }
 
 	/**
