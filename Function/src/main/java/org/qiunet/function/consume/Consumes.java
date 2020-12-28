@@ -3,6 +3,7 @@ package org.qiunet.function.consume;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.function.base.IOperationType;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param consumeType 消耗的日志类型
 	 * @return 消耗上下文
 	 */
-	public ConsumeContext<Obj> verify(Obj obj, IConsumeType consumeType) {
+	public ConsumeContext<Obj> verify(Obj obj, IOperationType consumeType) {
 		return this.verify(obj, 1, consumeType);
 	}
 
@@ -40,7 +41,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param consumeType 消耗的日志类型
 	 * @return 上下文对象
 	 */
-	public ConsumeContext<Obj> verify(Obj obj, int multi, IConsumeType consumeType) {
+	public ConsumeContext<Obj> verify(Obj obj, int multi, IOperationType consumeType) {
 		if (! obj.inSelfThread()) {
 			throw new CustomException("Need verify in safe thread!");
 		}

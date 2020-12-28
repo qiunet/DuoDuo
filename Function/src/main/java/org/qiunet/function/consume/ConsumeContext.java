@@ -2,6 +2,7 @@ package org.qiunet.function.consume;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.function.base.IOperationType;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
@@ -37,7 +38,7 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	/**
 	 * 消耗的类型. 记录日志使用
 	 */
-	private IConsumeType consumeType;
+	private IOperationType consumeType;
 	/**
 	 * 消耗的结果
 	 */
@@ -46,7 +47,7 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	private ConsumeContext(){}
 
 
-	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IConsumeType consumeType) {
+	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IOperationType consumeType) {
 		ConsumeContext<Obj> context = new ConsumeContext<>();
 		context.obj = obj;
 		context.multi = multi;
@@ -70,7 +71,7 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		return obj;
 	}
 
-	public IConsumeType getConsumeType() {
+	public IOperationType getConsumeType() {
 		return consumeType;
 	}
 
