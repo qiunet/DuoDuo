@@ -36,9 +36,9 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 */
 	private Consumes<Obj> consumes;
 	/**
-	 * 消耗的类型. 记录日志使用
+	 * 操作的类型. 记录日志使用
 	 */
-	private IOperationType consumeType;
+	private IOperationType operationType;
 	/**
 	 * 消耗的结果
 	 */
@@ -47,12 +47,12 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	private ConsumeContext(){}
 
 
-	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IOperationType consumeType) {
+	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IOperationType operationType) {
 		ConsumeContext<Obj> context = new ConsumeContext<>();
 		context.obj = obj;
 		context.multi = multi;
 		context.consumes = consumes;
-		context.consumeType = consumeType;
+		context.operationType = operationType;
 		return context;
 	}
 
@@ -71,8 +71,8 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		return obj;
 	}
 
-	public IOperationType getConsumeType() {
-		return consumeType;
+	public IOperationType getOperationType() {
+		return operationType;
 	}
 
 	public int getMulti() {
