@@ -1,0 +1,51 @@
+package org.qiunet.function.reward;
+
+/***
+ * 奖励的配置
+ * 可能邮件什么发奖励. 也通过序列化成该对象的json string 然后发放.
+ *
+ *
+ * @author qiunet
+ * 2020-12-28 22:45
+ */
+public final class RewardConfig {
+	/**
+	 * 资源id
+	 */
+	private int cfgId;
+	/**
+	 * 数值
+	 */
+	private long value;
+	/**
+	 *  额外信息.
+	 *  比如一些原始信息. 需要通过奖励同步的. 都记录这里.
+	 */
+	private String extraInfo;
+
+	public RewardConfig() {
+	}
+
+	public RewardConfig(int cfgId, long value) {
+		this.cfgId = cfgId;
+		this.value = value;
+	}
+
+	public RewardConfig(int cfgId, long value, String extraInfo) {
+		this.cfgId = cfgId;
+		this.value = value;
+		this.extraInfo = extraInfo;
+	}
+
+	public int getCfgId() {
+		return cfgId;
+	}
+
+	public long getValue() {
+		return value;
+	}
+
+	public String getExtraInfo() {
+		return extraInfo;
+	}
+}

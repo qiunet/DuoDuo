@@ -11,7 +11,7 @@ import org.qiunet.listener.event.EventManager;
  * 2020-10-21 10:08
  */
 public abstract class AbstractPlayerActor<T extends AbstractPlayerActor>
-	extends AbstractUserActor<T> implements ICrossStatusActor {
+	extends AbstractUserActor<T> implements ICrossStatusActor, IPlayer {
 
 
 	public AbstractPlayerActor(DSession session) {
