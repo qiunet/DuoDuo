@@ -3,6 +3,7 @@ package org.qiunet.utils.scanner;
 import com.google.common.collect.Lists;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
@@ -28,11 +29,12 @@ import java.util.Set;
 			 || Modifier.isInterface(fieldType.getModifiers())) {
 				Set<Class<?>> classes = context.getSubTypesOf((Class<Object>) fieldType);
 				if (classes.isEmpty()) {
-					throw new CustomException("Field type {} have none subType class, Do not know how to wired");
+					LoggerType.DUODUO.warn("Field type {} have none subType class, Do not know how to wired", fieldType.getName());
+					continue;
 				}
 
 				if (classes.size() > 1) {
-					throw new CustomException("Field type {} have much subType class, Do not know how to wired");
+					throw new CustomException("Field type {} have much subType class, Do not know how to wired", fieldType.getName());
 				}
 
 				type = Lists.newArrayList(classes).get(0);
