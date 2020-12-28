@@ -2,6 +2,7 @@ package org.qiunet.utils.scanner;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 /**
  * @author qiunet
@@ -9,6 +10,9 @@ import org.junit.Test;
  */
 public class TestClassScanner {
 	public  static String clazzName;
+	@AutoWired
+	private static ITestInterface testInterface;
+
 	@Test
 	public void testClassScanner() throws Exception {
 		ClassScanner.getInstance()
@@ -17,5 +21,6 @@ public class TestClassScanner {
 
 		Assert.assertNotNull(clazzName);
 		Assert.assertEquals("PlayerHandler", clazzName);
+		Assert.assertEquals(12345678, testInterface.getType());
 	}
 }

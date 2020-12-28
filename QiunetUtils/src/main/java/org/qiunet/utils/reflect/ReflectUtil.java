@@ -123,26 +123,35 @@ public final class ReflectUtil {
 	 * <p>
 	 * Thrown exceptions are handled via a call to
 	 *
-	 * @param t
+	 * @param declaringObj
 	 *            the target object on which to set the field
 	 * @param name
 	 *            the field to set
 	 * @param value
 	 *            the value to set; may be <code>null</code>
 	 */
-	public static void setField(Object t, String name, Object value) {
-		Field field = findField(t.getClass(), name);
+	public static void setField(Object declaringObj, String name, Object value) {
+		Field field = findField(declaringObj.getClass(), name);
 		if (field == null) {
 			return;
 		}
+		setField(declaringObj, field, value);
+	}
+
+	/**
+	 * 给字段设置值
+	 * @param declaringObj the target object on which to set the field
+	 * @param field the field to set
+	 * @param value the value to set; may be <code>null</code>
+	 */
+	public static void setField(Object declaringObj, Field field, Object value) {
 		makeAccessible(field);
 		try {
-			field.set(t, value);
+			field.set(declaringObj, value);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
 		}
 	}
-
 	/**
 	 * Get the field represented by the supplied {@link Field field object} on
 	 * the specified {@link Object target object} . In accordance with {@link Field#get(Object)}
