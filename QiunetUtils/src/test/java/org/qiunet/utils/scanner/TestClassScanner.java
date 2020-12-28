@@ -12,9 +12,11 @@ public class TestClassScanner {
 	public  static String clazzName;
 	@AutoWired
 	private static ITestInterface testInterface;
+	@AutoWired
+	private static ITestIgnoreWired wired;
 
 	@Test
-	public void testClassScanner() throws Exception {
+	public void testClassScanner() {
 		ClassScanner.getInstance()
 			.addParam(ArgKey.Test, 10)
 			.scanner();
