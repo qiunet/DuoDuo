@@ -27,7 +27,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 
 	public BaseReward(RewardConfig rewardConfig) {
 		this.cfgId = rewardConfig.getCfgId();
-		this.value = rewardConfig.getValue();
+		this.value = rewardConfig.getCount();
 	}
 
 	/**

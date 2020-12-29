@@ -16,7 +16,7 @@ public class ConsumeConfig {
 	 */
 	private int cfgId;
 	/**
-	 * 熟练IG
+	 * 数量
 	 */
 	private long count;
 	/**
