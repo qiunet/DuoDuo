@@ -42,10 +42,10 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 
 	protected Rewards(String dbJsonString, boolean unmodifiable) {
 		List<RewardConfig> configList = JsonUtil.getGeneralObjWithField(dbJsonString, CONFIG_JSON_TYPE);
-		List<BaseReward<Obj>> baseRewardList = configList.stream()
-				.map(config -> config.convertToRewardItem(id -> resourceManager.getResSubType(id)))
-				.collect(Collectors.toList());
-
+		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(configList.size());
+		for (RewardConfig rewardConfig : configList) {
+			baseRewardList.add(rewardConfig.convertToRewardItem(id -> resourceManager.getResSubType(id)));
+		}
 		if (unmodifiable) {
 			baseRewardList = ImmutableList.copyOf(baseRewardList);
 		}
