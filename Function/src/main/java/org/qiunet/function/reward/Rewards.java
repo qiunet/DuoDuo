@@ -75,7 +75,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 
 		RewardContext<Obj> context = RewardContext.valueOf(multi, player, this, type);
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
-			RewardResult result = objBaseReward.verify(player, type);
+			RewardResult result = objBaseReward.verify(context);
 			if (result.isFail()) {
 				context.result = result;
 				return context;

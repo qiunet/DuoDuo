@@ -2,7 +2,7 @@ package org.qiunet.function.reward;
 
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
-import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  * 奖励的基础类
@@ -32,16 +32,30 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 
 	/**
 	 * 校验
-	 * @param player 玩家对象
-	 * @param type 操作类型
+	 * @param context 上下文
 	 * @return 结果.
 	 */
-	abstract RewardResult verify(Obj player, IOperationType type);
-
+	abstract RewardResult doVerify(RewardContext<Obj> context);
 	/**
-	 * 发放奖励
-	 * @param context 奖励上下文
+	 * 校验
+	 * @param context 上下文
+	 * @return 结果.
 	 */
+	final RewardResult verify(RewardContext<Obj> context) {
+		if (context.getMulti() < 1) {
+			throw new CustomException("Multi 数值 {} 不合法, 必须 >= 1", context.getMulti());
+		}
+
+		if (value * context.getMulti() < 0) {
+			throw new CustomException("Value {} 和 multi {} 相乘后会溢出!", value, context.getMulti());
+		}
+
+		return doVerify(context);
+	}
+		/**
+		 * 发放奖励
+		 * @param context 奖励上下文
+		 */
 	abstract void grant(RewardContext<Obj> context);
 
 	/**
