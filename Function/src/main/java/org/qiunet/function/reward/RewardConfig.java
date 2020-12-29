@@ -1,5 +1,9 @@
 package org.qiunet.function.reward;
 
+import org.qiunet.function.base.IResourceSubType;
+
+import java.util.function.Function;
+
 /***
  * 奖励的配置
  * 可能邮件什么发奖励. 也通过序列化成该对象的json string 然后发放.
@@ -35,6 +39,15 @@ public final class RewardConfig {
 		this.cfgId = cfgId;
 		this.value = value;
 		this.extraInfo = extraInfo;
+	}
+
+	/**
+	 * 转 rewardItem
+	 * @param subTypeGetter subType 获取
+	 * @return rewardItem 实例
+	 */
+	public BaseReward convertToRewardItem(Function<Integer, IResourceSubType> subTypeGetter) {
+		return subTypeGetter.apply(cfgId).createRewardItem(this);
 	}
 
 	public int getCfgId() {

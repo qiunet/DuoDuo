@@ -5,20 +5,31 @@ import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
 
 /***
- *
+ * 奖励的基础类
  *
  * @author qiunet
  * 2020-12-28 20:37
  */
-public abstract class RewardItem<Obj extends IThreadSafe & IPlayer> {
+public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 奖励id
 	 */
-	private int cfgId;
+	private final int cfgId;
 	/**
 	 * 奖励数
 	 */
-	private long value;
+	private final long value;
+
+	public BaseReward(int cfgId, long value) {
+		this.cfgId = cfgId;
+		this.value = value;
+	}
+
+	public BaseReward(RewardConfig rewardConfig) {
+		this.cfgId = rewardConfig.getCfgId();
+		this.value = rewardConfig.getValue();
+	}
+
 	/**
 	 * 校验
 	 * @param player 玩家对象
@@ -37,7 +48,7 @@ public abstract class RewardItem<Obj extends IThreadSafe & IPlayer> {
 	 * 复制一份
 	 * @return
 	 */
-	public RewardItem<Obj> copy() {
+	public BaseReward<Obj> copy() {
 		return copy(1);
 	}
 
@@ -46,7 +57,7 @@ public abstract class RewardItem<Obj extends IThreadSafe & IPlayer> {
 	 * @param multi
 	 * @return
 	 */
-	public abstract RewardItem<Obj> copy(int multi);
+	public abstract BaseReward<Obj> copy(int multi);
 
 	/**
 	 * 转RewardConfig

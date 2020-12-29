@@ -1,7 +1,9 @@
 package org.qiunet.function.base;
 
-import org.qiunet.function.consume.AbstractConsume;
+import org.qiunet.function.consume.BaseConsume;
 import org.qiunet.function.consume.ConsumeConfig;
+import org.qiunet.function.reward.BaseReward;
+import org.qiunet.function.reward.RewardConfig;
 
 /***
  * 资源的子类型枚举.
@@ -16,5 +18,13 @@ public interface IResourceSubType {
 	 * @param <T> 消耗实例泛型
 	 * @return 消耗实例
 	 */
-	<T extends AbstractConsume> T createConsume(ConsumeConfig consumeConfig);
+	<T extends BaseConsume> T createConsume(ConsumeConfig consumeConfig);
+
+	/**
+	 * 根据子类型. 创建对应的奖励实例
+	 * @param rewardConfig 奖励配置
+	 * @param <T> 奖励的泛型类
+	 * @return 奖励的实例
+	 */
+	<T extends BaseReward> T createRewardItem(RewardConfig rewardConfig);
 }

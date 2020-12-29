@@ -1,11 +1,15 @@
 package org.qiunet.function.reward;
 
+import com.alibaba.fastjson.TypeReference;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.function.base.IResourceManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -18,16 +22,36 @@ import java.util.stream.Collectors;
  * 2020-12-28 20:35
  */
 public class Rewards<Obj extends IThreadSafe & IPlayer> {
-	private final List<RewardItem<Obj>> rewardItemList;
+	protected static final TypeReference<List<RewardConfig>> CONFIG_JSON_TYPE = new TypeReference<List<RewardConfig>>(){};
+	@AutoWired
+	protected static IResourceManager resourceManager;
+
+	private final List<BaseReward<Obj>> baseRewardList;
 
 	public Rewards() {
 		this(Lists.newArrayListWithCapacity(5));
 	}
 
-	public Rewards(List<RewardItem<Obj>> rewardItemList) {
-		this.rewardItemList = rewardItemList;
+	public Rewards(List<BaseReward<Obj>> baseRewardList) {
+		this.baseRewardList = baseRewardList;
 	}
 
+	public Rewards(String dbJsonString) {
+		this(dbJsonString, false);
+	}
+
+	protected Rewards(String dbJsonString, boolean unmodifiable) {
+		List<RewardConfig> configList = JsonUtil.getGeneralObjWithField(dbJsonString, CONFIG_JSON_TYPE);
+		List<BaseReward<Obj>> baseRewardList = configList.stream()
+				.map(config -> config.convertToRewardItem(id -> resourceManager.getResSubType(id)))
+				.collect(Collectors.toList());
+
+		if (unmodifiable) {
+			baseRewardList = ImmutableList.copyOf(baseRewardList);
+		}
+
+		this.baseRewardList = baseRewardList;
+	}
 	/**
 	 * 校验 是否能扔进背包.
 	 * @param player 玩家对象
@@ -50,8 +74,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		}
 
 		RewardContext<Obj> context = RewardContext.valueOf(multi, player, this, type);
-		for (RewardItem<Obj> objRewardItem : rewardItemList) {
-			RewardResult result = objRewardItem.verify(player, type);
+		for (BaseReward<Obj> objBaseReward : baseRewardList) {
+			RewardResult result = objBaseReward.verify(player, type);
 			if (result.isFail()) {
 				context.result = result;
 				return context;
@@ -73,17 +97,17 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 
 	/**
 	 * 增加 rewardItem
-	 * @param rewardItem 奖励物品
+	 * @param baseReward 奖励物品
 	 */
-	public void addRewardItem(RewardItem<Obj> rewardItem) {
-		this.rewardItemList.add(rewardItem);
+	public void addRewardItem(BaseReward<Obj> baseReward) {
+		this.baseRewardList.add(baseReward);
 	}
 	/**
 	 * 循环奖励数据
 	 * @param consumer consumer
 	 */
-	public void forEach(Consumer<RewardItem<Obj>> consumer) {
-		rewardItemList.forEach(consumer);
+	public void forEach(Consumer<BaseReward<Obj>> consumer) {
+		baseRewardList.forEach(consumer);
 	}
 
 	/**
@@ -96,8 +120,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		for (RewardItem<Obj> objRewardItem : rewardItemList) {
-			objRewardItem.grant(context);
+		for (BaseReward<Obj> objBaseReward : baseRewardList) {
+			objBaseReward.grant(context);
 		}
 	}
 
@@ -105,8 +129,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * 转成json
 	 * @return
 	 */
-	public String toDbString(){
-		List<RewardConfig> collect = rewardItemList.stream().map(RewardItem::toRewardConfig).collect(Collectors.toList());
+	public String toDbJsonString(){
+		List<RewardConfig> collect = baseRewardList.stream().map(BaseReward::toRewardConfig).collect(Collectors.toList());
 		return JsonUtil.toJsonString(collect);
 	}
 }

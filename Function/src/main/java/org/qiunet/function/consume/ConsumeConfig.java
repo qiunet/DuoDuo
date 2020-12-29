@@ -29,7 +29,7 @@ public class ConsumeConfig {
 	 * @param subTypeGetter cfgId -> subType
 	 * @return Consume
 	 */
-	public AbstractConsume convertToConsume(Function<Integer, IResourceSubType> subTypeGetter) {
+	public BaseConsume convertToConsume(Function<Integer, IResourceSubType> subTypeGetter) {
 		return subTypeGetter.apply(cfgId).createConsume(this);
 	}
 

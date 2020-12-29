@@ -14,13 +14,13 @@ public class Consumes<Obj extends IThreadSafe> {
 	/**
 	 * 主要的消耗内容
 	 */
-	private final List<AbstractConsume<Obj>> consumeList;
+	private final List<BaseConsume<Obj>> consumeList;
 
 	public Consumes() {
 		this(Lists.newArrayListWithCapacity(3));
 	}
 
-	public Consumes(List<AbstractConsume<Obj>> consumeList) {
+	public Consumes(List<BaseConsume<Obj>> consumeList) {
 		this.consumeList = consumeList;
 	}
 
@@ -48,7 +48,7 @@ public class Consumes<Obj extends IThreadSafe> {
 
 		Preconditions.checkArgument(multi >= 1);
 		ConsumeContext<Obj> context = ConsumeContext.valueOf(obj, multi, this, consumeType);
-		for (AbstractConsume<Obj> consume : consumeList) {
+		for (BaseConsume<Obj> consume : consumeList) {
 			ConsumeResult result = consume.verify(context);
 			if (result.isFail()) {
 				context.result = result;
@@ -66,7 +66,7 @@ public class Consumes<Obj extends IThreadSafe> {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		for (AbstractConsume<Obj> consume : consumeList) {
+		for (BaseConsume<Obj> consume : consumeList) {
 			consume.consume(context);
 		}
 	}
@@ -74,11 +74,11 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * 添加一个 consume
 	 * @param consume 上下文对象
 	 */
-	public void addConsume(AbstractConsume<Obj> consume) {
+	public void addConsume(BaseConsume<Obj> consume) {
 		boolean merged = false;
-		for (AbstractConsume<Obj> abstractConsume : this.consumeList) {
-			if (abstractConsume.canMerge(consume)) {
-				abstractConsume.doMerge(consume);
+		for (BaseConsume<Obj> baseConsume : this.consumeList) {
+			if (baseConsume.canMerge(consume)) {
+				baseConsume.doMerge(consume);
 				merged = true;
 			}
 		}
@@ -98,19 +98,19 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * 循环遍历.
 	 * @param consumer 消耗的consumer
 	 */
-	public void forEach(Consumer<AbstractConsume<Obj>> consumer, Predicate<AbstractConsume<Obj>> filter) {
-		for (AbstractConsume<Obj> objAbstractConsume : consumeList) {
-			if (! filter.test(objAbstractConsume)) {
+	public void forEach(Consumer<BaseConsume<Obj>> consumer, Predicate<BaseConsume<Obj>> filter) {
+		for (BaseConsume<Obj> objBaseConsume : consumeList) {
+			if (! filter.test(objBaseConsume)) {
 				continue;
 			}
-			consumer.accept(objAbstractConsume);
+			consumer.accept(objBaseConsume);
 		}
 	}
 	/**
 	 * 循环遍历.
 	 * @param consumer 消耗的consumer
 	 */
-	public void forEach(Consumer<AbstractConsume<Obj>> consumer) {
+	public void forEach(Consumer<BaseConsume<Obj>> consumer) {
 		consumeList.forEach(consumer);
 	}
 

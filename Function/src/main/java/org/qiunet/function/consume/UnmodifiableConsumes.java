@@ -16,7 +16,7 @@ public final class UnmodifiableConsumes<Obj extends IThreadSafe> extends Consume
 	 * 创建不可变更修改的消耗
 	 * @param consumeList 列表
 	 */
-	public UnmodifiableConsumes(List<AbstractConsume<Obj>> consumeList) {
+	public UnmodifiableConsumes(List<BaseConsume<Obj>> consumeList) {
 		super(ImmutableList.copyOf(consumeList));
 	}
 }

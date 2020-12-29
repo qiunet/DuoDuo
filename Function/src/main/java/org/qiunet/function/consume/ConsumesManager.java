@@ -32,7 +32,7 @@ public enum ConsumesManager {
 			return EMPTY_CONSUMES;
 		}
 
-		List<AbstractConsume> list = configList.stream().map(cfg -> {
+		List<BaseConsume> list = configList.stream().map(cfg -> {
 			return cfg.convertToConsume(id -> resourceManager.getResSubType(cfg.getCfgId()));
 		}).collect(Collectors.toList());
 		return new UnmodifiableConsumes(list);

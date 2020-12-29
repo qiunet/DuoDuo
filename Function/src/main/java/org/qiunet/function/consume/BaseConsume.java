@@ -7,7 +7,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * 消耗父类
  * @param <Obj>
  */
-public abstract class AbstractConsume<Obj extends IThreadSafe> {
+public abstract class BaseConsume<Obj extends IThreadSafe> {
 	/**
 	 * 消耗资源的id
 	 */
@@ -21,6 +21,21 @@ public abstract class AbstractConsume<Obj extends IThreadSafe> {
 	 * 某些货币可以使用其他货币替代. 这里如果是true, 则不允许.
 	 */
 	protected boolean banReplace;
+
+	public BaseConsume(ConsumeConfig consumeConfig) {
+		this(consumeConfig.getCfgId(), consumeConfig.getCount(), consumeConfig.isBanReplace());
+	}
+
+	public BaseConsume(int cfgId, long value) {
+		this(cfgId, value, false);
+	}
+
+	public BaseConsume(int cfgId, long value, boolean banReplace) {
+		this.cfgId = cfgId;
+		this.value = value;
+		this.banReplace = banReplace;
+	}
+
 	/**
 	 * 校验
 	 * @param context 上下文
@@ -50,7 +65,7 @@ public abstract class AbstractConsume<Obj extends IThreadSafe> {
 		this.doConsume(context);
 	}
 	/**
-	 * 消耗. 真实消耗由 {@link AbstractConsume#consume(ConsumeContext)} 记录.
+	 * 消耗. 真实消耗由 {@link BaseConsume#consume(ConsumeContext)} 记录.
 	 * 实现此方法不需要记录
 	 * @param context 上下文对象
 	 */
@@ -60,14 +75,14 @@ public abstract class AbstractConsume<Obj extends IThreadSafe> {
 	 * clone
 	 * @return 返回clone的对象
 	 */
-	abstract AbstractConsume<Obj> copy();
+	abstract BaseConsume<Obj> copy();
 
 	/**
 	 * 是否可以合并
 	 * @param consume 消耗的具体对象
 	 * @return 是否可以合并
 	 */
-	 boolean canMerge(AbstractConsume<Obj> consume) {
+	 boolean canMerge(BaseConsume<Obj> consume) {
 	 	return this.getClass() == consume.getClass()
 				&& this.getCfgId() == consume.getCfgId()
 				&& banReplace == consume.banReplace;
@@ -78,7 +93,7 @@ public abstract class AbstractConsume<Obj extends IThreadSafe> {
 	 * 子类需要覆盖.
 	 * @param consume 消耗的具体对象
 	 */
-	final void merge(AbstractConsume<Obj> consume) {
+	final void merge(BaseConsume<Obj> consume) {
 		if (canMerge(consume)) {
 			this.doMerge(consume);
 		}
@@ -88,7 +103,7 @@ public abstract class AbstractConsume<Obj extends IThreadSafe> {
 	 * 合并另一个
 	 * @param consume 消耗的具体对象
 	 */
-	protected void doMerge(AbstractConsume<Obj> consume) {
+	protected void doMerge(BaseConsume<Obj> consume) {
 		this.value += consume.value;
 	}
 
