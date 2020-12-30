@@ -24,6 +24,18 @@ public class ConsumeConfig {
 	 */
 	private boolean banReplace;
 
+	public ConsumeConfig() {}
+
+	public ConsumeConfig(int cfgId, long count) {
+		this(cfgId, count, false);
+	}
+
+	public ConsumeConfig(int cfgId, long count, boolean banReplace) {
+		this.cfgId = cfgId;
+		this.count = count;
+		this.banReplace = banReplace;
+	}
+
 	/**
 	 * 转 Consume
 	 * @param subTypeGetter cfgId -> subType

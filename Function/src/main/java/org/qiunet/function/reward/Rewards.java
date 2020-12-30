@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IBasicFunction;
+import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	protected static final TypeReference<List<RewardConfig>> CONFIG_JSON_TYPE = new TypeReference<List<RewardConfig>>(){};
 	@AutoWired
-	protected static IBasicFunction resourceManager;
+	protected static IBasicFunction basicFunction;
 
 	private final List<BaseReward<Obj>> baseRewardList;
 
@@ -44,7 +45,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		List<RewardConfig> configList = JsonUtil.getGeneralObjWithField(dbJsonString, CONFIG_JSON_TYPE);
 		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(configList.size());
 		for (RewardConfig rewardConfig : configList) {
-			baseRewardList.add(rewardConfig.convertToRewardItem(id -> resourceManager.getResSubType(id)));
+			baseRewardList.add(rewardConfig.convertToRewardItem(id -> basicFunction.getResSubType(id)));
 		}
 		if (unmodifiable) {
 			baseRewardList = ImmutableList.copyOf(baseRewardList);
@@ -93,6 +94,16 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		Rewards<Obj> rewards = new Rewards<>();
 		this.forEach(item -> rewards.addRewardItem(item.copy(multi)));
 		return rewards;
+	}
+
+	/**
+	 * 添加奖励
+	 * @param cfgId 资源id
+	 * @param count 数量
+	 */
+	public void addRewardItem(int cfgId, long count) {
+		IResourceSubType resSubType = basicFunction.getResSubType(cfgId);
+		this.addRewardItem(resSubType.createRewardItem(new RewardConfig(cfgId, count)));
 	}
 
 	/**

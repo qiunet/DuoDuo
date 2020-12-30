@@ -3,14 +3,19 @@ package org.qiunet.function.consume;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class Consumes<Obj extends IThreadSafe> {
+	@AutoWired
+	private static IBasicFunction basicFunction;
 	/**
 	 * 主要的消耗内容
 	 */
@@ -69,6 +74,26 @@ public class Consumes<Obj extends IThreadSafe> {
 		for (BaseConsume<Obj> consume : consumeList) {
 			consume.consume(context);
 		}
+	}
+
+	/**
+	 * 添加消耗
+	 * @param cfgId 资源id
+	 * @param count 数量
+	 */
+	public void addConsume(int cfgId, long count) {
+		this.addConsume(cfgId, count, false);
+	}
+
+	/**
+	 * 添加消耗
+	 * @param cfgId 资源id
+	 * @param count 数量
+	 * @param banReplace 禁止替换
+	 */
+	public void addConsume(int cfgId, long count, boolean banReplace) {
+		IResourceSubType subType = basicFunction.getResSubType(cfgId);
+		this.addConsume(subType.createConsume(new ConsumeConfig(cfgId, count, banReplace)));
 	}
 	/**
 	 * 添加一个 consume
