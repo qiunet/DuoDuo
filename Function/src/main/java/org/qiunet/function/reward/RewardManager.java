@@ -1,6 +1,6 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.function.base.IResourceManager;
+import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.string.StringUtil;
 
@@ -18,7 +18,7 @@ public enum RewardManager {
 
 
 	@AutoWired
-	private static IResourceManager resourceManager;
+	private static IBasicFunction resourceManager;
 	/**
 	 * 空的 rewards
 	 */

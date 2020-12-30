@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.function.base.IResourceManager;
+import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	protected static final TypeReference<List<RewardConfig>> CONFIG_JSON_TYPE = new TypeReference<List<RewardConfig>>(){};
 	@AutoWired
-	protected static IResourceManager resourceManager;
+	protected static IBasicFunction resourceManager;
 
 	private final List<BaseReward<Obj>> baseRewardList;
 

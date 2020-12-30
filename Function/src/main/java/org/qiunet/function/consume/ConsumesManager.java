@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.IResourceManager;
+import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ public enum ConsumesManager {
 	instance;
 
 	@AutoWired
-	private static IResourceManager resourceManager;
+	private static IBasicFunction resourceManager;
 	/**
 	 * 空的consumes
 	 */
