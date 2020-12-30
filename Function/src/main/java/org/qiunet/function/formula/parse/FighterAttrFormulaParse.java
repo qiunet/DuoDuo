@@ -31,7 +31,7 @@ public class FighterAttrFormulaParse <Type extends Enum<Type> & IAttrEnum<Type>>
 				continue;
 			}
 
-			String attrStr = formulaString.substring(side.name().length());
+			String attrStr = formulaString.substring(side.name().length() + 1);
 			Type attr = basicFunction.parse(attrStr);
 			return new FormulaFighterAttr<>(side, attr);
 		}

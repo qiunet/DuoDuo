@@ -23,4 +23,9 @@ public class FormulaFighterAttr<Type extends Enum<Type> & IAttrEnum<Type>> imple
 	public double cal(FighterAttrFormulaParam<Type> params) {
 		return side.getFighter(params).getAttr(type);
 	}
+
+	@Override
+	public String toString() {
+		return side + "." + type;
+	}
 }

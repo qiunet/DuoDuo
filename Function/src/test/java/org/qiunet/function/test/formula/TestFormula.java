@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.function.formula.parse.FormulaParseManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -33,6 +34,13 @@ public class TestFormula {
 		String str = "[(3 + 6), (5 + 20)]";
 		IFormula parse = FormulaParseManager.parse(str);
 		Assert.assertEquals("[(3.0 + 6.0), (5.0 + 20.0)]", parse.toString());
+	}
+
+	@Test
+	public void testAttr(){
+		String str = "self.ATT * 30%";
+		IFormula<IFormulaParam> formula = FormulaParseManager.parse(str);
+		System.out.println(formula);
 	}
 
 	/**
