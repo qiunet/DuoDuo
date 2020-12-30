@@ -38,7 +38,7 @@ public class TestFormula {
 
 	@Test
 	public void testAttr(){
-		String str = "self.ATT * 30%";
+		String str = "self.ATT * 30% + var2";
 		IFormula<IFormulaParam> formula = FormulaParseManager.parse(str);
 		System.out.println(formula);
 	}
