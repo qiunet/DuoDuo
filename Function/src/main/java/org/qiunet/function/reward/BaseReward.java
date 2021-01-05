@@ -14,11 +14,11 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 奖励id
 	 */
-	private final int cfgId;
+	protected final int cfgId;
 	/**
 	 * 奖励数
 	 */
-	private final long value;
+	protected final long value;
 
 	public BaseReward(int cfgId, long value) {
 		this.cfgId = cfgId;
@@ -79,5 +79,13 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 */
 	public RewardConfig toRewardConfig() {
 		return new RewardConfig(cfgId, value);
+	}
+
+	public int getCfgId() {
+		return cfgId;
+	}
+
+	public long getValue() {
+		return value;
 	}
 }

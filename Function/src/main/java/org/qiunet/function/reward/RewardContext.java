@@ -64,8 +64,8 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 		return !isSuccess();
 	}
 
-	public IOperationType getOperationType() {
-		return operationType;
+	public <T extends Enum<T> & IOperationType> T getOperationType() {
+		return (T)operationType;
 	}
 
 	public RewardResult getResult() {

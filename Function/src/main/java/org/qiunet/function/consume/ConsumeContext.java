@@ -71,8 +71,8 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		return obj;
 	}
 
-	public IOperationType getOperationType() {
-		return operationType;
+	public <T extends Enum<T> & IOperationType> T getOperationType() {
+		return (T)operationType;
 	}
 
 	public int getMulti() {
