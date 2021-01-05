@@ -35,7 +35,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @param context 上下文
 	 * @return 结果.
 	 */
-	abstract RewardResult doVerify(RewardContext<Obj> context);
+	public abstract RewardResult doVerify(RewardContext<Obj> context);
 	/**
 	 * 校验
 	 * @param context 上下文
@@ -56,7 +56,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 		 * 发放奖励
 		 * @param context 奖励上下文
 		 */
-	abstract void grant(RewardContext<Obj> context);
+	public abstract void grant(RewardContext<Obj> context);
 
 	/**
 	 * 复制一份

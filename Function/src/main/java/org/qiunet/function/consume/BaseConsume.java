@@ -75,14 +75,14 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * clone
 	 * @return 返回clone的对象
 	 */
-	abstract BaseConsume<Obj> copy();
+	public abstract BaseConsume<Obj> copy();
 
 	/**
 	 * 是否可以合并
 	 * @param consume 消耗的具体对象
 	 * @return 是否可以合并
 	 */
-	 boolean canMerge(BaseConsume<Obj> consume) {
+	public boolean canMerge(BaseConsume<Obj> consume) {
 	 	return this.getClass() == consume.getClass()
 				&& this.getCfgId() == consume.getCfgId()
 				&& banReplace == consume.banReplace;
@@ -93,7 +93,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * 子类需要覆盖.
 	 * @param consume 消耗的具体对象
 	 */
-	final void merge(BaseConsume<Obj> consume) {
+	public final void merge(BaseConsume<Obj> consume) {
 		if (canMerge(consume)) {
 			this.doMerge(consume);
 		}
