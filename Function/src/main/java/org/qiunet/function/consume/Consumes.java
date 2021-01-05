@@ -74,6 +74,8 @@ public class Consumes<Obj extends IThreadSafe> {
 		for (BaseConsume<Obj> consume : consumeList) {
 			consume.consume(context);
 		}
+
+		ConsumeEventData.valueOf(context).fireEventHandler();
 	}
 
 	/**

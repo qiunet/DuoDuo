@@ -134,6 +134,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
 			objBaseReward.grant(context);
 		}
+
+		GainRewardEventData.valueOf(this, player, context.getOperationType()).fireEventHandler();
 	}
 
 	/**
