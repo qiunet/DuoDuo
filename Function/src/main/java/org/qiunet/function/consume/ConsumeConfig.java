@@ -18,7 +18,7 @@ public class ConsumeConfig {
 	/**
 	 * 数量
 	 */
-	private long count;
+	private long value;
 	/**
 	 * 禁止替换
 	 */
@@ -26,13 +26,13 @@ public class ConsumeConfig {
 
 	public ConsumeConfig() {}
 
-	public ConsumeConfig(int cfgId, long count) {
-		this(cfgId, count, false);
+	public ConsumeConfig(int cfgId, long value) {
+		this(cfgId, value, false);
 	}
 
-	public ConsumeConfig(int cfgId, long count, boolean banReplace) {
+	public ConsumeConfig(int cfgId, long value, boolean banReplace) {
 		this.cfgId = cfgId;
-		this.count = count;
+		this.value = value;
 		this.banReplace = banReplace;
 	}
 
@@ -49,8 +49,8 @@ public class ConsumeConfig {
 		return cfgId;
 	}
 
-	public long getCount() {
-		return count;
+	public long getValue() {
+		return value;
 	}
 
 	public boolean isBanReplace() {

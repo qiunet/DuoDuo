@@ -20,7 +20,7 @@ public final class RewardConfig {
 	/**
 	 * 数值
 	 */
-	private long count;
+	private long value;
 	/**
 	 *  额外信息.
 	 *  比如一些原始信息. 需要通过奖励同步的. 都记录这里.
@@ -30,14 +30,14 @@ public final class RewardConfig {
 	public RewardConfig() {
 	}
 
-	public RewardConfig(int cfgId, long count) {
+	public RewardConfig(int cfgId, long value) {
 		this.cfgId = cfgId;
-		this.count = count;
+		this.value = value;
 	}
 
-	public RewardConfig(int cfgId, long count, String extraInfo) {
+	public RewardConfig(int cfgId, long value, String extraInfo) {
 		this.cfgId = cfgId;
-		this.count = count;
+		this.value = value;
 		this.extraInfo = extraInfo;
 	}
 
@@ -54,8 +54,8 @@ public final class RewardConfig {
 		return cfgId;
 	}
 
-	public long getCount() {
-		return count;
+	public long getValue() {
+		return value;
 	}
 
 	public String getExtraInfo() {

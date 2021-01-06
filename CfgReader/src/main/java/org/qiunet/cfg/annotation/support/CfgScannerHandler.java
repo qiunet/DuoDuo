@@ -42,8 +42,6 @@ public class CfgScannerHandler implements IApplicationContextAware {
 			CfgType.createCfgWrapper((Class<? extends ICfg>) aClass);
 		}
 
-		CfgManagers.getInstance().initSetting();
-
 		Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgWrapperAutoWired.class);
 		for (Field field : fieldSet) {
 			if (!ICfgWrapper.class.isAssignableFrom(field.getType())) {
@@ -65,5 +63,7 @@ public class CfgScannerHandler implements IApplicationContextAware {
 			field.setAccessible(true);
 			field.set(obj, CfgType.getCfgWrapper(cfgClass));
 		}
+
+		CfgManagers.getInstance().initSetting();
 	}
 }

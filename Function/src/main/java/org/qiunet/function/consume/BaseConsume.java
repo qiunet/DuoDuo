@@ -23,7 +23,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	protected boolean banReplace;
 
 	public BaseConsume(ConsumeConfig consumeConfig) {
-		this(consumeConfig.getCfgId(), consumeConfig.getCount(), consumeConfig.isBanReplace());
+		this(consumeConfig.getCfgId(), consumeConfig.getValue(), consumeConfig.isBanReplace());
 	}
 
 	public BaseConsume(int cfgId, long value) {
