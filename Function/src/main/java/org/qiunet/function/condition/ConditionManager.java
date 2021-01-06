@@ -6,6 +6,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,10 @@ public class ConditionManager {
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends ICondition>> classes = context.getSubTypesOf(ICondition.class);
 			for (Class<? extends ICondition> aClass : classes) {
+				if (Modifier.isAbstract(aClass.getModifiers())) {
+					continue;
+				}
+
 				ICondition instanceOfClass = aClass.newInstance();
 				conditionMap.put(instanceOfClass.getType().name(), aClass);
 			}
