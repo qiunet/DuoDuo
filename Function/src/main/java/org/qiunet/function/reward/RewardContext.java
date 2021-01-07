@@ -1,8 +1,11 @@
 package org.qiunet.function.reward;
 
+import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
+
+import java.util.List;
 
 /***
  * 奖励上下文
@@ -31,6 +34,11 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	 * 操作类型
 	 */
 	private IOperationType operationType;
+	/**
+	 * 真实奖励
+	 */
+	private final List<? extends IRealReward> realRewards = Lists.newArrayList();
+
 	private RewardContext(){}
 	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(int multi, Obj player, Rewards<Obj> rewards, IOperationType operationType) {
 		RewardContext<Obj> context = new  RewardContext<Obj>();
@@ -70,5 +78,9 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 
 	public RewardResult getResult() {
 		return result;
+	}
+
+	public List<? extends IRealReward> getRealRewards() {
+		return realRewards;
 	}
 }
