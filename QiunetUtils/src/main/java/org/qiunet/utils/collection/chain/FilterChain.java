@@ -3,6 +3,7 @@ package org.qiunet.utils.collection.chain;
 import com.google.common.collect.Lists;
 import org.qiunet.utils.collection.enums.ForEachResult;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -62,6 +63,14 @@ public class FilterChain<E> {
 	 */
 	public void clean() {
 		this.filters = null;
+	}
+
+	/**
+	 * 所有的filter
+	 * @return
+	 */
+	public List<E> all() {
+		return filters == null ? Collections.emptyList() : filters;
 	}
 
 	/**
