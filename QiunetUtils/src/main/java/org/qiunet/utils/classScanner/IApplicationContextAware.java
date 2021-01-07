@@ -9,4 +9,20 @@ public interface IApplicationContextAware {
 	 * @param context
 	 */
 	void setApplicationContext(IApplicationContext context);
+	/**
+	 * 越大执行越靠前
+	 * @return
+	 */
+	default int order() {
+		return 0;
+	}
+
+	/**
+	 * 部分只有某个场合执行.
+	 * 做下区分
+	 * @return
+	 */
+	default ScannerType scannerType() {
+		return ScannerType.ALL;
+	}
 }

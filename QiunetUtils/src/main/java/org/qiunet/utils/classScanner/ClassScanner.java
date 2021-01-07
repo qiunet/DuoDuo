@@ -1,5 +1,6 @@
 package org.qiunet.utils.classScanner;
 
+import com.google.common.collect.ComparisonChain;
 import org.qiunet.utils.logger.LoggerType;
 import org.reflections.Reflections;
 import org.reflections.scanners.*;
@@ -11,15 +12,16 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
  * @author qiunet
- *         Created on 17/1/23 18:22.
+ * Created on 17/1/23 18:22.
  */
 public final class ClassScanner implements IApplicationContext {
-	private static final Scanner [] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
+	private static final Scanner[] scanners = new Scanner[]{new MethodAnnotationsScanner(), new SubTypesScanner(), new FieldAnnotationsScanner(), new TypeAnnotationsScanner()};
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Reflections reflections;
 
@@ -34,8 +36,7 @@ public final class ClassScanner implements IApplicationContext {
 	public static ClassScanner getInstance() {
 		if (instance == null) {
 			synchronized (ClassScanner.class) {
-				if (instance == null)
-				{
+				if (instance == null) {
 					new ClassScanner();
 				}
 			}
@@ -44,21 +45,33 @@ public final class ClassScanner implements IApplicationContext {
 	}
 
 	private AtomicBoolean scannered = new AtomicBoolean();
-	public void scanner(String ... packetPrefix){
-		if (scannered.get()) {
+
+	public void scanner(String... packetPrefix) {
+		try {
+			this.scanner0(packetPrefix);
+		} catch (Exception e) {
+			logger.error("Scanner Exception:", e);
+			System.exit(1);
+		}
+	}
+
+	public void scanner0(String... packetPrefix) {
+		if (scannered.get() || !scannered.compareAndSet(false, true)) {
 			logger.error("Duplicate scanner!!!", new IllegalStateException("Class scanner was initialization, can not scanner again."));
 			return;
 		}
 
-		if (scannered.compareAndSet(false, true)) {
-			if (packetPrefix != null && packetPrefix.length > 0) {
-				this.reflections.merge(new Reflections(packetPrefix, scanners));
-			}
-			Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
-			for (Class<? extends IApplicationContextAware> aClass : subTypesOf) {
-				IApplicationContextAware instance = (IApplicationContextAware) getInstanceOfClass(aClass);
-				instance.setApplicationContext(this);
-			}
+		if (packetPrefix != null && packetPrefix.length > 0) {
+			this.reflections.merge(new Reflections(packetPrefix, scanners));
+		}
+
+		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
+		List<IApplicationContextAware> collect = subTypesOf.stream()
+				.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
+				.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
+				.collect(Collectors.toList());
+		for (IApplicationContextAware iApplicationContextAware : collect) {
+			iApplicationContextAware.setApplicationContext(this);
 		}
 	}
 
@@ -85,9 +98,9 @@ public final class ClassScanner implements IApplicationContext {
 	@Override
 	public Object getInstanceOfClass(Class clazz, Object... params) {
 		Optional<Field> first = Stream.of(clazz.getDeclaredFields())
-			.filter(f -> Modifier.isStatic(f.getModifiers()))
-			.filter(f -> f.getType() == clazz)
-			.findFirst();
+				.filter(f -> Modifier.isStatic(f.getModifiers()))
+				.filter(f -> f.getType() == clazz)
+				.findFirst();
 
 		if (first.isPresent()) {
 			Field field = first.get();
@@ -99,7 +112,7 @@ public final class ClassScanner implements IApplicationContext {
 				e.printStackTrace();
 			}
 		}
-		Class<?> [] clazzes = new Class[params.length];
+		Class<?>[] clazzes = new Class[params.length];
 		for (int i = 0; i < params.length; i++) {
 			clazzes[i] = params[i].getClass();
 		}
@@ -109,7 +122,7 @@ public final class ClassScanner implements IApplicationContext {
 			if (constructor.getParameterCount() != clazzes.length) continue;
 
 			boolean allMatch = IntStream.range(0, clazzes.length).mapToObj(i -> clazzes[i] == constructor.getParameterTypes()[i]).allMatch(Boolean::booleanValue);
-			if (! allMatch) continue;
+			if (!allMatch) continue;
 
 			constructor.setAccessible(true);
 			try {
@@ -119,6 +132,6 @@ public final class ClassScanner implements IApplicationContext {
 			}
 		}
 
-		throw new NullPointerException("can not get instance for class ["+clazz.getName()+"]");
+		throw new NullPointerException("can not get instance for class [" + clazz.getName() + "]");
 	}
 }
