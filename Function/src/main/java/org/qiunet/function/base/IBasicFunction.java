@@ -16,7 +16,7 @@ public interface IBasicFunction {
 	 * @param cfgId 资源id
 	 * @return subType
 	 */
-	IResourceSubType getResSubType(int cfgId);
+	<T extends IResourceSubType> T getResSubType(int cfgId);
 
 	/**
 	 * 获得属性名

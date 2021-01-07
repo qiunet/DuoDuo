@@ -2,7 +2,10 @@ package org.qiunet.function.reward;
 
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.function.base.IBasicFunction;
+import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 /***
  * 奖励的基础类
@@ -10,7 +13,10 @@ import org.qiunet.utils.exceptions.CustomException;
  * @author qiunet
  * 2020-12-28 20:37
  */
-public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
+public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> implements IRealReward {
+	@AutoWired
+	private static IBasicFunction basicFunction;
+
 	/**
 	 * 奖励id
 	 */
@@ -87,5 +93,13 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 
 	public long getValue() {
 		return value;
+	}
+
+	/**
+	 * 获得subType
+	 * @return
+	 */
+	public <T extends IResourceSubType> T  subType() {
+		return basicFunction.getResSubType(cfgId);
 	}
 }
