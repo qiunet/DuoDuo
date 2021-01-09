@@ -18,6 +18,12 @@ public interface IRealReward {
 	int getCfgId();
 
 	/**
+	 * 获得数量信息
+	 * @return
+	 */
+	long getValue();
+	
+	/**
 	 * 获得资源配置
 	 * @param <T>
 	 * @return

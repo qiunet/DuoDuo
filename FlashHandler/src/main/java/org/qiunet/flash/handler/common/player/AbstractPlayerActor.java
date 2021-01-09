@@ -11,7 +11,7 @@ import org.qiunet.listener.event.EventManager;
  * 2020-10-21 10:08
  */
 public abstract class AbstractPlayerActor<T extends AbstractPlayerActor<T>>
-	extends AbstractUserActor implements ICrossStatusActor, IPlayer {
+	extends AbstractUserActor<T> implements ICrossStatusActor, IPlayer {
 
 
 	public AbstractPlayerActor(DSession session) {
@@ -23,8 +23,8 @@ public abstract class AbstractPlayerActor<T extends AbstractPlayerActor<T>>
 	 * 跨服的提交跨服那边. 本服调用自己的
 	 * @param eventData
 	 */
-	public <D extends BasePlayerEventData> void fireEvent(D eventData){
-		eventData.setPlayer(this);
+	public <D extends BasePlayerEventData<T>> void fireEvent(D eventData){
+		eventData.setPlayer((T) this);
 		EventManager.fireEventHandler(eventData);
 	}
 }
