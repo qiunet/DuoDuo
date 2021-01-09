@@ -3,9 +3,9 @@ package org.qiunet.function.consume;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
-import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
 

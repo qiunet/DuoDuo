@@ -1,8 +1,8 @@
 package org.qiunet.function.test.formula;
 
 import org.qiunet.function.attr.enums.IAttrEnum;
-import org.qiunet.function.base.IBasicFunction;
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceCfg;
+import org.qiunet.function.base.basic.IBasicFunction;
 
 /***
  *
@@ -11,8 +11,9 @@ import org.qiunet.function.base.IResourceSubType;
  * 2020-12-30 15:03
  */
 public class BasicFunction implements IBasicFunction {
+
 	@Override
-	public IResourceSubType getResSubType(int cfgId) {
+	public <T extends IResourceCfg> T getResById(int cfgId) {
 		return null;
 	}
 

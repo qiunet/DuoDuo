@@ -13,6 +13,17 @@ import org.qiunet.function.reward.RewardConfig;
  */
 public interface IResourceSubType {
 	/**
+	 *  枚举名
+	 * @return
+	 */
+	String name();
+
+	/**
+	 * 获得资源的类型
+	 * @return
+	 */
+	<T extends IResourceType> T resourceType();
+	/**
 	 * 根据子类型. 创建对应的消耗实例
 	 * @param consumeConfig 消耗配置
 	 * @param <T> 消耗实例泛型

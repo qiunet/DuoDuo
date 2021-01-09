@@ -1,10 +1,9 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.attr.enums.IAttrEnum;
-import org.qiunet.function.base.IBasicFunction;
+import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.function.formula.FormulaFighterAttr;
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.function.formula.enums.FighterParamSide;
 import org.qiunet.function.formula.param.FighterAttrFormulaParam;
 import org.qiunet.utils.scanner.anno.AutoWired;

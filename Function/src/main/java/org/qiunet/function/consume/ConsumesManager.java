@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.IBasicFunction;
+import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.Collections;

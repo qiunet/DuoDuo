@@ -2,8 +2,8 @@ package org.qiunet.function.reward;
 
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
-import org.qiunet.function.base.IBasicFunction;
 import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
 

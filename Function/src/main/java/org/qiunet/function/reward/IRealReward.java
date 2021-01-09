@@ -1,6 +1,7 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceCfg;
+import org.qiunet.function.base.basic.BasicFunctionManager;
 
 /***
  * 真实奖励.
@@ -11,9 +12,17 @@ import org.qiunet.function.base.IResourceSubType;
  */
 public interface IRealReward {
 	/**
-	 * 奖励的子类型
-	 * @param <T> ResourceSubType
+	 * 配置id
 	 * @return
 	 */
-	<T extends IResourceSubType> T subType();
+	int getCfgId();
+
+	/**
+	 * 获得资源配置
+	 * @param <T>
+	 * @return
+	 */
+	default <T extends IResourceCfg> T getResourceCfg() {
+		return BasicFunctionManager.instance.getResById(getCfgId());
+	}
 }
