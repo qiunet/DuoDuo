@@ -37,7 +37,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 真实奖励
 	 */
-	private final List<? extends IRealReward> realRewards = Lists.newArrayList();
+	private final List<IRealReward> realRewards = Lists.newArrayList();
 
 	private RewardContext(){}
 	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(int multi, Obj player, Rewards<Obj> rewards, IOperationType operationType) {
@@ -80,7 +80,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 		return result;
 	}
 
-	public List<? extends IRealReward> getRealRewards() {
+	public List<IRealReward> getRealRewards() {
 		return realRewards;
 	}
 }

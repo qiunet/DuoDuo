@@ -133,6 +133,9 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
 			objBaseReward.grant(context);
+			if (objBaseReward instanceof IRealReward) {
+				context.getRealRewards().add((IRealReward) objBaseReward);
+			}
 		}
 
 		GainRewardEventData.valueOf(this, player, context.getOperationType()).fireEventHandler();

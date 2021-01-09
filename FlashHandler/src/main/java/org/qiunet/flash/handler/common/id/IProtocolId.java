@@ -48,5 +48,15 @@ public interface IProtocolId {
 		int SERVER_NODE_AUTH_RESP = 604;
 		/** 跨服玩家鉴权. */
 		int CROSS_PLAYER_AUTH = 605;
+
+		/** gm 首页请求 */
+		int GM_COMMAND_INDEX_REQ = 606;
+		/** gm 首页响应 */
+		int GM_COMMAND_LIST_RESP = 607;
+
+		/** gm 调用响应 */
+		int GM_COMMAND_REQ = 608;
+		/** gm 调用响应 */
+		int GM_COMMAND_RESP = 609;
 	}
 }

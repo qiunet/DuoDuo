@@ -13,7 +13,7 @@ import org.qiunet.utils.scanner.anno.AutoWired;
  * @author qiunet
  * 2020-12-28 20:37
  */
-public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> implements IRealReward {
+public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	@AutoWired
 	private static IBasicFunction basicFunction;
 
