@@ -5,6 +5,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.context.status.IGameStatus;
 
 /***
  *执行结果
@@ -16,19 +17,19 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
 @PbResponse(IProtocolId.System.GM_COMMAND_RESP)
 public class GmCommandResp implements IpbResponseData {
 	@Protobuf(description = "执行结果")
-	private boolean success;
+	private int status;
 
-	public static GmCommandResp valueOf(boolean success) {
+	public static GmCommandResp valueOf(IGameStatus status) {
 		GmCommandResp resp = new GmCommandResp();
-		resp.success = success;
+		resp.status = status.getStatus();
 		return resp;
 	}
 
-	public boolean isSuccess() {
-		return success;
+	public int getStatus() {
+		return status;
 	}
 
-	public void setSuccess(boolean success) {
-		this.success = success;
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

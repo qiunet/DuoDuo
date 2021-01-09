@@ -27,7 +27,7 @@ public class RewardResult {
 		this.params = params;
 	}
 
-	private static RewardResult valueOf(IGameStatus status, Object ... params) {
+	public static RewardResult valueOf(IGameStatus status, Object ... params) {
 		if (params == null || params.length == 0) {
 			return cached.computeIfAbsent(status, RewardResult::new);
 		}

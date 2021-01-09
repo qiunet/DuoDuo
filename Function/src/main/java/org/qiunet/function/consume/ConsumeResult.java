@@ -27,7 +27,7 @@ public class ConsumeResult {
 		this.params = params;
 	}
 
-	private static ConsumeResult valueOf(IGameStatus status, Object ... params) {
+	public static ConsumeResult valueOf(IGameStatus status, Object ... params) {
 		if (params == null || params.length == 0) {
 			return cached.computeIfAbsent(status, ConsumeResult::new);
 		}
