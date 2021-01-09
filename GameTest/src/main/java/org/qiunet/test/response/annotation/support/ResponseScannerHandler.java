@@ -1,6 +1,6 @@
 package org.qiunet.test.response.annotation.support;
 
-import org.qiunet.test.response.ILongConnResponse;
+import org.qiunet.test.response.IPersistConnResponse;
 import org.qiunet.test.response.annotation.Response;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -19,7 +19,7 @@ class ResponseScannerHandler implements IApplicationContextAware {
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.context  = context;
 
-		context.getSubTypesOf(ILongConnResponse.class).stream()
+		context.getSubTypesOf(IPersistConnResponse.class).stream()
 			.filter(c -> ! Modifier.isAbstract(c.getModifiers()))
 			.forEach(this::handler);
 	}
@@ -28,7 +28,7 @@ class ResponseScannerHandler implements IApplicationContextAware {
 		Response responseAnnotation = clazz.getAnnotation(Response.class);
 		if (responseAnnotation == null) throw new NullPointerException("class ["+clazz.getSimpleName()+"] not define ID");
 		try {
-			ILongConnResponse response = (ILongConnResponse) context.getInstanceOfClass(clazz);
+			IPersistConnResponse response = (IPersistConnResponse) context.getInstanceOfClass(clazz);
 			if (response != null) {
 				ResponseMapping.instance.addResponse(responseAnnotation.ID(), response);
 			}

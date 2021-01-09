@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -45,7 +45,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 		System.out.println("All Time is:["+(end - start)+"]ms");
 	}
 
-	public class Trigger implements ILongConnResponseTrigger {
+	public class Trigger implements IPersistConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());

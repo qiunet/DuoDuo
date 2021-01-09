@@ -23,22 +23,14 @@ public enum HandlerType {
 		}
 	},
 	/**
-	 * tcp
-	 *  但是udp可以使用该类型的context和handler
+	 * 长连接
+	 * persistent connection
+	 * 简称 PersistConn
 	 */
-	TCP {
+	PERSIST_CONN {
 		@Override
 		public IMessage createRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			return handler.getDataType().createTcpRequestContext(content, channel, handler, messageActor);
-		}
-	},
-	/**
-	 * webSocket
-	 */
-	WEB_SOCKET {
-		@Override
-		public IMessage createRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			return handler.getDataType().createWebSocketRequestContext(content, channel, handler, messageActor);
+			return handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
 		}
 	};
 

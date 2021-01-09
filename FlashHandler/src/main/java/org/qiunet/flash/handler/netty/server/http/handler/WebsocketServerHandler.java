@@ -8,11 +8,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequestContext;
+import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -40,7 +40,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
 			HttpHeaders headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
-			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.WEB_SOCKET);
+			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.WS);
 
 			DSession iSession = new DSession(ctx.channel());
 
@@ -84,7 +84,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		}
 
 		if (ctx.channel().isActive()) {
-			IWebSocketRequestContext context = handler.getDataType().createWebSocketRequestContext(content, ctx.channel(), handler, messageActor);
+			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, ctx.channel(), handler, messageActor);
 			messageActor.addMessage(context);
 		}else {
 			content.release();

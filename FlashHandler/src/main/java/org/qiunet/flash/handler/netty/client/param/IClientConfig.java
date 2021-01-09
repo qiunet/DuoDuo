@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 
 import java.net.InetSocketAddress;
@@ -30,5 +31,5 @@ public interface IClientConfig {
 	 * 得到处理类型
 	 * @return
 	 */
-	HandlerType getHandlerType();
+	ServerConnType getConnType();
 }

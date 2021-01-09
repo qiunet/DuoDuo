@@ -1,6 +1,6 @@
 package org.qiunet.test.server;
 
-import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 
 /**
@@ -33,8 +33,8 @@ public interface IServer {
 	 * 得到类型 处理
 	 * @return
 	 */
-	default HandlerType getType() {
-		return getClientConfig().getHandlerType();
+	default ServerConnType getType() {
+		return getClientConfig().getConnType();
 	}
 	/**
 	 * 得到请求的地址 socket 则只有host  port 可用

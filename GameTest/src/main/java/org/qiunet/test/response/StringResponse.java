@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
  * Created by qiunet.
  * 17/12/8
  */
-public abstract class StringResponse<Robot extends IRobot> implements ILongConnResponse<String, Robot> {
+public abstract class StringResponse<Robot extends IRobot> implements IPersistConnResponse<String, Robot> {
 	@Override
 	public void response(Robot robot, MessageContent content) {
 		this.response(robot, new String(content.bytes(), StandardCharsets.UTF_8));

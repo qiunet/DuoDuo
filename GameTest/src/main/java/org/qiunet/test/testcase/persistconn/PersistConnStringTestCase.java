@@ -1,4 +1,4 @@
-package org.qiunet.test.testcase.LongConn;
+package org.qiunet.test.testcase.persistconn;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -9,7 +9,7 @@ import org.qiunet.test.robot.IRobot;
  * Created by qiunet.
  * 17/12/8
  */
-public abstract class LongConnStringTestCase<Robot extends IRobot> extends BaseLongConnTestCase<Robot> {
+public abstract class PersistConnStringTestCase<Robot extends IRobot> extends PersistConnTestCase<Robot> {
 	@Override
 	public MessageContent buildRequest(Robot robot) {
 		String requestData = requestBuild(robot);

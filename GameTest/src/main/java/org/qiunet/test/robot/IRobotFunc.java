@@ -1,6 +1,6 @@
 package org.qiunet.test.robot;
 
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.test.server.IServer;
 
 /**
@@ -19,5 +19,5 @@ public interface IRobotFunc {
 	 * @param Server
 	 * @return
 	 */
-	ILongConnClient getLongConnClient(IServer Server);
+	IPersistConnClient getPersistConnClient(IServer Server);
 }

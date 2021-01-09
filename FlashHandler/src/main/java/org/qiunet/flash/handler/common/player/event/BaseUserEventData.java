@@ -10,7 +10,7 @@ import org.qiunet.listener.event.IEventData;
  * @author qiunet
  * 2020-10-21 11:02
  */
-public class BaseUserEventData<T extends AbstractUserActor<T>> implements IEventData {
+public class BaseUserEventData<T extends AbstractUserActor> implements IEventData {
 	/**
 	 * 玩家的对象.
 	 */

@@ -1,14 +1,13 @@
 package org.qiunet.flash.handler.netty.transmit;
 
 import com.google.common.base.Preconditions;
-import io.netty.buffer.Unpooled;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
+import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
-import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
+import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 
 import java.nio.ByteBuffer;
 
@@ -19,10 +18,10 @@ import java.nio.ByteBuffer;
  * 2020-10-26 20:22
  */
 @RequestHandler(ID = IProtocolId.System.PLAYER_2_CROSS_TRANSMIT_REQ, desc = "玩家请求转发到Cross")
-public class CrossTransmitHandler extends TcpProtobufHandler<AbstractUserActor, TransmitRequest> {
+public class CrossTransmitHandler extends PersistConnPbHandler<AbstractUserActor, TransmitRequest> {
 
 	@Override
-	public void handler(AbstractUserActor playerActor, ITcpRequest<TransmitRequest> context) throws Exception {
+	public void handler(AbstractUserActor playerActor, IPersistConnRequest<TransmitRequest> context) throws Exception {
 		TransmitRequest requestData = context.getRequestData();
 		IHandler handler0 = RequestHandlerMapping.getInstance().getHandler(requestData.getPid());
 

@@ -171,7 +171,7 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 
 			if (fieldType == Boolean.TYPE || fieldType == Boolean.class) {
-				return Boolean.getBoolean(val);
+				return "1".equals(val) || Boolean.parseBoolean(val);
 			}
 
 			if (fieldType == StringSet.class) {

@@ -10,12 +10,12 @@
 * HTTP
 	* HttpStringTestCase
 	* HttpProtobufTestCase
-* LongConn
-	* LongConnProtobufTestCase
-	* LongConnStringTestCase
+* PersistConn
+	* PersistConnProtobufTestCase
+	* PersistConnStringTestCase
 
 
-	Tcp Websocket 使用LongConn的类型TestCase
+	Tcp Websocket 使用PersistConn的类型TestCase
 	Http根据自己的情况使用Http的
 
 #### IResponse

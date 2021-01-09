@@ -9,7 +9,7 @@ import org.qiunet.cross.test.event.CrossPlayerLoginEventData;
 import org.qiunet.cross.test.proto.req.EquipIndexRequest;
 import org.qiunet.cross.test.proto.resp.CrossLoginResponse;
 import org.qiunet.flash.handler.common.annotation.RequestHandler;
-import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
+import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 
 /***
  *
@@ -20,7 +20,7 @@ import org.qiunet.flash.handler.context.request.websocket.IWebSocketRequest;
 @RequestHandler(ID = ProtocolId.Equip.EQUIP_INDEX, desc = "装备首页")
 public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 	@Override
-	public void handler(PlayerActor playerActor, IWebSocketRequest<EquipIndexRequest> context) throws Exception {
+	public void handler(PlayerActor playerActor, IPersistConnRequest<EquipIndexRequest> context) throws Exception {
 		playerActor.cross(Constants.CROSS_SERVER_ID);
 		playerActor.fireCrossEvent(new CrossPlayerLoginEventData());
 	}

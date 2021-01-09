@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 
 import java.net.InetSocketAddress;
 
@@ -15,8 +16,8 @@ public final class TcpClientParams extends AbstractClientParam {
 	private TcpClientParams(){}
 
 	@Override
-	public HandlerType getHandlerType() {
-		return HandlerType.TCP;
+	public ServerConnType getConnType() {
+		return ServerConnType.TCP;
 	}
 
 

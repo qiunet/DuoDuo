@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.WsPbLoginRequest;
@@ -35,7 +35,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		latch.await();
 	}
 
-	public class ResponseTrigger implements ILongConnResponseTrigger {
+	public class ResponseTrigger implements IPersistConnResponseTrigger {
 		@Override
 		public void response(DSession session, MessageContent data) {
 			// test 的地方.直接使用bytes 解析. 免得release

@@ -15,8 +15,8 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  * Created by qiunet.
  * 17/11/21
  */
-public  class HttpProtobufRequestContext<RequestData extends IpbRequestData, ResponseData  extends IpbResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
-	public HttpProtobufRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+public  class HttpPbRequestContext<RequestData extends IpbRequestData, ResponseData  extends IpbResponseData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
+	public HttpPbRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channel, params, request);
 	}
 

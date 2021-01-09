@@ -6,7 +6,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-11-06 12:25
  */
-public class TcpClientConnector implements ILongConnClient {
+public class TcpClientConnector implements IPersistConnClient {
 	private DSession session;
 
 	TcpClientConnector(Bootstrap bootstrap, String host, int port) {

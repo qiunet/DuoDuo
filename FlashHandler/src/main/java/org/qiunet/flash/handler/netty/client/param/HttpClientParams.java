@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 
 import java.net.URI;
 
@@ -49,8 +50,8 @@ public class HttpClientParams extends AbstractClientParam {
 	}
 
 	@Override
-	public HandlerType getHandlerType() {
-		return HandlerType.HTTP;
+	public ServerConnType getConnType() {
+		return ServerConnType.HTTP;
 	}
 	/***
 	 * 得到

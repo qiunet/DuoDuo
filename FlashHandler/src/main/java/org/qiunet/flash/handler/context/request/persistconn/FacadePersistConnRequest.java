@@ -1,19 +1,19 @@
-package org.qiunet.flash.handler.context.request.tcp;
+package org.qiunet.flash.handler.context.request.persistconn;
+
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 
 /**
- * tcp request 的外观类
  * Created by qiunet.
- * 17/11/21
+ * 17/12/2
  */
-class FacadeTcpRequest<RequestData, P extends IMessageActor> implements ITcpRequest<RequestData> {
-	private AbstractTcpRequestContext<RequestData, P> context;
-
-	public FacadeTcpRequest (AbstractTcpRequestContext context) {
+class FacadePersistConnRequest<RequestData, P extends IMessageActor> implements IPersistConnRequest<RequestData> {
+	private AbstractPersistConnRequestContext<RequestData, P> context;
+	public FacadePersistConnRequest(AbstractPersistConnRequestContext<RequestData, P> context) {
 		this.context = context;
 	}
+
 	@Override
 	public RequestData getRequestData() {
 		return context.getRequestData();

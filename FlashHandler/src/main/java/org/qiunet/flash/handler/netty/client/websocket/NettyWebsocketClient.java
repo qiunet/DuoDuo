@@ -15,9 +15,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -32,15 +32,15 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/12/1
  */
-public class NettyWebsocketClient implements ILongConnClient {
+public class NettyWebsocketClient implements IPersistConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
-	private ILongConnResponseTrigger trigger;
+	private IPersistConnResponseTrigger trigger;
 	private WebSocketClientParams params;
 	private DSession session;
 
-	private NettyWebsocketClient(WebSocketClientParams params, ILongConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
+	private NettyWebsocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
 		this.trigger = trigger;
 		this.params = params;
 
@@ -57,7 +57,7 @@ public class NettyWebsocketClient implements ILongConnClient {
 		});
 	}
 
-	public static NettyWebsocketClient create(WebSocketClientParams params, ILongConnResponseTrigger trigger){
+	public static NettyWebsocketClient create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
 		DPromise<NettyWebsocketClient> promise = DPromise.create();
 		new NettyWebsocketClient(params, trigger, promise);
 		try {

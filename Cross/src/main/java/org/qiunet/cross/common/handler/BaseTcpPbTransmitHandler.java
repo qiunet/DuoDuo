@@ -3,7 +3,7 @@ package org.qiunet.cross.common.handler;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
-import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
+import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 
 /***
@@ -15,6 +15,6 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
  * 2020-10-26 15:24
  */
 public abstract class BaseTcpPbTransmitHandler<ACTOR extends AbstractPlayerActor<ACTOR>, REQ extends IpbRequestData>
-	extends TcpProtobufHandler<ACTOR, REQ> implements ITransmitHandler<CrossPlayerActor, REQ> {
+	extends PersistConnPbHandler<ACTOR, REQ> implements ITransmitHandler<CrossPlayerActor, REQ> {
 
 }

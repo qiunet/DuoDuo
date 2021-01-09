@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.session.DSession;
  * Created by qiunet.
  * 17/11/25
  */
-public interface ILongConnResponseTrigger {
+public interface IPersistConnResponseTrigger {
 	/***
 	 * 触发的响应
 	 * @param data

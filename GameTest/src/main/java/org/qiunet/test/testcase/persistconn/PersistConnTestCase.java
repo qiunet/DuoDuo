@@ -1,7 +1,7 @@
-package org.qiunet.test.testcase.LongConn;
+package org.qiunet.test.testcase.persistconn;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
 import org.qiunet.test.testcase.ITestCase;
@@ -10,7 +10,7 @@ import org.qiunet.test.testcase.ITestCase;
  * Created by qiunet.
  * 17/12/8
  */
-abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<Robot> {
+abstract class PersistConnTestCase<Robot extends IRobot> implements ITestCase<Robot> {
 	/***
 	 * 请求id
 	 * @return
@@ -30,7 +30,7 @@ abstract class BaseLongConnTestCase<Robot extends IRobot> implements ITestCase<R
 
 	@Override
 	public void sendRequest(Robot robot) {
-		ILongConnClient connClient = robot.getLongConnClient(getServer());
+		IPersistConnClient connClient = robot.getPersistConnClient(getServer());
 		connClient.sendMessage(buildRequest(robot));
 		// 阻塞当前线程
 		if (syncWaitForResponse() != 0) robot.parkForResponseID(syncWaitForResponse());

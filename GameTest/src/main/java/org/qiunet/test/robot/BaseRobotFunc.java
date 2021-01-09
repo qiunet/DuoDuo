@@ -3,14 +3,14 @@ package org.qiunet.test.robot;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.ILongConnClient;
+import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.test.response.ILongConnResponse;
+import org.qiunet.test.response.IPersistConnResponse;
 import org.qiunet.test.response.annotation.support.ResponseMapping;
 import org.qiunet.test.robot.init.IRobotInitInfo;
 import org.qiunet.test.server.IServer;
@@ -24,11 +24,11 @@ import java.util.concurrent.locks.LockSupport;
  * 17/12/9
  */
 abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info> {
-	private BaseRobotFunc.LongConnResponseTrigger trigger = new BaseRobotFunc.LongConnResponseTrigger();
+	private PersistConnResponseTrigger trigger = new PersistConnResponseTrigger();
 	/***
 	 * 长连接的session map
 	 */
-	private Map<String, ILongConnClient> clients = Maps.newConcurrentMap();
+	private Map<String, IPersistConnClient> clients = Maps.newConcurrentMap();
 
 	private IRobot robot;
 	public BaseRobotFunc(){
@@ -45,10 +45,10 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 	}
 
 	@Override
-	public ILongConnClient getLongConnClient(IServer server) {
+	public IPersistConnClient getPersistConnClient(IServer server) {
 		return clients.computeIfAbsent(server.name(), serverName -> {
 			switch (server.getType()) {
-				case WEB_SOCKET:
+				case WS:
 					return NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
 				case TCP:
 					return NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger).connect(server.host(), server.port());
@@ -58,11 +58,11 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 		});
 	}
 
-	private class LongConnResponseTrigger implements ILongConnResponseTrigger {
+	private class PersistConnResponseTrigger implements IPersistConnResponseTrigger {
 
 		@Override
 		public void response(DSession session, MessageContent data) {
-			ILongConnResponse response = ResponseMapping.instance.getResponse(data.getProtocolId());
+			IPersistConnResponse response = ResponseMapping.instance.getResponse(data.getProtocolId());
 			if (response == null) {
 				session.close(CloseCause.LOGOUT);
 				robot.brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");

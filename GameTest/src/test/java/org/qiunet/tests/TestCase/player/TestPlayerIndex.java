@@ -1,6 +1,6 @@
 package org.qiunet.tests.TestCase.player;
 
-import org.qiunet.tests.TestCase.base.BaseOnlineTestCase;
+import org.qiunet.tests.TestCase.base.PersistOnlineTestCase;
 import org.qiunet.tests.proto.PlayerIndexRequest;
 import org.qiunet.tests.robot.Robot;
 
@@ -8,7 +8,7 @@ import org.qiunet.tests.robot.Robot;
  * Created by qiunet.
  * 17/12/9
  */
-public class TestPlayerIndex extends BaseOnlineTestCase<PlayerIndexRequest> {
+public class TestPlayerIndex extends PersistOnlineTestCase<PlayerIndexRequest> {
 	@Override
 	protected PlayerIndexRequest requestBuild(Robot robot) {
 		return new PlayerIndexRequest();

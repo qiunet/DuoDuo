@@ -10,7 +10,7 @@ import java.lang.reflect.ParameterizedType;
  * Created by qiunet.
  * 17/12/8
  */
-public abstract class ProtobufResponse<ResponseData, Robot extends IRobot> implements ILongConnResponse<ResponseData, Robot> {
+public abstract class ProtobufResponse<ResponseData, Robot extends IRobot> implements IPersistConnResponse<ResponseData, Robot> {
 	private Class<ResponseData> responseDataClass;
 	public ProtobufResponse(){
 		Class clazz = getClass();

@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
  * Created by qiunet.
  * 17/12/8
  */
-public interface ILongConnClient {
+public interface IPersistConnClient {
 	/***
 	 * 发送消息
 	 * @param content

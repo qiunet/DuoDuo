@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
@@ -19,7 +19,7 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  * @author qiunet
  * 2020-10-23 17:44
  */
-public class TcpNodeClientTrigger implements ILongConnResponseTrigger {
+public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(DSession session, MessageContent data) {
 		IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);

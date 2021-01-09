@@ -9,7 +9,7 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.trigger.ILongConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -21,14 +21,14 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
  */
 public class NettyTcpClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
-	private ILongConnResponseTrigger trigger;
+	private IPersistConnResponseTrigger trigger;
 	private TcpClientParams params;
 	private Bootstrap bootstrap;
 	/**
 	 *
 	 * @param params
 	 */
-	private NettyTcpClient(TcpClientParams params, ILongConnResponseTrigger trigger) {
+	private NettyTcpClient(TcpClientParams params, IPersistConnResponseTrigger trigger) {
 		this.bootstrap = new Bootstrap();
 
 		this.bootstrap.option(ChannelOption.TCP_NODELAY,true);
@@ -44,7 +44,7 @@ public class NettyTcpClient {
 	 * @param params
 	 * @return
 	 */
-	public static NettyTcpClient create(TcpClientParams params, ILongConnResponseTrigger trigger) {
+	public static NettyTcpClient create(TcpClientParams params, IPersistConnResponseTrigger trigger) {
 		return new NettyTcpClient(params, trigger);
 	}
 

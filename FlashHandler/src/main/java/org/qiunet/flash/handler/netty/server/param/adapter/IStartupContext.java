@@ -15,7 +15,7 @@ import org.qiunet.utils.async.LazyLoader;
  * @author qiunet
  * 2020/3/8 09:31
  **/
-public interface IStartupContext<T extends IMessageActor<T>> {
+public interface IStartupContext<T extends IMessageActor> {
 	LazyLoader<DefaultProtobufMessage> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
 	LazyLoader<DefaultProtobufMessage> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
 	LazyLoader<DefaultProtobufMessage> SERVER_CLOSE_MESSAGE = new LazyLoader<>(() -> new ServerCloseResponse().buildResponseMessage());

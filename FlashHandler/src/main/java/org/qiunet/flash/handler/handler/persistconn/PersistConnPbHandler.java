@@ -1,8 +1,7 @@
-package org.qiunet.flash.handler.handler.websocket;
+package org.qiunet.flash.handler.handler.persistconn;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.google.protobuf.CodedInputStream;
-import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -15,15 +14,19 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
+ * 长连接 protobuf handler 基类
+ *
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class WebSocketProtobufHandler<P extends IMessageActor, RequestData extends IpbRequestData> extends BaseHandler<RequestData> implements IWebSocketHandler<P, RequestData> {
+public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData extends IpbRequestData>
+		extends BaseHandler<RequestData>
+		implements IPersistConnHandler<P, RequestData> {
 	private LazyLoader<Codec<RequestData>> codec = new LazyLoader<>(() -> ProtobufDataManager.getCodec(getRequestClass()));
 
 	@Override
 	public HandlerType getHandlerType() {
-		return HandlerType.WEB_SOCKET;
+		return HandlerType.PERSIST_CONN;
 	}
 
 	@Override

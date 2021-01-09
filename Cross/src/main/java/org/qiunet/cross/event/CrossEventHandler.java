@@ -5,8 +5,8 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
-import org.qiunet.flash.handler.context.request.tcp.ITcpRequest;
-import org.qiunet.flash.handler.handler.tcp.TcpProtobufHandler;
+import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
+import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.listener.event.EventManager;
 import org.qiunet.listener.event.IEventData;
 
@@ -17,10 +17,10 @@ import org.qiunet.listener.event.IEventData;
  * 2020-10-15 16:56
  */
 @RequestHandler(ID = IProtocolId.System.CROSS_EVENT, desc = "跨服事件处理")
-public class CrossEventHandler extends TcpProtobufHandler<AbstractMessageActor, CrossEventRequest> {
+public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor, CrossEventRequest> {
 
 	@Override
-	public void handler(AbstractMessageActor actor, ITcpRequest<CrossEventRequest> context) throws Exception {
+	public void handler(AbstractMessageActor actor, IPersistConnRequest<CrossEventRequest> context) throws Exception {
 		CrossEventRequest requestData = context.getRequestData();
 		IEventData obj = requestData.getData();
 		if (obj instanceof BaseUserEventData) {
