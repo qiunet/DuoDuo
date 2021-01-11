@@ -20,7 +20,7 @@ public class FighterAttrFormulaParam<Type extends Enum<Type> & IAttrEnum<Type>> 
 	 */
 	IFighter<Type> target;
 
-	private FighterAttrFormulaParam(IFighter<Type> self, IFighter<Type> target, double... values) {
+	public FighterAttrFormulaParam(IFighter<Type> self, IFighter<Type> target, double... values) {
 		super(values);
 		this.self = self;
 		this.target = target;
