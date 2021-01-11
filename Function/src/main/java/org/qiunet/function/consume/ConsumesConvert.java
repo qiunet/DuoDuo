@@ -3,7 +3,9 @@ package org.qiunet.function.consume;
 import com.alibaba.fastjson.TypeReference;
 import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.string.StringUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 /***
@@ -17,7 +19,12 @@ public class ConsumesConvert extends BaseObjConvert<Consumes> {
 
 	@Override
 	protected Consumes fromString0(String str) {
-		List<ConsumeConfig> configList = JsonUtil.getGeneralObjWithField(str, TYPE);
+		List<ConsumeConfig> configList;
+		if (StringUtil.isEmpty(str)) {
+			configList = Collections.emptyList();
+		}else {
+			configList = JsonUtil.getGeneralObjWithField(str, TYPE);
+		}
 		return ConsumesManager.instance.createConsumes(configList);
 	}
 

@@ -3,7 +3,9 @@ package org.qiunet.function.condition;
 import com.alibaba.fastjson.TypeReference;
 import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.string.StringUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 /***
@@ -17,7 +19,13 @@ public class ConditionConvert extends BaseObjConvert<Conditions> {
 
 	@Override
 	protected Conditions fromString0(String str) {
-		List<ConditionConfig> configList = JsonUtil.getGeneralObjWithField(str, TYPE);
+		List<ConditionConfig> configList;
+		if (StringUtil.isEmpty(str)) {
+			configList = Collections.emptyList();
+		}else {
+			configList = JsonUtil.getGeneralObjWithField(str, TYPE);
+		}
+
 		return ConditionManager.createCondition(configList);
 	}
 
