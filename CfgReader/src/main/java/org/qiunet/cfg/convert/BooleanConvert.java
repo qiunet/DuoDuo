@@ -8,7 +8,7 @@ package org.qiunet.cfg.convert;
 public class BooleanConvert extends BaseObjConvert<Boolean> {
 	@Override
 	protected Boolean fromString0(String str) {
-		return "true".equals(str) || "1".equals(str);
+		return "1".equals(str) || Boolean.parseBoolean(str);
 	}
 
 	@Override
