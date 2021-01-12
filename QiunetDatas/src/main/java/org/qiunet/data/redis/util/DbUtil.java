@@ -65,9 +65,9 @@ public final class DbUtil {
 	 */
 	public static long buildId(int incrId) {
 		int serverId = ServerConfig.getServerId();
-		int length = (int) (Math.log10(serverId));
-		int pow = POW10_NUMS[length + 1];
-		return incrId * pow + serverId * 10 + length;
+		int length = (int) Math.log10(serverId);
+		long pow = POW10_NUMS[length + 1];
+		return incrId * pow + serverId * 10L + length;
 	}
 
 	/***
