@@ -2,7 +2,9 @@ package org.qiunet.cfg.wrapper;
 
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.utils.logger.LoggerType;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +28,10 @@ public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
 	 * @return
 	 */
 	default List<Cfg> getCfgsById(ID id){
+		if (! contains(id)) {
+			LoggerType.DUODUO_CFG_READER.info("ID [{}] is missing!", id);
+			return Collections.emptyList();
+		}
 		return allCfgs().get(id);
 	}
 
@@ -37,6 +43,7 @@ public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
 	 */
 	default Cfg getCfgsById(ID id, int index){
 		if (! contains(id, index)) {
+			LoggerType.DUODUO_CFG_READER.info("ID [{}] index [{}] is missing!", id, index);
 			return null;
 		}
 		return allCfgs().get(id).get(index);

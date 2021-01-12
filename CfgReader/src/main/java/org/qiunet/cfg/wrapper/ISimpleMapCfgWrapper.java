@@ -2,6 +2,8 @@ package org.qiunet.cfg.wrapper;
 
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,10 @@ public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg> extends ICf
 	 * @return
 	 */
 	default Cfg getCfgById(ID id){
+		if (! contains(id)) {
+			LoggerType.DUODUO_CFG_READER.info("ID [{}] is missing!", id);
+			return null;
+		}
 		return allCfgs().get(id);
 	}
 
