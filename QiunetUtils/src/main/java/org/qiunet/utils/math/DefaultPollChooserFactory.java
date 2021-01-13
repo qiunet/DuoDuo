@@ -11,8 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/29
  */
 public class DefaultPollChooserFactory implements PollChooserFactory {
-	public static final DefaultPollChooserFactory DEFAULT = new DefaultPollChooserFactory();
-	private DefaultPollChooserFactory(){}
+	DefaultPollChooserFactory(){}
 	@Override
 	public <Element> PollChooser<Element> newChooser(List<Element> executors) {
 		ArrayList<Element> list = null;

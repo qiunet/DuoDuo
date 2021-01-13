@@ -2,7 +2,6 @@ package org.qiunet.utils.math;
 
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +9,10 @@ import java.util.List;
  * 17/11/29
  */
 public interface PollChooserFactory {
-
+	/**
+	 * default pool chooser factory
+	 */
+	DefaultPollChooserFactory DEFAULT = new DefaultPollChooserFactory();
 	/**
 	 * Returns a new {@link PollChooser}.
 	 */

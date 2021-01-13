@@ -11,7 +11,7 @@ public class TestPollChooser {
 	@Test
 	public void testPollChooser(){
 		Integer [] nums1 = new Integer[]{0, 1, 2, 3};
-		PollChooserFactory.PollChooser<Integer> chooser = DefaultPollChooserFactory.DEFAULT.newChooser(nums1);
+		PollChooserFactory.PollChooser<Integer> chooser = PollChooserFactory.DEFAULT.newChooser(nums1);
 		Assert.assertTrue(0 == chooser.next());
 		Assert.assertTrue(1 == chooser.next());
 		Assert.assertTrue(2 == chooser.next());
