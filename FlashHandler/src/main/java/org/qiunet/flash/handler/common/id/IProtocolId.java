@@ -29,6 +29,8 @@ public interface IProtocolId {
 		int PLAYER_2_CROSS_TRANSMIT_REQ = 2;
 		/**服务没有开启*/
 		int SERVER_NOT_OPEN_RESP = 3;
+		/** 错误消息提示 */
+		int ERROR_MESSAGE_TIPS_RESP = 4;
 
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;

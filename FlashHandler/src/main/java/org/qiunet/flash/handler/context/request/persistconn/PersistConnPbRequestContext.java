@@ -6,8 +6,10 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 
 /**
@@ -23,11 +25,16 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor>
 
 	@Override
 	public void execute(P p) {
-		this.handlerRequest();
+		try {
+			this.handlerRequest();
+		}catch (Exception e) {
+			DefaultProtobufMessage protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);
+			channel.writeAndFlush(protobufMessage.encode());
+		}
 	}
 
 	@Override
-	public void handlerRequest() {
+	public void handlerRequest() throws Exception{
 		if (handler.needAuth() && ! messageActor.isAuth()) {
 			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
@@ -38,10 +45,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor>
 			logger.info("[{}] <<< {}", messageActor.getIdent(), ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
 		}
 
-		try {
-			((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
-		} catch (Exception e) {
-			logger.error("WebSocketProtobufRequestContext Exception", e);
-		}
+
+		((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
 	}
 }

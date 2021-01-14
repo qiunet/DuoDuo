@@ -46,6 +46,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(iSession));
 			ctx.channel().attr(ServerConstants.HTTP_WS_HEADER_KEY).set(headers);
+			ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
 			ChannelUtil.bindSession(iSession);
 		}
 		super.userEventTriggered(ctx, evt);

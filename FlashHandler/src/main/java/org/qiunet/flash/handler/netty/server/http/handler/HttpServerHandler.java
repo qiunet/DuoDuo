@@ -49,7 +49,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("HttpServerHandler throw Exception : ", cause);
-		sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+		sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 		ctx.close();
 	}
 	@Override
@@ -61,11 +61,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		FullHttpRequest request = (msg);
 		if (! request.decoderResult().isSuccess()) {
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
 		}
 		if (request.uri().equals("/favicon.ico")) {
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
 		try {
@@ -82,7 +82,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
 			}
 		}catch (Exception e) {
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
 			logger.error("HttpServerHandler Parse request error: ", e);
 		}
@@ -121,7 +121,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message magic! client is "+ header);
 			// encryption 不对, 不被认证的请求
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}
 
@@ -129,19 +129,24 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		MessageContent content = new MessageContent(header.getProtocolId(), byteBuf);
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			content.release();
 			return;
 		}
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			content.release();
 			return;
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		context.handlerRequest();
+		try {
+			context.handlerRequest();
+		} catch (Exception e) {
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Http Exception:", e);
+		}
 	}
 	/***
 	 * 处理其它请求
@@ -153,13 +158,18 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
-			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			content.release();
 			return;
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		context.handlerRequest();
+		try {
+			context.handlerRequest();
+		} catch (Exception e) {
+			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+			logger.error("Http Exception:", e);
+		}
 	}
 
 	/***
@@ -167,7 +177,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @param ctx
 	 * @param status 对应的响应码
 	 */
-	private static void sendHttpResonseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
+	private static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
 		logger.error("Http message response status ["+status+"]");
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);

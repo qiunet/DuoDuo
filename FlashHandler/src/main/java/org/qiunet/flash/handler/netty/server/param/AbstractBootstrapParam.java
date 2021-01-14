@@ -35,7 +35,7 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected int maxReceivedLength = 1024 * 1024;
 
-	protected IStartupContext<? extends IMessageActor> startupContext;
+	protected IStartupContext<? extends IMessageActor<?>> startupContext;
 
 	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
 		return protocolHeaderAdapter;
@@ -57,7 +57,7 @@ public abstract class AbstractBootstrapParam {
 		return readIdleCheckSeconds;
 	}
 
-	public IStartupContext<? extends IMessageActor> getStartupContext() {
+	public IStartupContext<? extends IMessageActor<?>> getStartupContext() {
 		return startupContext;
 	}
 
@@ -75,7 +75,7 @@ public abstract class AbstractBootstrapParam {
 			return (B) this;
 		}
 
-		public B setStartupContext(IStartupContext<? extends IMessageActor> startupContext) {
+		public B setStartupContext(IStartupContext<? extends IMessageActor<?>> startupContext) {
 			AbstractBootstrapParam.this.startupContext = startupContext;
 			return (B) this;
 		}

@@ -31,7 +31,7 @@ public  class HttpPbRequestContext<RequestData extends IpbRequestData, ResponseD
 	}
 
 	@Override
-	public void handlerRequest() {
+	public void handlerRequest() throws Exception {
 		FacadeHttpRequest<RequestData, GeneratedMessageV3> request = new FacadeHttpRequest<>(this);
 		ResponseData data = null;
 		try {
