@@ -40,6 +40,7 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 		for (Class<?> clazz : classes) {
 			if (clazz.isInterface()
 				|| clazz.isEnum()
+				|| Modifier.isInterface(clazz.getModifiers())
 				|| Modifier.isAbstract(clazz.getModifiers())
 				|| ! Modifier.isPublic(clazz.getModifiers())
 			) {

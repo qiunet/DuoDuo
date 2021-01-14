@@ -31,10 +31,12 @@ public class MessageTipsResponse implements IpbResponseData {
 	@Protobuf(description = "占位符(占位符号客户端自己定义)参数")
 	private List<String> params;
 
-	private static final Map<IGameStatus, MessageTipsResponse> cached = Maps.newConcurrentMap();
+	private static final Map<Integer, MessageTipsResponse> cached = Maps.newConcurrentMap();
 
-	private MessageTipsResponse(IGameStatus status, Object... params) {
-		this.status = status.getStatus();
+	public MessageTipsResponse(){}
+
+	private MessageTipsResponse(int status, Object... params) {
+		this.status = status;
 		if (params != null && params.length > 0) {
 			this.params = Arrays.stream(params).map(String::valueOf).collect(Collectors.toList());
 		}
@@ -42,9 +44,9 @@ public class MessageTipsResponse implements IpbResponseData {
 
 	public static MessageTipsResponse valueOf(IGameStatus status, Object... params) {
 		if (params == null || params.length == 0) {
-			return cached.computeIfAbsent(status, MessageTipsResponse::new);
+			return cached.computeIfAbsent(status.getStatus(), MessageTipsResponse::new);
 		}
-		return new MessageTipsResponse(status, params);
+		return new MessageTipsResponse(status.getStatus(), params);
 	}
 
 	public static MessageTipsResponse valueOf(StatusResultException ex) {
