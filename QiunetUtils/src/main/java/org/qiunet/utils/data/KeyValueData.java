@@ -1,20 +1,18 @@
 package org.qiunet.utils.data;
 
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * 实现的一个Properties map 的封装类
+ *
  * @author qiunet
- *         Created on 16/12/21 07:52.
+ * Created on 16/12/21 07:52.
  */
-public class KeyValueData<K , V> implements IKeyValueData<K , V> {
+public class KeyValueData<K, V> implements IKeyValueData<K, V> {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	private Map<K, V> map = new HashMap<>();
 
@@ -28,21 +26,14 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 	public KeyValueData(Map<K, V> map) {
 		this.load(map);
 	}
+
 	/***
 	 * 热加载, 重新替换map
 	 * @param map
 	 */
-	protected void load(Map<K, V> map){
+	protected void load(Map<K, V> map) {
 		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
 		this.map = map;
-	}
-	/**
-	 * 提出合并
-	 * @param map
-	 */
-	protected void merge(Map<K, V> map){
-		if (map == null) throw new NullPointerException("Map can not be null for KeyValueData");
-		this.map.putAll(map);
 	}
 
 	@Override
@@ -62,19 +53,20 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public String getString(K key, String defaultVal) {
-		String rt=defaultVal;
+		String rt = defaultVal;
 		V v = getValue(key);
-		if(v != null){
-			rt=v.toString().trim();
+		if (v != null) {
+			rt = v.toString().trim();
 		}
 		return rt;
 	}
+
 	@Override
 	public String getString(K key) {
 		V v = getValue(key);
 		if (v == null) {
 			// 这里需要打印缺少的key.
-			logger.error("=================Key ["+key+"] is not in map.=============== ");
+			logger.error("=================Key [" + key + "] is not in map.=============== ");
 			return null;
 		}
 		return v.toString();
@@ -102,7 +94,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public byte getByte(K key, int defaultVal) {
-		return Byte.parseByte(getString(key , String.valueOf(defaultVal)));
+		return Byte.parseByte(getString(key, String.valueOf(defaultVal)));
 	}
 
 	@Override
@@ -112,7 +104,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public float getFloat(K key, float defaultVal) {
-		return Float.parseFloat(getString(key , String.valueOf(defaultVal)));
+		return Float.parseFloat(getString(key, String.valueOf(defaultVal)));
 	}
 
 	@Override
@@ -122,7 +114,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public long getLong(K key, long defaultVal) {
-		return Long.parseLong(getString(key , String.valueOf(defaultVal)));
+		return Long.parseLong(getString(key, String.valueOf(defaultVal)));
 	}
 
 	@Override
@@ -132,7 +124,7 @@ public class KeyValueData<K , V> implements IKeyValueData<K , V> {
 
 	@Override
 	public double getDouble(K key, double defaultVal) {
-		return Double.parseDouble(getString(key , String.valueOf(defaultVal)));
+		return Double.parseDouble(getString(key, String.valueOf(defaultVal)));
 	}
 
 	@Override

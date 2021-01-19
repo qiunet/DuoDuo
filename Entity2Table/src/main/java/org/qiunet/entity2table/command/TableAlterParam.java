@@ -7,7 +7,7 @@ package org.qiunet.entity2table.command;
  * 2019-08-22 11:09
  ***/
 public class TableAlterParam {
-
+	private String dbSourceName;
 	private String tableName;
 
 	private FieldParam field;
@@ -15,7 +15,9 @@ public class TableAlterParam {
 	private String dbName;
 
 	private boolean splitTable;
-	public TableAlterParam(String tableName, FieldParam field, boolean splitTable) {
+
+	public TableAlterParam(String dbSourceName, String tableName, FieldParam field, boolean splitTable) {
+		this.dbSourceName = dbSourceName;
 		this.splitTable = splitTable;
 		this.tableName = tableName;
 		this.field = field;
@@ -47,5 +49,9 @@ public class TableAlterParam {
 
 	public boolean isSplitTable() {
 		return splitTable;
+	}
+
+	public String getDbSourceName() {
+		return dbSourceName;
 	}
 }

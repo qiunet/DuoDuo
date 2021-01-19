@@ -1,9 +1,11 @@
 package org.qiunet.data.db;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.data.support.DbDataListSupport;
 import org.qiunet.data.support.DbDataSupport;
+import org.qiunet.utils.classScanner.ClassScanner;
 
 import java.util.Map;
 
@@ -14,6 +16,10 @@ public class TestDbDataSupport {
 	private static DbDataListSupport<Long, Integer, ItemDo, ItemBo> dataListSupport = new DbDataListSupport<>(ItemDo.class, ItemBo::new);
 	private long uid = 10000;
 
+	@BeforeClass
+	public static void init(){
+		ClassScanner.getInstance().scanner();
+	}
 	@Test
 	public void testEntity() {
 		String name = "秋阳";

@@ -39,4 +39,10 @@ public @interface Table {
 	 * @return
 	 */
 	String comment() default "NULL";
+	/**
+	 * 适用哪个数据源名.
+	 * 如果 serverType == 0. 取默认数据源
+	 * @return
+	 */
+	String dbSource() default "";
 }

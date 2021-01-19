@@ -12,6 +12,7 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.redis.constants.RedisDbConstants;
 import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -27,7 +28,8 @@ import java.sql.SQLException;
 import java.util.*;
 
 class DbLoader {
-	private DbProperties dbProperties = DbProperties.getInstance();
+	private final ServerConfig serverConfig = ServerConfig.instance;
+//	private DbProperties dbProperties = DbProperties.getInstance();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/**mybatis 的配置文件名称**/
@@ -81,7 +83,7 @@ class DbLoader {
 	 * @param key 想取的对应的key
 	 */
 	private String getConfigKey(String datasourceName, String key) {
-		return "database."+datasourceName+"."+key;
+		return "db."+datasourceName+"."+key;
 	}
 	private volatile static DbLoader instance;
 
@@ -89,8 +91,9 @@ class DbLoader {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 
 		try {
-			if (dbProperties.containKey(MYBATIS_CONFIG_FILENAME)) {
-				mybatisConfigFileName = dbProperties.getString(MYBATIS_CONFIG_FILENAME);
+			if (serverConfig.containKey(MYBATIS_CONFIG_FILENAME)) {
+//				mybatisConfigFileName = dbProperties.getString(MYBATIS_CONFIG_FILENAME);
+				mybatisConfigFileName = serverConfig.getString(MYBATIS_CONFIG_FILENAME);
 			}
 			this.loaderDataSource();
 
@@ -129,18 +132,18 @@ class DbLoader {
 	 */
 	private void loaderDataSource() throws Exception {
 		Set<String> sets = new HashSet<>();
-		for (Object key : dbProperties.returnMap().keySet()) {
+		for (Object key : serverConfig.returnMap().keySet()) {
 			if (!key.toString().endsWith("driverClassName")) continue;
-			String name = StringUtil.split(key.toString(), ".")[1];
-			if (sets.contains(name)) continue;
+			String dbSourceName = StringUtil.split(key.toString(), ".")[1];
+			if (sets.contains(dbSourceName)) continue;
 
-			SqlSessionFactory factory = buildSqlSessionFactory(name);
-			this.dataSources.put(name, factory);
-			sets.add(name);
+			SqlSessionFactory factory = buildSqlSessionFactory(dbSourceName);
+			this.dataSources.put(dbSourceName, factory);
+			sets.add(dbSourceName);
 		}
 
-		if (dbProperties.containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / dbProperties.getInt(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
+		if (serverConfig.containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / serverConfig.getInt(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
 			for (int i = 0; i < dbSourceCount; i++) {
 				if (! this.dataSources.containsKey(String.valueOf(i))){
 					throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
@@ -161,12 +164,12 @@ class DbLoader {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(prefix, setting.name);
 			if(val.getClass() == int.class || val.getClass() == Integer.class) {
-				val = dbProperties.getInt(dbKey, (Integer) val);
+				val = serverConfig.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
-				boolean contain = dbProperties.containKey(dbKey);
-				if (contain) val = dbProperties.getBoolean(dbKey);
+				boolean contain = serverConfig.containKey(dbKey);
+				if (contain) val = serverConfig.getBoolean(dbKey);
 			}else if(val.getClass() == String.class){
-				val = dbProperties.getString(dbKey, (String) val);
+				val = serverConfig.getString(dbKey, (String) val);
 			}
 
 			Method method = BasicDataSource.class.getDeclaredMethod(setting.methodName, setting.clazz);
@@ -228,12 +231,12 @@ class DbLoader {
 	 * @return
 	 */
 	private SqlSessionFactory getDefaultSqlSessionFactory(){
-		if (! dbProperties.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
+		if (! serverConfig.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
 			throw new NullPointerException("default config size must be 1!");
 		}
 		if (defaultSqlSessionFactory == null) {
-			if (dbProperties.containKey(DEFAULT_DATABASE_SOURCE)) {
-				this.defaultSqlSessionFactory = dataSources.get(dbProperties.getString(DEFAULT_DATABASE_SOURCE));
+			if (serverConfig.containKey(DEFAULT_DATABASE_SOURCE)) {
+				this.defaultSqlSessionFactory = dataSources.get(serverConfig.getString(DEFAULT_DATABASE_SOURCE));
 			}else {
 				this.defaultSqlSessionFactory = new ArrayList<>(dataSources.values()).get(0);
 			}

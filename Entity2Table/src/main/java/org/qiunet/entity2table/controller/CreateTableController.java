@@ -1,8 +1,10 @@
 package org.qiunet.entity2table.controller;
 
+import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableAlterParam;
@@ -38,10 +40,11 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param entityFieldList 用于存entity的字段
 	 * @param clazz           entity
 	 */
-	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<?> clazz) {
+	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<? extends IEntity> clazz) {
+		String dbSourceName = DbUtil.getDbSource(clazz);
 		Table table = clazz.getAnnotation(Table.class);
 		// 已存在时理论上做修改的操作，这里查出该表的结构
-		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name());
+		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(dbSourceName, table.name());
 
 		// 从sysColumns中取出我们需要比较的列的List
 		// 先取出name用来筛选出增加和删除的字段
@@ -63,7 +66,8 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param tableColumnList 已存在时理论上做修改的操作，这里查出该表的结构
 	 * @param entityFieldMap  entity的列 map
 	 */
-	private void handlerModifyFields(Class<?> clazz, List<Columns> tableColumnList, Map<String, FieldParam> entityFieldMap) {
+	private void handlerModifyFields(Class<? extends IEntity> clazz, List<Columns> tableColumnList, Map<String, FieldParam> entityFieldMap) {
+		String dbSourceName = DbUtil.getDbSource(clazz);
 		Table table = clazz.getAnnotation(Table.class);
 
 		List<FieldParam> modifyFieldList = new ArrayList<>();
@@ -117,7 +121,7 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 
-		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(table.name(), f, table.splitTable())));
+		modifyFieldList.forEach(f -> this.modifyTableField(new TableAlterParam(dbSourceName, table.name(), f, table.splitTable())));
 	}
 
 	/**
@@ -127,14 +131,15 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param entityFieldList  entity中的结构
 	 * @param tableColumnNames 数据库中的结构
 	 */
-	private void handlerAddFields(Class<?> clazz, List<FieldParam> entityFieldList, Set<String> tableColumnNames) {
+	private void handlerAddFields(Class<? extends IEntity> clazz, List<FieldParam> entityFieldList, Set<String> tableColumnNames) {
+		String dbSourceName = DbUtil.getDbSource(clazz);
 		Table table = clazz.getAnnotation(Table.class);
 
 		List<FieldParam> addFieldList = entityFieldList.stream()
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
 				.collect(Collectors.toList());
 
-		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(table.name(), fieldParam, table.splitTable())));
+		addFieldList.forEach(fieldParam -> this.addTableFields(new TableAlterParam(dbSourceName, table.name(), fieldParam, table.splitTable())));
 	}
 
 	/**
@@ -209,7 +214,7 @@ class CreateTableController implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context) {
-		context.getTypesAnnotatedWith(Table.class).forEach(this::handlerTable);
+		context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
 	}
 
 	/***
@@ -217,10 +222,11 @@ class CreateTableController implements IApplicationContextAware {
 	 * 判断是否新建表,  有字段改动等
 	 * @param clazz
 	 */
-	private void handlerTable(Class<?> clazz) {
+	private void handlerTable(Class<? extends IEntity> clazz) {
 		try {
+			String dbSourceName = DbUtil.getDbSource(clazz);
 			Table table = clazz.getAnnotation(Table.class);
-			if(table == null){
+			if (table == null) {
 				logger.info("===========扫描到:" + clazz + "\t table is null");
 				return;
 			}
@@ -228,10 +234,10 @@ class CreateTableController implements IApplicationContextAware {
 			// 迭代出当前clazz所有fields存到newFieldList中
 			List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 
-			int tableExist = createTableService.findTableCountByTableName(table.name());
+			int tableExist = createTableService.findTableCountByTableName(dbSourceName, table.name());
 			// 不存在时
 			if (tableExist == 0) {
-				TableCreateParam tableParam = new TableCreateParam(table.name(), table.comment(), entityFieldList, table.splitTable());
+				TableCreateParam tableParam = new TableCreateParam(dbSourceName, table, entityFieldList);
 				createTable(tableParam);
 			} else {
 				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
