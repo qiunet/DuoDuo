@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.data.async.SyncType;
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigInstance;
@@ -34,6 +35,11 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	@DConfigValue("server.type")
 	private static ServerType serverType;
+
+	@DConfigValue("server.sync_type")
+	private static SyncType syncType;
+
+
 	/**
 	 * hook 的端口
 	 */
@@ -68,6 +74,9 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
 	 */
+	@DConfigValue("db.db_size_per_instance")
+	private static int dbSizePerInstance;
+
 	@DConfigValue("db.entity_to_table_range")
 	private static StringSet entity2TableSourceRange;
 
@@ -76,6 +85,9 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	@DConfigValue("db.db_source_pre")
 	private static String moreDbSourcePre;
+
+	@DConfigValue("db.db_name_prefix")
+	private static String dbNamePrefix;
 
 	public static int getServerId() {
 		return serverId;
@@ -126,6 +138,18 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static String getMoreDbSourcePre() {
 		return moreDbSourcePre;
+	}
+
+	public static int getDbSizePerInstance() {
+		return dbSizePerInstance;
+	}
+
+	public static String getDbNamePrefix() {
+		return dbNamePrefix;
+	}
+
+	public static SyncType getSyncType() {
+		return syncType;
 	}
 
 	public static DHocon getConfig() {

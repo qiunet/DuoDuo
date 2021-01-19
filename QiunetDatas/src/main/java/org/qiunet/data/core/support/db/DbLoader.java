@@ -11,7 +11,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.redis.constants.RedisDbConstants;
-import org.qiunet.data.util.DbProperties;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.hook.ShutdownHookThread;
 import org.qiunet.utils.logger.LoggerType;
@@ -29,10 +28,11 @@ import java.util.*;
 
 class DbLoader {
 	private final ServerConfig serverConfig = ServerConfig.instance;
-//	private DbProperties dbProperties = DbProperties.getInstance();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
-	/**mybatis 的配置文件名称**/
+	/**
+	 * mybatis 的配置文件名称
+	 **/
 	private static final String DEFAULT_MYBATIS_FILENAME = "mybatis/mybatis-config.xml";
 	// DbSourceType 对应的 dataSource
 	private Map<String, SqlSessionFactory> dataSources = new HashMap<>();
@@ -45,11 +45,13 @@ class DbLoader {
 	/***
 	 * Db模式和Cache单数据库模式下, 默认的数据库源. 如果没有. 会取第一个(认为配置里也就一个).
 	 */
-	private static final String DEFAULT_DATABASE_SOURCE = "default_database_source";
+	private static final String DEFAULT_DATABASE_SOURCE = "db.default_source";
 
 	private String mybatisConfigFileName = DEFAULT_MYBATIS_FILENAME;
 
-	/**需要设定的连接池属性. 以及默认值**/
+	/**
+	 * 需要设定的连接池属性. 以及默认值
+	 **/
 	private static final List<DatasourceAttr> datasourceSettings = new ArrayList<DatasourceAttr>() {
 		{
 			add(new DatasourceAttr("url", "", String.class));
@@ -74,6 +76,7 @@ class DbLoader {
 			add(new DatasourceAttr("removeAbandonedOnMaintenance", true, boolean.class));
 		}
 	};
+
 	/***
 	 *
 	 * 拼成这样的串.
@@ -83,8 +86,9 @@ class DbLoader {
 	 * @param key 想取的对应的key
 	 */
 	private String getConfigKey(String datasourceName, String key) {
-		return "db."+datasourceName+"."+key;
+		return "db." + datasourceName + "." + key;
 	}
+
 	private volatile static DbLoader instance;
 
 	private DbLoader() {
@@ -92,14 +96,13 @@ class DbLoader {
 
 		try {
 			if (serverConfig.containKey(MYBATIS_CONFIG_FILENAME)) {
-//				mybatisConfigFileName = dbProperties.getString(MYBATIS_CONFIG_FILENAME);
 				mybatisConfigFileName = serverConfig.getString(MYBATIS_CONFIG_FILENAME);
 			}
 			this.loaderDataSource();
 
-			ShutdownHookThread.getInstance().addShutdownHook( () -> {
+			ShutdownHookThread.getInstance().addShutdownHook(() -> {
 				AbandonedConnectionCleanupThread.checkedShutdown();
-				while (DriverManager.getDrivers().hasMoreElements()){
+				while (DriverManager.getDrivers().hasMoreElements()) {
 					Driver driver = DriverManager.getDrivers().nextElement();
 					try {
 						DriverManager.deregisterDriver(driver);
@@ -117,8 +120,7 @@ class DbLoader {
 	static DbLoader getInstance() {
 		if (instance == null) {
 			synchronized (DbLoader.class) {
-				if (instance == null)
-				{
+				if (instance == null) {
 					new DbLoader();
 				}
 			}
@@ -142,17 +144,19 @@ class DbLoader {
 			sets.add(dbSourceName);
 		}
 
-		if (serverConfig.containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
-			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / serverConfig.getInt(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY);
+		if (RedisDbConstants.DB_SIZE_PER_INSTANCE > 1) {
+			int dbSourceCount = RedisDbConstants.MAX_DB_COUNT / RedisDbConstants.DB_SIZE_PER_INSTANCE;
 			for (int i = 0; i < dbSourceCount; i++) {
-				if (! this.dataSources.containsKey(String.valueOf(i))){
-					throw new NullPointerException("DbSourceKey [database."+i+".*] config is not exist in db.properties");
+				if (!this.dataSources.containsKey(ServerConfig.instance.getMoreDbSourcePre() + i)) {
+					throw new NullPointerException("DbSourceKey [" + ServerConfig.instance.getMoreDbSourcePre() + i + ".*] config is not exist in db.properties");
 				}
 			}
 		}
 	}
+
 	/**
 	 * 根据name 构建SqlSessionFactory
+	 *
 	 * @param prefix
 	 * @return
 	 * @throws Exception
@@ -163,12 +167,12 @@ class DbLoader {
 		for (DatasourceAttr setting : datasourceSettings) {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(prefix, setting.name);
-			if(val.getClass() == int.class || val.getClass() == Integer.class) {
+			if (val.getClass() == int.class || val.getClass() == Integer.class) {
 				val = serverConfig.getInt(dbKey, (Integer) val);
-			}else if (val == boolean.class || val.getClass() == Boolean.class) {
+			} else if (val == boolean.class || val.getClass() == Boolean.class) {
 				boolean contain = serverConfig.containKey(dbKey);
 				if (contain) val = serverConfig.getBoolean(dbKey);
-			}else if(val.getClass() == String.class){
+			} else if (val.getClass() == String.class) {
 				val = serverConfig.getString(dbKey, (String) val);
 			}
 
@@ -198,7 +202,7 @@ class DbLoader {
 
 			xmlConfigBuilder.parse();
 			if (logger.isInfoEnabled()) {
-				logger.info("Parsed name["+prefix+"] configuration file: '" + this.mybatisConfigFileName + "'");
+				logger.info("Parsed name[" + prefix + "] configuration file: '" + this.mybatisConfigFileName + "'");
 			}
 			configuration.setEnvironment(environment);
 		} catch (Exception e) {
@@ -215,12 +219,13 @@ class DbLoader {
 		private Object defaultVal;
 		private Class<?> clazz;
 		private String methodName;
-		DatasourceAttr (String name , Object defaultVal, Class<?> clazz) {
+
+		DatasourceAttr(String name, Object defaultVal, Class<?> clazz) {
 			this.name = name;
 			this.clazz = clazz;
 			this.defaultVal = defaultVal;
 
-			char [] chars = ("set"+name).toCharArray();
+			char[] chars = ("set" + name).toCharArray();
 			chars[3] -= 32;
 			this.methodName = new String(chars);
 		}
@@ -230,35 +235,38 @@ class DbLoader {
 	 * 得到默认的sqlFactory
 	 * @return
 	 */
-	private SqlSessionFactory getDefaultSqlSessionFactory(){
-		if (! serverConfig.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
+	private SqlSessionFactory getDefaultSqlSessionFactory() {
+		if (!serverConfig.containKey(DEFAULT_DATABASE_SOURCE) && this.dataSources.size() != 1) {
 			throw new NullPointerException("default config size must be 1!");
 		}
 		if (defaultSqlSessionFactory == null) {
 			if (serverConfig.containKey(DEFAULT_DATABASE_SOURCE)) {
 				this.defaultSqlSessionFactory = dataSources.get(serverConfig.getString(DEFAULT_DATABASE_SOURCE));
-			}else {
+			} else {
 				this.defaultSqlSessionFactory = new ArrayList<>(dataSources.values()).get(0);
 			}
 		}
 		return defaultSqlSessionFactory;
 	}
+
 	private SqlSessionFactory defaultSqlSessionFactory;
+
 	/***
 	 * 获得一个默认sqlSession
 	 * @return
 	 */
-	SqlSession getDefaultSqlSession(){
+	SqlSession getDefaultSqlSession() {
 		SqlSessionFactory factory = getDefaultSqlSessionFactory();
 		SqlSession sqlSession = factory.openSession(true);
 		InvocationHandler handler = new SqlSessionTemp(sqlSession);
 		return (SqlSession) Proxy.newProxyInstance(handler.getClass().getClassLoader(), sqlSession.getClass().getInterfaces(), handler);
 	}
+
 	/***
 	 * 获得一个sqlsession
 	 * @return
 	 */
-	 SqlSession getSqlSession(String datasourceType){
+	SqlSession getSqlSession(String datasourceType) {
 		SqlSessionFactory factory = this.dataSources.get(datasourceType);
 		SqlSession sqlSession = factory.openSession(true);
 		InvocationHandler handler = new SqlSessionTemp(sqlSession);
@@ -271,11 +279,12 @@ class DbLoader {
 		SqlSessionTemp(SqlSession sqlSession) {
 			this.sqlSession = sqlSession;
 		}
+
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
 				return method.invoke(sqlSession, args);
-			}finally {
+			} finally {
 				this.sqlSession.close();
 			}
 		}

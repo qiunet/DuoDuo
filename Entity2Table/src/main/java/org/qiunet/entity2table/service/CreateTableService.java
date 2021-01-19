@@ -1,11 +1,10 @@
 package org.qiunet.entity2table.service;
 
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.redis.constants.RedisDbConstants;
-import org.qiunet.data.util.DbProperties;
-import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableAlterParam;
 import org.qiunet.entity2table.command.TableCreateParam;
 
@@ -36,7 +35,7 @@ public class CreateTableService {
 	 */
 	public void createTable(TableCreateParam createParam) {
 		//判断当前项目的数据源是单一数据源还是多个数据源,根据数据源不同,执行不同的处理
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+		if (ServerConfig.instance.getDbSizePerInstance() > 1) {
 			String tableName = createParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 //				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
@@ -63,7 +62,7 @@ public class CreateTableService {
 	 * @return
 	 */
 	public int findTableCountByTableName(String dbSourceName, String tableName) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+		if (ServerConfig.instance.getDbSizePerInstance() > 1) {
 //			String dbSourceName = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
 			Map<String, Object> map = new HashMap<>();
 			map.put("tableName", tableName);
@@ -85,7 +84,7 @@ public class CreateTableService {
 	 */
 	public List<Columns> findTableEnsembleByTableName(String dbSourceName, String tableName) {
 
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+		if (ServerConfig.instance.getDbSizePerInstance() > 1) {
 //			String dbSourceName = String.valueOf(0 / RedisDbConstants.DB_SIZE_PER_INSTANCE);
 
 			Map<String, Object> map = new HashMap<>();
@@ -105,7 +104,7 @@ public class CreateTableService {
 	 * @param alterParam
 	 */
 	public void addTableField(TableAlterParam alterParam) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+		if (ServerConfig.instance.getDbSizePerInstance() > 1) {
 			String tableName = alterParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 //				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);
@@ -132,7 +131,7 @@ public class CreateTableService {
 	 * @param alterParam
 	 */
 	public void modifyTableField(TableAlterParam alterParam) {
-		if (DbProperties.getInstance().containKey(RedisDbConstants.DB_SIZE_PER_INSTANCE_KEY)) {
+		if (ServerConfig.instance.getDbSizePerInstance() > 1) {
 			String tableName = alterParam.getTableName();
 			for (int dbIndex = 0; dbIndex < RedisDbConstants.MAX_DB_COUNT; dbIndex++) {
 //				String dbSource = String.valueOf(dbIndex / RedisDbConstants.DB_SIZE_PER_INSTANCE);

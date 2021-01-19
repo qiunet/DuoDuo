@@ -4,7 +4,7 @@ import org.qiunet.data.async.SyncType;
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.support.db.DefaultDatabaseSupport;
-import org.qiunet.data.util.DbProperties;
+import org.qiunet.data.util.ServerConfig;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -12,7 +12,7 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	/***对Entity 的操作 **/
 	private enum  EntityOperate {INSERT, UPDATE, DELETE}
 
-	protected boolean async = DbProperties.getInstance().getSyncType() == SyncType.ASYNC;
+	protected boolean async = ServerConfig.instance.getSyncType() == SyncType.ASYNC;
 	/***有同步需求的 key*/
 	protected ConcurrentLinkedQueue<SyncEntityElement> syncKeyQueue = new ConcurrentLinkedQueue<>();
 
