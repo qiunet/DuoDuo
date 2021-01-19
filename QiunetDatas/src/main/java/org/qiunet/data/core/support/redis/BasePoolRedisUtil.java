@@ -24,7 +24,7 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	 * 构造redisUtil 需要的JedisPool
 	 * @param redisProperties
 	 * @param redisName
-	 */
+
 	protected BasePoolRedisUtil(IKeyValueData<Object, Object> redisProperties, String redisName) {
 		this.redisName = redisName;
 
@@ -52,14 +52,35 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 			this.jedisPool.close();
 		});
 	}
-
-	protected BasePoolRedisUtil(JedisPool jedisPool) {
-		this.jedisPool = jedisPool;
+	 */
+	/***
+	 * 构造redisUtil 需要的JedisPool
+	 * @param redisConfig
+	 * @param redisName
+	 */
+	protected BasePoolRedisUtil(IKeyValueData<String, String> redisConfig, String redisName) {
+		super(redisName);
+		// jedisPool 构造
+		this.jedisPool = this.buildJedisPool(redisConfig);
+		// 添加关闭.
+		ShutdownHookThread.getInstance().addLast(this.jedisPool::close);
 	}
 
-	private String getConfigKey(String originConfigKey) {
-		// 返回类似: redis.{redisName}.host 的字符串
-		return "redis."+redisName+"."+originConfigKey;
+	/**
+	 * 构造一个可以用的jedisPool
+	 * @param redisConfig properties 内容
+	 * @return
+	 */
+	private JedisPool buildJedisPool(IKeyValueData<String, String> redisConfig){
+
+		String host = redisConfig.getString(getConfigKey("host"));
+		int port = redisConfig.getInt(getConfigKey("port"));
+		String password = redisConfig.getString(getConfigKey("pass"), null);
+		if ("".equals(password)) password = null;
+
+		int timeout = redisConfig.getInt(getConfigKey("timeout"), 2000);
+		int db = redisConfig.getInt(getConfigKey("db"), 0);
+		return new JedisPool(buildPoolConfig(redisConfig), host, port, timeout, password, db, null);
 	}
 
 	private class ClosableJedisProxy implements InvocationHandler {
