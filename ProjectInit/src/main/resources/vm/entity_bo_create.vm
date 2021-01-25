@@ -3,7 +3,7 @@ package ${define.entityPackage};
 import org.qiunet.data.support.IEntityBo;
 
 public class ${define.boName} implements IEntityBo<${define.doName}>{
-	private ${define.doName} aDo;
+	private final ${define.doName} aDo;
 
 	public ${define.boName} (${define.doName} aDo) {
 		this.aDo = aDo;
