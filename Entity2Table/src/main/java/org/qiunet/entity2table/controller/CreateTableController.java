@@ -224,12 +224,13 @@ class CreateTableController implements IApplicationContextAware {
 	 */
 	private void handlerTable(Class<? extends IEntity> clazz) {
 		try {
-			String dbSourceName = DbUtil.getDbSource(clazz);
 			Table table = clazz.getAnnotation(Table.class);
 			if (table == null) {
 				logger.info("===========扫描到:" + clazz + "\t table is null");
 				return;
 			}
+
+			String dbSourceName = DbUtil.getDbSource(clazz);
 
 			// 迭代出当前clazz所有fields存到newFieldList中
 			List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
