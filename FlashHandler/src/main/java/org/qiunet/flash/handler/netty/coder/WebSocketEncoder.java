@@ -20,12 +20,8 @@ public class WebSocketEncoder extends MessageToMessageEncoder<MessageContent> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, MessageContent msg, List<Object> out) throws Exception {
-		try {
-			// 这里不需要release ByteBuf WebSocketFrame 本身会帮你搞定.
-			ByteBuf byteBuf = ChannelUtil.messageContentToByteBuf(msg, ctx.channel());
-			out.add(new BinaryWebSocketFrame(byteBuf));
-		}catch (Exception e) {
-			logger.error("WebSocketEncoder", e);
-		}
+		// 这里不需要release ByteBuf WebSocketFrame 本身会帮你搞定.
+		ByteBuf byteBuf = ChannelUtil.messageContentToByteBuf(msg, ctx.channel());
+		out.add(new BinaryWebSocketFrame(byteBuf));
 	}
 }
