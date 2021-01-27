@@ -14,6 +14,7 @@ import org.qiunet.excel2cfgs.frame.component.CfgTreeCell;
 import org.qiunet.excel2cfgs.frame.component.FileTreeItem;
 import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
+import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
@@ -148,6 +149,9 @@ public class RootController {
 
 		this.cfgPaths.getItems().addAll(cfgPathStrs);
 		this.cfgPaths.getSelectionModel().select(cfgPathStrs.get(0));
+		this.cfgPaths.setOnAction(event -> {
+			SettingManager.getInstance().addCfgPath(this.cfgPaths.getValue());
+		});
 	}
 	/***
 	 * 初始化Excel路径 下拉选择框
@@ -160,6 +164,9 @@ public class RootController {
 
 		this.excelPaths.getItems().addAll(excelPathStrs);
 		this.excelPaths.getSelectionModel().select(excelPathStrs.get(0));
+		this.cfgPaths.setOnAction(event -> {
+			SettingManager.getInstance().addExcelPath(this.excelPaths.getValue());
+		});
 	}
 
 	/***
