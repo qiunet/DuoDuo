@@ -100,7 +100,32 @@ public class CommonUtil {
 	 * @param map
 	 * @return
 	 */
-	public static boolean isEmptyMap(Map map) {
+	public static boolean isEmptyMap(Map<? ,?> map) {
 		return map == null || map.isEmpty();
+	}
+
+	/**
+	 * 是否非空map
+	 * @param map
+	 * @return
+	 */
+	public static boolean isNotEmptyMap(Map<? ,?> map) {
+		return ! isEmptyMap(map);
+	}
+	/**
+	 * 集合是否不为空
+	 * @param collection
+	 * @return
+	 */
+	public static boolean isNotEmpty(Collection<?> collection) {
+		return ! isEmpty(collection);
+	}
+	/**
+	 * 集合是否为空
+	 * @param collection
+	 * @return
+	 */
+	public static boolean isEmpty(Collection<?> collection) {
+		return collection == null || collection.isEmpty();
 	}
 }
