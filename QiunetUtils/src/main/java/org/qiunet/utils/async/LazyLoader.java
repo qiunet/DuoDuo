@@ -27,4 +27,11 @@ public class LazyLoader<T> {
 		}
 		return ret;
 	}
+
+	/**
+	 * 重置loader
+	 */
+	public void reset(){
+		this.objRef.set(null);
+	}
 }
