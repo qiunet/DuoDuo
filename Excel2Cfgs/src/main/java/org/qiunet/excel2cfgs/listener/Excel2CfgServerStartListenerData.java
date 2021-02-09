@@ -12,6 +12,16 @@ public class Excel2CfgServerStartListenerData implements IEventData {
 
 	private Stage stage;
 
+	public Excel2CfgServerStartListenerData() {
+	}
+
+	/***因为没有参数. 所以可以使用单例 . 有参数的eventData 还是得自己new */
+	private static final Excel2CfgServerStartListenerData instance = new Excel2CfgServerStartListenerData();
+
+	public static void fireStartEventHandler(){
+		instance.fireEventHandler();
+	}
+
 	public Excel2CfgServerStartListenerData(Stage stage) {
 		this.stage = stage;
 	}

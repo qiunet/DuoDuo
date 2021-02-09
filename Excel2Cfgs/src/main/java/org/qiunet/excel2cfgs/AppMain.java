@@ -2,6 +2,7 @@ package org.qiunet.excel2cfgs;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
+import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -19,7 +20,7 @@ import java.awt.event.WindowEvent;
 public enum AppMain {
     instance;
 
-    private Logger logger = LoggerType.DUODUO.getLogger();
+    private final Logger logger = LoggerType.DUODUO.getLogger();
     private ToolTabPanel toolTabPanel;
     private JPanel mainPanelCenter;
     private JFrame frame;
@@ -41,11 +42,11 @@ public enum AppMain {
         this.frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                logger.info("============windowClosing");
+				ServerShutdownEventData.fireShutdownEventHandler();
             }
             @Override
             public void windowActivated(WindowEvent e) {
-                logger.info("============windowActivated");
+//                Excel2CfgServerStartListenerData.fireStartEventHandler();
             }
         });
         this.frame.add(mainPanel);
