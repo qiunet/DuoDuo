@@ -14,7 +14,6 @@ import org.qiunet.excel2cfgs.frame.component.CfgTreeCell;
 import org.qiunet.excel2cfgs.frame.component.FileTreeItem;
 import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
-import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.utils.FxUIUtil;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
@@ -211,7 +210,9 @@ public class RootController {
 
 	@EventListener
 	private void onServerStart(Excel2CfgServerStartListenerData data) {
-		this.init(data.getStage());
+		if (data.getStage() != null) {
+			this.init(data.getStage());
+		}
 	}
 
 	@EventListener

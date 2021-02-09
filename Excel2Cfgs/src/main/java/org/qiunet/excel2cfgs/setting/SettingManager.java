@@ -6,7 +6,6 @@ import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -20,14 +19,10 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2019-11-06 14:57
  ***/
-public class SettingManager {
-	private static SettingManager instance;
+public enum SettingManager {
+	instance;
 
-	private SettingManager(){
-		if (instance != null) {
-			throw new CustomException("Instance Duplication!");
-		}
-		instance = this;
+	SettingManager(){
 		this.loadSetting();
 	}
 

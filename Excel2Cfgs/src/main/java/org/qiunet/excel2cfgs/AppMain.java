@@ -1,6 +1,7 @@
 package org.qiunet.excel2cfgs;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
@@ -46,7 +47,7 @@ public enum AppMain {
             }
             @Override
             public void windowActivated(WindowEvent e) {
-//                Excel2CfgServerStartListenerData.fireStartEventHandler();
+                Excel2CfgServerStartListenerData.fireStartEventHandler();
             }
         });
         this.frame.add(mainPanel);
