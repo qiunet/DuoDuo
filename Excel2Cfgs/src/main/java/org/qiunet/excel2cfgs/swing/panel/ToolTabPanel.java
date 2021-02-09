@@ -57,7 +57,7 @@ public class ToolTabPanel extends JPanel {
     /**
      * 按钮状态
      */
-    enum ButtonStatus {disable, normal, enable}
+    enum ButtonStatus {disable, normal, enable, rollover}
 
     /**
      * 按钮
@@ -72,12 +72,18 @@ public class ToolTabPanel extends JPanel {
         setting(new SettingPanel(),"设置"),
         ;
         private JPanel centerPanel;
-        private IconButton button;
-        private String tip;
+        private final IconButton button;
+        private final String tip;
 
         Buttons(JPanel centerPanel, String tip) {
             this.tip = tip;
-            this.button = new IconButton(getImageIcon(this, ButtonStatus.normal), getImageIcon(this, ButtonStatus.enable), getImageIcon(this, ButtonStatus.disable), tip);
+			this.button = new IconButton(
+					getImageIcon(this, ButtonStatus.normal),
+					getImageIcon(this, ButtonStatus.enable),
+					getImageIcon(this, ButtonStatus.disable),
+					getImageIcon(this, ButtonStatus.rollover),
+					tip);
+
         }
 
         public IconButton getButton() {
@@ -96,8 +102,9 @@ public class ToolTabPanel extends JPanel {
         public void addListener() {
             this.button.addActionListener(e -> {
                 for (Buttons value : Buttons.values()) {
-                    if (value == this) {
-                        value.button.setIcon(getImageIcon(value, ButtonStatus.enable));
+					value.button.setEnabled(value != this);
+					if (value == this) {
+						value.button.setIcon(getImageIcon(value, ButtonStatus.enable));
                     }else {
                         value.button.setIcon(getImageIcon(value, ButtonStatus.normal));
                     }

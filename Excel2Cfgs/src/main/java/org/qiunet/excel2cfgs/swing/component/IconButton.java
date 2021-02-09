@@ -11,8 +11,10 @@ import java.awt.*;
 public class IconButton extends JButton {
 
     private static final long serialVersionUID = 1L;
-    private ImageIcon iconEnable, iconDisable;
-    private String tip;
+    private final ImageIcon iconEnable;
+	private final ImageIcon iconDisable;
+	private final ImageIcon iconRollOver;
+    private final String tip;
 
     /**
      * 构造
@@ -20,13 +22,15 @@ public class IconButton extends JButton {
      * @param iconNormal  默认图标
      * @param iconEnable  激活图标
      * @param iconDisable 失效图标
+     * @param iconRollover 划过图标
      * @param tip         提示
      */
-    public IconButton(ImageIcon iconNormal, ImageIcon iconEnable, ImageIcon iconDisable, String tip) {
+    public IconButton(ImageIcon iconNormal, ImageIcon iconEnable, ImageIcon iconDisable, ImageIcon iconRollover, String tip) {
         super(iconNormal);
 
         this.iconEnable = iconEnable;
         this.iconDisable = iconDisable;
+        this.iconRollOver = iconRollover;
         this.tip = tip;
 
         initialize();
@@ -48,8 +52,8 @@ public class IconButton extends JButton {
      * 设置按钮图标：鼠标移过、按压、失效的图标 和设置按钮提示
      */
     private void setUp() {
-        this.setRolloverIcon(iconEnable);
-         this.setSelectedIcon(iconEnable);
+		this.setRolloverIcon(iconRollOver);
+        this.setSelectedIcon(iconRollOver);
         this.setPressedIcon(iconEnable);
         this.setDisabledIcon(iconDisable);
 
