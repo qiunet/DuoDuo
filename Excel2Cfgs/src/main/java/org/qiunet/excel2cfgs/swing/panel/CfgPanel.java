@@ -1,6 +1,7 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
-import org.qiunet.excel2cfgs.swing.IToolPanel;
+import org.qiunet.excel2cfgs.swing.component.IconJPanel;
+import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
 import javax.swing.*;
 
@@ -10,9 +11,30 @@ import javax.swing.*;
  * @Author qiunet
  * @Date 2021/2/9 21:56
  **/
-public class CfgPanel extends JPanel implements IToolPanel {
+public class CfgPanel extends IconJPanel {
+
 	@Override
-	public void reload() {
+	public void initialize() {
+
+	}
+
+	@Override
+	public void loadData() {
 		this.add(new JLabel("测试"));
+	}
+
+	@Override
+	public IconButtonType type(){
+		return IconButtonType.cfg;
+	}
+
+	@Override
+	public String title() {
+		return "Excel配置转换";
+	}
+
+	@Override
+	public void addToParent(ToolTabPanel toolTabPanel) {
+		toolTabPanel.getPanelUp().add(this.getButton());
 	}
 }

@@ -5,6 +5,7 @@ import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.ClassScanner;
 import org.slf4j.Logger;
 
 import javax.swing.*;
@@ -27,6 +28,7 @@ public enum AppMain {
     private JFrame frame;
 
     public static void main(String[] args) {
+		ClassScanner.getInstance().scanner();
         AppMain.instance.init();
     }
 
@@ -68,6 +70,8 @@ public enum AppMain {
         mainPanel.add(mainPanelCenter, BorderLayout.CENTER);
         return mainPanel;
     }
+
+
 
     public JPanel getMainPanelCenter() {
         return mainPanelCenter;

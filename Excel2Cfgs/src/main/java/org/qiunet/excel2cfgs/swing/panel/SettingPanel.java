@@ -2,7 +2,8 @@ package org.qiunet.excel2cfgs.swing.panel;
 
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
-import org.qiunet.excel2cfgs.swing.IToolPanel;
+import org.qiunet.excel2cfgs.swing.component.IconJPanel;
+import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.awt.*;
  * @author qiunet
  * 2021-02-08 15:35
  */
-public class SettingPanel extends JPanel implements IToolPanel {
+public class SettingPanel extends IconJPanel {
     /**
      * 角色 label
      */
@@ -28,7 +29,6 @@ public class SettingPanel extends JPanel implements IToolPanel {
 
 	private JComboBox<RoleType> roleTypeJComboBox;
     public SettingPanel() {
-        super(true);
         this.initialize();
     }
 
@@ -50,11 +50,27 @@ public class SettingPanel extends JPanel implements IToolPanel {
 		this.add(this.outputFormatPanel);
 		this.add(this.excelPathLabel);
 		this.add(this.projectCfgPathLabel);
-		this.setVisible(true);
     }
 
 	@Override
-	public void reload() {
+	public void loadData() {
 		this.roleTypeJComboBox.setSelectedItem(SettingManager.getInstance().getSetting().getRoleType());
+	}
+
+
+	@Override
+	public IconButtonType type(){
+		return IconButtonType.setting;
+	}
+
+	@Override
+	public String title() {
+		return "设置";
+	}
+
+
+	@Override
+	public void addToParent(ToolTabPanel toolTabPanel) {
+		toolTabPanel.getPanelDown().add(this.getButton(), BorderLayout.SOUTH);
 	}
 }

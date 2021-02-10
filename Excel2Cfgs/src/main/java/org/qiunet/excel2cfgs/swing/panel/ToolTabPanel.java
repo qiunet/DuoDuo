@@ -1,7 +1,8 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
-import org.qiunet.excel2cfgs.swing.enums.ToolButtons;
+import org.qiunet.excel2cfgs.swing.IconButtonManager;
+import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,8 @@ import java.awt.*;
  * 2021-02-07 16:35
  */
 public class ToolTabPanel extends JPanel {
+	private JPanel panelUp;
+	private JPanel panelDown;
 
     public ToolTabPanel() {
         this.initialize();
@@ -28,28 +31,34 @@ public class ToolTabPanel extends JPanel {
 
         this.setBackground(UiConstant.TOOL_BAR_BACK_COLOR);
         this.setLayout(new GridLayout(2, 1));
+
+		this.panelUp = new JPanel(true);
+		panelUp.setBackground(UiConstant.TOOL_BAR_BACK_COLOR);
+		panelUp.setLayout(new FlowLayout(0, 0, 10));
+
+		this.panelDown = new JPanel(true);
+		panelDown.setBackground(UiConstant.TOOL_BAR_BACK_COLOR);
+		panelDown.setLayout(new BorderLayout());
+
+		this.add(panelUp);
+		this.add(panelDown);
     }
 
     private void addButton(){
-        JPanel panelUp = new JPanel(true);
-        panelUp.setBackground(UiConstant.TOOL_BAR_BACK_COLOR);
-        panelUp.setLayout(new FlowLayout(0, 0, 10));
-        panelUp.add(ToolButtons.cfg.getButton());
-        panelUp.add(ToolButtons.json.getButton());
-        panelUp.add(ToolButtons.time.getButton());
-
-        JPanel panelDown = new JPanel(true);
-        panelDown.setBackground(UiConstant.TOOL_BAR_BACK_COLOR);
-        panelDown.setLayout(new BorderLayout());
-        panelDown.add(ToolButtons.setting.getButton(), BorderLayout.SOUTH);
-
-        this.add(panelUp);
-        this.add(panelDown);
+		for (IconButtonType value : IconButtonType.values()) {
+			IconButtonManager.instance.getIconPanel(value).addToParent(this);
+		}
     }
 
     private void addListener(){
-        for (ToolButtons value : ToolButtons.values()) {
-            value.addListener();
-        }
+		IconButtonManager.instance.getIconPanels().forEach(IIconPanel::addListener);
     }
+
+	public JPanel getPanelDown() {
+		return panelDown;
+	}
+
+	public JPanel getPanelUp() {
+		return panelUp;
+	}
 }

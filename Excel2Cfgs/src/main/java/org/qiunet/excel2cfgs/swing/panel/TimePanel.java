@@ -1,8 +1,7 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
-import org.qiunet.excel2cfgs.swing.IToolPanel;
-
-import javax.swing.*;
+import org.qiunet.excel2cfgs.swing.component.IconJPanel;
+import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
 /***
  * 时间戳转换的面板
@@ -10,9 +9,30 @@ import javax.swing.*;
  * @Author qiunet
  * @Date 2021/2/9 21:56
  **/
-public class TimePanel extends JPanel implements IToolPanel {
-	@Override
-	public void reload() {
+public class TimePanel extends IconJPanel {
 
+	@Override
+	public void initialize() {
+
+	}
+
+	@Override
+	public void loadData() {
+
+	}
+
+	@Override
+	public IconButtonType type(){
+		return IconButtonType.time;
+	}
+
+	@Override
+	public String title() {
+		return "时间戳转换";
+	}
+
+	@Override
+	public void addToParent(ToolTabPanel toolTabPanel) {
+		toolTabPanel.getPanelUp().add(this.getButton());
 	}
 }
