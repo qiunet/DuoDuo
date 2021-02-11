@@ -66,6 +66,8 @@ public interface IIconPanel {
 			}
 			AppMain.instance.getMainPanelCenter().removeAll();
 			this.loadData();
+			AppMain.instance.getTitleLabel().setText(this.title());
+			AppMain.instance.getTitleLabel().updateUI();
 			AppMain.instance.getMainPanelCenter().add((JPanel) this);
 			AppMain.instance.getMainPanelCenter().updateUI();
 		});

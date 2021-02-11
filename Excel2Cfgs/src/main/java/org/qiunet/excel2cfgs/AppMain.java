@@ -25,7 +25,8 @@ public enum AppMain {
     private final Logger logger = LoggerType.DUODUO.getLogger();
     private ToolTabPanel toolTabPanel;
     private JPanel mainPanelCenter;
-    private JFrame frame;
+	private JLabel titleLabel;
+	private JFrame frame;
 
     public static void main(String[] args) {
 		ClassScanner.getInstance().scanner();
@@ -40,8 +41,6 @@ public enum AppMain {
         this.frame.setSize(UiConstant.MAIN_SIZE);
 
         JPanel mainPanel = this.createMainPanel();
-
-
         this.frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -66,14 +65,26 @@ public enum AppMain {
         this.toolTabPanel = new ToolTabPanel();
         mainPanel.add(toolTabPanel, BorderLayout.WEST);
 
-        this.mainPanelCenter = new JPanel(true);
-        mainPanel.add(mainPanelCenter, BorderLayout.CENTER);
+        JPanel contentPanel = new JPanel(true);
+        contentPanel.setLayout(new GridLayout(2, 1));
+		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
+		this.titleLabel = new JLabel();
+		this.titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 30));
+		this.titleLabel.setForeground(UiConstant.TOOL_BAR_BACK_COLOR);
+		titlePanel.add(this.titleLabel);
+		contentPanel.add(titlePanel);
+
+        this.mainPanelCenter = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
+		contentPanel.add(mainPanelCenter);
+		mainPanel.add(contentPanel, BorderLayout.CENTER);
         return mainPanel;
     }
 
+	public JLabel getTitleLabel() {
+		return titleLabel;
+	}
 
-
-    public JPanel getMainPanelCenter() {
+	public JPanel getMainPanelCenter() {
         return mainPanelCenter;
     }
 }

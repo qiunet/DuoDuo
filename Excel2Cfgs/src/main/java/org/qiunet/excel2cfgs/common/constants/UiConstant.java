@@ -3,7 +3,6 @@ package org.qiunet.excel2cfgs.common.constants;
 import org.qiunet.excel2cfgs.AppMain;
 import org.qiunet.utils.system.SystemPropertyUtil;
 
-import javax.swing.*;
 import java.awt.*;
 
 /***
@@ -21,6 +20,10 @@ public interface UiConstant {
      * 主窗口 高度
      */
     int MAIN_WINDOW_HEIGHT = 680;
+	/**
+	 * 选择框大小
+	 */
+	Dimension COMBO_BOX_SIZE = new Dimension(600, 40);
 
     String MAIN_WINDOWS_TITLE = "DuoDuo Tools";
     /**
