@@ -24,7 +24,7 @@ public class ToolTabPanel extends JPanel {
     }
 
     private void initialize(){
-        Dimension size = new Dimension(58, UiConstant.MAIN_WINDOW_HEIGHT);
+        Dimension size = new Dimension(UiConstant.TOOLS_PANEL_WIDTH, UiConstant.MAIN_WINDOW_HEIGHT);
         this.setPreferredSize(size);
         this.setMaximumSize(size);
         this.setMinimumSize(size);

@@ -21,6 +21,10 @@ public interface UiConstant {
      */
     int MAIN_WINDOW_HEIGHT = 680;
 	/**
+	 *  工具面板宽度
+	 */
+	int TOOLS_PANEL_WIDTH = 58;
+	/**
 	 * 选择框大小
 	 */
 	Dimension COMBO_BOX_SIZE = new Dimension(600, 40);

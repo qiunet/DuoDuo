@@ -66,16 +66,17 @@ public enum AppMain {
         mainPanel.add(toolTabPanel, BorderLayout.WEST);
 
         JPanel contentPanel = new JPanel(true);
-        contentPanel.setLayout(new GridLayout(2, 1));
+        contentPanel.setLayout(new BorderLayout());
 		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
+
 		this.titleLabel = new JLabel();
 		this.titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 30));
 		this.titleLabel.setForeground(UiConstant.TOOL_BAR_BACK_COLOR);
 		titlePanel.add(this.titleLabel);
-		contentPanel.add(titlePanel);
+		contentPanel.add(titlePanel, BorderLayout.NORTH);
 
         this.mainPanelCenter = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
-		contentPanel.add(mainPanelCenter);
+		contentPanel.add(mainPanelCenter, BorderLayout.CENTER);
 		mainPanel.add(contentPanel, BorderLayout.CENTER);
         return mainPanel;
     }
