@@ -36,10 +36,6 @@ public class SettingPanel extends IconJPanel {
 
 	private JPopupMenu addOrDeductPopupMenu;
 
-    public SettingPanel() {
-        this.initialize();
-    }
-
     @Override
     public void initialize() {
 		GridBagLayout gridLayout = new GridBagLayout();

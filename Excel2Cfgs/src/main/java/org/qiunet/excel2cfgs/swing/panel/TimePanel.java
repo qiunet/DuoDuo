@@ -13,7 +13,7 @@ public class TimePanel extends IconJPanel {
 
 	@Override
 	public void initialize() {
-
+//		this.add(new TimeForm().getMainPanel());
 	}
 
 	@Override
