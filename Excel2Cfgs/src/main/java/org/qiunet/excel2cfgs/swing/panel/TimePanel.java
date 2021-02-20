@@ -14,6 +14,10 @@ import javax.swing.*;
 public class TimePanel extends IconJPanel {
 
 	private JPanel showPanel;
+	private JLabel currTimestamp;
+	private JButton button1;
+	private JButton button2;
+	private JLabel currDatetime;
 
 	@Override
 	public void initialize() {
