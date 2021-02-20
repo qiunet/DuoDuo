@@ -29,11 +29,6 @@ public class CfgPanel extends IconJPanel {
 	}
 
 	@Override
-	public String title() {
-		return "Excel配置转换";
-	}
-
-	@Override
 	public void addToParent(ToolTabPanel toolTabPanel) {
 		toolTabPanel.getPanelUp().add(this.getButton());
 	}

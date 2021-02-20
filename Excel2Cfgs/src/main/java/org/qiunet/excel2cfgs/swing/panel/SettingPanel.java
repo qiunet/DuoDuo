@@ -197,12 +197,6 @@ public class SettingPanel extends IconJPanel {
 	}
 
 	@Override
-	public String title() {
-		return "设置";
-	}
-
-
-	@Override
 	public void addToParent(ToolTabPanel toolTabPanel) {
 		toolTabPanel.getPanelDown().add(this.getButton(), BorderLayout.SOUTH);
 	}

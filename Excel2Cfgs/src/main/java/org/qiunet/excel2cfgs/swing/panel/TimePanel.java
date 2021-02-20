@@ -27,11 +27,6 @@ public class TimePanel extends IconJPanel {
 	}
 
 	@Override
-	public String title() {
-		return "时间戳转换";
-	}
-
-	@Override
 	public void addToParent(ToolTabPanel toolTabPanel) {
 		toolTabPanel.getPanelUp().add(this.getButton());
 	}

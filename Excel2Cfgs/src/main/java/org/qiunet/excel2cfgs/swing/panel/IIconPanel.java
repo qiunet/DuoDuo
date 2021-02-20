@@ -47,7 +47,9 @@ public interface IIconPanel {
 	 * tip
 	 * @return
 	 */
-	String title();
+	default String title() {
+		return type().getTitle();
+	}
 	/**
 	 * 得到button
 	 * @return

@@ -27,12 +27,6 @@ public class JsonFormatPanel extends IconJPanel {
 	}
 
 	@Override
-	public String title() {
-		return "Json格式化";
-	}
-
-
-	@Override
 	public void addToParent(ToolTabPanel toolTabPanel) {
 		toolTabPanel.getPanelUp().add(this.getButton());
 	}

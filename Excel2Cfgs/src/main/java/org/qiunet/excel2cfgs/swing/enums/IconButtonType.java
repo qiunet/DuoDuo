@@ -9,17 +9,27 @@ public enum IconButtonType {
 	/**
 	 * 设定转换
 	 */
-	cfg,
+	cfg("Excel配置转换"),
 	/**
 	 * json
 	 */
-	json,
+	json("Json格式化"),
 	/**
 	 * 时间戳转换
 	 */
-	time,
+	time("时间戳转换"),
 	/**
 	 * 设置
 	 */
-	setting
+	setting("设置"),
+	;
+	private String title;
+
+	IconButtonType(String title) {
+		this.title = title;
+	}
+
+	public String getTitle() {
+		return title;
+	}
 }
