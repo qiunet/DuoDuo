@@ -3,6 +3,8 @@ package org.qiunet.excel2cfgs.swing.panel;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
+import javax.swing.*;
+
 /***
  * 时间戳转换的面板
  *
@@ -11,9 +13,11 @@ import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
  **/
 public class TimePanel extends IconJPanel {
 
+	private JPanel showPanel;
+
 	@Override
 	public void initialize() {
-//		this.add(new TimeForm().getMainPanel());
+
 	}
 
 	@Override
@@ -24,6 +28,11 @@ public class TimePanel extends IconJPanel {
 	@Override
 	public IconButtonType type(){
 		return IconButtonType.time;
+	}
+
+	@Override
+	public JPanel getShowPanel() {
+		return showPanel;
 	}
 
 	@Override

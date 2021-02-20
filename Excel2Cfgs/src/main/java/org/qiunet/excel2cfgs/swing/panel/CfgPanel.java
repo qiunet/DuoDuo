@@ -13,6 +13,8 @@ import javax.swing.*;
  **/
 public class CfgPanel extends IconJPanel {
 
+	private JPanel showPanel;
+
 	@Override
 	public void initialize() {
 
@@ -20,12 +22,16 @@ public class CfgPanel extends IconJPanel {
 
 	@Override
 	public void loadData() {
-		this.add(new JLabel("测试"));
 	}
 
 	@Override
 	public IconButtonType type(){
 		return IconButtonType.cfg;
+	}
+
+	@Override
+	public JPanel getShowPanel() {
+		return showPanel;
 	}
 
 	@Override

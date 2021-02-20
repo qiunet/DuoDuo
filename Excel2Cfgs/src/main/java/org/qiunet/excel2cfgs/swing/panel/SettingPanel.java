@@ -35,81 +35,82 @@ public class SettingPanel extends IconJPanel {
 	private IconButton saveButton;
 
 	private JPopupMenu addOrDeductPopupMenu;
+	private JPanel showPanel;
 
-    @Override
+	@Override
     public void initialize() {
-		GridBagLayout gridLayout = new GridBagLayout();
-		this.addOrDeductPopupMenu = new JPopupMenu("下拉右键菜单");
-		this.addOrDeductPopupMenu.add(new JMenuItem("+"));
-		this.addOrDeductPopupMenu.add(new JMenuItem("-"));
-
-		this.formatChoice = new JComboBox<>(OutputFormatType.values());
-		formatCheckBoxPanel = new JPanel(new FlowLayout());
-		this.jsonBox = new JCheckBox("json");
-		this.xmlBox = new JCheckBox("xml");
-		this.xdBox = new JCheckBox("xd");
-		formatCheckBoxPanel.add(this.jsonBox);
-		formatCheckBoxPanel.add(this.xmlBox);
-		formatCheckBoxPanel.add(this.xdBox);
-
-		this.saveButton = new IconButton(UiConstant.SAVE, UiConstant.SAVE_ENABLE, UiConstant.SAVE_DISABLE, UiConstant.SAVE, "保存");
-
-		JLabel roleLabel = new JLabel("角色选择:");
-		JLabel excelPathLabel = new JLabel("Excel路径选择:");
-		JLabel outputFormatLabel = new JLabel("输出格式选择:");
-		this.projectCfgPathLabel = new JLabel("项目输出路径选择:");
-
-		this.roleTypeJComboBox = new JComboBox<>(RoleType.values());
-		this.roleTypeJComboBox.addActionListener(e -> this.refreshByRoleType());
-
-		GridBagConstraints constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
-		gridLayout.setConstraints(roleLabel, constraints);
-
-		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		gridLayout.setConstraints(this.roleTypeJComboBox, constraints);
-		this.add(roleLabel);
-		this.add(roleTypeJComboBox);
-
-		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
-		gridLayout.setConstraints(outputFormatLabel, constraints);
-		this.outputFormatPanel = new JPanel(new FlowLayout());
-		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		gridLayout.setConstraints(this.outputFormatPanel, constraints);
-		this.add(outputFormatLabel);
-		this.outputFormatPanel.add(this.formatCheckBoxPanel);
-		this.outputFormatPanel.add(this.formatChoice);
-		this.add(outputFormatPanel);
-
-		this.excelChoice = new JComboBox<>();
-		this.excelChoice.setMinimumSize(UiConstant.COMBO_BOX_SIZE);
-		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
-		gridLayout.setConstraints(excelPathLabel, constraints);
-		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		gridLayout.setConstraints(this.excelChoice, constraints);
-		this.add(excelPathLabel);
-		this.add(excelChoice);
-
-		this.proCfgPathChoice = new JComboBox<>();
-		this.proCfgPathChoice.setMinimumSize(UiConstant.COMBO_BOX_SIZE);
-		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
-		gridLayout.setConstraints(projectCfgPathLabel, constraints);
-		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		gridLayout.setConstraints(this.proCfgPathChoice, constraints);
-		this.add(projectCfgPathLabel);
-		this.add(proCfgPathChoice);
-
-		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
-		constraints.gridwidth = GridBagConstraints.REMAINDER;
-		gridLayout.setConstraints(this.saveButton, constraints);
-		this.add(saveButton);
-
-		this.saveButton.addActionListener(e -> this.saveData());
-
-		this.setLayout(gridLayout);
+//		GridBagLayout gridLayout = new GridBagLayout();
+//		this.addOrDeductPopupMenu = new JPopupMenu("下拉右键菜单");
+//		this.addOrDeductPopupMenu.add(new JMenuItem("+"));
+//		this.addOrDeductPopupMenu.add(new JMenuItem("-"));
+//
+//		this.formatChoice = new JComboBox<>(OutputFormatType.values());
+//		formatCheckBoxPanel = new JPanel(new FlowLayout());
+//		this.jsonBox = new JCheckBox("json");
+//		this.xmlBox = new JCheckBox("xml");
+//		this.xdBox = new JCheckBox("xd");
+//		formatCheckBoxPanel.add(this.jsonBox);
+//		formatCheckBoxPanel.add(this.xmlBox);
+//		formatCheckBoxPanel.add(this.xdBox);
+//
+//		this.saveButton = new IconButton(UiConstant.SAVE, UiConstant.SAVE_ENABLE, UiConstant.SAVE_DISABLE, UiConstant.SAVE, "保存");
+//
+//		JLabel roleLabel = new JLabel("角色选择:");
+//		JLabel excelPathLabel = new JLabel("Excel路径选择:");
+//		JLabel outputFormatLabel = new JLabel("输出格式选择:");
+//		this.projectCfgPathLabel = new JLabel("项目输出路径选择:");
+//
+//		this.roleTypeJComboBox = new JComboBox<>(RoleType.values());
+//		this.roleTypeJComboBox.addActionListener(e -> this.refreshByRoleType());
+//
+//		GridBagConstraints constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
+//		gridLayout.setConstraints(roleLabel, constraints);
+//
+//		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		gridLayout.setConstraints(this.roleTypeJComboBox, constraints);
+//		this.getShowPanel().add(roleLabel);
+//		this.getShowPanel().add(roleTypeJComboBox);
+//
+//		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
+//		gridLayout.setConstraints(outputFormatLabel, constraints);
+//		this.outputFormatPanel = new JPanel(new FlowLayout());
+//		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		gridLayout.setConstraints(this.outputFormatPanel, constraints);
+//		this.getShowPanel().add(outputFormatLabel);
+//		this.outputFormatPanel.add(this.formatCheckBoxPanel);
+//		this.outputFormatPanel.add(this.formatChoice);
+//		this.getShowPanel().add(outputFormatPanel);
+//
+//		this.excelChoice = new JComboBox<>();
+//		this.excelChoice.setMinimumSize(UiConstant.COMBO_BOX_SIZE);
+//		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
+//		gridLayout.setConstraints(excelPathLabel, constraints);
+//		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		gridLayout.setConstraints(this.excelChoice, constraints);
+//		this.getShowPanel().add(excelPathLabel);
+//		this.getShowPanel().add(excelChoice);
+//
+//		this.proCfgPathChoice = new JComboBox<>();
+//		this.proCfgPathChoice.setMinimumSize(UiConstant.COMBO_BOX_SIZE);
+//		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
+//		gridLayout.setConstraints(projectCfgPathLabel, constraints);
+//		constraints = this.createGridBagConstraints(GridBagConstraints.WEST);
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		gridLayout.setConstraints(this.proCfgPathChoice, constraints);
+//		this.getShowPanel().add(projectCfgPathLabel);
+//		this.getShowPanel().add(proCfgPathChoice);
+//
+//		constraints = this.createGridBagConstraints(GridBagConstraints.EAST);
+//		constraints.gridwidth = GridBagConstraints.REMAINDER;
+//		gridLayout.setConstraints(this.saveButton, constraints);
+//		this.getShowPanel().add(saveButton);
+//
+//		this.saveButton.addActionListener(e -> this.saveData());
+//
+//		this.getShowPanel().setLayout(gridLayout);
 	}
 
 	private GridBagConstraints createGridBagConstraints(int anchor){
@@ -144,15 +145,15 @@ public class SettingPanel extends IconJPanel {
 
 	@Override
 	public void loadData() {
-		this.roleTypeJComboBox.setSelectedItem(SettingManager.getInstance().getSetting().getRoleType());
-
-		excelChoice.removeAllItems();
-		SettingManager.getInstance().getExcelPaths().forEach(excelChoice::addItem);
-		excelChoice.setSelectedItem(SettingManager.getInstance().getFirstExcelPath());
-
-		proCfgPathChoice.removeAllItems();
-		SettingManager.getInstance().getCfgPaths().forEach(proCfgPathChoice::addItem);
-		proCfgPathChoice.setSelectedItem(SettingManager.getInstance().getFirstCfgPath());
+//		this.roleTypeJComboBox.setSelectedItem(SettingManager.getInstance().getSetting().getRoleType());
+//
+//		excelChoice.removeAllItems();
+//		SettingManager.getInstance().getExcelPaths().forEach(excelChoice::addItem);
+//		excelChoice.setSelectedItem(SettingManager.getInstance().getFirstExcelPath());
+//
+//		proCfgPathChoice.removeAllItems();
+//		SettingManager.getInstance().getCfgPaths().forEach(proCfgPathChoice::addItem);
+//		proCfgPathChoice.setSelectedItem(SettingManager.getInstance().getFirstCfgPath());
 
 	}
 
@@ -184,7 +185,12 @@ public class SettingPanel extends IconJPanel {
 
 		this.projectCfgPathLabel.setVisible(selectedItem != RoleType.SCHEMER);
 		this.proCfgPathChoice.setVisible(selectedItem != RoleType.SCHEMER);
-		this.updateUI();
+		this.getShowPanel().updateUI();
+	}
+
+	@Override
+	public JPanel getShowPanel() {
+		return showPanel;
 	}
 
 	@Override

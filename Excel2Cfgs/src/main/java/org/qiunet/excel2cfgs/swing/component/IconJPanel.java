@@ -10,14 +10,13 @@ import javax.swing.*;
  * @Author qiunet
  * @Date 2021/2/10 09:07
  **/
-public abstract class IconJPanel extends JPanel implements IIconPanel {
+public abstract class IconJPanel implements IIconPanel {
 	/**
 	 * button
 	 */
 	private final IconButton button;
 
 	public IconJPanel(){
-		super(true);
 		this.button = new IconButton(
 				IIconPanel.getImageIcon(this, ButtonStatus.normal),
 				IIconPanel.getImageIcon(this, ButtonStatus.enable),

@@ -70,11 +70,16 @@ public interface IIconPanel {
 			this.loadData();
 			AppMain.instance.getTitleLabel().setText(this.title());
 			AppMain.instance.getTitleLabel().updateUI();
-			AppMain.instance.getMainPanelCenter().add((JPanel) this);
+			AppMain.instance.getMainPanelCenter().add(getShowPanel());
 			AppMain.instance.getMainPanelCenter().updateUI();
 		});
 	}
 
+	/**
+	 * 获得
+	 * @return
+	 */
+	JPanel getShowPanel();
 	/**
 	 * 获得图标
 	 * @param status
