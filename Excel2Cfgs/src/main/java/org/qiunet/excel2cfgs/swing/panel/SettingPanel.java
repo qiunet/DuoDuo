@@ -1,6 +1,5 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
-import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.enums.OutputFormatType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
@@ -37,7 +36,6 @@ public class SettingPanel extends IconJPanel {
 	private JPopupMenu addOrDeductPopupMenu;
 	private JPanel showPanel;
 
-	@Override
     public void initialize() {
 //		GridBagLayout gridLayout = new GridBagLayout();
 //		this.addOrDeductPopupMenu = new JPopupMenu("下拉右键菜单");
@@ -113,6 +111,11 @@ public class SettingPanel extends IconJPanel {
 //		this.getShowPanel().setLayout(gridLayout);
 	}
 
+	@Override
+	public void unActivate() {
+
+	}
+
 	private GridBagConstraints createGridBagConstraints(int anchor){
     	GridBagConstraints constraints = new GridBagConstraints();
     	constraints.insets = new Insets(10, 20, 10, 20);
@@ -144,7 +147,7 @@ public class SettingPanel extends IconJPanel {
 	}
 
 	@Override
-	public void loadData() {
+	public void activate() {
 //		this.roleTypeJComboBox.setSelectedItem(SettingManager.getInstance().getSetting().getRoleType());
 //
 //		excelChoice.removeAllItems();

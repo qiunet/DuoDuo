@@ -23,36 +23,35 @@ public enum AppMain {
     instance;
 
     private final Logger logger = LoggerType.DUODUO.getLogger();
-    private ToolTabPanel toolTabPanel;
-    private JPanel mainPanelCenter;
+	private JPanel mainPanelCenter;
 	private JLabel titleLabel;
-	private JFrame frame;
 
-    public static void main(String[] args) {
+	public static void main(String[] args) {
 		ClassScanner.getInstance().scanner();
         AppMain.instance.init();
     }
 
     private void init(){
-        this.frame = new JFrame(UiConstant.MAIN_WINDOWS_TITLE);
-        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.frame.setBackground(UiConstant.MAIN_BACK_COLOR);
-        this.frame.setIconImage(UiConstant.IMAGE_ICON);
-        this.frame.setSize(UiConstant.MAIN_SIZE);
+		JFrame frame = new JFrame(UiConstant.MAIN_WINDOWS_TITLE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setBackground(UiConstant.MAIN_BACK_COLOR);
+        frame.setIconImage(UiConstant.IMAGE_ICON);
+        frame.setSize(UiConstant.MAIN_SIZE);
 
         JPanel mainPanel = this.createMainPanel();
-        this.frame.addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
 				ServerShutdownEventData.fireShutdownEventHandler();
             }
-            @Override
-            public void windowActivated(WindowEvent e) {
-                Excel2CfgServerStartListenerData.fireStartEventHandler();
-            }
+
+			@Override
+			public void windowOpened(WindowEvent e) {
+				Excel2CfgServerStartListenerData.fireStartEventHandler();
+			}
         });
-        this.frame.add(mainPanel);
-        this.frame.setVisible(true);
+        frame.add(mainPanel);
+        frame.setVisible(true);
     }
 
     /**
@@ -62,7 +61,7 @@ public enum AppMain {
     private JPanel createMainPanel(){
         JPanel mainPanel = new JPanel(true);
         mainPanel.setLayout(new BorderLayout());
-        this.toolTabPanel = new ToolTabPanel();
+		ToolTabPanel toolTabPanel = new ToolTabPanel();
         mainPanel.add(toolTabPanel, BorderLayout.WEST);
 
         JPanel contentPanel = new JPanel(true);
@@ -74,6 +73,7 @@ public enum AppMain {
 		this.titleLabel.setForeground(UiConstant.TOOL_BAR_BACK_COLOR);
 		titlePanel.add(this.titleLabel);
 		contentPanel.add(titlePanel, BorderLayout.NORTH);
+
 
         this.mainPanelCenter = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
 		contentPanel.add(mainPanelCenter, BorderLayout.CENTER);
@@ -88,4 +88,8 @@ public enum AppMain {
 	public JPanel getMainPanelCenter() {
         return mainPanelCenter;
     }
+
+	public JPanel getStatusPanel() {
+		return mainPanelCenter;
+	}
 }

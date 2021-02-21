@@ -9,20 +9,24 @@ import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import javax.swing.*;
 
 /***
+ * 左边tab面板接口.
+ * 负责一个button和一个面板提供.
+ * 面板提供给主界面展示.
  *
  * @Author qiunet
  * @Date 2021/2/9 21:50
  **/
 public interface IIconPanel {
 	/**
-	 * 初始化.
-	 * 把布局做好.
-	 */
-	void initialize();
-	/**
+	 * 激活面板时候.
 	 * 数据加载.
 	 */
-	void loadData();
+	void activate();
+	/**
+	 * 非激活状态.
+	 * 处理部分线程池回收等问题
+	 */
+	void unActivate();
 
 	/**
 	 * 添加到toolPanel
@@ -59,6 +63,11 @@ public interface IIconPanel {
 	default void addListener() {
 		this.getButton().addActionListener(e -> {
 			for (IIconPanel value : IconButtonManager.instance.getIconPanels()) {
+				if (! value.getButton().isEnabled()) {
+					// 说明当前是激活状态.
+					this.unActivate();
+				}
+
 				value.getButton().setEnabled(value != this);
 				if (value == this) {
 					value.getButton().setIcon(getImageIcon(value, ButtonStatus.enable));
@@ -67,7 +76,7 @@ public interface IIconPanel {
 				}
 			}
 			AppMain.instance.getMainPanelCenter().removeAll();
-			this.loadData();
+			this.activate();
 			AppMain.instance.getTitleLabel().setText(this.title());
 			AppMain.instance.getTitleLabel().updateUI();
 			AppMain.instance.getMainPanelCenter().add(getShowPanel());

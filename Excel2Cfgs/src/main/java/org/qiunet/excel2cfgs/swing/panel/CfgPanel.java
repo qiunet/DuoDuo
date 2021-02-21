@@ -16,12 +16,12 @@ public class CfgPanel extends IconJPanel {
 	private JPanel showPanel;
 
 	@Override
-	public void initialize() {
+	public void unActivate() {
 
 	}
 
 	@Override
-	public void loadData() {
+	public void activate() {
 	}
 
 	@Override

@@ -34,7 +34,6 @@ public enum IconButtonManager implements IApplicationContextAware {
 				.filter(clz -> ! Modifier.isAbstract(clz.getModifiers()))
 				.map(context::getInstanceOfClass)
 				.map(obj -> (IIconPanel) obj)
-				.peek(IIconPanel::initialize)
 				.collect(Collectors.toMap(IIconPanel::type, Function.identity()));
 	}
 
