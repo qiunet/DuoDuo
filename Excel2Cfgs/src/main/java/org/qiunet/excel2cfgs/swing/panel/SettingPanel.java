@@ -10,8 +10,6 @@ import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -30,7 +28,7 @@ public class SettingPanel extends IconJPanel {
 	private JCheckBox xdBox;
 	private JPanel formatCheckBoxPanel;
 	private JComboBox<String> excelChoice;
-	private JPanel proCfgPathChoicePanel;
+	private JLabel proCfgLabel;
 	private JComboBox<String> proCfgPathChoice;
 	private JButton saveButton;
 
@@ -111,7 +109,8 @@ public class SettingPanel extends IconJPanel {
 			}
 		}
 
-		this.proCfgPathChoicePanel.setVisible(selectedItem != RoleType.SCHEMER);
+		this.proCfgPathChoice.setVisible(selectedItem != RoleType.SCHEMER);
+		this.proCfgLabel.setVisible(selectedItem != RoleType.SCHEMER);
 	}
 
 	@Override
@@ -128,4 +127,5 @@ public class SettingPanel extends IconJPanel {
 	public void addToParent(ToolTabPanel toolTabPanel) {
 		toolTabPanel.getPanelDown().add(this.getButton(), BorderLayout.SOUTH);
 	}
+
 }
