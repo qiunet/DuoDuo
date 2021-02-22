@@ -31,6 +31,11 @@ public class SettingPanel extends IconJPanel {
 	private JLabel proCfgLabel;
 	private JComboBox<String> proCfgPathChoice;
 	private JButton saveButton;
+	private JButton addExcelPath;
+	private JButton remExcelPath;
+	private JPanel operateProCfgPanel;
+	private JButton addCfgPath;
+	private JButton remCfgPath;
 
 	public SettingPanel() {
 		Arrays.stream(OutputFormatType.values()).forEach(this.formatChoice::addItem);
@@ -38,6 +43,60 @@ public class SettingPanel extends IconJPanel {
 		Arrays.stream(RoleType.values()).forEach(this.roleTypeJComboBox::addItem);
 		this.roleTypeJComboBox.addActionListener(e -> this.refreshByRoleType());
 		saveButton.addMouseListener(new JButtonMouseListener(saveButton, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		addCfgPath.addMouseListener(new JButtonMouseListener(addCfgPath, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		remCfgPath.addMouseListener(new JButtonMouseListener(remCfgPath, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		addExcelPath.addMouseListener(new JButtonMouseListener(addExcelPath, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		remExcelPath.addMouseListener(new JButtonMouseListener(remExcelPath, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+
+		saveButton.addActionListener(e -> this.saveData());
+		addExcelPath.addActionListener(e -> {
+			String directoryChooser = this.openDirectoryChooser("选择excel路径文件夹");
+			if (directoryChooser == null) {
+				return;
+			}
+
+			this.excelChoice.addItem(directoryChooser);
+			this.excelChoice.setSelectedItem(directoryChooser);
+			SettingManager.getInstance().addExcelPath(directoryChooser);
+		});
+		addCfgPath.addActionListener(e -> {
+
+			String directoryChooser = this.openDirectoryChooser("选择项目配置路径文件夹");
+			if (directoryChooser == null) {
+				return;
+			}
+
+			this.proCfgPathChoice.addItem(directoryChooser);
+			this.proCfgPathChoice.setSelectedItem(directoryChooser);
+			SettingManager.getInstance().addCfgPath(directoryChooser);
+		});
+		remCfgPath.addActionListener(e -> {
+			String curr = this.proCfgPathChoice.getSelectedItem().toString();
+			SettingManager.getInstance().removeCfgPath(curr);
+			this.proCfgPathChoice.removeItem(curr);
+		});
+
+		remExcelPath.addActionListener(e -> {
+			String curr = this.excelChoice.getSelectedItem().toString();
+			SettingManager.getInstance().removeExcelPath(curr);
+			this.excelChoice.removeItem(curr);
+		});
+	}
+
+	/**
+	 * 选择文件夹路径
+	 */
+	public String openDirectoryChooser(String title) {
+		JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		chooser.setSize(UiConstant.FILE_CHOOSER_SIZE);
+		chooser.setFont(UiConstant.DEFAULT_FONT);
+		chooser.setDialogTitle(title);
+
+		if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+			return chooser.getSelectedFile().getAbsolutePath();
+		}
+		return null;
 	}
 
 	@Override
@@ -67,6 +126,7 @@ public class SettingPanel extends IconJPanel {
 			OutputFormatType choiceItem = (OutputFormatType) this.formatChoice.getSelectedItem();
 			choiceItem.saveStatus();
 		}
+		SettingManager.getInstance().update();
 	}
 
 	@Override
@@ -109,6 +169,7 @@ public class SettingPanel extends IconJPanel {
 			}
 		}
 
+		this.operateProCfgPanel.setVisible(selectedItem != RoleType.SCHEMER);
 		this.proCfgPathChoice.setVisible(selectedItem != RoleType.SCHEMER);
 		this.proCfgLabel.setVisible(selectedItem != RoleType.SCHEMER);
 	}

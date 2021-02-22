@@ -2,7 +2,6 @@ package org.qiunet.excel2cfgs.common.constants;
 
 import org.qiunet.excel2cfgs.AppMain;
 
-import javax.swing.*;
 import java.awt.*;
 
 /***
@@ -25,9 +24,9 @@ public interface UiConstant {
 	 */
 	int TOOLS_PANEL_WIDTH = 58;
 	/**
-	 * 选择框大小
+	 * 文件选择器大小
 	 */
-	Dimension COMBO_BOX_SIZE = new Dimension(1000, 40);
+	Dimension FILE_CHOOSER_SIZE = new Dimension(700, 500);
 
     String MAIN_WINDOWS_TITLE = "DuoDuo Tools";
     /**
@@ -47,13 +46,8 @@ public interface UiConstant {
      * 工具栏背景色
      */
     Color TOOL_BAR_BACK_COLOR = new Color(37, 174, 96);
-    /**
-     * 表格线条背景色
-     */
-    Color TABLE_LINE_COLOR = new Color(229, 229, 229);
-
-
-	ImageIcon SAVE = new ImageIcon(AppMain.class.getResource("/icon/saveButton.png"));
-	ImageIcon SAVE_ENABLE = new ImageIcon(AppMain.class.getResource("/icon/saveButtonEnable.png"));
-	ImageIcon SAVE_DISABLE = new ImageIcon(AppMain.class.getResource("/icon/saveButtonDisable.png"));
+	/**
+	 * 默认字体
+	 */
+    Font DEFAULT_FONT = new Font("微软雅黑", Font.BOLD, 18);
 }
