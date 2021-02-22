@@ -1,8 +1,10 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
+import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
+import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
 import org.qiunet.excel2cfgs.swing.listener.JTextFieldHintListener;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -103,6 +105,11 @@ public class TimePanel extends IconJPanel implements ClipboardOwner {
 				timestampTextField.setText(text);
 			}
 		});
+
+		copyDatetime.addMouseListener(new JButtonMouseListener(copyDatetime, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		copyTimestamp.addMouseListener(new JButtonMouseListener(copyTimestamp, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		convertToDatetime.addMouseListener(new JButtonMouseListener(convertToDatetime, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
+		convertToTimeStamp.addMouseListener(new JButtonMouseListener(convertToTimeStamp, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
 	}
 
 	@Override

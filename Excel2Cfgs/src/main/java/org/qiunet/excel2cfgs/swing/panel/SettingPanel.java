@@ -1,13 +1,17 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
+import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.enums.OutputFormatType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
+import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -35,6 +39,7 @@ public class SettingPanel extends IconJPanel {
 
 		Arrays.stream(RoleType.values()).forEach(this.roleTypeJComboBox::addItem);
 		this.roleTypeJComboBox.addActionListener(e -> this.refreshByRoleType());
+		saveButton.addMouseListener(new JButtonMouseListener(saveButton, UiConstant.TOOL_BAR_BACK_COLOR, Color.WHITE));
 	}
 
 	@Override
