@@ -12,7 +12,11 @@ import org.qiunet.utils.system.OSUtil;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,6 +63,22 @@ public class CfgPanel extends IconJPanel {
 		});
 
 		excelPathTree.setScrollsOnExpand(true);
+		excelPathTree.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent event) {
+				if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2) {
+					File file = ((FileNode) ((DefaultMutableTreeNode) excelPathTree.getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject()).getFile();
+					if (file.isDirectory()) {
+						return;
+					}
+					try {
+						Desktop.getDesktop().open(file);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	@Override
