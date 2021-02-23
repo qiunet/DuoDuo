@@ -162,19 +162,6 @@
           </scrollpane>
         </children>
       </grid>
-      <component id="d002d" class="javax.swing.JTextArea" binding="console">
-        <constraints>
-          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="650" height="450"/>
-          </grid>
-        </constraints>
-        <properties>
-          <background color="-13159113"/>
-          <editable value="false"/>
-          <enabled value="false"/>
-          <font size="16"/>
-        </properties>
-      </component>
       <component id="1f1f5" class="javax.swing.JSeparator">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -187,6 +174,30 @@
         </constraints>
         <properties/>
       </component>
+      <scrollpane id="d3492">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="650" height="450"/>
+            <preferred-size width="650" height="450"/>
+            <maximum-size width="650" height="450"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="1364e" class="javax.swing.JTextArea" binding="console">
+            <constraints/>
+            <properties>
+              <background color="-13159113"/>
+              <editable value="false"/>
+              <enabled value="false"/>
+              <font size="16"/>
+              <maximumSize width="650" height="450"/>
+              <minimumSize width="650" height="450"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
     </children>
   </grid>
 </form>

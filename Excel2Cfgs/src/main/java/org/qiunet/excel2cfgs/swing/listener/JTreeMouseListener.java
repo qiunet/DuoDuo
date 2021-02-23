@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 
 /***
  *
@@ -24,12 +25,32 @@ import java.io.File;
  */
 public class JTreeMouseListener extends MouseAdapter {
 	private final JTree jTree;
+	private final JMenuItem openItem;
 	private final JMenuItem convertItem;
 	private final JMenuItem svnUpdateItem;
 	private final JMenuItem svnCommitItem;
 
 	public JTreeMouseListener(JTree jTree) {
 		this.jTree = jTree;
+		this.openItem = this.createMenuItem("打开", new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (jTree.getSelectionPath() == null) {
+					return;
+				}
+
+				CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
+				if (fileNode == null) {
+					return;
+				}
+
+				try {
+					Desktop.getDesktop().open(fileNode.getFile());
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+				}
+			}
+		});
 
 		this.convertItem = this.createMenuItem("==", new MouseAdapter() {
 			@Override
@@ -92,6 +113,7 @@ public class JTreeMouseListener extends MouseAdapter {
 		File file = fileNode.getFile();
 		JPopupMenu jPopupMenu = new JPopupMenu();
 		convertItem.setText(file.isDirectory() ? "转换所有" : "转换");
+		jPopupMenu.add(openItem);
 		jPopupMenu.add(convertItem);
 		jPopupMenu.add(svnUpdateItem);
 		if (OSUtil.isWindows()) {

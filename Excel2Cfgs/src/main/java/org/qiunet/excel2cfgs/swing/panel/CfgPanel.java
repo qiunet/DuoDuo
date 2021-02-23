@@ -75,6 +75,10 @@ public class CfgPanel extends IconJPanel {
 			public void mousePressed(MouseEvent event) {
 				if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2) {
 					File file = ((FileNode) ((DefaultMutableTreeNode) excelPathTree.getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject()).getFile();
+					if (! file.isFile()) {
+						return;
+					}
+
 					try {
 						Desktop.getDesktop().open(file);
 					} catch (IOException e) {
