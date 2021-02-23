@@ -2,6 +2,7 @@ package org.qiunet.excel2cfgs.swing.panel;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
@@ -11,6 +12,7 @@ import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.*;
@@ -48,6 +50,10 @@ public class CfgPanel extends IconJPanel {
 		}
 
 		refreshBtn.addActionListener(e -> this.loadFileTree());
+		TitledBorder titledBorder = new TitledBorder("控制台");
+		titledBorder.setTitleColor(Color.WHITE);
+		titledBorder.setTitleFont(UiConstant.DEFAULT_FONT);
+		console.setBorder(titledBorder);
 
 		svnClean.addActionListener(e -> {
 			String path = SettingManager.getInstance().getFirstExcelPath();
