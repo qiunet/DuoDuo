@@ -6,6 +6,7 @@ import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
+import org.qiunet.excel2cfgs.swing.listener.JTreeMouseListener;
 import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.utils.system.OSUtil;
 
@@ -68,9 +69,6 @@ public class CfgPanel extends IconJPanel {
 			public void mousePressed(MouseEvent event) {
 				if (event.getButton() == MouseEvent.BUTTON1 && event.getClickCount() == 2) {
 					File file = ((FileNode) ((DefaultMutableTreeNode) excelPathTree.getSelectionModel().getSelectionPath().getLastPathComponent()).getUserObject()).getFile();
-					if (file.isDirectory()) {
-						return;
-					}
 					try {
 						Desktop.getDesktop().open(file);
 					} catch (IOException e) {
@@ -79,6 +77,8 @@ public class CfgPanel extends IconJPanel {
 				}
 			}
 		});
+
+		excelPathTree.addMouseListener(new JTreeMouseListener(excelPathTree));
 	}
 
 	@Override

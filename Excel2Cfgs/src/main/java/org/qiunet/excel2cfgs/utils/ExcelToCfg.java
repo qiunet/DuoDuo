@@ -7,6 +7,7 @@ import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.excel2cfgs.setting.SettingManager;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
@@ -23,11 +24,11 @@ public class ExcelToCfg {
 	/***
 	 * excel的根目录
 	 */
-	private String rootPath = SettingManager.getInstance().getFirstExcelPath();
+	private final String rootPath = SettingManager.getInstance().getFirstExcelPath();
 	/***
 	 * 配置
 	 */
-	private Setting setting = SettingManager.getInstance().getSetting();
+	private final Setting setting = SettingManager.getInstance().getSetting();
 	/**
 	 * 定义数据的行数-行号
 	 */
@@ -35,9 +36,9 @@ public class ExcelToCfg {
 	/***
 	 * 从根目录开始的文件名
 	 */
-	private String fileRelativeName;
+	private final String fileRelativeName;
 
-	private File sourceFile;
+	private final File sourceFile;
 
 	public ExcelToCfg(File file) {
 		this.fileRelativeName = file.getAbsolutePath().substring(rootPath.length() + 1);
@@ -99,7 +100,7 @@ public class ExcelToCfg {
 		 */
 		int rowNum = 0, columnNum = 0;
 		int lastRow = getSheetLastRow(sheet);
-		FxUIUtil.appendMessage("表格["+fileRelativeName+"]:[" + sheet.getSheetName() + "]转换数据内容[ "+(lastRow - DATA_DEFINE_ROW)+" ]行");
+		SwingUtil.appendToConsole("表格["+fileRelativeName+"]:[" + sheet.getSheetName() + "]转换数据内容[ "+(lastRow - DATA_DEFINE_ROW)+" ]行");
 		/*写二进制文件规则：参数-数据行数-数据   写流的时候 d要压缩*/
 
 		try {
@@ -141,7 +142,7 @@ public class ExcelToCfg {
 			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
-			FxUIUtil.alterError("Sheet: [" + sheet.getSheetName() + "] Row: ["+(rowNum + 1)+"] Column ["+(columnNum + 1)+"] 错误!");
+			SwingUtil.alterError("Sheet: [" + sheet.getSheetName() + "] Row: ["+(rowNum + 1)+"] Column ["+(columnNum + 1)+"] 错误!");
 		}
 	}
 
@@ -167,12 +168,12 @@ public class ExcelToCfg {
 			}
 
 			if (appenderAttachable.getAppenderSize() == 0){
-				FxUIUtil.alterError("请选择至少一种配置输出格式");
+				SwingUtil.alterError("请选择至少一种配置输出格式");
 				return;
 			}
 
 			if (SettingManager.getInstance().roleType() != RoleType.SCHEMER && appenderAttachable.getAppenderSize() != 1){
-				FxUIUtil.alterError("非策划人员只能选择一种文件输出格式! ");
+				SwingUtil.alterError("非策划人员只能选择一种文件输出格式! ");
 				return;
 			}
 
@@ -204,6 +205,6 @@ public class ExcelToCfg {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		FxUIUtil.appendMessage("["+this.fileRelativeName +"]导出配置成功");
+		SwingUtil.appendToConsole("["+this.fileRelativeName +"]导出配置成功");
 	}
 }
