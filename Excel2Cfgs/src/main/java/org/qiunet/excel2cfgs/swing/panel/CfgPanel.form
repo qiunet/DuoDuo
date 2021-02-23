@@ -155,7 +155,7 @@
                 <properties>
                   <background color="-1"/>
                   <font size="18"/>
-                  <maximumSize width="250" height="410"/>
+                  <maximumSize width="240" height="410"/>
                 </properties>
               </component>
             </children>

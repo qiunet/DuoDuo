@@ -1,5 +1,7 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
@@ -9,7 +11,10 @@ import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.io.File;
+import java.util.Map;
+import java.util.Set;
 
 /***
  * 配置转换的面板
@@ -18,6 +23,8 @@ import java.io.File;
  * @Date 2021/2/9 21:56
  **/
 public class CfgPanel extends IconJPanel {
+	/**缓存*/
+	private static final Map<String, DefaultMutableTreeNode> treeNodeCache = Maps.newHashMap();
 
 	private JPanel showPanel;
 	private JLabel currExcelPath;
@@ -29,16 +36,13 @@ public class CfgPanel extends IconJPanel {
 	private JButton svnUpdate;
 	private JButton svnCommit;
 	private JButton svnClean;
-
-
+	private DefaultMutableTreeNode root;
 	public CfgPanel() {
 		if (OSUtil.isLinux() || OSUtil.isMac()) {
 			svnCommit.setVisible(false);
 		}
 
-		refreshBtn.addActionListener(e -> {
-
-		});
+		refreshBtn.addActionListener(e -> this.loadFileTree());
 
 		svnClean.addActionListener(e -> {
 			String path = SettingManager.getInstance().getFirstExcelPath();
@@ -51,7 +55,10 @@ public class CfgPanel extends IconJPanel {
 		svnUpdate.addActionListener(e -> {
 			String path = SettingManager.getInstance().getFirstExcelPath();
 			SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, path);
+			this.loadFileTree();
 		});
+
+		excelPathTree.setScrollsOnExpand(true);
 	}
 
 	@Override
@@ -65,6 +72,14 @@ public class CfgPanel extends IconJPanel {
 		this.currProCfgPath.setVisible(SettingManager.getInstance().getSetting().getRoleType() != RoleType.SCHEMER);
 		this.currProCfgPath.setText(SettingManager.getInstance().getFirstCfgPath());
 		this.currExcelPath.setText(SettingManager.getInstance().getFirstExcelPath());
+
+		String workPath = SettingManager.getInstance().getFirstExcelPath();
+		if (workPath == null || workPath.length() == 0 || !new File(workPath).exists()) return;
+
+		treeNodeCache.clear();
+		File workPathFile = new File(workPath);
+		root = new DefaultMutableTreeNode(new FileNode(workPathFile));
+		this.loadFileTree();
 	}
 
 	@Override
@@ -86,30 +101,55 @@ public class CfgPanel extends IconJPanel {
 	 * 加载文件树
 	 */
 	private void loadFileTree () {
-		String workPath = SettingManager.getInstance().getFirstExcelPath();
-		if (workPath == null || workPath.length() == 0 || !new File(workPath).exists()) return;
-
-		File workPathFile = new File(workPath);
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode(new FileNode(workPathFile));
-//		this.loadTree(root, workPathFile);
-//		if (excelPathTree != null) {
-//			this.recordExpandNode(new TreePath(excelPathTree.getModel().getRoot()));
-//		}
-//
-//		if (this.excelPathTree != null) {
-//			this.excelPathTree.removeAll();
-//			this.excelPathTree.setModel(new DefaultTreeModel(root));
-//			this.excelPathTree.repaint();
-//		} else {
-//			this.excelPathTree = new JTree(root);
-//			excelPathTree.addMouseListener(new TreePopMenuListener());
-//			excelPathTree.setExpandsSelectedPaths(true);
-//			excelPathTree.setScrollsOnExpand(true);
-//			this.scrollPane.setViewportView(jTree);
-//		}
-//		this.revertExpandNode(new TreePath(jTree.getModel().getRoot()));
+		root.removeAllChildren();
+		this.loadTree(root);
+		this.excelPathTree.setModel(new DefaultTreeModel(root));
+		this.excelPathTree.repaint();
 	}
 
+
+	/***
+	 * 递归加载树
+	 * @param dirRoot
+	 */
+	private void loadTree(DefaultMutableTreeNode dirRoot) {
+		File dirFile = ((FileNode) dirRoot.getUserObject()).getFile();
+		File [] files = dirFile.listFiles();
+		if (files == null) return;
+
+		for (File file : files){
+			if (! filePostfixCheck(file)) continue;
+			DefaultMutableTreeNode node = treeNodeCache.computeIfAbsent(file.getAbsolutePath(),
+					key -> new DefaultMutableTreeNode(new FileNode(file), file.isDirectory())
+			);
+
+			dirRoot.add(node);
+
+			if (file.isDirectory()) {
+				this.loadTree(node);
+			}
+		}
+	}
+	private static final Set<String> postfixs = Sets.newHashSet("xlsx", "xls", "xd", "xml", "json");
+
+	/**
+	 * 校验文件的后缀名
+	 * @param file 校验的文件
+	 * @return true 符合
+	 */
+	public static final boolean filePostfixCheck(File file) {
+		String fileName = file.getName();
+
+		if (fileName.startsWith("~") || fileName.startsWith(".")) return false;
+
+		if (file.isFile()) {
+			if (file.getName().contains(".")) {
+				String postfix = file.getName().substring(file.getName().indexOf(".")+1);
+				return postfixs.contains(postfix);
+			}
+		}
+		return true;
+	}
 	public static class FileNode{
 		private final File file ;
 		public FileNode (File file) {
@@ -124,5 +164,9 @@ public class CfgPanel extends IconJPanel {
 		public String toString() {
 			return file.getName();
 		}
+	}
+
+	public JTextArea getConsole() {
+		return console;
 	}
 }

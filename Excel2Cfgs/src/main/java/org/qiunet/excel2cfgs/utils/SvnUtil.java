@@ -1,10 +1,8 @@
 package org.qiunet.excel2cfgs.utils;
 
-import javafx.application.Platform;
 import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
-import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,9 +18,7 @@ public class SvnUtil {
 	/**svn正操作中 后期可以做监听, 告知按钮不可被操作.*/
 	private static boolean processing = false;
 
-	private static Logger logger = LoggerType.DUODUO.getLogger();
-
-	private static SystemPropertyUtil.OSType osType = SystemPropertyUtil.getOsName();
+	private static final SystemPropertyUtil.OSType osType = SystemPropertyUtil.getOsName();
 
 
 	public static void svnEvent(SvnCommand command, String path) {
@@ -32,13 +28,11 @@ public class SvnUtil {
 
 		switch (osType) {
 			case WINDOWS:
-				Platform.runLater(() -> {
-					try {
-						Runtime.getRuntime().exec("TortoiseProc.exe /command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				});
+				try {
+					Runtime.getRuntime().exec("TortoiseProc.exe /command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
+				} catch (IOException e) {
+					SwingUtil.alterError(e.getMessage());
+				}
 				break;
 			case MAC_OS:
 			case LINUX:
@@ -68,7 +62,7 @@ public class SvnUtil {
 		try {
 			process = Runtime.getRuntime().exec(sb.toString());
 		} catch (IOException e) {
-			FxUIUtil.alterError("执行命令报错"+e.getMessage());
+			SwingUtil.alterError("执行命令报错"+e.getMessage());
 			e.printStackTrace();
 		}
 		if (process == null) {
@@ -94,12 +88,13 @@ public class SvnUtil {
 			}
 			process.waitFor();
 		} catch (Exception e) {
+			SwingUtil.alterError("异常: "+e.getMessage());
 			e.printStackTrace();
 		}finally {
 			processing = false;
 		}
 		if (! haveProcessMsg) {
-			FxUIUtil.sendMsgToTextInput(process.exitValue() == 0 ? "执行成功": "执行失败", true);
+			SwingUtil.sendMsgToConsole(process.exitValue() == 0 ? "执行成功": "执行失败", true);
 		}
 		new SvnProcessingListenerData().fireEventHandler();
 	}
