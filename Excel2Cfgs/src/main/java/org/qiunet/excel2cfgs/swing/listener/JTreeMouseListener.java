@@ -1,6 +1,7 @@
 package org.qiunet.excel2cfgs.swing.listener;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.panel.CfgPanel;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
 import org.qiunet.excel2cfgs.utils.ExcelToCfg;
@@ -15,7 +16,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.IOException;
 
 /***
  *
@@ -44,11 +44,7 @@ public class JTreeMouseListener extends MouseAdapter {
 					return;
 				}
 
-				try {
-					Desktop.getDesktop().open(fileNode.getFile());
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-				}
+				SwingUtil.open(fileNode.getFile());
 			}
 		});
 

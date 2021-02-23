@@ -6,6 +6,9 @@ import org.qiunet.excel2cfgs.swing.panel.CfgPanel;
 import org.qiunet.utils.async.LazyLoader;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /***
  *
@@ -59,4 +62,11 @@ public class SwingUtil {
 
 	}
 
+	public static void open(File file) {
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (IOException e) {
+			alterError("打开文件目录异常: "+e.getMessage());
+		}
+	}
 }

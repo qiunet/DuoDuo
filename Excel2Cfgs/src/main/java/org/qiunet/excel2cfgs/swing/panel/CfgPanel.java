@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JTreeMouseListener;
@@ -19,7 +20,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -79,16 +79,30 @@ public class CfgPanel extends IconJPanel {
 						return;
 					}
 
-					try {
-						Desktop.getDesktop().open(file);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					SwingUtil.open(file);
 				}
 			}
 		});
 
 		excelPathTree.addMouseListener(new JTreeMouseListener(excelPathTree));
+		currExcelPath.setToolTipText("双击打开目录");
+		currProCfgPath.setToolTipText("双击打开目录");
+		currExcelPath.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					SwingUtil.open(new File(currExcelPath.getText()));
+				}
+			}
+		});
+		currProCfgPath.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					SwingUtil.open(new File(currProCfgPath.getText()));
+				}
+			}
+		});
 	}
 
 	@Override
