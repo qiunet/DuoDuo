@@ -3,8 +3,6 @@ package org.qiunet.excel2cfgs.setting;
 
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
-import org.qiunet.listener.event.EventListener;
-import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.secret.StrCodecUtil;
@@ -141,10 +139,5 @@ public enum SettingManager {
 
 	public void update(){
 		this.setting.update();
-	}
-
-	@EventListener
-	public void onShutdown(ServerShutdownEventData data) {
-		Excel2CfgsUtil.writeToProjectFile(this.setting);
 	}
 }

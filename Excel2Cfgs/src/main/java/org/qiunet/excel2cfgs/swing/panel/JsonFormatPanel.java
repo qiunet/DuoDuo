@@ -11,6 +11,7 @@ import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
+import org.qiunet.utils.string.StringUtil;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -36,6 +37,10 @@ public class JsonFormatPanel extends IconJPanel {
 		formatJsonBtn.addActionListener(e -> {
 			String string = originJson.getText();
 			String trim = string.trim();
+			if (StringUtil.isEmpty(trim)) {
+				return;
+			}
+
 			Object result;
 			try {
 				if (trim.startsWith("{")) {

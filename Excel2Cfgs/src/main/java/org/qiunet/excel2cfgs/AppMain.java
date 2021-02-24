@@ -5,7 +5,6 @@ import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.scanner.ClassScanner;
 import org.slf4j.Logger;
 
 import javax.swing.*;
@@ -27,7 +26,6 @@ public enum AppMain {
 	private JLabel titleLabel;
 
 	public static void main(String[] args) {
-		ClassScanner.getInstance().scanner();
         AppMain.instance.init();
     }
 

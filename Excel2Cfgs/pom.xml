@@ -123,7 +123,10 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>compile</scope>
 		</dependency>
-
+		<dependency>
+			<groupId>org.qiunet</groupId>
+			<artifactId>QiunetUtils</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.intellij</groupId>
 			<artifactId>forms_rt</artifactId>
