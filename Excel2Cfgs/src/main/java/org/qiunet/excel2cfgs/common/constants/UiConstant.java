@@ -28,7 +28,7 @@ public interface UiConstant {
 	 */
 	Dimension FILE_CHOOSER_SIZE = new Dimension(700, 500);
 
-    String MAIN_WINDOWS_TITLE = "DuoDuo Tools";
+    String MAIN_WINDOWS_TITLE = "DTools";
     /**
      * 主窗口图标
      */
