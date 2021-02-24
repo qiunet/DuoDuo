@@ -1,6 +1,5 @@
 package org.qiunet.excel2cfgs.utils;
 
-import org.qiunet.excel2cfgs.listener.SvnProcessingListenerData;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
 
@@ -70,7 +69,6 @@ public class SvnUtil {
 		}
 		processing = true;
 		boolean haveProcessMsg = false;
-		new SvnProcessingListenerData().fireEventHandler();
 		try (
 			InputStreamReader ir=new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8);
 			LineNumberReader input = new LineNumberReader (ir);
@@ -79,11 +77,11 @@ public class SvnUtil {
 		){
 			String line;
 			while ((line = input.readLine ()) != null){
-				FxUIUtil.sendMsgToTextInput(line, true);
+				SwingUtil.sendMsgToConsole(line, true);
 				haveProcessMsg = true;
 			}
 			while((line = inputError.readLine())!=null){
-				FxUIUtil.sendMsgToTextInput(line, true);
+				SwingUtil.sendMsgToConsole(line, true);
 				haveProcessMsg = true;
 			}
 			process.waitFor();
@@ -96,16 +94,8 @@ public class SvnUtil {
 		if (! haveProcessMsg) {
 			SwingUtil.sendMsgToConsole(process.exitValue() == 0 ? "执行成功": "执行失败", true);
 		}
-		new SvnProcessingListenerData().fireEventHandler();
 	}
 
-	/**
-	 * svn 操作状态
-	 * @return
-	 */
-	public static boolean isProcessing() {
-		return processing;
-	}
 
 	public enum SvnCommand {
 		//提交

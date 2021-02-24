@@ -1,10 +1,9 @@
 package org.qiunet.excel2cfgs.appender;
 
 
-import javafx.scene.control.Alert;
 import org.qiunet.excel2cfgs.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
-import org.qiunet.excel2cfgs.utils.FxUIUtil;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
@@ -30,7 +29,7 @@ public interface IAppender {
 		}
 
 		if (roleType != RoleType.SCHEMER && StringUtil.isEmpty(baseCfgPath)) {
-			FxUIUtil.openAlert(Alert.AlertType.ERROR, "服务端客户端需要设定导出的项目路径", "错误");
+			SwingUtil.alterError("服务端客户端需要设定导出的项目路径");
 			return;
 		}
 

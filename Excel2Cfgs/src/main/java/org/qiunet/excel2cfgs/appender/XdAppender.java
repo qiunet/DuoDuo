@@ -1,10 +1,9 @@
 package org.qiunet.excel2cfgs.appender;
 
 
-import javafx.scene.control.Alert;
 import org.qiunet.excel2cfgs.enums.OutPutType;
 import org.qiunet.excel2cfgs.enums.RoleType;
-import org.qiunet.excel2cfgs.utils.FxUIUtil;
+import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.common.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -66,7 +65,7 @@ public class XdAppender extends BaseAppender {
 			throw e;
 		}catch (Exception e) {
 			e.printStackTrace();
-			FxUIUtil.openAlert(Alert.AlertType.ERROR, e.getMessage(), "错误");
+			SwingUtil.alterError(e.getMessage());
 		}
 
 

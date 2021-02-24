@@ -18,7 +18,7 @@ public interface UiConstant {
     /**
      * 主窗口 高度
      */
-    int MAIN_WINDOW_HEIGHT = 680;
+    int MAIN_WINDOW_HEIGHT = 720;
 	/**
 	 *  工具面板宽度
 	 */

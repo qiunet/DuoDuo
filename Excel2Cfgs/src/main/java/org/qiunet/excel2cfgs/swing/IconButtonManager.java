@@ -1,10 +1,8 @@
 package org.qiunet.excel2cfgs.swing;
 
 import com.google.common.collect.Lists;
-import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.IIconPanel;
-import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -36,12 +34,6 @@ public enum IconButtonManager implements IApplicationContextAware {
 				.map(obj -> (IIconPanel) obj)
 				.collect(Collectors.toMap(IIconPanel::type, Function.identity()));
 	}
-
-	@EventListener
-	private void onStart(Excel2CfgServerStartListenerData data) {
-		panelMap.get(IconButtonType.cfg).getButton().doClick();
-	}
-
 	/**
 	 * 获得所有的面板
 	 * @return

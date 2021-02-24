@@ -255,7 +255,7 @@ public class CfgPanel extends IconJPanel {
 		final JPanel panel2 = new JPanel();
 		panel2.setLayout(new GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
 		panel2.setBackground(new Color(-788494));
-		panel1.add(panel2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(-1, 40), null, 0, false));
+		panel1.add(panel2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, new Dimension(250, 40), new Dimension(250, 40), new Dimension(250, 40), 0, false));
 		refreshBtn = new JButton();
 		refreshBtn.setBackground(new Color(-1773577));
 		refreshBtn.setIcon(new ImageIcon(getClass().getResource("/icon/refresh_normal.png")));
@@ -289,7 +289,7 @@ public class CfgPanel extends IconJPanel {
 		svnClean.setToolTipText("Svn清理");
 		panel2.add(svnClean, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, new Dimension(38, 38), new Dimension(38, 38), new Dimension(38, 38), 0, false));
 		final JScrollPane scrollPane1 = new JScrollPane();
-		panel1.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(250, 410), new Dimension(250, 410), 0, false));
+		panel1.add(scrollPane1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(250, 430), new Dimension(250, 430), new Dimension(250, 430), 0, false));
 		excelPathTree = new JTree();
 		excelPathTree.setBackground(new Color(-1));
 		Font excelPathTreeFont = this.$$$getFont$$$(null, -1, 18, excelPathTree.getFont());
@@ -301,15 +301,15 @@ public class CfgPanel extends IconJPanel {
 		final JSeparator separator2 = new JSeparator();
 		showPanel.add(separator2, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
 		final JScrollPane scrollPane2 = new JScrollPane();
-		showPanel.add(scrollPane2, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(650, 450), new Dimension(650, 450), new Dimension(650, 450), 0, false));
+		showPanel.add(scrollPane2, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(650, 500), new Dimension(650, 500), new Dimension(650, 500), 0, false));
 		console = new JTextArea();
 		console.setBackground(new Color(-13159113));
 		console.setEditable(false);
 		console.setEnabled(false);
 		Font consoleFont = this.$$$getFont$$$(null, -1, 16, console.getFont());
 		if (consoleFont != null) console.setFont(consoleFont);
-		console.setMaximumSize(new Dimension(650, 450));
-		console.setMinimumSize(new Dimension(650, 450));
+		console.setMaximumSize(new Dimension(650, 500));
+		console.setMinimumSize(new Dimension(650, 500));
 		scrollPane2.setViewportView(console);
 	}
 

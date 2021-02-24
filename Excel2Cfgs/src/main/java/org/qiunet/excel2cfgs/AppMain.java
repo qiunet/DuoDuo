@@ -1,9 +1,10 @@
 package org.qiunet.excel2cfgs;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
-import org.qiunet.excel2cfgs.listener.Excel2CfgServerStartListenerData;
+import org.qiunet.excel2cfgs.setting.SettingManager;
+import org.qiunet.excel2cfgs.swing.IconButtonManager;
+import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
-import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.slf4j.Logger;
@@ -42,12 +43,12 @@ public enum AppMain {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-				ServerShutdownEventData.fireShutdownEventHandler();
+				SettingManager.getInstance().update();
             }
 
 			@Override
 			public void windowOpened(WindowEvent e) {
-				Excel2CfgServerStartListenerData.fireStartEventHandler();
+				IconButtonManager.instance.getIconPanel(IconButtonType.cfg).getButton().doClick();
 			}
         });
         frame.add(mainPanel);
