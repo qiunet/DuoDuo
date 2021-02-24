@@ -110,6 +110,7 @@ public class JTreeMouseListener extends MouseAdapter {
 		JPopupMenu jPopupMenu = new JPopupMenu();
 		convertItem.setText(file.isDirectory() ? "转换所有" : "转换");
 		jPopupMenu.add(openItem);
+		jPopupMenu.add(new JSeparator());
 		jPopupMenu.add(convertItem);
 		jPopupMenu.add(svnUpdateItem);
 		if (OSUtil.isWindows()) {
@@ -120,7 +121,7 @@ public class JTreeMouseListener extends MouseAdapter {
 
 	private JMenuItem createMenuItem(String text, MouseListener mouseListener) {
 		JMenuItem item = new JMenuItem(text);
-		item.setPreferredSize(new Dimension(120, 40));
+		item.setPreferredSize(new Dimension(150, 40));
 		item.setFont(UiConstant.DEFAULT_FONT);
 		item.setBackground(Color.white);
 		item.addMouseListener(mouseListener);
