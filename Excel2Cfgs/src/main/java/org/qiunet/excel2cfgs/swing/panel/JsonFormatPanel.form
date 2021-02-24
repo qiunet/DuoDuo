@@ -1,12 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="org.qiunet.excel2cfgs.swing.panel.JsonFormatPanel">
-  <grid id="27dc6" binding="showPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="showPanel" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="500" height="400"/>
+      <xy x="20" y="20" width="924" height="584"/>
     </constraints>
     <properties/>
     <border type="none"/>
-    <children/>
+    <children>
+      <scrollpane id="25a97">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="920" height="90"/>
+            <preferred-size width="920" height="90"/>
+            <maximum-size width="920" height="90"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="line" title="Json输入"/>
+        <children>
+          <component id="5f2d7" class="javax.swing.JTextArea" binding="originJson">
+            <constraints/>
+            <properties>
+              <font size="16"/>
+              <lineWrap value="true"/>
+              <maximumSize width="920" height="2147483647"/>
+              <minimumSize width="920" height="88"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="6a73" class="javax.swing.JButton" binding="formatJsonBtn">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <font size="18" style="1"/>
+          <text value="↓↓格式化Json↓↓"/>
+        </properties>
+      </component>
+      <scrollpane id="b6731">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="920" height="450"/>
+            <preferred-size width="920" height="450"/>
+            <maximum-size width="920" height="450"/>
+          </grid>
+        </constraints>
+        <properties/>
+        <border type="line" title="Json输出"/>
+        <children>
+          <component id="9d63b" class="javax.swing.JTextArea" binding="formatJson">
+            <constraints/>
+            <properties>
+              <editable value="false"/>
+              <font size="18"/>
+              <maximumSize width="920" height="2147483647"/>
+              <minimumSize width="920" height="446"/>
+            </properties>
+          </component>
+        </children>
+      </scrollpane>
+    </children>
   </grid>
 </form>
