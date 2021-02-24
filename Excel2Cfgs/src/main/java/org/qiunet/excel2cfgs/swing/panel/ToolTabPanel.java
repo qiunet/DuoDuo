@@ -1,11 +1,11 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
-import org.qiunet.excel2cfgs.swing.IconButtonManager;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 /***
  * 工具切换面板
@@ -46,12 +46,12 @@ public class ToolTabPanel extends JPanel {
 
     private void addButton(){
 		for (IconButtonType value : IconButtonType.values()) {
-			IconButtonManager.instance.getIconPanel(value).addToParent(this);
+			value.getPanel().addToParent(this);
 		}
     }
 
     private void addListener(){
-		IconButtonManager.instance.getIconPanels().forEach(IIconPanel::addListener);
+		Arrays.stream(IconButtonType.values()).forEach(type -> type.getPanel().addListener());
     }
 
 	public JPanel getPanelDown() {

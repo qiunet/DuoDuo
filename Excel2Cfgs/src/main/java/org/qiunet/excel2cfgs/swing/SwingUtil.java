@@ -16,7 +16,7 @@ import java.io.IOException;
  * @Date 2021/2/21 15:24
  **/
 public class SwingUtil {
-	private static final LazyLoader<JTextArea> console = new LazyLoader<>(() -> ((CfgPanel) IconButtonManager.instance.getIconPanel(IconButtonType.cfg)).getConsole());
+	private static final LazyLoader<JTextArea> console = new LazyLoader<>(() -> ((CfgPanel) (IconButtonType.cfg.getPanel())).getConsole());
 	/**
 	 * 弹出错误信息
 	 * @param message

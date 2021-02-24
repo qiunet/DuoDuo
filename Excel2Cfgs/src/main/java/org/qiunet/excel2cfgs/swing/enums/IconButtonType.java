@@ -1,5 +1,7 @@
 package org.qiunet.excel2cfgs.swing.enums;
 
+import org.qiunet.excel2cfgs.swing.panel.*;
+
 /***
  * 工具栏按钮类型
  * @Author qiunet
@@ -9,24 +11,30 @@ public enum IconButtonType {
 	/**
 	 * 设定转换
 	 */
-	cfg("Excel配置转换"),
+	cfg(new CfgPanel(), "Excel配置转换"),
 	/**
 	 * json
 	 */
-	json("Json格式化"),
+	json(new JsonFormatPanel(), "Json格式化"),
 	/**
 	 * 时间戳转换
 	 */
-	time("时间戳转换"),
+	time(new TimePanel(), "时间戳转换"),
 	/**
 	 * 设置
 	 */
-	setting("设置"),
+	setting(new SettingPanel(), "设置"),
 	;
-	private String title;
+	private final String title;
+	private final IIconPanel panel;
 
-	IconButtonType(String title) {
+	IconButtonType(IIconPanel panel, String title) {
 		this.title = title;
+		this.panel = panel;
+	}
+
+	public IIconPanel getPanel() {
+		return panel;
 	}
 
 	public String getTitle() {

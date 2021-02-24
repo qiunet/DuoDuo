@@ -2,7 +2,6 @@ package org.qiunet.excel2cfgs;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.setting.SettingManager;
-import org.qiunet.excel2cfgs.swing.IconButtonManager;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
 import org.qiunet.utils.logger.LoggerType;
@@ -48,7 +47,7 @@ public enum AppMain {
 
 			@Override
 			public void windowOpened(WindowEvent e) {
-				IconButtonManager.instance.getIconPanel(IconButtonType.cfg).getButton().doClick();
+				IconButtonType.cfg.getPanel().getButton().doClick();
 			}
         });
         frame.add(mainPanel);

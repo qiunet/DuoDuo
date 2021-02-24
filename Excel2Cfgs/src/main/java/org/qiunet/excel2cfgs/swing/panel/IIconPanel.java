@@ -1,7 +1,6 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
 import org.qiunet.excel2cfgs.AppMain;
-import org.qiunet.excel2cfgs.swing.IconButtonManager;
 import org.qiunet.excel2cfgs.swing.component.IconButton;
 import org.qiunet.excel2cfgs.swing.enums.ButtonStatus;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
@@ -62,7 +61,8 @@ public interface IIconPanel {
 
 	default void addListener() {
 		this.getButton().addActionListener(e -> {
-			for (IIconPanel value : IconButtonManager.instance.getIconPanels()) {
+			for (IconButtonType type : IconButtonType.values()) {
+				IIconPanel value = type.getPanel();
 				if (! value.getButton().isEnabled()) {
 					// 说明当前是激活状态.
 					this.unActivate();
