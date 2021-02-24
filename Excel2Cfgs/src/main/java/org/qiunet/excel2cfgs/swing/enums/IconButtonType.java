@@ -21,6 +21,11 @@ public enum IconButtonType {
 	 */
 	time(new TimePanel(), "时间戳转换"),
 	/**
+	 * gm 命令调试发送
+	 * 道具发送等
+	 */
+	gm(new GmPanel(), "GM命令"),
+	/**
 	 * 设置
 	 */
 	setting(new SettingPanel(), "设置"),

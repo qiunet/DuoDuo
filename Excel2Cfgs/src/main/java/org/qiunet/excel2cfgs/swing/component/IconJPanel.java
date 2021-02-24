@@ -19,7 +19,7 @@ public abstract class IconJPanel implements IIconPanel {
 			IIconPanel.getImageIcon(this, ButtonStatus.enable),
 			IIconPanel.getImageIcon(this, ButtonStatus.disable),
 			IIconPanel.getImageIcon(this, ButtonStatus.rollover),
-			name())
+			this.title())
 	);
 
 
