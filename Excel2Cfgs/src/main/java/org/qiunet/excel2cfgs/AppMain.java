@@ -44,26 +44,39 @@ public enum AppMain {
 		frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		systemTray = SystemTray.getSystemTray();// 获得系统托盘的实例
 		trayIcon = new TrayIcon(UiConstant.IMAGE_ICON);
-		try {
-			systemTray.add(trayIcon);// 设置托盘的图标
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
+		PopupMenu popupMenu = new PopupMenu();
+		MenuItem exit = new MenuItem("Exit");
+		exit.setFont(UiConstant.DEFAULT_FONT);
+		exit.addActionListener(e -> {
+			System.exit(0);
+		});
+		popupMenu.add(exit);
+		trayIcon.setPopupMenu(popupMenu);
 		//为图标设置鼠标监听器
 		trayIcon.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				//双击托盘窗口再现
-				if(e.getClickCount() == 2 )
-					frame.setExtendedState(Frame.NORMAL);
-					frame.setVisible(true);
+				if (e.getButton() != MouseEvent.BUTTON1) {
+					return;
 				}
+				frame.setExtendedState(Frame.NORMAL);
+				frame.setVisible(true);
+			}
 		});
 
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowIconified(WindowEvent e) {
-				frame.dispose();
+			public void windowActivated(WindowEvent e) {
+				systemTray.remove(trayIcon);
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				try {
+					systemTray.add(trayIcon);// 设置托盘的图标
+				} catch (AWTException ex) {
+					ex.printStackTrace();
+				}
 			}
 		});
 	}
