@@ -8,6 +8,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,11 +25,10 @@ public enum AppMain {
     instance;
 
     private final Logger logger = LoggerType.DUODUO.getLogger();
-	private JPanel mainPanelCenter;
-	private JLabel titleLabel;
-
 	private TrayIcon trayIcon;// 托盘图标
 	private SystemTray systemTray;// 系统托盘
+	private JPanel mainPanelCenter;
+	private final TitledBorder border = new TitledBorder("=");
 
 
 	public static void main(String[] args) {
@@ -114,25 +114,16 @@ public enum AppMain {
 		ToolTabPanel toolTabPanel = new ToolTabPanel();
         mainPanel.add(toolTabPanel, BorderLayout.WEST);
 
-        JPanel contentPanel = new JPanel(true);
-        contentPanel.setLayout(new BorderLayout());
-		JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
-
-		this.titleLabel = new JLabel();
-		this.titleLabel.setFont(new Font("微软雅黑", Font.BOLD, 30));
-		this.titleLabel.setForeground(UiConstant.TOOL_BAR_BACK_COLOR);
-		titlePanel.add(this.titleLabel);
-		contentPanel.add(titlePanel, BorderLayout.NORTH);
-
-
         this.mainPanelCenter = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 15));
-		contentPanel.add(mainPanelCenter, BorderLayout.CENTER);
-		mainPanel.add(contentPanel, BorderLayout.CENTER);
+        this.border.setTitleFont(new Font("微软雅黑", Font.BOLD, 32));
+        this.border.setTitleColor(UiConstant.TOOL_BAR_BACK_COLOR);
+        this.mainPanelCenter.setBorder(border);
+		mainPanel.add(mainPanelCenter, BorderLayout.CENTER);
         return mainPanel;
     }
 
-	public JLabel getTitleLabel() {
-		return titleLabel;
+	public TitledBorder getBorder() {
+		return border;
 	}
 
 	public JPanel getMainPanelCenter() {
