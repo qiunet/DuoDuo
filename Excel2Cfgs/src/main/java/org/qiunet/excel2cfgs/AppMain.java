@@ -47,9 +47,7 @@ public enum AppMain {
 		PopupMenu popupMenu = new PopupMenu();
 		MenuItem exit = new MenuItem("Exit");
 		exit.setFont(UiConstant.DEFAULT_FONT);
-		exit.addActionListener(e -> {
-			System.exit(0);
-		});
+		exit.addActionListener(e -> System.exit(0));
 		popupMenu.add(exit);
 		trayIcon.setPopupMenu(popupMenu);
 		//为图标设置鼠标监听器
@@ -66,17 +64,19 @@ public enum AppMain {
 
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowActivated(WindowEvent e) {
-				systemTray.remove(trayIcon);
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
+				// 设置托盘的图标
 				try {
-					systemTray.add(trayIcon);// 设置托盘的图标
+					systemTray.add(trayIcon);
 				} catch (AWTException ex) {
 					ex.printStackTrace();
 				}
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				systemTray.remove(trayIcon);
+
 			}
 		});
 	}
