@@ -5,6 +5,7 @@ import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.system.OSUtil;
 import org.slf4j.Logger;
 
 import javax.swing.*;
@@ -36,7 +37,7 @@ public enum AppMain {
     }
 
     private void handlerTray(JFrame frame) {
-		if (! SystemTray.isSupported()) {
+		if (! SystemTray.isSupported() || ! OSUtil.isWindows()) {
 			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			return;
 		}
