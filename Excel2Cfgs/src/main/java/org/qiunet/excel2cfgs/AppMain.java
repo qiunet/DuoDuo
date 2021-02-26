@@ -26,10 +26,11 @@ public enum AppMain {
     instance;
 
     private final Logger logger = LoggerType.DUODUO.getLogger();
-	private TrayIcon trayIcon;// 托盘图标
+	private final TitledBorder border = new TitledBorder("=");
 	private SystemTray systemTray;// 系统托盘
 	private JPanel mainPanelCenter;
-	private final TitledBorder border = new TitledBorder("=");
+	private TrayIcon trayIcon;// 托盘图标
+	private JFrame frame;
 
 
 	public static void main(String[] args) {
@@ -83,11 +84,12 @@ public enum AppMain {
 	}
 
     private void init(){
-		JFrame frame = new JFrame(UiConstant.MAIN_WINDOWS_TITLE);
+		this.frame = new JFrame();
         frame.setBackground(UiConstant.MAIN_BACK_COLOR);
-        frame.setIconImage(UiConstant.IMAGE_ICON);
-        frame.setSize(UiConstant.MAIN_SIZE);
-        this.handlerTray(frame);
+		frame.setIconImage(UiConstant.IMAGE_ICON);
+		frame.setSize(UiConstant.MAIN_SIZE);
+		this.handlerTray(frame);
+		this.refreshTitle();
 
         JPanel mainPanel = this.createMainPanel();
         frame.addWindowListener(new WindowAdapter() {
@@ -133,5 +135,13 @@ public enum AppMain {
 
 	public JPanel getStatusPanel() {
 		return mainPanelCenter;
+	}
+
+	public void refreshTitle() {
+		frame.setTitle(this.mainWindowsTitle());
+	}
+
+	private String mainWindowsTitle() {
+		return  "DTools("+ SettingManager.getInstance().getSetting().getRoleType() +")";
 	}
 }

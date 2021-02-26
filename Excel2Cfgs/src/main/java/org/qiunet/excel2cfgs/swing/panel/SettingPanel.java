@@ -3,6 +3,7 @@ package org.qiunet.excel2cfgs.swing.panel;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
+import org.qiunet.excel2cfgs.AppMain;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.common.enums.OutputFormatType;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
@@ -133,6 +134,7 @@ public class SettingPanel extends IconJPanel {
 			choiceItem.saveStatus();
 		}
 		SettingManager.getInstance().update();
+		AppMain.instance.refreshTitle();
 	}
 
 	@Override
