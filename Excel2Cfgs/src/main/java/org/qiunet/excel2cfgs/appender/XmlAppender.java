@@ -5,7 +5,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,7 +1,7 @@
 package org.qiunet.excel2cfgs.appender;
 
 
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.utils.string.StringUtil;

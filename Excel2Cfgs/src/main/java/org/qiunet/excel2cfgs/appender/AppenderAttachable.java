@@ -1,9 +1,9 @@
 package org.qiunet.excel2cfgs.appender;
 
 import com.google.common.collect.Lists;
-import org.qiunet.excel2cfgs.enums.DataType;
-import org.qiunet.excel2cfgs.enums.OutPutType;
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.DataType;
+import org.qiunet.excel2cfgs.common.enums.OutPutType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,15 +17,15 @@ public class AppenderAttachable {
 	/**
 	 * 文件名
 	 */
-	private String fileName;
+	private final String fileName;
 	/**
 	 * 选择的json xml  xd等append
 	 */
-	private List<IAppender> appenders = new LinkedList<>();
+	private final List<IAppender> appenders = new LinkedList<>();
 	/**
 	 * 所有数据
 	 */
-	private List<List<AppenderData>> appenderDatas = Lists.newArrayList();
+	private final List<List<AppenderData>> appenderDatas = Lists.newArrayList();
 	/**
 	 * 每一行的数据
 	 */
@@ -33,7 +33,7 @@ public class AppenderAttachable {
 	/**
 	 * 保存的数值字段名称
 	 */
-	private List<NameAppenderData> nameAppenderDatas = Lists.newArrayList();
+	private final List<NameAppenderData> nameAppenderDatas = Lists.newArrayList();
 
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;

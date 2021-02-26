@@ -1,7 +1,7 @@
 package org.qiunet.excel2cfgs.appender;
 
-import org.qiunet.excel2cfgs.enums.DataType;
-import org.qiunet.excel2cfgs.enums.OutPutType;
+import org.qiunet.excel2cfgs.common.enums.DataType;
+import org.qiunet.excel2cfgs.common.enums.OutPutType;
 
 /***
  *

@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.enums;
+package org.qiunet.excel2cfgs.common.enums;
 
 import org.qiunet.excel2cfgs.setting.SettingManager;
 

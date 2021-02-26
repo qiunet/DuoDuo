@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.enums;
+package org.qiunet.excel2cfgs.common.enums;
 
 /***
  * 角色类型
@@ -20,7 +20,7 @@ public enum  RoleType {
 	 */
 	SCHEMER("策划"),
 	;
-	private String name;
+	private final String name;
 
 	RoleType(String name) {
 		this.name = name;

@@ -5,13 +5,13 @@ import com.google.common.collect.Sets;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
+import org.qiunet.excel2cfgs.common.utils.SvnUtil;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JTreeMouseListener;
-import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;

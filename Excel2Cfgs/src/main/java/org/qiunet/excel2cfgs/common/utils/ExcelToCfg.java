@@ -1,10 +1,10 @@
-package org.qiunet.excel2cfgs.utils;
+package org.qiunet.excel2cfgs.common.utils;
 
 import org.apache.poi.ss.usermodel.*;
 import org.qiunet.excel2cfgs.appender.*;
-import org.qiunet.excel2cfgs.enums.DataType;
-import org.qiunet.excel2cfgs.enums.OutPutType;
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.DataType;
+import org.qiunet.excel2cfgs.common.enums.OutPutType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;

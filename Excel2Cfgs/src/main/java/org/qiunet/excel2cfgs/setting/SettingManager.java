@@ -1,8 +1,8 @@
 package org.qiunet.excel2cfgs.setting;
 
 
-import org.qiunet.excel2cfgs.enums.RoleType;
-import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
+import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.secret.StrCodecUtil;

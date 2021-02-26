@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.exception;
+package org.qiunet.excel2cfgs.common.exception;
 
 /**
  * Created by qiunet.

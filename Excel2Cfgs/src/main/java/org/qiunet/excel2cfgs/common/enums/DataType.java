@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.enums;
+package org.qiunet.excel2cfgs.common.enums;
 
 /***
  *
@@ -20,7 +20,7 @@ public enum DataType {
 	LONG("int64"),
 	;
 
-	private String protoType;
+	private final String protoType;
 	DataType(String protoType) {
 		this.protoType = protoType;
 	}

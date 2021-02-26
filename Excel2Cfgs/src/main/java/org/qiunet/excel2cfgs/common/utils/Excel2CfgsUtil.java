@@ -1,4 +1,4 @@
-package org.qiunet.excel2cfgs.utils;
+package org.qiunet.excel2cfgs.common.utils;
 
 import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.utils.common.CommonUtil;

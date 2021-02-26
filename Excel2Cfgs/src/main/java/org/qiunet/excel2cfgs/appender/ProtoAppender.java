@@ -1,6 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
-import org.qiunet.excel2cfgs.enums.RoleType;
+import org.qiunet.excel2cfgs.common.enums.RoleType;
 import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;

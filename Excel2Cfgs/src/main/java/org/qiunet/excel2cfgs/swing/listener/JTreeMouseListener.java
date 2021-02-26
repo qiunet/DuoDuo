@@ -1,11 +1,11 @@
 package org.qiunet.excel2cfgs.swing.listener;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
+import org.qiunet.excel2cfgs.common.utils.ExcelToCfg;
+import org.qiunet.excel2cfgs.common.utils.SvnUtil;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.panel.CfgPanel;
-import org.qiunet.excel2cfgs.utils.Excel2CfgsUtil;
-import org.qiunet.excel2cfgs.utils.ExcelToCfg;
-import org.qiunet.excel2cfgs.utils.SvnUtil;
 import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;
