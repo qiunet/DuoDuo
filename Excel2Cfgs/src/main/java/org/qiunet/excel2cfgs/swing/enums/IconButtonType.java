@@ -20,6 +20,10 @@ public enum IconButtonType {
 	 * 时间戳转换
 	 */
 	time(new TimePanel(), "时间戳转换"),
+	/***
+	 * 工具集合
+	 */
+	tools(new ToolsPanel(), "工具集合"),
 	/**
 	 * gm 命令调试发送
 	 * 道具发送等
