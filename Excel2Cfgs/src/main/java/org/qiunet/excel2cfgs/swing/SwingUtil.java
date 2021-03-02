@@ -35,6 +35,13 @@ public class SwingUtil {
 		JOptionPane.showMessageDialog(AppMain.instance.getStatusPanel(), message, title, messageType);
 	}
 
+	/**
+	 * 提示信息
+	 * @param message
+	 */
+	public static void promptMessage(String message) {
+		alterMessage(message, "提示", JOptionPane.INFORMATION_MESSAGE);
+	}
 
 	/**
 	 * 拼加一条消息到输出控制台
