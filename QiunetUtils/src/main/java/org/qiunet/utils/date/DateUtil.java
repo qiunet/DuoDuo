@@ -19,53 +19,11 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  */
 public final class DateUtil {
-	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
-	private static long offsetMillis = 0;
-
-	/***
-	 * 当前的秒
-	 * @return
-	 */
-	public static long currSeconds() {
-		return DateUtil.currentTimeMillis() / 1000;
-	}
-
-	/**
-	 * 得到当前的 Instant
-	 *
-	 * @return
-	 */
-	public static Instant currentInstant() {
-		return Instant.ofEpochMilli(currentTimeMillis());
-	}
-
-	public static Date currentDate() {
-		return new Date();
-	}
-
-	public static LocalDateTime currentLocalDateTime() {
-		return LocalDateTime.ofInstant(currentInstant(), defaultZoneId);
-	}
-
-	public static ZoneId getDefaultZoneId() {
-		return defaultZoneId;
-	}
-
-	public static long currentTimeMillis() {
-		return System.currentTimeMillis() + offsetMillis;
-	}
-
-	/***
-	 * 对全局时间偏移做调整
-	 * @param offsetValue
-	 */
-	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
-		DateUtil.offsetMillis = unit.toMillis(offsetValue);
-	}
-
 	private DateUtil() {
 	}
 
+	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
+	private static long offsetMillis = 0;
 	/**
 	 * 默认的时间格式(日期 时间)
 	 */
@@ -88,38 +46,98 @@ public final class DateUtil {
 	 **/
 	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
+	public static ZoneId getDefaultZoneId() {
+		return defaultZoneId;
+	}
+
 	/**
-	 * 日期转字符串 默认格式
+	 * 得到当前的 Instant
 	 *
-	 * @param millis
 	 * @return
 	 */
-	public static String dateToString(long millis) {
-		return dateToString(millis, DEFAULT_DATE_TIME_FORMAT);
+	public static Instant currentInstant() {
+		return Instant.ofEpochMilli(currentTimeMillis());
+	}
+
+	public static Date currentDate() {
+		return new Date();
+	}
+
+	/**
+	 * 默认时区
+	 *
+	 * @return
+	 */
+	public static LocalDateTime currentLocalDateTime() {
+		return LocalDateTime.ofInstant(currentInstant(), defaultZoneId);
+	}
+
+	/**
+	 * 当前时间(默认时区)
+	 *
+	 * @return
+	 */
+	public static LocalDateTime nowLocalDateTime() {
+		return LocalDateTime.now(getDefaultZoneId());
+	}
+
+	/**
+	 * 当前时间(自定义时区)
+	 *
+	 * @param zoneOffset
+	 * @return
+	 */
+	public static LocalDateTime nowLocalDateTime(ZoneOffset zoneOffset) {
+		return LocalDateTime.now(zoneOffset);
+	}
+
+	/**
+	 * 系统时间戳, 不区分时区
+	 *
+	 * @return
+	 */
+	public static long currentTimeMillis() {
+		return System.currentTimeMillis() + offsetMillis;
 	}
 
 	/***
-	 * 格式化为 yyyy-MM-dd HH:mm:ss
-	 * @param date
+	 * 当前的秒, 不区分时区
 	 * @return
 	 */
-	public static String dateToString(LocalDateTime date) {
-		return DEFAULT_DATE_TIME_FORMATTER.format(date);
+	public static long currSeconds() {
+		return DateUtil.currentTimeMillis() / 1000;
 	}
 
-	//获取指定日期的毫秒
+	/***
+	 * 对全局时间偏移做调整
+	 * @param offsetValue
+	 */
+	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
+		DateUtil.offsetMillis = unit.toMillis(offsetValue);
+	}
+
+	/**
+	 * 获取指定日期的毫秒(默认系统时区, 注意!!!如果time的时区和系统时区不等,返回值错误)
+	 *
+	 * @param time
+	 * @return
+	 */
 	public static long getMilliByTime(LocalDateTime time) {
 		return time.atZone(getDefaultZoneId()).toInstant().toEpochMilli();
 	}
 
-	//获取指定日期的秒
+	/**
+	 * 获取指定日期的秒(默认系统时区, 注意!!!如果time的时区和系统时区不等,返回值错误)
+	 *
+	 * @param time
+	 * @return
+	 */
 	public static long getSecondsByTime(LocalDateTime time) {
 		return time.atZone(getDefaultZoneId()).toInstant().getEpochSecond();
 	}
 
-
 	/**
-	 * 获取指定日期的毫秒
+	 * 获取指定日期的毫秒, 自定义时区, zoneOffset必须和time的时区一致
 	 *
 	 * @param time
 	 * @param zoneOffset
@@ -130,7 +148,7 @@ public final class DateUtil {
 	}
 
 	/**
-	 * 获取指定日期的秒
+	 * 获取指定日期的秒, 自定义时区, zoneOffset必须和time的时区一致
 	 *
 	 * @param time
 	 * @param zoneOffset
@@ -149,28 +167,8 @@ public final class DateUtil {
 		return nowLocalDateTime().atZone(getDefaultZoneId()).toInstant().toEpochMilli();
 	}
 
-
 	/**
-	 * 当前时间
-	 *
-	 * @return
-	 */
-	public static LocalDateTime nowLocalDateTime() {
-		return LocalDateTime.now(getDefaultZoneId());
-	}
-
-	/**
-	 * 当前时间
-	 *
-	 * @param zoneOffset
-	 * @return
-	 */
-	public static LocalDateTime nowLocalDateTime(ZoneOffset zoneOffset) {
-		return LocalDateTime.now(zoneOffset);
-	}
-
-	/**
-	 * 根据时间戳 得到LocalDateTime
+	 * 根据时间戳 得到LocalDateTime(默认系统时区)
 	 *
 	 * @param milliseconds
 	 * @return
@@ -181,7 +179,7 @@ public final class DateUtil {
 	}
 
 	/**
-	 * 根据时间戳 得到LocalDateTime
+	 * 根据时间戳 得到LocalDateTime(自定义时区)
 	 *
 	 * @param milliseconds
 	 * @param zoneOffset
@@ -192,6 +190,24 @@ public final class DateUtil {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), zoneOffset);
 	}
 
+	/**
+	 * 日期转字符串 默认格式
+	 *
+	 * @param millis
+	 * @return
+	 */
+	public static String dateToString(long millis) {
+		return dateToString(millis, DEFAULT_DATE_TIME_FORMAT);
+	}
+
+	/***
+	 * 格式化为 yyyy-MM-dd HH:mm:ss
+	 * @param date
+	 * @return
+	 */
+	public static String dateToString(LocalDateTime date) {
+		return DEFAULT_DATE_TIME_FORMATTER.format(date);
+	}
 
 	/**
 	 * 日期转字符串 指定格式
