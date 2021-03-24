@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.common.player;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
+import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
+import org.qiunet.listener.event.EventHandlerWeightType;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.collection.enums.ForEachResult;
 
@@ -27,12 +29,17 @@ public enum UserOnlineManager {
 	private void addPlayerActor(AuthEventData eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
-
-		userActor.getSession().addCloseListener(cause -> {
-			datas.remove(userActor.getId());
-			userActor.destroy();
-		});
+		userActor.getSession().addCloseListener(cause -> datas.remove(userActor.getId()));
 		datas.put(userActor.getId(), userActor);
+	}
+
+	/**
+	 * 登出事件
+	 * @param eventData
+	 */
+	@EventListener(EventHandlerWeightType.LESS)
+	private void onLogout(PlayerLogoutEventData eventData) {
+		eventData.getPlayer().destroy();
 	}
 
 	/**
