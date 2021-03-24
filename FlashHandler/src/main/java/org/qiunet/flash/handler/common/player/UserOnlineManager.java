@@ -18,18 +18,20 @@ import java.util.function.Function;
  * @author qiunet
  * 2020-10-16 10:25
  */
-public class UserOnlineManager {
-	private static final UserOnlineManager instance = new UserOnlineManager();
-	private UserOnlineManager(){}
+public enum UserOnlineManager {
+	instance;
 
-	private static Map<Long, AbstractUserActor> datas = Maps.newConcurrentMap();
+	private static final Map<Long, AbstractUserActor> datas = Maps.newConcurrentMap();
 
 	@EventListener
 	private void addPlayerActor(AuthEventData eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
 
-		userActor.getSession().addCloseListener(cause -> datas.remove(userActor.getId()));
+		userActor.getSession().addCloseListener(cause -> {
+			datas.remove(userActor.getId());
+			userActor.destroy();
+		});
 		datas.put(userActor.getId(), userActor);
 	}
 
