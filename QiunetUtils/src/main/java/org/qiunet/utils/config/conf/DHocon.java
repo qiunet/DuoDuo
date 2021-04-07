@@ -7,6 +7,7 @@ import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ import java.util.stream.Collectors;
  */
 public final class DHocon extends KeyValueData<String, String> {
 	private Config config;
+
 	/**
-	 *
 	 * @param fileName 基于classpath的文件名和路径
 	 */
 	public DHocon(String fileName) {
@@ -30,8 +31,9 @@ public final class DHocon extends KeyValueData<String, String> {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
-		File file = new File(url.getFile());
-		load0(file);
+//		InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName);
+//		File file = new File(url.getFile());
+		load0(url);
 	}
 
 	private void load0(File file) {
@@ -41,8 +43,16 @@ public final class DHocon extends KeyValueData<String, String> {
 		super.load(collect);
 	}
 
+	private void load0(URL url) {
+		this.config = ConfigFactory.parseURL(url);
+		Map<String, String> collect = config.entrySet().stream()
+				.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
+		super.load(collect);
+	}
+
 	/**
 	 * 得到对应的config
+	 *
 	 * @return
 	 */
 	public Config getConfig() {

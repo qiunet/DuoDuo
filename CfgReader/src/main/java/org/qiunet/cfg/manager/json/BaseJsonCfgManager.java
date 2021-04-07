@@ -14,8 +14,11 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	protected BaseJsonCfgManager(String fileName) {
 		Cfg annotation = getClass().getAnnotation(Cfg.class);
-		CfgManagers.getInstance().addDataSettingManager(this, annotation == null? 0: annotation.order());
+		CfgManagers.getInstance().addDataSettingManager(this, annotation == null ? 0 : annotation.order());
 		this.fileName = fileName;
 	}
 
@@ -54,6 +57,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
 	 * 目前是空的实现,开发者选择是否覆盖函数
 	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
+	 *
 	 * @throws Exception
 	 */
 	public void initBySelf() throws Exception {
@@ -62,25 +66,42 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	/**
 	 * 获取配置文件真实路径
+	 *
 	 * @param fileName
 	 * @return
 	 */
 	protected File getFile(String fileName) {
-		return new File(getClass().getClassLoader().getResource(fileName).getFile());
+		//这种读取配置文件方式, 在把项目打成jar包会读取文件内容失败. 所以注释掉, 换成下面这种方式
+//		return new File(getClass().getClassLoader().getResource(fileName).getFile());
+		URL url = getClass().getClassLoader().getResource(fileName);
+
+//		System.out.println("file:" + url.getFile());
+//		System.out.println("path:" + url.getPath());
+
+		try {
+			return new File(url.toURI());
+		} catch (URISyntaxException var2) {
+			return new File(url.getPath());
+		} catch (IllegalArgumentException var3) {
+			return new File(url.getPath());
+		}
 	}
 
 	/**
 	 * json解析成为cfg对象
+	 *
 	 * @param sheetName
 	 * @param cfgClass
 	 * @param <Cfg>
 	 * @return
 	 */
-	protected <Cfg> List<Cfg> getSimpleListCfg(String sheetName, Class<Cfg> cfgClass) throws Exception{
+	protected <Cfg> List<Cfg> getSimpleListCfg(String sheetName, Class<Cfg> cfgClass) throws Exception {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
 		String json = null;
 		try {
-			json = FileUtil.getFileContent(getFile(fileName));
+//			json = FileUtil.getFileContent(getFile(fileName));
+			InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileName);
+			json = FileUtil.getFileContent(resourceAsStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +112,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 			List<Cfg> reList = new ArrayList<>();
 
 			for (JSONObject jsonObject : generalList) {
-				reList.add(generalCfg(jsonObject,cfgClass));
+				reList.add(generalCfg(jsonObject, cfgClass));
 			}
 			return reList;
 //			return JsonUtil.getGeneralList(json, cfgClass);
@@ -129,6 +150,7 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 
 	/**
 	 * 从JSONObject 去到对应属性名的值
+	 *
 	 * @param field
 	 * @param jsonObject
 	 * @return
@@ -143,6 +165,6 @@ public abstract class BaseJsonCfgManager extends BaseCfgManager {
 		if (type == Double.TYPE || type == Double.class) return jsonObject.getDouble(name);
 		if (type == String.class) return jsonObject.getString(name);
 
-		throw new RuntimeException("not define convert for type ["+type.getName()+"]");
+		throw new RuntimeException("not define convert for type [" + type.getName() + "]");
 	}
 }

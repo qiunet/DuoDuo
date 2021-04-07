@@ -1,5 +1,6 @@
 package org.qiunet.utils.file;
 
+import org.apache.commons.io.IOUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -13,12 +14,14 @@ import java.util.List;
 
 /**
  * @author qiunet
- *         Created on 17/2/17 18:02.
+ * Created on 17/2/17 18:02.
  */
 public class FileUtil {
 	private static Logger logger = LoggerType.DUODUO.getLogger();
+
 	/**
 	 * 移动文件
+	 *
 	 * @param srcFile
 	 * @param destPath
 	 * @return
@@ -32,7 +35,8 @@ public class FileUtil {
 
 	/**
 	 * 移动文件  只能mv到文件夹
-	 * @param srcFile 文件
+	 *
+	 * @param srcFile  文件
 	 * @param destPath 文件夹路径
 	 * @return 成功与否
 	 */
@@ -42,6 +46,7 @@ public class FileUtil {
 
 	/**
 	 * copy文件
+	 *
 	 * @param oldPath
 	 * @param newPath
 	 */
@@ -51,16 +56,18 @@ public class FileUtil {
 
 	/**
 	 * copy文件
+	 *
 	 * @param oldFile
 	 * @param newPath
 	 */
 	public static void copy(File oldFile, String newPath) {
-		if (! oldFile.exists() || !oldFile.isFile()) throw new IllegalArgumentException("file ["+oldFile.getAbsolutePath()+"] is not exist or is not a file!");
+		if (!oldFile.exists() || !oldFile.isFile())
+			throw new IllegalArgumentException("file [" + oldFile.getAbsolutePath() + "] is not exist or is not a file!");
 
 		try (FileOutputStream fs = new FileOutputStream(newPath)) {
 			fs.write(Files.readAllBytes(oldFile.toPath()));
 		} catch (Exception e) {
-			logger.error("Exception" , e);
+			logger.error("Exception", e);
 		}
 	}
 
@@ -69,18 +76,20 @@ public class FileUtil {
 	 * @param file
 	 * @param msg
 	 */
-	public static void appendToFile(File file, String msg){
+	public static void appendToFile(File file, String msg) {
 		writeStringToFile(file, msg, StandardCharsets.UTF_8, true, "\n");
 	}
+
 	/***
 	 * 使用content构造一个新文件
 	 * 如果已经有该文件. 将被覆盖.
 	 * @param file
 	 * @param content
 	 */
-	public static void createFileWithContent(File file, String content){
+	public static void createFileWithContent(File file, String content) {
 		writeStringToFile(file, content, StandardCharsets.UTF_8, false, "");
 	}
+
 	/***
 	 * 写入数据到文件
 	 * @param file 文件
@@ -88,18 +97,18 @@ public class FileUtil {
 	 * @param charset 编码
 	 * @param append 是否append
 	 */
-	public static void writeStringToFile(final File file, final String data, final Charset charset, final boolean append, String endChar){
+	public static void writeStringToFile(final File file, final String data, final Charset charset, final boolean append, String endChar) {
 		if (file.isDirectory()) {
 			logger.error("File '" + file + "' exists but is a directory");
 			return;
 		}
-		if (! file.exists() && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
+		if (!file.exists() && !file.getParentFile().exists() && !file.getParentFile().mkdirs()) {
 			logger.error("Directory '" + file.getParent() + "' could not be created");
 			return;
 		}
 
-		try (FileOutputStream output = new FileOutputStream(file, append)){
-			output.write((data+endChar).getBytes(charset));
+		try (FileOutputStream output = new FileOutputStream(file, append)) {
+			output.write((data + endChar).getBytes(charset));
 		} catch (Exception e) {
 			logger.error("FileUtil Exception", e);
 		}
@@ -114,6 +123,7 @@ public class FileUtil {
 	public static List<String> tailFile(File file, int lastNum) {
 		return tailFile(file, 0, lastNum);
 	}
+
 	/****
 	 * 从某个位置开始读取文件的最后{lastNum}行.
 	 * @param file
@@ -137,11 +147,11 @@ public class FileUtil {
 					if (++count >= lastNum) break;
 				}
 			}
-		}catch (IOException e) {
-			logger.error("Exception" , e);
+		} catch (IOException e) {
+			logger.error("Exception", e);
 		}
 
-		if (! result.isEmpty()) {
+		if (!result.isEmpty()) {
 			Collections.reverse(result);
 		}
 		return result;
@@ -161,7 +171,9 @@ public class FileUtil {
 		return file.length();
 	}
 
-	private FileUtil(){}
+	private FileUtil() {
+	}
+
 	/**
 	 * 删除文件 或者文件夹 以及其子目录下所有文件
 	 *
@@ -169,15 +181,15 @@ public class FileUtil {
 	 * @throws IOException
 	 */
 	public static void deleteFile(File f) {
-		if (! f.exists()) return;
+		if (!f.exists()) return;
 
 		if (f.isFile()) {
 			f.delete();
 			return;
 		}
 
-		File [] files = f.listFiles();
-		if(files == null) return;
+		File[] files = f.listFiles();
+		if (files == null) return;
 
 		for (File file : files) {
 			deleteFile(file);
@@ -193,9 +205,20 @@ public class FileUtil {
 	 * @throws IOException
 	 */
 	public static String getFileContent(File file) throws IOException {
-		if (! file.exists() || !file.isFile()) return null;
+		if (!file.exists() || !file.isFile()) return null;
 
 		byte[] bytes = Files.readAllBytes(file.toPath());
 		return new String(bytes, StandardCharsets.UTF_8);
+	}
+
+	/**
+	 * 读取文件内容, 兼容jar包内配置文件读取
+	 * @param inputStream
+	 * @return
+	 * @throws IOException
+	 */
+	public static String getFileContent(InputStream inputStream) throws IOException {
+		String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+		return result;
 	}
 }
