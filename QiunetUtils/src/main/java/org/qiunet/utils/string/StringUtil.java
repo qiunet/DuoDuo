@@ -6,10 +6,7 @@ import org.slf4j.helpers.MessageFormatter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
@@ -273,11 +270,11 @@ public class StringUtil {
 		int start = 0;
 		int length = str.length();
 
-		while (start < length && ! isAllowChar(str.charAt(start))) {
+		while (start < length && isAllowChar(str.charAt(start))) {
 			start ++;
 		}
 
-		while (length > start && ! isAllowChar(str.charAt(length - 1))) {
+		while (length > start && isAllowChar(str.charAt(length - 1))) {
 			length --;
 		}
 
@@ -294,18 +291,18 @@ public class StringUtil {
 	 */
 	private static boolean isAllowChar(char ch) {
 		if (ch >= 'A' && ch <= 'Z') {
-			return true;
+			return false;
 		}
 
 		if (ch >= '0' && ch <= '9') {
-			return true;
+			return false;
 		}
 
 		if (ch >= 'a' && ch <= 'z') {
-			return true;
+			return false;
 		}
 		String chStr = String.valueOf(ch);
-		return regexChinese(chStr);
+		return !regexChinese(chStr);
 	}
 
 	private static final int start = Integer.valueOf("4e00", 16);
@@ -346,7 +343,7 @@ public class StringUtil {
 	 *  both <code>null</code>
 	 */
 	public static boolean equals(String str1, String str2) {
-		return str1 == null ? str2 == null : str1.equals(str2);
+		return Objects.equals(str1, str2);
 	}
 
 }
