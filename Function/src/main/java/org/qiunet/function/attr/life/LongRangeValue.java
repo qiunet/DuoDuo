@@ -75,8 +75,8 @@ public class LongRangeValue {
 	 * @param minVal 需要设置的minVal
 	 * @return 是否有改变
 	 */
-	public boolean decreaseAndHoldMin(long value, long minVal) {
-		return this.decreaseAndHoldMin(value, () -> {
+	public void decreaseAndHoldMin(long value, long minVal) {
+		this.decreaseAndHoldMin(value, () -> {
 			this.setCurrent(minVal);
 		});
 	}
@@ -186,19 +186,19 @@ public class LongRangeValue {
 	 * @param touchMinimalValue
 	 * @return
 	 */
-	public boolean decreaseAndHoldMin(long value, ITouchMinimalValue touchMinimalValue) {
+	public void decreaseAndHoldMin(long value, ITouchMinimalValue touchMinimalValue) {
 		if (value < 0) {
 			throw new CustomException("value [{}] is negatives number!", value);
 		}
 
 		if (value == 0) {
-			return false;
+			return;
 		}
 
 		lock.lock();
 		try {
 			if (isMinimal()) {
-				return false;
+				return;
 			}
 
 			this.current = Math.max(this.minimal, this.current - value);
@@ -209,7 +209,7 @@ public class LongRangeValue {
 			lock.unlock();
 		}
 
-		return true;
+		return;
 	}
 
 	/**
