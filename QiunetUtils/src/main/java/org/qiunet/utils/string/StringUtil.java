@@ -270,11 +270,11 @@ public class StringUtil {
 		int start = 0;
 		int length = str.length();
 
-		while (start < length && isAllowChar(str.charAt(start))) {
+		while (start < length && !isAllowChar(str.charAt(start))) {
 			start ++;
 		}
 
-		while (length > start && isAllowChar(str.charAt(length - 1))) {
+		while (length > start && !isAllowChar(str.charAt(length - 1))) {
 			length --;
 		}
 
@@ -291,18 +291,18 @@ public class StringUtil {
 	 */
 	private static boolean isAllowChar(char ch) {
 		if (ch >= 'A' && ch <= 'Z') {
-			return false;
+			return true;
 		}
 
 		if (ch >= '0' && ch <= '9') {
-			return false;
+			return true;
 		}
 
 		if (ch >= 'a' && ch <= 'z') {
-			return false;
+			return true;
 		}
 		String chStr = String.valueOf(ch);
-		return !regexChinese(chStr);
+		return regexChinese(chStr);
 	}
 
 	private static final int start = Integer.valueOf("4e00", 16);
