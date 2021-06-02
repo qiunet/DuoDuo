@@ -3,6 +3,7 @@ package org.qiunet.function.utils;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.utils.timer.TimerManager;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,13 +41,13 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 	 */
 	private TimeUnit unit;
 	/**
-	 * 心跳所有者
-	 */
-	private Owner owner;
-	/**
 	 * 类型
 	 */
 	private Type type;
+	/**
+	 * 心跳所有者
+	 */
+	private WeakReference<Owner> owner;
 	/**
 	 * 调度 future
 	 */
@@ -68,10 +69,10 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 			Owner owner, int initDelay, int period, TimeUnit unit, Runnable runnable
 	) {
 		ObjectTick<Type, Owner> tick = new ObjectTick<>();
+		tick.owner = new WeakReference<>(owner);
 		tick.initDelay = initDelay;
 		tick.runnable = runnable;
 		tick.period = period;
-		tick.owner = owner;
 		tick.unit = unit;
 		return tick;
 	}
@@ -84,10 +85,24 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 			return;
 		}
 
+		if (owner.get() == null) {
+			throw new RuntimeException("Owner is recycle!");
+		}
+
+		if (this.future != null && ! this.future.isCancelled()) {
+			return;
+		}
+
 		this.future = TimerManager.executor.scheduleAtFixedRate(() -> {
 			if (paused.get()) {
 				return;
 			}
+			Owner owner = this.owner.get();
+			if (owner == null) {
+				this.tryPaused();
+				return;
+			}
+
 			owner.addMessage(h -> runnable.run());
 		}, initDelay, period, unit);
 	}
@@ -101,6 +116,14 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 		}
 
 		this.future.cancel(false);
+	}
+
+	/**
+	 * 是否暂停
+	 * @return
+	 */
+	public boolean isPaused(){
+		return this.paused.get();
 	}
 
 	public Type getType() {
