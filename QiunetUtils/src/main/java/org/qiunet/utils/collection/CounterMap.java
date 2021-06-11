@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /***
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
  **/
 public class CounterMap<Key> {
 
-	private Map<Key, AtomicInteger> counters = Maps.newConcurrentMap();
+	private final Map<Key, Integer> counters = Maps.newConcurrentMap();
 
 	/**
 	 * 获得计数数量
@@ -24,8 +23,7 @@ public class CounterMap<Key> {
 	 * @return
 	 */
 	public int getCount(Key key) {
-		AtomicInteger atomicInteger = counters.get(key);
-		return atomicInteger == null ? 0 : atomicInteger.get();
+		return counters.getOrDefault(key, 0);
 	}
 	/**
 	 * 自增指定值
@@ -33,10 +31,9 @@ public class CounterMap<Key> {
 	 * @param alter
 	 * @return
 	 */
-	public int incr(Key key, int alter) {
+	public int increase(Key key, int alter) {
 		Preconditions.checkArgument(alter > 0, "alter ["+alter+"] must grant than zero!");
-		AtomicInteger counter = counters.computeIfAbsent(key, k -> new AtomicInteger());
-		return counter.addAndGet(alter);
+		return counters.merge(key, alter, Integer::sum);
 	}
 
 	/**
@@ -44,8 +41,8 @@ public class CounterMap<Key> {
 	 * @param key
 	 * @return
 	 */
-	public int incr(Key key) {
-		return incr(key, 1);
+	public int increase(Key key) {
+		return increase(key, 1);
 	}
 
 	/**
@@ -54,10 +51,14 @@ public class CounterMap<Key> {
 	 * @param alter
 	 * @return
 	 */
-	public int decr(Key key, int alter) {
+	public int decrease(Key key, int alter) {
 		Preconditions.checkArgument(alter > 0, "alter ["+alter+"] must grant than zero!");
-		AtomicInteger counter = counters.computeIfAbsent(key, k -> new AtomicInteger());
-		return counter.addAndGet(-alter);
+		Preconditions.checkArgument(getCount(key) >= alter, "alter number is greater than current");
+		Integer integer = counters.merge(key, -alter, Integer::sum);
+		if (integer <= 0) {
+			counters.remove(key);
+		}
+		return integer;
 	}
 
 	/**
@@ -65,8 +66,8 @@ public class CounterMap<Key> {
 	 * @param key
 	 * @return
 	 */
-	public int decr(Key key) {
-		return decr(key, 1);
+	public int decrease(Key key) {
+		return decrease(key, 1);
 	}
 
 	/**
@@ -84,6 +85,6 @@ public class CounterMap<Key> {
 	 */
 	public Map<Key, Integer> toMap() {
 		return this.counters.entrySet().stream()
-			.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().get()));
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 }
