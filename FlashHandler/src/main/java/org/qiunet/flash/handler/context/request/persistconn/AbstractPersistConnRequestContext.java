@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.util.ChannelUtil;
  * Created by qiunet.
  * 17/12/2
  */
-abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessageActor>
+abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessageActor<P>>
 		extends BaseRequestContext<RequestData>
 		implements IPersistConnRequestContext<RequestData, P> {
 

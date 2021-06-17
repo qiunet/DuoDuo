@@ -25,17 +25,17 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * buff map
 	 */
-	private Map<IAttrBuff, IAttrNodeBuff<Attr, ?>> buffMap;
+	private final Map<IAttrBuff, IAttrNodeBuff<Attr, ?>> buffMap;
 
-	private AttrBox<Attr> attrBox;
+	private final AttrBox<Attr> attrBox;
 	/**
 	 * 路径
 	 */
-	private AttrRoad road;
+	private final AttrRoad road;
 	/**
 	 * buff 变动时候, 需要通知到的road
 	 */
-	private Set<AttrRoad> buffRoads;
+	private final Set<AttrRoad> buffRoads;
 
 	/**
 	 * 基础属性
@@ -138,7 +138,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 		}
 
 		if (!change.isEmpty()) {
-			attrBox.getObserver().fire(IAttrChangeObserver.class, o -> o.attrChange(this.road, change));
+			attrBox.getObserver().syncFire(IAttrChangeObserver.class, o -> o.attrChange(this.road, change));
 		}
 	}
 
@@ -178,7 +178,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 				Map<Attr, Long> change = new HashMap<>(diff.size());
 				AttrUtil.mergeToBox(attrBox, diff, change);
 
-				attrBox.getObserver().fire(IAttrChangeObserver.class, o -> o.attrChange(buffRoad, change));
+				attrBox.getObserver().syncFire(IAttrChangeObserver.class, o -> o.attrChange(buffRoad, change));
 			}
 		}finally {
 			writeLock().unlock();

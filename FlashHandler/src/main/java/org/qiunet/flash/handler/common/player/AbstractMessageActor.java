@@ -17,9 +17,9 @@ import org.qiunet.utils.args.IArgsContainer;
  * @author qiunet
  * 2020/3/1 21:45
  **/
-public abstract class AbstractMessageActor<P extends AbstractMessageActor>
+public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	extends MessageHandler<P> implements IMessageActor<P>, IChannelMessageSender, IArgsContainer {
-	private ArgsContainer container = new ArgsContainer();
+	private final ArgsContainer container = new ArgsContainer();
 
 	protected DSession session;
 

@@ -10,7 +10,7 @@ import org.qiunet.utils.string.StringUtil;
  * @author qiunet
  * 2020/3/1 21:43
  **/
-public interface IMessageActor<P extends IMessageActor> extends IMessageHandler<P>, IChannelMessageSender {
+public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandler<P>, IChannelMessageSender {
 	/***
 	 * 得到 Id playerActor一般是playerId
 	 * crossActor 是 serverId

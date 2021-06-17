@@ -6,7 +6,7 @@ package org.qiunet.flash.handler.common;
  * @author qiunet
  * 2020-02-08 20:56
  **/
-public interface IMessage<H extends IMessageHandler> {
+public interface IMessage<H extends IMessageHandler<H>> {
 	/***
 	 * 执行
 	 * @param h

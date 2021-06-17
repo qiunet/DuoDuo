@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
  * Created by qiunet.
  * 17/12/2
  */
-class FacadePersistConnRequest<RequestData, P extends IMessageActor> implements IPersistConnRequest<RequestData> {
-	private AbstractPersistConnRequestContext<RequestData, P> context;
+class FacadePersistConnRequest<RequestData, P extends IMessageActor<P>> implements IPersistConnRequest<RequestData> {
+	private final AbstractPersistConnRequestContext<RequestData, P> context;
 	public FacadePersistConnRequest(AbstractPersistConnRequestContext<RequestData, P> context) {
 		this.context = context;
 	}

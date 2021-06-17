@@ -8,6 +8,6 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
  * Created by qiunet.
  * 17/12/2
  */
-public interface IPersistConnRequestContext<RequestData, P extends IMessageActor> extends IRequestContext<RequestData>, IPersistConnRequest<RequestData>, IMessage<P> {
+public interface IPersistConnRequestContext<RequestData, P extends IMessageActor<P>> extends IRequestContext<RequestData>, IPersistConnRequest<RequestData>, IMessage<P> {
 
 }

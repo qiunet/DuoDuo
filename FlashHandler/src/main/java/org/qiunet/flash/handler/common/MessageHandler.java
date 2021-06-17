@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  * 2020-02-08 20:53
  **/
-public abstract class MessageHandler<H extends IMessageHandler>
+public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements Runnable, IMessageHandler<H>, IThreadSafe {
 
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();

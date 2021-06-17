@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /***
@@ -16,8 +17,8 @@ import java.util.function.Consumer;
  * 2020-08-31 08:15
  **/
 public class ObserverSupport {
-
-	private Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
+	protected final AtomicInteger versions = new AtomicInteger();
+	protected final Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
 
 	/**
 	 * 往该support添加一个观察者.
@@ -27,7 +28,7 @@ public class ObserverSupport {
 	 */
 	public <O extends IObserver> Observer<O> attach(Class<O> clazz, O o) {
 		ObserverList<O> observers = this.computeIfAbsent(clazz);
-		Observer<O> observer = new Observer<>(this, o);
+		Observer<O> observer = new Observer<>(this, o, versions.getAndIncrement());
 		observers.getObservers().add(observer);
 		return observer;
 	}
@@ -60,23 +61,23 @@ public class ObserverSupport {
 	 * @param clazz
 	 * @return
 	 */
-	private <O extends IObserver> ObserverList<O> computeIfAbsent(Class<O> clazz){
+	protected <O extends IObserver> ObserverList<O> computeIfAbsent(Class<O> clazz){
 		return (ObserverList<O>) observerMaps.computeIfAbsent(clazz, key-> new ObserverList<O>());
 	}
 
 	/**
-	 * 触发监听
+	 * 同步触发监听
 	 * @param clazz
 	 * @param consumer
 	 * @param <O>
 	 */
-	public <O extends IObserver> void fire(Class<O> clazz, Consumer<O> consumer) {
+	public <O extends IObserver> void syncFire(Class<O> clazz, Consumer<O> consumer) {
 		ObserverList<O> observers = this.computeIfAbsent(clazz);
 		observers.forEach(o -> consumer.accept(o.getObserver()));
 	}
 
-	private static class ObserverList<O extends IObserver> {
-		private List<Observer<O>> observers;
+	protected static class ObserverList<O extends IObserver> {
+		private final List<Observer<O>> observers;
 
 		ObserverList() {
 			this.observers = new CopyOnWriteArrayList<>();

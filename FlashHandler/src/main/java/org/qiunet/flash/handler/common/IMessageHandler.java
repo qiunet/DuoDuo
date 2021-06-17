@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-04-12 12:51
  **/
-public interface IMessageHandler<H extends IMessageHandler> {
+public interface IMessageHandler<H extends IMessageHandler<H>> {
 	/**
 	 * 销毁不用了必须调用
 	 */
