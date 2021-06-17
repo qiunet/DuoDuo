@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/26
  */
 public final class DSession {
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
 	 * 写次数计数
 	 */
-	private AtomicInteger counter = new AtomicInteger();
+	private final AtomicInteger counter = new AtomicInteger();
 	/**
 	 * 是否默认flush
 	 */
@@ -47,7 +47,7 @@ public final class DSession {
 	/**
 	 * 判断是否已经在计时flush
 	 */
-	private AtomicBoolean flushScheduling = new AtomicBoolean();
+	private final AtomicBoolean flushScheduling = new AtomicBoolean();
 
 	public DSession(Channel channel) {
 		this.channel = channel;
@@ -121,7 +121,7 @@ public final class DSession {
 			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			if (messageActor != null) {
-				logger.info("[{}] >>> {}", messageActor.getIdent(), message.toStr());
+				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
 			}
 		}
 
@@ -175,7 +175,7 @@ public final class DSession {
 		channel.attr(key).set(obj);
 	}
 
-	private AtomicBoolean closed = new AtomicBoolean();
+	private final AtomicBoolean closed = new AtomicBoolean();
 	public void close(CloseCause cause) {
 		if (! closed.compareAndSet(false, true)) {
 			// 避免多次调用close. 多次调用监听.
@@ -193,7 +193,7 @@ public final class DSession {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (messageActor != null) {
-			sj.add(messageActor.getIdent());
+			sj.add(messageActor.getIdentity());
 		}
 		sj.add("ID = " + channel.id().asShortText());
 		sj.add("Ip = " + getIp());
@@ -208,7 +208,7 @@ public final class DSession {
 		this.closeListeners.add(listener);
 	}
 
-	private List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
+	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
 	@FunctionalInterface
 	public interface SessionCloseListener {
 		void close(CloseCause cause);

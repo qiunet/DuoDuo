@@ -22,7 +22,7 @@ public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandl
 	 * 最好能明确的找到问题的id. 比如玩家id什么的.
 	 * @return
 	 */
-	default String getIdent(){
+	default String getIdentity(){
 		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
 	}
 	/**

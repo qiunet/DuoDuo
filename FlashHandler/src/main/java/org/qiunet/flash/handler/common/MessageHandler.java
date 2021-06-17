@@ -38,7 +38,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	private volatile boolean close;
 
-	private final UseTimer useTimer = new UseTimer(getIdent(), 500);
+	private final UseTimer useTimer = new UseTimer(getIdentity(), 500);
 
 	@Override
 	public void run() {
@@ -89,7 +89,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	@Override
 	public void addMessage(IMessage<H> msg) {
 		if (close) {
-			logger.error("MessageHandler [{}] 已经关闭销毁", getIdent());
+			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
 			return;
 		}
 
@@ -103,7 +103,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	@Override
 	public void runMessage(IMessage<H> message) {
 		if (close) {
-			logger.error("MessageHandler [{}] 已经关闭销毁", getIdent());
+			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
 			return;
 		}
 
@@ -121,7 +121,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * 最好能明确的找到问题的id. 比如玩家id什么的.
 	 * @return
 	 */
-	public String getIdent(){
+	public String getIdentity(){
 		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
 	}
 
