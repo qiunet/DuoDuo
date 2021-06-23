@@ -2,6 +2,8 @@ package org.qiunet.utils.logger;
 
 import org.slf4j.Logger;
 
+import java.util.function.Supplier;
+
 /***
  *
  * @author qiunet
@@ -10,6 +12,39 @@ import org.slf4j.Logger;
 public interface ILoggerType {
 
 	Logger getLogger();
+ 	default boolean isDebugEnabled(){
+ 		return getLogger().isDebugEnabled();
+	}
+
+	default boolean isInfoEnabled(){
+ 		return getLogger().isInfoEnabled();
+	}
+
+	default boolean isErrorEnabled(){
+		return getLogger().isErrorEnabled();
+	}
+
+	/**
+	 * 如果 debug能打印. 才真正去计算string.
+	 * @param msg
+	 */
+	default void debug(Supplier<String> msg) {
+ 		if (this.isDebugEnabled()) {
+ 			this.debug(msg.get());
+		}
+	}
+
+	default void info(Supplier<String> msg) {
+		if (this.isInfoEnabled()) {
+			this.info(msg.get());
+		}
+	}
+
+	default void error(Supplier<String> msg) {
+		if (this.isErrorEnabled()) {
+			this.error(msg.get());
+		}
+	}
 
 	default void debug(String msg) {
 		getLogger().debug(msg);
