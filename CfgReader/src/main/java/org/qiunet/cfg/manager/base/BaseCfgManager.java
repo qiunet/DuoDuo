@@ -28,7 +28,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 	/**
 	 * 加载顺序
 	 */
-	private int order;
+	private final int order;
 	/**
 	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
 	 * 目前是空的实现,开发者选择是否覆盖函数
@@ -130,8 +130,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 			if (isInvalidField(field)) {
 				throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
-			Class<?> aClass = field.getType();
-			Object obj = CfgFieldObjConvertManager.getInstance().covert(aClass, val);
+			Object obj = CfgFieldObjConvertManager.getInstance().covert(field, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (IllegalAccessException e) {

@@ -34,7 +34,7 @@ class KeyValManager implements IApplicationContextAware {
 	/**
 	 * key val 的数据
 	 */
-	private List<ICfgManager> keyValManagers = Lists.newArrayList();
+	private final List<ICfgManager> keyValManagers = Lists.newArrayList();
 	/**
 	 * 监听添加 ICfgManager
 	 * @param eventData
@@ -79,7 +79,7 @@ class KeyValManager implements IApplicationContextAware {
 			String val = keyValDatas.get(keyName);
 			Preconditions.checkState(! StringUtil.isEmpty(val) , "No cfg value for KeyName [%s]", keyName);
 			field.setAccessible(true);
-			Object realVal = CfgFieldObjConvertManager.getInstance().covert(field.getType(), val);
+			Object realVal = CfgFieldObjConvertManager.getInstance().covert(field, val);
 			Object instance = null;
 			if (! Modifier.isStatic(field.getModifiers())) {
 				instance = context.getInstanceOfClass(field.getDeclaringClass());

@@ -7,6 +7,7 @@ import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -74,7 +75,15 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static <T> T getGeneralObjWithField(String jsonText, TypeReference<T> type, ParserConfig parserConfig, Feature... features) {
-		return JSON.parseObject(jsonText, type.getType(), parserConfig, features);
+		return getGeneralObjWithField(jsonText, type.getType(), parserConfig, features);
+	}
+	/**
+	 * 使用字段
+	 * @param
+	 * @return
+	 */
+	public static <T> T getGeneralObjWithField(String jsonText, Type type, ParserConfig parserConfig, Feature... features) {
+		return JSON.parseObject(jsonText, type, parserConfig, features);
 	}
 	/**
 	 * 得到通用的列表
@@ -96,9 +105,20 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static <T> T getGeneralObject(String json , TypeReference<T> typeReference, Feature ... features){
-		return JSON.parseObject(json, typeReference.getType(), features);
+		return getGeneralObject(json, typeReference.getType(), features);
 	}
-
+	/**
+	 * 反序列化根据get set判断字段的对象
+	 * 使用TypeReference 反序列. TypeReference最好定义为常量
+	 * @param json
+	 * @param type
+	 * @param features
+	 * @param <T>
+	 * @return
+	 */
+	public static <T> T getGeneralObject(String json , Type type, Feature ... features){
+		return JSON.parseObject(json, type, features);
+	}
 	/**
 	 * 得到通用的对象
 	 * @param json

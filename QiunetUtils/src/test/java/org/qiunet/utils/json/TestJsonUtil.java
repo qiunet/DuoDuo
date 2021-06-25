@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Map;
  *         Created on 16/11/5 20:45.
  */
 public class TestJsonUtil extends BaseTest{
+	private static Map<Integer, Map<String, String>> testField;
 	@Test
 	public void testGetGeneralObject(){
 		Map<String,Integer> map = new HashMap<>();
@@ -67,5 +69,15 @@ public class TestJsonUtil extends BaseTest{
 
 		User user = JsonUtil.getGeneralObjWithField(jsonString, User.class);
 		Assert.assertEquals(123456, user.getUserId());
+	}
+
+	@Test
+	public void testField() throws NoSuchFieldException {
+		Field testField = TestJsonUtil.class.getDeclaredField("testField");
+		String value = "{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}";
+		Map<Integer, Map<String, String>>  map = (Map<Integer, Map<String, String>>) JsonUtil.getGeneralObject(value, testField.getType());
+		Map<String, String> subMap = map.get(2);
+		Assert.assertNotNull(subMap);
+		Assert.assertEquals("bb", subMap.get("DEF"));
 	}
 }

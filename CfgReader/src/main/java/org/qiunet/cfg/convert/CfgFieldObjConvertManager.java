@@ -4,10 +4,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,13 +36,25 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	private static final Map<Class<?>, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
 	/***
 	 * 按照指定的class 类型转换str
-	 * @param clazz
+	 * @param field
 	 * @param val
 	 * @return 没有转换器将抛出异常
 	 */
-	public Object covert(Class clazz, String val) {
-		BaseObjConvert objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
-			for (BaseObjConvert convert : converts) {
+	public Object covert(Field field, String val) {
+		// json 转换.
+		if (!StringUtil.isEmpty(val)
+		&& ((val.startsWith("{") && val.endsWith("}")) || (val.startsWith("[") && val.endsWith("]")))
+		) {
+			return JsonUtil.getGeneralObject(val, field.getGenericType());
+		}
+
+		Class clazz = field.getType();
+		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
+			return Enum.valueOf(clazz, val);
+		}
+
+		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
+			for (BaseObjConvert<?> convert : converts) {
 				if (convert.canConvert(clazz)) {
 					return convert;
 				}
@@ -50,11 +65,10 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 			return objConvert.fromString(val);
 		}
 
-		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
-			return Enum.valueOf(clazz, val);
+		if (StringUtil.isEmpty(val)) {
+			return null;
 		}
-
-		throw new CustomException("Can not convert class type for [{}]", clazz.getName());
+		throw new CustomException("Can not convert class type for [{}] field[{}] value[{}]", clazz.getName(), field.getName(), val);
 	}
 
 	@Override
