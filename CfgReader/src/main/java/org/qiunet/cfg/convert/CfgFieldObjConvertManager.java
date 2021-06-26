@@ -41,13 +41,6 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	 * @return 没有转换器将抛出异常
 	 */
 	public Object covert(Field field, String val) {
-		// json 转换.
-		if (!StringUtil.isEmpty(val)
-		&& ((val.startsWith("{") && val.endsWith("}")) || (val.startsWith("[") && val.endsWith("]")))
-		) {
-			return JsonUtil.getGeneralObject(val, field.getGenericType());
-		}
-
 		Class clazz = field.getType();
 		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
 			return Enum.valueOf(clazz, val);
@@ -67,6 +60,11 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 
 		if (StringUtil.isEmpty(val)) {
 			return null;
+		}
+
+		// json 转换.
+		if ((val.startsWith("{") && val.endsWith("}")) || (val.startsWith("[") && val.endsWith("]"))) {
+			return JsonUtil.getGeneralObject(val, field.getGenericType());
 		}
 		throw new CustomException("Can not convert class type for [{}] field[{}] value[{}]", clazz.getName(), field.getName(), val);
 	}
