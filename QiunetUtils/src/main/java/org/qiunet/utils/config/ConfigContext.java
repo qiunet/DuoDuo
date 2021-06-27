@@ -139,7 +139,7 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 			try {
 				field.setAccessible(true);
-				field.set(instance, this.convertVal(field.getType(), val));
+				field.set(instance, this.convertVal(field, val));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
@@ -148,16 +148,17 @@ enum ConfigContext implements IApplicationContextAware {
 
 	/**
 	 * 转换字段值
-	 * @param fieldType
+	 * @param field
 	 * @param val
 	 * @return
 	 */
-	private Object convertVal(Class fieldType, String val) {
+	private Object convertVal(Field field, String val) {
 		try {
 			Class<?> aClass = Class.forName("org.qiunet.cfg.convert.CfgFieldObjConvertManager");
-			Method method = aClass.getMethod("covert", Class.class, String.class);
-			return method.invoke(context.getInstanceOfClass(aClass), fieldType, val);
+			Method method = aClass.getMethod("covert", Field.class, String.class);
+			return method.invoke(context.getInstanceOfClass(aClass), field, val);
 		} catch (ClassNotFoundException e) {
+			Class fieldType = field.getType();
 			if (fieldType == String.class) {
 				return val;
 			}
@@ -186,7 +187,7 @@ enum ConfigContext implements IApplicationContextAware {
 		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		throw new CustomException("Can not convert class type for ["+fieldType.getName()+"]");
+		throw new CustomException("Can not convert class type for ["+field.getName()+"]");
 	}
 
 	/**
