@@ -40,6 +40,10 @@ public class TcpClientConnector implements IPersistConnClient {
 		this.connect();
 	}
 
+	public DPromise<DSession> getPromise() {
+		return promise;
+	}
+
 	/**
 	 * 连接
 	 */
@@ -82,6 +86,8 @@ public class TcpClientConnector implements IPersistConnClient {
 				this.session = promise.get(5, TimeUnit.SECONDS);
 			} catch (Exception e) {
 				throw new CustomException(e, e.getMessage());
+			}finally {
+				this.promise = null;
 			}
 		}
 		return this.session;

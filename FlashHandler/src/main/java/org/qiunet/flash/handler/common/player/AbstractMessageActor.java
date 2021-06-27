@@ -23,7 +23,15 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 
 	protected DSession session;
 
+	protected AbstractMessageActor() {
+
+	}
+
 	public AbstractMessageActor(DSession session) {
+		this.setSession(session);
+	}
+
+	protected void setSession(DSession session) {
 		session.addCloseListener(cause -> this.destroy());
 		this.session = session;
 	}

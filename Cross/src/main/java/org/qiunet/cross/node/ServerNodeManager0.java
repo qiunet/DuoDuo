@@ -5,13 +5,10 @@ import com.google.common.collect.Maps;
 import io.netty.util.AttributeKey;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.common.exception.AuthFailException;
-import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.listener.event.EventListener;
 import org.qiunet.listener.event.data.ServerShutdownEventData;
@@ -42,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
 	private static final AttributeKey<DPromise<ServerNode>> SERVER_NODE_PROMISE_ATTRIBUTE = AttributeKey.newInstance("SERVER_NODE_PROMISE_ATTRIBUTE");
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
+
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/***
 	 * server Node 在redis中的 key
@@ -101,41 +98,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
-		ServerNode node = nodes.get(serverId);
-		if (node != null && node.getSession().isActive()) {
-			return node;
-		}
-		return this.createServerNode(serverId);
+		return nodes.computeIfAbsent(serverId, key -> new ServerNode(this.getServerInfo(key)));
 	}
-
-	/**
-	 * 创建一个serverNode 如果响应回来. 并且result == true . 即可加入nodes
-	 * @param serverId
-	 * @return
-	 */
-	private synchronized ServerNode createServerNode(int serverId) {
-		ServerNode node = nodes.get(serverId);
-		if (node != null && node.getSession().isActive()) {
-			return node;
-		}
-
-		nodes.remove(serverId);
-		ServerInfo serverInfo = getServerInfo(serverId);
-		TcpClientConnector connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort());
-		DPromise<ServerNode> authPromise = DPromise.create();
-		ServerNode serverNode = ServerNode.valueOf(connector.getSession(), serverId);
-		serverNode.getSession().attachObj(SERVER_NODE_PROMISE_ATTRIBUTE, authPromise);
-		serverNode.send(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()).buildResponseMessage());
-		authPromise.whenComplete((res, ex) -> {
-			if (authPromise.isSuccess()) this.addNode(res);
-		});
-		try {
-			return authPromise.get(5, TimeUnit.SECONDS);
-		} catch (Exception e) {
-			throw new CustomException(e, "Connect to ServerId {} error!", serverId);
-		}
-	}
-
 	/**
 	 * 鉴权响应
 	 * @param serverNode

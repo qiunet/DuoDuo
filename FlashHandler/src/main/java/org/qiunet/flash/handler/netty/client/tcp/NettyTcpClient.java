@@ -15,15 +15,17 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 
+import java.util.function.BiConsumer;
+
 /**
  * Created by qiunet.
  * 17/11/25
  */
 public class NettyTcpClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
-	private IPersistConnResponseTrigger trigger;
-	private TcpClientParams params;
-	private Bootstrap bootstrap;
+	private final IPersistConnResponseTrigger trigger;
+	private final TcpClientParams params;
+	private final Bootstrap bootstrap;
 	/**
 	 *
 	 * @param params
@@ -49,7 +51,22 @@ public class NettyTcpClient {
 	}
 
 	public TcpClientConnector connect(String host, int port) {
-		return new TcpClientConnector(bootstrap, host, port);
+		return this.connect(host, port, null);
+	}
+
+	/**
+	 * 连接服务器.
+	 * @param host
+	 * @param port
+	 * @param completeAction 完成后的动作
+	 * @return
+	 */
+	public TcpClientConnector connect(String host, int port, BiConsumer<? super DSession, ? super Throwable> completeAction) {
+		TcpClientConnector connector =  new TcpClientConnector(bootstrap, host, port);
+		if (completeAction != null) {
+			connector.getPromise().whenComplete(completeAction);
+		}
+		return connector;
 	}
 
 	public static void shutdown(){

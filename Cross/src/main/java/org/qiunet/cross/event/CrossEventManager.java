@@ -52,6 +52,6 @@ public class CrossEventManager {
 
 		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
-		ServerNodeManager.getNode(serverId).send(request.buildResponseMessage());
+		ServerNodeManager.getNode(serverId).writeMessage(request);
 	}
 }
