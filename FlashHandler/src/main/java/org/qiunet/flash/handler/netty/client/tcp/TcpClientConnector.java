@@ -5,6 +5,9 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
@@ -12,6 +15,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /***
  * Tcp client 专门连接服务器的对象.
@@ -21,9 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2020-11-06 12:25
  */
 public class TcpClientConnector implements IPersistConnClient {
-	private final ConcurrentLinkedQueue<MessageContent> queue = new ConcurrentLinkedQueue<>();
+	private final ConcurrentLinkedQueue<DMessageContentFuture> queue = new ConcurrentLinkedQueue<>();
 	private final AtomicBoolean connecting = new AtomicBoolean();
-	private ChannelFuture connectFuture;
 	private DPromise<DSession> promise;
 	private final Bootstrap bootstrap;
 	private final String host;
@@ -40,49 +43,48 @@ public class TcpClientConnector implements IPersistConnClient {
 	/**
 	 * 连接
 	 */
-	public ChannelFuture connect(){
+	public void connect(){
 		if (! connecting.compareAndSet(false, true)) {
-			return connectFuture;
+			return;
 		}
 
 		this.promise = DPromise.create();
 		GenericFutureListener<ChannelFuture> listener = f -> {
-			if (f.isSuccess()) {
-				f.channel().attr(NettyTcpClient.SESSION).set(new DSession(f.channel()));
-				promise.trySuccess(f.channel().attr(NettyTcpClient.SESSION).get());
-			}else {
+			if (! f.isSuccess()) {
 				promise.tryFailure(new CustomException("Tcp Connect fail!"));
+				return;
 			}
-			MessageContent msg;
+			f.channel().attr(NettyTcpClient.SESSION).set(new DSession(f.channel()));
+			promise.trySuccess(f.channel().attr(NettyTcpClient.SESSION).get());
+			DMessageContentFuture msg;
 			while ((msg = queue.poll()) != null) {
-				f.channel().writeAndFlush(msg);
+				if (msg.isCanceled()) {
+					continue;
+				}
+				ChannelFuture channelFuture = f.channel().writeAndFlush(msg.getMessageContent());
+
+				msg.getListeners().forEach(channelFuture::addListener);
+				AtomicReference<DMessageContentFuture.Status> status = msg.getStatus();
+				channelFuture.addListener(f0 -> {
+					status.compareAndSet(DMessageContentFuture.Status.NONE, DMessageContentFuture.Status.SUCCESS);
+				});
 			}
 			connecting.set(false);
-			connectFuture = null;
 		};
 
-		this.connectFuture = bootstrap.connect(host, port);
+		ChannelFuture connectFuture = bootstrap.connect(host, port);
 		connectFuture.addListener(listener);
-		return connectFuture;
-	}
-
-	/**
-	 * 得到sessionFuture
-	 * @return
-	 */
-	public ChannelFuture getConnectFuture() {
-		return connectFuture;
 	}
 
 	private DSession getSession0() {
-		if (session == null) {
+		if (this.session == null) {
 			try {
 				this.session = promise.get(5, TimeUnit.SECONDS);
 			} catch (Exception e) {
 				throw new CustomException(e, e.getMessage());
 			}
 		}
-		return session;
+		return this.session;
 	}
 
 	public DSession getSession() {
@@ -90,11 +92,12 @@ public class TcpClientConnector implements IPersistConnClient {
 	}
 
 	@Override
-	public void sendMessage(MessageContent content) {
+	public IDSessionFuture sendMessage(MessageContent content) {
 		if (connecting.get()) {
-			this.queue.add(content);
-			return;
+			DMessageContentFuture IDSessionFuture = new DMessageContentFuture(content);
+			this.queue.add(IDSessionFuture);
+			return IDSessionFuture;
 		}
-		session.channel().writeAndFlush(content);
+		return new DChannelFutureWrapper(session.channel().writeAndFlush(content));
 	}
 }

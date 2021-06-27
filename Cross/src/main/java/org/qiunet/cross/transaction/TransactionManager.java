@@ -2,9 +2,9 @@ package org.qiunet.cross.transaction;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
@@ -27,11 +27,11 @@ public enum TransactionManager {
 	instance;
 	private static final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 
-	private IdGenerator idGenerator  = new DefaultIdGenerator();
+	private final IdGenerator idGenerator  = new DefaultIdGenerator();
 	/**
 	 * 保存映射关系
 	 */
-	private Map<Long, DPromise> cacheRequests = Maps.newConcurrentMap();
+	private final Map<Long, DPromise> cacheRequests = Maps.newConcurrentMap();
 	/**
 	 * 发起事务请求
 	 * @param serverId 目标的serverId
@@ -69,7 +69,7 @@ public enum TransactionManager {
 		}
 
 		ServerNode node = ServerNodeManager.getNode(serverId);
-		ChannelFuture channelFuture = node.writeMessage(routeTransactionRequest);
+		IDSessionFuture channelFuture = node.writeMessage(routeTransactionRequest);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
 				respTransactionFuture.beginCalTimeOut(timeout, unit);

@@ -15,6 +15,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -34,10 +36,10 @@ import org.slf4j.Logger;
  */
 public class NettyWebsocketClient implements IPersistConnClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
-	private IPersistConnResponseTrigger trigger;
-	private WebSocketClientParams params;
+	private final IPersistConnResponseTrigger trigger;
+	private final WebSocketClientParams params;
 	private DSession session;
 
 	private NettyWebsocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
@@ -68,8 +70,8 @@ public class NettyWebsocketClient implements IPersistConnClient {
 	}
 
 	@Override
-	public void sendMessage(MessageContent content){
-		channelHandlerContext.channel().writeAndFlush(content);
+	public IDSessionFuture sendMessage(MessageContent content){
+		return new DChannelFutureWrapper(channelHandlerContext.channel().writeAndFlush(content));
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
@@ -84,7 +86,7 @@ public class NettyWebsocketClient implements IPersistConnClient {
 
 
 	private class NettyClientHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
-		private WebSocketClientHandshaker handshaker;
+		private final WebSocketClientHandshaker handshaker;
 		private ChannelPromise handshakeFuture;
 		public ChannelFuture handshakeFuture() {
 			return handshakeFuture;

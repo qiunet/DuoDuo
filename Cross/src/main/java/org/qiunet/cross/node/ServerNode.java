@@ -1,10 +1,11 @@
 package org.qiunet.cross.node;
 
-import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
@@ -65,8 +66,8 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * 向服务器发起一个请求
 	 * @param message
 	 */
-	public ChannelFuture writeMessage(IpbChannelData message) {
-		return this.send(message.buildResponseMessage());
+	public IDSessionFuture writeMessage(IpbChannelData message) {
+		return new DChannelFutureWrapper(this.send(message.buildResponseMessage()));
 	}
 
 	@Override
