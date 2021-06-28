@@ -3,13 +3,14 @@ package org.qiunet.flash.handler.context.session;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.sender.ISessionMessageSender;
+import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by qiunet.
  * 17/11/26
  */
-public final class DSession {
+public final class DSession implements ISessionMessageSender {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
 	 * 写次数计数
@@ -92,58 +93,6 @@ public final class DSession {
 		return ChannelUtil.getIp(channel);
 	}
 
-	/**
-	 * 写入消息
-	 * @param message
-	 * @return
-	 */
-	public ChannelFuture writeMessage(IpbChannelData message) {
-		return this.writeMessage(message.buildResponseMessage());
-	}
-	/**
-	 * 写入消息
-	 * @param message
-	 * @return
-	 */
-
-	public ChannelFuture writeMessage(IChannelMessage message) {
-		return this.writeMessage(message, default_flush);
-	}
-
-	/**
-	 * 写入消息. 自己定义是否需要立即刷新
-	 * @param message
-	 * @param flush
-	 * @return
-	 */
-	public ChannelFuture writeMessage(IChannelMessage message, boolean flush) {
-		if ( logger.isInfoEnabled()
-			&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (messageActor != null) {
-				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
-			}
-		}
-
-		if (flush) {
-			return channel.writeAndFlush(message.encode());
-		}
-
-		ChannelFuture future = channel.write(message.encode());
-		if (counter.incrementAndGet() >= 10) {
-			// 次数够也flush
-			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
-				this.flushSchedule.cancel(false);
-			}
-			this.flush0();
-			return future;
-		}
-
-		if (flushScheduling.compareAndSet(false, true)) {
-			this.flushSchedule = channel.eventLoop().schedule(this::flush0, flush_delay_ms, TimeUnit.MILLISECONDS);
-		}
-		return future;
-	}
 	private ScheduledFuture<?> flushSchedule;
 	/**
 	 * flush
@@ -209,6 +158,42 @@ public final class DSession {
 	}
 
 	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
+
+	@Override
+	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
+		return this.sendMessage(message, default_flush);
+	}
+
+	@Override
+	public IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+		if ( logger.isInfoEnabled()
+				&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			if (messageActor != null) {
+				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
+			}
+		}
+
+		if (flush) {
+			return new DChannelFutureWrapper(channel.writeAndFlush(message.encode()));
+		}
+
+		IDSessionFuture future = new DChannelFutureWrapper(channel.write(message.encode()));
+		if (counter.incrementAndGet() >= 10) {
+			// 次数够也flush
+			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
+				this.flushSchedule.cancel(false);
+			}
+			this.flush0();
+			return future;
+		}
+
+		if (flushScheduling.compareAndSet(false, true)) {
+			this.flushSchedule = channel.eventLoop().schedule(this::flush0, flush_delay_ms, TimeUnit.MILLISECONDS);
+		}
+		return future;
+	}
+
 	@FunctionalInterface
 	public interface SessionCloseListener {
 		void close(CloseCause cause);

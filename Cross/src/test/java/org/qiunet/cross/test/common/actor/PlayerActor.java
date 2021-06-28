@@ -28,9 +28,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
-	private Logger logger = LoggerType.DUODUO_CROSS.getLogger();
+	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/**跨服标记*/
-	private AtomicBoolean crossing = new AtomicBoolean();
+	private final AtomicBoolean crossing = new AtomicBoolean();
 
 	private DSession crossSession;
 
@@ -54,7 +54,7 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 
 		this.crossSession = tcpClient.connect("localhost", serverInfo.getServerPort()).getSession();
 		this.crossSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
-		this.crossSession.writeMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerConfig.getServerId()));
+		this.crossSession.sendMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerConfig.getServerId()));
 		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
 		return this.crossing.compareAndSet(false, true);
 	}

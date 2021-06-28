@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -81,7 +80,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		if (connector != null) {
 			return connector.sendMessage(message);
 		}
-		return new DChannelFutureWrapper(this.send(message.buildResponseMessage()));
+		return this.sendMessage(message);
 	}
 
 	@Override

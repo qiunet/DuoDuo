@@ -28,7 +28,7 @@ import org.slf4j.Logger;
  */
 public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private TcpBootstrapParams params;
+	private final TcpBootstrapParams params;
 
 	public TcpServerHandler(TcpBootstrapParams params) {
 		this.params = params;
@@ -60,7 +60,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		if (handler instanceof ITransmitHandler
 			&& messageActor instanceof ICrossStatusActor
 			&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).crossSession().writeMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			((ICrossStatusActor) messageActor).crossSession().sendMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 		if (ctx.channel().isActive()) {

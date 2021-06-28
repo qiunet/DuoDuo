@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<MessageContent> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private HttpBootstrapParams params;
+	private final HttpBootstrapParams params;
 
 
 	@Override
@@ -80,7 +80,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		if (handler instanceof ITransmitHandler
 		&& messageActor instanceof ICrossStatusActor
 		&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).crossSession().writeMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			((ICrossStatusActor) messageActor).crossSession().sendMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 
