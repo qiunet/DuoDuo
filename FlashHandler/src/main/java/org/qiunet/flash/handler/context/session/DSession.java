@@ -8,7 +8,7 @@ import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.sender.ISessionMessageSender;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by qiunet.
  * 17/11/26
  */
-public final class DSession implements ISessionMessageSender {
+public final class DSession implements IChannelMessageSender {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
 	 * 写次数计数
@@ -158,6 +158,11 @@ public final class DSession implements ISessionMessageSender {
 	}
 
 	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
+
+	@Override
+	public DSession getSession() {
+		return this;
+	}
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {

@@ -93,6 +93,7 @@ public class TcpClientConnector implements IPersistConnClient {
 		return this.session;
 	}
 
+	@Override
 	public DSession getSession() {
 		return getSession0();
 	}

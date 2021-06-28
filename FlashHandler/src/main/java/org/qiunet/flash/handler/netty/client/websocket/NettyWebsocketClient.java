@@ -136,6 +136,11 @@ public class NettyWebsocketClient implements IPersistConnClient {
 		}
 	}
 
+	@Override
+	public DSession getSession() {
+		return session;
+	}
+
 	private class NettyWSClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
