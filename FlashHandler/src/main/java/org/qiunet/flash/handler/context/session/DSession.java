@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -31,24 +32,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class DSession implements IChannelMessageSender {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
+	 * 配置
+	 */
+	private DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
+	/**
 	 * 写次数计数
 	 */
 	private final AtomicInteger counter = new AtomicInteger();
-	/**
-	 * 是否默认flush
-	 */
-	private boolean default_flush;
-	/**
-	 * 默认flush延时毫秒时间
-	 */
-	private int flush_delay_ms = 50;
 
 
-	protected Channel channel;
+	private Channel channel;
 	/**
 	 * 判断是否已经在计时flush
 	 */
 	private final AtomicBoolean flushScheduling = new AtomicBoolean();
+
+	public DSession(String host, int port) {
+
+	}
 
 	public DSession(Channel channel) {
 		this.channel = channel;
@@ -58,14 +59,11 @@ public final class DSession implements IChannelMessageSender {
 		}
 	}
 	/**
-	 * 设置flush的参数
-	 * @param default_flush 是否默认flush. 是. 每个message都flush, 否 则需要设置下面的参数
-	 * @param flush_delay_ms flush延迟毫秒数.
+	 * 设置 session 的参数
 	 */
-	public DSession flushConfig(boolean default_flush, int flush_delay_ms) {
-		Preconditions.checkState(default_flush || (flush_delay_ms >= 5 && flush_delay_ms < 1000));
-		this.flush_delay_ms = flush_delay_ms;
-		this.default_flush = default_flush;
+	public DSession sessionConfig(DSessionConfig config) {
+		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 10000));
+		this.sessionConfig = config;
 		return this;
 	}
 
@@ -166,7 +164,7 @@ public final class DSession implements IChannelMessageSender {
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
-		return this.sendMessage(message, default_flush);
+		return this.sendMessage(message, sessionConfig.isDefault_flush());
 	}
 
 	@Override
@@ -194,7 +192,7 @@ public final class DSession implements IChannelMessageSender {
 		}
 
 		if (flushScheduling.compareAndSet(false, true)) {
-			this.flushSchedule = channel.eventLoop().schedule(this::flush0, flush_delay_ms, TimeUnit.MILLISECONDS);
+			this.flushSchedule = channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
 		}
 		return future;
 	}
