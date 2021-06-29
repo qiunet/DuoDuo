@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * 2020-04-12 16:28
  **/
 public class PlayerActor extends AbstractMessageActor<PlayerActor> {
-	private Logger logger = LoggerFactory.getLogger("PlayerActor");
+	private final Logger logger = LoggerFactory.getLogger("PlayerActor");
 	private long playerId;
 
 	public PlayerActor(DSession session) {
@@ -39,6 +39,6 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 	}
 
 	public void sendResponse(IpbResponseData responseData) {
-		this.send(responseData.buildResponseMessage());
+		this.sendMessage(responseData);
 	}
 }

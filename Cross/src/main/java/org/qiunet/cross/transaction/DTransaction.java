@@ -22,13 +22,12 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		TIMEOUT,
 		/**处理完毕*/
 		OVER,
-		;
 	}
-	private long reqId;
-	private REQ reqData;
-	private ServerNode serverNode;
-	private TimeOutFuture timeOutFuture;
-	private AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
+	private final long reqId;
+	private final REQ reqData;
+	private final ServerNode serverNode;
+	private final TimeOutFuture timeOutFuture;
+	private final AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
 	DTransaction(long reqId, REQ reqData) {
 		this(reqId, reqData, null);
@@ -50,7 +49,7 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		RESP response = dataHandler.apply(reqData);
 		RouteTransactionResponse transactionResponse = RouteTransactionResponse.valueOf(reqId, response);
 		if (serverNode != null) {
-			serverNode.writeMessage(transactionResponse);
+			serverNode.sendMessage(transactionResponse);
 		}else {
 			TransactionManager.instance.completeTransaction(transactionResponse);
 		}

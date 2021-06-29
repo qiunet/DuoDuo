@@ -21,7 +21,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	private int serverId;
 
-	ServerNode(DSession session) {
+	public ServerNode(DSession session) {
 		super(session);
 	}
 

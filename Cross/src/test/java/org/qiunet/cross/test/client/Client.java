@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.proto.req.EquipIndexRequest;
 import org.qiunet.cross.test.proto.req.LoginRequest;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -31,11 +30,11 @@ public class Client {
 
 	@Test
 	public void request() throws InterruptedException {
-		websocketClient.sendMessage(new MessageContent(1000, LoginRequest.valueOf(100000).toByteArray()));
-		websocketClient.sendMessage(new MessageContent(1100, new EquipIndexRequest().toByteArray()));
+		websocketClient.sendMessage(LoginRequest.valueOf(100000));
+		websocketClient.sendMessage(new EquipIndexRequest());
 		Thread.sleep(1000);
 		// 第二次将转发到Cross服务
-		websocketClient.sendMessage(new MessageContent(1100, new EquipIndexRequest().toByteArray()));
+		websocketClient.sendMessage(new EquipIndexRequest());
 		LockSupport.park();
 	}
 }

@@ -1,6 +1,6 @@
 package org.qiunet.test.robot;
 
-import org.qiunet.flash.handler.netty.client.IPersistConnClient;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.test.server.IServer;
 
 /**
@@ -19,5 +19,5 @@ public interface IRobotFunc {
 	 * @param Server
 	 * @return
 	 */
-	IPersistConnClient getPersistConnClient(IServer Server);
+	IChannelMessageSender getPersistConnClient(IServer Server);
 }

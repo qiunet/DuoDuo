@@ -1,7 +1,7 @@
 package org.qiunet.test.testcase.persistconn;
 
-import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.IPersistConnClient;
+import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
 import org.qiunet.test.testcase.ITestCase;
@@ -21,7 +21,7 @@ abstract class PersistConnTestCase<Robot extends IRobot> implements ITestCase<Ro
 	 * @param robot
 	 * @return
 	 */
-	protected abstract MessageContent buildRequest(Robot robot);
+	protected abstract IpbRequestData buildRequest(Robot robot);
 	/***
 	 * 得到当前的server数据
 	 * @return
@@ -30,7 +30,7 @@ abstract class PersistConnTestCase<Robot extends IRobot> implements ITestCase<Ro
 
 	@Override
 	public void sendRequest(Robot robot) {
-		IPersistConnClient connClient = robot.getPersistConnClient(getServer());
+		IChannelMessageSender connClient = robot.getPersistConnClient(getServer());
 		connClient.sendMessage(buildRequest(robot));
 		// 阻塞当前线程
 		if (syncWaitForResponse() != 0) robot.parkForResponseID(syncWaitForResponse());

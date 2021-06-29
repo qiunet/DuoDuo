@@ -18,6 +18,6 @@ import org.qiunet.function.gm.message.resp.GmCommandIndexResp;
 public class GmCommandIndexHandler extends PersistConnPbHandler<AbstractPlayerActor, GmCommandIndexReq> {
 	@Override
 	public void handler(AbstractPlayerActor playerActor, IPersistConnRequest<GmCommandIndexReq> context) throws Exception {
-		playerActor.send(GmCommandIndexResp.valueOf(GmCommandManager.instance.getInfoList()).buildResponseMessage());
+		playerActor.sendMessage(GmCommandIndexResp.valueOf(GmCommandManager.instance.getInfoList()));
 	}
 }

@@ -1,5 +1,6 @@
 package org.qiunet.function.test.targets;
 
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.function.targets.TargetContainer;
@@ -11,11 +12,11 @@ import org.qiunet.function.targets.TargetContainer;
  * 2020-11-23 17:35
  */
 public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
-	private TargetContainer<TargetType, PlayerActor> targetContainer;
+	private final TargetContainer<TargetType, PlayerActor> targetContainer;
 	private long id;
-	private String name;
+	private final String name;
 	public PlayerActor(long id, String name) {
-		super(new DSession(null));
+		super(new DSession((Channel) null));
 		this.targetContainer = new TargetContainer<>(this);
 		this.name = name;
 		this.id = id;

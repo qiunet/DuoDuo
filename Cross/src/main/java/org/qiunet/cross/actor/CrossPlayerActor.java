@@ -5,13 +5,11 @@ import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.data.BaseCrossTransferData;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
-import org.qiunet.cross.actor.message.Cross2PlayerResponse;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.listener.event.EventManager;
 
@@ -27,7 +25,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	/***
 	 * 跨服的数据持有者
 	 */
-	private Map<CrossData, CrossDataGetter> crossDataHolder = Maps.newConcurrentMap();
+	private final Map<CrossData, CrossDataGetter> crossDataHolder = Maps.newConcurrentMap();
 	/**
 	 * 玩家id
 	 */
@@ -62,14 +60,6 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	public  <T extends BasePlayerEventData> void fireEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
 		CrossEventManager.fireCrossEvent(getPlayerId(), getSession(), eventData);
-	}
-
-	/**
-	 * 调用该接口. 会直接转发给客户端
-	 * @param responseData
-	 */
-	public void sendMessage(IpbResponseData responseData) {
-		this.send(Cross2PlayerResponse.valueOf(responseData).buildResponseMessage());
 	}
 
 	public long getPlayerId() {

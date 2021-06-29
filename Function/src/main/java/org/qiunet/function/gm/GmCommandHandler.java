@@ -33,6 +33,6 @@ public class GmCommandHandler extends PersistConnPbHandler<AbstractPlayerActor, 
 		}
 
 		IGameStatus status = commandInfo.handler(playerActor, requestData.getParams());
-		playerActor.send(GmCommandResp.valueOf(status).buildResponseMessage());
+		playerActor.sendMessage(GmCommandResp.valueOf(status));
 	}
 }

@@ -135,7 +135,10 @@ public final class DSession implements IChannelMessageSender {
 	}
 
 	private void setChannel(Channel channel) {
-		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		if (channel != null) {
+			// 测试可能为null
+			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		}
 		this.channel = channel;
 	}
 	/**

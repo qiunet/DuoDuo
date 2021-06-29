@@ -28,10 +28,9 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 		NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
 			.setAddress("localhost", port).build(), new ResponseTrigger());
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf(text, text, 11);
-		MessageContent content = new MessageContent(1006, request.toByteArray());
 		latch = new CountDownLatch(1);
 
-		client.sendMessage(content);
+		client.sendMessage(request);
 		latch.await();
 	}
 

@@ -69,7 +69,7 @@ public enum TransactionManager {
 		}
 
 		ServerNode node = ServerNodeManager.getNode(serverId);
-		IDSessionFuture channelFuture = node.writeMessage(routeTransactionRequest);
+		IDSessionFuture channelFuture = node.sendMessage(routeTransactionRequest);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
 				respTransactionFuture.beginCalTimeOut(timeout, unit);

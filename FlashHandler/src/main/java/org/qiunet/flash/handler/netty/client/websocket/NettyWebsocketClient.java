@@ -14,10 +14,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
-import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
@@ -34,7 +32,7 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/12/1
  */
-public class NettyWebsocketClient implements IPersistConnClient {
+public class NettyWebsocketClient implements IChannelMessageSender {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelHandlerContext channelHandlerContext;
@@ -67,11 +65,6 @@ public class NettyWebsocketClient implements IPersistConnClient {
 		} catch (Exception e) {
 			throw new CustomException(e, "WS CONNECT ERROR!!!");
 		}
-	}
-
-	@Override
-	public IDSessionFuture sendMessage(MessageContent content){
-		return new DChannelFutureWrapper(channelHandlerContext.channel().writeAndFlush(content));
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {

@@ -2,8 +2,8 @@ package org.qiunet.test.robot;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -24,13 +24,13 @@ import java.util.concurrent.locks.LockSupport;
  * 17/12/9
  */
 abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info> {
-	private PersistConnResponseTrigger trigger = new PersistConnResponseTrigger();
+	private final PersistConnResponseTrigger trigger = new PersistConnResponseTrigger();
 	/***
 	 * 长连接的session map
 	 */
-	private Map<String, IPersistConnClient> clients = Maps.newConcurrentMap();
+	private final Map<String, IChannelMessageSender> clients = Maps.newConcurrentMap();
 
-	private IRobot robot;
+	private final IRobot robot;
 	public BaseRobotFunc(){
 		robot = this;
 	}
@@ -45,7 +45,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 	}
 
 	@Override
-	public IPersistConnClient getPersistConnClient(IServer server) {
+	public IChannelMessageSender getPersistConnClient(IServer server) {
 		return clients.computeIfAbsent(server.name(), serverName -> {
 			switch (server.getType()) {
 				case WS:
