@@ -6,16 +6,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
-
-import java.util.function.BiConsumer;
 
 /**
  * Created by qiunet.
@@ -50,23 +50,22 @@ public class NettyTcpClient {
 		return new NettyTcpClient(params, trigger);
 	}
 
-	public TcpClientConnector connect(String host, int port) {
-		return this.connect(host, port, null);
-	}
-
 	/**
 	 * 连接服务器.
 	 * @param host
 	 * @param port
-	 * @param completeAction 完成后的动作
 	 * @return
 	 */
-	public TcpClientConnector connect(String host, int port, BiConsumer<? super DSession, ? super Throwable> completeAction) {
-		TcpClientConnector connector =  new TcpClientConnector(bootstrap, host, port);
-		if (completeAction != null) {
-			connector.getPromise().whenComplete(completeAction);
-		}
-		return connector;
+	public DSession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
+		return new DSession(
+				DSessionConnectParam.newBuilder(bootstrap, host, port)
+				.setConnectListener(listener)
+				.build()
+		);
+	}
+
+	public TcpClientConnector connect(String host, int port) {
+		return new TcpClientConnector(bootstrap, host, port);
 	}
 
 	public static void shutdown(){

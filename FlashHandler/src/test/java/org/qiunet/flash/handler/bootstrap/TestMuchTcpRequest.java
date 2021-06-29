@@ -19,8 +19,8 @@ import java.util.concurrent.CountDownLatch;
  * 17/11/27
  */
 public class TestMuchTcpRequest extends MuchTcpRequest {
-	private int requestCount = 100000;
-	private CountDownLatch latch = new CountDownLatch(requestCount);
+	private final int requestCount = 100000;
+	private final CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new Trigger());
@@ -34,8 +34,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
 					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, null);
-					MessageContent content = new MessageContent(3001, request.toByteArray());
-					connector.sendMessage(content);
+					connector.sendMessage(request);
 				}
 			}).start();
 		}

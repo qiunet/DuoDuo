@@ -106,6 +106,7 @@ public final class DSession implements IChannelMessageSender {
 			if (! f.isSuccess()) {
 				throw new CustomException("Tcp Connect fail!");
 			}
+			f.channel().attr(ChannelUtil.SESSION_KEY).set(this);
 			channelFuture.trySuccess(f.channel());
 			this.setChannel(f.channel());
 			try {
@@ -115,7 +116,7 @@ public final class DSession implements IChannelMessageSender {
 					if (msg.isCanceled()) {
 						continue;
 					}
-					IDSessionFuture future = this.sendMessage(msg.getMessage(), false);
+					IDSessionFuture future = this.doSendMessage(msg.getMessage(), false);
 					msg.getListeners().forEach(future::addListener);
 					AtomicReference<DMessageContentFuture.Status> status = msg.getStatus();
 					future.addListener(f0 -> {
@@ -138,7 +139,6 @@ public final class DSession implements IChannelMessageSender {
 
 	private void setChannel(Channel channel) {
 		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
-		channel.attr(ChannelUtil.SESSION_KEY).set(this);
 		this.channel = channel;
 	}
 	/**

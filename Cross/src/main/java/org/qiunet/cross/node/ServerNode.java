@@ -1,15 +1,13 @@
 package org.qiunet.cross.node;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
-import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -20,26 +18,24 @@ import org.qiunet.utils.exceptions.CustomException;
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
-	private TcpClientConnector connector;
 
 	private int serverId;
-	ServerNode(DSession session) {
-		super(session.flushConfig(true, 0));
 
+	ServerNode(DSession session) {
+		super(session);
 	}
 
 	ServerNode(ServerInfo serverInfo) {
+		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort(), this::addToChannel);
 		this.serverId = serverInfo.getServerId();
-		this.connector = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort(), (ret, ex) -> {
-			if (ex != null) {
-				throw new CustomException(ex, "Connect to server id {} fail.", serverInfo);
-			}
-			super.setSession(ret);
-		});
-		// 发送鉴权请求
-		this.writeMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()));
-	}
+		super.setSession(session);
 
+		// 发送鉴权请求
+		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()));
+	}
+	private void addToChannel(ChannelFuture f){
+		f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);
+	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
 		if (isAuth()) {
@@ -61,7 +57,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	public void auth(long serverId) {
 		this.serverId = (int)serverId;
 		boolean ret = ServerNodeManager0.instance.addNode(this);
-		this.writeMessage(ServerNodeAuthResponse.valueOf(ret));
+		this.sendMessage(ServerNodeAuthResponse.valueOf(ret));
 	}
 
 	/**
@@ -72,16 +68,6 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		return serverId;
 	}
 
-	/**
-	 * 向服务器发起一个请求
-	 * @param message
-	 */
-	public IDSessionFuture writeMessage(IpbChannelData message) {
-		if (connector != null) {
-			return connector.sendMessage(message);
-		}
-		return this.sendMessage(message);
-	}
 
 	@Override
 	public long getId() {
