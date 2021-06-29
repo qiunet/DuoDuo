@@ -57,14 +57,14 @@ public class NettyTcpClient {
 	 */
 	public DSession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
 		return new DSession(
-				DSessionConnectParam.newBuilder(bootstrap, host, port)
+				DSessionConnectParam.newBuilder(() -> bootstrap.connect(host, port))
 				.setConnectListener(listener)
 				.build()
 		);
 	}
 
 	public TcpClientConnector connect(String host, int port) {
-		return new TcpClientConnector(bootstrap, host, port);
+		return new TcpClientConnector(connect(host, port, null));
 	}
 
 	public static void shutdown(){

@@ -130,10 +130,7 @@ public final class DSession implements IChannelMessageSender {
 			}
 		};
 
-		ChannelFuture connectFuture = connectParam.getBootstrap().connect(connectParam.getHost(), connectParam.getPort());
-		if (connectParam.getConnectListener() != null) {
-			connectFuture.addListener(connectParam.getConnectListener());
-		}
+		ChannelFuture connectFuture = connectParam.connect();
 		connectFuture.addListener(listener);
 	}
 

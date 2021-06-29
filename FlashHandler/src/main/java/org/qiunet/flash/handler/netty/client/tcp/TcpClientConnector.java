@@ -1,9 +1,7 @@
 package org.qiunet.flash.handler.netty.client.tcp;
 
-import io.netty.bootstrap.Bootstrap;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.IPersistConnClient;
@@ -18,8 +16,8 @@ import org.qiunet.flash.handler.netty.client.IPersistConnClient;
 public class TcpClientConnector implements IPersistConnClient {
 	private final DSession session;
 
-	TcpClientConnector(Bootstrap bootstrap, String host, int port) {
-		this.session = new DSession(DSessionConnectParam.newBuilder(bootstrap, host, port).build());
+	TcpClientConnector(DSession session) {
+		this.session = session;
 	}
 
 	@Override
