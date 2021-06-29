@@ -22,9 +22,9 @@ public final class DSessionConfig {
 	 */
 	private final int flush_delay_ms;
 
-	private DSessionConfig(boolean default_flush, int flush_delay_ms) {
-		this.default_flush = default_flush;
-		this.flush_delay_ms = flush_delay_ms;
+	private DSessionConfig(DSessionConfigBuilder builder) {
+		this.default_flush = builder.default_flush;
+		this.flush_delay_ms = builder.flush_delay_ms;
 	}
 
 	public boolean isDefault_flush() {
@@ -61,7 +61,7 @@ public final class DSessionConfig {
 		}
 
 		public DSessionConfig build() {
-			return new DSessionConfig(default_flush, flush_delay_ms);
+			return new DSessionConfig(this);
 		}
 	}
 }

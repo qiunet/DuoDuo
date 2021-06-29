@@ -10,7 +10,9 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
+import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +35,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class DSession implements IChannelMessageSender {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
+	 * 如果是使用DSession 连接, 连接成功前. 发送的消息存储这里
+	 */
+	private final ConcurrentLinkedQueue<DMessageContentFuture> queue = new ConcurrentLinkedQueue<>();
+	/**
+	 * 连接中标志
+	 */
+	private final AtomicBoolean connecting = new AtomicBoolean();
+	/**
 	 * 配置
 	 */
 	private DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
@@ -39,16 +50,26 @@ public final class DSession implements IChannelMessageSender {
 	 * 写次数计数
 	 */
 	private final AtomicInteger counter = new AtomicInteger();
-
-
-	private Channel channel;
 	/**
 	 * 判断是否已经在计时flush
 	 */
 	private final AtomicBoolean flushScheduling = new AtomicBoolean();
+	/**
+	 * 如果是作为客户端的DSession, 这里是连接参数
+	 */
+	private DSessionConnectParam connectParam;
+	/**
+	 * netty Channel
+	 */
+	private Channel channel;
 
-	public DSession(String host, int port) {
-
+	/**
+	 * 作为客户端. 也可以先使用连接参数. 构造一个DSession. 先发送消息.
+	 * 消息在连接前缓存
+	 * @param connectParam
+	 */
+	public DSession(DSessionConnectParam connectParam) {
+		this.connectParam = connectParam;
 	}
 
 	public DSession(Channel channel) {
