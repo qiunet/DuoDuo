@@ -28,7 +28,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			&& iMessageActor instanceof AbstractPlayerActor) {
 			// 直接往客户端转发
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
-			iMessageActor.getSession().channel().writeAndFlush(response.buildMessageContent());
+			iMessageActor.getSession().sendMessage(response);
 			return;
 		}
 
