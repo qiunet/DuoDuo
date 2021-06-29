@@ -34,7 +34,7 @@ public class TestMuchTcpRequest extends MuchTcpRequest {
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
 					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, null);
-					connector.sendMessage(request);
+					connector.sendMessage(request, true);
 				}
 			}).start();
 		}

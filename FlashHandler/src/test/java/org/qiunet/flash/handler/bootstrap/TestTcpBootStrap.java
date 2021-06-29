@@ -21,7 +21,7 @@ public class TestTcpBootStrap extends TcpBootStrap {
 	public void testTcpProtobuf(){
 		text = "test [testTcpProtobuf]";
 		TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, GenderType.FAMALE);
-		this.tcpClientConnector.sendMessage(request);
+		this.tcpClientConnector.sendMessage(request, true);
 	}
 
 	@Override
