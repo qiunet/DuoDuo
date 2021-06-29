@@ -106,7 +106,7 @@ public final class DSession implements IChannelMessageSender {
 			if (! f.isSuccess()) {
 				throw new CustomException("Tcp Connect fail!");
 			}
-			f.channel().attr(ChannelUtil.SESSION_KEY).set(this);
+			f.channel().attr(ServerConstants.SESSION_KEY).set(this);
 			channelFuture.trySuccess(f.channel());
 			this.setChannel(f.channel());
 			try {

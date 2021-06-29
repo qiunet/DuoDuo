@@ -6,7 +6,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
-import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -21,7 +20,6 @@ import java.net.InetSocketAddress;
 
 public final class ChannelUtil {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	public static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
 	private ChannelUtil(){}
 	/***
 	 * 得到channel保存的ProtocolHeader数据
@@ -65,7 +63,7 @@ public final class ChannelUtil {
 	 */
 	public static boolean bindSession(DSession val) {
 		Preconditions.checkNotNull(val);
-		Attribute<DSession> attr = val.channel().attr(SESSION_KEY);
+		Attribute<DSession> attr = val.channel().attr(ServerConstants.SESSION_KEY);
 		boolean result = attr.compareAndSet(null, val);
 		if (! result) {
 			logger.error("Session [{}] Duplicate", val);
@@ -80,7 +78,7 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static DSession getSession(Channel channel) {
-		return channel.attr(SESSION_KEY).get();
+		return channel.attr(ServerConstants.SESSION_KEY).get();
 	}
 
 	/**

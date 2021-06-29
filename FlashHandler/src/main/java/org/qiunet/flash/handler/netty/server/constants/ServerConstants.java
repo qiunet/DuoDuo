@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
 import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.listener.event.EventHandlerWeightType;
@@ -28,6 +29,10 @@ public final class ServerConstants {
 	 * channel 存储他是使用哪种方式连接的.
 	 */
 	public static final AttributeKey<ServerConnType> HANDLER_TYPE_KEY = AttributeKey.newInstance("HANDLER_TYPE_KEY");
+	/**
+	 * Session key
+	 */
+	public static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
 	/***
 	 * 启动参数
 	 */

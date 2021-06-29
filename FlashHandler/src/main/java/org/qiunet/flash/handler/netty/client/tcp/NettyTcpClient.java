@@ -5,7 +5,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -72,7 +71,6 @@ public class NettyTcpClient {
 		if (! group.isShutdown()) group.shutdownGracefully();
 	}
 
-	static final AttributeKey<DSession> SESSION = AttributeKey.newInstance("CLIENT_SESSION");
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 
 		@Override
@@ -88,7 +86,7 @@ public class NettyTcpClient {
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(ctx.channel().attr(SESSION).get(), msg);
+			trigger.response(ctx.channel().attr(ServerConstants.SESSION_KEY).get(), msg);
 		}
 	}
 }
