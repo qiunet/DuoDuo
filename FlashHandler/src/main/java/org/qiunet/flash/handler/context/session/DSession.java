@@ -3,7 +3,9 @@ package org.qiunet.flash.handler.context.session;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -17,15 +19,21 @@ import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Session 的 父类
@@ -39,9 +47,17 @@ public final class DSession implements IChannelMessageSender {
 	 */
 	private final ConcurrentLinkedQueue<DMessageContentFuture> queue = new ConcurrentLinkedQueue<>();
 	/**
+	 * 锁. 防止连接时候. 发送信息错误放置.
+	 */
+	private final ReentrantLock sessionLock = new ReentrantLock();
+	/**
 	 * 连接中标志
 	 */
 	private final AtomicBoolean connecting = new AtomicBoolean();
+	/**
+	 * 连接模式, Channel 的获取future
+	 */
+	private DPromise<Channel> channelFuture;
 	/**
 	 * 配置
 	 */
@@ -69,15 +85,61 @@ public final class DSession implements IChannelMessageSender {
 	 * @param connectParam
 	 */
 	public DSession(DSessionConnectParam connectParam) {
+		this.channelFuture = new DCompletePromise<>();
 		this.connectParam = connectParam;
+		this.connect();
 	}
 
 	public DSession(Channel channel) {
-		this.channel = channel;
-		if (channel != null) {
-			// 除了测试. 这里不会为null
-			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		this.setChannel(channel);
+	}
+
+	/**
+	 * 连接
+	 */
+	private void connect() {
+		Preconditions.checkNotNull(connectParam);
+		if (! connecting.compareAndSet(false, true)) {
+			return;
 		}
+		GenericFutureListener<ChannelFuture> listener = f -> {
+			if (! f.isSuccess()) {
+				throw new CustomException("Tcp Connect fail!");
+			}
+			channelFuture.trySuccess(f.channel());
+			this.setChannel(f.channel());
+			try {
+				sessionLock.lock();
+				DMessageContentFuture msg;
+				while ((msg = queue.poll()) != null) {
+					if (msg.isCanceled()) {
+						continue;
+					}
+					IDSessionFuture future = this.sendMessage(msg.getMessage(), false);
+					msg.getListeners().forEach(future::addListener);
+					AtomicReference<DMessageContentFuture.Status> status = msg.getStatus();
+					future.addListener(f0 -> {
+						status.compareAndSet(DMessageContentFuture.Status.NONE, DMessageContentFuture.Status.SUCCESS);
+					});
+				}
+				this.flush0();
+				connecting.set(false);
+			}finally {
+				sessionLock.unlock();
+			}
+		};
+
+		ChannelFuture connectFuture = connectParam.getBootstrap().connect(connectParam.getHost(), connectParam.getPort());
+		if (connectParam.getConnectListener() != null) {
+			connectFuture.addListener(connectParam.getConnectListener());
+		}
+		connectFuture.addListener(listener);
+	}
+
+	private void setChannel(Channel channel) {
+		channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+		channel.attr(ChannelUtil.SESSION_KEY).set(this);
+		this.channel = channel;
 	}
 	/**
 	 * 设置 session 的参数
@@ -93,14 +155,23 @@ public final class DSession implements IChannelMessageSender {
 	 * @return
 	 */
 	public boolean isActive() {
-		return channel.isActive();
+		return channel != null && channel.isActive();
 	}
 
 	/**
 	 * 得到channel
+	 * 如果是client模式. 会阻塞知道拿到channel
+	 *
 	 * @return
 	 */
 	public Channel channel() {
+		if (channel == null && channelFuture != null) {
+			try {
+				channel = channelFuture.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new CustomException(e, "Get channel error");
+			}
+		}
 		return channel;
 	}
 
@@ -151,7 +222,7 @@ public final class DSession implements IChannelMessageSender {
 		}
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(cause));
-		if (channel.isActive() || channel.isOpen()) {
+		if (channel != null && (channel.isActive() || channel.isOpen())) {
 			channel.close();
 		}
 	}
@@ -159,12 +230,14 @@ public final class DSession implements IChannelMessageSender {
 	@Override
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
-		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (messageActor != null) {
-			sj.add(messageActor.getIdentity());
+		if (channel != null) {
+			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			if (messageActor != null) {
+				sj.add(messageActor.getIdentity());
+			}
+			sj.add("ID = " + channel.id().asShortText());
+			sj.add("Ip = " + getIp());
 		}
-		sj.add("ID = " + channel.id().asShortText());
-		sj.add("Ip = " + getIp());
 		return sj.toString();
 	}
 
@@ -190,6 +263,22 @@ public final class DSession implements IChannelMessageSender {
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+		if (connecting.get()) {
+			try {
+				sessionLock.lock();
+				if (connecting.get()) {
+					DMessageContentFuture contentFuture = new DMessageContentFuture(message);
+					this.queue.add(contentFuture);
+					return contentFuture;
+				}
+			}finally {
+				sessionLock.unlock();
+			}
+		}
+		return this.doSendMessage(message, flush);
+	}
+
+	public IDSessionFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
 		if ( logger.isInfoEnabled()
 				&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);

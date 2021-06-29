@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.context.session.future;
 import com.google.common.collect.Lists;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,10 +30,10 @@ public class DMessageContentFuture implements IDSessionFuture {
 	/**
 	 * 携带的消息
 	 */
-	private final MessageContent messageContent;
+	private final IChannelMessage<?> message;
 
-	public DMessageContentFuture(MessageContent messageContent) {
-		this.messageContent = messageContent;
+	public DMessageContentFuture(IChannelMessage<?> message) {
+		this.message = message;
 	}
 
 	@Override
@@ -75,7 +75,7 @@ public class DMessageContentFuture implements IDSessionFuture {
 		return status;
 	}
 
-	public MessageContent getMessageContent() {
-		return messageContent;
+	public IChannelMessage<?> getMessage() {
+		return message;
 	}
 }

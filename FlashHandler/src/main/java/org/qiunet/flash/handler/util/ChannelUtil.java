@@ -21,7 +21,7 @@ import java.net.InetSocketAddress;
 
 public final class ChannelUtil {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
+	public static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
 	private ChannelUtil(){}
 	/***
 	 * 得到channel保存的ProtocolHeader数据

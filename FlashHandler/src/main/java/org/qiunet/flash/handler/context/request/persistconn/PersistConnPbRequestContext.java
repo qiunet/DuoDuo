@@ -29,7 +29,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 			this.handlerRequest();
 		}catch (Exception e) {
 			DefaultProtobufMessage protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);
-			channel.writeAndFlush(protobufMessage.encode());
+			ChannelUtil.getSession(channel).sendMessage(protobufMessage);
 		}
 	}
 

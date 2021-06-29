@@ -12,6 +12,19 @@ public interface IAttributeData {
 	 * @return
 	 */
 	Object getAttribute(String key);
+
+	/**
+	 * 获取或者得到默认值
+	 * @param key
+	 * @return
+	 */
+	default Object getOrDefault(String key, Object defaultVal) {
+		Object attribute = getAttribute(key);
+		if (attribute == null) {
+			return defaultVal;
+		}
+		return attribute;
+	}
 	/**
 	 * 得到对象
 	 * @param key
