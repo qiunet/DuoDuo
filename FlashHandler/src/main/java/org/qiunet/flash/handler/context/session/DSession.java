@@ -19,8 +19,6 @@ import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.async.future.DCompletePromise;
-import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -28,7 +26,6 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,10 +51,6 @@ public final class DSession implements IChannelMessageSender {
 	 * 连接中标志
 	 */
 	private final AtomicBoolean connecting = new AtomicBoolean();
-	/**
-	 * 连接模式, Channel 的获取future
-	 */
-	private DPromise<Channel> channelFuture;
 	/**
 	 * 配置
 	 */
@@ -85,7 +78,6 @@ public final class DSession implements IChannelMessageSender {
 	 * @param connectParam
 	 */
 	public DSession(DSessionConnectParam connectParam) {
-		this.channelFuture = new DCompletePromise<>();
 		this.connectParam = connectParam;
 		this.connect();
 	}
@@ -107,23 +99,29 @@ public final class DSession implements IChannelMessageSender {
 				throw new CustomException("Tcp Connect fail!");
 			}
 			f.channel().attr(ServerConstants.SESSION_KEY).set(this);
-			channelFuture.trySuccess(f.channel());
 			this.setChannel(f.channel());
 			try {
 				sessionLock.lock();
-				DMessageContentFuture msg;
-				while ((msg = queue.poll()) != null) {
-					if (msg.isCanceled()) {
-						continue;
-					}
-					IDSessionFuture future = this.doSendMessage(msg.getMessage(), false);
-					msg.getListeners().forEach(future::addListener);
-					AtomicReference<DMessageContentFuture.Status> status = msg.getStatus();
+				DMessageContentFuture msg = queue.poll();
+				if (msg != null) {
+					// 第一个协议一般是鉴权协议. 先发送. 等发送成功再发送后面的协议.
+					IDSessionFuture future = this.doSendMessage(msg.getMessage(), true);
 					future.addListener(f0 -> {
-						status.compareAndSet(DMessageContentFuture.Status.NONE, DMessageContentFuture.Status.SUCCESS);
+						DMessageContentFuture msg0;
+						while ((msg0 = queue.poll()) != null) {
+							if (msg0.isCanceled()) {
+								continue;
+							}
+							IDSessionFuture future1 = this.doSendMessage(msg0.getMessage(), false);
+							msg0.getListeners().forEach(future1::addListener);
+							AtomicReference<DMessageContentFuture.Status> status = msg0.getStatus();
+							future1.addListener(f1 -> {
+								status.compareAndSet(DMessageContentFuture.Status.NONE, DMessageContentFuture.Status.SUCCESS);
+							});
+						}
+						this.flush0();
 					});
 				}
-				this.flush0();
 				connecting.set(false);
 			}finally {
 				sessionLock.unlock();
@@ -165,13 +163,6 @@ public final class DSession implements IChannelMessageSender {
 	 * @return
 	 */
 	public Channel channel() {
-		if (channel == null && channelFuture != null) {
-			try {
-				channel = channelFuture.get();
-			} catch (InterruptedException | ExecutionException e) {
-				throw new CustomException(e, "Get channel error");
-			}
-		}
 		return channel;
 	}
 
