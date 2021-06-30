@@ -427,4 +427,28 @@ public final class ReflectUtil {
 		}
 		return result;
 	}
+
+	/**
+	 * 找出Class 上对应的泛型参数类型
+	 * @param oriClazz 原始class
+	 * @param filter 类型过滤
+	 * @return
+	 */
+	public static Class<?> findGenericParameterizedType(Class<?> oriClazz, Predicate<Class<?>> filter) {
+		Class<?> clazz = oriClazz;
+		do {
+			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
+				clazz = clazz.getSuperclass();
+				continue;
+			}
+			Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
+			for (Type type : types) {
+				if (type instanceof Class && filter.test((Class<?>) type)) {
+					return  (Class<?>) type;
+				}
+			}
+			clazz = clazz.getSuperclass();
+		}while (clazz != Object.class);
+		return null;
+	}
 }
