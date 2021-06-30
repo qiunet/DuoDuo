@@ -16,6 +16,6 @@ public class LoginPbHandler extends PersistConnPbHandler<PlayerActor, TcpPbLogin
 
 	@Override
 	public void handler(PlayerActor player, IPersistConnRequest<TcpPbLoginRequest> context)throws Exception {
-		player.sendResponse(LoginResponse.valueOf(context.getRequestData().getAccount()));
+		player.sendMessage(LoginResponse.valueOf(context.getRequestData().getAccount()));
 	}
 }

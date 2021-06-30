@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.startup.context;
 
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +34,5 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 
 	public String getOpenId() {
 		return null;
-	}
-
-	public void sendResponse(IpbResponseData responseData) {
-		this.sendMessage(responseData);
 	}
 }
