@@ -52,8 +52,8 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 			return false;
 		}
 
-		this.crossSession = tcpClient.connect("localhost", serverInfo.getServerPort()).getSession();
-		this.crossSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+		this.crossSession = tcpClient.connect("localhost", serverInfo.getServerPort(), f ->
+				f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
 		this.crossSession.sendMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerConfig.getServerId()));
 		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
 		return this.crossing.compareAndSet(false, true);

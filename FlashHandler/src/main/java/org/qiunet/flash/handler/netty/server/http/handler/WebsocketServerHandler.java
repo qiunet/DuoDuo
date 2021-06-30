@@ -99,7 +99,8 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
+			ChannelUtil.getSession(ctx.channel()).sendMessage(params.getStartupContext().exception(cause))
+					.addListener(ChannelFutureListener.CLOSE);
 			if (session == null) {
 				ctx.close();
 			}else {

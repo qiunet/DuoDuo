@@ -39,6 +39,6 @@ public class RequestScannerHandler implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.SERVER;
+		return ScannerType.ALL;
 	}
 }

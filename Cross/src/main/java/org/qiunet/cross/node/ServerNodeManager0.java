@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.util.AttributeKey;
 import org.qiunet.cross.common.contants.ScannerParamKey;
-import org.qiunet.cross.common.exception.AuthFailException;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
@@ -99,29 +98,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	ServerNode getNode(int serverId) {
 		return nodes.computeIfAbsent(serverId, key -> new ServerNode(this.getServerInfo(key)));
-	}
-	/**
-	 * 鉴权响应
-	 * @param serverNode
-	 * @param response
-	 */
-	void authResponse(ServerNode serverNode, ServerNodeAuthResponse response) {
-		DPromise<ServerNode> dPromise = serverNode.getSession().channel().attr(SERVER_NODE_PROMISE_ATTRIBUTE).get();
-		if (dPromise == null) {
-			logger.error("call serverNode auth response . But promise is null!");
-			return;
-		}
-
-		if (! dPromise.isDone()) {
-			if(response.isResult()) {
-				dPromise.trySuccess(serverNode);
-			}else {
-				dPromise.tryFailure(new AuthFailException());
-			}
-		} else {
-			logger.error("call serverNode auth response . But promise is Done!");
-		}
-		serverNode.getSession().channel().attr(SERVER_NODE_PROMISE_ATTRIBUTE).compareAndSet(dPromise, null);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package org.qiunet.cross.node;
 
-import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -26,15 +25,14 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	ServerNode(ServerInfo serverInfo) {
-		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort(), this::addToChannel);
+		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort(),
+				f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
+
 		this.serverId = serverInfo.getServerId();
 		super.setSession(session);
 
 		// 发送鉴权请求
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()));
-	}
-	private void addToChannel(ChannelFuture f){
-		f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);
 	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
@@ -57,7 +55,6 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	public void auth(long serverId) {
 		this.serverId = (int)serverId;
 		boolean ret = ServerNodeManager0.instance.addNode(this);
-		this.sendMessage(ServerNodeAuthResponse.valueOf(ret));
 	}
 
 	/**
