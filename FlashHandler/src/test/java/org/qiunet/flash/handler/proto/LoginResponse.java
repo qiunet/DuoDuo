@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 
 /***
  *
@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
  * @author qiunet
  * 2020-09-22 12:31
  */
-@PbResponse(1000001)
+@PbChannelDataID(1000001)
 @ProtobufClass(description = "登录下行")
 public class LoginResponse implements IpbResponseData {
 

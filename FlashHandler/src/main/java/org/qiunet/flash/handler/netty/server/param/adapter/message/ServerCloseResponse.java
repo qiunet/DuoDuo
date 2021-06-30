@@ -4,7 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 
 /***
  * 服务未开启响应
@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
  * 2020-11-11 10:04
  */
 @ProtobufClass(description = "服务未开启响应")
-@PbResponse(IProtocolId.System.SERVER_NOT_OPEN_RESP)
+@PbChannelDataID(IProtocolId.System.SERVER_NOT_OPEN_RESP)
 public class ServerCloseResponse implements IpbResponseData {
 	@Protobuf(description = "服务没有开启提示")
 	private String serverCloseMsg;

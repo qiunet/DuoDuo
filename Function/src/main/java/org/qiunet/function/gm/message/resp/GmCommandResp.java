@@ -4,7 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.request.data.pb.PbResponse;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 
 /***
@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.context.status.IGameStatus;
  * 2021-01-09 11:08
  */
 @ProtobufClass(description = "执行结果响应")
-@PbResponse(IProtocolId.System.GM_COMMAND_RESP)
+@PbChannelDataID(IProtocolId.System.GM_COMMAND_RESP)
 public class GmCommandResp implements IpbResponseData {
 	@Protobuf(description = "执行结果")
 	private int status;

@@ -47,17 +47,17 @@ public class PbResponseDataMapping implements IApplicationContextAware {
 				continue;
 			}
 
-			if (! clazz.isAnnotationPresent(PbResponse.class)) {
+			if (! clazz.isAnnotationPresent(PbChannelDataID.class)) {
 				throw new IllegalArgumentException("Class ["+clazz.getName()+"] is not specify PbResponse annotation!");
 			}
 
-			PbResponse pbResponse = clazz.getAnnotation(PbResponse.class);
-			if (protocolIds.contains(pbResponse.value())) {
-				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+pbResponse.value()+"] is repeated!");
+			PbChannelDataID pbChannelDataID = clazz.getAnnotation(PbChannelDataID.class);
+			if (protocolIds.contains(pbChannelDataID.value())) {
+				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+ pbChannelDataID.value()+"] is repeated!");
 			}
 
-			protocolIds.add(pbResponse.value());
-			mapping.put((Class<? extends IpbResponseData>) clazz, pbResponse.value());
+			protocolIds.add(pbChannelDataID.value());
+			mapping.put((Class<? extends IpbResponseData>) clazz, pbChannelDataID.value());
 		}
 	}
 
