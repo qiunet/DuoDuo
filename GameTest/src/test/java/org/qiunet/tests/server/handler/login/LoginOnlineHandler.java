@@ -23,6 +23,6 @@ public class LoginOnlineHandler extends PersistConnPbHandler<PlayerActor, LoginO
 	public void handler(PlayerActor playerActor, IPersistConnRequest<LoginOnlineRequest> context) throws Exception {
 		logger.info("LoginOnlineHandler: "+ context.getRequestData());
 
-		playerActor.sendResponse(LoginOnlineResponse.valueOf(10000));
+		playerActor.sendMessage(LoginOnlineResponse.valueOf(10000));
 	}
 }

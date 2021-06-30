@@ -1,7 +1,6 @@
 package org.qiunet.tests.proto;
 
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 
 /***
@@ -10,9 +9,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
  * @author qiunet
  * 2020-09-22 21:00
  */
-@PbChannelDataID(value = 1000003)
-@ProtobufClass(description = "登录room响应")
-public class LoginRoomResponse implements IpbResponseData {
+@PbChannelDataID(ID = 1000003, desc = "登录room响应")
+public class LoginRoomResponse implements IpbChannelData {
 
 	private int roomSize;
 

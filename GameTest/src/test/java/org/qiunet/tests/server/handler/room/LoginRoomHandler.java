@@ -17,6 +17,6 @@ public class LoginRoomHandler extends PersistConnPbHandler<PlayerActor, LoginRoo
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<LoginRoomRequest> context) throws Exception {
 		logger.info("LoginRoomHandler received message "+context.getRequestData());
-		playerActor.sendResponse(LoginRoomResponse.valueOf(10));
+		playerActor.sendMessage(LoginRoomResponse.valueOf(10));
 	}
 }

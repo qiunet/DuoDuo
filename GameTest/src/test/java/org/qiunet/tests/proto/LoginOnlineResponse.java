@@ -1,7 +1,6 @@
 package org.qiunet.tests.proto;
 
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 
 /***
@@ -10,9 +9,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
  * @author qiunet
  * 2020-09-22 20:56
  */
-@PbChannelDataID(1000000)
-@ProtobufClass(description = "登录Online响应")
-public class LoginOnlineResponse implements IpbResponseData {
+@PbChannelDataID(ID = 1000000,desc = "登录Online响应")
+public class LoginOnlineResponse implements IpbChannelData {
 	private int day;
 
 	public static LoginOnlineResponse valueOf(int day) {

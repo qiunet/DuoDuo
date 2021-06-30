@@ -18,7 +18,7 @@ public class PlayerIndexTcpHandler extends PersistConnPbHandler<PlayerActor, Pla
 
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<PlayerIndexRequest> context) throws Exception {
-		playerActor.sendResponse(PlayerIndexResponse.valueOf(Lists.newArrayList(
+		playerActor.sendMessage(PlayerIndexResponse.valueOf(Lists.newArrayList(
 			Item.valueOf(123450, 1),
 			Item.valueOf(123451, 2),
 			Item.valueOf(123452, 3),

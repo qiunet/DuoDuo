@@ -23,10 +23,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
-import org.qiunet.flash.handler.context.request.data.pb.PbResponseDataMapping;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,23 +36,23 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 
+ *
  * Utility class for generate protobuf IDL content from @{@link Protobuf}
- * 
+ *
  * @author xiemalin
  * @since 1.0.1
  */
 public class ProtobufIDLGenerator {
-    
+
     /** Logger for this class. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ProtobufIDLGenerator.class.getName());
-    
+
     /** The Constant V3_HEADER. */
     private static final String V3_HEADER = "syntax=\"proto3\"";
-    
+
     /**
      * get IDL content from class.
-     * 
+     *
      * @param cls target class to parse for IDL message.
      * @param cachedTypes if type already in set will not generate IDL. if a new type found will add to set
      * @param cachedEnumTypes if enum already in set will not generate IDL. if a new enum found will add to set
@@ -71,7 +68,7 @@ public class ProtobufIDLGenerator {
             LOGGER.info("class '{}' marked as @Ignore annotation, create IDL ignored.", cls.getName());
             return null;
         }
-        
+
         Set<Class<?>> types = cachedTypes;
         if (types == null) {
             types = new HashSet<>();
@@ -81,7 +78,7 @@ public class ProtobufIDLGenerator {
         if (enumTypes == null) {
             enumTypes = new HashSet<>();
         }
-        
+
         if (types.contains(cls)) {
             return null;
         }
@@ -114,7 +111,7 @@ public class ProtobufIDLGenerator {
 
     /**
      * get IDL content from class.
-     * 
+     *
      * @param cls target class to parse for IDL message.
      * @param cachedTypes if type already in set will not generate IDL. if a new type found will add to set
      * @param cachedEnumTypes if enum already in set will not generate IDL. if a new enum found will add to set
@@ -130,7 +127,7 @@ public class ProtobufIDLGenerator {
 
     /**
      * get IDL content from class.
-     * 
+     *
      * @param cls target protobuf class to parse
      * @return protobuf IDL content in string
      */
@@ -164,13 +161,9 @@ public class ProtobufIDLGenerator {
 	 * @return
 	 */
 	public static int getProtocolId(Class<?> clz) {
-		if (IpbRequestData.class.isAssignableFrom(clz)) {
-			return RequestHandlerMapping.getInstance().getProtocolId((Class<? extends IpbRequestData>) clz);
+		if (IpbChannelData.class.isAssignableFrom(clz)) {
+			return PbChannelDataMapping.protocolId((Class<? extends IpbChannelData>) clz);
 		}
-		if (IpbResponseData.class.isAssignableFrom(clz)) {
-			return PbResponseDataMapping.protocolId((Class<? extends IpbResponseData>) clz);
-		}
-//		//
 		return 0;
 	}
     /**
@@ -203,13 +196,13 @@ public class ProtobufIDLGenerator {
                             Type targetType = actualTypeArguments[0];
                             if (targetType instanceof Class) {
                                 Class c = (Class) targetType;
-                                
+
                                 String fieldTypeName;
                                 if (ProtobufProxyUtils.isScalarType(c)) {
-                                    
+
                                     FieldType fieldType = ProtobufProxyUtils.TYPE_MAPPING.get(c);
                                     fieldTypeName = fieldType.getType();
-                                    
+
                                 } else {
                                     if (field.getFieldType() == FieldType.ENUM) {
                                         if (!cachedEnumTypes.contains(c)) {
@@ -217,16 +210,16 @@ public class ProtobufIDLGenerator {
                                             enumTypes.add(c);
                                         }
                                     } else  {
-                                        
+
                                         if (!cachedTypes.contains(c)) {
                                             cachedTypes.add(c);
                                             subTypes.add(c);
                                         }
                                     }
-                                    
+
                                     fieldTypeName = c.getSimpleName();
                                 }
-                                
+
                                 code.append("repeated ").append(fieldTypeName).append(" ")
                                 .append(field.getField().getName()).append("=").append(field.getOrder())
                                 .append(";\n");
@@ -243,7 +236,7 @@ public class ProtobufIDLGenerator {
                             enumTypes.add(c);
                         }
                     } else  {
-                        
+
                         if (!cachedTypes.contains(c)) {
                             cachedTypes.add(c);
                             subTypes.add(c);
@@ -269,7 +262,7 @@ public class ProtobufIDLGenerator {
                     Class valueClass = field.getGenericeValueType();
                     type = type + "<" + ProtobufProxyUtils.processProtobufType(keyClass) + ", ";
                     type = type + ProtobufProxyUtils.processProtobufType(valueClass)  + ">";
-                    
+
                     // check map key or value is object type
                     if (ProtobufProxyUtils.isObjectType(keyClass)) {
                         if (Enum.class.isAssignableFrom(keyClass)) {
@@ -278,7 +271,7 @@ public class ProtobufIDLGenerator {
                             subTypes.add(keyClass);
                         }
                     }
-                    
+
                     if (ProtobufProxyUtils.isObjectType(valueClass)) {
                         if (Enum.class.isAssignableFrom(valueClass)) {
                             enumTypes.add(valueClass);
@@ -286,7 +279,7 @@ public class ProtobufIDLGenerator {
                             subTypes.add(valueClass);
                         }
                     }
-                    
+
                 }
 
                 String required = getFieldRequired(field.isRequired());
@@ -326,7 +319,7 @@ public class ProtobufIDLGenerator {
 
         Field[] fields = cls.getFields();
         for (Field field : fields) {
-            
+
             String name = field.getName();
 			Protobuf annotation = field.getAnnotation(Protobuf.class);
 			if (annotation != null && !StringUtil.isEmpty(annotation.description())) {

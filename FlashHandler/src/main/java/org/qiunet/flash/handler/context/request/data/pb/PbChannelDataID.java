@@ -18,5 +18,11 @@ public @interface PbChannelDataID {
 	 * 协议id
 	 * @return
 	 */
-	int value();
+	int ID();
+
+	/**
+	 * 描述
+	 * @return
+	 */
+	String desc();
 }

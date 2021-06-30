@@ -31,5 +31,7 @@ public interface IpbChannelData extends IDataToString {
 	 * 得到protocolId
 	 * @return
 	 */
-	int protocolId();
+	default int protocolId() {
+		return PbChannelDataMapping.protocolId(getClass());
+	}
 }

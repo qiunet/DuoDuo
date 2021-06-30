@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.proto;
 
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbResponseData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
 
 /***
@@ -10,9 +9,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
  * @author qiunet
  * 2020-09-22 12:31
  */
-@PbChannelDataID(1000001)
-@ProtobufClass(description = "登录下行")
-public class LoginResponse implements IpbResponseData {
+@PbChannelDataID(ID = 1000001, desc = "登录下行")
+public class LoginResponse implements IpbChannelData {
 
 	private String testString;
 
