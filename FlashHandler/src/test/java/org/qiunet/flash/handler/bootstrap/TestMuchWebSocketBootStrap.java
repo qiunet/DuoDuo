@@ -2,10 +2,11 @@ package org.qiunet.flash.handler.bootstrap;
 
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
-import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -25,7 +26,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {
-				NettyWebsocketClient client = NettyWebsocketClient.create(WebSocketClientParams.custom()
+				IChannelMessageSender client = NettyWebSocketClient.create(WebSocketClientParams.custom()
 					.setAddress("localhost", port).build(), new Trigger());
 				for (int j = 0; j < requestCount; j++) {
 					String text = "testMuchWebSocket: "+j;

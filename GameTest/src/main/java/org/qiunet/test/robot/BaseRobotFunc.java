@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
-import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.test.response.IPersistConnResponse;
 import org.qiunet.test.response.annotation.support.ResponseMapping;
@@ -49,7 +49,7 @@ abstract class BaseRobotFunc<Info extends IRobotInitInfo> implements IRobot<Info
 		return clients.computeIfAbsent(server.name(), serverName -> {
 			switch (server.getType()) {
 				case WS:
-					return NettyWebsocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
+					return NettyWebSocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
 				case TCP:
 					return NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger).connect(server.host(), server.port());
 				default:

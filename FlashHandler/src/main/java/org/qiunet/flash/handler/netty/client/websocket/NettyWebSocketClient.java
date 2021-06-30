@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
@@ -28,43 +29,53 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.concurrent.ExecutionException;
+
 /**
+ * webSocket 客户端
+ *
  * Created by qiunet.
  * 17/12/1
  */
-public class NettyWebsocketClient implements IChannelMessageSender {
+public class NettyWebSocketClient implements IChannelMessageSender {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private ChannelHandlerContext channelHandlerContext;
 	private final IPersistConnResponseTrigger trigger;
 	private final WebSocketClientParams params;
+	private final Bootstrap bootstrap;
 	private DSession session;
 
-	private NettyWebsocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger, DPromise<NettyWebsocketClient> promise) {
+	private NettyWebSocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		this.params = params;
 
-		Bootstrap bootstrap = new Bootstrap();
+		bootstrap = new Bootstrap();
 		bootstrap.group(group);
 
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.handler(new NettyWebsocketClient.NettyClientInitializer());
-		ChannelFuture future = bootstrap.connect(params.getAddress());
-		future.addListener(f1 -> {
-			ChannelFuture nettyClientHandler = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
-			nettyClientHandler.addListener(f2 -> promise.trySuccess(this));
-		});
+		bootstrap.handler(new NettyWebSocketClient.NettyClientInitializer());
 	}
 
-	public static NettyWebsocketClient create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
-		DPromise<NettyWebsocketClient> promise = DPromise.create();
-		new NettyWebsocketClient(params, trigger, promise);
-		try {
-			return promise.get();
-		} catch (Exception e) {
-			throw new CustomException(e, "WS CONNECT ERROR!!!");
-		}
+	public static DSession create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
+		NettyWebSocketClient client = new NettyWebSocketClient(params, trigger);
+		return client.connect();
+	}
+
+	private DSession connect() {
+		DPromise<ChannelFuture> promise = DPromise.create();
+		ChannelFuture future = bootstrap.connect(params.getAddress());
+		future.addListener(f1 -> {
+			ChannelFuture handshakeFuture = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
+			promise.trySuccess(handshakeFuture);
+		});
+		return (this.session = new DSession(DSessionConnectParam.newBuilder(() -> {
+			try {
+				return promise.get();
+			} catch (InterruptedException | ExecutionException e) {
+				throw new CustomException(e, "Connect to server {} error!", params.getURI());
+			}
+		}).build()));
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
@@ -98,8 +109,6 @@ public class NettyWebsocketClient implements IChannelMessageSender {
 
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) {
-			channelHandlerContext = ctx;
-			session = new DSession(ctx.channel());
 			handshaker.handshake(ctx.channel());
 		}
 
@@ -118,12 +127,13 @@ public class NettyWebsocketClient implements IChannelMessageSender {
 					pipeline.addLast("WebSocketServerHandler", new NettyWSClientHandler());
 					pipeline.addLast("encode", new WebSocketEncoder());
 
+					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {
 					handshakeFuture.setFailure(e);
 					logger.error("WebSocket Client failed to connect", e);
 				}
-				ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
+
 				ctx.fireChannelRead(msg.retain());
 			}
 		}

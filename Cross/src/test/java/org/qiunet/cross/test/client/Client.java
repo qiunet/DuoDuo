@@ -5,8 +5,9 @@ import org.junit.Test;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.proto.req.EquipIndexRequest;
 import org.qiunet.cross.test.proto.req.LoginRequest;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
-import org.qiunet.flash.handler.netty.client.websocket.NettyWebsocketClient;
+import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -19,11 +20,11 @@ import java.util.concurrent.locks.LockSupport;
  * 2020-10-23 10:34
  */
 public class Client {
-	private static NettyWebsocketClient websocketClient;
+	private static IChannelMessageSender websocketClient;
 	@BeforeClass
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.TESTER).scanner();
-		websocketClient = NettyWebsocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
+		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
 			System.out.println("--------------------------"+data.getProtocolId());
 		});
 	}
