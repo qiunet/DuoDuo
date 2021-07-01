@@ -37,9 +37,15 @@ public class TestReflectUtil extends BaseTest {
 		}
 	}
 
+	public static class NoParamClass {
+
+	}
 	@Test
 	public void test(){
-		Class<?> type = ReflectUtil.findGenericParameterizedType(ReflectTestClass.class, ITest2.class::isAssignableFrom);
-		Assert.assertEquals(type, Test2.class);
+		Class<?> type0 = ReflectUtil.findGenericParameterizedType(ReflectTestClass.class, ITest2.class::isAssignableFrom);
+		Assert.assertEquals(type0, Test2.class);
+
+		Class<?> type1 = ReflectUtil.findGenericParameterizedType(NoParamClass.class, clz -> true);
+		Assert.assertNull(type1);
 	}
 }
