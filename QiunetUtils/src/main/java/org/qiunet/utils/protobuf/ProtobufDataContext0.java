@@ -2,7 +2,6 @@ package org.qiunet.utils.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -20,7 +19,7 @@ import java.util.Set;
  * 2020-09-22 11:34
  */
 class ProtobufDataContext0 implements IApplicationContextAware {
-	private Map<Class, Codec> codecMap = new HashMap<>();
+	private final Map<Class, Codec> codecMap = new HashMap<>();
 	private static ProtobufDataContext0 instance;
 	private IApplicationContext context;
 
@@ -36,7 +35,7 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 	}
 
 	private void handlerCodec() {
-		Set<Class<?>> classes = this.context.getTypesAnnotatedWith(ProtobufClass.class);
+		Set<Class<? extends IProtobufClass>> classes = this.context.getSubTypesOf(IProtobufClass.class);
 		for (Class<?> clazz : classes) {
 			if (clazz.isInterface()
 				|| clazz.isEnum()
