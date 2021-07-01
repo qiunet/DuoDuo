@@ -6,9 +6,9 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -32,7 +32,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			return;
 		}
 
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(data);
+		IHandler handler = PbChannelDataMapping.getHandler(data.getProtocolId());
 		IMessage message = handler.getHandlerType().createRequestContext(data, session.channel(), handler, iMessageActor);
 		iMessageActor.addMessage(message);
 	}

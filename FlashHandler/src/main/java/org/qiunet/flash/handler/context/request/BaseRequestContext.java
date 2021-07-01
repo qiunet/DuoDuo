@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -31,7 +31,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 		if (content.getProtocolId() > 0) {
 			this.handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		}else {
-			this.handler = RequestHandlerMapping.getInstance().getHandler(content.getUriPath());
+			this.handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
 		}
 		try {
 			this.requestData = getHandler().parseRequestData(messageContent.byteBuffer());

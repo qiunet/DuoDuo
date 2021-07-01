@@ -18,7 +18,7 @@ import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
@@ -156,7 +156,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		ByteBuf byteBuf = request.content();
 		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content.getUriPath());
+		IHandler handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
