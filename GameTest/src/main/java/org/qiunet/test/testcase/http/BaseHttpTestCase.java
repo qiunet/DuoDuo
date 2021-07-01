@@ -18,12 +18,6 @@ import java.nio.ByteBuffer;
  * 17/12/4
  */
 abstract class BaseHttpTestCase<RequestData, ResponseData, Robot extends IRobot> extends AbstractHttpTestCase<RequestData, ResponseData, Robot> {
-	/***
-	 * 请求id
-	 * @return
-	 */
-	protected abstract int getRequestID();
-
 	@Override
 	public void sendRequest(Robot robot) {
 		MessageContent content = buildRequest(robot);

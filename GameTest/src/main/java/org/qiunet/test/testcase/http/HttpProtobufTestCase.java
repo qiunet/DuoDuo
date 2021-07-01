@@ -30,8 +30,7 @@ public abstract class HttpProtobufTestCase<RequestData extends IpbChannelData, R
 	public MessageContent buildRequest(Robot robot) {
 		RequestData requestData = requestBuild(robot);
 		byte [] bytes = requestData.toByteArray();
-		MessageContent content = new MessageContent(getRequestID() , bytes);
-		return content;
+		return new MessageContent(requestData.protocolId() , bytes);
 	}
 
 	@Override

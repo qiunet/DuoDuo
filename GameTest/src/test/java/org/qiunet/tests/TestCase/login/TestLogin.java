@@ -24,9 +24,4 @@ public class TestLogin extends BaseLogicTestCase<LoginRequest, LoginResponse> {
 	public boolean conditionJudge(Robot robot) {
 		return true;
 	}
-
-	@Override
-	public int getRequestID() {
-		return 1000;
-	}
 }
