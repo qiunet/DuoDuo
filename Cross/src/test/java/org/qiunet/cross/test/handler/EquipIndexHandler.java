@@ -8,7 +8,6 @@ import org.qiunet.cross.test.data.TestCrossDataCross;
 import org.qiunet.cross.test.event.CrossPlayerLoginEventData;
 import org.qiunet.cross.test.proto.req.EquipIndexRequest;
 import org.qiunet.cross.test.proto.resp.CrossLoginResponse;
-import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 
 /***
@@ -17,7 +16,6 @@ import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
  * @author qiunet
  * 2020-10-26 15:56
  */
-@RequestHandler(ID = ProtocolId.Equip.EQUIP_INDEX, desc = "装备首页")
 public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<EquipIndexRequest> context) throws Exception {

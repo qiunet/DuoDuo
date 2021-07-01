@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.handler.mapping;
 
-import org.qiunet.flash.handler.common.annotation.RequestHandler;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
-import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -21,20 +19,15 @@ public class RequestScannerHandler implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.context = context;
-		context.getSubTypesOf(IHandler.class).stream()
+		context.getTypesAnnotatedWith(UriPathHandler.class).stream()
 			.filter(c -> !Modifier.isAbstract(c.getModifiers()))
 			.forEach(this::handler);
 	}
 
 	private void handler(Class<?> clazz) {
-		RequestHandler requestHandler = clazz.getAnnotation(RequestHandler.class);
 		UriPathHandler otherRequestHandler = clazz.getAnnotation(UriPathHandler.class);
-		IHandler handler = (IHandler) context.getInstanceOfClass(clazz);
-		if (requestHandler != null) {
-			RequestHandlerMapping.getInstance().addHandler(requestHandler.ID(), handler);
-		}else {
-			RequestHandlerMapping.getInstance().addHandler(otherRequestHandler.value(), ((IHttpHandler) handler));
-		}
+		IHttpHandler handler = (IHttpHandler) context.getInstanceOfClass(clazz);
+		RequestHandlerMapping.getInstance().addHandler(otherRequestHandler.value(), handler);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package org.qiunet.test.testcase.persistconn;
 
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.test.robot.IRobot;
 import org.qiunet.test.server.IServer;
@@ -21,7 +21,7 @@ abstract class PersistConnTestCase<Robot extends IRobot> implements ITestCase<Ro
 	 * @param robot
 	 * @return
 	 */
-	protected abstract IpbRequestData buildRequest(Robot robot);
+	protected abstract IpbChannelData buildRequest(Robot robot);
 	/***
 	 * 得到当前的server数据
 	 * @return

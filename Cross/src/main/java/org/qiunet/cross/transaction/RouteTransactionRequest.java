@@ -3,8 +3,9 @@ package org.qiunet.cross.transaction;
 import com.baidu.bjf.remoting.protobuf.FieldType;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -16,8 +17,8 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  * 2020-09-24 09:34
  */
 @SkipProtoGenerator
-@ProtobufClass(description = "事务请求类")
-public class RouteTransactionRequest implements IpbRequestData {
+@PbChannelData(ID = IProtocolId.System.TRANSACTION_REQ, desc = "处理事务请求")
+public class RouteTransactionRequest implements IpbChannelData {
 	/**
 	 * 请求端维护自增的id, 需要带着返回给请求服务器.
 	 */

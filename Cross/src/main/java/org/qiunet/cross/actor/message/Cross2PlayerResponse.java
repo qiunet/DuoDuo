@@ -5,7 +5,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.json.JsonUtil;
 
@@ -16,7 +16,7 @@ import org.qiunet.utils.json.JsonUtil;
  * 2020-10-26 12:15
  */
 @SkipProtoGenerator
-@PbChannelDataID(ID = IProtocolId.System.CROSS_2_PLAYER_MSG, desc = "跨服给客户端的包")
+@PbChannelData(ID = IProtocolId.System.CROSS_2_PLAYER_MSG, desc = "跨服给客户端的包")
 public class Cross2PlayerResponse implements IpbChannelData {
 	/**
 	 * 消息的协议id

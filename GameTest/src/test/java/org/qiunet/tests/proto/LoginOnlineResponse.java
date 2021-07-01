@@ -1,7 +1,9 @@
 package org.qiunet.tests.proto;
 
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+
+import static org.qiunet.tests.protocol.ProtocolId.Test.ONLINE_LOGIN_RESP;
 
 /***
  *
@@ -9,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
  * @author qiunet
  * 2020-09-22 20:56
  */
-@PbChannelDataID(ID = 1000000,desc = "登录Online响应")
+@PbChannelData(ID = ONLINE_LOGIN_RESP, desc = "登录Online响应")
 public class LoginOnlineResponse implements IpbChannelData {
 	private int day;
 

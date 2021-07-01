@@ -8,14 +8,13 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
  * Created by qiunet.
  * 17/11/21
  */
-public  class HttpPbRequestContext<RequestData extends IpbRequestData, ResponseData  extends IpbChannelData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
+public  class HttpPbRequestContext<RequestData extends IpbChannelData, ResponseData  extends IpbChannelData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	public HttpPbRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channel, params, request);
 	}

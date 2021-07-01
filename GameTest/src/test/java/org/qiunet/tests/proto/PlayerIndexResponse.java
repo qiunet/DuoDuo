@@ -1,9 +1,11 @@
 package org.qiunet.tests.proto;
 
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 
 import java.util.List;
+
+import static org.qiunet.tests.protocol.ProtocolId.Test.PLAYER_INDEX_RESP;
 
 /***
  *
@@ -11,7 +13,7 @@ import java.util.List;
  * @author qiunet
  * 2020-09-23 10:22
  */
-@PbChannelDataID(ID = 1000001, desc = "玩家首页响应")
+@PbChannelData(ID = PLAYER_INDEX_RESP, desc = "玩家首页响应")
 public class PlayerIndexResponse implements IpbChannelData {
 
 	private List<Item> items;

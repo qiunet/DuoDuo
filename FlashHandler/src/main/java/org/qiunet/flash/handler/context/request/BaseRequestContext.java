@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.request;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.utils.logger.LoggerType;
@@ -22,12 +23,16 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected IHandler<RequestData> handler;
 	private Map<String , Object> attributes;
 	// 请求数据. 必须在这里获取. 然后release MessageContent
-	private RequestData requestData;
+	private final RequestData requestData;
 
 	protected BaseRequestContext(MessageContent content, Channel channel) {
 		this.channel = channel;
 		this.messageContent = content;
-		this.handler = RequestHandlerMapping.getInstance().getHandler(content);
+		if (content.getProtocolId() > 0) {
+			this.handler = PbChannelDataMapping.getHandler(content.getProtocolId());
+		}else {
+			this.handler = RequestHandlerMapping.getInstance().getHandler(content.getUriPath());
+		}
 		try {
 			this.requestData = getHandler().parseRequestData(messageContent.byteBuffer());
 		}finally {

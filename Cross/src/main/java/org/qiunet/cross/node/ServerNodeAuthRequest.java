@@ -1,8 +1,9 @@
 package org.qiunet.cross.node;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
@@ -13,8 +14,8 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
  * 2020-10-22 15:57
  */
 @SkipProtoGenerator
-@ProtobufClass(description = "ServerNode鉴权请求")
-public class ServerNodeAuthRequest implements IpbRequestData {
+@PbChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH, desc = "serverNode 鉴权请求")
+public class ServerNodeAuthRequest implements IpbChannelData {
 	@Protobuf(description = "请求serverId 鉴权")
 	private int serverId;
 

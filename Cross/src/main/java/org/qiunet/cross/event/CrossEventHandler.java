@@ -1,7 +1,5 @@
 package org.qiunet.cross.event;
 
-import org.qiunet.flash.handler.common.annotation.RequestHandler;
-import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
@@ -16,7 +14,6 @@ import org.qiunet.listener.event.IEventData;
  * @author qiunet
  * 2020-10-15 16:56
  */
-@RequestHandler(ID = IProtocolId.System.CROSS_EVENT, desc = "跨服事件处理")
 public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor, CrossEventRequest> {
 
 	@Override

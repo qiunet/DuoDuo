@@ -1,8 +1,9 @@
 package org.qiunet.cross.node;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
@@ -12,8 +13,8 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
  * 2020-11-06 11:42
  */
 @SkipProtoGenerator
-@ProtobufClass(description = "鉴权后的响应. 是成功失败.")
-public class ServerNodeAuthResponse implements IpbRequestData {
+@PbChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH_RESP, desc = "serverNode 鉴权请求响应")
+public class ServerNodeAuthResponse implements IpbChannelData {
 	@Protobuf(description = "鉴权结果")
 	private boolean result;
 

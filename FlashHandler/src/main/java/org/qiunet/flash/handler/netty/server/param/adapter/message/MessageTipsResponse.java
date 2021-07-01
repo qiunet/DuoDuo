@@ -4,7 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-11-11 10:04
  */
-@PbChannelDataID(ID = IProtocolId.System.ERROR_MESSAGE_TIPS_RESP, desc = "错误信息提示响应")
+@PbChannelData(ID = IProtocolId.System.ERROR_MESSAGE_TIPS_RESP, desc = "错误信息提示响应")
 public class MessageTipsResponse implements IpbChannelData {
 	/**
 	 * 策划配置最好. 客户端读表. 配合参数生成提示

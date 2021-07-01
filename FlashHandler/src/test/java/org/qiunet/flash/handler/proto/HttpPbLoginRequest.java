@@ -1,8 +1,10 @@
 package org.qiunet.flash.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+
+import static org.qiunet.flash.handler.proto.ProtocolId.Test.HTTP_PB_LOGIN_REQ;
 
 /***
  *
@@ -10,8 +12,8 @@ import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
  * @author qiunet
  * 2020-09-22 12:30
  */
-@ProtobufClass(description = "登录协议")
-public class HttpPbLoginRequest implements IpbRequestData {
+@PbChannelData(ID = HTTP_PB_LOGIN_REQ, desc = "login http protobuf type")
+public class HttpPbLoginRequest implements IpbChannelData {
 
 	private String account;
 

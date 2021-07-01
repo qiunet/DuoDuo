@@ -15,6 +15,7 @@ import java.util.Set;
  * Created by qiunet.
  * 18/1/29
  */
+
 public abstract class HttpJsonHandler extends HttpStringHandler {
 
 	@Override
@@ -30,8 +31,8 @@ public abstract class HttpJsonHandler extends HttpStringHandler {
 	protected abstract JsonResponse handler0(IHttpRequest<JsonRequest> request);
 
 	private static  class HttpJsonFacadeRequest implements IHttpRequest<JsonRequest>{
-		private IHttpRequest<String> request;
-		private JsonRequest requestData;
+		private final IHttpRequest<String> request;
+		private final JsonRequest requestData;
 		HttpJsonFacadeRequest(IHttpRequest<String> request) {
 			this.request = request;
 			String data = request.getRequestData();

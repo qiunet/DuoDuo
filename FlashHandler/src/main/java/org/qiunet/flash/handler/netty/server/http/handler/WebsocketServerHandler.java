@@ -12,10 +12,10 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -65,7 +65,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 			return;
 		}
 
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
+		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.

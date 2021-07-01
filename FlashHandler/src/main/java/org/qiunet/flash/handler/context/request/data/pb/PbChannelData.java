@@ -1,25 +1,26 @@
-package org.qiunet.flash.handler.common.annotation;
+package org.qiunet.flash.handler.context.request.data.pb;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * 标记请求处理类. 指定id 用来分发请求. 解耦处理代码和配置.
+/***
+ *
+ *
  * @author qiunet
- *         Created on 17/1/24 09:32.
+ * 2020-09-21 15:35
  */
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RequestHandler {
-	/***
-	 * request Command Id
+public @interface PbChannelData {
+	/**
+	 * 协议id
 	 * @return
 	 */
 	int ID();
 
-	/***
+	/**
 	 * 描述
 	 * @return
 	 */

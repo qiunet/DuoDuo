@@ -1,8 +1,9 @@
 package org.qiunet.flash.handler.netty.transmit;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
@@ -12,8 +13,8 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
  * 2020-10-26 18:29
  */
 @SkipProtoGenerator
-@ProtobufClass(description = "客户端请求的转发")
-public class TransmitRequest implements IpbRequestData {
+@PbChannelData(ID = IProtocolId.System.PLAYER_2_CROSS_TRANSMIT_REQ, desc = "玩家请求转发到Cross")
+public class TransmitRequest implements IpbChannelData {
 	@Protobuf(description = "协议id")
 	private int pid;
 	@Protobuf(description = "协议内容")

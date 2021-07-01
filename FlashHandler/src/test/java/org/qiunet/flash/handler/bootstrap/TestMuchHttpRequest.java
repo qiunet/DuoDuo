@@ -1,12 +1,13 @@
 package org.qiunet.flash.handler.bootstrap;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.proto.HttpPbLoginRequest;
+import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
+import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
@@ -17,9 +18,9 @@ import java.util.concurrent.CountDownLatch;
  * 17/11/27
  */
 public class TestMuchHttpRequest extends HttpBootStrap {
-	private int requestCount = 5000;
-	private CountDownLatch latch = new CountDownLatch(requestCount);
-	private HttpClientParams params = HttpClientParams.custom()
+	private final int requestCount = 5000;
+	private final CountDownLatch latch = new CountDownLatch(requestCount);
+	private final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
 		.setProtocolHeaderAdapter(ADAPTER)
 		.build();
@@ -31,16 +32,16 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 			new Thread(() -> {
 				for (int i = 0; i < requestCount/threadCount; i++) {
 					final String test = "[测试testHttpProtobuf]"+i;
-
-					MessageContent content = new MessageContent(5000, test.getBytes(CharsetUtil.UTF_8));
+					HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 					HttpRequest.post(params.getURI())
-						.withBytes(ADAPTER.getAllBytes(content))
+						.withBytes(ADAPTER.getAllBytes(request.buildResponseMessage().encode()))
 						.asyncExecutor((call, response) -> {
 							Assert.assertEquals(response.code() , HttpResponseStatus.OK.code());
 							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());
 							ADAPTER.newHeader(buffer);
 
-							Assert.assertEquals(test, CharsetUtil.UTF_8.decode(buffer).toString());
+							LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);
+							Assert.assertEquals(test, loginResponse.getTestString());
 							latch.countDown();
 						});
 				}

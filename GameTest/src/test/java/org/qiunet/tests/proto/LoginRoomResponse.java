@@ -1,7 +1,9 @@
 package org.qiunet.tests.proto;
 
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+
+import static org.qiunet.tests.protocol.ProtocolId.Test.ROOM_LOGIN_RESP;
 
 /***
  *
@@ -9,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
  * @author qiunet
  * 2020-09-22 21:00
  */
-@PbChannelDataID(ID = 1000003, desc = "登录room响应")
+@PbChannelData(ID = ROOM_LOGIN_RESP, desc = "登录room响应")
 public class LoginRoomResponse implements IpbChannelData {
 
 	private int roomSize;

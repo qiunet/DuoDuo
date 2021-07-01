@@ -15,6 +15,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
@@ -40,7 +41,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private HttpBootstrapParams params;
+	private final HttpBootstrapParams params;
 
 	public HttpServerHandler (HttpBootstrapParams params) {
 		this.params = params;
@@ -133,7 +134,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			content.release();
 			return;
 		}
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
+		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			content.release();
@@ -155,7 +156,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		ByteBuf byteBuf = request.content();
 		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
-		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
+		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content.getUriPath());
 		if (handler == null) {
 			logger.error("uriPath ["+uriPath+"] not found !");
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);

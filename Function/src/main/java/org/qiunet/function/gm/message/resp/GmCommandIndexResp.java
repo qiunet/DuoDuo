@@ -3,7 +3,7 @@ package org.qiunet.function.gm.message.resp;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataID;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ import java.util.List;
  * @author qiunet
  * 2021-01-09 10:35
  */
-@PbChannelDataID(ID = IProtocolId.System.GM_COMMAND_LIST_RESP, desc = "gm 首页响应")
+@PbChannelData(ID = IProtocolId.System.GM_COMMAND_LIST_RESP, desc = "gm 首页响应")
 public class GmCommandIndexResp implements IpbChannelData {
 	@Protobuf(description = "所有gm命令列表")
 	private List<GmCommandInfo> list;

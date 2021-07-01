@@ -1,8 +1,9 @@
 package org.qiunet.cross.actor.auth;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.context.request.data.pb.IpbRequestData;
+import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 
 /***
@@ -12,8 +13,8 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
  * 2020-10-23 16:50
  */
 @SkipProtoGenerator
-@ProtobufClass(description = "跨服用户鉴权请求")
-public class CrossPlayerAuthRequest implements IpbRequestData {
+@PbChannelData(ID = IProtocolId.System.CROSS_PLAYER_AUTH, desc = "跨服鉴权")
+public class CrossPlayerAuthRequest implements IpbChannelData {
 	@Protobuf(description = "玩家id")
 	private long playerId;
 	@Protobuf(description = "玩家的serverId")

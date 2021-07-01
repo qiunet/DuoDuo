@@ -1,7 +1,5 @@
 package org.qiunet.function.gm;
 
-import org.qiunet.flash.handler.common.annotation.RequestHandler;
-import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.IGameStatus;
@@ -16,7 +14,6 @@ import org.qiunet.utils.logger.LoggerType;
  * @author qiunet
  * 2021-01-09 16:16
  */
-@RequestHandler(ID = IProtocolId.System.GM_COMMAND_REQ, desc = "处理gm 请求")
 public class GmCommandHandler extends PersistConnPbHandler<AbstractPlayerActor, GmCommandReq> {
 	@Override
 	public void handler(AbstractPlayerActor playerActor, IPersistConnRequest<GmCommandReq> context) throws Exception {
