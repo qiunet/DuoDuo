@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param.adapter.message;
 
+import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -29,6 +30,7 @@ public class MessageTipsResponse implements IpbChannelData {
 	@Protobuf(description = "占位符(占位符号客户端自己定义)参数")
 	private List<String> params;
 
+	@Ignore
 	private static final Map<Integer, MessageTipsResponse> cached = Maps.newConcurrentMap();
 
 	public MessageTipsResponse(){}

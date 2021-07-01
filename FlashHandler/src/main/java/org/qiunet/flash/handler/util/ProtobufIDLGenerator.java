@@ -147,11 +147,12 @@ public class ProtobufIDLGenerator {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("// ").append(annotation.description()).append("\n");
+		sb.append("// ");
 		if (IpbChannelData.class.isAssignableFrom(clz)) {
 			int protocolId = getProtocolId(clz);
-			sb.append("// ProtocolId = ").append(protocolId).append("\n");
+			sb.append("[ProtocolId = ").append(protocolId).append(" ] ");
 		}
+		sb.append(annotation.description()).append("\n");
     	return sb.toString();
 	}
 
