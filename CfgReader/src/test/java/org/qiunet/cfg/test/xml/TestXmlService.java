@@ -1,10 +1,10 @@
 package org.qiunet.cfg.test.xml;
 
 import org.junit.Assert;
-import org.qiunet.cfg.annotation.CfgWrapperAutoWired;
 import org.qiunet.cfg.wrapper.INestListCfgWrapper;
 import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
 import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 /***
  *
@@ -14,13 +14,13 @@ import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
 public enum TestXmlService {
 	instance;
 
-	@CfgWrapperAutoWired
+	@AutoWired
 	private ISimpleMapCfgWrapper<Integer, XmlSimpleMapInitCfg> simpleMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private ISimpleMapCfgWrapper<Integer, XmlRewardInitCfg> XmlRewardWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private INestMapCfgWrapper<Integer, String, XmlNestMapInitCfg> nestMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private INestListCfgWrapper<Integer, XmlNestListInitCfg> nestListCfgWrapper;
 
 

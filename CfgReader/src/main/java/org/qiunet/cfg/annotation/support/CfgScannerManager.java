@@ -3,7 +3,6 @@ package org.qiunet.cfg.annotation.support;
 import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.annotation.CfgLoadOver;
-import org.qiunet.cfg.annotation.CfgWrapperAutoWired;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.cfg.manager.CfgManagers;
@@ -28,17 +27,21 @@ import java.util.Set;
  */
 enum CfgScannerManager implements IApplicationContextAware {
 	instance;
-	private Map<Class<? extends ICfg>, LoadOverMethod> loadOverMap = Maps.newHashMap();
+	private final Map<Class<? extends ICfg>, LoadOverMethod> loadOverMap = Maps.newHashMap();
 	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 		this.scannerLoadOverMethod();
 		this.createCfgWrapper();
-		this.cfgAutoWired();
 		this.initCfg();
-
 	}
+
+	@Override
+	public int order() {
+		return 10;
+	}
+
 	private void initCfg() {
 		CfgManagers.getInstance().initSetting();
 	}
@@ -75,28 +78,26 @@ enum CfgScannerManager implements IApplicationContextAware {
 	/**
 	 * 自动注入
 	 */
-	private void cfgAutoWired() throws Exception {
-		Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgWrapperAutoWired.class);
-		for (Field field : fieldSet) {
-			if (!ICfgWrapper.class.isAssignableFrom(field.getType())) {
-				throw new CustomException("CfgWrapperAutoWired must use for Some Type extends ICfgWrapper");
-			}
-
-			Type genericType = field.getGenericType();
-			if (! ParameterizedType.class.isAssignableFrom(genericType.getClass())){
-				throw new CustomException("ICfgWrapper must specify GenericType!");
-			}
-
-			Object obj = null;
-			if (! Modifier.isStatic(field.getModifiers())) {
-				obj = context.getInstanceOfClass(field.getDeclaringClass());
-			}
-			Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
-			Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
-
-			field.setAccessible(true);
-			field.set(obj, CfgType.getCfgWrapper(cfgClass));
+	private boolean cfgAutoWired(Field field) throws Exception {
+		if (!ICfgWrapper.class.isAssignableFrom(field.getType())) {
+			return false;
 		}
+
+		Type genericType = field.getGenericType();
+		if (! ParameterizedType.class.isAssignableFrom(genericType.getClass())){
+			throw new CustomException("ICfgWrapper must specify GenericType!");
+		}
+
+		Object obj = null;
+		if (! Modifier.isStatic(field.getModifiers())) {
+			obj = context.getInstanceOfClass(field.getDeclaringClass());
+		}
+		Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
+		Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
+
+		field.setAccessible(true);
+		field.set(obj, CfgType.getCfgWrapper(cfgClass));
+		return true;
 	}
 
 	@EventListener(EventHandlerWeightType.LESS)
@@ -105,8 +106,8 @@ enum CfgScannerManager implements IApplicationContextAware {
 	}
 
 	private static class LoadOverMethod {
-		private Object object;
-		private Method method;
+		private final Object object;
+		private final Method method;
 
 		public LoadOverMethod(Object object, Method method) {
 			this.object = object;

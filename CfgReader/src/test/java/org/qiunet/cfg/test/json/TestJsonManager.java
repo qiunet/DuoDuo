@@ -3,11 +3,11 @@ package org.qiunet.cfg.test.json;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.cfg.annotation.CfgWrapperAutoWired;
 import org.qiunet.cfg.wrapper.INestListCfgWrapper;
 import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
 import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 /***
  *
@@ -16,13 +16,13 @@ import org.qiunet.utils.scanner.ClassScanner;
  * 2020-04-23 18:26
  ***/
 public class TestJsonManager {
-	@CfgWrapperAutoWired
+	@AutoWired
 	private static ISimpleMapCfgWrapper<Integer, JsonSimpleMapInitCfg> simpleMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private static ISimpleMapCfgWrapper<Integer, JsonRewardInitCfg> jsonRewardWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private static INestMapCfgWrapper<Integer, String, JsonNestMapInitCfg> nestMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private static INestListCfgWrapper<Integer, JsonNestListInitCfg> nestListCfgWrapper;
 
 	@BeforeClass

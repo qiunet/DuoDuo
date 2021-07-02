@@ -1,10 +1,10 @@
 package org.qiunet.cfg.test.xd;
 
 import org.junit.Assert;
-import org.qiunet.cfg.annotation.CfgWrapperAutoWired;
 import org.qiunet.cfg.wrapper.INestListCfgWrapper;
 import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
 import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 /***
  *
@@ -14,13 +14,13 @@ import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
 public enum TestXdService {
 	instance;
 
-	@CfgWrapperAutoWired
+	@AutoWired
 	private ISimpleMapCfgWrapper<Integer, XdSimpleMapInitCfg> simpleMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private ISimpleMapCfgWrapper<Integer, XdRewardInitCfg> XdRewardWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private INestMapCfgWrapper<Integer, String, XdNestMapInitCfg> nestMapCfgWrapper;
-	@CfgWrapperAutoWired
+	@AutoWired
 	private INestListCfgWrapper<Integer, XdNestListInitCfg> nestListCfgWrapper;
 
 

@@ -2,12 +2,14 @@ package org.qiunet.utils.scanner;
 
 import com.google.common.collect.Lists;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.scanner.anno.IgnoreEmptyWired;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
@@ -19,10 +21,15 @@ import java.util.Set;
  */
  enum AutoWiredHandler implements IApplicationContextAware {
 	instance;
+	private IApplicationContext context;
  	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
+ 		this.context = context;
 		Set<Field> fields = context.getFieldsAnnotatedWith(AutoWired.class);
 		for (Field field : fields) {
+			if (this.handlerCfgAutoWire(field)) {
+				continue;
+			}
 			Class<?> fieldType = field.getType();
 			Class<?> type = fieldType;
 			if (Modifier.isAbstract(fieldType.getModifiers())
@@ -49,5 +56,24 @@ import java.util.Set;
 			}
 			ReflectUtil.setField(declaringObj, field, autoWiredObj);
 		}
+	}
+
+	private static final LazyLoader<Class<?>> cfgScannerManagerClass = new LazyLoader<>(() -> {
+		String cfgAutoWireClass = "org.qiunet.cfg.annotation.support.CfgScannerManager";
+		try {
+			return Class.forName(cfgAutoWireClass);
+		}catch (Exception e) {
+			return null;
+		}
+	});
+	private boolean handlerCfgAutoWire(Field field) throws Exception {
+		if (cfgScannerManagerClass.get() == null) {
+			return false;
+		}
+		Object cfgScannerManager = this.context.getInstanceOfClass(cfgScannerManagerClass.get());
+		Method method = cfgScannerManagerClass.get().getDeclaredMethod("cfgAutoWired", Field.class);
+		method.setAccessible(true);
+		Boolean result = (Boolean) method.invoke(cfgScannerManager, field);
+		return result;
 	}
 }
