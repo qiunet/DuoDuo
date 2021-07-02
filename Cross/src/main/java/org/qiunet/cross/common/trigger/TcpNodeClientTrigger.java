@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -28,7 +29,9 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			&& iMessageActor instanceof AbstractPlayerActor) {
 			// 直接往客户端转发
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
-			iMessageActor.getSession().sendMessage(response);
+			Class<? extends IpbChannelData> protocolClass = PbChannelDataMapping.protocolClass(response.getPid());
+			IpbChannelData channelData = ProtobufDataManager.decode(protocolClass, response.getBytes());
+			iMessageActor.getSession().sendMessage(channelData);
 			return;
 		}
 

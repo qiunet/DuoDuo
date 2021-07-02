@@ -5,12 +5,15 @@ import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.data.BaseCrossTransferData;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
+import org.qiunet.cross.actor.message.Cross2PlayerResponse;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.listener.event.EventManager;
 
 import java.util.Map;
@@ -91,5 +94,18 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	public <Data extends BaseCrossTransferData> Data getCrossData(CrossData<Data> key) {
 		CrossDataGetter<Data> getter = crossDataHolder.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
 		return getter.get();
+	}
+	/**
+	 * 调用该接口. 会直接转发给客户端
+	 * @param channelData
+	 */
+	@Override
+	public IDSessionFuture sendMessage(IpbChannelData channelData) {
+		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData));
+	}
+
+	@Override
+	public IDSessionFuture sendMessage(IpbChannelData channelData, boolean flush) {
+		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData), flush);
 	}
 }

@@ -18,6 +18,6 @@ public class TransactionRequestHandler extends PersistConnPbHandler<ServerNode, 
 
 		BaseTransactionRequest transactionRequestData = requestData.getData();
 		DTransaction transaction = new DTransaction(requestData.getId(), transactionRequestData, serverNode);
-		TransactionManager0.instance.handler(transactionRequestData.getClass(), transaction);
+		TransactionManager0.handler(transactionRequestData.getClass(), transaction);
 	}
 }

@@ -64,7 +64,7 @@ public enum TransactionManager {
 		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			DTransaction<Req, Resp> dTransaction = new DTransaction<>(reqId, req);
-			TransactionManager0.instance.handler(req.getClass(), dTransaction);
+			TransactionManager0.handler(req.getClass(), dTransaction);
 			return respTransactionFuture;
 		}
 

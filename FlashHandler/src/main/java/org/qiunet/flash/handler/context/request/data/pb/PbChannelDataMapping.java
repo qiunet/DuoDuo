@@ -10,6 +10,7 @@ import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.collection.DuMap;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -37,7 +38,7 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 	/**
 	 * pbChannelData Class 和 Id的映射关系
 	 */
-	private static final Map<Class<? extends IpbChannelData>, Integer> mapping = Maps.newHashMap();
+	private static final DuMap<Class<? extends IpbChannelData>, Integer> mapping = new DuMap();
 
 	private PbChannelDataMapping(){}
 
@@ -100,7 +101,11 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 	}
 
 	public static int protocolId(Class<? extends IpbChannelData> clazz) {
-		return mapping.get(clazz);
+		return mapping.getVal(clazz);
+	}
+
+	public static Class<? extends IpbChannelData> protocolClass(int protocolId) {
+		return mapping.getKey(protocolId);
 	}
 
 	public static IHandler getHandler(int protocolId) {

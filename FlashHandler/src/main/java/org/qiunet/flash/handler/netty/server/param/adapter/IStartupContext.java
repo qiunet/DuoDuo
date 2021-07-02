@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.MessageTipsRe
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerCloseResponse;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
 import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  *
@@ -44,6 +45,8 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	default DefaultProtobufMessage exception(Throwable cause){
 		if (cause instanceof StatusResultException) {
 			return MessageTipsResponse.valueOf(((StatusResultException) cause)).buildResponseMessage();
+		}else {
+			LoggerType.DUODUO_CROSS.error("异常", cause);
 		}
 		return SERVER_EXCEPTION_MESSAGE.get();
 	}

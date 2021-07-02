@@ -22,10 +22,9 @@ import java.util.Set;
  * @author qiunet
  * 2020-10-22 18:05
  */
-enum TransactionManager0 implements IApplicationContextAware {
-	instance;
+class TransactionManager0 implements IApplicationContextAware {
 
-	private Map<Class, ITransactionHandler> handles = Maps.newHashMap();
+	private static final Map<Class, ITransactionHandler> handles = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -61,7 +60,7 @@ enum TransactionManager0 implements IApplicationContextAware {
 	 * @param reqClass
 	 * @param transaction
 	 */
-	void handler(Class reqClass, DTransaction transaction) {
+	static void handler(Class reqClass, DTransaction transaction) {
 		handles.get(reqClass).handler(transaction);
 	}
 

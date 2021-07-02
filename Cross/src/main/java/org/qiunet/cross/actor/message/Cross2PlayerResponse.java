@@ -3,7 +3,6 @@ package org.qiunet.cross.actor.message;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
@@ -38,10 +37,6 @@ public class Cross2PlayerResponse implements IpbChannelData {
 		response.bytes = responseData.toByteArray();
 		response.data = responseData;
 		return response;
-	}
-
-	public MessageContent buildMessageContent(){
-		return new MessageContent(pid, bytes);
 	}
 
 	public int getPid() {

@@ -2,6 +2,7 @@ package org.qiunet.utils.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -35,11 +36,12 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 	}
 
 	private void handlerCodec() {
-		Set<Class<? extends IProtobufClass>> classes = this.context.getSubTypesOf(IProtobufClass.class);
+		Set<Class<? extends IProtobufClass>> classes0 = this.context.getSubTypesOf(IProtobufClass.class);
+		Set<Class<?>> classes = this.context.getTypesAnnotatedWith(ProtobufClass.class);
+		classes.addAll(classes0);
 		for (Class<?> clazz : classes) {
 			if (clazz.isInterface()
 				|| clazz.isEnum()
-				|| Modifier.isInterface(clazz.getModifiers())
 				|| Modifier.isAbstract(clazz.getModifiers())
 				|| ! Modifier.isPublic(clazz.getModifiers())
 			) {

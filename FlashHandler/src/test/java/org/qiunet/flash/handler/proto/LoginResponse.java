@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
  * @author qiunet
  * 2020-09-22 12:31
  */
-@PbChannelData(ID = 1000001, desc = "登录下行")
+@PbChannelData(ID = ProtocolId.Test.LOGIN_RESP, desc = "登录下行")
 public class LoginResponse implements IpbChannelData {
 
 	private String testString;
