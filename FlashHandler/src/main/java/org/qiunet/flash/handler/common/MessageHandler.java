@@ -32,7 +32,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	private final Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
 
-	private final Set<Future> scheduleFutures = Sets.newConcurrentHashSet();
+	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private volatile Thread currentThread;
 
@@ -153,7 +153,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @param period 间隔
 	 * @return
 	 */
-	public ScheduleFuture scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
+	public Future<?> scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
 		ScheduledFuture<?> future = TimerManager.instance.scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
 		return new ScheduleFuture(scheduleName, future);
 	}
