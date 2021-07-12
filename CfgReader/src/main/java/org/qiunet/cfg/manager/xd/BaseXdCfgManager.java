@@ -92,7 +92,7 @@ abstract class BaseXdCfgManager extends BaseCfgManager {
 			logger.error("关闭配置文件"+fileName+"数据出现问题", e);
 		}
 
-		fileName = null;
+//		fileName = null;
 		dis = null;
 		in = null;
 	}
