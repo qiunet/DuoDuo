@@ -1,9 +1,8 @@
-package reflect;
+package org.qiunet.utils.reflect;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.base.BaseTest;
-import org.qiunet.utils.reflect.ReflectUtil;
 
 /***
  * 测试 ReflectUtil
