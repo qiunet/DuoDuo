@@ -12,10 +12,13 @@ import org.qiunet.utils.data.ByteUtil;
  * 2020-11-17 12:50
  */
 public class TestByteUtil {
+	private static final int num = 666666;
+	private static final byte [] arr = new byte[]{0, 10, 44, 42};
 	@Test
 	public void test(){
-		byte[] bytes = ByteUtil.int2Bytes(666666);
-		Assert.assertArrayEquals(bytes, new byte[]{0, 10, 44, 42});
-		Assert.assertEquals(666666, ByteUtil.read32bit(bytes, 0));
+		byte[] bytes = ByteUtil.int2Bytes(num);
+		Assert.assertArrayEquals(bytes, arr);
+
+		Assert.assertEquals(num, ByteUtil.read32bit(arr, 0));
 	}
 }
