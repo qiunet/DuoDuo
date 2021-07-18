@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * qiunet
  * 2021/7/18 07:56
  **/
-public final class SH1Util {
+public final class SHA1Util {
 
 	private static final ThreadLocal<MessageDigest> SHA1 = ThreadLocal.withInitial(() -> {
 		try {
