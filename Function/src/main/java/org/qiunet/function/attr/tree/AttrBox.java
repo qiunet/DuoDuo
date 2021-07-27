@@ -1,13 +1,14 @@
 package org.qiunet.function.attr.tree;
 
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.observer.IObserver;
+import org.qiunet.flash.handler.common.observer.Observer;
+import org.qiunet.flash.handler.common.observer.ObserverSupport;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.function.attr.AttrValue;
 import org.qiunet.function.attr.buff.IAttrBuff;
 import org.qiunet.function.attr.buff.IAttrNodeBuff;
 import org.qiunet.function.attr.enums.IAttrEnum;
-import org.qiunet.listener.observer.IObserver;
-import org.qiunet.listener.observer.Observer;
-import org.qiunet.listener.observer.ObserverSupport;
 
 import java.util.Collections;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-11-16 10:01
  */
-public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
+public class AttrBox<Owner extends AbstractUserActor<Owner>, Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	private static final AttrValue EMPTY_VALUE = new AttrValue();
 	Lock readLock;
 	/**
@@ -35,7 +36,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	/**
 	 * 观察者
 	 */
-	private final ObserverSupport observer = new ObserverSupport();
+	private final ObserverSupport<Owner> observer;
 	/**
 	 * 总的属性
 	 */
@@ -45,8 +46,9 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	Map<AttrRoad, AttrRoadContent<Attr>> roadContentMap = Maps.newConcurrentMap();
 
-	AttrBox(AttrTree rootTree) {
+	AttrBox(Owner owner, AttrTree rootTree) {
 		this.rootTree = rootTree;
+		this.observer = new ObserverSupport<>(owner);
 		ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 		this.writeLock = lock.writeLock();
 		this.readLock = lock.readLock();
@@ -56,7 +58,7 @@ public class AttrBox<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 * 得到观察者.
 	 * @return
 	 */
-	public ObserverSupport getObserver() {
+	public ObserverSupport<Owner> getObserver() {
 		return observer;
 	}
 

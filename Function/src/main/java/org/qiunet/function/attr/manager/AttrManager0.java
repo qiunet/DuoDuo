@@ -1,5 +1,6 @@
 package org.qiunet.function.attr.manager;
 
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.attr.tree.AttrBox;
 import org.qiunet.function.attr.tree.AttrRoad;
@@ -30,14 +31,14 @@ enum AttrManager0 implements IApplicationContextAware {
 		});
 	}
 
-	<Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Attr> buildAttrBox() {
-		return attrTree.buildAttrBox();
+	<Owner extends AbstractUserActor<Owner>, Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Owner, Attr> buildAttrBox(Owner owner) {
+		return attrTree.buildAttrBox(owner);
 	}
 
 	enum AttrRoot implements IAttrNodeType {
 		ROOT(null, "Root");
-		private Class<?> keyClass;
-		private String desc;
+		private final Class<?> keyClass;
+		private final String desc;
 
 		AttrRoot(Class<?> keyClass, String desc) {
 			this.keyClass = keyClass;

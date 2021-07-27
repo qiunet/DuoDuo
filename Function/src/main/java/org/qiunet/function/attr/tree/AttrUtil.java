@@ -48,7 +48,7 @@ final class AttrUtil {
 	 * @param <Attr> 属性枚举类
 	 * @return
 	 */
-	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeToBox(AttrBox<Attr> box, Map<Attr, Long> addAttr, Map<Attr, Long> change) {
+	static <Attr extends Enum<Attr> & IAttrEnum<Attr>> void mergeToBox(AttrBox<?, Attr> box, Map<Attr, Long> addAttr, Map<Attr, Long> change) {
 		addAttr.forEach((type, value) -> {
 			if (value == 0) {
 				return;

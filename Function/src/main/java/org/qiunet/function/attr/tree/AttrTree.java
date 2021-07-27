@@ -2,6 +2,7 @@ package org.qiunet.function.attr.tree;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.function.attr.buff.IAttrBuff;
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.utils.id.IntIdGenerator;
@@ -22,11 +23,11 @@ public class AttrTree {
 	/**
 	 * id
 	 */
-	private IntIdGenerator idGenerator = new IntIdGenerator();
+	private final IntIdGenerator idGenerator = new IntIdGenerator();
 	/**
 	 * 所有的node
 	 */
-	private Map<IAttrNodeType, AttrNode> allNodes = Maps.newHashMap();
+	private final Map<IAttrNodeType, AttrNode> allNodes = Maps.newHashMap();
 
 	private AttrTree() {}
 
@@ -83,8 +84,8 @@ public class AttrTree {
 	 * 得到AttrBox
 	 * @return
 	 */
-	public <Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Attr> buildAttrBox() {
-		return new AttrBox<>(this);
+	public <Owner extends AbstractUserActor<Owner>, Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Owner, Attr> buildAttrBox(Owner owner) {
+		return new AttrBox<>(owner, this);
 	}
 
 	/**

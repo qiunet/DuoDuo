@@ -1,8 +1,8 @@
 package org.qiunet.function.attr;
 
+import org.qiunet.flash.handler.common.observer.IObserver;
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.attr.tree.AttrRoad;
-import org.qiunet.listener.observer.IObserver;
 
 import java.util.Map;
 

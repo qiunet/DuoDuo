@@ -27,7 +27,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	private final Map<IAttrBuff, IAttrNodeBuff<Attr, ?>> buffMap;
 
-	private final AttrBox<Attr> attrBox;
+	private final AttrBox<?, Attr> attrBox;
 	/**
 	 * 路径
 	 */
@@ -46,7 +46,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 	 */
 	private Map<Attr, Long> finalAttrMap;
 
-	AttrRoadContent(AttrBox<Attr> attrBox, AttrRoad road) {
+	AttrRoadContent(AttrBox<?, Attr> attrBox, AttrRoad road) {
 		this.road = road;
 		this.attrBox = attrBox;
 	 	this.buffMap = new HashMap<>(4);
@@ -169,7 +169,7 @@ public class AttrRoadContent<Attr extends Enum<Attr> & IAttrEnum<Attr>> {
 				Map<Attr, Long> newBuffAdditions = calBuff(content, buffData);
 
 				Map<Attr, Long> diff = AttrUtil.diff(oldBuffAdditions, newBuffAdditions);
-				if (diff == null || diff.isEmpty()) {
+				if (diff.isEmpty()) {
 					continue;
 				}
 

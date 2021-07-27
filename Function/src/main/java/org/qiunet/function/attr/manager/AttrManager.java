@@ -1,5 +1,6 @@
 package org.qiunet.function.attr.manager;
 
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.attr.tree.AttrBox;
 import org.qiunet.function.attr.tree.AttrRoad;
@@ -17,8 +18,8 @@ public class AttrManager {
 	 * @param <Attr>
 	 * @return
 	 */
-	public static <Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Attr> buildAttrBox() {
-		return AttrManager0.instance.buildAttrBox();
+	public static <Owner extends AbstractUserActor<Owner>, Attr extends Enum<Attr> & IAttrEnum<Attr>> AttrBox<Owner, Attr> buildAttrBox(Owner owner) {
+		return AttrManager0.instance.buildAttrBox(owner);
 	}
 	/**
 	 * 打印attrTree

@@ -11,6 +11,7 @@ import org.qiunet.function.attr.tree.AttrBox;
 import org.qiunet.function.attr.tree.AttrRoad;
 import org.qiunet.function.test.attr.equip.EquipAttrNode;
 import org.qiunet.function.test.attr.equip.EquipPostion;
+import org.qiunet.function.test.targets.PlayerActor;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -33,8 +34,9 @@ public class AttrTest {
 	@Test
 	public void test(){
 		AttrManager.printAttrTree();
+		PlayerActor playerActor = new PlayerActor(1000, "qiunet");
 
-		AttrBox<AttrType> attrBox = AttrManager.buildAttrBox();
+		AttrBox<PlayerActor, AttrType> attrBox = AttrManager.buildAttrBox(playerActor);
 		AttrRoad equipBaseRoad = EquipAttrNode.BASE.builderRoad();
 		attrBox.attach(IAttrChangeObserver.class, (road, changed) -> {
 			// 业务在这里处理属性的变更.

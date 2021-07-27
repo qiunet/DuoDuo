@@ -1,6 +1,7 @@
-package org.qiunet.listener.observer;
+package org.qiunet.flash.handler.common.observer;
 
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.MessageHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -16,9 +17,14 @@ import java.util.function.Consumer;
  * @author qiunet
  * 2020-08-31 08:15
  **/
-public class ObserverSupport {
-	protected final AtomicInteger versions = new AtomicInteger();
-	protected final Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
+public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
+	private final Owner owner;
+	private final AtomicInteger versions = new AtomicInteger();
+	private final Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
+
+	public ObserverSupport(Owner owner) {
+		this.owner = owner;
+	}
 
 	/**
 	 * 往该support添加一个观察者.
@@ -65,6 +71,15 @@ public class ObserverSupport {
 		return (ObserverList<O>) observerMaps.computeIfAbsent(clazz, key-> new ObserverList<O>());
 	}
 
+	/**
+	 * 异步触发监听
+	 * @param clazz
+	 * @param consumer
+	 * @param <O>
+	 */
+	public <O extends IObserver> void asyncFire(Class<O> clazz, Consumer<O> consumer) {
+		this.owner.addMessage(o -> syncFire(clazz, consumer));
+	}
 	/**
 	 * 同步触发监听
 	 * @param clazz

@@ -1,4 +1,4 @@
-package org.qiunet.listener.observer;
+package org.qiunet.flash.handler.common.observer;
 
 /***
  * 观察者的包装类.
