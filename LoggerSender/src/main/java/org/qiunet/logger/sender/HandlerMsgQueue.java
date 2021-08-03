@@ -5,6 +5,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +15,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 class HandlerMsgQueue {
 	AtomicLong atomicLong = new AtomicLong();
-	private int threadNum = 1;
+	private int threadNum = 2;
 	private ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
 	private Map<Long, SocketChannel> channelMap = new HashMap<>(threadNum);
-
+	private Map<Long, ByteBuffer> bufferMap = new HashMap<>(threadNum);
 	/***
 	 * 添加一个元素
 	 * @param message
@@ -27,7 +28,7 @@ class HandlerMsgQueue {
 			atomicLong.incrementAndGet();
 			long threadId = Thread.currentThread().getId();
 			if (message.getType() == ProtoType.TCP) {
-				message.loadChannel(threadId, channelMap);
+				message.loadChannel(threadId, channelMap, bufferMap);
 			}
 			message.send();
 //			System.out.println("threadId:" + threadId + "\t msg:" + message.getMsg());

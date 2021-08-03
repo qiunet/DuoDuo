@@ -10,8 +10,8 @@ import java.nio.channels.SocketChannel;
 import java.util.Map;
 
 class UdpMessage implements IMessage {
-	private static ByteBuffer buffer = ByteBuffer.allocate(1024);
 	private InetSocketAddress address;
+	private ByteBuffer buffer;
 	private byte[] message;
 	private short gameId;
 	private String secret;
@@ -52,8 +52,14 @@ class UdpMessage implements IMessage {
 	}
 
 	@Override
-	public void loadChannel(long threadId, Map<Long, SocketChannel> channelMap) {
-
+	public void loadChannel(long threadId, Map<Long, SocketChannel> channelMap, Map<Long, ByteBuffer> bufferMap) {
+		if (bufferMap.containsKey(threadId)) {
+			buffer = bufferMap.get(threadId);
+		}
+		if (buffer == null) {
+			buffer = ByteBuffer.allocate(1024);
+			bufferMap.put(threadId, buffer);
+		}
 	}
 
 	@Override

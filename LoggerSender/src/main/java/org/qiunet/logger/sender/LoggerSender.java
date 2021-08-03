@@ -46,13 +46,14 @@ public class LoggerSender {
 	 * 得到发送的数量
 	 * @return
 	 */
-	public long getSendCount(){
+	public long getSendCount() {
 		return this.handler.atomicLong.get();
 	}
+
 	/***
 	 * 停止服务
 	 */
-	public void stop(){
+	public void stop() {
 		this.handler.shutdown();
 	}
 
@@ -60,13 +61,14 @@ public class LoggerSender {
 	 * 发送一般消息. 使用udp
 	 */
 	public void sendLog(String logName, String msg) {
-		byte [] bytes = (logName + "|" + msg).getBytes(charset);
+		byte[] bytes = (logName + "|" + msg).getBytes(charset);
 		int msgLength = bytes.length;
 		if (msgLength >= 1000) {
-			logger.error("udp package length can not more than: "+1000);
+			logger.error("udp package length can not more than: " + 1000);
 		}
 		this.handler.add(new UdpMessage(address, gameId, secret, bytes));
 	}
+
 	/***
 	 * 发送重要消息 使用tcp.
 	 */
