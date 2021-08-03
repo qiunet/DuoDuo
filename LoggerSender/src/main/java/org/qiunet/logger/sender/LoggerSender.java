@@ -27,7 +27,7 @@ public class LoggerSender {
 
 	private String secret;
 
-	private SocketChannel channel;
+//	private SocketChannel channel;
 
 	public LoggerSender(String remoteIp, int port, int gameId, String secret) {
 		try {
@@ -71,15 +71,16 @@ public class LoggerSender {
 	 * 发送重要消息 使用tcp.
 	 */
 	public void sendImportantLog(String logName, String msg) {
-		if (channel == null || ! (channel.isConnected() && channel.isOpen())) {
+		/*if (channel == null || ! (channel.isConnected() && channel.isOpen())) {
 			try {
 				channel = SocketChannel.open(address);
 				channel.configureBlocking(false);
 			} catch (IOException e) {
 				logger.error("异常", e);
 			}
-		}
+		}*/
 
-		this.handler.add(new TcpMessage(channel, gameId, secret, (logName + "|" + msg).getBytes(charset)));
+//		this.handler.add(new TcpMessage(channel, gameId, secret, (logName + "|" + msg).getBytes(charset)));
+		this.handler.add(new TcpMessage(address, gameId, secret, msg.getBytes(charset)));
 	}
 }

@@ -1,9 +1,13 @@
 package org.qiunet.logger.sender;
 
+import org.qiunet.logger.enums.ProtoType;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Map;
 
 class UdpMessage implements IMessage {
 	private static ByteBuffer buffer = ByteBuffer.allocate(1024);
@@ -12,12 +16,13 @@ class UdpMessage implements IMessage {
 	private short gameId;
 	private String secret;
 
-	 UdpMessage(InetSocketAddress address, short gameId, String secret, byte[] message) {
+	UdpMessage(InetSocketAddress address, short gameId, String secret, byte[] message) {
 		this.address = address;
 		this.message = message;
 		this.gameId = gameId;
 		this.secret = secret;
 	}
+
 	@Override
 	public void send() {
 		DatagramChannel channel = null;
@@ -28,9 +33,9 @@ class UdpMessage implements IMessage {
 			buffer.put(message);
 			buffer.flip();
 			channel.send(buffer, address);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			if (channel != null) {
 				try {
 					channel.close();
@@ -39,5 +44,20 @@ class UdpMessage implements IMessage {
 				}
 			}
 		}
+	}
+
+	@Override
+	public String getMsg() {
+		return new String(message);
+	}
+
+	@Override
+	public void loadChannel(long threadId, Map<Long, SocketChannel> channelMap) {
+
+	}
+
+	@Override
+	public ProtoType getType() {
+		return ProtoType.UDP;
 	}
 }
