@@ -5,7 +5,12 @@ import org.qiunet.logger.sender.LoggerSender;
 
 public class TestLoggerSender {
 	private static final RemoteProperties remote = RemoteProperties.getInstance();
-	private static final LoggerSender sender = new LoggerSender(remote.getString("remoteIp"), remote.getInt("remotePort"), remote.getShort("gameId"), remote.getString("secret"));
+	private static final LoggerSender sender = new LoggerSender(
+			remote.getString("remoteIp"),
+			remote.getInt("remotePort"),
+			remote.getShort("gameId"),
+			remote.getString("secret"),
+			1);
 
 	@Test
 	public void testLogger() throws InterruptedException {

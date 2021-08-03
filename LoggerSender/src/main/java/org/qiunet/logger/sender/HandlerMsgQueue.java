@@ -15,10 +15,21 @@ import java.util.concurrent.atomic.AtomicLong;
 
 class HandlerMsgQueue {
 	AtomicLong atomicLong = new AtomicLong();
-	private int threadNum = 2;
-	private ExecutorService executorService = Executors.newFixedThreadPool(threadNum);
-	private Map<Long, SocketChannel> channelMap = new HashMap<>(threadNum);
-	private Map<Long, ByteBuffer> bufferMap = new HashMap<>(threadNum);
+	private int threadNum;
+	private ExecutorService executorService;
+	private Map<Long, SocketChannel> channelMap;
+	private Map<Long, ByteBuffer> bufferMap;
+
+	public HandlerMsgQueue() {
+	}
+
+	public HandlerMsgQueue(int threadNum) {
+		this.threadNum = threadNum;
+		this.executorService = Executors.newFixedThreadPool(threadNum);
+		this.channelMap = new HashMap<>(threadNum);
+		this.bufferMap = new HashMap<>(threadNum);
+	}
+
 	/***
 	 * 添加一个元素
 	 * @param message

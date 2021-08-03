@@ -29,10 +29,10 @@ public class LoggerSender {
 
 //	private SocketChannel channel;
 
-	public LoggerSender(String remoteIp, int port, int gameId, String secret) {
+	public LoggerSender(String remoteIp, int port, int gameId, String secret, int threadNum) {
 		try {
 			this.address = new InetSocketAddress(InetAddress.getByName(remoteIp), port);
-			this.handler = new HandlerMsgQueue();
+			this.handler = new HandlerMsgQueue(threadNum);
 			this.gameId = (short) gameId;
 			this.secret = secret;
 		} catch (UnknownHostException e) {
