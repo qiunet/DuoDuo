@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-11-11 10:04
  */
-@PbChannelData(ID = IProtocolId.System.ERROR_MESSAGE_TIPS_RESP, desc = "错误信息提示响应")
-public class MessageTipsResponse implements IpbChannelData {
+@PbChannelData(ID = IProtocolId.System.ERROR_STATUS_TIPS_RESP, desc = "错误信息提示响应")
+public class StatusTipsResponse implements IpbChannelData {
 	/**
 	 * 策划配置最好. 客户端读表. 配合参数生成提示
 	 */
@@ -31,25 +31,25 @@ public class MessageTipsResponse implements IpbChannelData {
 	private List<String> params;
 
 	@Ignore
-	private static final Map<Integer, MessageTipsResponse> cached = Maps.newConcurrentMap();
+	private static final Map<Integer, StatusTipsResponse> cached = Maps.newConcurrentMap();
 
-	public MessageTipsResponse(){}
+	public StatusTipsResponse(){}
 
-	private MessageTipsResponse(int status, Object... params) {
+	private StatusTipsResponse(int status, Object... params) {
 		this.status = status;
 		if (params != null && params.length > 0) {
 			this.params = Arrays.stream(params).map(String::valueOf).collect(Collectors.toList());
 		}
 	}
 
-	public static MessageTipsResponse valueOf(IGameStatus status, Object... params) {
+	public static StatusTipsResponse valueOf(IGameStatus status, Object... params) {
 		if (params == null || params.length == 0) {
-			return cached.computeIfAbsent(status.getStatus(), MessageTipsResponse::new);
+			return cached.computeIfAbsent(status.getStatus(), StatusTipsResponse::new);
 		}
-		return new MessageTipsResponse(status.getStatus(), params);
+		return new StatusTipsResponse(status.getStatus(), params);
 	}
 
-	public static MessageTipsResponse valueOf(StatusResultException ex) {
+	public static StatusTipsResponse valueOf(StatusResultException ex) {
 		return valueOf(ex.getStatus(), ex.getArgs());
 	}
 
