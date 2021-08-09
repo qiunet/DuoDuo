@@ -59,6 +59,7 @@ public class BigDecimalUtil {
 	public static BigDecimal add(BigDecimal b1, long b2) {// v1 + v2
 		return add(b1, new BigDecimal(b2));
 	}
+
 	public static BigDecimal add(String b1, BigDecimal b2) {// v1 + v2
 		return add(new BigDecimal(b1), b2);
 	}
@@ -79,7 +80,7 @@ public class BigDecimalUtil {
 		return result;
 	}
 
-	public static BigDecimal mul(BigDecimal b, long ... arr) {
+	public static BigDecimal mul(BigDecimal b, long... arr) {
 		BigDecimal result = b;
 		for (long v : arr) {
 			result = mul(result, v);
@@ -87,7 +88,7 @@ public class BigDecimalUtil {
 		return result;
 	}
 
-	public static BigDecimal mul(String b, double ... arr) {
+	public static BigDecimal mul(String b, double... arr) {
 		BigDecimal result = new BigDecimal(b);
 		for (double v : arr) {
 			result = mul(result, new BigDecimal(String.valueOf(v)));
@@ -114,6 +115,22 @@ public class BigDecimalUtil {
 	public static BigDecimal div(BigDecimal b1, BigDecimal b2) {
 		// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入
 		return b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP);// 应对除不尽的情况
+	}
+
+	public static BigDecimal add(String... arr) {
+		BigDecimal result = BigDecimal.ZERO;
+		for (String v : arr) {
+			result = add(result, new BigDecimal(v));
+		}
+		return result;
+	}
+
+	public static BigDecimal mul(String... arr) {
+		BigDecimal result = BigDecimal.ONE;
+		for (String v : arr) {
+			result = sub(result, new BigDecimal(v));
+		}
+		return result;
 	}
 
 	public static boolean moreThan(String b1, String b2) {
@@ -171,6 +188,7 @@ public class BigDecimalUtil {
 	public static boolean moreThanZero(BigDecimal b1) {
 		return moreThan(b1, BigDecimal.ZERO);
 	}
+
 	public static boolean moreThanOrEqulsZero(BigDecimal b1) {
 		return moreThanOrEquls(b1, BigDecimal.ZERO);
 	}
@@ -178,6 +196,7 @@ public class BigDecimalUtil {
 	public static boolean lessThanZero(BigDecimal b1) {
 		return lessThan(b1, BigDecimal.ZERO);
 	}
+
 	public static boolean lessThanOrEqulsZero(BigDecimal b1) {
 		return lessThanOrEquls(b1, BigDecimal.ZERO);
 	}
