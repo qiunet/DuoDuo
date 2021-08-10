@@ -6,7 +6,7 @@ package org.qiunet.function.condition;
  * qiunet
  * 2021/8/10 11:09
  **/
-public class ConditionsAnd<Obj> implements IConditionCheck<Obj> {
+public class ConditionsAnd<Obj> implements IConditionData<Obj> {
 	private final Conditions<Obj> a;
 	private final Conditions<Obj> b;
 

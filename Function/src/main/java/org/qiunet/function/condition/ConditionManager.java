@@ -19,26 +19,27 @@ import java.util.stream.Collectors;
  * 2020-12-31 12:25
  */
 public class ConditionManager {
+	public static final IConditionData<?> EMPTY_CONDITION = new Conditions<>(ImmutableList.of());
 	/**
 	 * 创建Condition
 	 * @param configList 配置
 	 * @return condition 实例
 	 */
-	public static Conditions createCondition(List<ConditionConfig> configList) {
+	public static IConditionData createCondition(List<ConditionConfig> configList) {
 		return ConditionManager0.instance.createCondition(configList);
 	}
 
 	 enum ConditionManager0 implements IApplicationContextAware {
 		instance;
 
-		private Map<String, Class<? extends ICondition>> conditionMap = Maps.newHashMap();
-		private Conditions EMPTY_CONDITION = new Conditions(ImmutableList.of());
+		private final Map<String, Class<? extends ICondition>> conditionMap = Maps.newHashMap();
+
 		/**
 		 * 创建Condition
 		 * @param configList 配置
 		 * @return condition 实例
 		 */
-		 Conditions createCondition(List<ConditionConfig> configList) {
+		IConditionData createCondition(List<ConditionConfig> configList) {
 			if (configList == null || configList.isEmpty()) {
 				return EMPTY_CONDITION;
 			}

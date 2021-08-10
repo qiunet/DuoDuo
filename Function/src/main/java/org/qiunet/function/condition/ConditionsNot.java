@@ -6,7 +6,7 @@ package org.qiunet.function.condition;
  * qiunet
  * 2021/8/10 11:09
  **/
-public class ConditionsNot<Obj> implements IConditionCheck<Obj> {
+public class ConditionsNot<Obj> implements IConditionData<Obj> {
 	private final Conditions<Obj> a;
 
 	public ConditionsNot(Conditions<Obj> a) {
