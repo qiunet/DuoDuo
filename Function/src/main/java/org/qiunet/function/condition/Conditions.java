@@ -1,7 +1,5 @@
 package org.qiunet.function.condition;
 
-import com.google.common.collect.Lists;
-
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -11,7 +9,7 @@ import java.util.function.Consumer;
  * @Author qiunet
  * @Date 2020/12/28 07:47
  **/
-public class Conditions<Obj> {
+public class Conditions<Obj> implements IConditionCheck<Obj> {
 	/**
 	 * 所有条件
 	 */
@@ -26,6 +24,7 @@ public class Conditions<Obj> {
 	 * @param obj
 	 * @return
 	 */
+	@Override
 	public ConditionResult verify(Obj obj) {
 		for (ICondition<Obj, ?> condition : conditions) {
 			ConditionResult result = condition.verify(obj);
