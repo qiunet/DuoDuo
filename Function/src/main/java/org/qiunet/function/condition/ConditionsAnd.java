@@ -9,10 +9,10 @@ import org.qiunet.flash.handler.context.status.StatusResult;
  * 2021/8/10 11:09
  **/
 public class ConditionsAnd<Obj> implements IConditions<Obj> {
-	private final Conditions<Obj> a;
-	private final Conditions<Obj> b;
+	private final IConditions<Obj> a;
+	private final IConditions<Obj> b;
 
-	public ConditionsAnd(Conditions<Obj> a, Conditions<Obj> b) {
+	public ConditionsAnd(IConditions<Obj> a, IConditions<Obj> b) {
 		this.a = a;
 		this.b = b;
 	}

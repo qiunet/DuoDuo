@@ -9,9 +9,9 @@ import org.qiunet.flash.handler.context.status.StatusResult;
  * 2021/8/10 11:09
  **/
 public class ConditionsNot<Obj> implements IConditions<Obj> {
-	private final Conditions<Obj> a;
+	private final IConditions<Obj> a;
 
-	public ConditionsNot(Conditions<Obj> a) {
+	public ConditionsNot(IConditions<Obj> a) {
 		this.a = a;
 	}
 
