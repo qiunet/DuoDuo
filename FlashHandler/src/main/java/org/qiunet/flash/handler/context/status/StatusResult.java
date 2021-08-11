@@ -12,15 +12,19 @@ import java.util.Map;
  */
 public class StatusResult {
 	public static final StatusResult SUCCESS = valueOf(IGameStatus.SUCCESS);
+	/**
+	 * 这个失败仅仅是服务器判断fail用. 如果涉及客户端需要. 请自定义详细的GameStatus.
+	 */
+	public static final StatusResult FAIL = valueOf(IGameStatus.FAIL);
 
 	/**
 	 * 消耗是否成功
 	 */
-	private IGameStatus status;
+	private final IGameStatus status;
 	/**
 	 * 其它参数
 	 */
-	private Object [] params;
+	private final Object [] params;
 
 
 	private static final Map<IGameStatus, StatusResult> cached = Maps.newConcurrentMap();

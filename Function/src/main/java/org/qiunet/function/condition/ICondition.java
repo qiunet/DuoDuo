@@ -1,5 +1,7 @@
 package org.qiunet.function.condition;
 
+import org.qiunet.flash.handler.context.status.StatusResult;
+
 /***
  *
  *
@@ -28,11 +30,11 @@ public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> exten
 	interface PubCondition<Type extends Enum<Type> & IConditionType>
 			extends ICondition<Void, Type> {
 		@Override
-		default ConditionResult verify(Void unused) {
+		default StatusResult verify(Void unused) {
 			return verify();
 		}
 
-		ConditionResult verify();
+		StatusResult verify();
 	}
 }
 

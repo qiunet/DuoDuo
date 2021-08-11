@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.function.base.basic.IBasicFunction;
@@ -76,7 +77,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 
 		RewardContext<Obj> context = RewardContext.valueOf(multi, player, this, type);
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
-			RewardResult result = objBaseReward.verify(context);
+			StatusResult result = objBaseReward.verify(context);
 			if (result.isFail()) {
 				context.result = result;
 				return context;

@@ -3,6 +3,7 @@ package org.qiunet.function.reward;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 校验结果
 	 */
-	RewardResult result;
+	StatusResult result;
 	/**
 	 * 奖励本身
 	 */
@@ -76,7 +77,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 		return (T)operationType;
 	}
 
-	public RewardResult getResult() {
+	public StatusResult getResult() {
 		return result;
 	}
 

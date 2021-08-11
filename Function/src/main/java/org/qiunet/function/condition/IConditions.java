@@ -1,5 +1,7 @@
 package org.qiunet.function.condition;
 
+import org.qiunet.flash.handler.context.status.StatusResult;
+
 /***
  * 条件数据
  *
@@ -12,5 +14,5 @@ public interface IConditions<Obj> {
 	 * @param obj 主体对象
 	 * @return
 	 */
-	ConditionResult verify(Obj obj);
+	StatusResult verify(Obj obj);
 }

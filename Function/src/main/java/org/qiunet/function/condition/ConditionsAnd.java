@@ -1,5 +1,7 @@
 package org.qiunet.function.condition;
 
+import org.qiunet.flash.handler.context.status.StatusResult;
+
 /***
  * 两个Condition and
  *
@@ -16,10 +18,10 @@ public class ConditionsAnd<Obj> implements IConditions<Obj> {
 	}
 
 	@Override
-	public ConditionResult verify(Obj obj) {
-		return (a.verify(obj) == ConditionResult.SUCCESS)
-				&& (b.verify(obj) == ConditionResult.SUCCESS)
-				? ConditionResult.SUCCESS : ConditionResult.FAIL;
+	public StatusResult verify(Obj obj) {
+		return (a.verify(obj) == StatusResult.SUCCESS)
+				&& (b.verify(obj) == StatusResult.SUCCESS)
+				? StatusResult.SUCCESS : StatusResult.FAIL;
 
 	}
 }

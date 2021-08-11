@@ -1,44 +1,27 @@
 package org.qiunet.function.reward;
 
 import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.utils.data.IKeyValueData;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /***
  * 奖励的配置
  * 可能邮件什么发奖励. 也通过序列化成该对象的json string 然后发放.
  *
- *
  * @author qiunet
  * 2020-12-28 22:45
  */
-public final class RewardConfig {
-	/**
-	 * 资源id
-	 */
-	private int cfgId;
-	/**
-	 * 数值
-	 */
-	private long value;
-	/**
-	 *  额外信息.
-	 *  比如一些原始信息. 需要通过奖励同步的. 都记录这里.
-	 */
-	private String extraInfo;
+public final class RewardConfig extends HashMap<Object, String> implements IKeyValueData<Object, String> {
 
 	public RewardConfig() {
 	}
 
 	public RewardConfig(int cfgId, long value) {
-		this.cfgId = cfgId;
-		this.value = value;
-	}
-
-	public RewardConfig(int cfgId, long value, String extraInfo) {
-		this.cfgId = cfgId;
-		this.value = value;
-		this.extraInfo = extraInfo;
+		this.put("cfgId", String.valueOf(cfgId));
+		this.put("value", String.valueOf(value));
 	}
 
 	/**
@@ -47,18 +30,19 @@ public final class RewardConfig {
 	 * @return rewardItem 实例
 	 */
 	public BaseReward convertToRewardItem(Function<Integer, IResourceSubType> subTypeGetter) {
-		return subTypeGetter.apply(cfgId).createRewardItem(this);
+		return subTypeGetter.apply(getCfgId()).createRewardItem(this);
 	}
 
 	public int getCfgId() {
-		return cfgId;
+		return getInt("cfgId");
 	}
 
 	public long getValue() {
-		return value;
+		return getLong("value");
 	}
 
-	public String getExtraInfo() {
-		return extraInfo;
+	@Override
+	public Map<Object, String> returnMap() {
+		return this;
 	}
 }

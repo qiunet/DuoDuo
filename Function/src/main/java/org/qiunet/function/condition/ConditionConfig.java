@@ -1,5 +1,10 @@
 package org.qiunet.function.condition;
 
+import org.qiunet.utils.data.IKeyValueData;
+
+import java.util.HashMap;
+import java.util.Map;
+
 /***
  * 条件配置
  * 一般是json格式.
@@ -8,22 +13,15 @@ package org.qiunet.function.condition;
  * @author qiunet
  * 2020-12-30 20:56
  */
-public class ConditionConfig {
-	/**
-	 * 类型
-	 */
-	private String type;
-	/**
-	 * 值
-	 */
-	private String value;
-
+public class ConditionConfig
+		extends HashMap<Object, String> implements IKeyValueData<Object, String> {
 
 	public String getType() {
-		return type;
+		return getString("type");
 	}
 
-	public String getValue() {
-		return value;
+	@Override
+	public Map<Object, String> returnMap() {
+		return this;
 	}
 }

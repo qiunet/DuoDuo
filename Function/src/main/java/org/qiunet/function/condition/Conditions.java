@@ -1,5 +1,8 @@
 package org.qiunet.function.condition;
 
+import org.qiunet.flash.handler.context.status.StatusResult;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -25,14 +28,14 @@ public class Conditions<Obj> implements IConditions<Obj> {
 	 * @return
 	 */
 	@Override
-	public ConditionResult verify(Obj obj) {
+	public StatusResult verify(Obj obj) {
 		for (ICondition<Obj, ?> condition : conditions) {
-			ConditionResult result = condition.verify(obj);
+			StatusResult result = condition.verify(obj);
 			if (result.isFail()) {
 				return result;
 			}
 		}
-		return ConditionResult.SUCCESS;
+		return StatusResult.SUCCESS;
 	}
 
 	/**
@@ -41,5 +44,16 @@ public class Conditions<Obj> implements IConditions<Obj> {
 	 */
 	public void forEach(Consumer<ICondition<Obj, ?>> consumer) {
 		conditions.forEach(consumer);
+	}
+
+	/**
+	 * 添加条件.
+	 * 如果是不可变的Conditions, 会抛出异常
+	 * @param conditions 条件
+	 * @param <Type> 条件类型
+	 */
+	public <Type extends Enum<Type> &IConditionType> Conditions<Obj> addConditions(ICondition<Obj, Type> ... conditions) {
+		this.conditions.addAll(Arrays.asList(conditions));
+		return this;
 	}
 }

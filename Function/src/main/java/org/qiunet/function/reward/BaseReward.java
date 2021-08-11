@@ -2,6 +2,7 @@ package org.qiunet.function.reward;
 
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
@@ -41,13 +42,13 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @param context 上下文
 	 * @return 结果.
 	 */
-	public abstract RewardResult doVerify(RewardContext<Obj> context);
+	public abstract StatusResult doVerify(RewardContext<Obj> context);
 	/**
 	 * 校验
 	 * @param context 上下文
 	 * @return 结果.
 	 */
-	final RewardResult verify(RewardContext<Obj> context) {
+	final StatusResult verify(RewardContext<Obj> context) {
 		if (context.getMulti() < 1) {
 			throw new CustomException("Multi 数值 {} 不合法, 必须 >= 1", context.getMulti());
 		}
