@@ -6,7 +6,7 @@ package org.qiunet.function.condition;
  * qiunet
  * 2021/8/10 11:06
  **/
-public interface IConditionData<Obj> {
+public interface IConditions<Obj> {
 	/**
 	 * 校验 条件是否满足
 	 * @param obj 主体对象

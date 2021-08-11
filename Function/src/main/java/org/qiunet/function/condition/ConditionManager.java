@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
  * 2020-12-31 12:25
  */
 public class ConditionManager {
-	public static final IConditionData<?> EMPTY_CONDITION = new Conditions<>(ImmutableList.of());
+	public static final IConditions<?> EMPTY_CONDITION = new Conditions<>(ImmutableList.of());
 	/**
 	 * 创建Condition
 	 * @param configList 配置
 	 * @return condition 实例
 	 */
-	public static IConditionData createCondition(List<ConditionConfig> configList) {
+	public static IConditions createCondition(List<ConditionConfig> configList) {
 		return ConditionManager0.instance.createCondition(configList);
 	}
 
@@ -39,7 +39,7 @@ public class ConditionManager {
 		 * @param configList 配置
 		 * @return condition 实例
 		 */
-		IConditionData createCondition(List<ConditionConfig> configList) {
+		IConditions createCondition(List<ConditionConfig> configList) {
 			if (configList == null || configList.isEmpty()) {
 				return EMPTY_CONDITION;
 			}

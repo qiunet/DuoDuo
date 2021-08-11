@@ -6,7 +6,7 @@ package org.qiunet.function.condition;
  * @author qiunet
  * 2020-12-30 16:11
  */
-public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> extends IConditionData<Obj> {
+public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> extends IConditions<Obj> {
 	/**
 	 * 获得type
 	 * @return

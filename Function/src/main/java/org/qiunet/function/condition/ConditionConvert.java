@@ -13,11 +13,11 @@ import java.util.List;
  * @author qiunet
  * 2020-12-31 15:31
  */
-public class ConditionConvert extends BaseObjConvert<IConditionData> {
+public class ConditionConvert extends BaseObjConvert<IConditions> {
 	private static final TypeReference<List<ConditionConfig>> TYPE = new TypeReference<List<ConditionConfig>>(){};
 
 	@Override
-	protected IConditionData fromString0(String str) {
+	protected IConditions fromString0(String str) {
 		if (StringUtil.isEmpty(str)) {
 			return ConditionManager.EMPTY_CONDITION;
 		} else {
@@ -28,6 +28,6 @@ public class ConditionConvert extends BaseObjConvert<IConditionData> {
 
 	@Override
 	public boolean canConvert(Class aClass) {
-		return aClass.isAssignableFrom(IConditionData.class);
+		return aClass.isAssignableFrom(IConditions.class);
 	}
 }

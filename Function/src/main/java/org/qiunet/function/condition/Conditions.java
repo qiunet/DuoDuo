@@ -9,7 +9,7 @@ import java.util.function.Consumer;
  * @Author qiunet
  * @Date 2020/12/28 07:47
  **/
-public class Conditions<Obj> implements IConditionData<Obj> {
+public class Conditions<Obj> implements IConditions<Obj> {
 	/**
 	 * 所有条件
 	 */
