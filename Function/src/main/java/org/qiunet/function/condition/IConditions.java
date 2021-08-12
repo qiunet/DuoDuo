@@ -15,4 +15,29 @@ public interface IConditions<Obj> {
 	 * @return
 	 */
 	StatusResult verify(Obj obj);
+
+	/**
+	 * 将结果 取反
+	 * @return 取反后的对象
+	 */
+	default IConditions<Obj> not() {
+		return new ConditionsNot<>(this);
+	}
+
+	/**
+	 * 当前condition 和 指定condition 取或
+	 * @param condition 指定的condition
+	 * @return 返回的结果
+	 */
+	default IConditions<Obj> or(IConditions<Obj> condition){
+		return new ConditionsOr<>(this, condition);
+	}
+	/**
+	 * 当前condition 和 指定condition 取与
+	 * @param condition 指定的condition
+	 * @return 返回的结果
+	 */
+	default IConditions<Obj> and(IConditions<Obj> condition){
+		return new ConditionsAnd<>(this, condition);
+	}
 }
