@@ -43,11 +43,4 @@ public class ConditionConvert extends BaseObjConvert<IConditions> {
 	public boolean canConvert(Class aClass) {
 		return aClass.isAssignableFrom(IConditions.class);
 	}
-
-	public static void main(String[] args) {
-		String str = "[{\"type\": \"PLAYER_MIN_LEVEL\", \"value\": \"30\"}, {\"type\": \"PLAYER_MAX_LEVEL\", \"value\": \"180\"}] || [{\"type\": \"PLAYER_MIN_LEVEL1\", \"value\": \"30\"}, {\"type\": \"PLAYER_MAX_LEVEL1\", \"value\": \"180\"}]";
-		ConditionConvert convert = new ConditionConvert();
-		IConditions iConditions = convert.fromString0(str);
-		System.out.println(iConditions);
-	}
 }
