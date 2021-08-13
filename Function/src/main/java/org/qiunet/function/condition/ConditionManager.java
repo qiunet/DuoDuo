@@ -1,5 +1,6 @@
 package org.qiunet.function.condition;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
@@ -48,6 +49,7 @@ public class ConditionManager {
 					 .map(cfg -> {
 						 ICondition iCondition = null;
 						 try {
+						 	Preconditions.checkNotNull(conditionMap.get(cfg.getType()), "ConditionType %s is not define!", cfg.getType());
 							 iCondition = conditionMap.get(cfg.getType()).newInstance();
 						 } catch (InstantiationException | IllegalAccessException e) {
 							 e.printStackTrace();
