@@ -1,5 +1,6 @@
 package org.qiunet.function.condition;
 
+import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.context.status.StatusResult;
 
 import java.util.Arrays;
@@ -18,7 +19,11 @@ public class Conditions<Obj> implements IConditions<Obj> {
 	 */
 	private final List<ICondition<Obj, ?>> conditions;
 
-	Conditions(List<ICondition<Obj, ?>> conditions) {
+	public Conditions(ICondition<Obj, ?> ... conditions) {
+		this(Lists.newArrayList(conditions));
+	}
+
+	public Conditions(List<ICondition<Obj, ?>> conditions) {
 		this.conditions = conditions;
 	}
 
