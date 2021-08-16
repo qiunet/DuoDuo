@@ -1,4 +1,4 @@
-package org.qiunet.game.test.behavior.action;
+package org.qiunet.game.test.behavior.node;
 
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 
@@ -10,9 +10,5 @@ import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
  * 2021-07-05 09:57
  */
 public interface IBehaviorAction extends IBehaviorNode, IChannelMessageSender {
-	/**
-	 * 行为类型
-	 * @return
-	 */
-	IBehaviorType type();
+
 }

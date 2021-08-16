@@ -3,6 +3,7 @@ package org.qiunet.game.test.robot;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.common.MessageHandler;
+import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
@@ -13,10 +14,11 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.game.test.behavior.action.IBehaviorAction;
-import org.qiunet.game.test.behavior.action.IBehaviorType;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.game.test.behavior.node.IBehaviorAction;
 import org.qiunet.game.test.response.ResponseMapping;
 import org.qiunet.game.test.server.IServer;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
@@ -32,10 +34,6 @@ import java.util.concurrent.TimeUnit;
  */
 abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandler<Robot> {
 	/**
-	 * 每个类型对应的action
-	 */
-	private final Map<Enum<? extends IBehaviorType>, IBehaviorAction> actionMapping = Maps.newHashMap();
-	/**
 	 * class 对应实例
 	 */
 	private final Map<Class<? extends IBehaviorAction>, IBehaviorAction> actionClzMapping = Maps.newHashMap();
@@ -50,17 +48,23 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	/**
 	 * 心跳future
 	 */
-	private final Future<?> tickFuture;
+	private DFuture<?> tickFuture;
+	/**
+	 *
+	 */
+	private final BehaviorRootTree behaviorRootTree;
 
 	protected RobotFunc() {
-		this.tickFuture = this.scheduleAtFixedRate("Robot.tick", h -> this.tick(), 10, 500, TimeUnit.MILLISECONDS);
+		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor(((Robot) this));
+		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), 20, TimeUnit.MILLISECONDS);
 	}
 
 	/**
-	 * 心跳
+	 * 心跳. 执行玩run. 延迟500 执行下次心跳. 不是等时的
 	 */
-	private void tick() {
-
+	private void tickRun(){
+		this.behaviorRootTree.tick();
+		this.tickFuture = this.scheduleMessage(h1 -> this.tickRun(), 500, TimeUnit.MILLISECONDS);
 	}
 
 	public Future<?> getTickFuture() {
@@ -86,6 +90,15 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 		@Override
 		public void response(DSession session, MessageContent data) {
+			RobotFunc.this.addMessage(h -> response0(session, data));
+		}
+
+		private void response0(DSession session, MessageContent data) {
+			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RESP) {
+				this.handlerStatus(session, data);
+				return;
+			}
+
 			Method method = ResponseMapping.getResponseMethodByID(data.getProtocolId());
 			if (method == null) {
 				session.close(CloseCause.LOGOUT);
@@ -103,7 +116,18 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 				throw new CustomException(e, "response exception!");
 			}
 		}
+
+		private void handlerStatus(DSession session, MessageContent data) {
+			StatusTipsResponse response = ProtobufDataManager.decode(StatusTipsResponse.class, data.bytes());
+			Method method = ResponseMapping.getStatusMethodByID(response.getStatus());
+			if (method == null) {
+				session.close(CloseCause.LOGOUT);
+				brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");
+				return;
+			}
+		}
 	}
+
 
 	public void brokeRobot(String message) {
 		LoggerType.DUODUO_GAME_TEST.error(message);

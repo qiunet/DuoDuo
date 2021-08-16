@@ -1,7 +1,8 @@
 package org.qiunet.game.test.behavior.node.base;
 
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.game.test.behavior.action.IBehaviorAction;
+import org.qiunet.function.condition.IConditions;
+import org.qiunet.game.test.behavior.node.IBehaviorAction;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.test.server.IServer;
 
@@ -11,14 +12,14 @@ import org.qiunet.game.test.server.IServer;
  * @author qiunet
  * 2021-07-07 10:37
  */
-public abstract class BaseActionNode extends BaseNode implements IBehaviorAction {
+public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBehaviorAction {
 	/**
 	 * 使用的连接方式
 	 */
 	private final IServer server;
 
-	public BaseActionNode(IServer server, Robot robot) {
-		super(robot);
+	public BaseBehaviorAction(IServer server, IConditions<Robot> preCondition) {
+		super(preCondition);
 		this.server = server;
 	}
 
