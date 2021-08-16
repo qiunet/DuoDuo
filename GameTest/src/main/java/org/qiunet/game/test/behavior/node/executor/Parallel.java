@@ -1,11 +1,9 @@
 package org.qiunet.game.test.behavior.node.executor;
 
 import com.google.common.collect.Lists;
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
-import org.qiunet.game.test.robot.Robot;
 
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.List;
  * qiunet
  * 2021/8/16 16:40
  **/
-public class Parallel extends BaseBehaviorExecutor {
+public class Parallel extends BaseBehaviorExecutor<Parallel> {
 	/**
 	 * 所有运行中的节点
 	 */
@@ -34,15 +32,18 @@ public class Parallel extends BaseBehaviorExecutor {
 	 */
 	private final ISuccessPolicy policy;
 
-	public Parallel(IConditions<Robot> preCondition, String name) {
-		this(REQUIRE_ALL_SUCCESS, preCondition, name);
+	public Parallel() {
+		this(REQUIRE_ALL_SUCCESS);
 	}
 
-	public Parallel(ISuccessPolicy policy, IConditions<Robot> preCondition, String name) {
-		super(preCondition, name);
+	public Parallel(ISuccessPolicy policy) {
 		this.policy = policy;
 	}
 
+	@Override
+	public boolean preCondition() {
+		return true;
+	}
 
 	@Override
 	public void release() {

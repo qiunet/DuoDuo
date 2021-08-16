@@ -1,11 +1,9 @@
 package org.qiunet.game.test.behavior.node.executor;
 
 import com.google.common.collect.Sets;
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
-import org.qiunet.game.test.robot.Robot;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.math.MathUtil;
 
@@ -20,7 +18,7 @@ import java.util.Set;
  * qiunet
  * 2021/8/9 12:10
  **/
-public class Random extends BaseBehaviorExecutor {
+public class Random extends BaseBehaviorExecutor<Random> {
 	/**
 	 * 已经执行过的node
 	 * 如果 excludeExecuted == true
@@ -32,20 +30,31 @@ public class Random extends BaseBehaviorExecutor {
 	 */
 	private final boolean excludeExecuted;
 
-
-	public Random(IConditions<Robot> preCondition, String name) {
-		this(preCondition, name, false);
+	public Random() {
+		this(false);
 	}
 
-	public Random(IConditions<Robot> preCondition, String name, boolean excludeExecuted) {
-		super(preCondition, name);
+	public Random(boolean excludeExecuted) {
 		this.excludeExecuted = excludeExecuted;
+	}
+
+	@Override
+	public boolean preCondition() {
+		for (IBehaviorNode node : nodes) {
+			if (executedNodes.contains(node)) {
+				continue;
+			}
+			if (node.preCondition()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public void initialize() {
 		if (nodes.isEmpty()) {
-			throw new CustomException("Name [{}] child nodes is empty!", getName());
+			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
 
 		if (nodes.size() == executedNodes.size()) {

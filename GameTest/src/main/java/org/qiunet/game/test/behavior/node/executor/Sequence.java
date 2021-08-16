@@ -1,9 +1,8 @@
 package org.qiunet.game.test.behavior.node.executor;
 
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
+import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
-import org.qiunet.game.test.robot.Robot;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -14,20 +13,27 @@ import org.qiunet.utils.exceptions.CustomException;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class Sequence extends BaseBehaviorExecutor {
+public class Sequence extends BaseBehaviorExecutor<Sequence> {
 	/**
 	 * 当前执行
 	 */
 	private int currIndex;
 
-	public Sequence(IConditions<Robot> preCondition, String name) {
-		super(preCondition, name);
+
+	@Override
+	public boolean preCondition() {
+		for (IBehaviorNode node : nodes) {
+			if (! node.preCondition()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public void initialize() {
 		if (nodes.isEmpty()) {
-			throw new CustomException("Name [{}] child nodes is empty!", getName());
+			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
 		this.currIndex = 0;
 	}

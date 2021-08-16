@@ -2,7 +2,7 @@ package org.qiunet.game.test.behavior.node.decorator;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorAction;
+import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseDecorator;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,15 +17,15 @@ public class CounterNode extends BaseDecorator {
 	private final AtomicInteger currCount = new AtomicInteger();
 	private final int count;
 
-	public CounterNode(IBehaviorAction action, int count) {
-		super(action);
+	public CounterNode(IBehaviorNode node, int count) {
+		super(node);
 		Preconditions.checkArgument(count > 0, "count [%s] less than 1!");
 		this.count = count;
 	}
 
 	@Override
 	protected ActionStatus execute() {
-		ActionStatus status = action.run();
+		ActionStatus status = node.run();
 		if (status == ActionStatus.SUCCESS
 		&& currCount.incrementAndGet() >= count) {
 			this.parent.removeChild(this);

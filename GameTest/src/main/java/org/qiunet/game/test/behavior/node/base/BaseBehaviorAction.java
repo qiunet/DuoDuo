@@ -17,10 +17,18 @@ public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBe
 	 * 使用的连接方式
 	 */
 	private final IServer server;
-
+	/**
+	 * 前置条件
+	 */
+	protected IConditions<Robot> preCondition;
 	public BaseBehaviorAction(IServer server, IConditions<Robot> preCondition) {
-		super(preCondition);
+		this.preCondition = preCondition;
 		this.server = server;
+	}
+
+	@Override
+	public boolean preCondition() {
+		return preCondition.verify(robot).isSuccess();
 	}
 
 	@Override

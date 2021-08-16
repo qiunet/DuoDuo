@@ -1,6 +1,5 @@
 package org.qiunet.game.test.behavior.node.base;
 
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
 import org.qiunet.game.test.behavior.node.IBehaviorNode;
@@ -23,18 +22,13 @@ abstract class BaseBehaviorNode implements IBehaviorNode {
 	 */
 	protected Robot robot;
 	/**
-	 * 前置条件
-	 */
-	protected IConditions<Robot> preCondition;
-	/**
 	 * 状态
 	 */
 	protected boolean running;
 
 
-	public BaseBehaviorNode(IConditions<Robot> preCondition) {
+	public BaseBehaviorNode() {
 		this.robot = ThreadContextData.get(Robot.class.getName());
-		this.preCondition = preCondition;
 	}
 
 	@Override
@@ -43,18 +37,8 @@ abstract class BaseBehaviorNode implements IBehaviorNode {
 	}
 
 	@Override
-	public boolean preCondition() {
-		return preCondition.verify(robot).isSuccess();
-	}
-
-	@Override
 	public void setParent(IBehaviorExecutor parent) {
 		this.parent = parent;
-	}
-
-	@Override
-	public IBehaviorNode getParent() {
-		return parent;
 	}
 
 	@Override

@@ -1,9 +1,8 @@
 package org.qiunet.game.test.behavior.node.executor;
 
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
+import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
-import org.qiunet.game.test.robot.Robot;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -21,7 +20,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class Selector extends BaseBehaviorExecutor {
+public class Selector extends BaseBehaviorExecutor<Selector> {
 	/**
 	 * 按照优先级执行
 	 * 每次从左 -> 右
@@ -36,22 +35,30 @@ public class Selector extends BaseBehaviorExecutor {
 	 */
 	private int currIndex;
 
-
-	public Selector(IConditions<Robot> preCondition, String name) {
-		this(preCondition, name, true);
+	public Selector() {
+		this(true);
 	}
 
-	public Selector(IConditions<Robot> preCondition, String name, boolean prioritySelector) {
-		super(preCondition, name);
+	public Selector(boolean prioritySelector) {
 		this.prioritySelector = prioritySelector;
 	}
 
 	@Override
 	public void initialize() {
 		if (nodes.isEmpty()) {
-			throw new CustomException("Name [{}] child nodes is empty!", getName());
+			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
 		this.currIndex = -1;
+	}
+
+	@Override
+	public boolean preCondition() {
+		for (IBehaviorNode node : nodes) {
+			if (node.preCondition()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

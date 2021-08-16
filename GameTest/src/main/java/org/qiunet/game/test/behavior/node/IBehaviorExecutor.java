@@ -1,7 +1,5 @@
 package org.qiunet.game.test.behavior.node;
 
-import java.util.List;
-
 /***
  * 行为执行者
  *  随机   选择   次序   并发  ROOT几种
@@ -15,26 +13,9 @@ public interface IBehaviorExecutor extends IBehaviorNode {
 	 */
 	int EVERY_NODE_SLEEP_MS = 50;
 	/**
-	 * 执行器名称
-	 * @return 名称
-	 */
-	String getName();
-	/**
-	 * 当前执行的行为节点
-	 * @return
-	 */
-	IBehaviorNode currentBehavior();
-
-	/**
 	 * 移除某个节点
 	 * 某些节点生命周期只需要执行一次. 比如登录.
 	 * @param child 需要移除的节点
 	 */
 	void removeChild(IBehaviorNode child);
-
-	/**
-	 * 获得所有的节点 副本
-	 * @return
-	 */
-	List<IBehaviorNode> getChildren();
 }

@@ -1,7 +1,5 @@
 package org.qiunet.game.test.robot;
 
-import org.qiunet.function.condition.ConditionManager;
-import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.behavior.node.executor.Selector;
 
 /***
@@ -11,10 +9,6 @@ import org.qiunet.game.test.behavior.node.executor.Selector;
  * 2021/7/26 09:37
  **/
 final class BehaviorRootTree extends Selector {
-
-	public BehaviorRootTree() {
-		super((IConditions<Robot>) ConditionManager.EMPTY_CONDITION, "ROOT");
-	}
 
 	public void tick(){
 		if (! isRunning()) {

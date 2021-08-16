@@ -1,6 +1,6 @@
 package org.qiunet.game.test.behavior.builder;
 
-import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
+import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.robot.Robot;
 
 /***
@@ -15,5 +15,5 @@ public interface IBehaviorBuilder {
 	 * 该行为的执行器
 	 * @return
 	 */
-	IBehaviorExecutor buildExecutor(Robot robot);
+	IBehaviorNode buildExecutor(Robot robot);
 }

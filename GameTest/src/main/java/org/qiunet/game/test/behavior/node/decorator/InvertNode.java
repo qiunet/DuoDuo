@@ -1,7 +1,7 @@
 package org.qiunet.game.test.behavior.node.decorator;
 
 import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorAction;
+import org.qiunet.game.test.behavior.node.IBehaviorNode;
 import org.qiunet.game.test.behavior.node.base.BaseDecorator;
 
 /***
@@ -12,12 +12,12 @@ import org.qiunet.game.test.behavior.node.base.BaseDecorator;
  **/
 public class InvertNode extends BaseDecorator {
 
-	public InvertNode(IBehaviorAction action) {
-		super(action);
+	public InvertNode(IBehaviorNode node) {
+		super(node);
 	}
 
 	@Override
 	protected ActionStatus execute() {
-		return action.run();
+		return node.run();
 	}
 }
