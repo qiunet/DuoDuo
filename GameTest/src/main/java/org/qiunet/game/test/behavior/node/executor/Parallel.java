@@ -56,7 +56,7 @@ public class Parallel extends BaseBehaviorExecutor<Parallel> {
 	@Override
 	public ActionStatus execute() {
 		if (isRunning()) {
-			for(Iterator<IBehaviorNode> it = nodes.iterator(); it.hasNext();){
+			for(Iterator<IBehaviorNode> it = runningNodes.iterator(); it.hasNext();){
 				IBehaviorNode node = it.next();
 				ActionStatus status = node.run();
 				if(status == ActionStatus.RUNNING){
