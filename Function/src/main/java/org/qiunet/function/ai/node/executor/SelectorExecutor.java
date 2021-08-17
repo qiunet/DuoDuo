@@ -21,7 +21,7 @@ import java.util.List;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class Selector extends BaseBehaviorExecutor<Selector> {
+public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	/**
 	 * 按照优先级执行
 	 * 每次从左 -> 右
@@ -36,16 +36,17 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 	 */
 	private int currIndex;
 
-	public Selector() {
+	public SelectorExecutor() {
 		this(true);
 	}
 
-	public Selector(boolean prioritySelector) {
+	public SelectorExecutor(boolean prioritySelector) {
 		this.prioritySelector = prioritySelector;
 	}
 
 	@Override
 	public void initialize() {
+		super.initialize();
 		this.currIndex = -1;
 	}
 
@@ -62,11 +63,18 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 	@Override
 	public ActionStatus execute() {
 		List<IBehaviorNode> childNodes = this.getChildNodes();
-		for (currIndex = this.startIndex(); currIndex < childSize(); currIndex++) {
+		int start = this.startIndex(), max = childSize();
+		for (currIndex = start; currIndex < max; currIndex++) {
 			IBehaviorNode currentBehavior = childNodes.get(currIndex);
 			if (! prioritySelector) {
 				this.startIndex = currIndex;
+				if (start > 0 && currIndex == max - 1) {
+					// 再从头循环一次.
+					currIndex = -1;
+					max = start;
+				}
 			}
+
 			boolean preCondition = currentBehavior.preCondition();
 			if (! preCondition) {
 				continue;
@@ -93,13 +101,14 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 	 * @return
 	 */
 	private int startIndex(){
-		// 每次从 0 开始
-		if (prioritySelector) {
-			return 0;
-		}
 		// 说明已经在运行中 再次进入
 		if (currIndex >= 0) {
 			return currIndex;
+		}
+
+		// 每次从 0 开始
+		if (prioritySelector) {
+			return 0;
 		}
 
 		if (startIndex >= childSize()) {

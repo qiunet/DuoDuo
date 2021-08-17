@@ -3,8 +3,8 @@ package org.qiunet.game.tests.client.action.login;
 import org.qiunet.function.ai.builder.IBehaviorBuilder;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.decorator.CounterNode;
-import org.qiunet.function.ai.node.executor.Selector;
-import org.qiunet.function.ai.node.executor.Sequence;
+import org.qiunet.function.ai.node.executor.SelectorExecutor;
+import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.game.test.robot.Robot;
 
 /***
@@ -17,10 +17,10 @@ public class LoginBehaviorBuilder implements IBehaviorBuilder<Robot> {
 
 	@Override
 	public IBehaviorNode buildExecutor(Robot robot) {
-		Sequence sequence = new Sequence();
+		SequenceExecutor sequence = new SequenceExecutor();
 		sequence.addChild(new LoginAction(robot));
-		Sequence registerBehavior = new Sequence().addChild(new RandomAction(robot), new RegisterAction(robot), new PlayerIndexAction(robot));
-		sequence.addChild(new Selector().addChild(registerBehavior, new PlayerIndexAction(robot)));
+		SequenceExecutor registerBehavior = new SequenceExecutor().addChild(new RandomAction(robot), new RegisterAction(robot), new PlayerIndexAction(robot));
+		sequence.addChild(new SelectorExecutor().addChild(registerBehavior, new PlayerIndexAction(robot)));
 		return new CounterNode(sequence, 1);
 	}
 }

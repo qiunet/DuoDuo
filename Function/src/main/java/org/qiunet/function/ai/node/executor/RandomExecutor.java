@@ -18,7 +18,7 @@ import java.util.Set;
  * qiunet
  * 2021/8/9 12:10
  **/
-public class Random extends BaseBehaviorExecutor<Random> {
+public class RandomExecutor extends BaseBehaviorExecutor<RandomExecutor> {
 	/**
 	 * 已经执行过的node
 	 * 如果 excludeExecuted == true
@@ -34,11 +34,11 @@ public class Random extends BaseBehaviorExecutor<Random> {
 	 */
 	private final boolean excludeExecuted;
 
-	public Random() {
+	public RandomExecutor() {
 		this(false);
 	}
 
-	public Random(boolean excludeExecuted) {
+	public RandomExecutor(boolean excludeExecuted) {
 		this.excludeExecuted = excludeExecuted;
 	}
 
@@ -57,6 +57,7 @@ public class Random extends BaseBehaviorExecutor<Random> {
 
 	@Override
 	public void initialize() {
+		super.initialize();
 		if (getChildNodes().isEmpty()) {
 			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}

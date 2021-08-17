@@ -11,6 +11,7 @@ import java.util.Map;
  * 2021-01-14 10:38
  */
 public class StatusResult {
+	private static final Map<IGameStatus, StatusResult> cached = Maps.newConcurrentMap();
 	public static final StatusResult SUCCESS = valueOf(IGameStatus.SUCCESS);
 	/**
 	 * 这个失败仅仅是服务器判断fail用. 如果涉及客户端需要. 请自定义详细的GameStatus.
@@ -27,7 +28,6 @@ public class StatusResult {
 	private final Object [] params;
 
 
-	private static final Map<IGameStatus, StatusResult> cached = Maps.newConcurrentMap();
 	protected StatusResult(IGameStatus status, Object... params) {
 		this.status = status;
 		this.params = params;

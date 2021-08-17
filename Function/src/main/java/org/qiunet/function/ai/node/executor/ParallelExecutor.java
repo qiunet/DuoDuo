@@ -14,7 +14,7 @@ import java.util.List;
  * qiunet
  * 2021/8/16 16:40
  **/
-public class Parallel extends BaseBehaviorExecutor<Parallel> {
+public class ParallelExecutor extends BaseBehaviorExecutor<ParallelExecutor> {
 	/**
 	 * 所有运行中的节点
 	 */
@@ -32,11 +32,11 @@ public class Parallel extends BaseBehaviorExecutor<Parallel> {
 	 */
 	private final ISuccessPolicy policy;
 
-	public Parallel() {
+	public ParallelExecutor() {
 		this(REQUIRE_ALL_SUCCESS);
 	}
 
-	public Parallel(ISuccessPolicy policy) {
+	public ParallelExecutor(ISuccessPolicy policy) {
 		this.policy = policy;
 	}
 

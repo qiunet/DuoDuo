@@ -1,6 +1,6 @@
 package org.qiunet.function.ai.node.root;
 
-import org.qiunet.function.ai.node.executor.Selector;
+import org.qiunet.function.ai.node.executor.SelectorExecutor;
 
 /***
  *  执行器ROOT
@@ -8,7 +8,11 @@ import org.qiunet.function.ai.node.executor.Selector;
  * qiunet
  * 2021/7/26 09:37
  **/
-public final class BehaviorRootTree extends Selector {
+public final class BehaviorRootTree extends SelectorExecutor {
+
+	public BehaviorRootTree() {
+		super(false);
+	}
 
 	public void tick(){
 		if (! isRunning()) {

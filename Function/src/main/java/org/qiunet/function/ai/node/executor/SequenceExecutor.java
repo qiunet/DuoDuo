@@ -15,7 +15,7 @@ import java.util.List;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class Sequence extends BaseBehaviorExecutor<Sequence> {
+public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 	/**
 	 * 当前执行
 	 */
@@ -34,6 +34,7 @@ public class Sequence extends BaseBehaviorExecutor<Sequence> {
 
 	@Override
 	public void initialize() {
+		super.initialize();
 		if (childSize() == 0) {
 			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}

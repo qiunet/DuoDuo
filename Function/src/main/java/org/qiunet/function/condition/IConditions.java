@@ -20,8 +20,8 @@ public interface IConditions<Obj> {
 	 * 将结果 取反
 	 * @return 取反后的对象
 	 */
-	default IConditions<Obj> not() {
-		return new ConditionsNot<>(this);
+	default IConditions<Obj> invert() {
+		return new ConditionsInvert<>(this);
 	}
 
 	/**

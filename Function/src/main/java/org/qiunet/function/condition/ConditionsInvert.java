@@ -8,10 +8,10 @@ import org.qiunet.flash.handler.context.status.StatusResult;
  * qiunet
  * 2021/8/10 11:09
  **/
-public class ConditionsNot<Obj> implements IConditions<Obj> {
+public class ConditionsInvert<Obj> implements IConditions<Obj> {
 	private final IConditions<Obj> a;
 
-	public ConditionsNot(IConditions<Obj> a) {
+	public ConditionsInvert(IConditions<Obj> a) {
 		this.a = a;
 	}
 
