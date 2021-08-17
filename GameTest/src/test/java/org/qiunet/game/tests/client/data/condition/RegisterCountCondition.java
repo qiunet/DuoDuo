@@ -2,11 +2,9 @@ package org.qiunet.game.tests.client.data.condition;
 
 import org.apache.commons.lang.math.RandomUtils;
 import org.qiunet.flash.handler.context.status.StatusResult;
-import org.qiunet.function.condition.ConditionConfig;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.client.data.condition.base.BaseRobotCondition;
-import org.qiunet.game.tests.client.data.condition.base.ConditionType;
 
 /***
  * 注册数条件
@@ -22,16 +20,6 @@ public class RegisterCountCondition extends BaseRobotCondition {
 
 	public RegisterCountCondition(int maxCount) {
 		this.maxCount = maxCount;
-	}
-
-	@Override
-	public ConditionType getType() {
-		return ConditionType.REGISTER_COUNT;
-	}
-
-	@Override
-	public void init(ConditionConfig config) {
-		maxCount = config.getInt("maxCount", 3);
 	}
 
 	@Override

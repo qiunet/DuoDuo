@@ -11,7 +11,8 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRes
 public interface IStatusTipsHandler {
 	/**
 	 * 处理状态.
+	 *
 	 * @param response
 	 */
-	void statusHandler(StatusTipsResponse response);
+	default void statusHandler(StatusTipsResponse response) {}
 }

@@ -26,11 +26,11 @@ public class ResponseMapping implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		this.handlerstatusTips(context);
+		this.handlerStatusTips(context);
 		this.handlerResponse(context);
 	}
 
-	private void handlerstatusTips(IApplicationContext context) throws Exception{
+	private void handlerStatusTips(IApplicationContext context) throws Exception{
 		context.getSubTypesOf(IStatusTipsHandler.class).forEach(clz -> {
 			if (! clz.isAssignableFrom(IBehaviorAction.class)) {
 				throw new CustomException("game.test status tips [clz:{}] need be a IBehaviorAction!", clz.getName());
