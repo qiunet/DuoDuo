@@ -84,14 +84,6 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 			if (status != ActionStatus.FAILURE) {
 				return status;
 			}
-
-			if (currIndex < childNodes.size() - 1) {
-				try {
-					Thread.sleep(EVERY_NODE_SLEEP_MS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return ActionStatus.FAILURE;
 	}

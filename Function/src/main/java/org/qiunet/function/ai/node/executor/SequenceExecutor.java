@@ -54,14 +54,6 @@ public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 			if (status != ActionStatus.SUCCESS) {
 				return status;
 			}
-
-			if (currIndex < childSize() - 1) {
-				try {
-					Thread.sleep(EVERY_NODE_SLEEP_MS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		return ActionStatus.SUCCESS;
 	}
