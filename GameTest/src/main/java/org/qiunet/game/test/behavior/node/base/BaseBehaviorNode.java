@@ -3,8 +3,6 @@ package org.qiunet.game.test.behavior.node.base;
 import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
 import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.robot.Robot;
-import org.qiunet.utils.thread.ThreadContextData;
 
 /***
  *  几点类型
@@ -18,18 +16,9 @@ abstract class BaseBehaviorNode implements IBehaviorNode {
 	 */
 	protected IBehaviorExecutor parent;
 	/**
-	 * 机器人
-	 */
-	protected Robot robot;
-	/**
 	 * 状态
 	 */
 	protected boolean running;
-
-
-	public BaseBehaviorNode() {
-		this.robot = ThreadContextData.get(Robot.class.getName());
-	}
 
 	@Override
 	public boolean isRunning() {

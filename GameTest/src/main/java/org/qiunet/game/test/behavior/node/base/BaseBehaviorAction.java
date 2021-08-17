@@ -1,10 +1,10 @@
 package org.qiunet.game.test.behavior.node.base;
 
-import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.function.condition.IConditions;
+import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.behavior.node.IBehaviorAction;
 import org.qiunet.game.test.robot.Robot;
-import org.qiunet.game.test.server.IServer;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  * action的 基类
@@ -14,25 +14,22 @@ import org.qiunet.game.test.server.IServer;
  */
 public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBehaviorAction {
 	/**
-	 * 使用的连接方式
-	 */
-	private final IServer server;
-	/**
 	 * 前置条件
 	 */
 	protected IConditions<Robot> preCondition;
-	public BaseBehaviorAction(IServer server, IConditions<Robot> preCondition) {
+	public BaseBehaviorAction(IConditions<Robot> preCondition) {
 		this.preCondition = preCondition;
-		this.server = server;
 	}
 
 	@Override
-	public boolean preCondition() {
-		return preCondition.verify(robot).isSuccess();
+	public ActionStatus run() {
+		if (! isRunning()) {
+			return super.run();
+		}
+		return runningStatusUpdate();
 	}
 
-	@Override
-	public DSession getSession() {
-		return robot.getPersistConnClient(server);
+	protected ActionStatus runningStatusUpdate(){
+		throw new CustomException("Class [{}] need implements runningStatusUpdate!", getClass().getName());
 	}
 }

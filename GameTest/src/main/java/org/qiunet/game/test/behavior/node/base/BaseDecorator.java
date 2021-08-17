@@ -1,5 +1,6 @@
 package org.qiunet.game.test.behavior.node.base;
 
+import org.qiunet.game.test.behavior.node.IBehaviorDecorator;
 import org.qiunet.game.test.behavior.node.IBehaviorNode;
 
 /***
@@ -8,7 +9,7 @@ import org.qiunet.game.test.behavior.node.IBehaviorNode;
  * qiunet
  * 2021/8/16 21:38
  **/
-public abstract class BaseDecorator extends BaseBehaviorNode{
+public abstract class BaseDecorator extends BaseBehaviorNode implements IBehaviorDecorator {
 
 	/**
 	 * 需要翻转的节点
