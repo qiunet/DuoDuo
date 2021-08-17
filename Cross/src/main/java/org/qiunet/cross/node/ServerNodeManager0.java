@@ -115,7 +115,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return;
 		}
 
-		if (argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).isEmpty()) {
+		if (argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).isNull()) {
 			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER'");
 		}
 

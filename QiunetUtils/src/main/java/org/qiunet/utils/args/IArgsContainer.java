@@ -91,6 +91,6 @@ public interface IArgsContainer {
 	 */
 	default boolean isEmpty(ArgumentKey key) {
 		Argument argument = getArgument(key, false);
-		return argument == null || argument.isEmpty();
+		return argument == null || argument.isNull();
 	}
 }

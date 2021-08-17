@@ -16,9 +16,9 @@ public class Argument<T> {
 	/***
 	 * 引用对象存储
 	 */
-	private AtomicReference<T> refData;
+	private final AtomicReference<T> refData;
 
-	private ArgumentKey<T> key;
+	private final ArgumentKey<T> key;
 	Argument(ArgumentKey<T> key) {
 		this.key = key;
 		this.refData = new AtomicReference<>();
@@ -68,7 +68,7 @@ public class Argument<T> {
 	 * @return
 	 */
 	public T get(T defaultVal) {
-		if (isEmpty()) {
+		if (isNull()) {
 			return defaultVal;
 		}
 		return get();
@@ -78,7 +78,7 @@ public class Argument<T> {
 	 * 是否有存储值.
 	 * @return 没有false
 	 */
-	public boolean isEmpty(){
+	public boolean isNull(){
 		return refData.get() == null;
 	}
 

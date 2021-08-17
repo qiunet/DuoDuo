@@ -36,12 +36,17 @@ public class RegisterCountCondition extends BaseRobotCondition {
 
 	@Override
 	public StatusResult verify(Robot robot) {
-		// 大概率不会新创角色.
-		if (RandomUtils.nextInt(100) < 99) {
+		// 没有注册信息
+		if (robot.getArgument(BlackBoard.loginInfo).isNull()) {
 			return StatusResult.FAIL;
 		}
-		// 没有注册信息
-		if (robot.getArgument(BlackBoard.loginInfo).isEmpty()) {
+		// 没有角色. 可以注册角色
+		if (BlackBoard.loginInfo.get(robot).size() < 1) {
+			return StatusResult.SUCCESS;
+		}
+
+		// 大概率不会新创角色.
+		if (RandomUtils.nextInt(100) < 99) {
 			return StatusResult.FAIL;
 		}
 		return BlackBoard.loginInfo.get(robot).size() < maxCount ?

@@ -16,7 +16,7 @@ public class TestArgsContainer {
 	public void test() throws Exception {
 		ArgsContainer container = new ArgsContainer();
 		Argument<Boolean> arg = container.getArgument(ArgumentKeys.TEST_KEY);
-		Assert.assertTrue(arg.isEmpty());
+		Assert.assertTrue(arg.isNull());
 		arg.compareAndSet(null, true);
 		Assert.assertTrue(arg.get());
 
