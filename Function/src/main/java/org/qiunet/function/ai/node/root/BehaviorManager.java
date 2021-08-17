@@ -1,13 +1,12 @@
-package org.qiunet.game.test.robot;
+package org.qiunet.function.ai.node.root;
 
 import com.google.common.collect.Lists;
-import org.qiunet.game.test.behavior.builder.IBehaviorBuilder;
-import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
+import org.qiunet.function.ai.builder.IBehaviorBuilder;
+import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
-import org.qiunet.utils.thread.ThreadContextData;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -29,24 +28,20 @@ public enum BehaviorManager implements IApplicationContextAware {
 		Set<Class<? extends IBehaviorBuilder>> types = context.getSubTypesOf(IBehaviorBuilder.class);
 		for (Class<? extends IBehaviorBuilder> type : types) {
 			Object builder = context.getInstanceOfClass(type);
-			Method method = type.getMethod("buildExecutor", Robot.class);
+			Method method = type.getMethod("buildExecutor", Object.class);
 			datas.add(new BehaviorBuilderData(builder, method));
 		}
 	}
 
 	/**
 	 * 构造一个 root executor
-	 * @param robot
+	 * @param obj 传入的参数
 	 * @return
 	 */
-	BehaviorRootTree buildRootExecutor(Robot robot) {
-		ThreadContextData.put(Robot.class.getName(), robot);
-
+	public BehaviorRootTree buildRootExecutor(Object obj) {
 		BehaviorRootTree root = new BehaviorRootTree();
-		datas.forEach(data -> root.addChild(data.build(robot)));
+		datas.forEach(data -> root.addChild(data.build(obj)));
 		root.initialize();
-
-		ThreadContextData.removeKey(Robot.class.getName());
 		return root;
 	}
 
@@ -59,14 +54,14 @@ public enum BehaviorManager implements IApplicationContextAware {
 			this.method = method;
 		}
 
-		public IBehaviorExecutor build(Robot robot){
+		public IBehaviorNode build(Object param){
 			Object o = null;
 			try {
-				o = method.invoke(obj, robot);
+				o = method.invoke(obj, param);
 			} catch (IllegalAccessException | InvocationTargetException e) {
 				throw new CustomException(e, "Call method {}.{} error!", obj.getClass().getSimpleName(), method.getName());
 			}
-			return ((IBehaviorExecutor) o);
+			return ((IBehaviorNode) o);
 		}
 	}
 }

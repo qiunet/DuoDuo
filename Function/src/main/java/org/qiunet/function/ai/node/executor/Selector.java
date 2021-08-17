@@ -1,9 +1,10 @@
-package org.qiunet.game.test.behavior.node.executor;
+package org.qiunet.function.ai.node.executor;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
-import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
+
+import java.util.List;
 
 /***
  * 或行为逻辑
@@ -31,7 +32,7 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 	 */
 	private int startIndex;
 	/**
-	 * 当前执行索引
+     * 当前执行索引
 	 */
 	private int currIndex;
 
@@ -45,15 +46,12 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 
 	@Override
 	public void initialize() {
-		if (nodes.isEmpty()) {
-			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
-		}
 		this.currIndex = -1;
 	}
 
 	@Override
 	public boolean preCondition() {
-		for (IBehaviorNode node : nodes) {
+		for (IBehaviorNode node : getChildNodes()) {
 			if (node.preCondition()) {
 				return true;
 			}
@@ -63,22 +61,23 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 
 	@Override
 	public ActionStatus execute() {
-		for (currIndex = this.startIndex(); currIndex < nodes.size(); currIndex++) {
-			this.currentBehavior = nodes.get(currIndex);
+		List<IBehaviorNode> childNodes = this.getChildNodes();
+		for (currIndex = this.startIndex(); currIndex < childSize(); currIndex++) {
+			IBehaviorNode currentBehavior = childNodes.get(currIndex);
 			if (! prioritySelector) {
 				this.startIndex = currIndex;
 			}
-			boolean preCondition = this.currentBehavior.preCondition();
+			boolean preCondition = currentBehavior.preCondition();
 			if (! preCondition) {
 				continue;
 			}
 
-			ActionStatus status = this.currentBehavior.run();
+			ActionStatus status = currentBehavior.run();
 			if (status != ActionStatus.FAILURE) {
 				return status;
 			}
 
-			if (currIndex < nodes.size() - 1) {
+			if (currIndex < childNodes.size() - 1) {
 				try {
 					Thread.sleep(EVERY_NODE_SLEEP_MS);
 				} catch (InterruptedException e) {
@@ -103,7 +102,7 @@ public class Selector extends BaseBehaviorExecutor<Selector> {
 			return currIndex;
 		}
 
-		if (startIndex >= nodes.size()) {
+		if (startIndex >= childSize()) {
 			startIndex = 0;
 		}
 

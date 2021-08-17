@@ -1,4 +1,4 @@
-package org.qiunet.game.test.behavior.node;
+package org.qiunet.function.ai.node;
 
 /***
  * 节点装饰类接口.

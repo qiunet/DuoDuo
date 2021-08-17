@@ -1,9 +1,9 @@
-package org.qiunet.game.test.behavior.node.executor;
+package org.qiunet.function.ai.node.executor;
 
 import com.google.common.collect.Sets;
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.math.MathUtil;
 
@@ -26,6 +26,10 @@ public class Random extends BaseBehaviorExecutor<Random> {
 	 */
 	private final Set<IBehaviorNode> executedNodes = Sets.newHashSet();
 	/**
+	 * 当前执行的节点
+	 */
+	private IBehaviorNode currentBehavior;
+	/**
 	 * 是否排除已经执行过的node
 	 */
 	private final boolean excludeExecuted;
@@ -40,7 +44,7 @@ public class Random extends BaseBehaviorExecutor<Random> {
 
 	@Override
 	public boolean preCondition() {
-		for (IBehaviorNode node : nodes) {
+		for (IBehaviorNode node : getChildNodes()) {
 			if (executedNodes.contains(node)) {
 				continue;
 			}
@@ -53,13 +57,13 @@ public class Random extends BaseBehaviorExecutor<Random> {
 
 	@Override
 	public void initialize() {
-		if (nodes.isEmpty()) {
+		if (getChildNodes().isEmpty()) {
 			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
-
-		if (nodes.size() == executedNodes.size()) {
+		if (childSize() == executedNodes.size()) {
 			executedNodes.clear();
 		}
+		this.currentBehavior = null;
 	}
 
 	@Override
@@ -69,7 +73,7 @@ public class Random extends BaseBehaviorExecutor<Random> {
 			return this.currentBehavior.run();
 		}
 
-		HashSet<IBehaviorNode> set = Sets.newHashSet(nodes);
+		HashSet<IBehaviorNode> set = Sets.newHashSet(getChildNodes());
 		set.removeAll(executedNodes);
 
 		int totalWeight = 0;

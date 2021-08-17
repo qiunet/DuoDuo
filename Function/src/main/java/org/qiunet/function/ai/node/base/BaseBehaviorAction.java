@@ -1,9 +1,7 @@
-package org.qiunet.game.test.behavior.node.base;
+package org.qiunet.function.ai.node.base;
 
-import org.qiunet.function.condition.IConditions;
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorAction;
-import org.qiunet.game.test.robot.Robot;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -13,13 +11,6 @@ import org.qiunet.utils.exceptions.CustomException;
  * 2021-07-07 10:37
  */
 public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBehaviorAction {
-	/**
-	 * 前置条件
-	 */
-	protected IConditions<Robot> preCondition;
-	public BaseBehaviorAction(IConditions<Robot> preCondition) {
-		this.preCondition = preCondition;
-	}
 
 	@Override
 	public ActionStatus run() {

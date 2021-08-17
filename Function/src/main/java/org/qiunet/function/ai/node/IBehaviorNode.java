@@ -1,6 +1,6 @@
-package org.qiunet.game.test.behavior.node;
+package org.qiunet.function.ai.node;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
+import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.utils.math.IWeightObj;
 
 /***
@@ -12,6 +12,10 @@ import org.qiunet.utils.math.IWeightObj;
  * 2021-07-05 09:57
  */
 public interface IBehaviorNode extends IWeightObj {
+	/**
+	 * 构造后的检查
+	 */
+	default void check() {}
 	/**
 	 * 初始化
 	 */

@@ -1,7 +1,7 @@
-package org.qiunet.game.test.behavior.node.base;
+package org.qiunet.function.ai.node.base;
 
-import org.qiunet.game.test.behavior.node.IBehaviorDecorator;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
+import org.qiunet.function.ai.node.IBehaviorDecorator;
+import org.qiunet.function.ai.node.IBehaviorNode;
 
 /***
  * 装饰节点父类

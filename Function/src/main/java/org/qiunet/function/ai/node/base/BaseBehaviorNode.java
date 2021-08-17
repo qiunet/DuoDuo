@@ -1,8 +1,8 @@
-package org.qiunet.game.test.behavior.node.base;
+package org.qiunet.function.ai.node.base;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorExecutor;
+import org.qiunet.function.ai.node.IBehaviorNode;
 
 /***
  *  几点类型

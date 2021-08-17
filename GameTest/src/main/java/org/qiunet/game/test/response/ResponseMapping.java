@@ -3,7 +3,7 @@ package org.qiunet.game.test.response;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
-import org.qiunet.game.test.behavior.node.IBehaviorAction;
+import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;

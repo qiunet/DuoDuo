@@ -1,6 +1,6 @@
-package org.qiunet.game.test.robot;
+package org.qiunet.function.ai.node.root;
 
-import org.qiunet.game.test.behavior.node.executor.Selector;
+import org.qiunet.function.ai.node.executor.Selector;
 
 /***
  *  执行器ROOT
@@ -8,7 +8,7 @@ import org.qiunet.game.test.behavior.node.executor.Selector;
  * qiunet
  * 2021/7/26 09:37
  **/
-final class BehaviorRootTree extends Selector {
+public final class BehaviorRootTree extends Selector {
 
 	public void tick(){
 		if (! isRunning()) {

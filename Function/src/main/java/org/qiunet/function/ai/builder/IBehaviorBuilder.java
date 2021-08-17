@@ -1,6 +1,6 @@
-package org.qiunet.game.test.behavior.builder;
+package org.qiunet.function.ai.builder;
 
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
+import org.qiunet.function.ai.node.IBehaviorNode;
 
 /***
  * 构造一个流程行为.

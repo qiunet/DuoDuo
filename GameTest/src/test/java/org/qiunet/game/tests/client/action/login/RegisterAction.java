@@ -1,8 +1,9 @@
 package org.qiunet.game.tests.client.action.login;
 
+import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.condition.Conditions;
-import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.response.TestResponse;
+import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.client.data.condition.RandomNamePresent;
@@ -20,8 +21,8 @@ import org.qiunet.game.tests.protocol.proto.RegisterResponse;
  **/
 public class RegisterAction extends TestAction {
 
-	public RegisterAction() {
-		super(new Conditions<>(new RandomNamePresent(), new RegisterCountCondition(3)));
+	public RegisterAction(Robot robot) {
+		super(robot, new Conditions<>(new RandomNamePresent(), new RegisterCountCondition(3)));
 	}
 
 	@Override

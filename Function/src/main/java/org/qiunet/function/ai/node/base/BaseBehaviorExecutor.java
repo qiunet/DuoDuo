@@ -1,8 +1,9 @@
-package org.qiunet.game.test.behavior.node.base;
+package org.qiunet.function.ai.node.base;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.qiunet.game.test.behavior.node.IBehaviorExecutor;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
+import org.qiunet.function.ai.node.IBehaviorExecutor;
+import org.qiunet.function.ai.node.IBehaviorNode;
 
 import java.util.List;
 
@@ -16,16 +17,17 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 	/**
 	 * 节点内所有的Node
 	 */
-	protected final List<IBehaviorNode> nodes = Lists.newArrayList();
-	/**
-	 * 当前执行的节点
-	 * 如果是run状态. 直接执行该对象的update.
-	 */
-	protected IBehaviorNode currentBehavior;
+	private final List<IBehaviorNode> nodes = Lists.newArrayList();
 
 	@Override
 	public void removeChild(IBehaviorNode child) {
 		nodes.remove(child);
+		this.check();
+	}
+
+	@Override
+	public int childSize() {
+		return nodes.size();
 	}
 
 	/**
@@ -38,6 +40,11 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 			this.nodes.add(action);
 		}
 		return (T)this;
+	}
+
+	@Override
+	public List<IBehaviorNode> getChildNodes() {
+		return ImmutableList.copyOf(nodes);
 	}
 
 	@Override

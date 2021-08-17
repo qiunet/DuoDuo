@@ -1,8 +1,9 @@
 package org.qiunet.game.tests.client.action.login;
 
+import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.condition.ConditionsNot;
-import org.qiunet.game.test.behavior.enums.ActionStatus;
 import org.qiunet.game.test.response.TestResponse;
+import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.client.data.condition.LoginCondition;
@@ -18,8 +19,8 @@ import org.qiunet.game.tests.protocol.proto.LoginResponse;
  **/
 public class LoginAction extends TestAction {
 
-	public LoginAction() {
-		super(new ConditionsNot<>(new LoginCondition()));
+	public LoginAction(Robot robot) {
+		super(robot, new ConditionsNot<>(new LoginCondition()));
 	}
 
 	@Override

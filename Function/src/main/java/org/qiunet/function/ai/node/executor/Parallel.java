@@ -1,9 +1,9 @@
-package org.qiunet.game.test.behavior.node.executor;
+package org.qiunet.function.ai.node.executor;
 
 import com.google.common.collect.Lists;
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +70,7 @@ public class Parallel extends BaseBehaviorExecutor<Parallel> {
 				it.remove();
 			}
 		} else {
-			for (IBehaviorNode node : nodes) {
+			for (IBehaviorNode node : this.getChildNodes()) {
 				ActionStatus status = node.run();
 				if (status == ActionStatus.SUCCESS) {
 					successCount ++;
@@ -85,7 +85,7 @@ public class Parallel extends BaseBehaviorExecutor<Parallel> {
 		if (! runningNodes.isEmpty()) {
 			return ActionStatus.RUNNING;
 		}
-		return this.policy.success(successCount, failCount, nodes.size())  ? ActionStatus.SUCCESS : ActionStatus.FAILURE;
+		return this.policy.success(successCount, failCount, childSize())  ? ActionStatus.SUCCESS : ActionStatus.FAILURE;
 	}
 
 	/**

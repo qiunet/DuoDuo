@@ -1,4 +1,4 @@
-package org.qiunet.game.test.behavior.node;
+package org.qiunet.function.ai.node;
 
 /***
  * 具体的测试动作.

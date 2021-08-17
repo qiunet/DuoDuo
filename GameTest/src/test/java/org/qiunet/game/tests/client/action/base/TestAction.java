@@ -2,12 +2,11 @@ package org.qiunet.game.tests.client.action.base;
 
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.function.ai.node.base.BaseBehaviorAction;
 import org.qiunet.function.condition.IConditions;
-import org.qiunet.game.test.behavior.node.base.BaseBehaviorAction;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.test.server.IServer;
 import org.qiunet.game.tests.server.type.ServerType;
-import org.qiunet.utils.thread.ThreadContextData;
 
 /***
  * 基础的TestActionNode
@@ -20,15 +19,19 @@ public abstract class TestAction extends BaseBehaviorAction implements IChannelM
 	/**
 	 * 机器人
 	 */
-	private final Robot robot;
+	protected final Robot robot;
+	/**
+	 * 前置条件
+	 */
+	protected IConditions<Robot> preCondition;
 	/**
 	 * 使用的连接方式
 	 */
 	private final IServer server = ServerType.LC_ONLINE;
 
-	public TestAction(IConditions<Robot> preConditions) {
-		super(preConditions);
-		this.robot = ThreadContextData.get(Robot.class.getName());
+	public TestAction(Robot robot, IConditions<Robot> preConditions) {
+		this.preCondition = preConditions;
+		this.robot = robot;
 	}
 
 	@Override

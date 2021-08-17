@@ -1,9 +1,11 @@
-package org.qiunet.game.test.behavior.node.executor;
+package org.qiunet.function.ai.node.executor;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.behavior.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 import org.qiunet.utils.exceptions.CustomException;
+
+import java.util.List;
 
 /***
  * 顺序执行容器 (与行为)
@@ -22,7 +24,7 @@ public class Sequence extends BaseBehaviorExecutor<Sequence> {
 
 	@Override
 	public boolean preCondition() {
-		for (IBehaviorNode node : nodes) {
+		for (IBehaviorNode node : getChildNodes()) {
 			if (! node.preCondition()) {
 				return false;
 			}
@@ -32,7 +34,7 @@ public class Sequence extends BaseBehaviorExecutor<Sequence> {
 
 	@Override
 	public void initialize() {
-		if (nodes.isEmpty()) {
+		if (childSize() == 0) {
 			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
 		this.currIndex = 0;
@@ -40,18 +42,19 @@ public class Sequence extends BaseBehaviorExecutor<Sequence> {
 
 	@Override
 	public ActionStatus execute() {
-		for (; currIndex < nodes.size(); currIndex++) {
-			this.currentBehavior = nodes.get(currIndex);
-			if (! this.currentBehavior.preCondition()) {
+		List<IBehaviorNode> childNodes = this.getChildNodes();
+		for (; currIndex < childSize(); currIndex++) {
+			IBehaviorNode currentBehavior = childNodes.get(currIndex);
+			if (! currentBehavior.preCondition()) {
 				return ActionStatus.FAILURE;
 			}
 
-			ActionStatus status = this.currentBehavior.run();
+			ActionStatus status = currentBehavior.run();
 			if (status != ActionStatus.SUCCESS) {
 				return status;
 			}
 
-			if (currIndex < nodes.size() - 1) {
+			if (currIndex < childSize() - 1) {
 				try {
 					Thread.sleep(EVERY_NODE_SLEEP_MS);
 				} catch (InterruptedException e) {

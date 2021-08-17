@@ -1,4 +1,4 @@
-package org.qiunet.game.test.behavior.enums;
+package org.qiunet.function.ai.enums;
 
 /***
  * 状态

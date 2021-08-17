@@ -1,6 +1,7 @@
 package org.qiunet.game.tests.client.action.login;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.condition.AuthCondition;
 
@@ -12,8 +13,8 @@ import org.qiunet.game.tests.client.data.condition.AuthCondition;
  **/
 public class PlayerIndexAction extends TestAction {
 
-	public PlayerIndexAction() {
-		super(new AuthCondition());
+	public PlayerIndexAction(Robot robot) {
+		super(robot, new AuthCondition());
 	}
 
 	@Override

@@ -1,4 +1,8 @@
-package org.qiunet.game.test.behavior.node;
+package org.qiunet.function.ai.node;
+
+import org.qiunet.utils.exceptions.CustomException;
+
+import java.util.List;
 
 /***
  * 行为执行者
@@ -18,4 +22,23 @@ public interface IBehaviorExecutor extends IBehaviorNode {
 	 * @param child 需要移除的节点
 	 */
 	void removeChild(IBehaviorNode child);
+
+	@Override
+	default void check() {
+		if (getChildNodes().isEmpty()) {
+			throw new CustomException("child nodes is empty!");
+		}
+		getChildNodes().forEach(IBehaviorNode::check);
+	}
+
+	/**
+	 * 获得所有的node
+	 * @return
+	 */
+	List<IBehaviorNode> getChildNodes();
+	/**
+	 *  子节点数
+	 * @return
+	 */
+	int childSize();
 }

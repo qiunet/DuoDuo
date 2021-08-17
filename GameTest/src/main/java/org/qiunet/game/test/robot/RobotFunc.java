@@ -15,7 +15,9 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
-import org.qiunet.game.test.behavior.node.IBehaviorAction;
+import org.qiunet.function.ai.node.IBehaviorAction;
+import org.qiunet.function.ai.node.root.BehaviorManager;
+import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.game.test.response.ResponseMapping;
 import org.qiunet.game.test.server.IServer;
 import org.qiunet.utils.async.future.DFuture;
@@ -55,7 +57,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	private final BehaviorRootTree behaviorRootTree;
 
 	protected RobotFunc() {
-		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor(((Robot) this));
+		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor((this));
 		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), 20, TimeUnit.MILLISECONDS);
 	}
 

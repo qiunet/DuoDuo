@@ -1,8 +1,8 @@
-package org.qiunet.game.test.behavior.node.decorator;
+package org.qiunet.function.ai.node.decorator;
 
-import org.qiunet.game.test.behavior.enums.ActionStatus;
-import org.qiunet.game.test.behavior.node.IBehaviorNode;
-import org.qiunet.game.test.behavior.node.base.BaseDecorator;
+import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.base.BaseDecorator;
 
 /***
  * 使颠倒
