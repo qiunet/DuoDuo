@@ -76,7 +76,7 @@ public class Argument<T> {
 
 	/**
 	 * 是否有存储值.
-	 * @return 没有false
+	 * @return null 返回true
 	 */
 	public boolean isNull(){
 		return refData.get() == null;
