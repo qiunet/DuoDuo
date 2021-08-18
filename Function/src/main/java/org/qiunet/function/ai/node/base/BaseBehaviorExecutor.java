@@ -53,6 +53,11 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 	}
 
 	@Override
+	public void reset() {
+		nodes.forEach(IBehaviorNode::reset);
+	}
+
+	@Override
 	public void release() {
 		nodes.forEach(IBehaviorNode::release);
 	}

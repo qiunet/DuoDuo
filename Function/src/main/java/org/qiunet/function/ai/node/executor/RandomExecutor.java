@@ -68,6 +68,13 @@ public class RandomExecutor extends BaseBehaviorExecutor<RandomExecutor> {
 	}
 
 	@Override
+	public void reset() {
+		super.reset();
+		this.currentBehavior = null;
+		this.executedNodes.clear();
+	}
+
+	@Override
 	public ActionStatus execute() {
 		if (isRunning()) {
 			// 如果是执行中的对象.直接调用run方法.

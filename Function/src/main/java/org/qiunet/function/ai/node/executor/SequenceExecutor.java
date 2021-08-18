@@ -21,6 +21,11 @@ public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 	 */
 	private int currIndex;
 
+	@Override
+	public void reset() {
+		super.reset();
+		this.currIndex = 0;
+	}
 
 	@Override
 	public boolean preCondition() {

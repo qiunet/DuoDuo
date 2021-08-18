@@ -45,6 +45,13 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	}
 
 	@Override
+	public void reset() {
+		super.reset();
+		this.currIndex = -1;
+		this.startIndex = 0;
+	}
+
+	@Override
 	public void initialize() {
 		super.initialize();
 		this.currIndex = -1;

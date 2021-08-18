@@ -13,6 +13,10 @@ import org.qiunet.utils.math.IWeightObj;
  */
 public interface IBehaviorNode extends IWeightObj {
 	/**
+	 * 重置
+	 */
+	default void reset(){}
+	/**
 	 * 构造后的检查
 	 */
 	default void check() {}

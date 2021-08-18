@@ -88,6 +88,14 @@ public class ParallelExecutor extends BaseBehaviorExecutor<ParallelExecutor> {
 		return this.policy.success(successCount, failCount, childSize())  ? ActionStatus.SUCCESS : ActionStatus.FAILURE;
 	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		this.failCount = 0;
+		this.successCount = 0;
+		this.runningNodes.clear();
+	}
+
 	/**
 	 * 判断成功的策略
 	 * 如果是RUNNING 状态. 直接返回.
