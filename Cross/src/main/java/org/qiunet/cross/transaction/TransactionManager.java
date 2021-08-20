@@ -27,7 +27,7 @@ public enum TransactionManager {
 	instance;
 	private static final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 
-	private final IdGenerator idGenerator  = new DefaultIdGenerator();
+	private final IdGenerator<Long> idGenerator  = new DefaultIdGenerator();
 	/**
 	 * 保存映射关系
 	 */

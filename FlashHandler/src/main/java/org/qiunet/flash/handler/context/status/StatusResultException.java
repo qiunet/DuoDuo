@@ -29,7 +29,7 @@ public class StatusResultException extends RuntimeException {
 		return valueOf(result.getStatus(), result.getParams());
 	}
 
-	public static StatusResultException valueOf(IGameStatus status, Object[] args) {
+	public static StatusResultException valueOf(IGameStatus status, Object... args) {
 		if (args == null || args.length == 0) {
 			return cached.computeIfAbsent(status, StatusResultException::new);
 		}

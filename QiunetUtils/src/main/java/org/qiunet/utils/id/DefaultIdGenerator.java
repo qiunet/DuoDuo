@@ -7,9 +7,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author qiunet
  * 2020-06-27 21:32
  **/
-public class DefaultIdGenerator implements IdGenerator {
+public class DefaultIdGenerator implements IdGenerator<Long> {
 
-	private AtomicLong generator;
+	private final AtomicLong generator;
 
 	public DefaultIdGenerator() {
 		this(0);
@@ -20,7 +20,7 @@ public class DefaultIdGenerator implements IdGenerator {
 	}
 
 	@Override
-	public long makeId() {
+	public Long makeId() {
 		return this.generator.incrementAndGet();
 	}
 }

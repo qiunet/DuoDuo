@@ -7,10 +7,10 @@ package org.qiunet.utils.id;
  * @author qiunet
  * 2020-06-27 21:29
  **/
-public interface IdGenerator {
+public interface IdGenerator<T> {
 	/**
 	 * 生成id
 	 * @return
 	 */
-	long makeId();
+	T makeId();
 }
