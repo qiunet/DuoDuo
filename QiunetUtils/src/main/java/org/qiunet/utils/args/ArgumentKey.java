@@ -39,8 +39,8 @@ public final class ArgumentKey<T> {
 	 * @param <Container> 容器类
 	 * @return true 空
 	 */
-	public <Container extends IArgsContainer> boolean isEmpty(Container container){
-		return container.isEmpty(this);
+	public <Container extends IArgsContainer> boolean isNull(Container container){
+		return container.isNull(this);
 	}
 
 	/**

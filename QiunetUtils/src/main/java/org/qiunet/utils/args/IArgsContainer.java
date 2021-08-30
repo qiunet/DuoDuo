@@ -89,7 +89,7 @@ public interface IArgsContainer {
 	 * 是否有存储值
 	 * @return
 	 */
-	default boolean isEmpty(ArgumentKey key) {
+	default boolean isNull(ArgumentKey key) {
 		Argument argument = getArgument(key, false);
 		return argument == null || argument.isNull();
 	}
