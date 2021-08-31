@@ -1,7 +1,10 @@
 package org.qiunet.function.ai.node.base;
 
+import com.google.common.collect.ImmutableList;
 import org.qiunet.function.ai.node.IBehaviorDecorator;
 import org.qiunet.function.ai.node.IBehaviorNode;
+
+import java.util.List;
 
 /***
  * 装饰节点父类
@@ -15,9 +18,22 @@ public abstract class BaseDecorator extends BaseBehaviorNode implements IBehavio
 	 * 需要翻转的节点
 	 */
 	protected IBehaviorNode node;
+	private final List<IBehaviorNode> nodes;
 
 	public BaseDecorator(IBehaviorNode node) {
 		this.node = node;
+		node.setParent(this);
+		this.nodes = ImmutableList.of(this.node);
+	}
+
+	@Override
+	public List<IBehaviorNode> getChildNodes() {
+		return this.nodes;
+	}
+
+	@Override
+	public IBehaviorNode getNode() {
+		return node;
 	}
 
 	@Override

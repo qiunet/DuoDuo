@@ -31,6 +31,11 @@ abstract class BaseBehaviorNode implements IBehaviorNode {
 	}
 
 	@Override
+	public IBehaviorExecutor parent() {
+		return parent;
+	}
+
+	@Override
 	public ActionStatus run() {
 		ActionStatus status = execute();
 		this.running = status == ActionStatus.RUNNING;

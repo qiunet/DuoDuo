@@ -48,6 +48,12 @@ public interface IBehaviorNode extends IWeightObj {
 	 * @param parent
 	 */
 	void setParent(IBehaviorExecutor parent);
+
+	/**
+	 * 得到父节点
+	 * @return
+	 */
+	IBehaviorExecutor parent();
 	/**
 	 * 权重.
 	 * 在 RANDOM 控制器下. 可以按照权重来.
