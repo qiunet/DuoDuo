@@ -6,12 +6,16 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRes
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 
 /***
  * 测试用例里面response 扫描
@@ -26,36 +30,51 @@ public class ResponseMapping implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		this.handlerStatusTips(context);
+		this.handlerStatusTips(context, argsContainer);
 		this.handlerResponse(context);
 	}
 
-	private void handlerStatusTips(IApplicationContext context) throws Exception{
+	private void handlerStatusTips(IApplicationContext context, ArgsContainer argsContainer) throws Exception{
+		if (argsContainer.isNull(IStatusTipsHandler.STATUS_MAPPING_HANDLER)) {
+			throw new CustomException("IStatusTipsHandler.STATUS_MAPPING_HANDLER need set!");
+		}
+
+		Function<Method, Set<Integer>> mapping = argsContainer.getArgument(IStatusTipsHandler.STATUS_MAPPING_HANDLER).get();
 		context.getSubTypesOf(IStatusTipsHandler.class).forEach(clz -> {
-			if (! clz.isAssignableFrom(IBehaviorAction.class)) {
+			if (
+					Modifier.isAbstract(clz.getModifiers())
+				||  Modifier.isInterface(clz.getModifiers())
+			) {
+				return;
+			}
+
+			if (! IBehaviorAction.class.isAssignableFrom(clz)) {
 				throw new CustomException("game.test status tips [clz:{}] need be a IBehaviorAction!", clz.getName());
 			}
+
 			Method mtd = null;
 			try {
 				mtd = clz.getMethod("statusHandler", StatusTipsResponse.class);
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			}
-			if (mtd == null) {
+			if (mtd == null || mtd.getAnnotations().length == 0) {
 				return;
 			}
 
-			StatusTipsHandler handler = mtd.getAnnotation(StatusTipsHandler.class);
-			if (handler == null) {
+			Set<Integer> set = mapping.apply(mtd);
+			if (set == null || set.isEmpty()) {
 				return;
 			}
 
-			for (int status : handler.value()) {
+			Method finalMtd = mtd;
+			ReflectUtil.makeAccessible(mtd);
+			set.forEach((status) -> {
 				if (statusMapping.containsKey(status)) {
 					throw new CustomException("game.test status tips [id:{}] is repeated!", status);
 				}
-				statusMapping.put(status, mtd);
-			}
+				statusMapping.put(status, finalMtd);
+			});
 		});
 	}
 
@@ -66,7 +85,7 @@ public class ResponseMapping implements IApplicationContextAware {
 				throw new CustomException("game.test Response [id:{}] is repeated!", annotation.value());
 			}
 
-			if (! mtd.getDeclaringClass().isAssignableFrom(IBehaviorAction.class)) {
+			if (! IBehaviorAction.class.isAssignableFrom(mtd.getDeclaringClass())) {
 				throw new CustomException("Response [id:{}] need define in IBehaviorAction!", annotation.value());
 			}
 
@@ -74,10 +93,11 @@ public class ResponseMapping implements IApplicationContextAware {
 				throw new CustomException("Response [id:{}] just a IPbChannelData parameter.", annotation.value());
 			}
 
-			if (! mtd.getParameterTypes()[0].isAssignableFrom(IpbChannelData.class)) {
+			if (! IpbChannelData.class.isAssignableFrom(mtd.getParameterTypes()[0])) {
 				throw new CustomException("Response [id:{}] parameter need implement IPbChannelData.", annotation.value());
 			}
 			methodMapping.put(annotation.value(), mtd);
+			ReflectUtil.makeAccessible(mtd);
 		});
 	}
 

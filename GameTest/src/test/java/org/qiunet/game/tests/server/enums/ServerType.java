@@ -1,4 +1,4 @@
-package org.qiunet.game.tests.server.type;
+package org.qiunet.game.tests.server.enums;
 
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;

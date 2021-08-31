@@ -32,6 +32,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction
 
 	public BaseRobotAction(Robot robot, IConditions<Robot> preConditions, IServer server) {
 		this.preCondition = preConditions;
+		robot.registerAction(this);
 		this.server = server;
 		this.robot = robot;
 	}

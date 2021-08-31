@@ -19,7 +19,7 @@ public class LoginBehaviorBuilder implements IBehaviorBuilder<Robot> {
 	public IBehaviorNode buildExecutor(Robot robot) {
 		SequenceExecutor sequence = new SequenceExecutor();
 		sequence.addChild(new LoginAction(robot));
-		SequenceExecutor registerBehavior = new SequenceExecutor().addChild(new RandomAction(robot), new RegisterAction(robot), new PlayerIndexAction(robot));
+		SequenceExecutor registerBehavior = new SequenceExecutor().addChild(new RandomNameAction(robot), new RegisterAction(robot), new PlayerIndexAction(robot));
 		sequence.addChild(new SelectorExecutor().addChild(registerBehavior, new PlayerIndexAction(robot)));
 		return new CounterNode(sequence, 1);
 	}

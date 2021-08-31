@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.game.tests.server.context.StartupContext;
-import org.qiunet.game.tests.server.type.ServerType;
+import org.qiunet.game.tests.server.enums.ServerType;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -48,7 +48,6 @@ public final class ServerStartup {
 				server.await();
 			}
 		}, "Client-Server-Startup");
-		thread.setDaemon(true);
 		thread.start();
 		LockSupport.park();
 	}

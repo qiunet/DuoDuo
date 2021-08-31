@@ -27,7 +27,12 @@ public class LoginAction extends TestAction {
 	public ActionStatus execute() {
 		LoginRequest loginRequest = LoginRequest.valueOf(robot.getAccount());
 		this.sendMessage(loginRequest);
-		return ActionStatus.SUCCESS;
+		return ActionStatus.RUNNING;
+	}
+
+	@Override
+	protected ActionStatus runningStatusUpdate() {
+		return 	BlackBoard.loginInfo.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	/**

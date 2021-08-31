@@ -18,5 +18,17 @@ public class PlayerIndexRequest implements IpbChannelData {
 	@Protobuf(description = "玩家id")
 	private long playerId;
 
+	public static PlayerIndexRequest valueOf(long playerId) {
+		PlayerIndexRequest req = new PlayerIndexRequest();
+		req.playerId = playerId;
+		return req;
+	}
 
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
+	}
 }

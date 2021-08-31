@@ -1,5 +1,6 @@
 package org.qiunet.game.tests.client.data;
 
+import org.qiunet.game.tests.protocol.proto.Item;
 import org.qiunet.game.tests.protocol.proto.LoginInfo;
 import org.qiunet.utils.args.ArgumentKey;
 
@@ -20,4 +21,8 @@ public interface BlackBoard {
 	 * 随机名称信息
 	 */
 	ArgumentKey<String> randomName = new ArgumentKey<>();
+	/**
+	 * 背包物品
+	 */
+	ArgumentKey<List<Item>> items = new ArgumentKey<>();
 }

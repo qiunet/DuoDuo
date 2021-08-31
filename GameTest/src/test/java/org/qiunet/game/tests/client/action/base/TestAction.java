@@ -3,7 +3,7 @@ package org.qiunet.game.tests.client.action.base;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.test.robot.action.BaseRobotAction;
-import org.qiunet.game.tests.server.type.ServerType;
+import org.qiunet.game.tests.server.enums.ServerType;
 
 /***
  * 基础的TestActionNode

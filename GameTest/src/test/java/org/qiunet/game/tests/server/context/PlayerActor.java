@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 	private final Logger logger = LoggerFactory.getLogger("PlayerActor");
 	private long playerId;
+	private String openId;
 
 	public PlayerActor(DSession session) {
 		super(session);
@@ -33,7 +34,11 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 		return playerId;
 	}
 
+	public void setOpenId(String openId) {
+		this.openId = openId;
+	}
+
 	public String getOpenId() {
-		return null;
+		return openId;
 	}
 }

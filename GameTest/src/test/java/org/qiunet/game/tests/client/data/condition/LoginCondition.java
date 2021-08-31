@@ -15,6 +15,6 @@ public class LoginCondition extends BaseRobotCondition {
 
 	@Override
 	public StatusResult verify(Robot robot) {
-		return (! BlackBoard.loginInfo.isEmpty(robot)) ? StatusResult.SUCCESS : StatusResult.FAIL;
+		return (! BlackBoard.loginInfo.isNull(robot)) ? StatusResult.SUCCESS : StatusResult.FAIL;
 	}
 }

@@ -18,7 +18,9 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRes
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.root.BehaviorManager;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
+import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.response.ResponseMapping;
+import org.qiunet.game.test.robot.action.BaseRobotAction;
 import org.qiunet.game.test.server.IServer;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
@@ -97,7 +99,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 		private void response0(DSession session, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RESP) {
-				this.handlerStatus(session, data);
+				this.handlerStatus(data);
 				return;
 			}
 
@@ -119,19 +121,30 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			}
 		}
 
-		private void handlerStatus(DSession session, MessageContent data) {
+		private void handlerStatus(MessageContent data) {
 			StatusTipsResponse response = ProtobufDataManager.decode(StatusTipsResponse.class, data.bytes());
 			Method method = ResponseMapping.getStatusMethodByID(response.getStatus());
 			if (method == null) {
-				session.close(CloseCause.LOGOUT);
-				brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");
+				brokeRobot("status ID ["+response.getStatus()+"] handler not define!");
 				return;
 			}
+
+			Class<?> declaringClass = method.getDeclaringClass();
+			IBehaviorAction action = actionClzMapping.get(declaringClass);
+			((IStatusTipsHandler) action).statusHandler(response);
 		}
 	}
 
-
+	/**
+	 * 断开所有session . 打印message
+	 * @param message
+	 */
 	public void brokeRobot(String message) {
+		clients.forEach((key, session) -> session.close(CloseCause.LOGOUT));
 		LoggerType.DUODUO_GAME_TEST.error(message);
+	}
+
+	public void registerAction(BaseRobotAction action) {
+		this.actionClzMapping.put(action.getClass(), action);
 	}
 }

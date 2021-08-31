@@ -1,4 +1,6 @@
-package org.qiunet.game.test.response;
+package org.qiunet.game.tests.client.anno;
+
+import org.qiunet.game.tests.server.enums.GameStatus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,9 +17,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StatusTipsHandler {
 	/**
-	 *  status id
+	 *  status id array.
 	 *
 	 * @return status message id
 	 */
-	int [] value();
+	GameStatus [] value();
 }

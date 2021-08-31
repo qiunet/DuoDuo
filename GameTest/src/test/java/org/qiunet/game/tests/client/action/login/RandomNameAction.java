@@ -16,16 +16,21 @@ import org.qiunet.game.tests.protocol.proto.RandomNameResponse;
  * qiunet
  * 2021/8/8 10:08
  **/
-public class RandomAction extends TestAction {
+public class RandomNameAction extends TestAction {
 
-	public RandomAction(Robot robot) {
+	public RandomNameAction(Robot robot) {
 		super(robot, new RegisterCountCondition(3));
 	}
 
 	@Override
 	public ActionStatus execute() {
 		this.sendMessage(RandomNameRequest.valueOf());
-		return ActionStatus.SUCCESS;
+		return ActionStatus.RUNNING;
+	}
+
+	@Override
+	protected ActionStatus runningStatusUpdate() {
+		return BlackBoard.randomName.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	@TestResponse(ProtocolId.Login.RANDOM_NAME_RSP)
