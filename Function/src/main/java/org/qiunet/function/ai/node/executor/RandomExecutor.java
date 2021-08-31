@@ -48,7 +48,7 @@ public class RandomExecutor extends BaseBehaviorExecutor<RandomExecutor> {
 			if (executedNodes.contains(node)) {
 				continue;
 			}
-			if (node.preCondition()) {
+			if (node.isRunning() || node.preCondition()) {
 				return true;
 			}
 		}

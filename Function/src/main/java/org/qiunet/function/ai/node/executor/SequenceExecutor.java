@@ -40,12 +40,12 @@ public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 	public ActionStatus execute() {
 		List<IBehaviorNode> childNodes = this.getChildNodes();
 		for (; currIndex < childSize(); currIndex++) {
-			IBehaviorNode currentBehavior = childNodes.get(currIndex);
-			if (! currentBehavior.preCondition()) {
+			IBehaviorNode currentNode = childNodes.get(currIndex);
+			if (!currentNode.isRunning() && ! currentNode.preCondition()) {
 				return ActionStatus.FAILURE;
 			}
 
-			ActionStatus status = currentBehavior.run();
+			ActionStatus status = currentNode.run();
 			if (status != ActionStatus.SUCCESS) {
 				return status;
 			}

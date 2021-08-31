@@ -38,6 +38,9 @@ public abstract class BaseDecorator extends BaseBehaviorNode implements IBehavio
 
 	@Override
 	public boolean preCondition() {
+		if (node.isRunning()) {
+			return true;
+		}
 		return node.preCondition();
 	}
 }

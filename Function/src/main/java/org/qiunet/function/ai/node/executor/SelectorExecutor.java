@@ -62,7 +62,7 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 		List<IBehaviorNode> childNodes = this.getChildNodes();
 		int start = this.startIndex(), max = childSize();
 		for (currIndex = start; currIndex < max; currIndex++) {
-			IBehaviorNode currentBehavior = childNodes.get(currIndex);
+			IBehaviorNode currentNode = childNodes.get(currIndex);
 			if (! prioritySelector) {
 				this.startIndex = currIndex;
 				if (start > 0 && currIndex == max - 1) {
@@ -72,12 +72,12 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 				}
 			}
 
-			boolean preCondition = currentBehavior.preCondition();
+			boolean preCondition = currentNode.isRunning() || currentNode.preCondition();
 			if (! preCondition) {
 				continue;
 			}
 
-			ActionStatus status = currentBehavior.run();
+			ActionStatus status = currentNode.run();
 			if (status != ActionStatus.FAILURE) {
 				return status;
 			}

@@ -24,4 +24,8 @@ public enum ActionStatus {
 	 *  进行后续的操作.
 	 */
 	RUNNING,
+	;
+	public boolean isRunning(){
+		return this == RUNNING;
+	}
 }

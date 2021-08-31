@@ -17,7 +17,9 @@ public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBe
 		if (! isRunning()) {
 			return super.run();
 		}
-		return runningStatusUpdate();
+		ActionStatus status = runningStatusUpdate();
+		this.running = status.isRunning();
+		return status;
 	}
 
 	protected ActionStatus runningStatusUpdate(){
