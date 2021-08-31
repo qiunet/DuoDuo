@@ -37,4 +37,13 @@ public interface IBehaviorExecutor extends IBehaviorNode {
 	 * @return
 	 */
 	int childSize();
+
+	/**
+	 * 控制器里面. 前面的action节点.可能会导致后面节点条件检查变动. 所以条件判断交给node去做.
+	 * @return
+	 */
+	@Override
+	default boolean preCondition() {
+		return true;
+	}
 }

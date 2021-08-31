@@ -28,16 +28,6 @@ public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 	}
 
 	@Override
-	public boolean preCondition() {
-		for (IBehaviorNode node : getChildNodes()) {
-			if (! node.preCondition()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
 	public void initialize() {
 		super.initialize();
 		if (childSize() == 0) {

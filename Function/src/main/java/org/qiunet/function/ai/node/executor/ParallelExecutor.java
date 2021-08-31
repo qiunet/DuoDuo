@@ -41,11 +41,6 @@ public class ParallelExecutor extends BaseBehaviorExecutor<ParallelExecutor> {
 	}
 
 	@Override
-	public boolean preCondition() {
-		return true;
-	}
-
-	@Override
 	public void release() {
 		this.runningNodes.clear();
 		this.successCount = 0;

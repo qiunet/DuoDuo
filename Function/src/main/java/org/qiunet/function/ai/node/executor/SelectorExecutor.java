@@ -58,16 +58,6 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	}
 
 	@Override
-	public boolean preCondition() {
-		for (IBehaviorNode node : getChildNodes()) {
-			if (node.preCondition()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
 	public ActionStatus execute() {
 		List<IBehaviorNode> childNodes = this.getChildNodes();
 		int start = this.startIndex(), max = childSize();
