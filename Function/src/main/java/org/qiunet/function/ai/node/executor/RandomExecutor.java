@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 /***
  *
@@ -38,7 +39,16 @@ public class RandomExecutor extends BaseBehaviorExecutor<RandomExecutor> {
 		this(false);
 	}
 
+	public RandomExecutor(Supplier<Boolean> conditionResult) {
+		this(conditionResult, false);
+	}
+
 	public RandomExecutor(boolean excludeExecuted) {
+		this(null, excludeExecuted);
+	}
+
+	public RandomExecutor(Supplier<Boolean> conditionResult, boolean excludeExecuted) {
+		super(conditionResult);
 		this.excludeExecuted = excludeExecuted;
 	}
 

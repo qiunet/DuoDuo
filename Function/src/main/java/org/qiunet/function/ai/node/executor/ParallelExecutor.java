@@ -7,6 +7,7 @@ import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 /***
  * 并发执行. 根据策略返回成功失败. 默认全部成功. 返回成功.
@@ -36,7 +37,16 @@ public class ParallelExecutor extends BaseBehaviorExecutor<ParallelExecutor> {
 		this(REQUIRE_ALL_SUCCESS);
 	}
 
+	public ParallelExecutor(Supplier<Boolean> conditionResult) {
+		this(conditionResult, REQUIRE_ALL_SUCCESS);
+	}
+
 	public ParallelExecutor(ISuccessPolicy policy) {
+		this(null, policy);
+	}
+
+	public ParallelExecutor(Supplier<Boolean> conditionResult, ISuccessPolicy policy) {
+		super(conditionResult);
 		this.policy = policy;
 	}
 

@@ -6,6 +6,7 @@ import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /***
  * 行为树的执行容器
@@ -18,6 +19,18 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 	 * 节点内所有的Node
 	 */
 	private final List<IBehaviorNode> nodes = Lists.newArrayList();
+	/**
+	 * 条件结果.
+	 */
+	private final Supplier<Boolean> conditionResult;
+
+	public BaseBehaviorExecutor(Supplier<Boolean> conditionResult) {
+		this.conditionResult = conditionResult;
+	}
+
+	public BaseBehaviorExecutor() {
+		this(null);
+	}
 
 	@Override
 	public void removeChild(IBehaviorNode child) {
@@ -50,6 +63,14 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 	@Override
 	public void initialize() {
 		nodes.forEach(IBehaviorNode::initialize);
+	}
+
+	@Override
+	public boolean preCondition() {
+		if (conditionResult == null) {
+			return true;
+		}
+		return conditionResult.get();
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /***
  * 顺序执行容器 (与行为)
@@ -20,6 +21,13 @@ public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
 	 * 当前执行
 	 */
 	private int currIndex;
+
+	public SequenceExecutor(Supplier<Boolean> conditionResult) {
+		super(conditionResult);
+	}
+
+	public SequenceExecutor() {
+	}
 
 	@Override
 	public void reset() {

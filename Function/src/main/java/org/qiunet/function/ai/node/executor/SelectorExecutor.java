@@ -5,6 +5,7 @@ import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /***
  * 或行为逻辑
@@ -40,7 +41,16 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 		this(true);
 	}
 
+	public SelectorExecutor(Supplier<Boolean> conditionResult) {
+		this(conditionResult, true);
+	}
+
 	public SelectorExecutor(boolean prioritySelector) {
+		this(null, prioritySelector);
+	}
+
+	public SelectorExecutor(Supplier<Boolean> conditionResult, boolean prioritySelector) {
+		super(conditionResult);
 		this.prioritySelector = prioritySelector;
 	}
 
