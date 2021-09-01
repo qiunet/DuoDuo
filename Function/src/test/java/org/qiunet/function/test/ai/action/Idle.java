@@ -15,7 +15,7 @@ import org.qiunet.utils.logger.LoggerType;
 public class Idle extends BaseAction {
 
 	public Idle(Hero hero) {
-		super(hero, new SeeGoblinCondition().invert().and(new SeeOmaCondition().invert()));
+		super(hero, new SeeGoblinCondition().not().and(new SeeOmaCondition().not()));
 	}
 
 	@Override

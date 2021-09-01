@@ -17,7 +17,11 @@ import org.qiunet.game.tests.server.handler.base.GameHandler;
 public class PlayerIndexHandler extends GameHandler<PlayerIndexRequest> {
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<PlayerIndexRequest> context) throws Exception {
+		PlayerIndexRequest requestData = context.getRequestData();
 
-		playerActor.sendMessage(PlayerIndexResponse.valueOf(Lists.newArrayList(Item.valueOf(1000, 1), Item.valueOf(1002, 2))));
+		playerActor.sendMessage(PlayerIndexResponse.valueOf(requestData.getPlayerId(),
+				Lists.newArrayList(Item.valueOf(1000, 1),
+						Item.valueOf(1002, 2)))
+		);
 	}
 }

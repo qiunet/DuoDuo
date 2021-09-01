@@ -5,10 +5,13 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.AuthCondition;
+import org.qiunet.game.tests.client.data.condition.RoleCountCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
+import org.qiunet.game.tests.protocol.proto.LoginInfo;
 import org.qiunet.game.tests.protocol.proto.PlayerIndexRequest;
 import org.qiunet.game.tests.protocol.proto.PlayerIndexResponse;
+
+import java.util.List;
 
 /***
  *
@@ -19,18 +22,20 @@ import org.qiunet.game.tests.protocol.proto.PlayerIndexResponse;
 public class PlayerIndexAction extends TestAction {
 
 	public PlayerIndexAction(Robot robot) {
-		super(robot, new AuthCondition());
+		super(robot, new RoleCountCondition(1));
 	}
 
 	@Override
 	protected ActionStatus execute() {
-		this.sendMessage(PlayerIndexRequest.valueOf(robot.getId()));
+		// 默认取最后一个角色. 客户端应该是玩家自己选择.
+		List<LoginInfo> loginInfos = BlackBoard.loginInfo.get(robot);
+		this.sendMessage(PlayerIndexRequest.valueOf(loginInfos.get(loginInfos.size() - 1).getPlayerId()));
 		return ActionStatus.RUNNING;
 	}
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return BlackBoard.items.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
+		return !robot.isAuth() ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)

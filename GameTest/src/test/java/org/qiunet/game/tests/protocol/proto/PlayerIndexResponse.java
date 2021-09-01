@@ -16,13 +16,19 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.PLAYER_INDEX_RSP;
  */
 @PbChannelData(ID = PLAYER_INDEX_RSP, desc = "玩家首页响应")
 public class PlayerIndexResponse implements IpbChannelData {
+	private long playerId;
 
 	private List<Item> items;
 
-	public static PlayerIndexResponse valueOf(List<Item> items) {
+	public static PlayerIndexResponse valueOf(long playerId, List<Item> items) {
 		PlayerIndexResponse response = new PlayerIndexResponse();
+		response.playerId = playerId;
 		response.items = items;
 		return response;
+	}
+
+	public long getPlayerId() {
+		return playerId;
 	}
 
 	public List<Item> getItems() {

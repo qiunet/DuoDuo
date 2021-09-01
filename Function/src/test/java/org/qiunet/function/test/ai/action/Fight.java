@@ -15,7 +15,7 @@ import org.qiunet.utils.logger.LoggerType;
 public class Fight extends BaseAction {
 
 	public Fight(Hero hero) {
-		super(hero, new SeeGoblinCondition().and(new SeeOmaCondition().invert()));
+		super(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
 	}
 
 	@Override

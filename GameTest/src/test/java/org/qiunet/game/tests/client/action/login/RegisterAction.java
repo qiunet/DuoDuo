@@ -26,11 +26,16 @@ public class RegisterAction extends TestAction {
 	 * 是否错误
 	 */
 	private int errorMsg;
+	/**
+	 * 已经完成注册
+	 */
+	private boolean registered;
 
 	@Override
 	public void release() {
 		super.release();
 		this.errorMsg = 0;
+		this.registered = false;
 	}
 
 	public RegisterAction(Robot robot) {
@@ -48,7 +53,7 @@ public class RegisterAction extends TestAction {
 		if (errorMsg > 0) {
 			return ActionStatus.FAILURE;
 		}
-		return robot.isAuth() ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
+		return registered ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
 	}
 
 	@Override
@@ -60,6 +65,6 @@ public class RegisterAction extends TestAction {
 	@TestResponse(ProtocolId.Login.REGISTER_RSP)
 	public void registerResp(RegisterResponse response) {
 		BlackBoard.loginInfo.get(robot).add(response.getLoginInfo());
-		robot.setId(response.getLoginInfo().getPlayerId());
+		this.registered = true;
 	}
 }

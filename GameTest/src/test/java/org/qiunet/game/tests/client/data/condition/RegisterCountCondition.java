@@ -29,7 +29,7 @@ public class RegisterCountCondition extends BaseRobotCondition {
 			return StatusResult.FAIL;
 		}
 		// 没有角色. 可以注册角色
-		if (BlackBoard.loginInfo.get(robot).size() < 1) {
+		if (BlackBoard.loginInfo.get(robot).isEmpty()) {
 			return StatusResult.SUCCESS;
 		}
 

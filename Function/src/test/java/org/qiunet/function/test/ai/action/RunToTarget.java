@@ -14,7 +14,7 @@ import org.qiunet.function.test.ai.condition.SeeOmaCondition;
 public class RunToTarget extends BaseAction {
 
 	public RunToTarget(Hero hero) {
-		super(hero, new SeeGoblinCondition().and(new SeeOmaCondition().invert()));
+		super(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
 	}
 
 	@Override

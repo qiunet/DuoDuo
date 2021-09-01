@@ -17,7 +17,7 @@ public class LoginBehaviorBuilder implements IBehaviorBuilder<Robot> {
 
 	@Override
 	public IBehaviorNode buildExecutor(Robot robot) {
-		SequenceExecutor sequence = new SequenceExecutor(() -> new AuthCondition().invert().verify(robot).isSuccess());
+		SequenceExecutor sequence = new SequenceExecutor(() -> new AuthCondition().not().verify(robot).isSuccess());
 		SequenceExecutor registerBehavior = new SequenceExecutor().addChild(new RandomNameAction(robot), new RegisterAction(robot), new PlayerIndexAction(robot));
 		sequence.addChild(new LoginAction(robot), new SelectorExecutor().addChild(registerBehavior, new PlayerIndexAction(robot)));
 		return sequence;
