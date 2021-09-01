@@ -25,6 +25,7 @@ public class RunToTarget extends BaseAction {
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
+		// 正常. 这里判断是否到坐标点了. 没有到返回RUNNING
 		hero.runFinished();
 		return ActionStatus.SUCCESS;
 	}

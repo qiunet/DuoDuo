@@ -30,7 +30,7 @@ public class PlayerIndexAction extends TestAction {
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return BlackBoard.items.isNull(robot) ? ActionStatus.SUCCESS : ActionStatus.FAILURE;
+		return BlackBoard.items.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)

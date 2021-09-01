@@ -25,6 +25,7 @@ import org.qiunet.game.test.server.IServer;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.lang.reflect.Method;
@@ -60,7 +61,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 	protected RobotFunc() {
 		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor((this));
-		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), 20, TimeUnit.MILLISECONDS);
+		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), MathUtil.random(20, 200), TimeUnit.MILLISECONDS);
 	}
 
 	/**

@@ -48,7 +48,7 @@ public class RegisterAction extends TestAction {
 		if (errorMsg > 0) {
 			return ActionStatus.FAILURE;
 		}
-		return robot.isAuth() ? ActionStatus.SUCCESS : ActionStatus.FAILURE;
+		return robot.isAuth() ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
 	}
 
 	@Override
