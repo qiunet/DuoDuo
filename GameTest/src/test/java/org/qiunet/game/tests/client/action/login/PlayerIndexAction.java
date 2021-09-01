@@ -41,5 +41,6 @@ public class PlayerIndexAction extends TestAction {
 	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)
 	protected void indexResp(PlayerIndexResponse response) {
 		BlackBoard.items.set(robot, response.getItems());
+		robot.setId(response.getPlayerId());
 	}
 }

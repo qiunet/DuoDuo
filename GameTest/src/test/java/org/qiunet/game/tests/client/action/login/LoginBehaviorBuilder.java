@@ -10,6 +10,9 @@ import org.qiunet.game.tests.client.data.condition.AuthCondition;
 /***
  * 登录的行为树构造.
  *
+ * 先拉去 loginInfo list
+ * 然后概率选取注册 或者 直接用list最后一个login info(在真实客户端. 这里应该是玩家选择角色), 请求playerIndex
+ *
  * qiunet
  * 2021/8/16 21:58
  **/
