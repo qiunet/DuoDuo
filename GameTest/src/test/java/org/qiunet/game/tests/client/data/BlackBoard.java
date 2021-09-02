@@ -1,7 +1,8 @@
 package org.qiunet.game.tests.client.data;
 
-import org.qiunet.game.tests.protocol.proto.Item;
-import org.qiunet.game.tests.protocol.proto.LoginInfo;
+import org.qiunet.game.tests.protocol.proto.login.Item;
+import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
+import org.qiunet.game.tests.protocol.proto.login.PlayerData;
 import org.qiunet.utils.args.ArgumentKey;
 
 import java.util.List;
@@ -25,4 +26,8 @@ public interface BlackBoard {
 	 * 背包物品
 	 */
 	ArgumentKey<List<Item>> items = new ArgumentKey<>();
+	/**
+	 * 玩家的数据
+	 */
+	ArgumentKey<PlayerData> playerData = new ArgumentKey<>();
 }

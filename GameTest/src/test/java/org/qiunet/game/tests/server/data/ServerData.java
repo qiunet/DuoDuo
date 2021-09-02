@@ -2,7 +2,7 @@ package org.qiunet.game.tests.server.data;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.qiunet.game.tests.protocol.proto.LoginInfo;
+import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
 import org.qiunet.game.tests.server.context.PlayerActor;
 import org.qiunet.utils.id.DefaultIdGenerator;
 import org.qiunet.utils.id.IdGenerator;

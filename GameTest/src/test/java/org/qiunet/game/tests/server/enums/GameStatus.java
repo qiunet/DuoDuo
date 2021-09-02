@@ -10,11 +10,12 @@ import org.qiunet.flash.handler.context.status.IGameStatus;
  **/
 public enum GameStatus implements IGameStatus {
 
-	RANDOM_NAME_POOL_EMPTY(100101, "随机名称池为空"),
+	RANDOM_NAME_POOL_EMPTY(100201, "随机名称池为空"),
 
-	RANDOM_NAME_ALREADY_USED(100102, "随机名称已经被用"),
+	RANDOM_NAME_ALREADY_USED(100202, "随机名称已经被用"),
 
-	REGISTER_COUNT_MAX(100201, "注册人数已经最大"),
+	REGISTER_COUNT_MAX(100301, "注册人数已经最大"),
+
 	;
 	private final int status;
 	private final String desc;

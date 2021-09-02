@@ -1,4 +1,4 @@
-package org.qiunet.game.tests.protocol.proto;
+package org.qiunet.game.tests.protocol.proto.login;
 
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
@@ -16,19 +16,20 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.PLAYER_INDEX_RSP;
  */
 @PbChannelData(ID = PLAYER_INDEX_RSP, desc = "玩家首页响应")
 public class PlayerIndexResponse implements IpbChannelData {
-	private long playerId;
 
 	private List<Item> items;
 
-	public static PlayerIndexResponse valueOf(long playerId, List<Item> items) {
+	private PlayerData PlayerData;
+
+	public static PlayerIndexResponse valueOf(PlayerData PlayerData, List<Item> items) {
 		PlayerIndexResponse response = new PlayerIndexResponse();
-		response.playerId = playerId;
+		response.PlayerData = PlayerData;
 		response.items = items;
 		return response;
 	}
 
-	public long getPlayerId() {
-		return playerId;
+	public PlayerData getPlayerData() {
+		return PlayerData;
 	}
 
 	public List<Item> getItems() {

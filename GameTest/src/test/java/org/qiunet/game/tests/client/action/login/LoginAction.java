@@ -7,8 +7,8 @@ import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.client.data.condition.LoginCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
-import org.qiunet.game.tests.protocol.proto.LoginRequest;
-import org.qiunet.game.tests.protocol.proto.LoginResponse;
+import org.qiunet.game.tests.protocol.proto.login.LoginRequest;
+import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
 
 /***
  * 登录行为构造

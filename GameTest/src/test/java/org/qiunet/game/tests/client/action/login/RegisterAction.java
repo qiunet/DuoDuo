@@ -11,8 +11,8 @@ import org.qiunet.game.tests.client.data.condition.RandomNamePresent;
 import org.qiunet.game.tests.client.data.condition.RegisterCountCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.enums.GenderType;
-import org.qiunet.game.tests.protocol.proto.RegisterRequest;
-import org.qiunet.game.tests.protocol.proto.RegisterResponse;
+import org.qiunet.game.tests.protocol.proto.login.RegisterRequest;
+import org.qiunet.game.tests.protocol.proto.login.RegisterResponse;
 import org.qiunet.game.tests.server.enums.GameStatus;
 
 /***

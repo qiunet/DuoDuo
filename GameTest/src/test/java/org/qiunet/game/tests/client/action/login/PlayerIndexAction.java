@@ -7,9 +7,9 @@ import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.client.data.condition.RoleCountCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
-import org.qiunet.game.tests.protocol.proto.LoginInfo;
-import org.qiunet.game.tests.protocol.proto.PlayerIndexRequest;
-import org.qiunet.game.tests.protocol.proto.PlayerIndexResponse;
+import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
+import org.qiunet.game.tests.protocol.proto.login.PlayerIndexRequest;
+import org.qiunet.game.tests.protocol.proto.login.PlayerIndexResponse;
 
 import java.util.List;
 
@@ -40,7 +40,8 @@ public class PlayerIndexAction extends TestAction {
 
 	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)
 	protected void indexResp(PlayerIndexResponse response) {
+		BlackBoard.playerData.set(robot, response.getPlayerData());
 		BlackBoard.items.set(robot, response.getItems());
-		robot.setId(response.getPlayerId());
+		robot.setId(response.getPlayerData().getPlayerId());
 	}
 }

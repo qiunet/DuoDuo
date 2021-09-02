@@ -2,6 +2,8 @@ package org.qiunet.game.tests.server.context;
 
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.game.tests.client.data.BlackBoard;
+import org.qiunet.game.tests.protocol.proto.login.PlayerData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,5 +42,13 @@ public class PlayerActor extends AbstractMessageActor<PlayerActor> {
 
 	public String getOpenId() {
 		return openId;
+	}
+
+	/**
+	 * 获得玩家的数据
+	 * @return
+	 */
+	public PlayerData getPlayerData() {
+		return computeIfAbsent(BlackBoard.playerData, () -> PlayerData.valueOf(this));
 	}
 }

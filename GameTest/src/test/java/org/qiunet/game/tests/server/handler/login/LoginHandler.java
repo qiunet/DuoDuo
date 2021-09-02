@@ -2,9 +2,9 @@ package org.qiunet.game.tests.server.handler.login;
 
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
-import org.qiunet.game.tests.protocol.proto.LoginInfo;
-import org.qiunet.game.tests.protocol.proto.LoginRequest;
-import org.qiunet.game.tests.protocol.proto.LoginResponse;
+import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
+import org.qiunet.game.tests.protocol.proto.login.LoginRequest;
+import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
 import org.qiunet.game.tests.server.context.PlayerActor;
 import org.qiunet.game.tests.server.data.ServerData;
 import org.qiunet.game.tests.server.handler.base.GameHandler;

@@ -1,4 +1,4 @@
-package org.qiunet.game.tests.protocol.proto;
+package org.qiunet.game.tests.protocol.proto.login;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
