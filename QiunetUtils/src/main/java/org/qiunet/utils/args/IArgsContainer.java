@@ -1,5 +1,7 @@
 package org.qiunet.utils.args;
 
+import java.util.function.Supplier;
+
 /***
  * 持有{@link ArgsContainer}的对象. 可以实现该接口.
  * 已经有大部分默认方法实现了
@@ -83,6 +85,20 @@ public interface IArgsContainer {
 	 */
 	default <T> boolean compareAndSet(ArgumentKey<T> key, T expect, T newVal) {
 		return getArgument(key).compareAndSet(expect, newVal);
+	}
+
+	/**
+	 * 如果没有. 就使用新的值set
+	 * @param key key
+	 * @param newVal 新的val
+	 * @param <T> 对象
+	 * @return 有旧的返回旧的. 否则返回新的
+	 */
+	default <T> T computeIfAbsent(ArgumentKey<T> key, Supplier<T> newVal) {
+		if (this.isNull(key)) {
+			this.compareAndSet(key, null, newVal.get());
+		}
+		return getVal(key);
 	}
 
 	/**
