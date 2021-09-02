@@ -1,5 +1,7 @@
 package org.qiunet.utils.args;
 
+import java.util.function.Supplier;
+
 /***
  * Argument 的key
  *
@@ -51,7 +53,18 @@ public final class ArgumentKey<T> {
 	 * @param <Container> 容器类
 	 * @return cas的结果 true 为成功.
 	 */
-	public <Container extends IArgsContainer> boolean cas(Container container, T oldVal, T newVal) {
+	public <Container extends IArgsContainer> boolean compareAndSet(Container container, T oldVal, T newVal) {
 		return container.compareAndSet(this, oldVal, newVal);
+	}
+
+	/**
+	 * 如果没有数据, 就使用指定的Supplier 初始化数据
+	 * @param container 容器对象
+	 * @param newVal 构造初始值的 Supplier
+	 * @param <Container> 容器类型
+	 * @return 现有的. 或者新的值
+	 */
+	public <Container extends IArgsContainer> T computeIfAbsent(Container container, Supplier<T> newVal) {
+		return container.computeIfAbsent(this, newVal);
 	}
 }
