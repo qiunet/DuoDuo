@@ -1,39 +1,22 @@
 # GameTest
 
-> 主要想做个通用的测试框架, 可以满足大部分的游戏测试.<br />
-> 游戏只需要关心小部分的实现和大部分的测试业务即可.
+> 一个基于行为树的压测框架
 
 #### FlashHandler
 * 自己的Netty框架. 可以自由组合集中协议服务
 
-#### ITestCase
-* HTTP
-	* HttpStringTestCase
-	* HttpProtobufTestCase
-* PersistConn
-	* PersistConnProtobufTestCase
-	* PersistConnStringTestCase
+### action
+	1. 所有的action 节点继承 BaseRobotAction . 
+	2. action 如果有网络请求. execute 需要返回RUNNING.
+	3. 在 runningStatusUpdate 中, 判断是否有得到响应数据. 有则返回SUCCESS
+	4. 通过 @TestResponse 可以处理返回的响应数据.
+	5. 通过自定义注解对 IStatusTipsHandler.statusHandler 的注解. 实现指定GameStatue 的处理.
 
-
-	Tcp Websocket 使用PersistConn的类型TestCase
-	Http根据自己的情况使用Http的
-
-#### IResponse
-服务器给推送的数据, 自己选择一下类继承. 需要使用`Response` 注解消息ID
-* ProtobufResponse
-* StringResponse
-
-#### 启动
-* RobotExecutor<br/>
-构造需要一个`ExecutorParams`类 构造后, 调用的方法有两个`testing()` 和 `pressureTesting(机器人数)`. 
-	* addScannerHandler()
-		> 添加各种扫描器, 比如 `ResponseScannerHandler`, `GameCfgScannerHandler` ,`PropertiesScannerHandler`
-	* setRobotFactory()
-		> 设置机器人的生成规则. 必要的提供是 `openid` 和 `sid`
-	* setInitializer()
-		> 一段自定义的初始化代码. 不是必要的
-	*  addTestCase()
-		> 顺序添加一个测试`ITestCase`用例.
-
-
+### 示例
+> 在test目录
+	
+	实现了
+	1. 登录 [-> 随机名称 -> 注册 ]-> 玩家数据请求
+	2. 经验获取(打怪) -> 升级
+	行为树会根据条件筛查合适的action执行.
     
