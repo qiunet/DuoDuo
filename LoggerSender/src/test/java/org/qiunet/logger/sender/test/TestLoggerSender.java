@@ -3,6 +3,9 @@ package org.qiunet.logger.sender.test;
 import org.junit.Test;
 import org.qiunet.logger.sender.LoggerSender;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TestLoggerSender {
 	private static final RemoteProperties remote = RemoteProperties.getInstance();
 	private static final LoggerSender sender = new LoggerSender(
@@ -14,7 +17,7 @@ public class TestLoggerSender {
 
 	@Test
 	public void testLogger() throws InterruptedException {
-		StringBuilder sb = new StringBuilder();
+		/*StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 100; i++) {
 //			sender.sendLog("ItemLog", "qiunet|sss|yyy"+i);
 //			if(sb.length() > 0){
@@ -25,9 +28,16 @@ public class TestLoggerSender {
 
 			sender.sendImportantLog("RechargeLog", msg);
 //			Thread.sleep(10);
-		}
+		}*/
 //		sender.sendImportantLog("RechargeLog", sb.toString());
 
-		Thread.sleep(1000);
+		List<String> msgList = new ArrayList<>();
+		for (int i = 0; i < 10000; i++) {
+//			sender.sendLog("ItemLog", "zj|sss|yyy"+i);
+			msgList.add(i + 1 + "-zhengjian|sss|yyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhf\n");
+		}
+		sender.sendImportantLog("RechargeLog", msgList);
+
+		Thread.sleep(3000);
 	}
 }

@@ -10,6 +10,7 @@ import java.net.*;
 import java.nio.channels.Channel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.List;
 
 /***
  * 日志发送
@@ -71,18 +72,24 @@ public class LoggerSender {
 
 	/***
 	 * 发送重要消息 使用tcp.
-	 */
+
 	public void sendImportantLog(String logName, String msg) {
-		/*if (channel == null || ! (channel.isConnected() && channel.isOpen())) {
-			try {
-				channel = SocketChannel.open(address);
-				channel.configureBlocking(false);
-			} catch (IOException e) {
-				logger.error("异常", e);
-			}
-		}*/
+//		if (channel == null || ! (channel.isConnected() && channel.isOpen())) {
+//			try {
+//				channel = SocketChannel.open(address);
+//				channel.configureBlocking(false);
+//			} catch (IOException e) {
+//				logger.error("异常", e);
+//			}
+//		}
 
 //		this.handler.add(new TcpMessage(channel, gameId, secret, (logName + "|" + msg).getBytes(charset)));
 		this.handler.add(new TcpMessage(address, gameId, secret, msg.getBytes(charset)));
 	}
+	 */
+
+	public void sendImportantLog(String logName, List<String> msg) {
+		this.handler.add(new TcpMessage(address, gameId, secret, msg));
+	}
+
 }

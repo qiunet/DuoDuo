@@ -4,7 +4,6 @@ import org.qiunet.logger.enums.ProtoType;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 
 class HandlerMsgQueue {
+	private Logger logger = LoggerType.DUODUO.getLogger();
 	AtomicLong atomicLong = new AtomicLong();
 	private int threadNum;
 	private ExecutorService executorService;
@@ -36,13 +36,15 @@ class HandlerMsgQueue {
 	 */
 	void add(IMessage message) {
 		this.executorService.submit(() -> {
-			atomicLong.incrementAndGet();
+			long l = atomicLong.incrementAndGet();
 			long threadId = Thread.currentThread().getId();
 			if (message.getType() == ProtoType.TCP) {
 				message.loadChannel(threadId, channelMap, bufferMap);
 			}
 			message.send();
-//			System.out.println("threadId:" + threadId + "\t msg:" + message.getMsg());
+			if (logger.isInfoEnabled()) {
+				logger.info("threadId:" + threadId + "\tl:" + l + "\t msg size:" + message.getMsg());
+			}
 		});
 	}
 
