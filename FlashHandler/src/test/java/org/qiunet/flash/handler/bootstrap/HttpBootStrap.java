@@ -3,11 +3,11 @@ package org.qiunet.flash.handler.bootstrap;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 
@@ -18,9 +18,9 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public class HttpBootStrap {
-	protected static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
+	protected static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
 	protected static final int port = 8080;
-	private static Hook hook = new MyHook();
+	private static final Hook hook = new MyHook();
 	private static Thread currThread;
 	@BeforeClass
 	public static void init() throws Exception {
@@ -29,6 +29,7 @@ public class HttpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
+					.setProtocolHeaderType(ProtocolHeaderType.server)
 					.setStartupContext(new StartupContext())
 					.setWebsocketPath("/ws")
 					.setPort(port)

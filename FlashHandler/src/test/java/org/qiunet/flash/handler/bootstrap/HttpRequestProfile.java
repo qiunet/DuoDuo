@@ -7,12 +7,13 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.proto.ProtocolId;
 import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -29,13 +30,13 @@ import java.nio.ByteBuffer;
 @Measurement(iterations = 5)
 @Warmup(iterations = 1, time = 5)
 public class HttpRequestProfile {
-	private static final IProtocolHeaderAdapter ADAPTER = new DefaultProtocolHeaderAdapter();
+	private static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
 	public static final Hook hook = new MyHook();
 	private static final int threadCount = 16;
 	public static final int port = 8080;
 	private static final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
-		.setProtocolHeaderAdapter(ADAPTER)
+		.setProtocolHeaderType(ADAPTER)
 		.build();
 
 
@@ -43,12 +44,12 @@ public class HttpRequestProfile {
 	@Threads(threadCount)
 	public String httpRequest() {
 		final String test = "[测试testHttpProtobuf]";
-		MessageContent content = new MessageContent(5000, test.getBytes(CharsetUtil.UTF_8));
+		MessageContent content = new MessageContent(ProtocolId.Test.HTTP_PB_LOGIN_REQ, test.getBytes(CharsetUtil.UTF_8));
 		return HttpRequest.post(params.getURI())
 			.withBytes(ADAPTER.getAllBytes(content))
 			.executor(resp -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
-				ADAPTER.newHeader(buffer);
+				buffer.position(ADAPTER.getReqHeaderLength());
 				return CharsetUtil.UTF_8.decode(buffer).toString();
 			});
 	}
@@ -57,6 +58,7 @@ public class HttpRequestProfile {
 		ClassScanner.getInstance().scanner();
 
 		HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
+			.setProtocolHeaderType(ProtocolHeaderType.server)
 			.setStartupContext(new StartupContext())
 			.setWebsocketPath("/ws")
 			.setPort(port)

@@ -10,26 +10,28 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**
- * 请求的固定头
+ * 服务请求的固定头
+ * 请求16字节. 响应8字节
+ *
  * Created by qiunet.
  * 17/7/19
  */
-public class DefaultProtocolHeader implements IProtocolHeader {
-	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	/**包头识别码*/
-	private static  final byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
-
+public class ServerProtocolHeader implements IProtocolHeader {
+	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 16;
+	/**响应头固定长度*/
+	public static final int RESPONSE_HEADER_LENGTH = 8;
+
 	/**辨别 请求使用*/
-	private byte [] magic;
+	private final byte [] magic;
 	// 长度
-	private int length;
+	private final int length;
 	// 请求的 响应的协议 id
-	private int protocolId;
+	private final int protocolId;
 	// encryption code
-	private int crc;
+	private final int crc;
 
 	/***
 	 * 构造函数
@@ -37,27 +39,19 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 	 * 由外面读取后 调构造函数传入
 	 * @param content 后面byte数组
 	 */
-	public DefaultProtocolHeader(MessageContent content) {
+	public ServerProtocolHeader(MessageContent content) {
 		this.magic = MAGIC_CONTENTS;
-		this.crc = (int) CrcUtil.getCrc32Value(content.bytes());
 		this.length = content.bytes().length;
 		this.protocolId = content.getProtocolId();
+		this.crc = 0;
 	}
 
-	public DefaultProtocolHeader(ByteBuf in) {
+	public ServerProtocolHeader(ByteBuf in) {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		in.readBytes(magic);
 		this.length = in.readInt();
 		this.protocolId = in.readInt();
 		this.crc = in.readInt();
-	}
-
-	public DefaultProtocolHeader(ByteBuffer in) {
-		this.magic = new byte[MAGIC_CONTENTS.length];
-		in.get(magic);
-		this.length = in.getInt();
-		this.protocolId = in.getInt();
-		this.crc = in.getInt();
 	}
 
 	@Override
@@ -67,7 +61,7 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 
 	@Override
 	public boolean validEncryption(ByteBuffer buffer) {
-		boolean ret = (int)CrcUtil.getCrc32Value(buffer) == this.crc;
+		boolean ret = (int) CrcUtil.getCrc32Value(buffer) == this.crc;
 		if (! ret) {
 			logger.error("Invalid message encryption! server is : "+ CrcUtil.getCrc32Value(buffer) +" client is "+ this.crc);
 		}
@@ -86,17 +80,15 @@ public class DefaultProtocolHeader implements IProtocolHeader {
 
 	@Override
 	public  byte[] dataBytes() {
-		ByteBuffer out = ByteBuffer.allocate(REQUEST_HEADER_LENGTH);
-		out.put(magic);
+		ByteBuffer out = ByteBuffer.allocate(RESPONSE_HEADER_LENGTH);
 		out.putInt(length);
 		out.putInt(protocolId);
-		out.putInt(crc);
 		return out.array();
 	}
 
 	@Override
 	public String toString() {
-		return "DefaultProtocolHeader{" +
+		return "ServerProtocolHeader{" +
 				"magic=" + Arrays.toString(magic) +
 				", length=" + length +
 				", protocolId=" + protocolId +

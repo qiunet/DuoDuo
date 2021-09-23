@@ -127,7 +127,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 					pipeline.addLast("WebSocketServerHandler", new NettyWSClientHandler());
 					pipeline.addLast("encode", new WebSocketEncoder());
 
-					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
+					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {
 					handshakeFuture.setFailure(e);

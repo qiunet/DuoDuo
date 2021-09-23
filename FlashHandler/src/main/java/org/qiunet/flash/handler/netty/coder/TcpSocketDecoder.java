@@ -5,7 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -18,20 +18,20 @@ import java.util.List;
  * 17/8/13
  */
 public class TcpSocketDecoder extends ByteToMessageDecoder {
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private int maxReceivedLength;
-	private boolean encryption;
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final int maxReceivedLength;
+	private final boolean encryption;
 	public TcpSocketDecoder(int maxReceivedLength, boolean encryption) {
 		this.encryption = encryption;
 		this.maxReceivedLength = maxReceivedLength;
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		IProtocolHeaderAdapter adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
-		if (! in.isReadable(adapter.getHeaderLength())) return;
+		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
+		if (! in.isReadable(adapter.getReqHeaderLength())) return;
 		in.markReaderIndex();
 
-		IProtocolHeader header = adapter.newHeader(in);
+		IProtocolHeader header = adapter.inHeader(in);
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message, magic is error! {}", header);
 			ctx.channel().close();

@@ -18,8 +18,8 @@ import java.util.concurrent.CountDownLatch;
  * 17/12/2
  */
 public class TestMuchWebSocketBootStrap extends HttpBootStrap {
-	private final int clientCount = 10;
-	private final int requestCount = 100;
+	private final int clientCount = 100;
+	private final int requestCount = 1000;
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
 	@Test
 	public void testMuchWebSocket() throws InterruptedException {

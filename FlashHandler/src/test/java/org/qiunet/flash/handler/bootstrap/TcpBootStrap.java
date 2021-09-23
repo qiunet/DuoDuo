@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.qiunet.flash.handler.bootstrap.hook.MyHook;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -38,6 +39,7 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
+				.setProtocolHeaderType(ProtocolHeaderType.server)
 				.setStartupContext(new StartupContext())
 				.setEncryption(true)
 				.setPort(port)

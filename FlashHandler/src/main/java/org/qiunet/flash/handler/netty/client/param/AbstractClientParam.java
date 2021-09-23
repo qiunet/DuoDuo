@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 
 import java.net.InetSocketAddress;
 
@@ -19,11 +19,11 @@ public abstract class AbstractClientParam implements IClientConfig {
 
 	protected int maxReceivedLength = 1024 * 1024 * 8;
 
-	protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
+	protected IProtocolHeaderType protocolHeaderType = ProtocolHeaderType.client;
 
 	@Override
-	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
-		return protocolHeaderAdapter;
+	public IProtocolHeaderType getProtocolHeaderType() {
+		return protocolHeaderType;
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @param protocolHeaderAdapter
 		 * @return
 		 */
-		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
-			AbstractClientParam.this.protocolHeaderAdapter = protocolHeaderAdapter;
+		public B setProtocolHeaderType(IProtocolHeaderType protocolHeaderAdapter) {
+			AbstractClientParam.this.protocolHeaderType = protocolHeaderAdapter;
 			return (B) this;
 		}
 

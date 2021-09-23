@@ -16,14 +16,14 @@ import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
  * 17/8/13
  */
 public class NettyTcpServerInitializer extends ChannelInitializer<SocketChannel> {
-	private TcpBootstrapParams params;
+	private final TcpBootstrapParams params;
 	public NettyTcpServerInitializer(TcpBootstrapParams params) {
 		this.params = params;
 	}
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline pipeline = ch.pipeline();
-		ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
+		ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
 		pipeline.addLast("TcpSocketEncoder", new TcpSocketEncoder());
 		pipeline.addLast("TcpSocketDecoder", new TcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
 		pipeline.addLast("handler", new TcpServerHandler(params));

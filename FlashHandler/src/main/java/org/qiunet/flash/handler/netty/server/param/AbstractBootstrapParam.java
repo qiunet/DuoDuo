@@ -1,8 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.DefaultProtocolHeaderAdapter;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
 import java.net.InetSocketAddress;
@@ -16,7 +15,7 @@ public abstract class AbstractBootstrapParam {
 	/**
 	 * 可以自定义协议头
 	 */
-	protected IProtocolHeaderAdapter protocolHeaderAdapter = new DefaultProtocolHeaderAdapter();
+	protected IProtocolHeaderType protocolHeaderType;
 	/***
 	 * 接收端口
 	 */
@@ -37,8 +36,8 @@ public abstract class AbstractBootstrapParam {
 
 	protected IStartupContext<? extends IMessageActor<?>> startupContext;
 
-	public IProtocolHeaderAdapter getProtocolHeaderAdapter() {
-		return protocolHeaderAdapter;
+	public IProtocolHeaderType getProtocolHeaderType() {
+		return protocolHeaderType;
 	}
 
 	public int getMaxReceivedLength() {
@@ -64,14 +63,14 @@ public abstract class AbstractBootstrapParam {
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	public abstract class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder> {
+	public abstract class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder<P, B>> {
 		/***
 		 * 启动需要的上下文对象
-		 * @param protocolHeaderAdapter
+		 * @param protocolHeaderType
 		 * @return
 		 */
-		public B setProtocolHeaderAdapter(IProtocolHeaderAdapter protocolHeaderAdapter) {
-			AbstractBootstrapParam.this.protocolHeaderAdapter = protocolHeaderAdapter;
+		public B setProtocolHeaderType(IProtocolHeaderType protocolHeaderType) {
+			AbstractBootstrapParam.this.protocolHeaderType = protocolHeaderType;
 			return (B) this;
 		}
 
@@ -104,7 +103,8 @@ public abstract class AbstractBootstrapParam {
 		 * @return
 		 */
 		public P build(){
-			if (address == null) throw new NullPointerException("Must set port for Http Listener! ");
+			if (address == null) throw new NullPointerException("Must set port for Listener! ");
+			if (protocolHeaderType == null) throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
 			return newParams();
 		}
 

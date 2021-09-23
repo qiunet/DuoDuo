@@ -8,10 +8,10 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ public final class ChannelUtil {
 	 * @param channel
 	 * @return
 	 */
-	public static IProtocolHeaderAdapter getProtocolHeaderAdapter(Channel channel) {
+	public static IProtocolHeaderType getProtocolHeaderAdapter(Channel channel) {
 		return channel.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).get();
 	}
 
@@ -37,8 +37,8 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static void messageContentToByteBuf(MessageContent content, Channel channel, ByteBuf out) {
-		IProtocolHeaderAdapter adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.newHeader(content);
+		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
+		IProtocolHeader header = adapter.outHeader(content);
 		out.writeBytes(header.dataBytes());
 		out.writeBytes(content.bytes());
 	}
@@ -49,8 +49,8 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static ByteBuf messageContentToByteBuf(MessageContent content, Channel channel) {
-		IProtocolHeaderAdapter adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.newHeader(content);
+		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
+		IProtocolHeader header = adapter.outHeader(content);
 		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
 		byte[] headerBytes = header.dataBytes();
 		return Unpooled.wrappedBuffer(headerBytes, content.bytes());

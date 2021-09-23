@@ -14,14 +14,14 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  * 17/11/11
  */
 public class NettyHttpServerInitializer extends ChannelInitializer<SocketChannel> {
-	private HttpBootstrapParams params;
+	private final HttpBootstrapParams params;
 	public NettyHttpServerInitializer(HttpBootstrapParams params) {
 		this.params = params;
 	}
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 		ChannelPipeline p = ch.pipeline();
-		ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
+		ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
 		p.addLast("HttpServerCodec" ,new HttpServerCodec());
 		p.addLast("HttpObjectAggregator", new HttpObjectAggregator(params.getMaxReceivedLength()));
 		p.addLast("HttpServerHandler", new HttpServerHandler(params));

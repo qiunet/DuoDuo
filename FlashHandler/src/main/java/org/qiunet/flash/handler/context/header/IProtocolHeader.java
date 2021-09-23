@@ -10,6 +10,9 @@ import java.nio.ByteBuffer;
  * .
  */
 public interface IProtocolHeader {
+	/**包头识别码*/
+	byte [] MAGIC_CONTENTS = {'f', 'a', 's', 't'};
+
 	/**
 	 * 得到协议ID
 	 * @return

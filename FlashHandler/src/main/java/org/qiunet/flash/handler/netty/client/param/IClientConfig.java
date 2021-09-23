@@ -1,8 +1,7 @@
 package org.qiunet.flash.handler.netty.client.param;
 
-import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.netty.server.param.adapter.IProtocolHeaderAdapter;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 
 import java.net.InetSocketAddress;
 
@@ -11,7 +10,7 @@ public interface IClientConfig {
 	 * 获得处理Header对象
 	 * @return
 	 */
-	IProtocolHeaderAdapter getProtocolHeaderAdapter();
+	IProtocolHeaderType getProtocolHeaderType();
 	/***
 	 * 地址
 	 * @return

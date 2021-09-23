@@ -6,7 +6,6 @@ import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
@@ -29,7 +28,7 @@ import java.util.concurrent.locks.LockSupport;
 public class TestHttpBootStrap extends HttpBootStrap {
 	private final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", 8080)
-		.setProtocolHeaderAdapter(ADAPTER)
+		.setProtocolHeaderType(ADAPTER)
 		.build();
 
 	@Test
@@ -42,7 +41,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 			.withBytes(ADAPTER.getAllBytes(content))
 			.asyncExecutor((call, resp) -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
-				IProtocolHeader header = ADAPTER.newHeader(buffer);
+				// 跳过头
+				buffer.position(ADAPTER.getReqHeaderLength());
 
 				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, buffer);
 				Assert.assertEquals(test, loginResponse.getTestString());

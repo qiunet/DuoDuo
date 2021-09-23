@@ -25,19 +25,15 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
-import org.slf4j.Logger;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
@@ -51,7 +47,7 @@ import java.util.concurrent.Future;
  */
 @Deprecated
 public final class NettyHttpClient {
-	private HttpClientParams clientParams;
+	private final HttpClientParams clientParams;
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
@@ -173,7 +169,7 @@ public final class NettyHttpClient {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						ChannelPipeline p = ch.pipeline();
-						ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderAdapter());
+						ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
 						if (sslCtx != null) {
 							p.addLast(sslCtx.newHandler(ch.alloc()));
 						}
@@ -190,7 +186,7 @@ public final class NettyHttpClient {
 
 
 	private static class HttpClientHandler extends SimpleChannelInboundHandler<HttpObject> {
-		private Promise<FullHttpResponse> promise;
+		private final Promise<FullHttpResponse> promise;
 		HttpClientHandler(Promise<FullHttpResponse> promise) {
 			this.promise = promise;
 		}
