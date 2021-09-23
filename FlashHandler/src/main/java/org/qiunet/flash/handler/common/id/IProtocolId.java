@@ -37,6 +37,10 @@ public interface IProtocolId {
 		/** 500 **/
 		int SERVER_EXCEPTION = 500;
 
+		/**客户端 ping pong */
+		int CLIENT_PING = 700;
+		int CLIENT_PONG = 700;
+
 		/**跨服事件**/
 		int CROSS_EVENT = 600;
 
@@ -60,5 +64,7 @@ public interface IProtocolId {
 		int GM_COMMAND_REQ = 608;
 		/** gm 调用响应 */
 		int GM_COMMAND_RESP = 609;
+
+
 	}
 }

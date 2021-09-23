@@ -4,10 +4,7 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerCloseResponse;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.*;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -22,6 +19,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<DefaultProtobufMessage> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
 	LazyLoader<DefaultProtobufMessage> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
 	LazyLoader<DefaultProtobufMessage> SERVER_CLOSE_MESSAGE = new LazyLoader<>(() -> new ServerCloseResponse().buildResponseMessage());
+	LazyLoader<DefaultProtobufMessage> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildResponseMessage());
 	/**
 	 * 构造MessageActor
 	 * http情况不会调用.
@@ -56,6 +54,10 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @return
 	 */
 	default DefaultProtobufMessage serverClose() {
+		return SERVER_CLOSE_MESSAGE.get();
+	}
+
+	default DefaultProtobufMessage serverPongMsg() {
 		return SERVER_CLOSE_MESSAGE.get();
 	}
 }

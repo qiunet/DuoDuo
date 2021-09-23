@@ -12,20 +12,24 @@ public class DefaultProtobufMessage implements IChannelMessage<IpbChannelData> {
 	/**
 	 * 消息id
 	 */
-	private int protocolId;
+	private final int protocolId;
 	/**
 	 * 消息体
 	 */
-	private IpbChannelData message;
-
+	private final IpbChannelData message;
+	/**
+	 * 消息体
+	 */
+	private final MessageContent msgContent;
 	public DefaultProtobufMessage(int protocolId, IpbChannelData message) {
 		this.message = message;
 		this.protocolId = protocolId;
+		this.msgContent = new MessageContent(protocolId, bytes());
 	}
 
 	@Override
 	public MessageContent encode() {
-		return new MessageContent(protocolId, bytes());
+		return msgContent;
 	}
 
 	@Override

@@ -64,6 +64,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 			content.release();
 			return;
 		}
+		// WebSocket ping pong 可以交给webSocket 自己的实现搞定
 
 		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {

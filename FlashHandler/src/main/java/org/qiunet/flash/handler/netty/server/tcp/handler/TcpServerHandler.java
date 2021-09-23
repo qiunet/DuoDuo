@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
+import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -47,6 +48,11 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
+		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
+			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
+			return;
+		}
+
 		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
