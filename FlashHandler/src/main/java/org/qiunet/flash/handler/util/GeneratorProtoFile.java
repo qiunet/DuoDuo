@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.utils.args.ArgsContainer;
@@ -25,15 +26,33 @@ import java.util.stream.Collectors;
  * 2020-09-23 16:34
  */
 public class GeneratorProtoFile implements IApplicationContextAware {
+	// 如果使用server.conf配置, 协议存放目录
+	public static final String PROTO_OUTPUT_DIR = "proto_output_dir";
+
 	private static final List<Class<?>> pbClasses = Lists.newArrayList();
 	static {
 		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("$");
 		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("_");
 	}
 	private GeneratorProtoFile(){}
+
 	/**
-	 *
-	 * @param directory 生成proto存放的文件夹
+	 * 使用配置文件的方式. 生成协议文件.
+	 * 配置的key 为  PROTO_OUTPUT_DIR
+	 */
+	public static void generator(ProtoGeneratorModel model, String packetPrefix) throws Exception {
+		Preconditions.checkState(model != null, "model is null");
+		ClassScanner.getInstance(ScannerType.SERVER).scanner(packetPrefix);
+		String dir = ServerConfig.getConfig().getString(PROTO_OUTPUT_DIR);
+		model.generatorProto(new File(dir), pbClasses);
+	}
+
+	/**
+	 * 生成协议文件
+	 * @param directory 生成的目录
+	 * @param model 生成类型
+	 * @param packetPrefix 扫描包前缀
+	 * @throws Exception -
 	 */
 	public static void generator(File directory, ProtoGeneratorModel model, String packetPrefix) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
