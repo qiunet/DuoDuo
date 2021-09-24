@@ -44,7 +44,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 		if (cause instanceof StatusResultException) {
 			return StatusTipsResponse.valueOf(((StatusResultException) cause)).buildResponseMessage();
 		}else {
-			LoggerType.DUODUO_CROSS.error("异常", cause);
+			LoggerType.DUODUO_FLASH_HANDLER.error("异常", cause);
 		}
 		return SERVER_EXCEPTION_MESSAGE.get();
 	}
