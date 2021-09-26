@@ -67,4 +67,22 @@ public final class ArgumentKey<T> {
 	public <Container extends IArgsContainer> T computeIfAbsent(Container container, Supplier<T> newVal) {
 		return container.computeIfAbsent(this, newVal);
 	}
+
+	/**
+	 * 删除 key
+	 * @param container 容器对象
+	 * @param <Container> 容器类型
+	 */
+	public <Container extends IArgsContainer> void remove(Container container) {
+		container.removeArg(this);
+	}
+
+	/**
+	 * 清除key
+	 * @param container 容器对象
+	 * @param <Container> 容器类型
+	 */
+	public <Container extends IArgsContainer> void clear(Container container) {
+		container.clear(this);
+	}
 }
