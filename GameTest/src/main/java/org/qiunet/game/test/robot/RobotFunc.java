@@ -58,8 +58,13 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	 *
 	 */
 	private final BehaviorRootTree behaviorRootTree;
+	/**
+	 * robot 心跳时间
+	 */
+	private final int tickMillis;
 
-	protected RobotFunc() {
+	protected RobotFunc(int tickMillis) {
+		this.tickMillis = tickMillis;
 		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor((this));
 		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), MathUtil.random(20, 200), TimeUnit.MILLISECONDS);
 	}
@@ -69,7 +74,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	 */
 	private void tickRun(){
 		this.behaviorRootTree.tick();
-		this.tickFuture = this.scheduleMessage(h1 -> this.tickRun(), 500, TimeUnit.MILLISECONDS);
+		this.tickFuture = this.scheduleMessage(h1 -> this.tickRun(), tickMillis, TimeUnit.MILLISECONDS);
 	}
 
 	public Future<?> getTickFuture() {

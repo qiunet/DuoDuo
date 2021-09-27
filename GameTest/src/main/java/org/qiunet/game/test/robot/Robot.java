@@ -25,9 +25,13 @@ public class Robot extends RobotFunc implements IArgsContainer {
 	 */
 	private final String account;
 
-	public Robot(String account) {
-		super();
+	public Robot(String account, int tickMillis) {
+		super(tickMillis);
 		this.account = account;
+	}
+
+	public Robot(String account) {
+		this(account, 500);
 	}
 
 	public void setId(long id) {
