@@ -2,6 +2,10 @@ package org.qiunet.game.test.robot.creator;
 
 import org.qiunet.game.test.robot.Robot;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 /***
  *
  * robot 工厂接口
@@ -16,4 +20,13 @@ public interface IRobotCreator {
 	 * @return
 	 */
 	Robot create();
+
+	/**
+	 * 创建一定数量的机器人
+	 * @param count 数量
+	 * @return 机器人的列表
+	 */
+	default List<Robot> create(int count) {
+		return IntStream.range(0, count).mapToObj(i -> create()).collect(Collectors.toList());
+	}
 }
