@@ -2,8 +2,8 @@ package org.qiunet.game.tests.client.data.condition;
 
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.game.test.robot.Robot;
+import org.qiunet.game.test.robot.condition.RobotCondition;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.base.BaseRobotCondition;
 import org.qiunet.game.tests.protocol.proto.login.PlayerData;
 
 /***
@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.proto.login.PlayerData;
  * qiunet
  * 2021/9/2 10:48
  **/
-public class ExpEnoughCondition extends BaseRobotCondition {
+public class ExpEnoughCondition extends RobotCondition {
 
 	@Override
 	public StatusResult verify(Robot robot) {

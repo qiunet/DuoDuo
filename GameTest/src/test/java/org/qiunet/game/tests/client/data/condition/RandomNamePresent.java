@@ -2,8 +2,8 @@ package org.qiunet.game.tests.client.data.condition;
 
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.game.test.robot.Robot;
+import org.qiunet.game.test.robot.condition.RobotCondition;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.base.BaseRobotCondition;
 import org.qiunet.utils.string.StringUtil;
 
 /***
@@ -12,7 +12,7 @@ import org.qiunet.utils.string.StringUtil;
  * qiunet
  * 2021/8/11 17:27
  **/
-public class RandomNamePresent extends BaseRobotCondition {
+public class RandomNamePresent extends RobotCondition {
 
 	@Override
 	public StatusResult verify(Robot robot) {
