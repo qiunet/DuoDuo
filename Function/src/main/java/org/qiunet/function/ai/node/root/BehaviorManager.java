@@ -7,6 +7,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -43,6 +44,11 @@ public enum BehaviorManager implements IApplicationContextAware {
 		datas.forEach(data -> root.addChild(data.build(obj)));
 		root.initialize();
 		return root;
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.TESTER;
 	}
 
 	private static class BehaviorBuilderData {

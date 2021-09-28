@@ -4,7 +4,6 @@ package org.qiunet.game.tests.server;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.game.tests.server.context.StartupContext;
 import org.qiunet.game.tests.server.enums.ServerType;
@@ -30,13 +29,6 @@ public final class ServerStartup {
 			@Override
 			public void run() {
 				BootstrapServer server = BootstrapServer.createBootstrap(hook);
-				server.httpListener(HttpBootstrapParams.custom()
-						.setStartupContext(new StartupContext())
-						.setProtocolHeaderType(ProtocolHeaderType.server)
-						.setPort(ServerType.HTTP_LOGIC.port())
-						.setWebsocketPath("/ws")
-						.build());
-
 				server.tcpListener(TcpBootstrapParams.custom()
 						.setProtocolHeaderType(ProtocolHeaderType.server)
 						.setStartupContext(new StartupContext())
