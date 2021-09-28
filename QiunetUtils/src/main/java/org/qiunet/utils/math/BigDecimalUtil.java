@@ -128,7 +128,7 @@ public class BigDecimalUtil {
 	public static BigDecimal mul(String... arr) {
 		BigDecimal result = BigDecimal.ONE;
 		for (String v : arr) {
-			result = sub(result, new BigDecimal(v));
+			result = mul(result, new BigDecimal(v));
 		}
 		return result;
 	}
