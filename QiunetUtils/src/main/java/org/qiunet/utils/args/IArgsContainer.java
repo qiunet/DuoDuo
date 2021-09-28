@@ -109,4 +109,11 @@ public interface IArgsContainer {
 		Argument argument = getArgument(key, false);
 		return argument == null || argument.isNull();
 	}
+	/**
+	 * 是否有存储值
+	 * @return
+	 */
+	default boolean notNull(ArgumentKey key) {
+		return ! isNull(key);
+	}
 }

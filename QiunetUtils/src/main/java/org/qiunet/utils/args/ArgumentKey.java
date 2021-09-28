@@ -44,6 +44,16 @@ public final class ArgumentKey<T> {
 	public <Container extends IArgsContainer> boolean isNull(Container container){
 		return container.isNull(this);
 	}
+	/**
+	 * 容器中指定的key是否有值.
+	 * @param container 容器对象
+	 * @param <Container> 容器类
+	 * @return true 非空
+	 */
+	public <Container extends IArgsContainer> boolean notNull(Container container){
+		return ! container.isNull(this);
+	}
+
 
 	/**
 	 * compare and set value
