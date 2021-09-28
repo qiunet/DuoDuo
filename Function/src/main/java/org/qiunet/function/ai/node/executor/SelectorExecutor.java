@@ -29,10 +29,6 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	 */
 	private final boolean prioritySelector;
 	/**
-	 * 顺序执行的起点索引
-	 */
-	private int startIndex;
-	/**
      * 当前执行索引
 	 */
 	private int currIndex;
@@ -57,28 +53,33 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	@Override
 	public void reset() {
 		super.reset();
-		this.currIndex = -1;
-		this.startIndex = 0;
+		this.currIndex = 0;
 	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
-		this.currIndex = -1;
+		if (prioritySelector) {
+			this.currIndex = 0;
+		}
 	}
 
 	@Override
 	public ActionStatus execute() {
 		List<IBehaviorNode> childNodes = this.getChildNodes();
-		int start = this.startIndex(), max = childSize();
-		for (currIndex = start; currIndex < max; currIndex++) {
+		int start = this.currIndex(), limit = childSize(), loopCount = 0;
+		for (currIndex = start; currIndex < limit; currIndex++) {
 			IBehaviorNode currentNode = childNodes.get(currIndex);
 			if (! prioritySelector) {
-				this.startIndex = currIndex;
-				if (start > 0 && currIndex == max - 1) {
-					// 再从头循环一次.
-					currIndex = -1;
-					max = start;
+				// 全部遍历完。 没有结果。
+				if (loopCount++ >= childSize()) {
+					break;
+				}
+
+				if (start > 0 && currIndex == childSize() - 1) {
+					// 再从头循环到起始位置.
+					currIndex = 0;
+					limit = start;
 				}
 			}
 
@@ -99,21 +100,12 @@ public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
 	 * 获得起始 索引
 	 * @return
 	 */
-	private int startIndex(){
+	private int currIndex(){
 		// 说明已经在运行中 再次进入
-		if (currIndex >= 0) {
-			return currIndex;
-		}
-
-		// 每次从 0 开始
-		if (prioritySelector) {
+		if (currIndex >= childSize()) {
 			return 0;
 		}
 
-		if (startIndex >= childSize()) {
-			startIndex = 0;
-		}
-
-		return startIndex;
+		return currIndex;
 	}
 }
