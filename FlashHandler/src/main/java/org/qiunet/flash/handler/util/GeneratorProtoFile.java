@@ -2,10 +2,12 @@ package org.qiunet.flash.handler.util;
 
 import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -54,10 +56,15 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		classes.addAll(context.getTypesAnnotatedWith(NeedProtoGenerator.class));
 		classes.addAll(context.getSubTypesOf(IpbChannelData.class));
 
-		Set<Class<?>> collect = classes.stream()
+		List<Class<?>> collect = classes.stream()
 			.filter(clz -> !Modifier.isInterface(clz.getModifiers()))
 			.filter(clz -> !Modifier.isAbstract(clz.getModifiers()))
-			.collect(Collectors.toSet());
+				.sorted((o1, o2) -> {
+					int protocolId1 = o1.isAnnotationPresent(PbChannelData.class) ? o1.getAnnotation(PbChannelData.class).ID() : 0;
+					int protocolId2 = o1.isAnnotationPresent(PbChannelData.class) ? o2.getAnnotation(PbChannelData.class).ID() : 0;
+					return ComparisonChain.start().compare(protocolId2, protocolId1).result();
+				})
+			.collect(Collectors.toList());
 
 		pbClasses.addAll(collect);
 	}
