@@ -4,7 +4,6 @@ import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.utils.args.ArgsContainer;
@@ -35,18 +34,6 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("_");
 	}
 	private GeneratorProtoFile(){}
-
-	/**
-	 * 使用配置文件的方式. 生成协议文件.
-	 * 配置的key 为  PROTO_OUTPUT_DIR
-	 */
-	public static void generator(ProtoGeneratorModel model, String packetPrefix) throws Exception {
-		Preconditions.checkState(model != null, "model is null");
-		ClassScanner.getInstance(ScannerType.SERVER).scanner(packetPrefix);
-		String dir = ServerConfig.getConfig().getString(PROTO_OUTPUT_DIR);
-		model.generatorProto(new File(dir), pbClasses);
-	}
-
 	/**
 	 * 生成协议文件
 	 * @param directory 生成的目录

@@ -1,9 +1,7 @@
 package org.qiunet.flash.handler.context.response.push;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.request.data.IDataToString;
+import org.qiunet.utils.json.JsonUtil;
 
 /**
  * 对外响应的编码消息
@@ -40,9 +38,6 @@ public interface IChannelMessage<T> {
 	 */
 	default String toStr() {
 		T content = this.getContent();
-		if (content instanceof IDataToString) {
-			return ((IDataToString) content)._toString();
-		}
-		return ToStringBuilder.reflectionToString(content, ToStringStyle.SHORT_PREFIX_STYLE);
+		return content.getClass().getSimpleName() + "" +JsonUtil.toJsonString(content);
 	}
 }

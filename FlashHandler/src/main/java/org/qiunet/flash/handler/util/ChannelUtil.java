@@ -17,6 +17,7 @@ import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 public final class ChannelUtil {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
@@ -41,6 +42,10 @@ public final class ChannelUtil {
 		IProtocolHeader header = adapter.outHeader(content);
 		out.writeBytes(header.dataBytes());
 		out.writeBytes(content.bytes());
+		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes()));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(content.bytes()));
+		}
 	}
 	/***
 	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
