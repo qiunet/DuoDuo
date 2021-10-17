@@ -1,5 +1,6 @@
 package org.qiunet.utils.string;
 
+import org.apache.commons.lang.StringUtils;
 import org.qiunet.utils.math.MathUtil;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -19,7 +20,10 @@ public class StringUtil {
 	private StringUtil(){}
 	/**汉字的正则表达式*/
 	public static final Pattern CHINESE_REGEX = Pattern.compile("([\u4E00-\u9FA5]*)");
-
+	/**
+	 * 空字符串
+	 */
+	public static final String EMPTY_STRING = StringUtils.EMPTY;
 	/***
 	 * 判断是否是空字符串
 	 * @return
@@ -127,6 +131,29 @@ public class StringUtil {
 			joiner.add(objectToString(arrays[i]));
 		}
 		return joiner.toString();
+	}
+
+	/**
+	 * map 拼串
+	 * @param keyValSeparator key val 中间分隔符号
+	 * @param separator 两组key val 分割符号
+	 * @param start 初始位置字符
+	 * @param end 结束位置字符
+	 * @return
+	 */
+	public static String mapToString(Map<?,?> map, String keyValSeparator, String separator, String start, String end) {
+		StringJoiner joiner = new StringJoiner(separator, start, end);
+		map.forEach((key, val) -> joiner.add(key.toString() + keyValSeparator + val.toString()));
+		return joiner.toString();
+	}
+	/**
+	 * map 拼串
+	 * @param keyValSeparator key val 中间分隔符号
+	 * @param separator 两组key val 分割符号
+	 * @return
+	 */
+	public static String mapToString(Map<?,?> map, String keyValSeparator, String separator) {
+		return mapToString(map, keyValSeparator, separator, EMPTY_STRING, EMPTY_STRING);
 	}
 
 	private static String objectToString(Object obj) {

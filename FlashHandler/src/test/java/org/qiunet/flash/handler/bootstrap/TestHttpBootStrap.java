@@ -15,6 +15,7 @@ import org.qiunet.flash.handler.proto.ProtocolId;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.protobuf.ProtobufDataManager;
 
+import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class TestHttpBootStrap extends HttpBootStrap {
 	private final HttpClientParams params = HttpClientParams.custom()
-		.setAddress("localhost", 8080)
+		.setAddress("localhost", port)
 		.setProtocolHeaderType(ADAPTER)
 		.build();
 
@@ -39,8 +40,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
 			.withBytes(ADAPTER.getAllBytes(content))
-			.asyncExecutor((call, resp) -> {
-				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
+			.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (resp) -> {
+				ByteBuffer buffer = ByteBuffer.wrap(resp.body());
 				// 跳过头
 				buffer.position(ADAPTER.getReqHeaderLength());
 
@@ -61,9 +62,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI("/back?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
-			.asyncExecutor((call, httpResponse) -> {
-				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
-				Assert.assertEquals(httpResponse.body().string(), test);
+			.asyncExecutor((httpResponse) -> {
+				Assert.assertEquals(httpResponse.statusCode(), HttpResponseStatus.OK.code());
+				Assert.assertEquals(httpResponse.body(), test);
 				LockSupport.unpark(currThread);
 
 		});
@@ -79,9 +80,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
-		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
-				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
-				String responseString = httpResponse.body().string();
+		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((httpResponse) -> {
+				Assert.assertEquals(httpResponse.statusCode(), HttpResponseStatus.OK.code());
+				String responseString = httpResponse.body();
 				JsonResponse response = JsonResponse.parse(responseString);
 				Assert.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
 				Assert.assertEquals(response.get("test"), test);
@@ -99,10 +100,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		map.put("SourceType" ,1);
 		map.put("test" ,"myTest");
 
-		String respContent = HttpRequest.post("http://localhost:8080/jsonUrl")
+		String respContent = HttpRequest.post(params.getURI("/jsonUrl"))
 			.withJsonData(map)
 			.executor();
 		System.out.println("================="+ respContent);
-
 	}
 }

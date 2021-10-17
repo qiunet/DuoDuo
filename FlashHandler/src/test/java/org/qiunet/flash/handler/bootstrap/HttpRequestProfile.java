@@ -18,6 +18,7 @@ import org.qiunet.flash.handler.startup.context.StartupContext;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.scanner.ClassScanner;
 
+import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 
 /**
@@ -45,13 +46,13 @@ public class HttpRequestProfile {
 	public String httpRequest() {
 		final String test = "[测试testHttpProtobuf]";
 		MessageContent content = new MessageContent(ProtocolId.Test.HTTP_PB_LOGIN_REQ, test.getBytes(CharsetUtil.UTF_8));
-		return HttpRequest.post(params.getURI())
-			.withBytes(ADAPTER.getAllBytes(content))
-			.executor(resp -> {
-				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
-				buffer.position(ADAPTER.getReqHeaderLength());
-				return CharsetUtil.UTF_8.decode(buffer).toString();
-			});
+		byte[] body = HttpRequest.post(params.getURI())
+				.withBytes(ADAPTER.getAllBytes(content))
+				.executor(HttpResponse.BodyHandlers.ofByteArray());
+
+		ByteBuffer buffer = ByteBuffer.wrap(body);
+		buffer.position(ADAPTER.getReqHeaderLength());
+		return CharsetUtil.UTF_8.decode(buffer).toString();
 	}
 
 	public static void serverStartup(){
