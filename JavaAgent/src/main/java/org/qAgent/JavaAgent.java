@@ -1,8 +1,11 @@
 package org.qAgent;
 
-import com.sun.tools.classfile.ClassFile;
 
+import javassist.bytecode.ClassFile;
+
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
@@ -48,14 +51,15 @@ public final class JavaAgent {
 	public static void agentmain(String args, Instrumentation ins) {
 		Path path = Paths.get(args);
 		logger("======开始热加载======");
-		logger("=======热加载目录: "+path.toString());
+		logger("=======热加载目录: "+ path);
 		List<ClassDefinition> classDefinitions = new ArrayList<>();
 		List<File> fileList = new ArrayList<>();
 		listFile(path, fileList);
 
 		for (File file: fileList) {
-			try {
-				ClassFile classFile = ClassFile.read(file);
+			try (FileInputStream fis = new FileInputStream(file);
+				 DataInputStream dis = new DataInputStream(fis)) {
+				ClassFile classFile = new ClassFile(dis);
 				String className = classFile.getName();
 				className = className.replaceAll("\\/", ".");
 

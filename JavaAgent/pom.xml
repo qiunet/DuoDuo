@@ -31,11 +31,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>tools</artifactId>
-			<version>1.8</version>
-			<scope>system</scope>
-			<systemPath>${java.home}/../lib/tools.jar</systemPath>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.26.0-GA</version>
 		</dependency>
 	</dependencies>
 </project>
