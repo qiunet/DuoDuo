@@ -18,7 +18,6 @@
 | encryptAndDecrypt |`加密 解密相关`|
 | exception 			|`部分通用的异常定义`|
 | file 			|`文件的操作, 可复制 移动  读写内容等等`|
-| groovy			|`使用groovy 脚本的工具类.优化使用中可能出现的线程安全问题`|
 | gzip 			|`对byte数组的 zip压缩 解压缩操作工具类`|
 | hook 			|`需要虚拟机关闭的close东西, 添加到这个目录的工具下`|
 | http 			|`Http 的工具类`|

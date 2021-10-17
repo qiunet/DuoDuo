@@ -61,7 +61,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 			.filter(clz -> !Modifier.isAbstract(clz.getModifiers()))
 				.sorted((o1, o2) -> {
 					int protocolId1 = o1.isAnnotationPresent(PbChannelData.class) ? o1.getAnnotation(PbChannelData.class).ID() : 0;
-					int protocolId2 = o1.isAnnotationPresent(PbChannelData.class) ? o2.getAnnotation(PbChannelData.class).ID() : 0;
+					int protocolId2 = o2.isAnnotationPresent(PbChannelData.class) ? o2.getAnnotation(PbChannelData.class).ID() : 0;
 					return ComparisonChain.start().compare(protocolId2, protocolId1).result();
 				})
 			.collect(Collectors.toList());

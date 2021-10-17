@@ -47,8 +47,7 @@ public class CustomValueMap<DATA extends Enum<DATA> & ICustomValue> {
 
 	/**
 	 * 从字符串加载Map
-	 * @param val
-	 * @return
+	 * @param val map的字符串内容
 	 */
 	public void parse(String val) {
 		if (StringUtil.isEmpty(val)) {
