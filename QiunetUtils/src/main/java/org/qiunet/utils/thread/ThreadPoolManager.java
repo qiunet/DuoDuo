@@ -1,6 +1,7 @@
 package org.qiunet.utils.thread;
 
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.system.OSUtil;
 
 import java.util.Collection;
@@ -19,7 +20,7 @@ public enum ThreadPoolManager implements ExecutorService {
 	/**
 	 * threadPool Name -> executors
 	 */
-	private ExecutorService executorService;
+	private final ExecutorService executorService;
 	/**
 	 * 得到或者生成新的池
 	 * @param poolName
@@ -30,6 +31,8 @@ public enum ThreadPoolManager implements ExecutorService {
 			60, TimeUnit.SECONDS,
 			new LinkedBlockingDeque<>(maxCap), new DefaultThreadFactory(poolName),
 			new ThreadPoolExecutor.CallerRunsPolicy());
+
+		ShutdownHookUtil.getInstance().addShutdownHook(() -> this.executorService.shutdown());
 	}
 	/**
 	 * 停止所有池资源

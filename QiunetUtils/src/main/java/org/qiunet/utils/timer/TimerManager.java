@@ -5,6 +5,7 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
@@ -29,9 +30,10 @@ public enum TimerManager {
 	executor(new ScheduledThreadPoolExecutor(4, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
 	;
 
-	private ScheduledExecutorService schedule;
+	private final ScheduledExecutorService schedule;
 	TimerManager(ScheduledExecutorService executorService) {
 		this.schedule = executorService;
+		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdown);
 	}
 
 	/***
