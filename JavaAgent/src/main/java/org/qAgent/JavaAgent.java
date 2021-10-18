@@ -1,11 +1,7 @@
 package org.qAgent;
 
 
-import javassist.bytecode.ClassFile;
-
-import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
@@ -57,9 +53,8 @@ public final class JavaAgent {
 		listFile(path, fileList);
 
 		for (File file: fileList) {
-			try (FileInputStream fis = new FileInputStream(file);
-				 DataInputStream dis = new DataInputStream(fis)) {
-				ClassFile classFile = new ClassFile(dis);
+			try {
+				ClassFile classFile = new ClassFile(file);
 				String className = classFile.getName();
 				className = className.replaceAll("\\/", ".");
 
