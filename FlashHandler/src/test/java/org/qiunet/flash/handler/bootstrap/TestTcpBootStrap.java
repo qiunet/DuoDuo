@@ -3,12 +3,12 @@ package org.qiunet.flash.handler.bootstrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.proto.GenderType;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /**
  * Created by qiunet.

@@ -1,4 +1,4 @@
-package org.qiunet.utils.protobuf;
+package org.qiunet.flash.handler.common.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.google.common.base.Preconditions;

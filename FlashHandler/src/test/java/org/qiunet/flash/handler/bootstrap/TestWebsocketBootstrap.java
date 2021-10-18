@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.bootstrap;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
@@ -11,7 +12,6 @@ import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
 

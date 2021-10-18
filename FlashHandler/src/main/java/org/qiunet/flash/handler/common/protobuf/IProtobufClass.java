@@ -1,4 +1,4 @@
-package org.qiunet.utils.protobuf;
+package org.qiunet.flash.handler.common.protobuf;
 
 /***
  *

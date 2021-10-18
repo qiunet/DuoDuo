@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -26,7 +27,6 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.lang.reflect.Method;
 import java.util.Map;

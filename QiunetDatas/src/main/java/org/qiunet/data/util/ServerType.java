@@ -1,6 +1,5 @@
 package org.qiunet.data.util;
 
-import com.baidu.bjf.remoting.protobuf.EnumReadable;
 import org.qiunet.utils.exceptions.EnumParseException;
 
 /***
@@ -12,7 +11,7 @@ import org.qiunet.utils.exceptions.EnumParseException;
  * @author qiunet
  * 2020-10-09 11:08
  */
-public enum ServerType implements EnumReadable {
+public enum ServerType {
 	/**
 	 * 全功能服务
 	 * 即服务包含所有的服务.
@@ -35,7 +34,7 @@ public enum ServerType implements EnumReadable {
 	 */
 	ROUTE(4),
 	;
-	private int type;
+	private final int type;
 
 	ServerType(int type) {
 		this.type = type;
@@ -45,12 +44,11 @@ public enum ServerType implements EnumReadable {
 		return type;
 	}
 
-	@Override
 	public int value() {
 		return type;
 	}
 
-	private static ServerType [] values = values();
+	private static final ServerType [] values = values();
 
 	public static ServerType parse(int serverType) {
 		if (serverType < 0 || serverType >= values.length) {

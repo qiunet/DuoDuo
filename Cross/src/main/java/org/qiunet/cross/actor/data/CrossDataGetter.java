@@ -3,9 +3,9 @@ package org.qiunet.cross.actor.data;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.transaction.TransactionFuture;
 import org.qiunet.cross.transaction.TransactionManager;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 
 /***
@@ -15,11 +15,11 @@ import org.qiunet.utils.protobuf.ProtobufDataManager;
  * 2020-10-28 11:35
  */
 public final class CrossDataGetter<Data extends BaseCrossTransferData> {
-	private LazyLoader<Data> loader;
+	private final LazyLoader<Data> loader;
 
-	private CrossData<Data> crossData;
+	private final CrossData<Data> crossData;
 
-	private CrossPlayerActor crossPlayerActor;
+	private final CrossPlayerActor crossPlayerActor;
 
 	public CrossDataGetter(CrossPlayerActor crossPlayerActor, CrossData<Data> crossData) {
 		this.crossData = crossData;

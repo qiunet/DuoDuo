@@ -50,6 +50,10 @@
 			<artifactId>QiunetDatas</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.baidu</groupId>
+			<artifactId>jprotobuf</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>

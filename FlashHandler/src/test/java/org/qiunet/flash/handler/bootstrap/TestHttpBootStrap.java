@@ -6,6 +6,7 @@ import io.netty.util.CharsetUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
@@ -13,7 +14,6 @@ import org.qiunet.flash.handler.proto.HttpPbLoginRequest;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.ProtocolId;
 import org.qiunet.utils.http.HttpRequest;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;

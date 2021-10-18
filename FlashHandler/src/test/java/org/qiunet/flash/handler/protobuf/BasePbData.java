@@ -1,4 +1,4 @@
-package org.qiunet.utils.test.protobuf;
+package org.qiunet.flash.handler.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 

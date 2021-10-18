@@ -1,15 +1,11 @@
 package org.qiunet.utils.file;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.io.FileUtils;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -24,7 +20,7 @@ import java.util.function.Predicate;
  *         Created on 17/2/17 18:02.
  */
 public class FileUtil {
-	private static Logger logger = LoggerType.DUODUO.getLogger();
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * 移动文件
 	 * @param srcFile
@@ -244,7 +240,64 @@ public class FileUtil {
 	 * @throws IOException
 	 */
 	public static void cleanDirectory(final File directory) throws IOException {
-		FileUtils.cleanDirectory(directory);
+		if (! directory.isDirectory()) {
+			return;
+		}
+
+		final File[] files =directory.listFiles();
+		if (files == null) {
+			return;
+		}
+		IOException exception = null;
+		for (final File file : files) {
+			try {
+				forceDelete(file);
+			} catch (final IOException ioe) {
+				exception = ioe;
+			}
+		}
+
+		if (null != exception) {
+			throw exception;
+		}
+	}
+
+	private static void forceDelete(final File file) throws IOException {
+		if (file.isDirectory()) {
+			deleteDirectory(file);
+		} else {
+			final boolean filePresent = file.exists();
+			if (!file.delete()) {
+				if (!filePresent) {
+					throw new FileNotFoundException("File does not exist: " + file);
+				}
+				final String message =
+						"Unable to delete file: " + file;
+				throw new IOException(message);
+			}
+		}
+	}
+	private static boolean isSymlink(final File file) throws IOException {
+		if (file == null) {
+			throw new NullPointerException("File must not be null");
+		}
+		return Files.isSymbolicLink(file.toPath());
+	}
+
+	private static void deleteDirectory(final File directory) throws IOException {
+		if (!directory.exists()) {
+			return;
+		}
+
+		if (!isSymlink(directory)) {
+			cleanDirectory(directory);
+		}
+
+		if (!directory.delete()) {
+			final String message =
+					"Unable to delete directory " + directory + ".";
+			throw new IOException(message);
+		}
 	}
 
 	/**

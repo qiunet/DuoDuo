@@ -3,7 +3,7 @@ package org.qiunet.cross.actor.data;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import org.qiunet.cross.transaction.BaseTransactionResponse;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 
 /***
  * 跨服获取玩家数据的事务请求数据

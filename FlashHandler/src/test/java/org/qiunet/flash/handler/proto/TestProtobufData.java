@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.proto;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.utils.scanner.ClassScanner;
 
 

@@ -5,10 +5,10 @@ import com.google.protobuf.CodedInputStream;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.utils.async.LazyLoader;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

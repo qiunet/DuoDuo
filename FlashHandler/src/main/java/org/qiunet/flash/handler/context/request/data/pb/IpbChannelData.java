@@ -1,9 +1,9 @@
 package org.qiunet.flash.handler.context.request.data.pb;
 
+import org.qiunet.flash.handler.common.protobuf.IProtobufClass;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-import org.qiunet.utils.protobuf.IProtobufClass;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 /***
  * requestData and responseData 的父类接口.

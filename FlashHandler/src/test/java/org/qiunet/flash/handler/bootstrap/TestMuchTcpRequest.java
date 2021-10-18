@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.bootstrap;
 
 import org.junit.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -9,7 +10,6 @@ import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.TcpPbLoginRequest;
-import org.qiunet.utils.protobuf.ProtobufDataManager;
 
 import java.util.concurrent.CountDownLatch;
 

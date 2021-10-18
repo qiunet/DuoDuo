@@ -1,7 +1,7 @@
 package org.qiunet.cross.actor.data;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.utils.protobuf.IProtobufClass;
+import org.qiunet.flash.handler.common.protobuf.IProtobufClass;
 
 /***
  *跨服传输的玩家数据基类
