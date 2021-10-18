@@ -2,7 +2,7 @@ package org.qiunet.function.reward;
 
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 获得奖励事件

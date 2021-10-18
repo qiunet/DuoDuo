@@ -4,9 +4,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
-import org.qiunet.listener.event.EventHandlerWeightType;
-import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.collection.enums.ForEachResult;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
+import org.qiunet.utils.listener.event.EventListener;
 
 import java.util.Map;
 import java.util.function.Function;

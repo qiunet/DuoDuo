@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 消耗事件

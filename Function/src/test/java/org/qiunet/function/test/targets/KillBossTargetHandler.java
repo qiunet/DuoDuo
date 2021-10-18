@@ -2,7 +2,7 @@ package org.qiunet.function.test.targets;
 
 import org.qiunet.function.targets.BaseTargetHandler;
 import org.qiunet.function.test.targets.event.KillBossEventData;
-import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventListener;
 
 /***
  *

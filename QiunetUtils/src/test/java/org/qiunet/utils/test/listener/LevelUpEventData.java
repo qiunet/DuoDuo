@@ -1,11 +1,11 @@
-package org.qiunet.listener.test.event;
+package org.qiunet.utils.test.listener;
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 public class LevelUpEventData implements IEventData {
-	private long uid;
-	private int oldLevel;
-	private int newLevel;
+	private final long uid;
+	private final int oldLevel;
+	private final int newLevel;
 
 	public LevelUpEventData(long uid, int oldLevel, int newLevel) {
 		this.uid = uid;

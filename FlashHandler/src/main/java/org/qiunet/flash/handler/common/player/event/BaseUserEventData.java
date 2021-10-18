@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 玩家事件的共同父类

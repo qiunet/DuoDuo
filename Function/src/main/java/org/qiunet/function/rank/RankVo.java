@@ -8,7 +8,7 @@ import java.util.Map;
 
 /***
  * 业务会有张表.
- * 保存所有的排行榜数据. 推荐 type -> json(list(rankVo))
+ * 保存所有的排行榜数据. 推荐 type → json(list(rankVo))
  *
  * @author qiunet
  * 2020-11-24 10:08

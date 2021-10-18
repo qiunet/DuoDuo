@@ -22,10 +22,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Listener</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>

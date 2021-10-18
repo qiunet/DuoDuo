@@ -23,7 +23,6 @@
 		<module>Entity2Table</module>
 		<module>all</module>
 		<module>EventLog</module>
-		<module>Listener</module>
 		<module>Cross</module>
 		<module>Profile</module>
 		<module>Function</module>
@@ -202,11 +201,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>FlashHandler</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>Listener</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

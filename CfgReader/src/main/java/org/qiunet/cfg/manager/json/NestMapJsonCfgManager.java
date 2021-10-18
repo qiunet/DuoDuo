@@ -57,7 +57,7 @@ public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>
 
 	/***
 	 * 得到一个一定格式的嵌套map
-	 * 格式: key 对应 Map<subKey, cfg>
+	 * 格式: key 对应 Map[subKey, cfg]
 	 * @return
 	 * @throws Exception
 	 */

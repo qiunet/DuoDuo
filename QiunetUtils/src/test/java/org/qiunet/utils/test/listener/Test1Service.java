@@ -1,8 +1,8 @@
-package org.qiunet.listener.test.event;
+package org.qiunet.utils.test.listener;
 
 import org.junit.Assert;
-import org.qiunet.listener.event.EventHandlerWeightType;
-import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
+import org.qiunet.utils.listener.event.EventListener;
 
 public class Test1Service {
 

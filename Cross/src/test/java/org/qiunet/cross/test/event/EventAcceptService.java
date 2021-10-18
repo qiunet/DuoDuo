@@ -5,7 +5,7 @@ import org.qiunet.cross.test.transaction.TestTransactionRequest;
 import org.qiunet.cross.test.transaction.TestTransactionResponse;
 import org.qiunet.cross.transaction.TransactionFuture;
 import org.qiunet.cross.transaction.TransactionManager;
-import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
 
 /***

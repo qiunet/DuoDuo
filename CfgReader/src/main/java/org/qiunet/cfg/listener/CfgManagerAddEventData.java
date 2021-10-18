@@ -1,7 +1,7 @@
 package org.qiunet.cfg.listener;
 
 import org.qiunet.cfg.manager.base.ICfgManager;
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 添加ICfgManager 到 CfgManagers 事件

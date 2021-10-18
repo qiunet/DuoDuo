@@ -1,9 +1,9 @@
 package org.qiunet.data.async;
 
-import org.qiunet.listener.event.EventHandlerWeightType;
-import org.qiunet.listener.event.EventListener;
-import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.quartz.CronSchedule;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.timer.TimerManager;
@@ -21,12 +21,12 @@ import java.util.concurrent.TimeUnit;
  */
  public enum AsyncJobSupport {
 	instance;
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private final Logger logger = LoggerType.DUODUO.getLogger();
 	public static AsyncJobSupport getInstance() {
 		return instance;
 	}
 
-	private Set<IAsyncNode> nodes = new HashSet<>();
+	private final Set<IAsyncNode> nodes = new HashSet<>();
 	void addNode(IAsyncNode node) {
 		this.nodes.add(node);
 	}

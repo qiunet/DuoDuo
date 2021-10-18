@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Listener</artifactId>
+			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

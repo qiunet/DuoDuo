@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.listener.event.EventManager;
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.EventManager;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 跨服事件处理
@@ -20,8 +20,8 @@ import org.qiunet.listener.event.IEventData;
 public class CrossEventManager {
 	/**
 	 * 跨服的事件.
-	 * 功能服 -> 跨服
-	 * 跨服 -> 功能服
+	 * 功能服 → 跨服
+	 * 跨服 → 功能服
 	 * @param playerId
 	 * @param crossSession
 	 * @param eventData

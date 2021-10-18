@@ -38,7 +38,7 @@ public class ConsumeConfig {
 
 	/**
 	 * 转 Consume
-	 * @param subTypeGetter cfgId -> subType
+	 * @param subTypeGetter cfgId → subType
 	 * @return Consume
 	 */
 	public BaseConsume convertToConsume(Function<Integer, IResourceSubType> subTypeGetter) {

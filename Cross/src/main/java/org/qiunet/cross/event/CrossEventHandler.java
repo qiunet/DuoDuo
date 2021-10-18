@@ -5,8 +5,8 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
-import org.qiunet.listener.event.EventManager;
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.EventManager;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 跨服事件请求

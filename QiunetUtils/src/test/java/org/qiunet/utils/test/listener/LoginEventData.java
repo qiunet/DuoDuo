@@ -1,10 +1,10 @@
-package org.qiunet.listener.test.event;
+package org.qiunet.utils.test.listener;
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 public class LoginEventData implements IEventData {
 
-	private long uid;
+	private final long uid;
 
 	public LoginEventData(long uid) {
 		this.uid = uid;

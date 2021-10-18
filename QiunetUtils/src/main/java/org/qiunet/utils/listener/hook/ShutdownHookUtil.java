@@ -1,12 +1,10 @@
-package org.qiunet.listener.hook;
+package org.qiunet.utils.listener.hook;
 
-import org.qiunet.listener.event.EventHandlerWeightType;
-import org.qiunet.listener.event.EventListener;
-import org.qiunet.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.thread.ThreadPoolManager;
-import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.util.LinkedList;
@@ -21,9 +19,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @Date Create in 2018/5/31 12:04
  **/
 public class ShutdownHookUtil {
-	private LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
-	private Logger logger = LoggerType.DUODUO.getLogger();
-	private AtomicBoolean executing = new AtomicBoolean();
+	private final LinkedList<IShutdownCloseHook> closes = new LinkedList<>();
+	private final Logger logger = LoggerType.DUODUO.getLogger();
+	private final AtomicBoolean executing = new AtomicBoolean();
 	private static ShutdownHookUtil instance;
 
 	private ShutdownHookUtil() {
@@ -72,8 +70,6 @@ public class ShutdownHookUtil {
 	 */
 	private void shutdownNow() {
 		if (executing.compareAndSet(false, true)) {
-			this.addShutdownHook(ThreadPoolManager::shutdownPool);
-			this.addShutdownHook(TimerManager::shutdown);
 			this.run();
 		}
 	}

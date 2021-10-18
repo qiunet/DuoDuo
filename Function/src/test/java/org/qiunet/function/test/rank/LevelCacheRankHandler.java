@@ -4,8 +4,8 @@ package org.qiunet.function.test.rank;
 import org.qiunet.function.rank.BaseCacheRankHandler;
 import org.qiunet.function.rank.RankVo;
 import org.qiunet.function.test.targets.event.LevelUpEventData;
-import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.listener.event.EventListener;
 
 import java.util.Collections;
 import java.util.List;

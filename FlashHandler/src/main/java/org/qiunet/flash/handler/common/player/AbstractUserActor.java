@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.listener.event.EventManager;
 
 /***
  * 玩家类型的messageActor 继承该类

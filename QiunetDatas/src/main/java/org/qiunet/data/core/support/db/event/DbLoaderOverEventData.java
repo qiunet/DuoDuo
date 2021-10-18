@@ -1,6 +1,6 @@
 package org.qiunet.data.core.support.db.event;
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  *
@@ -10,7 +10,7 @@ import org.qiunet.listener.event.IEventData;
  */
 public class DbLoaderOverEventData implements IEventData {
 
-	private static DbLoaderOverEventData instance = new DbLoaderOverEventData();
+	private static final DbLoaderOverEventData instance = new DbLoaderOverEventData();
 
 	public static void fireEvent() {
 		instance.fireEventHandler();

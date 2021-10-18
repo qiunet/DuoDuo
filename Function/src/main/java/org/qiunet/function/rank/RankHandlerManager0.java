@@ -2,9 +2,9 @@ package org.qiunet.function.rank;
 
 import com.google.common.collect.Maps;
 import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
-import org.qiunet.listener.event.EventHandlerWeightType;
-import org.qiunet.listener.event.EventListener;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
+import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -21,7 +21,7 @@ import java.util.Set;
 enum RankHandlerManager0 implements IApplicationContextAware {
 	instances;
 	private IApplicationContext context;
-	private Map<IRankType, IRankHandler> map = Maps.newHashMap();
+	private final Map<IRankType, IRankHandler> map = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {

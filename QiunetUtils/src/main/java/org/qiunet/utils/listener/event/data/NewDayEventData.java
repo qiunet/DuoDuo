@@ -1,6 +1,6 @@
-package org.qiunet.listener.event.data;
+package org.qiunet.utils.listener.event.data;
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 跨天的监听

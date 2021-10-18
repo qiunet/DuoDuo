@@ -1,7 +1,7 @@
-package org.qiunet.listener.test.event;
+package org.qiunet.utils.test.listener;
 
 import org.junit.Assert;
-import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventListener;
 
 public class Test2Service {
 

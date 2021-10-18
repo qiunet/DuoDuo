@@ -1,7 +1,7 @@
 package org.qiunet.cfg.listener;
 
 
-import org.qiunet.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 配置加载完成事件

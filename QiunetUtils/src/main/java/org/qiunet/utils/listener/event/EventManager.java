@@ -1,4 +1,4 @@
-package org.qiunet.listener.event;
+package org.qiunet.utils.listener.event;
 
 public class EventManager {
 	/***

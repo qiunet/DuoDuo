@@ -9,7 +9,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import java.util.Map;
 
 /***
- * 管理 {Id -> Cfg} 类型的配置文件对象
+ * 管理 {Id to Cfg} 类型的配置文件对象
  * @param <ID>
  * @param <Cfg>
  */

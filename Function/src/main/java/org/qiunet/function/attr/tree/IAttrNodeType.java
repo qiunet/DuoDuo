@@ -13,8 +13,8 @@ public interface IAttrNodeType {
 	/**
 	 * node 对应的key的class
 	 * 如果没有分叉点(keyClass == null). 就不需要传入该参数.
-	 * 比如: 角色 -> 战神装备 -> 铸魂石玩法 -> 腰带
-	 * 其中 角色 -> 战神装备 -> 铸魂石玩法 是确定路径. 腰带铸魂是[铸魂石玩法]变量. 则keyClass需要指出腰带的key类型, 比如枚举或者int.
+	 * 比如: 角色 → 战神装备 → 铸魂石玩法 → 腰带
+	 * 其中 角色 → 战神装备 → 铸魂石玩法 是确定路径. 腰带铸魂是[铸魂石玩法]变量. 则keyClass需要指出腰带的key类型, 比如枚举或者int.
 	 * @return
 	 */
 	Class<?> keyClass();

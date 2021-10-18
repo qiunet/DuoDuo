@@ -52,7 +52,7 @@ public interface IRankType {
 
 	/**
 	 * 是否可以进入排名.
-	 * 有时候, 要求value > 多少才进入排行 .
+	 * 有时候, 要求value 大于多少才进入排行 .
 	 * @param id 排名的id
 	 * @param value 排名值
 	 * @return

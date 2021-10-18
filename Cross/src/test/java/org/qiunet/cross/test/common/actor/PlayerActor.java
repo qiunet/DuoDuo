@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 

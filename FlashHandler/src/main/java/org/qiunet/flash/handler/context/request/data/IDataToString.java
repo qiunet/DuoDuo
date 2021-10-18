@@ -4,7 +4,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /***
- * data -> toString
+ * data to toString
  *
  * @author qiunet
  * 2020-10-27 16:45

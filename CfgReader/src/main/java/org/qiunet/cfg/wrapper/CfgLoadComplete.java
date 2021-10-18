@@ -3,7 +3,7 @@ package org.qiunet.cfg.wrapper;
 import org.qiunet.cfg.base.IAfterLoad;
 import org.qiunet.cfg.base.ICfgCheck;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
-import org.qiunet.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventListener;
 
 /***
  *

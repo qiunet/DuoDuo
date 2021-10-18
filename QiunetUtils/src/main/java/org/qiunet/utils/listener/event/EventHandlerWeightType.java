@@ -1,4 +1,4 @@
-package org.qiunet.listener.event;
+package org.qiunet.utils.listener.event;
 
 /***
  * 事件处理权重枚举

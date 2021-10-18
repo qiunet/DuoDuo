@@ -1,4 +1,4 @@
-package org.qiunet.listener.event;
+package org.qiunet.utils.listener.event;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
@@ -23,7 +23,7 @@ import java.util.Set;
  */
 enum EventManager0 implements IApplicationContextAware {
 	instance;
-	private Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
+	private final Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
 	private IApplicationContext context;
 	static EventManager0 getInstance() {
 		return instance;
@@ -85,9 +85,9 @@ enum EventManager0 implements IApplicationContextAware {
 	}
 
 	private static class Wrapper {
-		private int weight;
-		private Method method;
-		private Object caller;
+		private final int weight;
+		private final Method method;
+		private final Object caller;
 
 		private Wrapper(Object caller, Method method, int weight) {
 			this.caller = caller;

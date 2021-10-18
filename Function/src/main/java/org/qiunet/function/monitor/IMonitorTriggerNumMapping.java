@@ -12,7 +12,7 @@ public interface IMonitorTriggerNumMapping<SubType> {
 	/**
 	 * 获得 subType 对应的触发次数
 	 * @param subType
-	 * @return <= 0 为不限制
+	 * @return 小于 0 为不限制
 	 */
 	long triggerNum(SubType subType);
 }

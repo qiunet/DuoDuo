@@ -6,9 +6,9 @@ import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
-import org.qiunet.listener.event.data.ServerShutdownEventData;
-import org.qiunet.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -35,8 +35,8 @@ public class BootstrapServer {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private static BootstrapServer instance;
 
-	private Set<INettyServer> nettyServers = new HashSet<>(8);
-	private HookListener hookListener;
+	private final Set<INettyServer> nettyServers = new HashSet<>(8);
+	private final HookListener hookListener;
 
 	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new CustomException("Instance Duplication!");
@@ -147,7 +147,7 @@ public class BootstrapServer {
 	 * Hook的监听
 	 */
 	private class HookListener implements Runnable {
-		private Hook hook;
+		private final Hook hook;
 		private boolean running = true;
 		HookListener(Hook hook) {
 			this.hook = hook;

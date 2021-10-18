@@ -35,7 +35,6 @@ public final class ChannelUtil {
 	 * 将一个MessageContent 写入byteBuf
 	 * @param content
 	 * @param channel
-	 * @return
 	 */
 	public static void messageContentToByteBuf(MessageContent content, Channel channel, ByteBuf out) {
 		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);

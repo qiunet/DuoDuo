@@ -1,7 +1,7 @@
 package org.qiunet.quartz.trigger;
 
-import org.qiunet.listener.event.data.NewDayEventData;
 import org.qiunet.quartz.CronSchedule;
+import org.qiunet.utils.listener.event.data.NewDayEventData;
 
 /***
  *

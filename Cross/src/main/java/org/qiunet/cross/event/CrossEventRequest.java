@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
-import org.qiunet.listener.event.IEventData;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  *

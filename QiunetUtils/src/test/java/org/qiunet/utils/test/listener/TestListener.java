@@ -1,9 +1,9 @@
-package org.qiunet.listener.test.event;
+package org.qiunet.utils.test.listener;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.scanner.ClassScanner;
 
 import java.util.concurrent.atomic.AtomicInteger;

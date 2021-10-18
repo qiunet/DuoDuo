@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  ***/
 public class CdTimer<T extends Enum<T> & ICdType> {
 
-	private Map<T, Timer> cdTimers = new ConcurrentHashMap<>();
+	private final Map<T, Timer> cdTimers = new ConcurrentHashMap<>();
 	/**
 	 * 测试环境可以关闭cd
 	 */
@@ -21,7 +21,6 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	 * 校验cd是否失效
 	 * 失效会重新计时 并返回true
 	 * @param cdType
-	 * @return
 	 */
 	public void recordCd(T cdType) {
 		this.recordCd(cdType, cdType.period(), cdType.unit());
@@ -32,7 +31,6 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	 * @param cdType
 	 * @param period 自己指定的间隔时间
 	 * @param unit 时间单位
-	 * @return
 	 */
 	public void recordCd(T cdType, long period, TimeUnit unit) {
 		if (close) {

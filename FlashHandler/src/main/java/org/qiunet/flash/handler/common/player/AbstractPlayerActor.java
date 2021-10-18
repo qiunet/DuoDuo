@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.listener.event.EventManager;
 
 /***
  * 玩家playerActor 的父类

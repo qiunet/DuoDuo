@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
-import org.qiunet.listener.event.EventManager;
+import org.qiunet.utils.listener.event.EventManager;
 
 import java.util.Map;
 

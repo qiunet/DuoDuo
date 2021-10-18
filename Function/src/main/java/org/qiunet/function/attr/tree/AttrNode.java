@@ -24,12 +24,12 @@ public class AttrNode {
 	/**
 	 * node 的id
 	 */
-	private int id;
+	private final int id;
 
 	/**
 	 * 外面定义的枚举类型
 	 */
-	private IAttrNodeType nodeType;
+	private final IAttrNodeType nodeType;
 	/**
 	 * 父节点.
 	 */
@@ -37,7 +37,7 @@ public class AttrNode {
 	/**
 	 * buff list
 	 */
-	private Set<IAttrBuff> buffSet;
+	private final Set<IAttrBuff> buffSet;
 	/**
 	 * 子node
 	 */
@@ -96,8 +96,8 @@ public class AttrNode {
 
 	/**
 	 * 构造一个节点路径
-	 * 比如: 角色 -> 战神装备 -> 铸魂石玩法 -> 腰带
-	 * 其中 角色 -> 战神装备 -> 铸魂石玩法 是确定路径. 腰带是[铸魂石玩法]变量. 则keyClass需要指出腰带的key类型.
+	 * 比如: 角色 → 战神装备 → 铸魂石玩法 → 腰带
+	 * 其中 角色 → 战神装备 → 铸魂石玩法 是确定路径. 腰带是[铸魂石玩法]变量. 则keyClass需要指出腰带的key类型.
 	 * keys 倒数第一个参数应该是腰带类型. keyClass == null 不需要判断. 剩下的从root开始一路下来分歧点的参数.
 	 * 后面的参数. 如果角色有多个角色.战神装备确定. 则第二个参数应该是角色的标识.
 	 *
