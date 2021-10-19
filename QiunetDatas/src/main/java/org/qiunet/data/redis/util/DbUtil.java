@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.Map;
@@ -50,8 +51,11 @@ public final class DbUtil {
 			Table table = key.getAnnotation(Table.class);
 			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
 			String dbSource = table.dbSource();
-			if (StringUtil.isEmpty(dbSource) && ServerConfig.isLogicServerType()) {
-				dbSource = ServerConfig.getDefaultSource();
+			if (StringUtil.isEmpty(dbSource)) {
+				if (!StringUtil.isEmpty(ServerConfig.getDefaultSource())) {
+					return ServerConfig.getDefaultSource();
+				}
+				throw new CustomException("Table [{}] not define dbSource, but default dbSource is empty.", clazz.getName());
 			}
 			return dbSource;
 		});

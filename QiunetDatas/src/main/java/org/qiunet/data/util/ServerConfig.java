@@ -15,7 +15,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-08-04 10:50
  ***/
-@DConfig(value = ServerConfig.CONFIG_FILE_NAME, listenerChange = true)
+@DConfig(value = ServerConfig.CONFIG_FILE_NAME)
 public enum ServerConfig implements IKeyValueData<String, String> {
 	instance;
 	// 部分的配置字段名. 外部需要. 所以需要定义.
@@ -80,13 +80,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static ServerType getServerType() {
 		return serverType;
-	}
-
-	public static boolean isLogicServerType() {
-		return
-			getServerType() == null
-			|| getServerType() == ServerType.LOGIC
-			|| getServerType() == ServerType.ALL;
 	}
 
 	public static String getServerCloseMsg() {
