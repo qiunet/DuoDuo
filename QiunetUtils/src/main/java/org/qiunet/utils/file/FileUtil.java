@@ -5,7 +5,10 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -173,24 +176,29 @@ public class FileUtil {
 	/**
 	 * 删除文件 或者文件夹 以及其子目录下所有文件
 	 *
-	 * @param f
+	 * @param file
 	 * @throws IOException
 	 */
-	public static void deleteFile(File f) {
-		if (! f.exists()) return;
+	public static void deleteFile(File file) throws IOException {
+		if (file == null || ! file.exists()) return;
 
-		if (f.isFile()) {
-			f.delete();
+		if (file.isFile()) {
+			if (! file.delete()) {
+				throw new IOException("Unable to delete file: " + file);
+			}
 			return;
 		}
 
-		File [] files = f.listFiles();
+		File [] files = file.listFiles();
 		if(files == null) return;
 
-		for (File file : files) {
-			deleteFile(file);
+		for (File file0 : files) {
+			deleteFile(file0);
 		}
-		f.delete();
+		// delete self
+		if (! file.delete()) {
+			throw new IOException("Unable to delete directory: " + file);
+		}
 	}
 
 	/**
@@ -248,10 +256,11 @@ public class FileUtil {
 		if (files == null) {
 			return;
 		}
+
 		IOException exception = null;
 		for (final File file : files) {
 			try {
-				forceDelete(file);
+				deleteFile(file);
 			} catch (final IOException ioe) {
 				exception = ioe;
 			}
@@ -261,45 +270,6 @@ public class FileUtil {
 			throw exception;
 		}
 	}
-
-	private static void forceDelete(final File file) throws IOException {
-		if (file.isDirectory()) {
-			deleteDirectory(file);
-		} else {
-			final boolean filePresent = file.exists();
-			if (!file.delete()) {
-				if (!filePresent) {
-					throw new FileNotFoundException("File does not exist: " + file);
-				}
-				final String message =
-						"Unable to delete file: " + file;
-				throw new IOException(message);
-			}
-		}
-	}
-	private static boolean isSymlink(final File file) throws IOException {
-		if (file == null) {
-			throw new NullPointerException("File must not be null");
-		}
-		return Files.isSymbolicLink(file.toPath());
-	}
-
-	private static void deleteDirectory(final File directory) throws IOException {
-		if (!directory.exists()) {
-			return;
-		}
-
-		if (!isSymlink(directory)) {
-			cleanDirectory(directory);
-		}
-
-		if (!directory.delete()) {
-			final String message =
-					"Unable to delete directory " + directory + ".";
-			throw new IOException(message);
-		}
-	}
-
 	/**
 	 * 变动监听
 	 * @param path
