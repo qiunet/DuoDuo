@@ -40,7 +40,6 @@ class DbLoader {
 	 */
 	private final Map<String, String> dbNameMapping = Maps.newHashMap();
 	private final Map<String, SqlSessionFactory> dataSources = Maps.newHashMap();
-	private static final SqlSessionFactoryBuilder builder = new SqlSessionFactoryBuilder();
 
 	/**
 	 *mybatis 配置文件的名称
@@ -204,7 +203,7 @@ class DbLoader {
 		} finally {
 			ErrorContext.instance().reset();
 		}
-		return builder.build(configuration);
+		return new SqlSessionFactoryBuilder().build(configuration);
 	}
 
 	boolean contains(String dbSourceName) {
