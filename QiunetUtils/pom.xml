@@ -69,6 +69,11 @@
 			<artifactId>guava</artifactId>
 		</dependency>
 		<dependency>
+<!--			别的项目(jProtobuf)有用到 common-lang-->
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.typesafe</groupId>
 			<artifactId>config</artifactId>
 		</dependency>
