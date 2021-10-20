@@ -3,7 +3,7 @@ package org.qiunet.function.formula.parse;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.utils.args.ArgsContainer;
@@ -41,7 +41,7 @@ public class FormulaParseManager {
 	enum FormulaParseManager0 implements IApplicationContextAware {
 		instance;
 
-		private List<IFormulaParse> parses = Lists.newArrayList();
+		private final List<IFormulaParse> parses = Lists.newArrayList();
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends IFormulaParse>> contextSubTypesOf = context.getSubTypesOf(IFormulaParse.class);

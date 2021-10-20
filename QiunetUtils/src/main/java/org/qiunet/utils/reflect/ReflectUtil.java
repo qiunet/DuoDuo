@@ -1,7 +1,7 @@
 package org.qiunet.utils.reflect;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;

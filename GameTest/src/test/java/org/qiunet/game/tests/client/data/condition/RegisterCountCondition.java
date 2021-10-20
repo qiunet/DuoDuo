@@ -1,10 +1,10 @@
 package org.qiunet.game.tests.client.data.condition;
 
-import org.apache.commons.lang.math.RandomUtils;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.test.robot.condition.RobotCondition;
 import org.qiunet.game.tests.client.data.BlackBoard;
+import org.qiunet.utils.math.MathUtil;
 
 /***
  * 注册数条件
@@ -34,7 +34,7 @@ public class RegisterCountCondition extends RobotCondition {
 		}
 
 		// 大概率不会新创角色.
-		if (RandomUtils.nextInt(100) < 99) {
+		if (MathUtil.random(100) < 99) {
 			return StatusResult.FAIL;
 		}
 		return BlackBoard.loginInfo.get(robot).size() < maxCount ?

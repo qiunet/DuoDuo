@@ -1,7 +1,7 @@
 package org.qiunet.cfg.wrapper;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.INestListCfg;
@@ -39,7 +39,7 @@ public enum  CfgType {
 		}
 	},
 	;
-	private Class<? extends ICfg> clazz;
+	private final Class<? extends ICfg> clazz;
 
 	CfgType(Class<? extends ICfg> clazz) {
 		this.clazz = clazz;
@@ -52,9 +52,9 @@ public enum  CfgType {
 	public static void createCfgWrapper(Class<? extends ICfg> clazz) {
 		Cfg cfg = clazz.getAnnotation(Cfg.class);
 		CfgFileType fileType = CfgFileType.parse(cfg.value());
-		List<Class> is = ClassUtils.getAllInterfaces(clazz);
+		List<Class<?>> is = ClassUtils.getAllInterfaces(clazz);
 		for (CfgType type : values()) {
-			for (Class i : is) {
+			for (Class<?> i : is) {
 				if (i == type.clazz){
 					cfgWrappers.put(clazz, type.getCfgWrapper(fileType, clazz));
 					return;

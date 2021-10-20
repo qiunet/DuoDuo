@@ -1,6 +1,6 @@
 package org.qiunet.utils.timer;
 
-import org.apache.commons.lang.time.StopWatch;
+import org.apache.commons.lang3.time.StopWatch;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -15,15 +15,15 @@ public class UseTimer {
 	/**
 	 * 用时表名称
 	 */
-	private String name;
+	private final String name;
 	/**
 	 * 警告时间 毫秒
 	 */
-	private long warnUseTime;
+	private final long warnUseTime;
 	/**
 	 *
 	 */
-	private StopWatch stopWatch;
+	private final StopWatch stopWatch;
 
 	public UseTimer(String name, long warnUseTime) {
 		this.name = name;

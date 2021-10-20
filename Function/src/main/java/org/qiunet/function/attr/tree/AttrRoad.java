@@ -1,7 +1,7 @@
 package org.qiunet.function.attr.tree;
 
 import com.google.common.collect.Maps;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.qiunet.utils.async.LazyLoader;
 
 import java.util.Arrays;
@@ -83,7 +83,7 @@ public class AttrRoad {
 		return node.getId() == that.node.getId() &&
 			Arrays.equals(keys, that.keys);
 	}
-	private LazyLoader<Integer> hashCodeLoader = new LazyLoader<>(()-> {
+	private final LazyLoader<Integer> hashCodeLoader = new LazyLoader<>(()-> {
 		int hashCode = Objects.hash(node.getId());
 		hashCode = 31 * hashCode + Arrays.hashCode(keys);
 		return hashCode;

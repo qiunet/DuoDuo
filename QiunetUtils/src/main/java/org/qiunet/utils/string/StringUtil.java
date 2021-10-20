@@ -1,6 +1,6 @@
 package org.qiunet.utils.string;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.qiunet.utils.math.MathUtil;
 import org.slf4j.helpers.MessageFormatter;
 
