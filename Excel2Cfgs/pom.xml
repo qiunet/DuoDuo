@@ -10,22 +10,63 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>Excel2Cfgs</artifactId>
+	<properties>
+		<tools.final.dir>${project.basedir}/target/tools</tools.final.dir>
+	</properties>
 
 	<build>
+		<finalName>Excel2Cfg</finalName>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-install-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<configuration>
+					<skipSource>true</skipSource>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-deploy-plugin</artifactId>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${tools.final.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources</directory>
+									<filtering>true</filtering>
+									<!--Only those files will be included-->
+									<includes>
+										<include>startup.sh</include>
+										<include>startup.bat</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -44,6 +85,7 @@
 							<Class-Path>.</Class-Path>
 						</manifestEntries>
 					</archive>
+					<outputDirectory>${tools.final.dir}</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -57,7 +99,7 @@
 							<goal>copy-dependencies</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/ExcelToData_lib</outputDirectory>
+							<outputDirectory>${tools.final.dir}/ExcelToData_lib</outputDirectory>
 							<!-- excludeTransitive:是否不包含间接依赖包，比如我们依赖A，但是A又依赖了B，我们是否也要把B打进去 默认不打-->
 							<excludeTransitive>false</excludeTransitive>
 							<!-- 复制的jar文件去掉版本信息 -->
@@ -71,7 +113,6 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<includes>
-					<include>**/*.fxml</include>
 					<include>**/*.xml</include>
 					<include>**/*.png</include>
 				</includes>
