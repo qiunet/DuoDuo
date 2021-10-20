@@ -8,7 +8,6 @@ import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
 import java.io.StringWriter;
-import java.util.Properties;
 
 /**
  * 搞定vmfile 并且输出为文件.
@@ -16,18 +15,16 @@ import java.util.Properties;
  *         Created on 16/11/22 16:04.
  */
 public class VelocityFactory {
-	private static VelocityFactory instance = new VelocityFactory();
+	private static final VelocityFactory instance = new VelocityFactory();
 
-	private VelocityEngine velocity;
+	private final VelocityEngine velocity;
 
 	private VelocityFactory() {
 		velocity = new VelocityEngine();
-		Properties properties = new Properties();
-		// 设置从classpath下查找
-		properties.setProperty("file.resource.loader.class","org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-		properties.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.NullLogChute");
-
-		velocity.init(properties);
+		// 默认应用 org/apache/velocity/runtime/defaults/velocity.properties
+		// 其它小幅度调整
+		velocity.setProperty("resource.loader.file.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		velocity.init();
 	}
 
 	public static VelocityFactory getInstance() {

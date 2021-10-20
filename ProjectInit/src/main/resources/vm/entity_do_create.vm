@@ -33,7 +33,7 @@ public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.
 	public ${define.DoName}(){}
 ###end
 #foreach(${constructorDefine} in ${define.ConstructorDefines})
-	public ${define.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${velocityCount} < (${constructorDefine.fields.size()})),#end#end){
+	public ${define.DoName}(#foreach(${field} in ${constructorDefine.fields})${field.type} ${field.name}#if(${foreach.count} < (${constructorDefine.fields.size()})), #end#end){
 #foreach(${field} in ${constructorDefine.fields})
 		this.${field.name} = ${field.name};
 #end
