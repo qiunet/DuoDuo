@@ -57,6 +57,10 @@
 			<artifactId>reflections</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+		<dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
         </dependency>
@@ -67,11 +71,6 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-<!--			别的项目(jProtobuf)有用到 common-lang-->
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe</groupId>

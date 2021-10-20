@@ -315,6 +315,10 @@
 			<artifactId>reflections</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>
@@ -333,10 +337,6 @@
 		<dependency>
 			<groupId>com.typesafe</groupId>
 			<artifactId>config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.baidu</groupId>
