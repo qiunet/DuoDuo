@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.utils.json.JsonUtil;
 
 /**
@@ -38,6 +39,9 @@ public interface IChannelMessage<T> {
 	 */
 	default String toStr() {
 		T content = this.getContent();
+		if (content instanceof IDataToString) {
+			return ((IDataToString) content)._toString();
+		}
 		return content.getClass().getSimpleName() + "" +JsonUtil.toJsonString(content);
 	}
 }
