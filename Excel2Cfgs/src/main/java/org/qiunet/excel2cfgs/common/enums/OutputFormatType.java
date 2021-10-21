@@ -10,11 +10,21 @@ import org.qiunet.excel2cfgs.setting.SettingManager;
 public enum OutputFormatType {
 	json {
 		@Override
+		public void unchecked() {
+			SettingManager.getInstance().getSetting().setJsonChecked(false);
+		}
+
+		@Override
 		public void saveStatus() {
 			SettingManager.getInstance().getSetting().setJsonChecked(true);
 		}
 	},
 	xml {
+		@Override
+		public void unchecked() {
+			SettingManager.getInstance().getSetting().setXmlChecked(false);
+		}
+
 		@Override
 		public void saveStatus() {
 			SettingManager.getInstance().getSetting().setXmlChecked(true);
@@ -22,9 +32,22 @@ public enum OutputFormatType {
 	},
 	xd {
 		@Override
+		public void unchecked() {
+			SettingManager.getInstance().getSetting().setXdChecked(false);
+		}
+		@Override
 		public void saveStatus() {
 			SettingManager.getInstance().getSetting().setXdChecked(true);
 		}
 	};
+
+	public static void uncheckedAll(){
+		for (OutputFormatType type : values()) {
+			type.unchecked();
+		}
+	}
+
+	public abstract void unchecked();
+
 	public abstract void saveStatus();
 }

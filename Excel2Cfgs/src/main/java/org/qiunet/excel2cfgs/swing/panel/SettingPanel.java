@@ -122,9 +122,7 @@ public class SettingPanel extends IconJPanel {
         SettingManager.getInstance().addCfgPath(Objects.requireNonNull(this.proCfgPathChoice.getSelectedItem()).toString());
 
 
-        SettingManager.getInstance().getSetting().setJsonChecked(false);
-        SettingManager.getInstance().getSetting().setXmlChecked(false);
-        SettingManager.getInstance().getSetting().setXdChecked(false);
+        OutputFormatType.uncheckedAll();
         if (selectedItem == RoleType.SCHEMER) {
             SettingManager.getInstance().getSetting().setJsonChecked(this.jsonBox.isSelected());
             SettingManager.getInstance().getSetting().setXmlChecked(this.xmlBox.isSelected());
