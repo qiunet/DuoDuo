@@ -121,6 +121,10 @@ public final class ChannelUtil {
 				return ip;
 			}
 		}
+		if (channel.remoteAddress() == null) {
+			return "unknown-address";
+		}
+
 		return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
 
 	}
