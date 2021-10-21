@@ -5,6 +5,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
@@ -19,7 +20,7 @@ import org.qiunet.utils.listener.event.IEventData;
  */
 @SkipProtoGenerator
 @PbChannelData(ID = IProtocolId.System.CROSS_EVENT, desc = "跨服事件处理")
-public class CrossEventRequest implements IpbChannelData {
+public class CrossEventRequest implements IpbChannelData, IDataToString {
 	@Protobuf(description = "事件的className")
 	private String className;
 	@Protobuf(description = "事件反序列化的数据.")

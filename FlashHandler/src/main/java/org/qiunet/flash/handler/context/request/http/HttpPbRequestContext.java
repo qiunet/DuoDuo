@@ -3,12 +3,11 @@ package org.qiunet.flash.handler.context.request.http;
 import com.google.protobuf.GeneratedMessageV3;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.utils.string.ToString;
 
 /**
  * Created by qiunet.
@@ -35,7 +34,7 @@ public  class HttpPbRequestContext<RequestData extends IpbChannelData, ResponseD
 		ResponseData data = null;
 		try {
 			if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-				logger.info("HTTP <<< {}", ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
+				logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
 			}
 			data = getHandler().handler(request);
 		} catch (Exception e) {
@@ -46,7 +45,7 @@ public  class HttpPbRequestContext<RequestData extends IpbChannelData, ResponseD
 			throw new NullPointerException("Response Protobuf data can not be null!");
 		}
 		if (logger.isInfoEnabled() && ! data.getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("HTTP >>> {}", ToStringBuilder.reflectionToString(data, ToStringStyle.SHORT_PREFIX_STYLE));
+			logger.info("HTTP >>> {}", ToString.toString(data));
 		}
 		this.response(data);
 	}

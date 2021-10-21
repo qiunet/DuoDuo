@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.request.data.pb;
 
 import org.qiunet.flash.handler.common.protobuf.IProtobufClass;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 
 /***
@@ -11,7 +10,7 @@ import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
  * @author qiunet
  * 2020-09-21 16:07
  */
-public interface IpbChannelData extends IDataToString, IProtobufClass {
+public interface IpbChannelData extends IProtobufClass {
 	/**
 	 * 转换为byte[]
 	 * @return

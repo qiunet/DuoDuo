@@ -1,8 +1,5 @@
 package org.qiunet.flash.handler.context.request.data;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 /***
  * data to toString
  *
@@ -11,10 +8,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public interface IDataToString {
 	/**
-	 * 转成string
+	 * 自己转 string 以便打印
 	 * @return
 	 */
-	default String _toString(){
-		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-	}
+	String _toString();
 }

@@ -23,10 +23,16 @@ import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.response.ResponseMapping;
 import org.qiunet.game.test.robot.action.BaseRobotAction;
 import org.qiunet.game.test.server.IServer;
+import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.args.Argument;
+import org.qiunet.utils.args.ArgumentKey;
+import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
+import org.qiunet.utils.string.ToString;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -37,7 +43,12 @@ import java.util.concurrent.TimeUnit;
  * Created by qiunet.
  * 17/12/9
  */
-abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandler<Robot> {
+abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandler<Robot> , IArgsContainer {
+	protected static final Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
+	/**
+	 * 存储各种数据的一个容器.
+	 */
+	protected final ArgsContainer container = new ArgsContainer();
 	/**
 	 * class 对应实例
 	 */
@@ -120,6 +131,8 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
 			Class<? extends IpbChannelData> protocolClass = PbChannelDataMapping.protocolClass(data.getProtocolId());
 			IpbChannelData realData = ProtobufDataManager.decode(protocolClass, data.bytes());
+
+			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(realData));
 			try {
 				method.invoke(action, realData);
 			} catch (Exception e) {
@@ -129,6 +142,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 		private void handlerStatus(MessageContent data) {
 			StatusTipsResponse response = ProtobufDataManager.decode(StatusTipsResponse.class, data.bytes());
+			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(response));
 			Method method = ResponseMapping.getStatusMethodByID(response.getStatus());
 			if (method == null) {
 				brokeRobot("status ID ["+response.getStatus()+"] handler not define!");
@@ -148,6 +162,10 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	public void brokeRobot(String message) {
 		clients.forEach((key, session) -> session.close(CloseCause.LOGOUT));
 		LoggerType.DUODUO_GAME_TEST.error(message);
+	}
+	@Override
+	public <T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent) {
+		return container.getArgument(key, computeIfAbsent);
 	}
 
 	public void registerAction(BaseRobotAction action) {

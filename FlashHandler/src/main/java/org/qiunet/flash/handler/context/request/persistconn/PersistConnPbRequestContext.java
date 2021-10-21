@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -11,6 +9,7 @@ import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.string.ToString;
 
 /**
  * Created by qiunet.
@@ -42,7 +41,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 
 		FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
 		if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("[{}] <<< {}", messageActor.getIdentity(), ToStringBuilder.reflectionToString(getRequestData(), ToStringStyle.SHORT_PREFIX_STYLE));
+			logger.info("[{}] <<< {}", messageActor.getIdentity(), ToString.toString(getRequestData()));
 		}
 
 
