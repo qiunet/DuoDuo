@@ -30,53 +30,23 @@
     
 
 ### Mysql
-	使用db.properties 配置, key 的命名遵循:
-	database.{数据库源名}.连接池参数=值
-	
-	# 默认数据库名, DefaultDatabaseSupport 会自动取该数据库操作
-	default_database_source=qiunet_db 
-	
-	参考: 
-	# qiunet_db 数据源的配置.
-    database.qiunet_db.driverClassName=com.mysql.jdbc.Driver
-    database.qiunet_db.url=jdbc:mysql://localhost:3306/qiunet_db?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    database.qiunet_db.username=root
-    database.qiunet_db.password=Qiuyang
-    
-    Redis模式是分库分表, 需要额外配置一些字段来表示.
-    # 每个数据库实例里面多少数据库
-    db_size_per_instance=100
-    # 数据库名前缀, 程序会自己拼上 dbIndex作为数据库名
-    db_name_prefix=qiunet_
-    
-    配置参考(其中0 是数据库源名): 
-    database.0.driverClassName=com.mysql.jdbc.Driver
-    database.0.url=jdbc:mysql://localhost:3306?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    database.0.username=root
-    database.0.password=Qiuyang88*
+	使用Server.conf配置
+	配置模块在db模块. 可以配置多组db.
 	
 ### IDatabaseSupport
-	所有的Mysql操作都是通过IDatabaseSupport 来的. 有两个子类 `DefaultDatabaseSupport` `MoreDbSourceDatabaseSupport`, 对应取默认数据库源和自己指定.
-	insert detele select以及update 都需要带上能标识源的一个字符串(由Dbproperties.getDataSourceTypeByDbIndex方法得到). 	
+	所有的Mysql操作都是通过IDatabaseSupport 进行. DbSourceDatabaseSupport 会为每个dbSource 创建一个实例.
+	通过dbSource. 可以对对应的数据库进行数据操作.
+	 	
 	
 	
 ### Redis
-     redis 主要是IRedisUtil. 目前支持pool, 以后扩展集群模式.
-     
-     db.properties 参数配置:
-     redis.${redis名称}.${连接池参数}=${val}  // 注: host pass port 不是参数. 是jedis配置. 
-     
-     例如:
-		 redis.data.host=localhost
-		 redis.data.port=6379
-		 redis.data.pass=
-		 redis.data.timeout=3000
+     使用server.conf配置
+	配置在 redis 模块. 可以配置多组
 
 
 ### 自动生成Po Mybatis xml等[ProjectInit](../ProjectInit/README.md)
-	因为大量的事情是重复的, 所以使用velocity生成代码. 
-	避免人的疏忽带来的错误.
+	因为大量的事情是重复的, 所以使用velocity生成代码, 避免人的疏忽带来的错误.
 
-### 自动根据Po的字段同步数据库的表(create drop alter 等)
+### 自动根据Po的字段同步数据库的表[Entity2Table](../Entity2Table/README.md)
 	默认所有的分库中的表结构都是一样的.只要同步字段,就同时操作所有的库.
 	
