@@ -235,12 +235,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>ProjectInit</artifactId>
-			<optional>true</optional>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>Cross</artifactId>
 			<optional>true</optional>
 			<scope>compile</scope>
@@ -281,10 +275,6 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity-engine-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
@@ -329,10 +319,6 @@
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-digester</groupId>
-			<artifactId>commons-digester</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.typesafe</groupId>
