@@ -6,6 +6,7 @@ import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.redis.RedisDataUtil;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -27,8 +28,8 @@ public class CrossServer {
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_START_CONTEXT).setPort(8001).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(8002).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(8001).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(8002).build())
 				.await();
 	}
 

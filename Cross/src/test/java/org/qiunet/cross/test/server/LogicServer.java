@@ -7,6 +7,7 @@ import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.common.actor.PlayerActor;
 import org.qiunet.cross.test.redis.RedisDataUtil;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -36,8 +37,8 @@ public class LogicServer {
 					public PlayerActor buildMessageActor(DSession session) {
 						return new PlayerActor(session);
 					}
-				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(9002).build())
+				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).setProtocolHeaderType(ProtocolHeaderType.server).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(CrossConstants.DEFAULT_CROSS_NODE_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(9002).build())
 				.await();
 	}
 

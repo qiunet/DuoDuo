@@ -10,6 +10,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2020-10-22 21:32
  */
 public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeaderType(ProtocolHeaderType.node).build(), new TcpNodeClientTrigger());
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/**跨服标记*/
 	private final AtomicBoolean crossing = new AtomicBoolean();

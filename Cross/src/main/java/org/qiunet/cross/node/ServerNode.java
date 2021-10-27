@@ -3,6 +3,7 @@ package org.qiunet.cross.node;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -16,7 +17,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  * 2020-10-09 11:13
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new TcpNodeClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeaderType(ProtocolHeaderType.node).build(), new TcpNodeClientTrigger());
 
 	private int serverId;
 

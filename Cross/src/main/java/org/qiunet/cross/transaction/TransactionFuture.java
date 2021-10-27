@@ -20,9 +20,9 @@ import java.util.function.BiConsumer;
  */
 public class TransactionFuture<T extends BaseTransactionResponse> {
 
-	private long id;
+	private final long id;
 
-	private DPromise<T> future;
+	private final DPromise<T> future;
 
 	TransactionFuture(long id, DPromise<T> future) {
 		Preconditions.checkNotNull(future);
@@ -34,6 +34,7 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 	void beginCalTimeOut(int timeout, TimeUnit unit) {
 		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
 			future.tryFailure(new CustomException("Transaction Timeout"));
+			this.clear();
 		}, timeout, unit);
 		this.future.whenComplete((res, ex) -> timeOutFuture.cancel());
 	}

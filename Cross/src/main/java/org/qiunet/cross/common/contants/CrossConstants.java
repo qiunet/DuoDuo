@@ -3,6 +3,7 @@ package org.qiunet.cross.common.contants;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
@@ -26,6 +27,7 @@ public final class CrossConstants {
 	 */
 	public static final TcpBootstrapParams CROSS_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_START_CONTEXT)
+		.setProtocolHeaderType(ProtocolHeaderType.node)
 		.setPort(ServerConfig.getServerPort())
 		.setReadIdleCheckSeconds(60 * 10)
 		.build();
@@ -34,6 +36,7 @@ public final class CrossConstants {
 	 */
 	public static final TcpBootstrapParams COMMUNICATION_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_NODE_START_CONTEXT)
+		.setProtocolHeaderType(ProtocolHeaderType.node)
 		.setPort(ServerConfig.getNodePort())
 		.setReadIdleCheckSeconds(60 * 10)
 		.build();

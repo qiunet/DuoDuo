@@ -40,22 +40,22 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	node{
 		@Override
 		public IProtocolHeader outHeader(MessageContent content) {
-			return null;
+			return new NodeProtocolHeader(content);
 		}
 
 		@Override
 		public IProtocolHeader inHeader(ByteBuf in) {
-			return null;
+			return new NodeProtocolHeader(in);
 		}
 
 		@Override
 		public int getReqHeaderLength() {
-			return 0;
+			return NodeProtocolHeader.REQUEST_HEADER_LENGTH;
 		}
 
 		@Override
 		public int getRspHeaderLength() {
-			return 0;
+			return NodeProtocolHeader.RESPONSE_HEADER_LENGTH;
 		}
 	},
 	/**
