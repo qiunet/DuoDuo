@@ -27,26 +27,74 @@ public final class DbUtil {
 		return Math.abs(hashCode);
 	}
 
+	/**
+	 * 获得serverId 长度
+	 * @param serverId
+	 * @return
+	 */
+	private static int getServerIdLength(int serverId) {
+		return (int) (Math.log10(serverId) + 1);
+	}
+
+	/**
+	 * 使用服务器自己的ServerId获得分表索引
+	 * @param key openId playerId 等主键ID
+	 * @return
+	 */
 	public static int getTbIndex(Object key) {
 		int serverId = ServerConfig.getServerId();
-		int length = (int) (Math.log10(serverId));
-		int pow = POW10_NUMS[length + 1];
+		return getTbIndex(key, serverId);
+	}
 
-		return (hashCode(key) / pow)
-			% MAX_TABLE_FOR_TB_SPLIT;
+	/**
+	 * 获得分表索引
+	 * @param key id openId playerId 等主键ID
+	 * @param serverId serverId 服务器id
+	 * @return
+	 */
+	public static int getTbIndex(Object key, int serverId) {
+
+		int length = getServerIdLength(serverId);
+		int pow = POW10_NUMS[length + 1];
+		int code = hashCode(key);
+		if (code <= pow) {
+			// 可能key 不是按照规则生成的. 直接取最后的数字即可. 否则都是0
+			return code % MAX_TABLE_FOR_TB_SPLIT;
+		}
+		return (code / pow) % MAX_TABLE_FOR_TB_SPLIT;
 	}
 
 	 /***
-	 * 合成一个唯一的id.
+	 * 使用服务器自己的serverId合成一个唯一的id.
 	 * 适用于: 公会id  玩家id
-	 * @param incrId
+	 * @param incrId 自增id
 	 * @return
 	 */
 	public static long buildId(int incrId) {
-		int serverId = ServerConfig.getServerId();
-		int length = (int) Math.log10(serverId);
+		return buildId(incrId, ServerConfig.getServerId());
+	}
+	/***
+	 * 合成一个唯一的id.
+	 * 适用于: 公会id  玩家id
+	 * @param incrId 自增id
+	 * @param serverId 服务器id
+	 * @return
+	 */
+	public static long buildId(int incrId, int serverId) {
+		int length = getServerIdLength(serverId);
 		long pow = POW10_NUMS[length + 1];
 		return incrId * pow + serverId * 10L + length;
+	}
+
+	/**
+	 * 根据id. 获得serverId
+	 * @param id
+	 * @return
+	 */
+	public static int getServerId(long id) {
+		int serverIdLength = (int) (id % 10);
+		long pow = POW10_NUMS[serverIdLength + 1];
+		return (int) (id % pow) / 10;
 	}
 
 	/***

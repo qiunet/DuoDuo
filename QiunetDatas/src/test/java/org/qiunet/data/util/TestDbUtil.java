@@ -16,4 +16,24 @@ public class TestDbUtil {
 		Assert.assertEquals("guild_member", DbUtil.getDefaultTableName("GuildMemberDo"));
 		Assert.assertEquals("item", DbUtil.getDefaultTableName("ItemDo"));
 	}
+
+	@Test
+	public void buildServerId(){
+		int serverId = 100001;
+		int incrId = 12;
+		long id = DbUtil.buildId(incrId, serverId);
+		Assert.assertEquals(id, 121000016);
+
+		Assert.assertEquals(2, DbUtil.getTbIndex(id, serverId));
+
+		Assert.assertEquals(serverId, DbUtil.getServerId(id));
+	}
+
+	@Test
+	public void testTbIndex(){
+		String openId = "1";
+		int serverId = 100001;
+
+		Assert.assertEquals(9, DbUtil.getTbIndex(openId, serverId));
+	}
 }
