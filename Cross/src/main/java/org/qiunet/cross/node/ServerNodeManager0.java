@@ -17,6 +17,7 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -52,7 +53,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	private static final String SERVER_NODE_INFO_REDIS_KEY = "SERVER_NODE_INFO_REDIS_KEY";
 
 	private IRedisUtil redisUtil;
-
+	/**
+	 * 服务器的信息. 支持增加自定义字段.
+	 */
 	private ServerInfo currServerInfo;
 
 	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
@@ -130,8 +133,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (currServerInfo.getType() == ServerType.ALL) {
 			return;
 		}
-
-		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, 0, 1, TimeUnit.MINUTES);
+		int delay = MathUtil.random(0, 200);
+		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, delay, 60000, TimeUnit.MILLISECONDS);
 	}
 
 	private String serverInfoRedisKey(int serverId) {
