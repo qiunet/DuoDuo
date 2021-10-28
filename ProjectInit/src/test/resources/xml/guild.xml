@@ -13,7 +13,7 @@
 	<field name="guildId" type="long" comment="公会id" />
 	<field name="name" type="String" comment="公会名称" jdbcType="VARCHAR1000" />
 	<field name="level" type="int" comment="公会等级" />
-	
+
 	<constructor>
 		<constructor_arg field="guildId"/>
 	</constructor>

@@ -1,12 +1,8 @@
 package org.qiunet.data.redis.util;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.data.core.entity.IEntity;
-import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.string.StringUtil;
 
 import java.util.Map;
 
@@ -38,27 +34,6 @@ public final class DbUtil {
 
 		return (hashCode(key) / pow)
 			% MAX_TABLE_FOR_TB_SPLIT;
-	}
-
-	/**
-	 * 得到entity 适用的数据库源名
-	 *
-	 * @param clazz
-	 * @return
-	 */
-	public static String getDbSource(Class<? extends IEntity> clazz) {
-		return dbSources.computeIfAbsent(clazz, key -> {
-			Table table = key.getAnnotation(Table.class);
-			Preconditions.checkNotNull(table,"Class ["+key.getName()+"] not set `Table` annotation !");
-			String dbSource = table.dbSource();
-			if (StringUtil.isEmpty(dbSource)) {
-				if (!StringUtil.isEmpty(ServerConfig.getDefaultSource())) {
-					return ServerConfig.getDefaultSource();
-				}
-				throw new CustomException("Table [{}] not define dbSource, but default dbSource is empty.", clazz.getName());
-			}
-			return dbSource;
-		});
 	}
 
 	 /***

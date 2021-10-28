@@ -3,7 +3,7 @@ package org.qiunet.data.redis;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntity;
 
-@Table(name = "vip")
+@Table(name = "vip", dbSource = "basic")
 public class VipDo extends RedisEntity<Long, VipBo> {
 	private long uid;
 	private int level;

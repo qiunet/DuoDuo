@@ -2,6 +2,7 @@
 <db_entity_list key="uid"
 				subKey="item_id"
 				name="ItemDo"
+				dbSource="basic"
 				baseDir="src/test/java"
 				packageName="org.qiunet.project.init.test.item"
 				xmlns="https://github.com/qiunet/DuoDuo/DbEntityList"

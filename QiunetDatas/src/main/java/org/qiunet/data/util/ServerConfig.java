@@ -71,9 +71,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	@DConfigValue("db.entity_to_table_range")
 	private static StringSet entity2TableSourceRange;
 
-	@DConfigValue("db.default_source")
-	private static String defaultSource;
-
 	public static int getServerId() {
 		return serverId;
 	}
@@ -106,12 +103,13 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 		return nodePort;
 	}
 
-	public static boolean isDbSourceNameInRange(String dbSource) {
+	/**
+	 * 是否在需要创建的dbSource范围
+	 * @param dbSource
+	 * @return
+	 */
+	public static boolean isDbSourceInRange(String dbSource) {
 		return entity2TableSourceRange.contains(dbSource);
-	}
-
-	public static String getDefaultSource() {
-		return defaultSource;
 	}
 
 	public static DHocon getConfig() {

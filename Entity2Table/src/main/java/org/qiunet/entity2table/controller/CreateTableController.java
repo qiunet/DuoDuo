@@ -5,7 +5,6 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
-import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
@@ -52,7 +51,7 @@ class CreateTableController implements IApplicationContextAware {
 	private void handlerAddAndModifyFields(List<FieldParam> entityFieldList, Class<? extends IEntity> clazz) {
 		Table table = clazz.getAnnotation(Table.class);
 		// 已存在时理论上做修改的操作，这里查出该表的结构
-		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name(), DbUtil.getDbSource(clazz), table.splitTable());
+		List<Columns> tableColumnList = createTableService.findTableEnsembleByTableName(table.name(), table.dbSource(), table.splitTable());
 
 		// 从sysColumns中取出我们需要比较的列的List
 		// 先取出name用来筛选出增加和删除的字段
@@ -130,7 +129,7 @@ class CreateTableController implements IApplicationContextAware {
 			}
 		}
 		if (! modifyFieldList.isEmpty()) {
-			this.modifyTableField(new TableParam(table.name(), modifyFieldList, table.splitTable(), DbUtil.getDbSource(clazz)));
+			this.modifyTableField(new TableParam(table.name(), modifyFieldList, table.splitTable(), table.dbSource()));
 		}
 	}
 
@@ -149,7 +148,7 @@ class CreateTableController implements IApplicationContextAware {
 				.collect(Collectors.toList());
 
 		if (! addFieldList.isEmpty()) {
-			this.addTableFields(new TableParam(table.name(), addFieldList, table.splitTable(), DbUtil.getDbSource(clazz)));
+			this.addTableFields(new TableParam(table.name(), addFieldList, table.splitTable(), table.dbSource()));
 		}
 	}
 
@@ -256,12 +255,12 @@ class CreateTableController implements IApplicationContextAware {
 	 * @param clazz
 	 */
 	private void handlerTable(Class<? extends IEntity> clazz) {
-		String dbSourceName = DbUtil.getDbSource(clazz);
-		if (! ServerConfig.isDbSourceNameInRange(dbSourceName)) {
+		Table table = clazz.getAnnotation(Table.class);
+		if (! ServerConfig.isDbSourceInRange(table.dbSource())) {
 			return;
 		}
 
-		Table table = clazz.getAnnotation(Table.class);
+		String dbSourceName = table.dbSource();
 		// 迭代出当前clazz所有fields存到newFieldList中
 		List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
 

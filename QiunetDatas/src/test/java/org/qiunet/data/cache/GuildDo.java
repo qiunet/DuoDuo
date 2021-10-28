@@ -7,7 +7,7 @@ import org.qiunet.data.support.anno.LoadAllData;
 
 @LoadAllData
 @Alias("GuildDo")
-@Table(name = "guild")
+@Table(name = "guild", dbSource = "basic")
 public class GuildDo extends CacheEntity<Long, GuildBo> {
 	private long guildId;
 	private String name;

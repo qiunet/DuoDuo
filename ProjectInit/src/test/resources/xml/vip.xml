@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <redis_entity key="uid"
 		name="VipDo"
+	    dbSource="basic"
 	    baseDir="src/test/java"
 	    packageName="org.qiunet.project.init.test.vip"
 	    redis="org.qiunet.project.init.redis.RedisDataUtil"

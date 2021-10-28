@@ -26,10 +26,9 @@ public @interface Table {
 
 	/**
 	 * 适用哪个数据源名.
-	 * 如果 serverType == 0. 取默认数据源
 	 * @return
 	 */
-	String dbSource() default "";
+	String dbSource();
 	/**
 	 * 需要分表的加上这个注解 {@link Table#splitTable()} = true
 	 * @return

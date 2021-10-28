@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
-import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -92,7 +91,7 @@ public class TestRedisDataSupport {
 
 		Table table = vipDo.getClass().getAnnotation(Table.class);
 		DbParamMap map = DbParamMap.create(table, vipDo.keyFieldName(), vipDo.key());
-		DbSourceDatabaseSupport.getInstance(DbUtil.getDbSource(vipDo.getClass())).insert("deleteVipDo", map);
+		DbSourceDatabaseSupport.getInstance(table.dbSource()).insert("deleteVipDo", map);
 
 		vipDo.delete();
 		dataSupport.syncToDatabase();

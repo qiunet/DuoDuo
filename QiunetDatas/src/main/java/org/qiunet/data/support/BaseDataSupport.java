@@ -71,6 +71,6 @@ import org.slf4j.Logger;
 	 * @return
 	 */
 	protected IDatabaseSupport databaseSupport() {
-		return DbSourceDatabaseSupport.getInstance(DbUtil.getDbSource(doClass));
+		return DbSourceDatabaseSupport.getInstance(this.table.dbSource());
 	}
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <db_entity key="uid"
 		name="PlayerDo"
+		dbSource="basic"
 	    baseDir="src/test/java"
 	    comment="玩家存放数据的表"
 		packageName="org.qiunet.project.init.test.player"
