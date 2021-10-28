@@ -2,6 +2,8 @@ package org.qiunet.cross.node;
 
 import org.qiunet.data.util.ServerType;
 
+import java.util.List;
+
 /***
  *
  *
@@ -33,6 +35,17 @@ public class ServerNodeManager {
 	public static ServerInfo getServerInfo(int serverId) {
 		return ServerNodeManager0.instance.getServerInfo(serverId);
 	}
+
+	/**
+	 * 获得指定type里面的指定id的serverInfo
+	 * @param serverType
+	 * @param serverIds 不指定. 默认得到所有.
+	 * @return
+	 */
+	public static List<ServerInfo> getServerInfos(ServerType serverType, String ...serverIds) {
+		return ServerNodeManager0.instance.getServerInfos(serverType, serverIds);
+	}
+
 	/**
 	 * 获得一个serverNode
 	 * @param serverId

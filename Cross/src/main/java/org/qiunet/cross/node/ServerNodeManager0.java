@@ -9,6 +9,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -24,8 +25,11 @@ import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /***
  * 管理server节点.
@@ -41,17 +45,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	// 服务判定离线时间
 	public static final int SERVER_OFFLINE_SECONDS = 110;
-
-	/***
-	 * server Node 在redis中的 key
-	 * 主要查找某一个类型所有服务
-	 */
-	private static final String SERVER_NODE_REDIS_SET_KEY = "SERVER_NODE_REDIS_SET_KEY";
-	/***
-	 * server Node 在redis中的 key
-	 * 主要查找某一个指定id服务
-	 */
-	private static final String SERVER_NODE_INFO_REDIS_KEY = "SERVER_NODE_INFO_REDIS_KEY";
 
 	private IRedisUtil redisUtil;
 	/**
@@ -87,7 +80,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerInfo getServerInfo(int serverId) {
-		String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(serverId));
+		String serverInfoStr = redisUtil.returnJedis().hget(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(serverId));
 		if (StringUtil.isEmpty(serverInfoStr)) {
 			throw new CustomException("ServerId [{}] is not online!", serverId);
 		}
@@ -138,23 +131,28 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, delay, 60000, TimeUnit.MILLISECONDS);
 	}
 
-	private String serverInfoRedisKey(int serverId) {
-		return SERVER_NODE_INFO_REDIS_KEY + serverId;
-	}
-
 	ServerInfo getCurrServerInfo() {
 		return currServerInfo;
 	}
 
+	/**
+	 * 获得指定type的redis key
+	 * @param serverType
+	 * @return
+	 */
+	private String serverNodeRedisKey(ServerType serverType) {
+		return "SERVER_NODE_REDIS_SET_KEY"+serverType;
+	}
+
+	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> serverNodeRedisKey(currServerInfo.getType()));
 	/**
 	 * 每一分钟, 刷新server info
 	 */
 	public void refreshServerInfo() {
 		redisUtil.execCommands(jedis -> {
 			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
-
-			jedis.setex(serverInfoRedisKey(currServerInfo.getServerId()), SERVER_OFFLINE_SECONDS, currServerInfo.toString());
-			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType(), String.valueOf(currServerInfo.getServerId()));
+			jedis.hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
+			jedis.expire(REDIS_SERVER_NODE_INFO_KEY.get(), SERVER_OFFLINE_SECONDS);
 			return 0;
 		});
 	}
@@ -164,12 +162,34 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return ScannerType.SERVER;
 	}
 
+	/**
+	 * 获得指定类型的部分id的serverInfo
+	 * @param serverType
+	 * @param serverIds
+	 * @return
+	 */
+	List<ServerInfo> getServerInfos(ServerType serverType, String ...serverIds) {
+		if (serverType == null) {
+			return Collections.emptyList();
+		}
+
+		String redisKey = serverNodeRedisKey(serverType);
+		List<String> stringList;
+		if (serverIds == null) {
+			stringList = redisUtil.returnJedis().hvals(redisKey);
+		}else {
+			stringList = redisUtil.returnJedis().hmget(redisKey, serverIds);
+		}
+
+		return stringList.stream()
+				.map(json -> JsonUtil.getGeneralObject(json, ServerInfo.class))
+				.collect(Collectors.toList());
+	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void onShutdown(ServerShutdownEventData data) {
 		redisUtil.execCommands(jedis -> {
-			jedis.srem(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType(), String.valueOf(currServerInfo.getServerId()));
-			jedis.expire(serverInfoRedisKey(currServerInfo.getServerId()), 0);
+			jedis.hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
 			return null;
 		});
 		nodes.values().forEach(node -> node.getSession().close(CloseCause.SERVER_SHUTDOWN));
