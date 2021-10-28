@@ -14,7 +14,7 @@ public class Test2Service {
 	}
 
 	@EventListener
-	public void onLogin(LoginEventData data) {
+	private void onLogin(LoginEventData data) {
 		Assert.assertEquals(3, TestListener.loginEventCount.incrementAndGet());
 	}
 }

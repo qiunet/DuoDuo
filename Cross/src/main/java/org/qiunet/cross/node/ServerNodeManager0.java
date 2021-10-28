@@ -2,7 +2,6 @@ package org.qiunet.cross.node;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import io.netty.util.AttributeKey;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
@@ -10,9 +9,9 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
@@ -38,9 +37,11 @@ import java.util.concurrent.TimeUnit;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
-	private static final AttributeKey<DPromise<ServerNode>> SERVER_NODE_PROMISE_ATTRIBUTE = AttributeKey.newInstance("SERVER_NODE_PROMISE_ATTRIBUTE");
-
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
+
+	// 服务判定离线时间
+	public static final int SERVER_OFFLINE_SECONDS = 110;
+
 	/***
 	 * server Node 在redis中的 key
 	 * 主要查找某一个类型所有服务
@@ -129,7 +130,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@EventListener
-	public void onServerStart(ServerStartupEventData data){
+	private void onServerStart(ServerStartupEventData data){
 		if (currServerInfo.getType() == ServerType.ALL) {
 			return;
 		}
@@ -150,8 +151,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	public void refreshServerInfo() {
 		redisUtil.execCommands(jedis -> {
-			jedis.setex(serverInfoRedisKey(currServerInfo.getServerId()), 110, JsonUtil.toJsonString(currServerInfo));
-			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType().getType(), String.valueOf(currServerInfo.getServerId()));
+			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
+
+			jedis.setex(serverInfoRedisKey(currServerInfo.getServerId()), SERVER_OFFLINE_SECONDS, currServerInfo.toString());
+			jedis.sadd(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType(), String.valueOf(currServerInfo.getServerId()));
 			return 0;
 		});
 	}
@@ -161,8 +164,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return ScannerType.SERVER;
 	}
 
-	@EventListener
-	public void onShutdown(ServerShutdownEventData data) {
+
+	@EventListener(EventHandlerWeightType.HIGHEST)
+	private void onShutdown(ServerShutdownEventData data) {
+		redisUtil.execCommands(jedis -> {
+			jedis.srem(SERVER_NODE_REDIS_SET_KEY+currServerInfo.getType(), String.valueOf(currServerInfo.getServerId()));
+			jedis.expire(serverInfoRedisKey(currServerInfo.getServerId()), 0);
+			return null;
+		});
 		nodes.values().forEach(node -> node.getSession().close(CloseCause.SERVER_SHUTDOWN));
 		NettyTcpClient.shutdown();
 	}

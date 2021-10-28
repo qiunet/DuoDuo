@@ -6,6 +6,7 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.net.NetUtil;
 
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /***
  * 服务节点
@@ -14,6 +15,7 @@ import java.util.HashMap;
  * 2020-10-09 11:07
  */
 public final class ServerInfo extends HashMap<String, Object> {
+	static final String lastUpdateDt = "lastUpdateDt";
 	/**
 	 *
 	 * @param serverPort 对外服务端口
@@ -69,6 +71,15 @@ public final class ServerInfo extends HashMap<String, Object> {
 
 	public int getCommunicationPort() {
 		return (Integer) get("communicationPort");
+	}
+
+	/**
+	 * 服务是否停止了
+	 * @return
+	 */
+	public boolean isOffline(){
+		Long dt = (Long) get(lastUpdateDt);
+		return dt != null && System.currentTimeMillis() - dt < TimeUnit.SECONDS.toMillis(ServerNodeManager0.SERVER_OFFLINE_SECONDS);
 	}
 
 	public int getServerPort() {
