@@ -1,10 +1,10 @@
 package org.qiunet.utils.test.config.conf;
 
-import com.typesafe.config.Config;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.qiunet.utils.config.conf.HoconUtil;
+import org.qiunet.utils.config.ConfigFileUtil;
+import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -17,10 +17,10 @@ public class TestHocon {
 
 	@Test
 	public void testConf() {
-		Config config = HoconUtil.loadConf("test.conf");
-		Assert.assertEquals(8886, config.getInt("server.node_port"));
-		Assert.assertEquals(8887, config.getInt("server.hook_port"));
-		Assert.assertEquals(8888, config.getInt("server.server_port"));
+		IKeyValueData<Object, Object> configData = ConfigFileUtil.loadConfig("test.conf");
+		Assert.assertEquals(8886, configData.getInt("server.node_port"));
+		Assert.assertEquals(8887, configData.getInt("server.hook_port"));
+		Assert.assertEquals(8888, configData.getInt("server.server_port"));
 
 		Assert.assertEquals(8888, TestConf.getPort());
 	}

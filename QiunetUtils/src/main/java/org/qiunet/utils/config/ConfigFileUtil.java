@@ -1,8 +1,11 @@
-package org.qiunet.utils.config.properties;
+package org.qiunet.utils.config;
 
 import com.google.common.base.Preconditions;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.data.KeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.file.IFileChangeCallback;
 import org.qiunet.utils.logger.LoggerType;
@@ -14,9 +17,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
-public final class PropertiesUtil {
+/***
+ * 文件类型配置工具
+ *
+ * @author qiunet
+ * 2021/10/28 18:12
+ **/
+public class ConfigFileUtil {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
 	/***
@@ -37,37 +48,55 @@ public final class PropertiesUtil {
 		}
 		return tempProperties;
 	}
-	/***
-	 * 加载一个properties
-	 * @param propertiesFile classpath 目录下的文件
+
+	/**
+	 * 加载 Hocon 类型文件
+	 * @param file
 	 * @return
 	 */
-	public static IKeyValueData<Object, Object> loadProperties(File propertiesFile) {
-		return new KeyValueData<>(loaderProperties(propertiesFile));
+	private static Config loadConf(File file) {
+		return ConfigFactory.parseFile(file);
+	}
+
+	/***
+	 * 加载一个 config file
+	 * @param configFile classpath 目录下的文件
+	 * @return
+	 */
+	public static IKeyValueData<Object, Object> loadConfig(File configFile) {
+		if (configFile.getName().endsWith(".properties")) {
+			return new KeyValueData<>(loaderProperties(configFile));
+		}else if (configFile.getName().endsWith(".conf")) {
+			Config config = loadConf(configFile);
+			Map<Object, Object> collect = config.entrySet().stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
+			return new KeyValueData<>(collect);
+		}
+		throw new CustomException("Not support!");
 	}
 	/***
-	 * 加载一个properties
+	 * 加载一个配置文件
 	 * @param fileName classpath 目录下的相对地址
 	 * @return
 	 */
-	public static IKeyValueData<Object, Object> loadProperties(String fileName) {
+	public static IKeyValueData<Object, Object> loadConfig(String fileName) {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
-
-		return loadProperties(new File(url.getFile()));
+		File file = new File(url.getFile());
+		return loadConfig(file);
 	}
 	/***
-	 * 加载一个properties
+	 * 加载一个配置文件
 	 * @param fileName classpath 目录下的相对地址
 	 * @param changeCallback 文件如果变动的回调.
 	 * @return
 	 */
-	public static IKeyValueData<Object, Object> loadProperties(String fileName, IFileChangeCallback changeCallback) {
+	public static IKeyValueData<Object, Object> loadConfig(String fileName, IFileChangeCallback changeCallback) {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
 		File file = new File(url.getFile());
 		FileUtil.changeListener(file, changeCallback);
-		return loadProperties(fileName);
+		return loadConfig(file);
 	}
 }

@@ -1,6 +1,7 @@
 package org.qiunet.utils.config.properties;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.utils.config.ConfigFileUtil;
 import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.file.FileUtil;
 
@@ -41,7 +42,7 @@ public final class DProperties extends KeyValueData<String, String> {
 	}
 
 	private void load0(File file) {
-		Properties properties = PropertiesUtil.loaderProperties(file);
+		Properties properties = ConfigFileUtil.loaderProperties(file);
 		Map<String, String> collect = properties.entrySet().stream()
 				.collect(Collectors.toMap(en -> en.getKey().toString(), en -> en.getValue().toString()));
 		super.load(collect);
