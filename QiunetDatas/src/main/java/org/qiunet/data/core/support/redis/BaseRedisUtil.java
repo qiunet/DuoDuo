@@ -11,6 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
 	 static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
@@ -32,10 +33,10 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		poolConfig.setMaxIdle(redisConfig.getInt(getConfigKey("maxIdle"), 30));
 		poolConfig.setMaxTotal(redisConfig.getInt(getConfigKey("maxTotal"), 100));
 		poolConfig.setTestWhileIdle(redisConfig.getBoolean(getConfigKey("testWhileIdle")));
-		poolConfig.setMaxWaitMillis(redisConfig.getInt(getConfigKey("maxWaitMillis"), 3000));
+		poolConfig.setMaxWait(Duration.ofMillis(redisConfig.getInt(getConfigKey("maxWait"), 3000)));
 		poolConfig.setNumTestsPerEvictionRun(redisConfig.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
-		poolConfig.setMinEvictableIdleTimeMillis(redisConfig.getInt(getConfigKey("minEvictableIdleTimeMillis"), 60000));
-		poolConfig.setTimeBetweenEvictionRunsMillis(redisConfig.getInt(getConfigKey("timeBetweenEvictionRunsMillis"), 60000));
+		poolConfig.setMinEvictableIdleTime(Duration.ofMillis(redisConfig.getInt(getConfigKey("minEvictableIdleTime"), 60000)));
+		poolConfig.setTimeBetweenEvictionRuns(Duration.ofMillis(redisConfig.getInt(getConfigKey("timeBetweenEvictionRuns"), 60000)));
 		return poolConfig;
 	}
 	/**
