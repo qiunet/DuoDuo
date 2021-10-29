@@ -141,7 +141,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	private String serverNodeRedisKey(ServerType serverType) {
-		return "SERVER_NODE_REDIS_SET_KEY"+serverType;
+		return "SERVER_NODE_REDIS_MAP_KEY#"+serverType;
 	}
 
 	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> serverNodeRedisKey(currServerInfo.getType()));
@@ -175,7 +175,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 		String redisKey = serverNodeRedisKey(serverType);
 		List<String> stringList;
-		if (serverIds == null) {
+		if (serverIds == null || serverIds.length == 0) {
 			stringList = redisUtil.returnJedis().hvals(redisKey);
 		}else {
 			stringList = redisUtil.returnJedis().hmget(redisKey, serverIds);

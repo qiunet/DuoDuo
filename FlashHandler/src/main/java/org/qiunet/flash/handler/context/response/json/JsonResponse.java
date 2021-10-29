@@ -6,11 +6,17 @@ import com.alibaba.fastjson.JSONObject;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.utils.json.JsonUtil;
 
+import java.util.Map;
+
 /**
  * Created by qiunet.
  * 18/1/29
  */
-public class JsonResponse extends JSONObject {
+public class JsonResponse {
+	/**
+	 * 数据
+	 */
+	private final JSONObject data = new JSONObject();
 
 	public JsonResponse() {this.setGameStatus(IGameStatus.SUCCESS);}
 
@@ -25,7 +31,7 @@ public class JsonResponse extends JSONObject {
 
 	public static JsonResponse parse(String jsonString) {
 		JsonResponse response = new JsonResponse();
-		response.putAll(JSON.parseObject(jsonString));
+		response.data.putAll(JSON.parseObject(jsonString));
 		return response;
 	}
 	/**
@@ -34,20 +40,14 @@ public class JsonResponse extends JSONObject {
 	 * @return
 	 */
 	public JsonResponse setGameStatus(IGameStatus status) {
-		super.put("status", status.getStatus());
-		if(status != IGameStatus.SUCCESS){
-			super.put("desc", status.getDesc());
-		}
+		Map<String, Object> map = Map.of("status", status.getStatus(), "desc", status.getDesc());
+		data.put("status", map);
 		return this;
 	}
 
 	public int status(){
-		Integer ret = getInteger("status");
-		return ret == null ? -1 : ret;
-	}
-
-	public String desc(){
-		return getString("desc");
+		Map<String, Object> status = (Map<String, Object>) data.get("status");
+		return (int) status.get("status");
 	}
 
 	public JsonResponse addAttribute(String key, int val) {
@@ -73,17 +73,42 @@ public class JsonResponse extends JSONObject {
 		this.put(key, array);
 		return this;
 	}
-	@Override
+
+
+	public Object get(String key) {
+		return data.get(key);
+	}
+
+	public String getString(String key) {
+		return data.getString(key);
+	}
+
+	public Integer getInteger(String key) {
+		return data.getInteger(key);
+	}
+
+	public int getIntValue(String key) {
+		return data.getIntValue(key);
+	}
+
+	public long getLongValue(String key) {
+		return data.getLongValue(key);
+	}
+
+	public Long getLong(String key) {
+		return data.getLong(key);
+	}
+
 	public JsonResponse put(String key, Object value) {
-		if (key.equals("status") || key.equals("desc")) {
+		if (key.equals("status")) {
 			throw new IllegalArgumentException("JsonResponse key can not named `status` or `desc`");
 		}
-		super.put(key, value);
+		data.put(key, value);
 		return this;
 	}
 
 	@Override
 	public String toString() {
-		return JsonUtil.toJsonString(this);
+		return JsonUtil.toJsonString(data);
 	}
 }
