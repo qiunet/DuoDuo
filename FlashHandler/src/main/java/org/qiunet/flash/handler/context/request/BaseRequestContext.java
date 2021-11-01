@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.context.request;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.utils.logger.LoggerType;
@@ -29,7 +29,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 		this.channel = channel;
 		this.messageContent = content;
 		if (content.getProtocolId() > 0) {
-			this.handler = PbChannelDataMapping.getHandler(content.getProtocolId());
+			this.handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		}else {
 			this.handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
 		}

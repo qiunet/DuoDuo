@@ -11,7 +11,7 @@ import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.listener.event.EventManager;
@@ -100,12 +100,12 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	 * @param channelData
 	 */
 	@Override
-	public IDSessionFuture sendMessage(IpbChannelData channelData) {
+	public IDSessionFuture sendMessage(IChannelData channelData) {
 		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData));
 	}
 
 	@Override
-	public IDSessionFuture sendMessage(IpbChannelData channelData, boolean flush) {
+	public IDSessionFuture sendMessage(IChannelData channelData, boolean flush) {
 		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData), flush);
 	}
 }

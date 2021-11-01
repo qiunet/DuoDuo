@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.context.request.data.pb;
+package org.qiunet.flash.handler.context.request.data;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PbChannelData {
+public @interface ChannelData {
 	/**
 	 * 协议id
 	 * @return

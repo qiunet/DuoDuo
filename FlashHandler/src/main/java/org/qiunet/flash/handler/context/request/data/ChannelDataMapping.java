@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.context.request.data.pb;
+package org.qiunet.flash.handler.context.request.data;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
@@ -28,7 +28,7 @@ import java.util.Set;
  * @author qiunet
  * 2020-09-22 12:50
  */
-public class PbChannelDataMapping implements IApplicationContextAware {
+public class ChannelDataMapping implements IApplicationContextAware {
 	private IApplicationContext context;
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
@@ -38,9 +38,9 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 	/**
 	 * pbChannelData Class 和 Id的映射关系
 	 */
-	private static final DuMap<Class<? extends IpbChannelData>, Integer> mapping = new DuMap();
+	private static final DuMap<Class<? extends IChannelData>, Integer> mapping = new DuMap();
 
-	private PbChannelDataMapping(){}
+	private ChannelDataMapping(){}
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -67,31 +67,31 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 	private void handlerPbChannelData(IApplicationContext context) {
 		Set<Integer> protocolIds = Sets.newHashSet();
 		ByteBuddyAgent.install();
-		for (Class<? extends IpbChannelData> clazz : context.getSubTypesOf(IpbChannelData.class)) {
+		for (Class<? extends IChannelData> clazz : context.getSubTypesOf(IChannelData.class)) {
 			if (Modifier.isAbstract(clazz.getModifiers())
 					|| Modifier.isInterface(clazz.getModifiers())
 			) {
 				continue;
 			}
 
-			if (! clazz.isAnnotationPresent(PbChannelData.class)) {
+			if (! clazz.isAnnotationPresent(ChannelData.class)) {
 				throw new IllegalArgumentException("Class ["+clazz.getName()+"] is not specify PbChannelDataID annotation!");
 			}
 
-			PbChannelData pbChannelData = clazz.getAnnotation(PbChannelData.class);
-			if (protocolIds.contains(pbChannelData.ID())) {
-				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+ pbChannelData.ID()+"] is repeated!");
+			ChannelData channelData = clazz.getAnnotation(ChannelData.class);
+			if (protocolIds.contains(channelData.ID())) {
+				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+ channelData.ID()+"] is repeated!");
 			}
 
 			new ByteBuddy().redefine(clazz).annotateType(
 					AnnotationDescription.Builder.ofType(ProtobufClass.class)
-							.define("description", pbChannelData.desc())
+							.define("description", channelData.desc())
 							.build()
 			).make()
 					.load(clazz.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
-			protocolIds.add(pbChannelData.ID());
-			mapping.put(clazz, pbChannelData.ID());
+			protocolIds.add(channelData.ID());
+			mapping.put(clazz, channelData.ID());
 		}
 	}
 
@@ -100,11 +100,11 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 		return Integer.MAX_VALUE;
 	}
 
-	public static int protocolId(Class<? extends IpbChannelData> clazz) {
+	public static int protocolId(Class<? extends IChannelData> clazz) {
 		return mapping.getVal(clazz);
 	}
 
-	public static Class<? extends IpbChannelData> protocolClass(int protocolId) {
+	public static Class<? extends IChannelData> protocolClass(int protocolId) {
 		return mapping.getKey(protocolId);
 	}
 
@@ -116,9 +116,9 @@ public class PbChannelDataMapping implements IApplicationContextAware {
 	 * @param handlerClz
 	 */
 	void addHandler(Class<? extends IHandler> handlerClz) {
-		Class<? extends IpbChannelData> type = (Class<? extends IpbChannelData>) ReflectUtil.findGenericParameterizedType(handlerClz, IpbChannelData.class::isAssignableFrom);
+		Class<? extends IChannelData> type = (Class<? extends IChannelData>) ReflectUtil.findGenericParameterizedType(handlerClz, IChannelData.class::isAssignableFrom);
 		if (! mapping.containsKey(type)) {
-			throw new CustomException("IHandler ["+handlerClz.getSimpleName()+"] can not get IPbChannelData info!");
+			throw new CustomException("IHandler ["+handlerClz.getSimpleName()+"] can not get IChannelData info!");
 		}
 		int protocolId = protocolId(type);
 		if (handlerMapping.containsKey(protocolId)) {

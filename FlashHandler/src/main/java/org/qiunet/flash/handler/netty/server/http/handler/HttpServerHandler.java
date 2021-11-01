@@ -16,7 +16,7 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
@@ -134,7 +134,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			content.release();
 			return;
 		}
-		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
+		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			content.release();

@@ -1,7 +1,7 @@
 package org.qiunet.game.tests.protocol.proto.login;
 
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.PLAYER_INDEX_RSP;
  * @author qiunet
  * 2020-09-23 10:22
  */
-@PbChannelData(ID = PLAYER_INDEX_RSP, desc = "玩家首页响应")
-public class PlayerIndexResponse implements IpbChannelData {
+@ChannelData(ID = PLAYER_INDEX_RSP, desc = "玩家首页响应")
+public class PlayerIndexResponse implements IChannelData {
 
 	private List<Item> items;
 

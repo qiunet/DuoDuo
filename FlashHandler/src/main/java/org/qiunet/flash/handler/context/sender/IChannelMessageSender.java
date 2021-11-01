@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.context.sender;
 
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
@@ -29,14 +29,14 @@ public interface IChannelMessageSender {
 	 * 发送消息
 	 * @param message
 	 */
-	default IDSessionFuture sendMessage(IpbChannelData message) {
+	default IDSessionFuture sendMessage(IChannelData message) {
 		return this.sendMessage(message.buildResponseMessage());
 	}
 	/**
 	 * 发送消息
 	 * @param message
 	 */
-	default IDSessionFuture sendMessage(IpbChannelData message, boolean flush) {
+	default IDSessionFuture sendMessage(IChannelData message, boolean flush) {
 		return this.sendMessage(message.buildResponseMessage(), flush);
 	}
 	/**

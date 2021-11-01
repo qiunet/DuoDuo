@@ -3,9 +3,9 @@ package org.qiunet.cross.actor.message;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.IDataToString;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.json.JsonUtil;
 
@@ -16,8 +16,8 @@ import org.qiunet.utils.json.JsonUtil;
  * 2020-10-26 12:15
  */
 @SkipProtoGenerator
-@PbChannelData(ID = IProtocolId.System.CROSS_2_PLAYER_MSG, desc = "跨服给客户端的包")
-public class Cross2PlayerResponse implements IpbChannelData, IDataToString {
+@ChannelData(ID = IProtocolId.System.CROSS_2_PLAYER_MSG, desc = "跨服给客户端的包")
+public class Cross2PlayerResponse implements IChannelData, IDataToString {
 	/**
 	 * 消息的协议id
 	 */
@@ -30,9 +30,9 @@ public class Cross2PlayerResponse implements IpbChannelData, IDataToString {
 	private byte [] bytes;
 
 	@Ignore
-	private IpbChannelData data;
+	private IChannelData data;
 
-	public static Cross2PlayerResponse valueOf(IpbChannelData responseData) {
+	public static Cross2PlayerResponse valueOf(IChannelData responseData) {
 		Cross2PlayerResponse response = new Cross2PlayerResponse();
 		response.pid = responseData.protocolId();
 		response.bytes = responseData.toByteArray();

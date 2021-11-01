@@ -30,10 +30,16 @@ public @interface Table {
 	 */
 	String dbSource();
 	/**
-	 * 需要分表的加上这个注解 {@link Table#splitTable()} = true
+	 * 需要分表的这里为 true
 	 * @return
 	 */
 	boolean splitTable() default false;
+
+	/**
+	 * 需要分库的这里为 true
+	 * @return
+	 */
+	boolean splitDb() default false;
 	/**
 	 * 是否异步入库.
 	 * false 为同步

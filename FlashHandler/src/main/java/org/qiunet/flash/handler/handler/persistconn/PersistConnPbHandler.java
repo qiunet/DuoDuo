@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.utils.async.LazyLoader;
 
@@ -19,7 +19,7 @@ import java.nio.ByteBuffer;
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData extends IpbChannelData>
+public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData extends IChannelData>
 		extends BaseHandler<RequestData>
 		implements IPersistConnHandler<P, RequestData> {
 	private final LazyLoader<Codec<RequestData>> codec = new LazyLoader<>(() -> ProtobufDataManager.getCodec(getRequestClass()));

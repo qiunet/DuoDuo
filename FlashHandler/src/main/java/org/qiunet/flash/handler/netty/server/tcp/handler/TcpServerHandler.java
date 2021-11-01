@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -53,7 +53,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 			return;
 		}
 
-		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
+		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
 			content.release();

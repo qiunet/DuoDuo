@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.proto;
 
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /***
  *
@@ -9,8 +9,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
  * @author qiunet
  * 2020-09-22 12:31
  */
-@PbChannelData(ID = ProtocolId.Test.LOGIN_RESP, desc = "登录下行")
-public class LoginResponse implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Test.LOGIN_RESP, desc = "登录下行")
+public class LoginResponse implements IChannelData {
 
 	private String testString;
 

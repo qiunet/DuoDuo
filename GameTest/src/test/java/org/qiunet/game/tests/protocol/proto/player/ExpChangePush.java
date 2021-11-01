@@ -1,8 +1,8 @@
 package org.qiunet.game.tests.protocol.proto.player;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.game.tests.protocol.ProtocolId;
 
 /***
@@ -11,8 +11,8 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * qiunet
  * 2021/9/2 10:09
  **/
-@PbChannelData(ID = ProtocolId.Player.EXP_CHANGE_PUSH, desc = "获得经验推送")
-public class ExpChangePush implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Player.EXP_CHANGE_PUSH, desc = "获得经验推送")
+public class ExpChangePush implements IChannelData {
 	@Protobuf(description = "当前等级")
 	private int level;
 	@Protobuf(description = "当前经验")

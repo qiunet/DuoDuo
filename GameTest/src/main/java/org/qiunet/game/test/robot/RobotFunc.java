@@ -6,8 +6,8 @@ import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
@@ -129,8 +129,8 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 			Class<?> declaringClass = method.getDeclaringClass();
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
-			Class<? extends IpbChannelData> protocolClass = PbChannelDataMapping.protocolClass(data.getProtocolId());
-			IpbChannelData realData = ProtobufDataManager.decode(protocolClass, data.bytes());
+			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(data.getProtocolId());
+			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.bytes());
 
 			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(realData));
 			try {

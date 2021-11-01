@@ -1,8 +1,8 @@
 package org.qiunet.game.tests.protocol.proto.login;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.enums.GenderType;
 
@@ -11,8 +11,8 @@ import org.qiunet.game.tests.protocol.enums.GenderType;
  * qiunet
  * 2021/8/1 21:41
  **/
-@PbChannelData(ID = ProtocolId.Login.REGISTER_REQ, desc = "注册协议请求")
-public class RegisterRequest implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Login.REGISTER_REQ, desc = "注册协议请求")
+public class RegisterRequest implements IChannelData {
 	@Protobuf(description = "昵称")
 	private String nick;
 	@Protobuf(description = "性别")

@@ -1,14 +1,14 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /**
  * 默认的protobuf 的message
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IChannelMessage<IpbChannelData> {
+public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 	/**
 	 * 消息id
 	 */
@@ -16,12 +16,12 @@ public class DefaultProtobufMessage implements IChannelMessage<IpbChannelData> {
 	/**
 	 * 消息体
 	 */
-	private final IpbChannelData message;
+	private final IChannelData message;
 	/**
 	 * 消息体
 	 */
 	private final MessageContent msgContent;
-	public DefaultProtobufMessage(int protocolId, IpbChannelData message) {
+	public DefaultProtobufMessage(int protocolId, IChannelData message) {
 		this.message = message;
 		this.protocolId = protocolId;
 		this.msgContent = new MessageContent(protocolId, bytes());
@@ -33,7 +33,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IpbChannelData> {
 	}
 
 	@Override
-	public IpbChannelData getContent() {
+	public IChannelData getContent() {
 		return message;
 	}
 

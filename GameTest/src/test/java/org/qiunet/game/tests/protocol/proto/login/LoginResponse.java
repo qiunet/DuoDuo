@@ -1,8 +1,8 @@
 package org.qiunet.game.tests.protocol.proto.login;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.game.tests.protocol.ProtocolId;
 
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.List;
  * @author qiunet
  * 2020-09-22 20:45
  */
-@PbChannelData(ID = ProtocolId.Login.LOGIN_RSP, desc = "登录响应")
-public class LoginResponse implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Login.LOGIN_RSP, desc = "登录响应")
+public class LoginResponse implements IChannelData {
 	@Protobuf(description = "账号下的所有角色")
 	private List<LoginInfo> infos;
 

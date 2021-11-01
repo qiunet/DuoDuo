@@ -1,8 +1,8 @@
 package org.qiunet.cross.test.proto.req;
 
 import org.qiunet.cross.test.handler.ProtocolId;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /***
  *
@@ -10,8 +10,8 @@ import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
  * @author qiunet
  * 2020-10-23 09:55
  */
-@PbChannelData(ID = ProtocolId.Player.PLAYER_LOGIN, desc = "登录请求")
-public class LoginRequest implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Player.PLAYER_LOGIN, desc = "登录请求")
+public class LoginRequest implements IChannelData {
 
 	private long playerId;
 

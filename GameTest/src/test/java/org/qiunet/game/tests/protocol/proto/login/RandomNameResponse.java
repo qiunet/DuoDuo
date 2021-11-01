@@ -1,8 +1,8 @@
 package org.qiunet.game.tests.protocol.proto.login;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
-import org.qiunet.flash.handler.context.request.data.pb.PbChannelData;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.game.tests.protocol.ProtocolId;
 
 /***
@@ -11,8 +11,8 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * qiunet
  * 2021/8/4 11:07
  **/
-@PbChannelData(ID = ProtocolId.Login.RANDOM_NAME_RSP, desc = "获取随机名称响应")
-public class RandomNameResponse implements IpbChannelData {
+@ChannelData(ID = ProtocolId.Login.RANDOM_NAME_RSP, desc = "获取随机名称响应")
+public class RandomNameResponse implements IChannelData {
 	@Protobuf(description = "随机的昵称")
 	private String nick;
 

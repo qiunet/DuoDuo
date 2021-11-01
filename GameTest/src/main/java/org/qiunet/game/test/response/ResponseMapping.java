@@ -1,7 +1,7 @@
 package org.qiunet.game.test.response;
 
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.utils.args.ArgsContainer;
@@ -90,11 +90,11 @@ public class ResponseMapping implements IApplicationContextAware {
 			}
 
 			if (mtd.getParameterCount() != 1) {
-				throw new CustomException("Response [id:{}] just a IPbChannelData parameter.", annotation.value());
+				throw new CustomException("Response [id:{}] just need a IChannelData parameter.", annotation.value());
 			}
 
-			if (! IpbChannelData.class.isAssignableFrom(mtd.getParameterTypes()[0])) {
-				throw new CustomException("Response [id:{}] parameter need implement IPbChannelData.", annotation.value());
+			if (! IChannelData.class.isAssignableFrom(mtd.getParameterTypes()[0])) {
+				throw new CustomException("Response [id:{}] parameter need implement IChannelData.", annotation.value());
 			}
 			methodMapping.put(annotation.value(), mtd);
 			ReflectUtil.makeAccessible(mtd);
