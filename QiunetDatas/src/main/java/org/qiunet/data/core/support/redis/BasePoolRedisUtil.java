@@ -3,8 +3,8 @@ package org.qiunet.data.core.support.redis;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.commands.JedisCommands;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

@@ -5,8 +5,8 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-import redis.clients.jedis.JedisCommands;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.commands.JedisCommands;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;

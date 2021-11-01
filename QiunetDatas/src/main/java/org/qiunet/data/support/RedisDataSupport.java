@@ -6,6 +6,7 @@ import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadContextData;
+import redis.clients.jedis.params.SetParams;
 
 /***
  *
@@ -17,7 +18,7 @@ import org.qiunet.utils.thread.ThreadContextData;
  */
 public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 	/**防止缓存击穿的 NULL*/
-	private Do NULL;
+	private final Do NULL;
 
 	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
@@ -121,7 +122,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 			aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
-				returnJedis().set(redisKey, PLACE_HOLDER, "nx", "ex", NORMAL_LIFECYCLE);
+				returnJedis().set(redisKey, PLACE_HOLDER, SetParams.setParams().ex(NORMAL_LIFECYCLE).nx());
 				return null;
 			}
 

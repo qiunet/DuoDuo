@@ -2,7 +2,7 @@ package org.qiunet.cross.test.redis;
 
 import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
 import org.qiunet.data.util.ServerConfig;
-import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.commands.JedisCommands;
 
 /***
  *

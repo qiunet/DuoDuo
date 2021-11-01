@@ -1,6 +1,7 @@
 package org.qiunet.data.core.support.redis;
 
-import redis.clients.jedis.JedisCommands;
+
+import redis.clients.jedis.commands.JedisCommands;
 
 public interface IRedisUtil {
 	/***

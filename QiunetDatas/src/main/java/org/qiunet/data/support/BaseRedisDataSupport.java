@@ -4,7 +4,7 @@ package org.qiunet.data.support;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.support.anno.LoadAllData;
-import redis.clients.jedis.JedisCommands;
+import redis.clients.jedis.commands.JedisCommands;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,10 +19,10 @@ import java.util.StringJoiner;
  */
 public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
 	/***缓存一天*/
-	protected static final int NORMAL_LIFECYCLE=86400;
+	protected static final long NORMAL_LIFECYCLE=86400;
 
 	/**redis update 同步队列 key**/
-	private String redisUpdateSyncSetKey;
+	private final String redisUpdateSyncSetKey;
 
 	protected IRedisUtil redisUtil;
 

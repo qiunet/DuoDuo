@@ -22,7 +22,7 @@ public class TestRedisDataSupport {
 
 	public void expire(long uid) {
 		String redisKey = "VipDo#"+uid;
-		RedisDataUtil.jedis().expire(redisKey, 0);
+		RedisDataUtil.jedis().expire(redisKey, 0L);
 		ThreadContextData.removeKey(redisKey);
 	}
 	private final long uid = 10000;
