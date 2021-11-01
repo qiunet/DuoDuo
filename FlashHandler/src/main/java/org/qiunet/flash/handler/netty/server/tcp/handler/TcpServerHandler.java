@@ -49,13 +49,13 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
 		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
-			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
+			ctx.writeAndFlush(params.getStartupContext().serverPongMsg().encode());
 			return;
 		}
 
 		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
-			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
 			content.release();
 			return;
 		}
@@ -84,7 +84,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
 			if (session != null) {
 				session.close(CloseCause.EXCEPTION);
 			}else {

@@ -4,7 +4,8 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -27,7 +28,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 		try {
 			this.handlerRequest();
 		}catch (Exception e) {
-			DefaultProtobufMessage protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);
+			IChannelMessage<IpbChannelData> protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);
 			ChannelUtil.getSession(channel).sendMessage(protobufMessage);
 		}
 	}

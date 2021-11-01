@@ -1,7 +1,8 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
+import org.qiunet.flash.handler.context.request.data.pb.IpbChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.*;
@@ -16,10 +17,10 @@ import org.qiunet.utils.logger.LoggerType;
  * 2020/3/8 09:31
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
-	LazyLoader<DefaultProtobufMessage> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
-	LazyLoader<DefaultProtobufMessage> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
-	LazyLoader<DefaultProtobufMessage> SERVER_CLOSE_MESSAGE = new LazyLoader<>(() -> new ServerCloseResponse().buildResponseMessage());
-	LazyLoader<DefaultProtobufMessage> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildResponseMessage());
+	LazyLoader<IChannelMessage<IpbChannelData>> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
+	LazyLoader<IChannelMessage<IpbChannelData>> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
+	LazyLoader<IChannelMessage<IpbChannelData>> SERVER_CLOSE_MESSAGE = new LazyLoader<>(() -> new ServerCloseResponse().buildResponseMessage());
+	LazyLoader<IChannelMessage<IpbChannelData>> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildResponseMessage());
 	/**
 	 * 构造MessageActor
 	 * http情况不会调用.
@@ -31,7 +32,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 *  没有找到handler 404
 	 * @return
 	 */
-	default DefaultProtobufMessage getHandlerNotFound() {
+	default IChannelMessage<IpbChannelData> getHandlerNotFound() {
 		return HANDLER_NOT_FOUND_MESSAGE.get();
 	}
 
@@ -40,7 +41,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @param cause
 	 * @return
 	 */
-	default DefaultProtobufMessage exception(Throwable cause){
+	default IChannelMessage<IpbChannelData> exception(Throwable cause){
 		if (cause instanceof StatusResultException) {
 			return StatusTipsResponse.valueOf(((StatusResultException) cause)).buildResponseMessage();
 		}else {
@@ -53,11 +54,11 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * 服务没有开启
 	 * @return
 	 */
-	default DefaultProtobufMessage serverClose() {
+	default IChannelMessage<IpbChannelData> serverClose() {
 		return SERVER_CLOSE_MESSAGE.get();
 	}
 
-	default DefaultProtobufMessage serverPongMsg() {
+	default IChannelMessage<IpbChannelData> serverPongMsg() {
 		return SERVER_CLOSE_MESSAGE.get();
 	}
 }

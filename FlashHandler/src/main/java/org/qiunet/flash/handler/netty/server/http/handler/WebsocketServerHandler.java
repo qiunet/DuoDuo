@@ -59,7 +59,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		if (! ServerConfig.isServerOpen() && ! ServerConfig.getIpWhiteList().contains(ChannelUtil.getIp(ctx.channel()))) {
-			ChannelFuture channelFuture = ctx.writeAndFlush(params.getStartupContext().serverClose());
+			ChannelFuture channelFuture = ctx.writeAndFlush(params.getStartupContext().serverClose().encode());
 			channelFuture.addListener(f -> ctx.close());
 			content.release();
 			return;
@@ -68,7 +68,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 		IHandler handler = PbChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
-			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound());
+			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
 //			ctx.close(); // 应刘文要求. 觉得没必要关闭通道.
 			content.release();
 			return;

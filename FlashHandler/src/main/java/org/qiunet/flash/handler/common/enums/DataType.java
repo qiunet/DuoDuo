@@ -47,6 +47,20 @@ public enum DataType {
 			return new PersistConnPbRequestContext(content, channel, messageActor);
 		}
 	},
+	/**
+	 * json
+	 */
+	JSON {
+		@Override
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+			return null;
+		}
+
+		@Override
+		public IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
+			return null;
+		}
+	}
 	;
 
 
