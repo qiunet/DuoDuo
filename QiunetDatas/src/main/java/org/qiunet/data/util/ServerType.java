@@ -56,6 +56,16 @@ public enum ServerType {
 	}
 
 	/**
+	 * 获得serverType
+	 * @param serverId
+	 * @return
+	 */
+	public static ServerType getServerType(int serverId) {
+		int type = serverId / 100000000;
+		return parse(type);
+	}
+
+	/**
 	 * 构造一个serverId
 	 * @param groupId
 	 * @param incrId
