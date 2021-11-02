@@ -30,8 +30,9 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	 */
 	JedisPoolConfig buildPoolConfig(IKeyValueData<String, String> redisConfig) {
 		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		poolConfig.setMaxIdle(redisConfig.getInt(getConfigKey("maxIdle"), 30));
-		poolConfig.setMaxTotal(redisConfig.getInt(getConfigKey("maxTotal"), 100));
+		poolConfig.setMinIdle(redisConfig.getInt(getConfigKey("minIdle"), 1));
+		poolConfig.setMaxIdle(redisConfig.getInt(getConfigKey("maxIdle"), 5));
+		poolConfig.setMaxTotal(redisConfig.getInt(getConfigKey("maxTotal"), 30));
 		poolConfig.setTestWhileIdle(redisConfig.getBoolean(getConfigKey("testWhileIdle")));
 		poolConfig.setMaxWait(Duration.ofMillis(redisConfig.getInt(getConfigKey("maxWait"), 3000)));
 		poolConfig.setNumTestsPerEvictionRun(redisConfig.getInt(getConfigKey("numTestsPerEvictionRun"), 30));
