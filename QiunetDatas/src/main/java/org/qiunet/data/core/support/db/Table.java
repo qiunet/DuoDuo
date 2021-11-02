@@ -34,12 +34,6 @@ public @interface Table {
 	 * @return
 	 */
 	boolean splitTable() default false;
-
-	/**
-	 * 需要分库的这里为 true
-	 * @return
-	 */
-	boolean splitDb() default false;
 	/**
 	 * 是否异步入库.
 	 * false 为同步

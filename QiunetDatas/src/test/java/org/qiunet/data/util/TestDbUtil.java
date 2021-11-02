@@ -36,4 +36,12 @@ public class TestDbUtil {
 
 		Assert.assertEquals(9, DbUtil.getTbIndex(openId, serverId));
 	}
+
+	@Test
+	public void testGroupId(){
+		int groupId = 11;
+		int serverId = ServerType.LOGIC.buildServerId(groupId, 1);
+		Assert.assertEquals(100011001, serverId);
+		Assert.assertEquals(groupId, ServerType.getGroupId(serverId));
+	}
 }

@@ -3,6 +3,7 @@ package org.qiunet.data.redis.util;
 import com.google.common.collect.Maps;
 import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.util.ServerType;
 
 import java.util.Map;
 
@@ -27,14 +28,6 @@ public final class DbUtil {
 		return Math.abs(hashCode);
 	}
 
-	/**
-	 * 获得serverId 长度
-	 * @param serverId
-	 * @return
-	 */
-	private static int getServerIdLength(int serverId) {
-		return (int) (Math.log10(serverId) + 1);
-	}
 
 	/**
 	 * 使用服务器自己的ServerId获得分表索引
@@ -54,7 +47,7 @@ public final class DbUtil {
 	 */
 	public static int getTbIndex(Object key, int serverId) {
 
-		int length = getServerIdLength(serverId);
+		int length = ServerType.getServerIdLength(serverId);
 		int pow = POW10_NUMS[length + 1];
 		int code = hashCode(key);
 		if (code <= pow) {
@@ -81,7 +74,7 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static long buildId(int incrId, int serverId) {
-		int length = getServerIdLength(serverId);
+		int length = ServerType.getServerIdLength(serverId);
 		long pow = POW10_NUMS[length + 1];
 		return incrId * pow + serverId * 10L + length;
 	}
