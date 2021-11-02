@@ -139,7 +139,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>${groupId}</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
