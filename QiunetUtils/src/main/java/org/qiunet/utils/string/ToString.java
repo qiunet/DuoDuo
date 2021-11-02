@@ -46,7 +46,7 @@ public final class ToString {
 	/**
 	 * The array separator {@code ','}.
 	 */
-	private static final String arraySeparator = ",";
+	private static final String arraySeparator = ", ";
 
 
 	/**
@@ -105,17 +105,17 @@ public final class ToString {
 			return ((Enum<?>) fieldValue).name();
 		}
 
-		if (aClass.isAssignableFrom(Date.class)) {
+		if (Date.class.isAssignableFrom(aClass)) {
 			return String.valueOf(((Date) fieldValue).getTime());
 		}
 
-		if (aClass.isAssignableFrom(Map.class)) {
+		if (Map.class.isAssignableFrom(aClass)) {
 			StringJoiner joiner = new StringJoiner(arraySeparator, arrayStart, arrayEnd);
 			((Map<?, ?>) fieldValue).forEach((key, val) -> joiner.add(this.valToString(key) + fieldNameValueSeparator + this.valToString(val)));
 			return joiner.toString();
 		}
 
-		if (aClass.isAssignableFrom(Collection.class)) {
+		if (Collection.class.isAssignableFrom(aClass)) {
 			StringJoiner joiner = new StringJoiner(arraySeparator, arrayStart, arrayEnd);
 			((Collection<?>) fieldValue).forEach(val -> joiner.add(this.valToString(val)));
 			return joiner.toString();
