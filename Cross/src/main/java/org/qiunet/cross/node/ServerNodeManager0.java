@@ -41,10 +41,11 @@ import java.util.stream.Collectors;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
+
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 
 	// 服务判定离线时间
-	public static final int SERVER_OFFLINE_SECONDS = 110;
+	public static final long SERVER_OFFLINE_SECONDS = 110;
 
 	private IRedisUtil redisUtil;
 	/**
@@ -80,7 +81,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerInfo getServerInfo(int serverId) {
-		String serverInfoStr = redisUtil.returnJedis().hget(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(serverId));
+		int groupId = ServerType.getGroupId(serverId);
+		ServerType serverType = ServerType.getServerType(serverId);
+		String serverInfoStr = redisUtil.returnJedis().hget(serverNodeRedisKey(serverType, groupId), String.valueOf(serverId));
 		if (StringUtil.isEmpty(serverInfoStr)) {
 			throw new CustomException("ServerId [{}] is not online!", serverId);
 		}
@@ -140,11 +143,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param serverType
 	 * @return
 	 */
-	private String serverNodeRedisKey(ServerType serverType) {
-		return "SERVER_NODE_REDIS_MAP_KEY#"+serverType;
+	private String serverNodeRedisKey(ServerType serverType, int groupId) {
+		return "SERVER_NODE_REDIS_MAP_KEY#"+serverType + "#" + groupId;
 	}
 
-	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> serverNodeRedisKey(currServerInfo.getType()));
+	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> {
+		int groupId = ServerType.getGroupId(ServerConfig.getServerId());
+		return serverNodeRedisKey(currServerInfo.getType(), groupId);
+	});
 	/**
 	 * 每一分钟, 刷新server info
 	 */
@@ -165,21 +171,16 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	/**
 	 * 获得指定类型的部分id的serverInfo
 	 * @param serverType
-	 * @param serverIds
+	 * @param groupId
 	 * @return
 	 */
-	List<ServerInfo> getServerInfos(ServerType serverType, String ...serverIds) {
+	List<ServerInfo> getServerInfos(ServerType serverType, int groupId) {
 		if (serverType == null) {
 			return Collections.emptyList();
 		}
 
-		String redisKey = serverNodeRedisKey(serverType);
-		List<String> stringList;
-		if (serverIds == null || serverIds.length == 0) {
-			stringList = redisUtil.returnJedis().hvals(redisKey);
-		}else {
-			stringList = redisUtil.returnJedis().hmget(redisKey, serverIds);
-		}
+		String redisKey = serverNodeRedisKey(serverType, groupId);
+		List<String> stringList = redisUtil.returnJedis().hvals(redisKey);
 
 		return stringList.stream()
 				.map(json -> JsonUtil.getGeneralObject(json, ServerInfo.class))

@@ -39,11 +39,11 @@ public class ServerNodeManager {
 	/**
 	 * 获得指定type里面的指定id的serverInfo
 	 * @param serverType
-	 * @param serverIds 不指定. 默认得到所有.
+	 * @param groupId 不指定. 默认得到所有.
 	 * @return
 	 */
-	public static List<ServerInfo> getServerInfos(ServerType serverType, String ...serverIds) {
-		return ServerNodeManager0.instance.getServerInfos(serverType, serverIds);
+	public static List<ServerInfo> getServerInfos(ServerType serverType, int groupId) {
+		return ServerNodeManager0.instance.getServerInfos(serverType, groupId);
 	}
 
 	/**
