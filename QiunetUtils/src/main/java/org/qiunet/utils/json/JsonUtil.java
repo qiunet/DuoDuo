@@ -34,7 +34,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static String toJsonString(Object o, SerializerFeature... features){
-		return JSON.toJSONString(o, features);
+		return toJsonString(o, DEFAULT_SERIALIZE_CONFIG, features);
 	}
 	/**
 	 * 转换json
@@ -42,7 +42,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static String toJsonString(Object o){
-		return JSON.toJSONString(o, SerializerFeature.DisableCircularReferenceDetect);
+		return toJsonString(o, DEFAULT_SERIALIZE_CONFIG, SerializerFeature.DisableCircularReferenceDetect);
 	}
 
 	/**
