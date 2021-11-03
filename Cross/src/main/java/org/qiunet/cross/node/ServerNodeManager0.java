@@ -131,7 +131,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return;
 		}
 		int delay = MathUtil.random(0, 200);
-		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, delay, 60000, TimeUnit.MILLISECONDS);
+		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, delay, 60, TimeUnit.SECONDS);
 	}
 
 	ServerInfo getCurrServerInfo() {
@@ -161,6 +161,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			jedis.expire(REDIS_SERVER_NODE_INFO_KEY.get(), SERVER_OFFLINE_SECONDS);
 			return 0;
 		});
+		// 触发心跳.
+		ServerNodeTickEvent.instance.fireEventHandler();
 	}
 
 	@Override
