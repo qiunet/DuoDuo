@@ -5,7 +5,7 @@
     <id>1111</id>
     <val1>1,2,3</val1>
     <val2>123456</val2>
-    <val3>1.1000000000000001</val3>
+    <val3>1.1</val3>
   </config>
   <config>
     <id>2222</id>
