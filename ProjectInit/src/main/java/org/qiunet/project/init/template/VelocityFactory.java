@@ -3,6 +3,7 @@ package org.qiunet.project.init.template;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.qiunet.project.init.define.ITemplateObjectDefine;
 import org.qiunet.utils.file.FileUtil;
 
@@ -22,8 +23,7 @@ public class VelocityFactory {
 	private VelocityFactory() {
 		velocity = new VelocityEngine();
 		// 默认应用 org/apache/velocity/runtime/defaults/velocity.properties
-		// 其它小幅度调整
-		velocity.setProperty("resource.loader.file.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+		velocity.setProperty("resource.loader.file.class", ClasspathResourceLoader.class.getName());
 		velocity.init();
 	}
 
