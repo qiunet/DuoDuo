@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
+import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -13,8 +14,11 @@ import org.qiunet.utils.listener.event.EventManager;
  */
 public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T>  {
 
+	private final ObserverSupport<T> observerSupport;
+
 	public AbstractUserActor(DSession session) {
 		super(session);
+		observerSupport = new ObserverSupport<>((T)this);
 	}
 	/**
 	 * 是否跨服状态
@@ -27,6 +31,10 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	protected void setSession(DSession session) {
 		this.session = session;
 		this.session.addCloseListener(cause -> this.fireEvent(new PlayerLogoutEventData<T>((T) this, cause)));
+	}
+
+	public ObserverSupport<T> getObserverSupport() {
+		return observerSupport;
 	}
 
 	/**

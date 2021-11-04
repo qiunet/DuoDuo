@@ -140,6 +140,14 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 
 	/**
+	 * 合并另一个的所有的消息
+	 * @return
+	 */
+	public void merge(MessageHandler<H> handler){
+		this.messages.addAll(handler.messages);
+	}
+
+	/**
 	 * 结束所有的调度
 	 */
 	public void cancelAllFuture(boolean mayInterruptIfRunning) {
