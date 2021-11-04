@@ -18,6 +18,14 @@ public enum DataType {
 	 * long
 	 */
 	LONG("int64"),
+	/**
+	 * int 数组
+	 */
+	INT_ARRAY("string"),
+	/**
+	 * long 数组
+	 */
+	LONG_ARRAY("string"),
 	;
 
 	private final String protoType;
@@ -30,6 +38,12 @@ public enum DataType {
 	}
 
 	public static DataType parse(String val){
+		if ("int[]".equalsIgnoreCase(val)) {
+			return INT_ARRAY;
+		}
+		if ("long[]".equalsIgnoreCase(val)) {
+			return LONG_ARRAY;
+		}
 		return DataType.valueOf(val.toUpperCase());
 	}
 }

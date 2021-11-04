@@ -57,6 +57,8 @@ public class JsonAppender extends BaseAppender {
 								jsonObject.put(rowData.getName(), Long.parseLong(rowData.getVal()));
 							}
 							break;
+						case INT_ARRAY:
+						case LONG_ARRAY:
 						case STRING:
 							jsonObject.put(rowData.getName(), rowData.getVal());
 							break;
