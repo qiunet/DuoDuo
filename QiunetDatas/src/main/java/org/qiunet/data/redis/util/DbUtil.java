@@ -63,7 +63,7 @@ public final class DbUtil {
 	 * @param incrId 自增id
 	 * @return
 	 */
-	public static long buildId(int incrId) {
+	public static long buildId(long incrId) {
 		return buildId(incrId, ServerConfig.getServerId());
 	}
 	/***
@@ -73,7 +73,7 @@ public final class DbUtil {
 	 * @param serverId 服务器id
 	 * @return
 	 */
-	public static long buildId(int incrId, int serverId) {
+	public static long buildId(long incrId, int serverId) {
 		int length = ServerType.getServerIdLength(serverId);
 		long pow = POW10_NUMS[length + 1];
 		return incrId * pow + serverId * 10L + length;
