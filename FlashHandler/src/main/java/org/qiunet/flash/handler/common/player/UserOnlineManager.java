@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.common.player;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
@@ -80,10 +79,11 @@ public enum UserOnlineManager {
 			return null;
 		}
 		actor.merge(currActor);
-		currActor.destroy();
+
 		actor.setSession(currActor.session);
-		Attribute<IMessageActor> attr = actor.getSession().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY);
-		attr.set(actor);
+		currActor.getSession().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
+
+		onlinePlayers.put(playerId, actor);
 		return actor;
 	}
 	/**

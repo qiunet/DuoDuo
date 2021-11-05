@@ -141,10 +141,14 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	/**
 	 * 合并另一个的所有的消息
+	 * 然后销毁被合并方.
 	 * @return
 	 */
 	public void merge(MessageHandler<H> handler){
+//		this.scheduleFutures.addAll(handler.scheduleFutures);
 		this.messages.addAll(handler.messages);
+//		handler.scheduleFutures.clear();
+		handler.destroy();
 	}
 
 	/**

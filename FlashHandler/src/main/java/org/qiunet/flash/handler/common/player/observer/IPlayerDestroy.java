@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player.observer;
 
 import org.qiunet.flash.handler.common.observer.IObserver;
-import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 
 /***
  * 销毁PlayerActor对象
@@ -14,5 +14,5 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
  **/
 public interface IPlayerDestroy extends IObserver {
 
-	<T extends AbstractUserActor<T>> void destroyActor(T actor);
+	void destroyActor(IMessageActor actor);
 }
