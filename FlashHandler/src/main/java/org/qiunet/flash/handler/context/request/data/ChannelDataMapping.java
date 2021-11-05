@@ -97,7 +97,7 @@ public class ChannelDataMapping implements IApplicationContextAware {
 
 	@Override
 	public int order() {
-		return Integer.MAX_VALUE;
+		return Integer.MAX_VALUE - 2;
 	}
 
 	public static int protocolId(Class<? extends IChannelData> clazz) {

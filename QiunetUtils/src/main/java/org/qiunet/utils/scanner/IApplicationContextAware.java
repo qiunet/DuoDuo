@@ -17,6 +17,24 @@ public interface IApplicationContextAware {
 
 	/**
 	 * 越大执行越靠前
+	 * 第一梯队
+	 * KeyValManager(只要context赋值)
+	 * CfgFieldObjConvertManager (不影响其它)
+	 *
+	 * 第二梯队
+	 * ConfigContext
+	 *
+	 * 第三梯队
+	 * EventManager(很多类初始化, 读取配置了)
+	 * ChannelDataMapping
+	 *
+	 * 第四梯队
+	 * CfgScannerManager
+	 * ServerNodeManager0
+	 *
+	 * 第五梯队
+	 * 其它. 没有顺序要求的
+	 *
 	 * @return
 	 */
 	default int order() {

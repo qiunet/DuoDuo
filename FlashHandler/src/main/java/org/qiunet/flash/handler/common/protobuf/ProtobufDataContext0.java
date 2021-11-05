@@ -56,9 +56,4 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 		Preconditions.checkState(codecMap.containsKey(clazz), "Have no codec for class [%s] !", clazz.getName());
 		return codecMap.get(clazz);
 	}
-
-	@Override
-	public int order() {
-		return Integer.MAX_VALUE - 3;
-	}
 }

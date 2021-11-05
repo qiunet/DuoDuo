@@ -46,7 +46,7 @@ enum EventManager0 implements IApplicationContextAware {
 
 	@Override
 	public int order() {
-		return Integer.MAX_VALUE;
+		return Integer.MAX_VALUE - 2;
 	}
 
 	/**
