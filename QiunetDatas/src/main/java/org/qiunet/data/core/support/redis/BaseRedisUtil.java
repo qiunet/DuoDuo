@@ -6,16 +6,13 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.commands.JedisCommands;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
-	 static final Class [] JEDIS_INTERFACES = new Class[]{JedisCommands.class};
-	protected Logger logger = LoggerType.DUODUO_REDIS.getLogger();
+	 static final Class [] JEDIS_INTERFACES = new Class[]{IJedis.class};
+	protected static final Logger logger = LoggerType.DUODUO_REDIS.getLogger();
 
 	private final String redisName;
 
@@ -59,20 +56,6 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return "redis."+redisName+"."+originConfigKey;
 	}
 
-
-	protected class NormalJedisProxy implements InvocationHandler {
-		private final boolean log;
-		private final JedisCommands jedis;
-		NormalJedisProxy(JedisCommands jedis, boolean log) {
-			this.log = log;
-			this.jedis = jedis;
-		}
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return execCommand(method, args, jedis, log);
-		}
-	}
-
 	@Override
 	public boolean redisLockRun(String key, Runnable run) {
 		try (RedisLock lock = redisLock(key)) {
@@ -84,24 +67,28 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return false;
 	}
 
-	 Object execCommand(Method method, Object[] args, JedisCommands jedis, boolean log) throws IllegalAccessException, InvocationTargetException {
-		long startDt = System.currentTimeMillis();
-		Object object = method.invoke(jedis, args);
-		if (log && logger.isInfoEnabled()){
-			long endDt = System.currentTimeMillis();
+	/**
+	 * 打印命令
+	 * @param method
+	 * @param args
+	 * @param result
+	 * @param startDt
+	 */
+	 static void logCommand(Method method, Object[] args, Object result, long startDt) {
+		 long endDt = System.currentTimeMillis();
 
-			StringBuilder sb = new StringBuilder();
-			sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt))).append("ms Key[").append(args[0]).append("] ");
-			if (args.length > 1) sb.append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append(" ");
-			sb.append("\tResult[");
-			if (object == null) {
-				sb.append("null");
-			}else {
-				sb.append(JsonUtil.toJsonString(object));
-			}
-			sb.append("]");
-			logger.info(sb.toString());
-		}
-		return object;
-	}
+		 StringBuilder sb = new StringBuilder();
+		 sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt))).append("ms Key[").append(args[0]).append("] ");
+		 if (args.length > 1) sb.append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append(" ");
+		 sb.append("\tResult[");
+		 if (result == null) {
+			 sb.append("<null>");
+		 }else {
+			 sb.append(JsonUtil.toJsonString(result));
+		 }
+		 sb.append("]");
+		 logger.info(sb.toString());
+	 }
+
+
 }

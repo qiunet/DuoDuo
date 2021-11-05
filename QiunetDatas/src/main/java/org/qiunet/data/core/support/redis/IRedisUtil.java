@@ -1,8 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
 
-import redis.clients.jedis.commands.JedisCommands;
-
 public interface IRedisUtil {
 	/***
 	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
@@ -18,7 +16,7 @@ public interface IRedisUtil {
 	 * @param log true 打印日志 false 不打印日志
 	 * @return
 	 */
-	JedisCommands returnJedis(boolean log);
+	IJedis returnJedis(boolean log);
 	/***
 	 * 得到redis的Lock
 	 * @param key
@@ -38,7 +36,7 @@ public interface IRedisUtil {
 	 * 使用完. 会自己close 默认打印日志
 	 * @return
 	 */
-	default JedisCommands returnJedis() {
+	default IJedis returnJedis() {
 		return returnJedis(true);
 	}
 }

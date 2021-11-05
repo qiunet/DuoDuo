@@ -1,10 +1,10 @@
 package org.qiunet.data.support;
 
 
+import org.qiunet.data.core.support.redis.IJedis;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.support.anno.LoadAllData;
-import redis.clients.jedis.commands.JedisCommands;
 
 import java.util.HashSet;
 import java.util.List;
@@ -101,9 +101,10 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	/**
 	 * 返回jedis 之后好统一是否需要日志.
 	 * @return
-	 */protected JedisCommands returnJedis(){
+	 */protected IJedis returnJedis(){
 		return redisUtil.returnJedis();
 	}
+
 	@Override
 	public void update(Do aDo) {
 		this.setDataObjectToRedis(aDo);

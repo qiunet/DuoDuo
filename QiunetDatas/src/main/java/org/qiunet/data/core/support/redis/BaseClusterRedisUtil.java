@@ -1,7 +1,5 @@
 package org.qiunet.data.core.support.redis;
 
-import redis.clients.jedis.commands.JedisCommands;
-
 /***
  * 集群模式的redisUtil
  * 目前知道的集群貌似不需要业务关心. 都是云实现无感集群.
@@ -9,22 +7,7 @@ import redis.clients.jedis.commands.JedisCommands;
  * @author qiunet
  * 2020-09-29 17:21
  */
-public class BaseClusterRedisUtil extends BaseRedisUtil {
-
-	BaseClusterRedisUtil(String redisName) {
-		super(redisName);
-	}
-
-	@Override
-	public <T> T execCommands(IRedisCaller<T> caller) {
-		return null;
-	}
-
-	@Override
-	public JedisCommands returnJedis(boolean log) {
-		return null;
-	}
-//
+public class BaseClusterRedisUtil  {
 //	private final JedisCluster jedisCluster;
 //
 //	public BaseClusterRedisUtil(IKeyValueData<String, String> redisConfig, String redisName) {
@@ -43,27 +26,21 @@ public class BaseClusterRedisUtil extends BaseRedisUtil {
 //		int timeout = redisConfig.getInt(getConfigKey("timeout"), 2000);
 //		int maxAttempts = redisConfig.getInt(getConfigKey("maxAttempts"), 1000);
 //		jedisCluster = new JedisCluster(nodes, timeout, timeout, maxAttempts, password, this.buildPoolConfig(redisConfig));
-//		ShutdownHookUtil.getInstance().addShutdownHook(() -> {
-//			try {
-//				jedisCluster.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		});
+//		ShutdownHookUtil.getInstance().addShutdownHook(jedisCluster::close);
 //	}
 //
 //	@Override
 //	public <T> T execCommands(IRedisCaller<T> caller) {
-////		NormalJedisProxy handler = new NormalJedisProxy(jedisCluster, caller.log());
-//		JedisCommands jc = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
+//		NormalJedisProxy handler = new NormalJedisProxy(jedisCluster, caller.log());
+//		IRedisObj jc = (IRedisObj) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 //		return caller.call(jc);
 //
 //	}
 //
 //	@Override
-//	public JedisCommands returnJedis(boolean log) {
+//	public IRedisObj returnJedis(boolean log) {
 //		NormalJedisProxy handler = new NormalJedisProxy(jedisCluster, log);
-//		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
+//		return (IRedisObj) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 //	}
 
 }

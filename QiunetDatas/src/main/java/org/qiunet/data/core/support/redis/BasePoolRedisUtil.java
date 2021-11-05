@@ -4,9 +4,9 @@ import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.commands.JedisCommands;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
@@ -42,20 +42,6 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 		return new JedisPool(buildPoolConfig(redisConfig), host, port, timeout, password, db, null);
 	}
 
-	private class ClosableJedisProxy implements InvocationHandler {
-		private final boolean log;
-		ClosableJedisProxy(boolean log) {
-			this.log = log;
-		}
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			try (Jedis jedis = jedisPool.getResource()){
-				return execCommand(method, args, jedis, log);
-			}
-		}
-	}
-
-
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close
@@ -63,9 +49,9 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	 * @return
 	 */
 	@Override
-	public JedisCommands returnJedis(boolean log) {
-		InvocationHandler handler = new ClosableJedisProxy(log);
-		return (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
+	public IJedis returnJedis(boolean log) {
+		InvocationHandler handler = new ClosableJedisProxy(jedisPool, log);
+		return (IJedis) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 	}
 
 	/***
@@ -77,9 +63,47 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	@Override
 	public <T> T execCommands(IRedisCaller<T> caller) {
 		try (Jedis jedis = jedisPool.getResource()){
-			NormalJedisProxy handler = new NormalJedisProxy(jedis, caller.log());
-			JedisCommands jc = (JedisCommands) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
+			JedisProxy handler = new JedisProxy(jedis, caller.log());
+			IJedis jc = (IJedis) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 			return caller.call(jc);
+		}
+	}
+
+	private static class ClosableJedisProxy implements InvocationHandler {
+		private final JedisPool jedisPool;
+		private final boolean log;
+		ClosableJedisProxy(JedisPool jedisPool, boolean log) {
+			this.jedisPool = jedisPool;
+			this.log = log;
+		}
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			try (Jedis jedis = jedisPool.getResource()){
+				return JedisProxy.exec(method, args, jedis, log);
+			}
+		}
+	}
+
+	private static class JedisProxy implements InvocationHandler {
+		private final boolean log;
+		private final Jedis jedis;
+
+		JedisProxy(Jedis jedis, boolean log) {
+			this.jedis = jedis;
+			this.log = log;
+		}
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			return exec(method, args, jedis, log);
+		}
+
+		public static Object exec(Method method, Object[] args, Jedis jedis, boolean log) throws InvocationTargetException, IllegalAccessException {
+			long startDt = System.currentTimeMillis();
+			Object object = method.invoke(jedis, args);
+			if (log && logger.isInfoEnabled()){
+				logCommand(method, args, object, startDt);
+			}
+			return object;
 		}
 	}
 
