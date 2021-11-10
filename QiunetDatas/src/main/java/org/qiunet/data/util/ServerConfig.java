@@ -70,6 +70,20 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 */
 	@DConfigValue("db.entity_to_table_range")
 	private static StringSet entity2TableSourceRange;
+	/**
+	 * 是否是正式服.
+	 * 是正式服. 需要屏蔽很多测试功能.
+	 */
+	@DConfigValue(value = "server.official", defaultVal = "true")
+	private static boolean official;
+
+	/**
+	 * 是否是正式服.
+	 * 是正式服. 需要屏蔽很多测试功能.
+	 */
+	public static boolean isOfficial() {
+		return official;
+	}
 
 	public static int getServerId() {
 		return serverId;

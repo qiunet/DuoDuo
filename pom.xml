@@ -50,13 +50,13 @@
 		<repository>
 			<id>releases</id>
 			<name>Proj Release Repository</name>
-			<url>http://192.168.1.102:8082/nexus/content/repositories/releases/</url>
+			<url>http://mvn.aliyun.xf.io/content/repositories/releases/</url>
 		</repository>
 
 		<snapshotRepository>
 			<id>snapshots</id>
 			<name>Proj Snapshot Repository</name>
-			<url>http://192.168.1.102:8082/nexus/content/repositories/snapshots/</url>
+			<url>http://mvn.aliyun.xf.io/content/repositories/snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 

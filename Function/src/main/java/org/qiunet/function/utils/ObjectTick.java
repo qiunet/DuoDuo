@@ -1,5 +1,6 @@
 package org.qiunet.function.utils;
 
+import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -10,16 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * MessageHandler 的对象心跳
- * @param <Owner>
  */
-public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Owner extends IMessageHandler<Owner>> {
-	/**
-	 * 心跳类型枚举接口
-	 */
-	public interface IObjectTickType{
-		String name();
-	}
-
+public class ObjectTick<Owner extends IMessageHandler<Owner>> {
 	/**
 	 * 该心跳暂停
 	 */
@@ -27,56 +20,35 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 	/**
 	 * 心跳执行的逻辑
 	 */
-	private Runnable runnable;
+	private final IMessage<Owner> runnable;
 	/**
 	 * 心跳周期
 	 */
-	private int period;
+	private final int period;
 	/**
 	 * 心跳初始延迟
 	 */
-	private int initDelay;
+	private final int initDelay;
 	/**
 	 * 心跳周期单位
 	 */
-	private TimeUnit unit;
-	/**
-	 * 类型
-	 */
-	private Type type;
+	private final TimeUnit unit;
 	/**
 	 * 心跳所有者
 	 */
-	private WeakReference<Owner> owner;
+	private final WeakReference<Owner> owner;
 	/**
 	 * 调度 future
 	 */
 	private ScheduledFuture<?> future;
 
-	private ObjectTick(){}
-
-	/**
-	 *
-	 * @param owner
-	 * @param initDelay
-	 * @param period
-	 * @param unit
-	 * @param runnable
-	 * @param <Owner>
-	 * @return
-	 */
-	public static <Type extends Enum<Type> & ObjectTick.IObjectTickType, Owner extends IMessageHandler<Owner>> ObjectTick<Type, Owner> valueOf(
-			Owner owner, int initDelay, int period, TimeUnit unit, Runnable runnable
-	) {
-		ObjectTick<Type, Owner> tick = new ObjectTick<>();
-		tick.owner = new WeakReference<>(owner);
-		tick.initDelay = initDelay;
-		tick.runnable = runnable;
-		tick.period = period;
-		tick.unit = unit;
-		return tick;
+	public ObjectTick(Owner owner, IMessage<Owner> runnable, int period, int initDelay, TimeUnit unit) {
+		this.owner = new WeakReference<>(owner);
+		this.runnable = runnable;
+		this.period = period;
+		this.initDelay = initDelay;
+		this.unit = unit;
 	}
-
 	/**
 	 * 尝试调度
 	 */
@@ -103,7 +75,7 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 				return;
 			}
 
-			owner.addMessage(h -> runnable.run());
+			owner.addMessage(runnable);
 		}, initDelay, period, unit);
 	}
 
@@ -124,9 +96,5 @@ public class ObjectTick<Type extends Enum<Type> & ObjectTick.IObjectTickType,Own
 	 */
 	public boolean isPaused(){
 		return this.paused.get();
-	}
-
-	public Type getType() {
-		return type;
 	}
 }
