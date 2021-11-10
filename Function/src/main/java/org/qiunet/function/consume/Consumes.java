@@ -3,6 +3,7 @@ package org.qiunet.function.consume;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.function.base.basic.IBasicFunction;
@@ -54,7 +55,7 @@ public class Consumes<Obj extends IThreadSafe> {
 		Preconditions.checkArgument(multi >= 1);
 		ConsumeContext<Obj> context = ConsumeContext.valueOf(obj, multi, this, consumeType);
 		for (BaseConsume<Obj> consume : consumeList) {
-			ConsumeResult result = consume.verify(context);
+			StatusResult result = consume.verify(context);
 			if (result.isFail()) {
 				context.result = result;
 				return context;

@@ -1,6 +1,7 @@
 package org.qiunet.function.consume;
 
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.utils.exceptions.CustomException;
 
 /**
@@ -41,7 +42,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @param context 上下文
 	 * @return 结果
 	 */
-	final ConsumeResult verify(ConsumeContext<Obj> context) {
+	final StatusResult verify(ConsumeContext<Obj> context) {
 		if (context.getMulti() < 1) {
 			throw new CustomException("Multi 数值 {} 不合法, 必须 >= 1", context.getMulti());
 		}
@@ -53,7 +54,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 		return doVerify(context);
 	}
 
-	protected abstract ConsumeResult doVerify(ConsumeContext<Obj> context);
+	protected abstract StatusResult doVerify(ConsumeContext<Obj> context);
 
 	/**
 	 * 本方法已经记录真实消耗了.
