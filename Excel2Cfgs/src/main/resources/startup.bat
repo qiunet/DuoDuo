@@ -1,3 +1,3 @@
 
-java -jar ExcelToStream-1.0.jar
+java -jar Excel2Cfg.jar
 pause%
