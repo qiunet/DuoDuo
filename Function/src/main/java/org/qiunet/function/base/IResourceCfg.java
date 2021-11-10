@@ -11,7 +11,9 @@ public interface IResourceCfg {
 	 * 获得资源的类型
 	 * @return
 	 */
-	< T extends IResourceType> T type();
+	default < T extends IResourceType> T type() {
+		return subType().resourceType();
+	}
 
 	/**
 	 * 获得资源的子类型

@@ -158,7 +158,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		redisUtil.execCommands(jedis -> {
 			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
 			jedis.hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
-			jedis.expire(REDIS_SERVER_NODE_INFO_KEY.get(), SERVER_OFFLINE_SECONDS);
 			return 0;
 		});
 		// 触发心跳.

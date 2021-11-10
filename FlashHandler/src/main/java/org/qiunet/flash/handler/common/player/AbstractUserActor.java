@@ -14,11 +14,10 @@ import org.qiunet.utils.listener.event.EventManager;
  */
 public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T>  {
 
-	private final ObserverSupport<T> observerSupport;
+	private final ObserverSupport<T> observerSupport = new ObserverSupport<>((T)this);
 
 	public AbstractUserActor(DSession session) {
 		super(session);
-		observerSupport = new ObserverSupport<>((T)this);
 	}
 	/**
 	 * 是否跨服状态
@@ -45,5 +44,11 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	public <D extends BaseUserEventData<T>> void fireEvent(D eventData){
 		eventData.setPlayer((T) this);
 		EventManager.fireEventHandler(eventData);
+	}
+
+	@Override
+	public void destroy() {
+		observerSupport.clear();
+		super.destroy();
 	}
 }
