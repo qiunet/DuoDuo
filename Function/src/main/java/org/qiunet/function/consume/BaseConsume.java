@@ -1,5 +1,6 @@
 package org.qiunet.function.consume;
 
+import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.utils.exceptions.CustomException;
@@ -35,6 +36,8 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 		this.cfgId = cfgId;
 		this.value = value;
 		this.banReplace = banReplace;
+
+		Preconditions.checkState(value > 0, "value can not less than 1");
 	}
 
 	/**

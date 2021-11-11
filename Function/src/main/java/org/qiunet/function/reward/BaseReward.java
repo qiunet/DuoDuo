@@ -1,5 +1,6 @@
 package org.qiunet.function.reward;
 
+import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
@@ -30,11 +31,12 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	public BaseReward(int cfgId, long value) {
 		this.cfgId = cfgId;
 		this.value = value;
+
+		Preconditions.checkState(value > 0, "value can not less than 1");
 	}
 
 	public BaseReward(RewardConfig rewardConfig) {
-		this.cfgId = rewardConfig.getCfgId();
-		this.value = rewardConfig.getValue();
+		this(rewardConfig.getCfgId(), rewardConfig.getValue());
 	}
 
 	/**
