@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.collection.generics.StringSet;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigInstance;
@@ -31,6 +32,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	@DConfigValue("server.id")
 	private static int serverId;
+	/**
+	 * 组ID
+	 */
+	private static final LazyLoader<Integer> serverGroupId = new LazyLoader<>(() -> ServerType.getGroupId(serverId));
 
 	@DConfigValue("server.type")
 	private static ServerType serverType;
@@ -87,6 +92,14 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static int getServerId() {
 		return serverId;
+	}
+
+	/**
+	 * 得到服务器组ID
+	 * @return
+	 */
+	public static int getServerGroupId(){
+		return serverGroupId.get();
 	}
 
 	public static ServerType getServerType() {

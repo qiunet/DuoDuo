@@ -19,31 +19,43 @@ public class TestDbUtil {
 
 	@Test
 	public void buildServerId(){
-		int serverId = 100001;
-		int incrId = 12;
-		long id = DbUtil.buildId(incrId, serverId);
-		Assert.assertEquals(id, 121000016);
+		int serverGroupId = 2;
+		int incrId = 11;
+		long id = DbUtil.buildId(incrId, serverGroupId);
+		Assert.assertEquals(id, 1121);
 
-		Assert.assertEquals(2, DbUtil.getTbIndex(id, serverId));
+		Assert.assertEquals(1, DbUtil.getTbIndex(id, serverGroupId));
 
-		Assert.assertEquals(serverId, DbUtil.getServerId(id));
+		Assert.assertEquals(serverGroupId, DbUtil.getServerGroupId(id));
 	}
 
 	@Test
 	public void testTbIndex(){
 		String openId = "1";
-		int serverId = 100001;
+		int serverId = 1301;
 
 		Assert.assertEquals(9, DbUtil.getTbIndex(openId, serverId));
 	}
 
 	@Test
-	public void testGroupId(){
-		int groupId = 11;
-		int serverId = ServerType.LOGIC.buildServerId(groupId, 1);
-		Assert.assertEquals(100011001, serverId);
+	public void testGroupId1(){
+		int groupId = 2;
+		int serverId = ServerType.LOGIC.buildServerId(groupId, 4);
+
+		Assert.assertEquals(2104, serverId);
 		Assert.assertEquals(groupId, ServerType.getGroupId(serverId));
 
 		Assert.assertEquals(ServerType.LOGIC, ServerType.getServerType(serverId));
+	}
+
+	@Test
+	public void testGroupId2(){
+		int groupId = 0;
+		int serverId = ServerType.ALL.buildServerId(groupId, 4);
+
+		Assert.assertEquals(4, serverId);
+		Assert.assertEquals(groupId, ServerType.getGroupId(serverId));
+
+		Assert.assertEquals(ServerType.ALL, ServerType.getServerType(serverId));
 	}
 }

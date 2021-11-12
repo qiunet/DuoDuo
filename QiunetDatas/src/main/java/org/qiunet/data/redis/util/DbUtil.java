@@ -1,18 +1,11 @@
 package org.qiunet.data.redis.util;
 
-import com.google.common.collect.Maps;
-import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
-
-import java.util.Map;
 
 public final class DbUtil {
 	/**支持分表数量**/
 	private static final int MAX_TABLE_FOR_TB_SPLIT = 10;
-
-	/**每个entity 对应的源.*/
-	private static final Map<Class<? extends IEntity>, String> dbSources = Maps.newConcurrentMap();
 
 	private static final int [] POW10_NUMS = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000, 1000000000};
 	/***
@@ -35,19 +28,18 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static int getTbIndex(Object key) {
-		int serverId = ServerConfig.getServerId();
-		return getTbIndex(key, serverId);
+		int groupId = ServerConfig.getServerGroupId();
+		return getTbIndex(key, groupId);
 	}
 
 	/**
 	 * 获得分表索引
 	 * @param key id openId playerId 等主键ID
-	 * @param serverId serverId 服务器id
+	 * @param groupId 服务组id
 	 * @return
 	 */
-	public static int getTbIndex(Object key, int serverId) {
-
-		int length = ServerType.getServerIdLength(serverId);
+	public static int getTbIndex(Object key, int groupId) {
+		int length = ServerType.getGroupIdLength(groupId);
 		int pow = POW10_NUMS[length + 1];
 		int code = hashCode(key);
 		if (code <= pow) {
@@ -64,29 +56,29 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static long buildId(long incrId) {
-		return buildId(incrId, ServerConfig.getServerId());
+		return buildId(incrId, ServerConfig.getServerGroupId());
 	}
 	/***
 	 * 合成一个唯一的id.
 	 * 适用于: 公会id  玩家id
 	 * @param incrId 自增id
-	 * @param serverId 服务器id
+	 * @param serverGroupId 服务器组id
 	 * @return
 	 */
-	public static long buildId(long incrId, int serverId) {
-		int length = ServerType.getServerIdLength(serverId);
+	public static long buildId(long incrId, int serverGroupId) {
+		int length = ServerType.getGroupIdLength(serverGroupId);
 		long pow = POW10_NUMS[length + 1];
-		return incrId * pow + serverId * 10L + length;
+		return incrId * pow + serverGroupId * 10L + length;
 	}
 
 	/**
-	 * 根据id. 获得serverId
+	 * 根据id. 获得serverGroupId
 	 * @param id
 	 * @return
 	 */
-	public static int getServerId(long id) {
-		int serverIdLength = (int) (id % 10);
-		long pow = POW10_NUMS[serverIdLength + 1];
+	public static int getServerGroupId(long id) {
+		int serverGroupIdLength = (int) (id % 10);
+		long pow = POW10_NUMS[serverGroupIdLength + 1];
 		return (int) (id % pow) / 10;
 	}
 

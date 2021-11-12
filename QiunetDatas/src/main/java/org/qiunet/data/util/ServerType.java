@@ -8,8 +8,14 @@ import java.util.Map;
 /***
  * 服务类型
  *
- * 按照类型 类型* 100000000 + 组ID * 1000 + 自增ID
- * 可以容纳100000个组  每个组1000个服务器ID
+ * 按照类型  组ID*1000 + 类型 * 100 + 自增ID
+ *
+ * 示例: 2103
+ * * serverGroupID: 2
+ * * 类型: 1
+ * * serverId: 03
+ *
+ *  每个组100个服务器ID
  * 一个组共用一个数据库
  *
  * @author qiunet
@@ -36,14 +42,14 @@ public enum ServerType {
 	;
 	private final int type;
 
-	private static final Map<Integer, Integer> serverIdLength = Maps.newConcurrentMap();
+	private static final Map<Integer, Integer> groupIdLength = Maps.newConcurrentMap();
 	/**
-	 * 获得serverId 长度
-	 * @param serverId
+	 * 获得serverId 里面groupID 长度
+	 * @param groupId
 	 * @return
 	 */
-	public static int getServerIdLength(int serverId) {
-		return serverIdLength.computeIfAbsent(serverId, id -> (int) (Math.log10(id) + 1));
+	public static int getGroupIdLength(int groupId) {
+		return groupIdLength.computeIfAbsent(groupId, id -> (int) (Math.log10(id) + 1));
 	}
 
 	/**
@@ -52,7 +58,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public static int getGroupId(int serverId) {
-		return (serverId % 100000000) / 1000;
+		return serverId / 1000;
 	}
 
 	/**
@@ -61,7 +67,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public static ServerType getServerType(int serverId) {
-		int type = serverId / 100000000;
+		int type = (serverId % 1000) / 100;
 		return parse(type);
 	}
 
@@ -72,7 +78,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public int buildServerId(int groupId, int incrId) {
-		return getType() * 100000000 + groupId * 1000 + incrId;
+		return groupId * 1000 + getType() * 100 + incrId;
 	}
 
 	ServerType(int type) {
