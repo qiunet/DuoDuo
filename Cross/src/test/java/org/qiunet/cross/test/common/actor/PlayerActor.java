@@ -6,7 +6,6 @@ import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
@@ -48,14 +47,13 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 			return false;
 		}
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
-		if (serverInfo.getType() != ServerType.CROSS) {
-			logger.error("ServerId {} is not a cross server!", serverInfo.getType());
+		if (serverInfo.getServerType() != ServerType.CROSS) {
+			logger.error("ServerId {} is not a cross server!", serverInfo.getServerType());
 			return false;
 		}
 
-		this.crossSession = tcpClient.connect("localhost", serverInfo.getServerPort(), f ->
-				f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
-		this.crossSession.sendMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerConfig.getServerId()));
+		this.crossSession = tcpClient.connect("localhost", serverInfo.getServerPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
+		this.crossSession.sendMessage(CrossPlayerAuthRequest.valueOf(getId(), ServerNodeManager.getCurrServerId()));
 		this.crossSession.addCloseListener(cause -> this.crossing.set(false));
 		return this.crossing.compareAndSet(false, true);
 	}

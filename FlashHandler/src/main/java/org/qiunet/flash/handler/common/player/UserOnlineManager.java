@@ -39,7 +39,7 @@ public enum UserOnlineManager {
 	private <T extends AbstractUserActor<T>> void addPlayerActor(AuthEventData<T> eventData) {
 		AbstractUserActor<T> userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
-		userActor.getSession().addCloseListener(cause -> onlinePlayers.remove(userActor.getId()));
+		userActor.getSender().addCloseListener(cause -> onlinePlayers.remove(userActor.getId()));
 		onlinePlayers.put(userActor.getId(), userActor);
 	}
 	/**
@@ -48,7 +48,7 @@ public enum UserOnlineManager {
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
 		this.destroyPlayer(actor, true);
-		actor.getSession().close(CloseCause.LOGOUT);
+		actor.getSender().close(CloseCause.LOGOUT);
 	}
 	/**
 	 * 登出事件
@@ -81,7 +81,7 @@ public enum UserOnlineManager {
 		actor.merge(currActor);
 
 		actor.setSession(currActor.session);
-		currActor.getSession().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
+		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
 
 		onlinePlayers.put(playerId, actor);
 		return actor;

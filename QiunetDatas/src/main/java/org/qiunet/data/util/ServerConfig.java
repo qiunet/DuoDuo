@@ -37,8 +37,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 */
 	private static final LazyLoader<Integer> serverGroupId = new LazyLoader<>(() -> ServerType.getGroupId(serverId));
 
-	@DConfigValue("server.type")
-	private static ServerType serverType;
+	private static final LazyLoader<ServerType> serverType = new LazyLoader<>(() -> ServerType.getServerType(serverId));
+
 	/**
 	 * hook 的端口
 	 */
@@ -103,7 +103,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	}
 
 	public static ServerType getServerType() {
-		return serverType;
+		return serverType.get();
 	}
 
 	public static String getServerCloseMsg() {

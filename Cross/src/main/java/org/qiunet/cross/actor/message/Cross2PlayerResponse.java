@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
-import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.string.ToString;
 
 /***
  *
@@ -58,6 +58,6 @@ public class Cross2PlayerResponse implements IChannelData, IDataToString {
 
 	@Override
 	public String _toString() {
-		return "CrossResponse: ["+data.getClass().getSimpleName()+": " + JsonUtil.toJsonString(data)+"]";
+		return ToString.toString(data);
 	}
 }

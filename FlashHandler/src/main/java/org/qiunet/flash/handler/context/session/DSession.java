@@ -243,7 +243,7 @@ public final class DSession implements IChannelMessageSender {
 	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
 
 	@Override
-	public DSession getSession() {
+	public DSession getSender() {
 		return this;
 	}
 

@@ -31,7 +31,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
 			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(response.getPid());
 			IChannelData channelData = ProtobufDataManager.decode(protocolClass, response.getBytes());
-			iMessageActor.getSession().sendMessage(channelData);
+			iMessageActor.getSender().sendMessage(channelData);
 			return;
 		}
 

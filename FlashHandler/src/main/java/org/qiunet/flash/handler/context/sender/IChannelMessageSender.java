@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.sender;
 
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 
 /***
@@ -14,7 +13,7 @@ public interface IChannelMessageSender {
 	/***
 	 * 得到session
 	 */
-	DSession getSession();
+	IChannelMessageSender getSender();
 
 	/**
 	 * 发送消息
@@ -22,7 +21,7 @@ public interface IChannelMessageSender {
 	 * @return
 	 */
 	default IDSessionFuture sendMessage(IChannelMessage<?> message) {
-		return getSession().sendMessage(message);
+		return getSender().sendMessage(message);
 	}
 
 	/**
@@ -44,6 +43,6 @@ public interface IChannelMessageSender {
 	 * @param message
 	 */
 	default IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush){
-		return getSession().sendMessage(message, flush);
+		return getSender().sendMessage(message, flush);
 	}
 }

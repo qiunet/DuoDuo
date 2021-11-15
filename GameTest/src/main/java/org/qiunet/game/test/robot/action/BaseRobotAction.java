@@ -43,7 +43,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction
 	}
 
 	@Override
-	public DSession getSession() {
+	public DSession getSender() {
 		return robot.getPersistConnClient(server);
 	}
 }

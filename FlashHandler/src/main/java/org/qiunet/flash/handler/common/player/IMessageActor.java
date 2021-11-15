@@ -29,7 +29,7 @@ public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandl
 	 * 获得session
 	 * @return
 	 */
-	DSession getSession();
+	DSession getSender();
 	/**
 	 * 是否已经鉴权认证.
 	 * 一般初始化是只有DSession,

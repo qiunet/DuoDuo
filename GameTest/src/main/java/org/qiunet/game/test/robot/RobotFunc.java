@@ -100,7 +100,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 				case TCP:
 					return NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger)
 							.connect(server.host(), server.port())
-							.getSession();
+							.getSender();
 				default:
 					throw new CustomException("Type [{}] is not support", server.getType());
 			}

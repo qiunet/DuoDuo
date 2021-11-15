@@ -6,7 +6,6 @@ import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.common.actor.PlayerActor;
 import org.qiunet.cross.test.redis.RedisDataUtil;
-import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
@@ -28,7 +27,7 @@ public class LogicServer {
 	public static void main(String[] args) {
 		ClassScanner.getInstance()
 			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, ServerType.CROSS, Constants.LOGIC_SERVER_PORT, 9002))
+			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_SERVER_PORT, 9002))
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)

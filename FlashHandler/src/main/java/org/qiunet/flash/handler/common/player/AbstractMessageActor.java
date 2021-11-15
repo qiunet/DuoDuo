@@ -35,7 +35,7 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	@Override
-	public DSession getSession() {
+	public DSession getSender() {
 		return session;
 	}
 

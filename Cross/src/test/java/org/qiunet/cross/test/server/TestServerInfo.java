@@ -3,7 +3,6 @@ package org.qiunet.cross.test.server;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.cross.node.ServerInfo;
-import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.json.JsonUtil;
 
 /***
@@ -15,13 +14,13 @@ import org.qiunet.utils.json.JsonUtil;
 public class TestServerInfo {
 	private static final String host = "192.168.1.124";
 	private static final int communicationPort = 8081;
-	private static final int serverId = 100001;
+	private static final int serverId = 1;
 	private static final int serverPort = 8080;
 	private static final int onlineNum = 11;
 
 	@Test
 	public void test(){
-		ServerInfo serverInfo0 = ServerInfo.valueOf(serverId, ServerType.ALL, host, serverPort, communicationPort);
+		ServerInfo serverInfo0 = ServerInfo.valueOf(serverId, host, serverPort, communicationPort);
 		serverInfo0.put("onlineNum", onlineNum);
 		this.assert0(serverInfo0);
 

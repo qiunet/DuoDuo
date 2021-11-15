@@ -18,7 +18,7 @@ public class TcpClientConnector implements IChannelMessageSender {
 	}
 
 	@Override
-	public DSession getSession() {
+	public DSession getSender() {
 		return session;
 	}
 

@@ -62,16 +62,16 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	synchronized boolean addNode(ServerNode node) {
 		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
 		ServerNode serverNode = nodes.get(node.getServerId());
-		if (serverNode != null && serverNode.getSession().isActive()) {
+		if (serverNode != null && serverNode.getSender().isActive()) {
 			return false;
 		}
 
 		if (serverNode != null) {
-			serverNode.getSession().close(CloseCause.INACTIVE);
+			serverNode.getSender().close(CloseCause.INACTIVE);
 		}
 
 		nodes.put(node.getServerId(), node);
-		node.getSession().addCloseListener(cause -> nodes.remove(node.getServerId()));
+		node.getSender().addCloseListener(cause -> nodes.remove(node.getServerId()));
 		return true;
 	}
 
@@ -111,7 +111,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getNodePort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
-		if (currServerInfo.getType() == ServerType.ALL) {
+		if (currServerInfo.getServerType() == ServerType.ALL) {
 			return;
 		}
 
@@ -127,11 +127,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	private void onServerStart(ServerStartupEventData data){
-		if (currServerInfo.getType() == ServerType.ALL) {
+		if (currServerInfo.getServerType() == ServerType.ALL) {
 			return;
 		}
-		int delay = MathUtil.random(0, 200);
-		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, delay, 60, TimeUnit.SECONDS);
+		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
 
 	ServerInfo getCurrServerInfo() {
@@ -149,7 +148,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> {
 		int groupId = ServerType.getGroupId(ServerConfig.getServerId());
-		return serverNodeRedisKey(currServerInfo.getType(), groupId);
+		return serverNodeRedisKey(currServerInfo.getServerType(), groupId);
 	});
 	/**
 	 * 每一分钟, 刷新server info
@@ -194,7 +193,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			jedis.hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
 			return null;
 		});
-		nodes.values().forEach(node -> node.getSession().close(CloseCause.SERVER_SHUTDOWN));
+		nodes.values().forEach(node -> node.getSender().close(CloseCause.SERVER_SHUTDOWN));
 		NettyTcpClient.shutdown();
 	}
 }

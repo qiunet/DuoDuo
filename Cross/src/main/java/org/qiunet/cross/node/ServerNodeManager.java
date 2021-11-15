@@ -24,7 +24,7 @@ public class ServerNodeManager {
 	 * @return
 	 */
 	public static ServerType getCurrServerType(){
-		return ServerNodeManager0.instance.getCurrServerInfo().getType();
+		return ServerNodeManager0.instance.getCurrServerInfo().getServerType();
 	}
 
 	/**
