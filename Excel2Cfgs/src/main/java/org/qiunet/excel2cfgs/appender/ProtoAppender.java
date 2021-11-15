@@ -1,7 +1,7 @@
 package org.qiunet.excel2cfgs.appender;
 
 import org.qiunet.excel2cfgs.common.enums.RoleType;
-import org.qiunet.utils.file.FileUtil;
+import org.qiunet.excel2cfgs.common.utils.FileUtil;
 
 import java.io.File;
 import java.nio.file.Paths;

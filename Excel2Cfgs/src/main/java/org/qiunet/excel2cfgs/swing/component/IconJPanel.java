@@ -1,8 +1,8 @@
 package org.qiunet.excel2cfgs.swing.component;
 
+import org.qiunet.excel2cfgs.common.utils.LazyLoader;
 import org.qiunet.excel2cfgs.swing.enums.ButtonStatus;
 import org.qiunet.excel2cfgs.swing.panel.IIconPanel;
-import org.qiunet.utils.async.LazyLoader;
 
 /***
  *

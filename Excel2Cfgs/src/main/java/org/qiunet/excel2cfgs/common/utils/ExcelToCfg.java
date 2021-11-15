@@ -8,7 +8,6 @@ import org.qiunet.excel2cfgs.common.enums.RoleType;
 import org.qiunet.excel2cfgs.setting.Setting;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
-import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
 import java.io.FileInputStream;

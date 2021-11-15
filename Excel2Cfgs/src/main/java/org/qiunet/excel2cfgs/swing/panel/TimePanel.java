@@ -4,14 +4,13 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.common.utils.DateUtil;
+import org.qiunet.excel2cfgs.common.utils.StringUtil;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
 import org.qiunet.excel2cfgs.swing.listener.JTextFieldHintListener;
-import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.timer.TimerManager;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -24,6 +23,8 @@ import java.awt.datatransfer.Transferable;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -34,6 +35,8 @@ import java.util.concurrent.TimeUnit;
  * @Date 2021/2/9 21:56
  **/
 public class TimePanel extends IconJPanel implements ClipboardOwner {
+	private static final ScheduledExecutorService schedule = Executors.newScheduledThreadPool(2);
+
     private JPanel showPanel;
 
     private JLabel currTimestamp;
@@ -128,7 +131,7 @@ public class TimePanel extends IconJPanel implements ClipboardOwner {
 
     @Override
     public void activate() {
-        this.future = TimerManager.executor.scheduleAtFixedRate(() -> {
+        this.future = schedule.scheduleAtFixedRate(() -> {
             long timeMillis = System.currentTimeMillis();
             this.currDatetime.setText(DateUtil.dateToString(timeMillis));
             this.currTimestamp.setText(String.valueOf((timeMillis / 1000)));

@@ -1,7 +1,6 @@
 package org.qiunet.excel2cfgs.common.utils;
 
 import org.qiunet.excel2cfgs.swing.SwingUtil;
-import org.qiunet.utils.system.SystemPropertyUtil;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,7 +16,7 @@ public class SvnUtil {
 	/**svn正操作中 后期可以做监听, 告知按钮不可被操作.*/
 	private static boolean processing = false;
 
-	private static final SystemPropertyUtil.OSType osType = SystemPropertyUtil.getOsName();
+	private static final boolean windows = Excel2CfgsUtil.isWindows();
 
 
 	public static void svnEvent(SvnCommand command, String path) {
@@ -25,23 +24,17 @@ public class SvnUtil {
 			return;
 		}
 
-		switch (osType) {
-			case WINDOWS:
-				try {
-					Runtime.getRuntime().exec("TortoiseProc.exe /command:"+command.name().toLowerCase()+" /path:\""+path+"\" /closeonend:1");
-				} catch (IOException e) {
-					SwingUtil.alterError(e.getMessage());
-				}
-				break;
-			case MAC_OS:
-			case LINUX:
-				if (command == SvnCommand.COMMIT) {
-					handlerMacOrlinux(SvnCommand.ADD, path);
-				}
-				handlerMacOrlinux(command, path);
-				break;
-			default:
-				break;
+		if (windows) {
+			try {
+				Runtime.getRuntime().exec("TortoiseProc.exe /command:" + command.name().toLowerCase() + " /path:\"" + path + "\" /closeonend:1");
+			} catch (IOException e) {
+				SwingUtil.alterError(e.getMessage());
+			}
+		}else {
+			if (command == SvnCommand.COMMIT) {
+				handlerMacOrlinux(SvnCommand.ADD, path);
+			}
+			handlerMacOrlinux(command, path);
 		}
 	}
 
@@ -105,6 +98,6 @@ public class SvnUtil {
 		// 清理
 		CLEANUP,
 		//添加
-		ADD,;
+		ADD,
 	}
 }

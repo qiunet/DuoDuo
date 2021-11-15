@@ -1,10 +1,10 @@
 package org.qiunet.excel2cfgs.appender;
 
-import com.google.common.collect.Lists;
 import org.qiunet.excel2cfgs.common.enums.DataType;
 import org.qiunet.excel2cfgs.common.enums.OutPutType;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,15 +25,15 @@ public class AppenderAttachable {
 	/**
 	 * 所有数据
 	 */
-	private final List<List<AppenderData>> appenderDatas = Lists.newArrayList();
+	private final List<List<AppenderData>> appenderDatas = new ArrayList<>();
 	/**
 	 * 每一行的数据
 	 */
-	private List<AppenderData> rowDatas = Lists.newArrayList();
+	private List<AppenderData> rowDatas = new ArrayList<>();
 	/**
 	 * 保存的数值字段名称
 	 */
-	private final List<NameAppenderData> nameAppenderDatas = Lists.newArrayList();
+	private final List<NameAppenderData> nameAppenderDatas = new ArrayList<>();
 
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;
@@ -67,7 +67,7 @@ public class AppenderAttachable {
 
 	public void rowRecordOver() {
 		appenderDatas.add(rowDatas);
-		rowDatas = Lists.newArrayList();
+		rowDatas = new ArrayList<>();
 	}
 
 	public void append(AppenderData appenderData) {

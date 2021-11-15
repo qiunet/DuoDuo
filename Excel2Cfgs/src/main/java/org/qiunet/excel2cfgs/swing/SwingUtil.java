@@ -1,9 +1,9 @@
 package org.qiunet.excel2cfgs.swing;
 
 import org.qiunet.excel2cfgs.AppMain;
+import org.qiunet.excel2cfgs.common.utils.LazyLoader;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.CfgPanel;
-import org.qiunet.utils.async.LazyLoader;
 
 import javax.swing.*;
 import java.awt.*;

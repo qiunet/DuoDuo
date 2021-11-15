@@ -3,8 +3,8 @@ package org.qiunet.excel2cfgs.appender;
 
 import org.qiunet.excel2cfgs.common.enums.OutPutType;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
+import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
-import org.qiunet.utils.common.CommonUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -57,7 +57,7 @@ public class XdAppender extends BaseAppender {
 			}
 
 			byte [] bytes = bouts.toByteArray();
-			CommonUtil.reverse(bytes, 2);
+			Excel2CfgsUtil.reverse(bytes, 2);
 			try (FileOutputStream fos = new FileOutputStream(path.toFile())){
 				fos.write(bytes);
 			}

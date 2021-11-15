@@ -4,12 +4,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.common.utils.StringUtil;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JButtonMouseListener;
 import org.qiunet.excel2cfgs.swing.listener.JTextFieldHintListener;
-import org.qiunet.utils.string.StringUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;

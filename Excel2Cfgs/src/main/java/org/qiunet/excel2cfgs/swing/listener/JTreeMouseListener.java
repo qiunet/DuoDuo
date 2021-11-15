@@ -6,7 +6,6 @@ import org.qiunet.excel2cfgs.common.utils.ExcelToCfg;
 import org.qiunet.excel2cfgs.common.utils.SvnUtil;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.panel.CfgPanel;
-import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -113,7 +112,7 @@ public class JTreeMouseListener extends MouseAdapter {
 		jPopupMenu.add(new JSeparator());
 		jPopupMenu.add(convertItem);
 		jPopupMenu.add(svnUpdateItem);
-		if (OSUtil.isWindows()) {
+		if (Excel2CfgsUtil.isWindows()) {
 			jPopupMenu.add(svnCommitItem);
 		}
 		jPopupMenu.show(jTree, e.getX(), e.getY());

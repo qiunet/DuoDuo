@@ -1,18 +1,16 @@
 package org.qiunet.excel2cfgs.swing.panel;
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
+import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
 import org.qiunet.excel2cfgs.common.utils.SvnUtil;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 import org.qiunet.excel2cfgs.swing.component.IconJPanel;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.listener.JTreeMouseListener;
-import org.qiunet.utils.system.OSUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -25,9 +23,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /***
  * 配置转换的面板
@@ -39,7 +35,7 @@ public class CfgPanel extends IconJPanel {
     /**
      * 缓存
      */
-    private static final Map<String, DefaultMutableTreeNode> treeNodeCache = Maps.newHashMap();
+    private static final Map<String, DefaultMutableTreeNode> treeNodeCache = new HashMap<>();
 
     private JPanel showPanel;
     private JLabel currExcelPath;
@@ -54,7 +50,7 @@ public class CfgPanel extends IconJPanel {
     private DefaultMutableTreeNode root;
 
     public CfgPanel() {
-        if (OSUtil.isLinux() || OSUtil.isMac()) {
+        if (!Excel2CfgsUtil.isWindows()) {
             svnCommit.setVisible(false);
         }
         excelPathTree.setBorder(new EmptyBorder(0, 0, 0, 0));
@@ -184,7 +180,7 @@ public class CfgPanel extends IconJPanel {
         }
     }
 
-    private static final Set<String> postfixs = Sets.newHashSet("xlsx", "xls", "xd", "xml", "json");
+    private static final Set<String> postfixs = new HashSet<>(Arrays.asList("xlsx", "xls", "xd", "xml", "json"));
 
     /**
      * 校验文件的后缀名

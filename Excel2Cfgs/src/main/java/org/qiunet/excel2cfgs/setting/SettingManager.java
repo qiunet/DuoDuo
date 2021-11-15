@@ -3,10 +3,8 @@ package org.qiunet.excel2cfgs.setting;
 
 import org.qiunet.excel2cfgs.common.enums.RoleType;
 import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
-import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.secret.StrCodecUtil;
-import org.qiunet.utils.string.StringUtil;
+import org.qiunet.excel2cfgs.common.utils.JsonUtil;
+import org.qiunet.excel2cfgs.common.utils.StringUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,8 +36,8 @@ public enum SettingManager {
 	 * @return 是否成功
 	 */
 	public boolean addExcelPath(String path) {
-		String encryptPath = StrCodecUtil.encrypt(path);
-		boolean existInList = CommonUtil.existInList(encryptPath, setting.getExcelPaths());
+		String encryptPath = StringUtil.encrypt(path);
+		boolean existInList = Excel2CfgsUtil.existInList(encryptPath, setting.getExcelPaths());
 		if (existInList) {
 			setting.getExcelPaths().remove(encryptPath);
 		}
@@ -53,8 +51,8 @@ public enum SettingManager {
 	 * @return 是否成功
 	 */
 	public boolean addCfgPath(String path) {
-		String encryptPath = StrCodecUtil.encrypt(path);
-		boolean existInList = CommonUtil.existInList(encryptPath, setting.getCfgPaths());
+		String encryptPath = StringUtil.encrypt(path);
+		boolean existInList = Excel2CfgsUtil.existInList(encryptPath, setting.getCfgPaths());
 		if (existInList) {
 			setting.getCfgPaths().remove(encryptPath);
 		}
@@ -75,7 +73,7 @@ public enum SettingManager {
 	 * @param path
 	 */
 	public void removeCfgPath(String path) {
-		String encryptPath = StrCodecUtil.encrypt(path);
+		String encryptPath = StringUtil.encrypt(path);
 		setting.getCfgPaths().remove(encryptPath);
 	}
 
@@ -87,7 +85,7 @@ public enum SettingManager {
 		if (setting.getCfgPaths().isEmpty()) {
 			return null;
 		}
-		return StrCodecUtil.decrypt(setting.getCfgPaths().getFirst());
+		return StringUtil.decrypt(setting.getCfgPaths().getFirst());
 	}
 
 	/***
@@ -95,7 +93,7 @@ public enum SettingManager {
 	 * @param path
 	 */
 	public void removeExcelPath(String path) {
-		String encryptPath = StrCodecUtil.encrypt(path);
+		String encryptPath = StringUtil.encrypt(path);
 		setting.getExcelPaths().remove(encryptPath);
 	}
 
@@ -107,7 +105,7 @@ public enum SettingManager {
 		if (setting.getExcelPaths().isEmpty()) {
 			return null;
 		}
-		return StrCodecUtil.decrypt(setting.getExcelPaths().getFirst());
+		return StringUtil.decrypt(setting.getExcelPaths().getFirst());
 	}
 
 	/***
@@ -115,7 +113,7 @@ public enum SettingManager {
 	 * @return
 	 */
 	public List<String> getExcelPaths() {
-		return setting.getExcelPaths().stream().map(StrCodecUtil::decrypt).collect(Collectors.toList());
+		return setting.getExcelPaths().stream().map(StringUtil::decrypt).collect(Collectors.toList());
 	}
 
 	/**
@@ -123,7 +121,7 @@ public enum SettingManager {
 	 * @return
 	 */
 	public List<String> getCfgPaths() {
-		return setting.getCfgPaths().stream().map(StrCodecUtil::decrypt).collect(Collectors.toList());
+		return setting.getCfgPaths().stream().map(StringUtil::decrypt).collect(Collectors.toList());
 	}
 	/***
 	 *  加载setting

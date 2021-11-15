@@ -1,14 +1,13 @@
 package org.qiunet.excel2cfgs.common.utils;
 
 import org.qiunet.excel2cfgs.setting.Setting;
-import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.file.FileUtil;
-import org.qiunet.utils.json.JsonUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
 
 /***
  *
@@ -69,9 +68,62 @@ public class Excel2CfgsUtil {
 		if (file.isFile()) {
 			if (file.getName().contains(".")) {
 				String postfix = file.getName().substring(file.getName().indexOf(".") + 1);
-				return CommonUtil.existInList(postfix, EXCEL_POSTFIXS);
+				return existInList(postfix, EXCEL_POSTFIXS);
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * 是否是windows
+	 * @return
+	 */
+	public static boolean isWindows() {
+		String os = System.getProperty("os.name");
+		return os.startsWith("Windows");
+	}
+
+	public static void reverse(byte [] array, int step) {
+		if (array == null || array.length <= 1) {
+			return;
+		}
+		byte temp;
+		int len = array.length;
+		int loopNum = len / 2;
+		for (int i = 0; i < loopNum; i+=step) {
+			temp = array[i];
+			int last = len - 1 - i;
+			array[i] = array[last];
+			array[last] = temp;
+		}
+	}
+
+	/**
+	 * 检查一个元素是否在数组中
+	 * @param <T>
+	 * @param arrays
+	 * @return
+	 */
+	public static <T> boolean existInList(T element,T ... arrays)
+	{
+		if (arrays == null || element == null) {
+			return false;
+		}
+		return Arrays.asList(arrays).contains(element);
+	}
+
+	/**
+	 * 检查一个元素是否在集合中
+	 * @param <T>
+	 * @param element
+	 * @param list
+	 * @return
+	 */
+	public static <T> boolean existInList(T element, Collection<T> list)
+	{
+		if(list.isEmpty() || element == null) {
+			return false;
+		}
+		return list.stream().anyMatch(ele -> ele.equals(element));
 	}
 }

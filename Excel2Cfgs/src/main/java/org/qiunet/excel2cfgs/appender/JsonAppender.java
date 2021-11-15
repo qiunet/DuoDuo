@@ -5,10 +5,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
-import org.qiunet.utils.file.FileUtil;
-import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.StringUtil;
-import org.slf4j.Logger;
+import org.qiunet.excel2cfgs.common.utils.FileUtil;
+import org.qiunet.excel2cfgs.common.utils.StringUtil;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -20,7 +18,6 @@ import java.util.List;
  * 17/10/30
  */
 public class JsonAppender extends BaseAppender {
-	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	public JsonAppender(File sourceFile, String relativeDirPath, String filePrefix) {
 		super(sourceFile, relativeDirPath, filePrefix);
@@ -43,7 +40,7 @@ public class JsonAppender extends BaseAppender {
 					switch (rowData.getDataType()){
 						case INT:
 							if(StringUtil.isEmpty(rowData.getVal())){
-								logger.error("Excel int 类型 列没有数值");
+								System.err.println("Excel int 类型 列没有数值");
 								jsonObject.put(rowData.getName(), 0);
 							}else{
 								jsonObject.put(rowData.getName(), Integer.parseInt(rowData.getVal()));
@@ -51,7 +48,7 @@ public class JsonAppender extends BaseAppender {
 							break;
 						case LONG:
 							if(StringUtil.isEmpty(rowData.getVal())){
-								logger.error("Excel long 类型 列没有数值");
+								System.err.println("Excel long 类型 列没有数值");
 								jsonObject.put(rowData.getName(), 0l);
 							}else{
 								jsonObject.put(rowData.getName(), Long.parseLong(rowData.getVal()));

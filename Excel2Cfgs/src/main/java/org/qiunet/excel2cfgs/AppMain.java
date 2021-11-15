@@ -1,12 +1,10 @@
 package org.qiunet.excel2cfgs;
 
 import org.qiunet.excel2cfgs.common.constants.UiConstant;
+import org.qiunet.excel2cfgs.common.utils.Excel2CfgsUtil;
 import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.enums.IconButtonType;
 import org.qiunet.excel2cfgs.swing.panel.ToolTabPanel;
-import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.system.OSUtil;
-import org.slf4j.Logger;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -25,7 +23,6 @@ import java.awt.event.WindowEvent;
 public enum AppMain {
     instance;
 
-    private final Logger logger = LoggerType.DUODUO.getLogger();
 	private final TitledBorder border = new TitledBorder("=");
 	private SystemTray systemTray;// 系统托盘
 	private JPanel mainPanelCenter;
@@ -38,7 +35,7 @@ public enum AppMain {
     }
 
     private void handlerTray(JFrame frame) {
-		if (! SystemTray.isSupported() || ! OSUtil.isWindows()) {
+		if (! SystemTray.isSupported() || ! Excel2CfgsUtil.isWindows()) {
 			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			return;
 		}
