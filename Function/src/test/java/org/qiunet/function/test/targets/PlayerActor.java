@@ -2,6 +2,7 @@ package org.qiunet.function.test.targets;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.function.targets.TargetContainer;
 
@@ -32,8 +33,8 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	public DSession crossSession() {
-		return null;
+	public void sendCrossMessage(IChannelData channelData) {
+
 	}
 
 	@Override

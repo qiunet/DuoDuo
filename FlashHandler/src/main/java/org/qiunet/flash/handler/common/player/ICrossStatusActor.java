@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /***
  * 跨服状态的actor
@@ -18,5 +18,5 @@ public interface ICrossStatusActor {
 	 * 获得crossSession
 	 * @return
 	 */
-	DSession crossSession();
+	void sendCrossMessage(IChannelData channelData);
 }

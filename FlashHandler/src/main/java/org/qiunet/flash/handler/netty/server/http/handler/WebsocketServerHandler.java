@@ -81,7 +81,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		if (handler instanceof ITransmitHandler
 		&& messageActor instanceof ICrossStatusActor
 		&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).crossSession().sendMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 

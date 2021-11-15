@@ -66,7 +66,7 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		if (handler instanceof ITransmitHandler
 			&& messageActor instanceof ICrossStatusActor
 			&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).crossSession().sendMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
 			return;
 		}
 		if (ctx.channel().isActive()) {

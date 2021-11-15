@@ -10,6 +10,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -74,10 +75,9 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	public DSession crossSession() {
-		return crossSession;
+	public void sendCrossMessage(IChannelData channelData) {
+		crossSession.sendMessage(channelData);
 	}
-
 
 	@Override
 	public long getId() {
