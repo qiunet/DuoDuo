@@ -9,7 +9,6 @@ import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -40,13 +39,11 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * 生成协议文件
 	 * @param directory 生成的目录
 	 * @param model 生成类型
-	 * @param packetPrefix 扫描包前缀
 	 * @throws Exception -
 	 */
-	public static void generator(File directory, ProtoGeneratorModel model, String packetPrefix) throws Exception {
+	public static void generator(File directory, ProtoGeneratorModel model) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-		ClassScanner.getInstance(ScannerType.SERVER).scanner(packetPrefix);
 		model.generatorProto(directory, pbClasses);
 	}
 
