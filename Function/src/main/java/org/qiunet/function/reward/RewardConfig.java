@@ -1,6 +1,6 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceType;
 import org.qiunet.utils.data.IKeyValueData;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	 * @param subTypeGetter subType 获取
 	 * @return rewardItem 实例
 	 */
-	public BaseReward convertToRewardItem(Function<Integer, IResourceSubType> subTypeGetter) {
+	public BaseReward convertToRewardItem(Function<Integer, IResourceType> subTypeGetter) {
 		return subTypeGetter.apply(getCfgId()).createRewardItem(this);
 	}
 

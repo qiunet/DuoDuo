@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceType;
 
 import java.util.function.Function;
 
@@ -38,11 +38,11 @@ public class ConsumeConfig {
 
 	/**
 	 * 转 Consume
-	 * @param subTypeGetter cfgId → subType
+	 * @param typeGetter cfgId → type
 	 * @return Consume
 	 */
-	public BaseConsume convertToConsume(Function<Integer, IResourceSubType> subTypeGetter) {
-		return subTypeGetter.apply(cfgId).createConsume(this);
+	public BaseConsume convertToConsume(Function<Integer, IResourceType> typeGetter) {
+		return typeGetter.apply(cfgId).createConsume(this);
 	}
 
 	public int getCfgId() {

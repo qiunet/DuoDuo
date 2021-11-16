@@ -1,7 +1,6 @@
 package org.qiunet.function.base.basic;
 
 import org.qiunet.function.base.IResourceCfg;
-import org.qiunet.function.base.IResourceSubType;
 import org.qiunet.function.base.IResourceType;
 
 /***
@@ -13,26 +12,16 @@ public interface IResourceFunction {
 	/**
 	 * 获得资源配置
 	 * @param cfgId
-	 * @param <T>
+	 * @param <Cfg>
 	 * @return
 	 */
-	<T extends IResourceCfg> T getResById(int cfgId);
+	<Cfg extends IResourceCfg> Cfg getResById(int cfgId);
 	/**
-	 * 获得指定资源的subType
+	 * 获得指定资源的type
 	 * @param cfgId 资源id
-	 * @return subType
+	 * @return type
 	 */
-	default <T extends IResourceSubType> T getResSubType(int cfgId) {
-		return getResById(cfgId).subType();
-	}
-
-	/**
-	 * 获得资源类型
-	 * @param cfgId
-	 * @param <T>
-	 * @return
-	 */
-	default <T extends IResourceType> T getResType(int cfgId) {
-		return getResSubType(cfgId).resourceType();
+	default <Type extends Enum<Type> & IResourceType> Type getResType(int cfgId) {
+		return getResById(cfgId).type();
 	}
 }

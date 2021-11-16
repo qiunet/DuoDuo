@@ -34,7 +34,7 @@ public enum RewardManager {
 		}
 
 		List<BaseReward> list = configList.stream().map(cfg -> {
-			return cfg.convertToRewardItem(id -> resourceManager.getResSubType(cfg.getCfgId()));
+			return cfg.convertToRewardItem(id -> resourceManager.getResType(cfg.getCfgId()));
 		}).collect(Collectors.toList());
 		return new UnmodifiableRewards(list);
 	}

@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceType;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -95,8 +95,8 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param banReplace 禁止替换
 	 */
 	public void addConsume(int cfgId, long count, boolean banReplace) {
-		IResourceSubType subType = basicFunction.getResSubType(cfgId);
-		this.addConsume(subType.createConsume(new ConsumeConfig(cfgId, count, banReplace)));
+		IResourceType type = basicFunction.getResType(cfgId);
+		this.addConsume(type.createConsume(new ConsumeConfig(cfgId, count, banReplace)));
 	}
 	/**
 	 * 添加一个 consume

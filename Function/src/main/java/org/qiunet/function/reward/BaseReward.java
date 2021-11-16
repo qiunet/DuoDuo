@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
-import org.qiunet.function.base.IResourceSubType;
+import org.qiunet.function.base.IResourceType;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -99,10 +99,10 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	}
 
 	/**
-	 * 获得subType
+	 * 获得type
 	 * @return
 	 */
-	public <T extends IResourceSubType> T  subType() {
-		return basicFunction.getResSubType(cfgId);
+	public <Type extends Enum<Type> & IResourceType> Type resType() {
+		return basicFunction.getResType(cfgId);
 	}
 }
