@@ -29,6 +29,10 @@
 			<artifactId>QiunetUtils</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.baidu</groupId>
+			<artifactId>jprotobuf</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
