@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -7,12 +9,12 @@ package org.qiunet.cfg.convert;
  **/
 public class LongConvert extends BaseObjConvert<Long> {
 	@Override
-	protected Long fromString0(String str) {
+	public Long fromString(Field field, String str) {
 		return Long.valueOf(str);
 	}
 
 	@Override
-	public boolean canConvert(Class type) {
+	public boolean canConvert(Class<Long> type) {
 		return type == Long.class || type == Long.TYPE;
 	}
 }

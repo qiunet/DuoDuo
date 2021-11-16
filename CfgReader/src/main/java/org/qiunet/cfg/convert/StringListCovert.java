@@ -3,6 +3,7 @@ package org.qiunet.cfg.convert;
 import org.qiunet.utils.collection.generics.StringList;
 import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,15 +16,10 @@ import java.util.stream.Stream;
 public class StringListCovert extends BaseObjConvert<StringList> {
 	private static final String SPLIT = ",";
 	@Override
-	protected StringList fromString0(String str) {
+	public StringList fromString(Field field, String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
 		StringList stringList = Stream.of(strings).collect(Collectors.toCollection(StringList::new));
 		stringList.convertToUnmodifiable();
 		return stringList;
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return type == StringList.class;
 	}
 }

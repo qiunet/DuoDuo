@@ -5,6 +5,7 @@ import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /***
@@ -17,7 +18,7 @@ public class ConditionConvert extends BaseObjConvert<IConditions> {
 	private static final TypeReference<List<ConditionConfig>> TYPE = new TypeReference<List<ConditionConfig>>(){};
 
 	@Override
-	protected IConditions fromString0(String str) {
+	public IConditions fromString(Field field, String str) {
 		if (StringUtil.isEmpty(str)) {
 			return ConditionManager.EMPTY_CONDITION;
 		} else if (str.contains("||")) {
@@ -40,7 +41,7 @@ public class ConditionConvert extends BaseObjConvert<IConditions> {
 	}
 
 	@Override
-	public boolean canConvert(Class aClass) {
+	public boolean canConvert(Class<IConditions> aClass) {
 		return aClass.isAssignableFrom(IConditions.class);
 	}
 }

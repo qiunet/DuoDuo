@@ -1,6 +1,9 @@
 package org.qiunet.cfg.convert;
 
-import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /***
  *
@@ -8,12 +11,11 @@ import com.thoughtworks.xstream.converters.basic.AbstractSingleValueConverter;
  * @author qiunet
  * 2020-02-04 12:13
  **/
-public abstract class BaseObjConvert<T> extends AbstractSingleValueConverter {
-
-
-	@Override
-	public Object fromString(String str) {
-		return fromString0(str);
+public abstract class BaseObjConvert<T> {
+	private Class<T> clazz;
+	public BaseObjConvert() {
+		Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
+		clazz = (Class<T>) actualTypeArguments[0];
 	}
 
 	/***
@@ -21,5 +23,14 @@ public abstract class BaseObjConvert<T> extends AbstractSingleValueConverter {
 	 * @param str
 	 * @return
 	 */
-	protected abstract T fromString0(String str);
+	public abstract T fromString(Field field, String str);
+
+	/**
+	 * 是否可以转换
+	 * @param type
+	 * @return
+	 */
+	public boolean canConvert(Class<T> type) {
+		return type == clazz;
+	}
 }

@@ -55,7 +55,7 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 			return null;
 		});
 		if (objConvert != null) {
-			return objConvert.fromString(val);
+			return objConvert.fromString(field, val);
 		}
 
 		if (StringUtil.isEmpty(val)) {

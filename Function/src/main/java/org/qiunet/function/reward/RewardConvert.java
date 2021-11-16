@@ -2,6 +2,8 @@ package org.qiunet.function.reward;
 
 import org.qiunet.cfg.convert.BaseObjConvert;
 
+import java.lang.reflect.Field;
+
 /***
  * rewards 转换类
  *
@@ -11,12 +13,7 @@ import org.qiunet.cfg.convert.BaseObjConvert;
 public class RewardConvert extends BaseObjConvert<Rewards> {
 
 	@Override
-	protected Rewards fromString0(String str) {
+	public Rewards fromString(Field field, String str) {
 		return RewardManager.instance.createRewards(str);
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return type == Rewards.class;
 	}
 }

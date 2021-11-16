@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -7,12 +9,12 @@ package org.qiunet.cfg.convert;
  **/
 public class BooleanConvert extends BaseObjConvert<Boolean> {
 	@Override
-	protected Boolean fromString0(String str) {
+	public Boolean fromString(Field field, String str) {
 		return "1".equals(str) || Boolean.parseBoolean(str);
 	}
 
 	@Override
-	public boolean canConvert(Class type) {
+	public boolean canConvert(Class<Boolean> type) {
 		return type == Boolean.class || type == Boolean.TYPE;
 	}
 }

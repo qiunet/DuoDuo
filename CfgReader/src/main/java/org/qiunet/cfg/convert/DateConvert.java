@@ -3,6 +3,7 @@ package org.qiunet.cfg.convert;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,16 +17,11 @@ public class DateConvert extends BaseObjConvert<Date> {
 	private static final ThreadLocal<SimpleDateFormat> sdf = ThreadLocal.withInitial(() -> new SimpleDateFormat(DateUtil.DEFAULT_DATE_TIME_FORMAT));
 
 	@Override
-	protected Date fromString0(String str) {
+	public Date fromString(Field field, String str) {
 		try {
 			return sdf.get().parse(str);
 		} catch (ParseException e) {
 			throw new CustomException(e, "string {} to Date error", str);
 		}
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return Date.class == type;
 	}
 }

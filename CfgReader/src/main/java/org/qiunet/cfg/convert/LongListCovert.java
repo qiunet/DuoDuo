@@ -3,6 +3,7 @@ package org.qiunet.cfg.convert;
 import org.qiunet.utils.collection.generics.LongList;
 import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.Field;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,15 +16,10 @@ import java.util.stream.Stream;
 public class LongListCovert extends BaseObjConvert<LongList> {
 	private static final String SPLIT = ",";
 	@Override
-	protected LongList fromString0(String str) {
+	public LongList fromString(Field field, String str) {
 		Long[] longs = StringUtil.conversion(str, SPLIT, Long.class);
 		LongList longList = Stream.of(longs).collect(Collectors.toCollection(LongList::new));
 		longList.convertToUnmodifiable();
 		return longList;
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return type == LongList.class;
 	}
 }

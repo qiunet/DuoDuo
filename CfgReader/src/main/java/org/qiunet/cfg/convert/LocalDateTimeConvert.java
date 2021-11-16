@@ -2,6 +2,7 @@ package org.qiunet.cfg.convert;
 
 import org.qiunet.utils.date.DateUtil;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 /***
@@ -12,12 +13,8 @@ import java.time.LocalDateTime;
 public class LocalDateTimeConvert extends BaseObjConvert<LocalDateTime> {
 
 	@Override
-	protected LocalDateTime fromString0(String str) {
+	public LocalDateTime fromString(Field field, String str) {
 		return DateUtil.stringToDate(str);
 	}
 
-	@Override
-	public boolean canConvert(Class type) {
-		return LocalDateTime.class == type;
-	}
 }

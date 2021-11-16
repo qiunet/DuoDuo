@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -7,12 +9,12 @@ package org.qiunet.cfg.convert;
  **/
 public class ShortConvert extends BaseObjConvert<Short> {
 	@Override
-	protected Short fromString0(String str) {
+	public Short fromString(Field field, String str) {
 		return Short.valueOf(str);
 	}
 
 	@Override
-	public boolean canConvert(Class type) {
+	public boolean canConvert(Class<Short> type) {
 		return type == Short.class || type == Short.TYPE;
 	}
 }

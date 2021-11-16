@@ -1,9 +1,9 @@
 package org.qiunet.cfg.manager.base;
 
-import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cfg.manager.exception.UnknownFieldException;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -124,7 +124,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 	protected <Cfg extends ICfg> void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
 		Field field = ReflectUtil.findField(cfgClass, name);
 		if (field == null) {
-			throw new AbstractReflectionConverter.UnknownFieldException(cfgClass.getName(), name);
+			throw new UnknownFieldException(cfgClass.getName(), name);
 		}
 		try {
 			if (isInvalidField(field)) {

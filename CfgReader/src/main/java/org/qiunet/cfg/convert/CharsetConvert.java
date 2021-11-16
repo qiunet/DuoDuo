@@ -1,5 +1,6 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 
 /***
@@ -10,12 +11,7 @@ import java.nio.charset.Charset;
  ***/
 public class CharsetConvert extends BaseObjConvert<Charset> {
 	@Override
-	protected Charset fromString0(String str) {
+	public Charset fromString(Field field, String str) {
 		return Charset.forName(str);
-	}
-
-	@Override
-	public boolean canConvert(Class aClass) {
-		return aClass == Charset.class;
 	}
 }

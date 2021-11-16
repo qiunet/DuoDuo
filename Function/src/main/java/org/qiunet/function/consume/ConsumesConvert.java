@@ -5,6 +5,7 @@ import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class ConsumesConvert extends BaseObjConvert<Consumes> {
 	private static final TypeReference<List<ConsumeConfig>> TYPE = new TypeReference<List<ConsumeConfig>>(){};
 
 	@Override
-	protected Consumes fromString0(String str) {
+	public Consumes fromString(Field field, String str) {
 		List<ConsumeConfig> configList;
 		if (StringUtil.isEmpty(str)) {
 			configList = Collections.emptyList();
@@ -26,10 +27,5 @@ public class ConsumesConvert extends BaseObjConvert<Consumes> {
 			configList = JsonUtil.getGeneralObjWithField(str, TYPE);
 		}
 		return ConsumesManager.instance.createConsumes(configList);
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return type == Consumes.class;
 	}
 }

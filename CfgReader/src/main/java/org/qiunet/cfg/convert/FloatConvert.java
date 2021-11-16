@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -8,12 +10,12 @@ package org.qiunet.cfg.convert;
 public class FloatConvert extends BaseObjConvert<Float> {
 
 	@Override
-	protected Float fromString0(String str) {
+	public Float fromString(Field field, String str) {
 		return Float.parseFloat(str);
 	}
 
 	@Override
-	public boolean canConvert(Class type) {
+	public boolean canConvert(Class<Float> type) {
 		return type == float.class || type == Float.class;
 	}
 }

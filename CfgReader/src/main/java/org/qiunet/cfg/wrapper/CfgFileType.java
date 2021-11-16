@@ -9,9 +9,6 @@ import org.qiunet.cfg.manager.json.SimpleMapJsonCfgManager;
 import org.qiunet.cfg.manager.xd.NestListXdCfgManager;
 import org.qiunet.cfg.manager.xd.NestMapXdCfgManager;
 import org.qiunet.cfg.manager.xd.SimpleMapXdCfgManager;
-import org.qiunet.cfg.manager.xml.NestListXmlCfgManager;
-import org.qiunet.cfg.manager.xml.NestMapXmlCfgManager;
-import org.qiunet.cfg.manager.xml.SimpleMapXmlCfgManager;
 import org.qiunet.utils.exceptions.EnumParseException;
 
 /***
@@ -21,25 +18,6 @@ import org.qiunet.utils.exceptions.EnumParseException;
  * 2020-04-23 16:29
  ***/
 public enum  CfgFileType {
-	XML {
-		@Override
-		public <ID, Cfg extends ISimpleMapCfg<ID>> ISimpleMapCfgWrapper<ID, Cfg> createSimpleMapCfgWrapper(Class<Cfg> clazz) {
-			SimpleMapXmlCfgManager<ID, Cfg> cfgManager = new SimpleMapXmlCfgManager<>(clazz);
-			return new SimpleMapCfgWrapper<>(cfgManager);
-		}
-
-		@Override
-		public <ID, SubId, Cfg extends INestMapCfg<ID, SubId>> INestMapCfgWrapper<ID, SubId, Cfg> createNestMapCfgWrapper(Class<Cfg> clazz) {
-			NestMapXmlCfgManager<ID, SubId, Cfg> cfgManager = new NestMapXmlCfgManager<>(clazz);
-			return new NestMapCfgWrapper<>(cfgManager);
-		}
-
-		@Override
-		public <ID, Cfg extends INestListCfg<ID>> INestListCfgWrapper<ID, Cfg> createNestListCfgWrapper(Class<Cfg> clazz) {
-			NestListXmlCfgManager<ID, Cfg> cfgManager = new NestListXmlCfgManager<>(clazz);
-			return new NestListCfgWrapper<>(cfgManager);
-		}
-	},
 
 	XD {
 		@Override

@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -7,12 +9,7 @@ package org.qiunet.cfg.convert;
  **/
 public class StringConvert extends BaseObjConvert<String> {
 	@Override
-	protected String fromString0(String str) {
+	public String fromString(Field field, String str) {
 		return str;
-	}
-
-	@Override
-	public boolean canConvert(Class type) {
-		return type == String.class;
 	}
 }

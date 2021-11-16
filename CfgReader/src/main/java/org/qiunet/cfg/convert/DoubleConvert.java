@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import java.lang.reflect.Field;
+
 /***
  *
  * @author qiunet
@@ -7,12 +9,12 @@ package org.qiunet.cfg.convert;
  **/
 public class DoubleConvert extends BaseObjConvert<Double> {
 	@Override
-	protected Double fromString0(String str) {
+	public Double fromString(Field field, String str) {
 		return Double.valueOf(str);
 	}
 
 	@Override
-	public boolean canConvert(Class type) {
+	public boolean canConvert(Class<Double> type) {
 		return type == Double.TYPE || type == Double.class;
 	}
 }
