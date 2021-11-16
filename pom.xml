@@ -276,6 +276,11 @@
 				<version>1.11.20</version>
 			</dependency>
 			<dependency>
+				<groupId>com.squareup.okhttp3</groupId>
+				<artifactId>okhttp</artifactId>
+				<version>3.14.7</version>
+			</dependency>
+			<dependency>
 				<groupId>net.bytebuddy</groupId>
 				<artifactId>byte-buddy-agent</artifactId>
 				<version>1.11.20</version>

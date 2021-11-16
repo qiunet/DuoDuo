@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.response.json;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.ImmutableMap;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.utils.json.JsonUtil;
 
@@ -40,7 +41,7 @@ public class JsonResponse {
 	 * @return
 	 */
 	public JsonResponse setGameStatus(IGameStatus status) {
-		Map<String, Object> map = Map.of("status", status.getStatus(), "desc", status.getDesc());
+		Map<String, Object> map = ImmutableMap.of("status", status.getStatus(), "desc", status.getDesc());
 		data.put("status", map);
 		return this;
 	}

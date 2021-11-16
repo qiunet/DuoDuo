@@ -1,8 +1,8 @@
 package org.qiunet.utils.http;
 
 import com.google.common.collect.Maps;
+import okhttp3.Request;
 
-import java.net.URI;
 import java.util.Map;
 
 /***
@@ -44,9 +44,9 @@ public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 
 
 	@Override
-	protected java.net.http.HttpRequest buildRequest() {
-		java.net.http.HttpRequest.Builder builder = java.net.http.HttpRequest.newBuilder(URI.create(buildUrl()));
-		headerBuilder.forEach(builder::header);
-		return builder.build();
+	protected Request buildRequest() {
+		return new Request.Builder().url(buildUrl())
+			.headers(headerBuilder.build())
+			.build();
 	}
 }

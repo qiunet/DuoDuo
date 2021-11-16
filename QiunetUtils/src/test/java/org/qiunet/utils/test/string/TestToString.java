@@ -1,5 +1,8 @@
 package org.qiunet.utils.test.string;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.logger.LoggerType;
@@ -16,13 +19,13 @@ import java.util.Map;
 public class TestToString {
 	@Test
 	public void test(){
-		String s = ToString.toString(Map.of("qiunet", "qiuyang"));
+		String s = ToString.toString(ImmutableMap.of("qiunet", "qiuyang"));
 		Assert.assertEquals(s, "{qiunet = qiuyang}");
 
 		s = ToString.toString(LoggerType.DUODUO);
 		Assert.assertEquals(s, "DUODUO");
 
-		s = ToString.toString(new User("qiunet", List.of(1, 2, 3)));
+		s = ToString.toString(new User("qiunet", ImmutableList.of(1, 2, 3)));
 		Assert.assertEquals(s, "User[account = qiunet, scores = {1, 2, 3}]");
 
 		s = ToString.toString(new int[]{1, 2, 3});

@@ -15,7 +15,6 @@ import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.ProtocolId;
 import org.qiunet.utils.http.HttpRequest;
 
-import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +39,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
 			.withBytes(ADAPTER.getAllBytes(content))
-			.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (resp) -> {
-				ByteBuffer buffer = ByteBuffer.wrap(resp.body());
+			.asyncExecutor((call, resp) -> {
+				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				// 跳过头
 				buffer.position(ADAPTER.getReqHeaderLength());
 
@@ -62,9 +61,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI("/back?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
-			.asyncExecutor((httpResponse) -> {
-				Assert.assertEquals(httpResponse.statusCode(), HttpResponseStatus.OK.code());
-				Assert.assertEquals(httpResponse.body(), test);
+			.asyncExecutor((call, httpResponse) -> {
+				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
+				Assert.assertEquals(httpResponse.body().string(), test);
 				LockSupport.unpark(currThread);
 
 		});
@@ -80,9 +79,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
-		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((httpResponse) -> {
-				Assert.assertEquals(httpResponse.statusCode(), HttpResponseStatus.OK.code());
-				String responseString = httpResponse.body();
+		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
+				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
+				String responseString = httpResponse.body().string();
 				JsonResponse response = JsonResponse.parse(responseString);
 				Assert.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
 				Assert.assertEquals(response.get("test"), test);
@@ -100,9 +99,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		map.put("SourceType" ,1);
 		map.put("test" ,"myTest");
 
-		String respContent = HttpRequest.post(params.getURI("/jsonUrl"))
+		String respContent = HttpRequest.post("http://localhost:8080/jsonUrl")
 			.withJsonData(map)
 			.executor();
 		System.out.println("================="+ respContent);
+
 	}
 }

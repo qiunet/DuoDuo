@@ -35,8 +35,8 @@ public class TestHttpRequest extends BaseTest{
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
 			HttpRequest.get(url).params(params).asyncExecutor(
-				response -> {
-					String result = response.body();
+				(call, response) -> {
+					String result = response.body().string();
 					System.out.println(result);
 					Assert.assertNotNull(result);
 					latch.countDown();
