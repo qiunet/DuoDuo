@@ -15,6 +15,7 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.event.AutoWireCompleteEventData;
 
 import java.lang.reflect.*;
 import java.util.Map;
@@ -34,7 +35,6 @@ enum CfgScannerManager implements IApplicationContextAware {
 		this.context = context;
 		this.scannerLoadOverMethod();
 		this.createCfgWrapper();
-		this.initCfg();
 	}
 
 	@Override
@@ -98,6 +98,11 @@ enum CfgScannerManager implements IApplicationContextAware {
 		field.setAccessible(true);
 		field.set(obj, CfgType.getCfgWrapper(cfgClass));
 		return true;
+	}
+
+	@EventListener
+	private void completeAutowire(AutoWireCompleteEventData data) {
+		this.initCfg();
 	}
 
 	@EventListener(EventHandlerWeightType.LESS)
