@@ -65,7 +65,7 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	 * 得到该剩余秒数
 	 * @return
 	 */
-	public int getLeftTime(T cdType){
+	public int getLeftSeconds(T cdType){
 		if (isTimeout(cdType)) {
 			return 0;
 		}
@@ -94,7 +94,7 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	}
 
 
-	public void removeCd(T cdType) {
+	public void cleanCd(T cdType) {
 		cdTimers.remove(cdType);
 	}
 	/***
