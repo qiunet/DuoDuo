@@ -49,7 +49,7 @@ public class JsonAppender extends BaseAppender {
 						case LONG:
 							if(StringUtil.isEmpty(rowData.getVal())){
 								System.err.println("Excel long 类型 列没有数值");
-								jsonObject.put(rowData.getName(), 0l);
+								jsonObject.put(rowData.getName(), 0);
 							}else{
 								jsonObject.put(rowData.getName(), Long.parseLong(rowData.getVal()));
 							}

@@ -119,7 +119,9 @@ public class SettingPanel extends IconJPanel {
         RoleType selectedItem = (RoleType) this.roleTypeJComboBox.getSelectedItem();
         SettingManager.getInstance().getSetting().setRoleType(selectedItem);
         SettingManager.getInstance().addExcelPath(Objects.requireNonNull(this.excelChoice.getSelectedItem()).toString());
-        SettingManager.getInstance().addCfgPath(Objects.requireNonNull(this.proCfgPathChoice.getSelectedItem()).toString());
+		if (selectedItem != RoleType.SCHEMER) {
+			SettingManager.getInstance().addCfgPath(Objects.requireNonNull(this.proCfgPathChoice.getSelectedItem()).toString());
+		}
 
 
         OutputFormatType.uncheckedAll();
