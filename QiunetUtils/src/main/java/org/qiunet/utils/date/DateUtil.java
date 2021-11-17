@@ -1,5 +1,8 @@
 package org.qiunet.utils.date;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -78,9 +81,13 @@ public final class DateUtil {
 	 * 时分秒的
 	 */
 	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
-
+	/**
+	 * 一天的毫秒数
+	 */
 	public static final long DAY_MS = 24 * 3600 * 1000;
-
+	/**
+	 * 一周的毫秒数
+	 */
 	public static final long WEEK_MS = 7L * DAY_MS;
 
 	/**
@@ -176,7 +183,6 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static LocalDateTime getLocalDateTime(long milliseconds) {
-//        return LocalDateTime.ofEpochSecond(milliseconds / 1000, 0, ZoneOffset.UTC);
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), getDefaultZoneId());
 	}
 
@@ -187,7 +193,6 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static LocalDateTime getLocalDateTime(long milliseconds, ZoneOffset zoneOffset) {
-//        return LocalDateTime.ofEpochSecond(milliseconds / 1000, 0, ZoneOffset.UTC);
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), zoneOffset);
 	}
 
@@ -203,6 +208,12 @@ public final class DateUtil {
 		return returnFormatter(format).format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), defaultZoneId));
 	}
 
+	/**
+	 * 日期转时间
+	 * @param date
+	 * @param format
+	 * @return
+	 */
 	public static String dateToString(LocalDateTime date, String format) {
 		return returnFormatter(format).format(date);
 	}
@@ -355,12 +366,7 @@ public final class DateUtil {
 		return isSameDay(ld1, ld2);
 	}
 
-	private static Map<String, DateTimeFormatter> dtfs = new HashMap() {
-		{
-			put(DEFAULT_DATE_TIME_FORMAT, DEFAULT_DATE_TIME_FORMATTER);
-		}
-	};
-
+	private static final Map<String, DateTimeFormatter> dtfs = Maps.newHashMap(ImmutableMap.of(DEFAULT_DATE_TIME_FORMAT, DEFAULT_DATE_TIME_FORMATTER));
 	/**
 	 * 使用LocalDateTime格式化时间. 取到对应的 DateTimeFormatter
 	 *
@@ -368,13 +374,14 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static DateTimeFormatter returnFormatter(String pattern) {
-		if (!dtfs.containsKey(pattern)) {
+		DateTimeFormatter formatter = dtfs.get(pattern);
+		if (formatter == null) {
 			synchronized (DateUtil.class) {
 				if (!dtfs.containsKey(pattern)) {
-					dtfs.put(pattern, DateTimeFormatter.ofPattern(pattern));
+					dtfs.put(pattern, formatter = DateTimeFormatter.ofPattern(pattern));
 				}
 			}
 		}
-		return dtfs.get(pattern);
+		return formatter;
 	}
 }
