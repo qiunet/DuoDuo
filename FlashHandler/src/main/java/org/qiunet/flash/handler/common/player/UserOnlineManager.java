@@ -99,11 +99,18 @@ public enum UserOnlineManager {
 		}
 	}
 	/**
-	 * 在线玩家数量
+	 * 在线本服玩家数量
 	 * @return 数量
 	 */
-	public int onlineSize(){
-		return onlinePlayers.size();
+	public int onlinePlayerSize(){
+		return (int) onlinePlayers.values().stream().filter(actor -> actor instanceof AbstractPlayerActor).count();
+	}
+	/**
+	 * 在线跨服玩家数量
+	 * @return 数量
+	 */
+	public int crossPlayerSize(){
+		return (int) onlinePlayers.values().stream().filter(actor -> ! (actor instanceof AbstractPlayerActor)).count();
 	}
 	/**
 	 * 遍历在线玩家.
