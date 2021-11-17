@@ -112,6 +112,14 @@ public enum UserOnlineManager {
 	public int crossPlayerSize(){
 		return (int) onlinePlayers.values().stream().filter(actor -> ! (actor instanceof AbstractPlayerActor)).count();
 	}
+
+	/**
+	 * 所有在线的数量
+	 * @return
+	 */
+	public int onlineSize(){
+		return onlinePlayers.size();
+	}
 	/**
 	 * 遍历在线玩家.
 	 * @param consume
