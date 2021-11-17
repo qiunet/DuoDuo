@@ -12,185 +12,31 @@
 	<packaging>jar</packaging>
 	<name>DuoDuo/All-in-One</name>
 
-	<properties>
-		<generatedSourceDir>${project.build.directory}/src</generatedSourceDir>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-						<configuration>
-							<quiet>true</quiet>
-							<additionalJOption>-Xdoclint:none</additionalJOption>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>source</id>
-						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<!-- Populate the properties whose key is groupId:artifactId:type
-                                             and whose value is the path to the artifact -->
-					<execution>
-						<id>locate-dependencies</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>properties</goal>
-						</goals>
-					</execution>
-
-					<!-- Unpack all source files -->
-					<execution>
-						<id>unpack-sources</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<classifier>sources</classifier>
-							<includes>
-								mybatis/CreateTableMapper.xml,
-								org/qiunet/**,
-								**/*.vm,
-								**/*.xsd
-							</includes>
-							<includeScope>runtime</includeScope>
-							<includeGroupIds>${project.groupId}</includeGroupIds>
-							<outputDirectory>${generatedSourceDir}</outputDirectory>
-						</configuration>
-					</execution>
-
-					<!-- Unpack all class files -->
-					<execution>
-						<id>unpack-jars</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-						<configuration>
-							<includes>
-								org/qiunet/**,
-								**/*.vm,
-								mybatis/CreateTableMapper.xml,
-								**/*.xsd,
-								META-INF/native/**
-							</includes>
-							<includeScope>runtime</includeScope>
-							<includeGroupIds>${project.groupId}</includeGroupIds>
-							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${generatedSourceDir}</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>generate-manifest</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-jar</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>all-in-one-jar</id>
 						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<archive>
-								<manifest>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								</manifest>
-								<manifestEntries>
-									<Automatic-Module-Name>org.qiunet.duoduo</Automatic-Module-Name>
-								</manifestEntries>
-								<index>true</index>
-							</archive>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
+							<!-- 创建源码jar -->
+							<createSourcesJar>true</createSourcesJar>
+							<artifactSet>
+								<excludes>
+									<exclude>${project.groupId}:JavaAgent:*</exclude>
+								</excludes>
+								<includes>
+									<include>${project.groupId}:*:*</include>
+								</includes>
+							</artifactSet>
 						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-resources</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>default-testResources</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-compile</id>
-						<phase>none</phase>
-					</execution>
-					<execution>
-						<id>default-testCompile</id>
-						<phase>none</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>default-test</id>
-						<phase>none</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -219,50 +65,43 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Function</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetDatas</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Profile</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Cross</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>CfgReader</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>Quartz</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>GameTest</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>EventLog</artifactId>
 			<optional>true</optional>
-			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
@@ -271,6 +110,7 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>io.netty</groupId>
