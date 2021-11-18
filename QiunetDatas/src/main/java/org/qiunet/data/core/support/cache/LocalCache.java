@@ -18,17 +18,26 @@ import java.util.concurrent.TimeUnit;
 public class LocalCache<Key, Val> {
 	/***
 	 * 本地存储cache
-	 * 24小时失效
 	 */
 	private Cache<Key, Val> localCache;
 
-	public LocalCache() {
-		this.localCache = CacheBuilder.newBuilder()
-			.expireAfterAccess(12, TimeUnit.HOURS)
-//			.maximumSize(10000)
-			.softValues()
-			.build();
+	private LocalCache() {}
+
+	public static <Key, Val> LocalCache<Key, Val> createTimeExpireCache(){
+		LocalCache<Key, Val> localCache = new LocalCache<>();
+		localCache.localCache = CacheBuilder.newBuilder()
+				.expireAfterAccess(12, TimeUnit.HOURS)
+				.softValues()
+				.build();
+		return localCache;
 	}
+
+	public static <Key, Val> LocalCache<Key, Val> createPermanentCache(){
+		LocalCache<Key, Val> localCache = new LocalCache<>();
+		localCache.localCache = CacheBuilder.newBuilder().build();
+		return localCache;
+	}
+
 	/**
 	 * 从本地缓存取
 	 * 没有试用caller 加载

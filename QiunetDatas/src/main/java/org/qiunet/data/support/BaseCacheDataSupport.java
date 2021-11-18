@@ -2,6 +2,7 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.data.core.support.cache.LocalCache;
 import org.qiunet.data.support.anno.LoadAllData;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -17,11 +18,15 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 	protected BaseCacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
-		if (doClass.isAnnotationPresent(LoadAllData.class)) {
+		boolean localAllData = doClass.isAnnotationPresent(LoadAllData.class);
+		this.initCache(localAllData ? LocalCache.createPermanentCache() : LocalCache.createTimeExpireCache());
+		if (localAllData) {
 			List<Do> objects = databaseSupport().selectList(selectAllStatement, null);
 			objects.forEach(aDo -> this.addToCache(supplier.get(aDo)));
 		}
 	}
+
+	protected abstract void initCache(LocalCache cache);
 
 	@Override
 	public void syncToDatabase() {

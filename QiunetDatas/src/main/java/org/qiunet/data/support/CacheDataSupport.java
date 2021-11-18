@@ -11,13 +11,17 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key, Bo>, Bo extends 
 	/**防止缓存击穿的 NULL值*/
 	private Bo NULL;
 	/**保存的cache*/
-	private LocalCache<Key, Bo> cache = new LocalCache<>();
+	private LocalCache<Key, Bo> cache;
 
 	public CacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		this.NULL = supplier.get(defaultDo);
 	}
 
+	@Override
+	protected void initCache(LocalCache cache) {
+		this.cache = cache;
+	}
 
 	@Override
 	protected void invalidateCache(Do aDo) {

@@ -21,10 +21,15 @@ import java.util.stream.Collectors;
  */
 public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
 	/**保存的cache*/
-	private LocalCache<Key, Map<SubKey, Bo>> cache = new LocalCache<>();
+	private LocalCache<Key, Map<SubKey, Bo>> cache;
 
 	public CacheDataListSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
+	}
+
+	@Override
+	protected void initCache(LocalCache cache) {
+		this.cache = cache;
 	}
 
 	@Override
