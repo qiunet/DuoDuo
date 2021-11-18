@@ -1,9 +1,14 @@
 package org.qiunet.utils.net;
 
 import org.qiunet.utils.common.CommonUtil;
+import org.qiunet.utils.exceptions.CustomException;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,17 +44,11 @@ public class NetUtil {
 	}
 
 	/***
-	 * 得到内网ip
+	 * 得到内网ip v4
 	 * @return
 	 */
 	public static String getInnerIp() {
-		InetAddress address = null;
-		try {
-			address = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return address != null ? address.getHostAddress() : null;
+		return localIpv4s().stream().filter(str -> ! isLocalIp(str)).findFirst().get();
 	}
 	/***
 	 * 得到主机名
@@ -70,17 +69,78 @@ public class NetUtil {
 	 * @return
 	 */
 	public static String[] getAllInnerIp(){
-		String localHostName = getLocalHostName();
-		String [] ret = null;
-		try {
-			InetAddress[] inetAddresses = InetAddress.getAllByName(localHostName);
-			ret = new String[inetAddresses.length];
-			for (int i = 0; i < inetAddresses.length; i++) {
-				ret[i] = inetAddresses[i].getHostAddress();
-			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+		LinkedHashSet<InetAddress> inetAddresses = localAddressList(i -> true);
+		return toIpList(inetAddresses).toArray(new String[0]);
+	}
+	/**
+	 * 获得本机的IPv4地址列表<br>
+	 * 返回的IP列表有序，按照系统设备顺序
+	 *
+	 * @return IP地址列表 {@link LinkedHashSet}
+	 */
+	public static LinkedHashSet<String> localIpv4s() {
+		final LinkedHashSet<InetAddress> localAddressList = localAddressList(t -> t instanceof Inet4Address);
+		return toIpList(localAddressList);
+	}
+
+	/**
+	 * 获得本机的IPv6地址列表<br>
+	 * 返回的IP列表有序，按照系统设备顺序
+	 *
+	 * @return IP地址列表 {@link LinkedHashSet}
+	 * @since 4.5.17
+	 */
+	public static LinkedHashSet<String> localIpv6s() {
+		final LinkedHashSet<InetAddress> localAddressList = localAddressList(t -> t instanceof Inet6Address);
+		return toIpList(localAddressList);
+	}
+	/**
+	 * 地址列表转换为IP地址列表
+	 *
+	 * @param addressList 地址{@link Inet4Address} 列表
+	 * @return IP地址字符串列表
+	 * @since 4.5.17
+	 */
+	public static LinkedHashSet<String> toIpList(Set<InetAddress> addressList) {
+		final LinkedHashSet<String> ipSet = new LinkedHashSet<>();
+		for (InetAddress address : addressList) {
+			ipSet.add(address.getHostAddress());
 		}
-		return ret;
+
+		return ipSet;
+	}
+	/**
+	 * 获取所有满足过滤条件的本地IP地址对象
+	 *
+	 * @param addressFilter 过滤器，null表示不过滤，获取所有地址
+	 * @return 过滤后的地址对象列表
+	 * @since 4.5.17
+	 */
+	public static LinkedHashSet<InetAddress> localAddressList(Predicate<InetAddress> addressFilter) {
+		Enumeration<NetworkInterface> networkInterfaces;
+		try {
+			networkInterfaces = NetworkInterface.getNetworkInterfaces();
+		} catch (SocketException e) {
+			throw new RuntimeException(e);
+		}
+
+		if (networkInterfaces == null) {
+			throw new CustomException("Get network interface error!");
+		}
+
+		final LinkedHashSet<InetAddress> ipSet = new LinkedHashSet<>();
+
+		while (networkInterfaces.hasMoreElements()) {
+			final NetworkInterface networkInterface = networkInterfaces.nextElement();
+			final Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+			while (inetAddresses.hasMoreElements()) {
+				final InetAddress inetAddress = inetAddresses.nextElement();
+				if (inetAddress != null && (null == addressFilter || addressFilter.test(inetAddress))) {
+					ipSet.add(inetAddress);
+				}
+			}
+		}
+
+		return ipSet;
 	}
 }
