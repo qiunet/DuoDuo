@@ -139,7 +139,7 @@ public final class DbUtil {
 	 */
 	public static String getDefaultTableName(String doName) {
 		if (! doName.endsWith("Do")) {
-			throw new IllegalArgumentException("Do must end with Do");
+			throw new IllegalArgumentException("doName ["+doName+"] must end with Do");
 		}
 		int index = 0;
 		StringBuilder sb = new StringBuilder();

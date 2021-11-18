@@ -51,7 +51,10 @@ import org.slf4j.Logger;
 
 		this.addToAsyncJob();
 	}
-
+	@Override
+	public Bo convertBo(Do aDo) {
+		return supplier.get(aDo);
+	}
 	/**
 	 * 得到po的名称. 用来组装 statement
 	 * @return
