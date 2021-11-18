@@ -1,8 +1,8 @@
 package org.qiunet.data.db;
 
-import org.qiunet.data.support.IEntityBo;
+import org.qiunet.data.db.loader.DbEntityBo;
 
-public class PlayerBo implements IEntityBo<PlayerDo> {
+public class PlayerBo extends DbEntityBo<PlayerDo> {
 
 	private PlayerDo playerDo;
 
