@@ -85,7 +85,7 @@ public final class ServerInfo extends HashMap<String, Object> {
 	 */
 	public boolean isOffline(){
 		Long dt = (Long) get(lastUpdateDt);
-		return dt != null && System.currentTimeMillis() - dt < TimeUnit.SECONDS.toMillis(ServerNodeManager0.SERVER_OFFLINE_SECONDS);
+		return dt != null && System.currentTimeMillis() - dt > TimeUnit.SECONDS.toMillis(ServerNodeManager0.SERVER_OFFLINE_SECONDS);
 	}
 
 	public int getServerPort() {
