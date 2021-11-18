@@ -90,6 +90,48 @@ public final class DbUtil {
 	public static String getNameSpace(String doName) {
 		return getDefaultTableName(doName);
 	}
+
+	/**
+	 * 得到insert 的 statement
+	 * @param doName
+	 * @return
+	 */
+	public static String getInsertStatement(String doName) {
+		return getNameSpace(doName)+".insert"+ doName;
+	}
+	/**
+	 * 得到 update 的 statement
+	 * @param doName
+	 * @return
+	 */
+	public static String getUpdateStatement(String doName) {
+		return getNameSpace(doName)+".update"+ doName;
+	}
+	/**
+	 * 得到 select 的 statement
+	 * @param doName
+	 * @return
+	 */
+	public static String getSelectStatement(String doName) {
+		return getNameSpace(doName)+".select"+ doName;
+	}
+	/**
+	 * 得到 select all 的 statement
+	 * @param doName
+	 * @return
+	 */
+	public static String getSelectAllStatement(String doName) {
+		return getNameSpace(doName)+".selectAll"+ doName;
+	}
+	/**
+	 * 得到 delete 的 statement
+	 * @param doName
+	 * @return
+	 */
+	public static String getDeleteStatement(String doName) {
+		return getNameSpace(doName)+".delete"+ doName;
+	}
+
 	/***
 	 * 得到表名 保留驼峰.
 	 * @param doName
@@ -97,7 +139,7 @@ public final class DbUtil {
 	 */
 	public static String getDefaultTableName(String doName) {
 		if (! doName.endsWith("Do")) {
-			throw new IllegalArgumentException("Do must end with Do");
+			throw new IllegalArgumentException("doName ["+doName+"] must end with Do");
 		}
 		int index = 0;
 		StringBuilder sb = new StringBuilder();

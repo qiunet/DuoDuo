@@ -1,0 +1,140 @@
+package org.qiunet.data.db.loader;
+
+import com.google.common.collect.Maps;
+import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.data.db.entity.DbEntityList;
+import org.qiunet.data.db.entity.IDbEntity;
+import org.qiunet.data.support.DataSupportMapping;
+import org.qiunet.utils.exceptions.CustomException;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/***
+ * 跟玩家相关的数据加载管理
+ *
+ * @author qiunet
+ * 2021/11/18 16:20
+ */
+public class PlayerDataLoader {
+	enum  EntityOperate {INSERT, UPDATE, DELETE}
+	private static final AtomicBoolean destroy = new AtomicBoolean();
+	static final Object NULL = new Object();
+	/**
+	 * 玩家的所有数据
+	 */
+	final Map<Class<? extends DbEntityBo>, Object> dataCache = Maps.newConcurrentMap();
+	/**
+     * 玩家有修改的数据. 需要入库的
+	 */
+	final DbEntityAsyncQueue cacheAsyncToDb = new DbEntityAsyncQueue();
+	/**
+     * 玩家ID
+	 */
+	private long playerId;
+
+	public PlayerDataLoader(long playerId) {
+		this.playerId = playerId;
+
+		DataLoaderManager.instance.registerPlayerLoader(playerId, this);
+	}
+
+	/**
+	 * 销毁. 顺便要更新入库
+	 */
+	public void destroy(){
+		if (destroy.compareAndSet(false, true)) {
+			DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
+			this.syncToDb();
+		}
+	}
+
+	/**
+	 * 同步数据到db
+	 */
+	void syncToDb(){
+		cacheAsyncToDb.syncToDb();
+	}
+
+	/**
+	 * 是否已经销毁
+	 * @return
+	 */
+	public boolean isDestroy(){
+		return destroy.get();
+	}
+	/**
+	 * 获得玩家ID
+	 * @return
+	 */
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	/**
+	 * 插入一个Do对象
+	 * @param entity
+	 * @param <Do>
+	 * @param <Bo>
+	 * @return
+	 */
+	public <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+		if (isDestroy()) {
+			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
+		}
+
+		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
+		if (bo.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)) {
+			cacheAsyncToDb.add(EntityOperate.INSERT, bo);
+		}
+		bo.playerDataLoader = this;
+		if (bo.getDo() instanceof DbEntityList) {
+			DbEntityList aDo = (DbEntityList) bo.getDo();
+			Map mapData = this.getMapData(bo.getClass());
+			mapData.put(aDo.subKey(), bo);
+		}else {
+			dataCache.put(bo.getClass(), bo);
+		}
+		return bo;
+	}
+
+	/**
+	 * 获得注册的数据
+	 * @param clazz
+	 * @param <Data>
+	 * @return
+	 */
+	public <Data extends DbEntityBo> Data getData(Class<Data> clazz) {
+		if (isDestroy()) {
+			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
+		}
+
+		Object data = dataCache.computeIfAbsent(clazz, key -> {
+			Object obj = DataLoaderManager.instance.getData(key, playerId);
+			if (obj == null) {
+				obj = NULL;
+			}
+			return obj;
+		});
+		if (data == NULL) {
+			return null;
+		}
+		return (Data) data;
+	}
+
+	/**
+	 * 获取一个Map
+	 * @param clazz bo的Class
+	 * @param <SubKey> Do的subKey 类型
+	 * @param <Bo> Bo类型
+	 * @param <Do> Do类型
+	 * @return
+	 */
+	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey, Bo>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
+		if (isDestroy()) {
+			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
+		}
+
+		return (Map<SubKey, Bo>) dataCache.computeIfAbsent(clazz, key -> DataLoaderManager.instance.getData(key, playerId));
+	}
+}

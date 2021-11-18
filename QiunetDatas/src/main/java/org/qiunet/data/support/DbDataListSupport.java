@@ -1,5 +1,6 @@
 package org.qiunet.data.support;
 
+import com.google.common.collect.Maps;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.db.entity.IDbEntityList;
 
@@ -21,7 +22,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 		List<Do> doList = databaseSupport().selectList(selectStatement, map);
-		if (doList == null) return Collections.emptyMap();
+		if (doList == null) return Maps.newHashMap();
 
 		return doList.stream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
 	}
