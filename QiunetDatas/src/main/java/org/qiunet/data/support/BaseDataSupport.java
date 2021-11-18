@@ -6,6 +6,7 @@ import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -21,8 +22,6 @@ import org.slf4j.Logger;
  	protected Do defaultDo;
 	/**	po的名称. 用来组装 statement */
 	protected String doName;
-	/** 得到mybatis 需要的nameSpace */
-	protected String nameSpace;
 	/**是否是异步*/
 	protected boolean async;
 	protected Table table;
@@ -42,14 +41,13 @@ import org.slf4j.Logger;
 		} catch (IllegalAccessException | InstantiationException e) {
 			e.printStackTrace();
 		}
-		this.nameSpace = DbUtil.getNameSpace(doName);
 
-		// select 区分 entity 和 list 在子类处理.
-		this.selectAllStatement = nameSpace+".selectAll"+ doName;
-		this.selectStatement = nameSpace+".select"+ doName;
-		this.insertStatement = nameSpace+".insert"+ doName;
-		this.updateStatement = nameSpace+".update"+ doName;
-		this.deleteStatement = nameSpace+".delete"+ doName;
+		 // select 区分 entity 和 list 在子类处理.
+		 this.selectAllStatement = DbUtil.getSelectAllStatement(doName);
+		 this.selectStatement = DbUtil.getSelectStatement(doName);
+		 this.insertStatement = DbUtil.getInsertStatement(doName);
+		 this.updateStatement = DbUtil.getUpdateStatement(doName);
+		 this.deleteStatement = DbUtil.getDeleteStatement(doName);
 
 		this.addToAsyncJob();
 	}
@@ -70,7 +68,8 @@ import org.slf4j.Logger;
 	 * 根据 注解Table 获取数据源
 	 * @return
 	 */
+	private final LazyLoader<IDatabaseSupport> databaseSupport = new LazyLoader<>(() -> DbSourceDatabaseSupport.getInstance(this.table.dbSource()));
 	protected IDatabaseSupport databaseSupport() {
-		return DbSourceDatabaseSupport.getInstance(this.table.dbSource());
+		return databaseSupport.get();
 	}
 }
