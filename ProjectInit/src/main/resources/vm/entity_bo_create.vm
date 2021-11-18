@@ -1,8 +1,14 @@
 package ${define.entityPackage};
 
+#if($define.dbType)
+import org.qiunet.data.db.loader.DbEntityBo;
+
+public class ${define.boName} extends DbEntityBo<${define.doName}>{
+#else
 import org.qiunet.data.support.IEntityBo;
 
 public class ${define.boName} implements IEntityBo<${define.doName}>{
+#end
 	private final ${define.doName} aDo;
 
 	public ${define.boName} (${define.doName} aDo) {

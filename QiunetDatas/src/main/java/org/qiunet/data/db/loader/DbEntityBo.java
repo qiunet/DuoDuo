@@ -35,6 +35,7 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IDbEntityBo<Do
 	@Override
 	public void update() {
 		if (playerDataLoader == null) {
+			this.serialize();
 			getDo().update();
 			return;
 		}

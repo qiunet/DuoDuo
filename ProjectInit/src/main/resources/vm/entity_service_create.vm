@@ -4,6 +4,9 @@ package ${define.packageName};
 import ${define.entityPackage}.${define.boName};
 import ${define.entityPackage}.${define.doName};
 import ${define.type.DataSupportClass.name};
+#if($define.dbType)
+import org.qiunet.data.db.loader.DataLoader;
+#end
 #if(${define.type.list})
 import java.util.Map;
 #end
@@ -13,12 +16,14 @@ public enum ${define.serviceName} {
 #if(${define.type} == 'CACHE_ENTITY')
 	private final CacheDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY')
+	@DataLoader(${define.boName}.class)
 	private final DbDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'REDIS_ENTITY')
 	private final RedisDataSupport<${define.keyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'REDIS_ENTITY_LIST')
 	private final RedisDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new RedisDataListSupport<>(${define.redis}.getInstance(), ${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'DB_ENTITY_LIST')
+	@DataLoader(${define.boName}.class)
 	private final DbDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new DbDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #elseif(${define.type} == 'CACHE_ENTITY_LIST')
 	private final CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);

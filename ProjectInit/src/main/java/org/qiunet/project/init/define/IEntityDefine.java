@@ -120,4 +120,22 @@ public interface IEntityDefine extends ITemplateObjectDefine {
 	 * @return
 	 */
 	boolean isList();
+
+	/**
+	 * 是否是cache define
+	 * @return
+	 */
+	boolean isCacheType();
+
+	/**
+	 * 是否是redis define
+	 * @return
+	 */
+	boolean isRedisType();
+
+	/**
+	 * 是否是redis define
+	 * @return
+	 */
+	boolean isDbType();
 }

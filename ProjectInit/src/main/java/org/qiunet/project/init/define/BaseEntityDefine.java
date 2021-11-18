@@ -189,6 +189,22 @@ import java.util.stream.Collectors;
 	}
 
 	@Override
+	public boolean isCacheType() {
+		return entityType.isCacheType();
+	}
+
+	@Override
+	public boolean isRedisType() {
+		return entityType.isRedisType();
+	}
+
+
+	@Override
+	public boolean isDbType() {
+		return entityType.isDbType();
+	}
+
+	@Override
 	public String getKeyType() {
 		Optional<FieldDefine> keyField = fieldDefines.stream().filter(f -> f.getName().equals(key)).findFirst();
 		FieldDefine fieldDefine = keyField.orElseThrow(() -> new NullPointerException("DoName ["+name+"] have not a field named ["+key+"]"));

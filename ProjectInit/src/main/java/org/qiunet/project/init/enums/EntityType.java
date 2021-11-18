@@ -103,6 +103,30 @@ public enum  EntityType {
 	public boolean isList(){
 		return name().endsWith("LIST");
 	}
+
+	/***
+	 * 是不是list类型
+	 * @return
+	 */
+	public boolean isCacheType(){
+		return name().startsWith("CACHE");
+	}
+
+	/***
+	 * 是不是list类型
+	 * @return
+	 */
+	public boolean isRedisType(){
+		return name().startsWith("REDIS");
+	}
+
+	/**
+	 * 是否是db Type
+	 * @return
+	 */
+	public boolean isDbType(){
+		return name().startsWith("DB");
+	}
 	/***
 	 * 初始化 digester
 	 * @param digester
