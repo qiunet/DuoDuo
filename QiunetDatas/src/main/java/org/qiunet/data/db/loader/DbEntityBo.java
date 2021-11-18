@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /***
+ * 对Bo进行一层封装. 如果是从PlayerDataLoader加载的数据.
+ * PlayerDataLoader不等于空. update delete 走cache逻辑.
  *
  * @author qiunet
  * 2021/11/18 19:29
@@ -17,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> {
 	private transient volatile AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
 	PlayerDataLoader playerDataLoader;
+	private boolean delete;
 
 	void updateEntityStatus(EntityStatus status) {
 		atomicStatus.set(status);
@@ -42,6 +45,10 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> 
 			throw new CustomException("Need insert first!");
 		}
 
+		if (delete) {
+			throw new CustomException("Entity already deleted!!");
+		}
+
 		// 如果上次的数据没有逻辑. 比如插入. 则这次更新不进行
 		if (atomicStatus.compareAndSet(EntityStatus.NORMAL, EntityStatus.UPDATE)) {
 			playerDataLoader.cacheAsyncToDb.add(PlayerDataLoader.EntityOperate.UPDATE,this);
@@ -55,6 +62,11 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> 
 			return;
 		}
 
+		if (delete) {
+			return;
+		}
+
+		this.delete = true;
 		EntityStatus entityStatus = entityStatus();
 		Object obj = playerDataLoader.dataCache.get(getClass());
 		if (obj instanceof Map) {
@@ -67,6 +79,7 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> 
 		if (entityStatus == EntityStatus.INIT) {
 			return;
 		}
+
 		playerDataLoader.cacheAsyncToDb.add(PlayerDataLoader.EntityOperate.DELETE,this);
 	}
 }
