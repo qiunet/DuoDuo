@@ -108,11 +108,29 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	}
 
 	/**
-	 * 增加 rewardItem
-	 * @param baseReward 奖励物品
+	 * 添加另一个Rewards
+	 * @param rewards
 	 */
-	public void addRewardItem(BaseReward<Obj> baseReward) {
-		this.baseRewardList.add(baseReward);
+	public void addRewards(Rewards<Obj> rewards) {
+		rewards.baseRewardList.forEach(this::addRewardItem);
+	}
+
+	/**
+	 * 增加 rewardItem
+	 * @param reward 奖励物品
+	 */
+	public void addRewardItem(BaseReward<Obj> reward) {
+		boolean merged = false;
+		for (BaseReward<Obj> baseReward : this.baseRewardList) {
+			if (baseReward.canMerge(reward)) {
+				baseReward.doMerge(reward);
+				merged = true;
+				break;
+			}
+		}
+		if (! merged) {
+			this.baseRewardList.add(reward);
+		}
 	}
 	/**
 	 * 循环奖励数据

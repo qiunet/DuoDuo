@@ -108,6 +108,7 @@ public class Consumes<Obj extends IThreadSafe> {
 			if (baseConsume.canMerge(consume)) {
 				baseConsume.doMerge(consume);
 				merged = true;
+				break;
 			}
 		}
 		if (! merged) {

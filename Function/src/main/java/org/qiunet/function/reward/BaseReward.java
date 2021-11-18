@@ -26,7 +26,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 奖励数
 	 */
-	protected final long value;
+	protected long value;
 
 	public BaseReward(int cfgId, long value) {
 		this.cfgId = cfgId;
@@ -97,7 +97,22 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	public long getValue() {
 		return value;
 	}
-
+	/**
+	 * 是否可以合并
+	 * @param reward 奖励的具体对象
+	 * @return 是否可以合并
+	 */
+	public boolean canMerge(BaseReward<Obj> reward) {
+		return this.getClass() == reward.getClass()
+				&& this.getCfgId() == reward.getCfgId();
+	}
+	/**
+	 * 合并一个reward
+	 * @param reward
+	 */
+	public void doMerge(BaseReward<Obj> reward) {
+		this.value += reward.value;;
+	}
 	/**
 	 * 获得type
 	 * @return
