@@ -1,6 +1,7 @@
 package org.qiunet.data.db.loader;
 
 import com.google.common.collect.Maps;
+import org.qiunet.data.async.IAsyncNode;
 import org.qiunet.data.support.*;
 import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.args.ArgsContainer;
@@ -18,8 +19,13 @@ import java.util.Set;
  * @author qiunet
  * 2021/11/17 19:44
  */
-enum DataLoaderManager {
+enum DataLoaderManager implements IAsyncNode {
 	instance;
+
+	DataLoaderManager(){
+		this.addToAsyncJob();
+	}
+
 	private static final Map<Long, PlayerDataLoader> playerDataLoaders = Maps.newConcurrentMap();
 
 	void unRegisterPlayerLoader(long playerId) {
@@ -43,14 +49,15 @@ enum DataLoaderManager {
 		return ((DbDataSupport) dataSupport).getBo(playerId);
 	}
 
-	@CronSchedule("15 * * * * ?")
-	void asyncCacheToDb() {
+	private static final Map<Class<? extends DbEntityBo>, IDataSupport> dataSupportMap = Maps.newHashMapWithExpectedSize(128);
+
+	@Override
+	public void syncToDatabase() {
 		for (PlayerDataLoader loader : playerDataLoaders.values()) {
 			loader.syncToDb();
 		}
 	}
 
-	private static final Map<Class<? extends DbEntityBo>, IDataSupport> dataSupportMap = Maps.newHashMapWithExpectedSize(128);
 	private enum DataLoaderManager0 implements IApplicationContextAware {
 		instance;
 

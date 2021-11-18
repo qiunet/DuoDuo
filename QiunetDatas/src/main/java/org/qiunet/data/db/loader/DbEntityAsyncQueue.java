@@ -24,24 +24,24 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author qiunet
  * 2021/11/18 16:43
  */
-public class DbEntityAsyncQueue {
+class DbEntityAsyncQueue {
 	protected static final Logger logger = LoggerType.DUODUO.getLogger();
 
-	private static final Map<Class<? extends IDbEntityBo>, SyncDoInfo> dbSourceCache = Maps.newConcurrentMap();
+	private static final Map<Class<? extends DbEntityBo>, SyncDoInfo> dbSourceCache = Maps.newConcurrentMap();
 
 	private final ConcurrentLinkedQueue<SyncEntityElement> syncKeyQueue = new ConcurrentLinkedQueue<>();
 
-	public void add(PlayerDataLoader.EntityOperate operate, IDbEntityBo entity) {
+	void add(PlayerDataLoader.EntityOperate operate, DbEntityBo entity) {
 		this.syncKeyQueue.add(new SyncEntityElement(operate, entity));
 	}
 
     /**
      * 数据入库
 	 */
-	public void syncToDb(){
+	void syncToDb(){
 		SyncEntityElement element;
 		while ((element = syncKeyQueue.poll()) != null) {
-			SyncDoInfo<IDbEntityBo> syncDoInfo = dbSourceCache.computeIfAbsent(element.entity.getClass(), SyncDoInfo::new);
+			SyncDoInfo<DbEntityBo> syncDoInfo = dbSourceCache.computeIfAbsent(element.entity.getClass(), SyncDoInfo::new);
 			syncDoInfo.syncToDb(element);
 		}
 	}
@@ -49,7 +49,7 @@ public class DbEntityAsyncQueue {
 	/**
 	 * 队列的对象
 	 */
-	private static class SyncEntityElement<Entity extends IDbEntityBo> {
+	private static class SyncEntityElement<Entity extends DbEntityBo> {
 		private PlayerDataLoader.EntityOperate operate;
 		private Entity entity;
 
@@ -62,7 +62,7 @@ public class DbEntityAsyncQueue {
     /**
      * db 同步需要的信息
 	 */
-	private static class SyncDoInfo<Entity extends IDbEntityBo> {
+	private static class SyncDoInfo<Entity extends DbEntityBo> {
 		private IDatabaseSupport databaseSupport;
 
 		private String insertStatement;

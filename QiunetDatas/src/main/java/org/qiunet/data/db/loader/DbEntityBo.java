@@ -4,6 +4,7 @@ import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.support.IEntityBo;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,22 +14,19 @@ import java.util.concurrent.atomic.AtomicReference;
  * @author qiunet
  * 2021/11/18 19:29
  */
-public abstract class DbEntityBo<Do extends IDbEntity> implements IDbEntityBo<Do> {
+public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> {
 	private transient volatile AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
 	PlayerDataLoader playerDataLoader;
 
-	@Override
-	public void updateEntityStatus(EntityStatus status) {
+	void updateEntityStatus(EntityStatus status) {
 		atomicStatus.set(status);
 	}
 
-	@Override
-	public boolean atomicSetEntityStatus(EntityStatus expect, EntityStatus status) {
+	boolean atomicSetEntityStatus(EntityStatus expect, EntityStatus status) {
 		return atomicStatus.compareAndSet(expect, status);
 	}
 
-	@Override
-	public EntityStatus entityStatus() {
+	EntityStatus entityStatus() {
 		return atomicStatus.get();
 	}
 
@@ -39,6 +37,11 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IDbEntityBo<Do
 			getDo().update();
 			return;
 		}
+
+		if (entityStatus() == EntityStatus.INIT) {
+			throw new CustomException("Need insert first!");
+		}
+
 		// 如果上次的数据没有逻辑. 比如插入. 则这次更新不进行
 		if (atomicStatus.compareAndSet(EntityStatus.NORMAL, EntityStatus.UPDATE)) {
 			playerDataLoader.cacheAsyncToDb.add(PlayerDataLoader.EntityOperate.UPDATE,this);

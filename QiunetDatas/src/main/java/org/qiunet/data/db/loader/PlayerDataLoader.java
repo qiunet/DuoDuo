@@ -139,6 +139,10 @@ public class PlayerDataLoader {
 			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
 		}
 
-		return (Map<SubKey, Bo>) dataCache.computeIfAbsent(clazz, key -> DataLoaderManager.instance.getData(key, playerId));
+		return (Map<SubKey, Bo>) dataCache.computeIfAbsent(clazz, key -> {
+			Map data = (Map) DataLoaderManager.instance.getData(key, playerId);
+			data.values().forEach(val -> ((DbEntityBo) val).playerDataLoader = this);
+			return data;
+		});
 	}
 }
