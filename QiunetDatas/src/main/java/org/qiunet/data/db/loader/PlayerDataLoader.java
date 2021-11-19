@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2021/11/18 16:20
  */
-public class PlayerDataLoader {
+public class PlayerDataLoader implements IPlayerDataLoader {
 	enum  EntityOperate {INSERT, UPDATE, DELETE}
 	private static final AtomicBoolean destroy = new AtomicBoolean();
 	static final Object NULL = new Object();
@@ -79,6 +79,11 @@ public class PlayerDataLoader {
 		return playerId;
 	}
 
+	@Override
+	public PlayerDataLoader dataLoader() {
+		return this;
+	}
+
 	/**
 	 * 插入一个Do对象
 	 * @param entity
@@ -86,6 +91,7 @@ public class PlayerDataLoader {
 	 * @param <Bo>
 	 * @return
 	 */
+	@Override
 	public <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
 		if (isDestroy()) {
 			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
@@ -120,6 +126,7 @@ public class PlayerDataLoader {
 	 * @param <Data>
 	 * @return
 	 */
+	@Override
 	public <Data extends DbEntityBo> Data getData(Class<Data> clazz) {
 		if (isDestroy()) {
 			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
@@ -146,6 +153,7 @@ public class PlayerDataLoader {
 	 * @param <Do> Do类型
 	 * @return
 	 */
+	@Override
 	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey, Bo>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
 		if (isDestroy()) {
 			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
