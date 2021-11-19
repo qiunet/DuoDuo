@@ -28,8 +28,8 @@ public enum ${define.serviceName} {
 #elseif(${define.type} == 'CACHE_ENTITY_LIST')
 	private final CacheDataListSupport<${define.keyType}, ${define.subKeyType}, ${define.doName}, ${define.boName}> dataSupport = new CacheDataListSupport<>(${define.doName}.class, ${define.boName}::new);
 #end
+#if(! $define.dbType)
 #if(${define.list})
-
 	/***
 	 * 获得一个 ${define.key} -> ${define.boName} Map对象
 	 * @param ${define.keyName} 获取对象的主键
@@ -56,5 +56,6 @@ public enum ${define.serviceName} {
 	public ${define.boName} get${define.boName}(${define.keyType} ${define.keyName}) {
 		return dataSupport.getBo(${define.keyName});
 	}
+#end
 #end
 }
