@@ -29,13 +29,21 @@ public class PlayerDataLoader {
 	 */
 	final DbEntityAsyncQueue cacheAsyncToDb = new DbEntityAsyncQueue();
 	/**
+	 * 只读
+	 */
+	final boolean readOnly;
+	/**
      * 玩家ID
 	 */
 	private long playerId;
 
 	public PlayerDataLoader(long playerId) {
-		this.playerId = playerId;
+		this(playerId, false);
+	}
 
+	public PlayerDataLoader(long playerId, boolean readOnly) {
+		this.playerId = playerId;
+		this.readOnly = readOnly;
 		DataLoaderManager.instance.registerPlayerLoader(playerId, this);
 	}
 
@@ -81,6 +89,10 @@ public class PlayerDataLoader {
 	public <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
 		if (isDestroy()) {
 			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
+		}
+
+		if (readOnly) {
+			throw new CustomException("Data loader read only!");
 		}
 
 		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
