@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.lang.reflect.Field;
 
 /***
@@ -11,6 +13,9 @@ public class FloatConvert extends BaseObjConvert<Float> {
 
 	@Override
 	public Float fromString(Field field, String str) {
+		if (StringUtil.isEmpty(str)) {
+			return 0F;
+		}
 		return Float.parseFloat(str);
 	}
 

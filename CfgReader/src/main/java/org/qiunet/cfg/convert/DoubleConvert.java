@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.lang.reflect.Field;
 
 /***
@@ -10,6 +12,9 @@ import java.lang.reflect.Field;
 public class DoubleConvert extends BaseObjConvert<Double> {
 	@Override
 	public Double fromString(Field field, String str) {
+		if (StringUtil.isEmpty(str)) {
+			return 0d;
+		}
 		return Double.valueOf(str);
 	}
 

@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.lang.reflect.Field;
 
 /***
@@ -10,6 +12,9 @@ import java.lang.reflect.Field;
 public class IntConvert extends BaseObjConvert<Integer> {
 	@Override
 	public Integer fromString(Field field, String str) {
+		if (StringUtil.isEmpty(str)) {
+			return 0;
+		}
 		return Integer.valueOf(str);
 	}
 

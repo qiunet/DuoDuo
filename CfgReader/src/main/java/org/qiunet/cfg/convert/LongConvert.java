@@ -1,5 +1,7 @@
 package org.qiunet.cfg.convert;
 
+import org.qiunet.utils.string.StringUtil;
+
 import java.lang.reflect.Field;
 
 /***
@@ -10,6 +12,9 @@ import java.lang.reflect.Field;
 public class LongConvert extends BaseObjConvert<Long> {
 	@Override
 	public Long fromString(Field field, String str) {
+		if (StringUtil.isEmpty(str)) {
+			return 0L;
+		}
 		return Long.valueOf(str);
 	}
 
