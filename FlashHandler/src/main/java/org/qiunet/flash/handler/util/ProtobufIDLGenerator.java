@@ -326,7 +326,7 @@ public class ProtobufIDLGenerator {
 			if (annotation != null && !StringUtil.isEmpty(annotation.description())) {
 				code.append("//").append(annotation.description()).append("\n");
 			}
-            code.append(name).append("=");
+            code.append(cls.getSimpleName()+"_"+name).append("=");
             try {
                 Enum value = Enum.valueOf(cls, name);
                 if (value instanceof EnumReadable) {
