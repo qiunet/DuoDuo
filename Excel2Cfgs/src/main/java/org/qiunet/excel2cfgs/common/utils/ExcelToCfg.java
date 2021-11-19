@@ -176,14 +176,6 @@ public class ExcelToCfg {
 				return;
 			}
 
-			if (SettingManager.getInstance().roleType() != RoleType.SERVER) {
-				appenderAttachable.addAppender(new ProtoAppender(sourceFile, relativeDirPath, fileNamePrefix));
-				Path path = Paths.get(SettingManager.getInstance().getFirstCfgPath(), relativeDirPath, fileNamePrefix + ".proto");
-				if (path.toFile().exists()) {
-					path.toFile().delete();
-				}
-			}
-
 			for (Iterator<Sheet> it = workbook.sheetIterator(); it.hasNext(); ) {
 				//分页片
 				Sheet sheet = it.next();
