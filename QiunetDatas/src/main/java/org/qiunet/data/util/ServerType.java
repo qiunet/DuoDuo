@@ -49,6 +49,9 @@ public enum ServerType {
 	 * @return
 	 */
 	public static int getGroupIdLength(int groupId) {
+		if (groupId == 0) {
+			return 0;
+		}
 		return groupIdLength.computeIfAbsent(groupId, id -> (int) (Math.log10(id) + 1));
 	}
 

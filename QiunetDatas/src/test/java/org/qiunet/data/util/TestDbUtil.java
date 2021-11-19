@@ -18,6 +18,18 @@ public class TestDbUtil {
 	}
 
 	@Test
+	public void testGroupIdLengthZero(){
+		int serverGroupId = 0;
+		Assert.assertEquals(0, ServerType.getGroupIdLength(serverGroupId));
+
+		long id = DbUtil.buildId(1, serverGroupId);
+		Assert.assertEquals(10, id);
+
+		int serverGroupId1 = DbUtil.getServerGroupId(id);
+		Assert.assertEquals(serverGroupId1, serverGroupId);
+	}
+
+	@Test
 	public void buildPlayerId(){
 		int serverGroupId = 2;
 		int incrId = 11;
