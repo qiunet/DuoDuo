@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
+import org.qiunet.data.util.ServerConfig;
+
 /**
  * 钩子. 先判断shutdown
  * 再判断 reloadCfg
@@ -22,7 +24,9 @@ public interface Hook {
 	 * 得到shutdown端口
 	 * @return
 	 */
-	int getHookPort();
+	default int getHookPort() {
+		return ServerConfig.getServerPort();
+	}
 	/**
 	 * 返回shutdown的msg
 	 * @return

@@ -24,22 +24,22 @@ public final class ServerInfo extends HashMap<String, Object> {
 	/**
 	 *
 	 * @param serverPort 对外服务端口
-	 * @param communicationPort 服务间交互端口
+	 * @param nodePort 服务间交互端口
 	 * @return
 	 */
-	public static ServerInfo valueOf(int serverPort, int communicationPort) {
-		return valueOf(ServerConfig.getServerId(), serverPort, communicationPort);
+	public static ServerInfo valueOf(int serverPort, int nodePort) {
+		return valueOf(ServerConfig.getServerId(), serverPort, nodePort);
 	}
 
 	/**
 	 *
 	 * @param serverId 分配的服务id
 	 * @param serverPort 对外服务端口
-	 * @param communicationPort 服务间交互端口
+	 * @param nodePort 服务间交互端口
 	 * @return
 	 */
-	public static ServerInfo valueOf(int serverId, int serverPort, int communicationPort) {
-		return valueOf(serverId, NetUtil.getInnerIp(), serverPort, communicationPort);
+	public static ServerInfo valueOf(int serverId, int serverPort, int nodePort) {
+		return valueOf(serverId, NetUtil.getInnerIp(), serverPort, nodePort);
 	}
 
 	/**
@@ -47,12 +47,12 @@ public final class ServerInfo extends HashMap<String, Object> {
 	 * @param serverId 分配的服务id
 	 * @param host 内网地址
 	 * @param serverPort 对外服务端口
-	 * @param communicationPort 服务间交互端口
+	 * @param nodePort 服务间交互端口
 	 * @return
 	 */
-	public static ServerInfo valueOf(int serverId, String host, int serverPort, int communicationPort) {
+	public static ServerInfo valueOf(int serverId, String host, int serverPort, int nodePort) {
 		ServerInfo node = new ServerInfo();
-		node.put("communicationPort", communicationPort);
+		node.put("nodePort", nodePort);
 		node.put("serverPort", serverPort);
 		node.put("serverId", serverId);
 		node.put("host", host);
@@ -75,8 +75,8 @@ public final class ServerInfo extends HashMap<String, Object> {
 		return get("host").toString();
 	}
 
-	public int getCommunicationPort() {
-		return (Integer) get("communicationPort");
+	public int getNodePort() {
+		return (Integer) get("nodePort");
 	}
 
 	/**

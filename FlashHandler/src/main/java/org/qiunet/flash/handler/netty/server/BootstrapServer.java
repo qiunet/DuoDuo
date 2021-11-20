@@ -18,10 +18,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -71,23 +68,14 @@ public class BootstrapServer {
 	 * @param msg 发送消息内容
 	 */
 	public static void sendHookMsg(int hookPort, String msg) {
-		sendHookMsg("localhost", hookPort, msg);
-	}
-
-	/***
-	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
-	 * @param hookPort 钩子端口
-	 * @param msg 发送消息内容
-	 */
-	public static void sendHookMsg(String serverIp, int hookPort, String msg) {
-		try (SocketChannel channel = SocketChannel.open(new InetSocketAddress(serverIp, hookPort))){
+		try (DatagramChannel channel = DatagramChannel.open()){
 			if (hookPort <= 0) {
 				logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
 				System.exit(1);
 			}
 			logger.error("BootstrapServer sendHookMsg [{}]!", msg);
 
-			channel.write(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)));
+			channel.send(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)), new InetSocketAddress("localhost", hookPort));
 		} catch (IOException e) {
 			logger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
@@ -147,8 +135,9 @@ public class BootstrapServer {
 	 * Hook的监听
 	 */
 	private class HookListener implements Runnable {
-		private final Hook hook;
+		private final ByteBuffer buffer = ByteBuffer.allocate(256);
 		private boolean running = true;
+		private final Hook hook;
 		HookListener(Hook hook) {
 			this.hook = hook;
 		}
@@ -172,10 +161,17 @@ public class BootstrapServer {
 
 		/***
 		 * 处理现有的消息. 可以用户自定义
-		 * @param byteBuffer 消息buffer
+		 * @param channel channel
 		 */
-		private void handlerMsg(ByteBuffer byteBuffer) {
-			String msg = CharsetUtil.UTF_8.decode(byteBuffer).toString();
+		private void handlerMsg(DatagramChannel channel) {
+			buffer.clear();
+			try {
+				channel.receive(buffer);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			buffer.flip();
+			String msg = CharsetUtil.UTF_8.decode(buffer).toString();
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
 			if (msg.equals(hook.getShutdownMsg())) {
@@ -188,66 +184,24 @@ public class BootstrapServer {
 			}
 		}
 
-
-		private void handlerAccept(Selector selector) {
-			try {
-				selector.select(1000);
-				Iterator<SelectionKey> itr = selector.selectedKeys().iterator();
-				while (itr.hasNext()) {
-					SelectionKey key = itr.next();
-					itr.remove();
-
-					if (key.isAcceptable()) {
-						logger.error("[HookListener]服务端: ProcessAcceptor Msg");
-						SocketChannel channel = ((ServerSocketChannel) key.channel()).accept();
-
-						String ip = ((InetSocketAddress)channel.getRemoteAddress()).getHostString();
-						if (!NetUtil.isInnerIp(ip) && !NetUtil.isLocalIp(ip)) {
-							logger.error("[HookListener]服务端: Remote ip [{}] is not allow !", ip);
-							channel.close();
-							continue;
-						}
-
-						channel.configureBlocking(false);
-						channel.register(selector, SelectionKey.OP_READ);
-					}else if( key.isReadable()){
-						SocketChannel channel = (SocketChannel) key.channel();
-						ByteBuffer byteBuffer = ByteBuffer.allocate(2048);
-						channel.read(byteBuffer);
-						byteBuffer.flip();
-						try {
-							handlerMsg(byteBuffer);
-						}finally {
-							channel.close();
-						}
-					}
-				}
-			}catch (Exception e) {
-				logger.error("HookListener Exception:", e);
-			}
-		}
-
 		@Override
 		public void run() {
-			logger.error("[HookListener]服务端 Hook Listener on port [{}]", hook.getHookPort());
-			try(ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
-				Selector selector = Selector.open()){
-
-				serverSocketChannel.configureBlocking(false);
+			logger.error("[HookListener]服务端 Hook Listener on udp port [{}]", hook.getHookPort());
+			try(DatagramChannel channel = DatagramChannel.open()) {
 				try {
-					serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+					channel.bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
 				}catch (Exception e) {
 					logger.error("Bind error", e);
 					System.exit(1);
 				}
-				serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
 				while (running) {
-					this.handlerAccept(selector);
+					this.handlerMsg(channel);
 				}
 
 			} catch (IOException e) {
 				logger.error("[HookListener]", e);
+				System.exit(1);
 			}
 		}
 	}

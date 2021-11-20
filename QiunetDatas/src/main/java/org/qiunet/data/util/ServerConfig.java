@@ -21,7 +21,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	instance;
 	// 部分的配置字段名. 外部需要. 所以需要定义.
 	public static final String CONFIG_FILE_NAME = "server.conf";
-	public static final String HOOK_PORT = "server.hook_port";
 
 	@DConfigInstance(CONFIG_FILE_NAME)
 	private static DHocon config;
@@ -39,11 +38,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	private static final LazyLoader<ServerType> serverType = new LazyLoader<>(() -> ServerType.getServerType(serverId));
 
-	/**
-	 * hook 的端口
-	 */
-	@DConfigValue(HOOK_PORT)
-	private static int hookPort;
 	/**
 	 * 对外服务的端口.
 	 */
@@ -116,10 +110,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static boolean isServerOpen() {
 		return serverOpen;
-	}
-
-	public static int getHookPort() {
-		return hookPort;
 	}
 
 	public static int getServerPort() {

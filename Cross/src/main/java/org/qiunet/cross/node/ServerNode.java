@@ -28,7 +28,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	ServerNode(ServerInfo serverInfo) {
-		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCommunicationPort(),
+		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(),
 				f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
 
 		this.serverId = serverInfo.getServerId();

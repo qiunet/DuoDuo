@@ -22,12 +22,12 @@ import org.qiunet.utils.scanner.ClassScanner;
  * 2020-10-22 21:24
  */
 public class LogicServer {
-	private static final Hook hook = new MyHook(9000);
+	private static final Hook hook = new MyHook(Constants.LOGIC_SERVER_PORT);
 
 	public static void main(String[] args) {
 		ClassScanner.getInstance()
 			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_SERVER_PORT, 9002))
+			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_SERVER_PORT, Constants.LOGIC_NODE_PORT))
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)

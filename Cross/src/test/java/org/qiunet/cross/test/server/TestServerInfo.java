@@ -34,6 +34,6 @@ public class TestServerInfo {
 		Assert.assertEquals(serverId, serverInfo0.getServerId());
 		Assert.assertEquals(onlineNum, serverInfo0.get("onlineNum"));
 		Assert.assertEquals(serverPort, serverInfo0.getServerPort());
-		Assert.assertEquals(communicationPort, serverInfo0.getCommunicationPort());
+		Assert.assertEquals(communicationPort, serverInfo0.getNodePort());
 	}
 }
