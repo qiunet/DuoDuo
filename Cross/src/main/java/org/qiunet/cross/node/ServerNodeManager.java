@@ -16,15 +16,22 @@ public class ServerNodeManager {
 	 * @return
 	 */
 	public static int getCurrServerId(){
-		return ServerNodeManager0.instance.getCurrServerInfo().getServerId();
+		return getCurrServerInfo().getServerId();
 	}
 
+	/**
+	 * 得到当前的ServerInfo
+	 * @return
+	 */
+	public static ServerInfo getCurrServerInfo() {
+		return ServerNodeManager0.instance.getCurrServerInfo();
+	}
 	/**
 	 * 获得当前的serverType
 	 * @return
 	 */
 	public static ServerType getCurrServerType(){
-		return ServerNodeManager0.instance.getCurrServerInfo().getServerType();
+		return getCurrServerInfo().getServerType();
 	}
 
 	/**

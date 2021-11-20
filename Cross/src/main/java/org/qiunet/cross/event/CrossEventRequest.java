@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.string.ToString;
 
 /***
  *
@@ -24,7 +25,7 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 	@Protobuf(description = "事件的className")
 	private String className;
 	@Protobuf(description = "事件反序列化的数据.")
-	private byte[] datas;
+	private String datas;
 	@Ignore
 	private IEventData data;
 
@@ -33,7 +34,7 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 
 		CrossEventRequest request = new CrossEventRequest();
 		request.className = data.getClass().getName();
-		request.datas = ProtobufDataManager.encode(data);
+		request.datas = JsonUtil.toJsonString(data);
 		request.data = data;
 		return request;
 	}
@@ -46,19 +47,19 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 		this.className = className;
 	}
 
-	public byte[] getDatas() {
+	public String getDatas() {
 		return datas;
 	}
 
-	public void setDatas(byte[] datas) {
+	public void setDatas(String datas) {
 		this.datas = datas;
 	}
 
 	public IEventData getData() {
 		if (data == null) {
 			try {
-				Class<? extends IEventData>aClass = (Class<? extends IEventData>) Class.forName(className);
-				data = ProtobufDataManager.decode(aClass, datas);
+				Class<?> aClass = Class.forName(className);
+				data = (IEventData) JsonUtil.getGeneralObjWithField(datas, aClass);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -67,6 +68,6 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 	}
 	@Override
 	public String _toString() {
-		return "CrossEvent: ["+getData().getClass().getSimpleName()+": " + JsonUtil.toJsonString(getData())+"]";
+		return "CrossEvent_"+ ToString.toString(data);
 	}
 }

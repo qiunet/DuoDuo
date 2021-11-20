@@ -1,6 +1,7 @@
 package org.qiunet.cross.node;
 
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
+import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
@@ -8,6 +9,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.listener.event.IEventData;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -57,7 +59,15 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		this.serverId = (int)serverId;
 		boolean ret = ServerNodeManager0.instance.addNode(this);
 	}
-
+	/**
+	 * 服务与服务之间的事件触发 .走cross通道.
+	 * @param serverId 对方serverId
+	 * @param eventData 事件
+	 * @param <T>
+	 */
+	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
+		CrossEventManager.fireCrossEvent(serverId, eventData);
+	}
 	/**
 	 * 获得serverId
 	 * @return

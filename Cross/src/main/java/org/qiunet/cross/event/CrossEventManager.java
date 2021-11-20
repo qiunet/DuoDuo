@@ -32,7 +32,6 @@ public class CrossEventManager {
 
 		Preconditions.checkNotNull(playerActor, "player actor null");
 		Preconditions.checkState(playerActor.isCrossStatus(), "player actor must be cross status");
-		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		crossSession.sendMessage(request.buildResponseMessage());
@@ -50,7 +49,6 @@ public class CrossEventManager {
 			return;
 		}
 
-		Preconditions.checkState(eventData.getClass().isAnnotationPresent(ProtobufClass.class), "Class [%s] need specify annotation @ProtobufClass", eventData.getClass().getName());
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		ServerNodeManager.getNode(serverId).sendMessage(request);
 	}

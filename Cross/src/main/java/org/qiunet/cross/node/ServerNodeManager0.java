@@ -97,6 +97,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerNode getNode(int serverId) {
+		if (serverId == currServerInfo.getServerId()) {
+			throw new CustomException("It is current server!!");
+		}
 		return nodes.computeIfAbsent(serverId, key -> new ServerNode(this.getServerInfo(key)));
 	}
 
