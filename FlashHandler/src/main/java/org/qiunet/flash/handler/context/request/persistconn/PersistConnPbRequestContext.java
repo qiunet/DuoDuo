@@ -41,7 +41,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 		}
 
 		FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
-		if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("[{}] <<< {}", messageActor.getIdentity(), ToString.toString(getRequestData()));
 		}
 

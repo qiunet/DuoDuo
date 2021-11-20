@@ -33,7 +33,7 @@ public  class HttpPbRequestContext<RequestData extends IChannelData, ResponseDat
 		FacadeHttpRequest<RequestData, GeneratedMessageV3> request = new FacadeHttpRequest<>(this);
 		ResponseData data = null;
 		try {
-			if (logger.isInfoEnabled() && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+			if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 				logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
 			}
 			data = getHandler().handler(request);
