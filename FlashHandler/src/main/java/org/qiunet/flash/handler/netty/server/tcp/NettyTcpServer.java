@@ -53,6 +53,7 @@ public final class NettyTcpServer implements INettyServer {
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyTcpServer] Exception: ", e);
+			System.exit(1);
 		}finally {
 			logger.error("[NettyTcpServer] is shutdown! ");
 			boss.shutdownGracefully();

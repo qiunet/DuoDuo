@@ -13,6 +13,7 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.net.BindException;
 import java.net.InetSocketAddress;
 
 /**
@@ -49,6 +50,7 @@ public class NettyHttpServer implements INettyServer {
 			this.closeFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyHttpServer] Exception: ", e);
+			System.exit(1);
 		}finally {
 			logger.error("[NettyHttpServer] is shutdown! ");
 			boss.shutdownGracefully();

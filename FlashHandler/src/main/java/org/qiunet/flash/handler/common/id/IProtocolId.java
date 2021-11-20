@@ -33,6 +33,9 @@ public interface IProtocolId {
 		/** 状态消息提示 */
 		int ERROR_STATUS_TIPS_RESP = 4;
 
+		/**HOOK 必须本机发送请求才处理*/
+		int HOOK_MESSAGE = 5;
+
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;
 		/** 500 **/

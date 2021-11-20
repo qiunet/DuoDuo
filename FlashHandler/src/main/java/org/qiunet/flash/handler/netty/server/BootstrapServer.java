@@ -234,7 +234,12 @@ public class BootstrapServer {
 				Selector selector = Selector.open()){
 
 				serverSocketChannel.configureBlocking(false);
-				serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+				try {
+					serverSocketChannel.socket().bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
+				}catch (Exception e) {
+					logger.error("Bind error", e);
+					System.exit(1);
+				}
 				serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
 				while (running) {
