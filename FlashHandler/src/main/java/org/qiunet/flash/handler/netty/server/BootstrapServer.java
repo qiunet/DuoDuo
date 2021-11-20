@@ -168,7 +168,7 @@ public class BootstrapServer {
 			try {
 				channel.receive(buffer);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error("handlerMsg", e);
 			}
 			buffer.flip();
 			String msg = CharsetUtil.UTF_8.decode(buffer).toString();
@@ -198,10 +198,8 @@ public class BootstrapServer {
 				while (running) {
 					this.handlerMsg(channel);
 				}
-
 			} catch (IOException e) {
 				logger.error("[HookListener]", e);
-				System.exit(1);
 			}
 		}
 	}
