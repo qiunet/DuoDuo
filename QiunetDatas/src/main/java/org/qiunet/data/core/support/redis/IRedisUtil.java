@@ -1,6 +1,8 @@
 package org.qiunet.data.core.support.redis;
 
 
+import java.io.IOException;
+
 public interface IRedisUtil {
 	/***
 	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
@@ -30,7 +32,7 @@ public interface IRedisUtil {
 	 * @param run
 	 * @return 是否锁定成功. 成功则执行了
 	 */
-	boolean redisLockRun(String key, Runnable run);
+	boolean redisLockRun(String key, Runnable run) throws IOException;
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close 默认打印日志

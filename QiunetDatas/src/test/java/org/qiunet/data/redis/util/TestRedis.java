@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.utils.scanner.ClassScanner;
 
+import java.io.IOException;
+
 public class TestRedis {
 	@BeforeClass
 	public static void init(){
@@ -32,11 +34,26 @@ public class TestRedis {
 		}
 	}
 
-	@Test
-	public void testLock(){
+	/**
+	 * 测试是否导致异常
+	 */
+	@Test(expected = IOException.class)
+	public void testLock1() throws IOException {
 		try (RedisLock lock = RedisDataUtil.getInstance().redisLock("qiuyang")){
 			if (lock.lock()){
-				Assert.assertFalse(lock.lock());
+				lock.lock();
+			}
+		}
+	}
+
+	/**
+	 * 测试锁是否正常
+	 */
+	@Test
+	public void testLock2() throws IOException {
+		try (RedisLock lock = RedisDataUtil.getInstance().redisLock("qiuyang")){
+			if (lock.lock()){
+				System.out.println("====");
 			}
 		}
 	}

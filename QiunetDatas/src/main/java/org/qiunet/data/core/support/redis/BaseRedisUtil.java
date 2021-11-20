@@ -7,6 +7,7 @@ import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 
@@ -57,12 +58,14 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	}
 
 	@Override
-	public boolean redisLockRun(String key, Runnable run) {
+	public boolean redisLockRun(String key, Runnable run) throws IOException {
 		try (RedisLock lock = redisLock(key)) {
 			if (lock.lock()) {
 				run.run();
 				return true;
 			}
+		} catch (IOException e) {
+			throw e;
 		}
 		return false;
 	}

@@ -4,6 +4,8 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.timer.TimerManager;
 import redis.clients.jedis.params.SetParams;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -29,30 +31,56 @@ import java.util.concurrent.TimeUnit;
  *
  */
 public class RedisLock implements AutoCloseable {
-	private final String key;
-	private Future<Long> future;
 	private final IRedisUtil redisUtil;
+	private Future<Long> future;
+	private final String key;
 
 	RedisLock(IRedisUtil redisUtil, String key) {
 		this.redisUtil = redisUtil;
-		this.key = key;
+		this.key = key+".lock";
 	}
 
 	/**
 	 * 在try里面调用
-	 * @return
+	 * @return 是否获得锁
 	 */
-	public boolean lock(){
+	private boolean lock0(){
 		String ret = redisUtil.returnJedis().set(key, "", SetParams.setParams().ex(30L).nx());
 		boolean locked = "OK".equals(ret);
 		if (locked) {
 			this.prolongedTime();
+			return true;
 		}
-		return locked;
+		return false;
 	}
 
+	/**
+	 * 获取锁
+	 * @return
+	 */
+	public boolean lock() throws IOException {
+		if (lock0()) {
+			return true;
+		}
+
+		for (int i = 0; i < 5; i++) {
+			DFuture<Boolean> lockFuture = TimerManager.executor.scheduleWithDelay(this::lock0, 50, TimeUnit.MILLISECONDS);
+			try {
+				if (lockFuture.get()) {
+					return true;
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				throw new IOException(e);
+			}
+		}
+		throw new IOException("Redis lock timeout!");
+	}
+
+	/**
+	 * 延时
+	 */
 	private void prolongedTime(){
-		DFuture<Long> dFuture = TimerManager.executor.scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30),
+		DFuture<Long> dFuture = TimerManager.executor.scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30L),
 			20, TimeUnit.SECONDS);
 		dFuture.whenComplete((res , e) -> {
 			if (! future.isCancelled()) {
@@ -68,7 +96,7 @@ public class RedisLock implements AutoCloseable {
 	public void unlock() {
 		if (this.future != null) {
 			this.future.cancel(true);
-			redisUtil.returnJedis().expire(key, 0);
+			redisUtil.returnJedis().expire(key, 0L);
 		}
 	}
 
