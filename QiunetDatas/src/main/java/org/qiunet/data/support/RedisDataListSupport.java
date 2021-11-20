@@ -35,7 +35,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 
 	@Override
 	protected String buildSyncParams(Do aDo) {
-		return getRedisKey(aDo.key(), aDo.subKey());
+		return aDo.key() + "#" + aDo.subKey();
 	}
 
 	@Override

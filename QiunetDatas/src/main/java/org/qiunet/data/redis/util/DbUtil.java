@@ -3,6 +3,8 @@ package org.qiunet.data.redis.util;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 
+import java.util.StringJoiner;
+
 public final class DbUtil {
 	/**支持分表数量**/
 	private static final int MAX_TABLE_FOR_TB_SPLIT = 10;
@@ -158,5 +160,20 @@ public final class DbUtil {
 
 	public static int getMaxTableForTbSplit(){
 		return MAX_TABLE_FOR_TB_SPLIT;
+	}
+
+	/**
+	 * 构造redis Key
+	 * @param doName
+	 * @param keys
+	 * @return
+	 */
+	public static String buildRedisKey(String doName, Object... keys){
+		StringJoiner sj = new StringJoiner("#");
+		sj.add(doName).add(String.valueOf(ServerConfig.getServerGroupId()));
+		for (Object key : keys) {
+			sj.add(String.valueOf(key));
+		}
+		return sj.toString();
 	}
 }

@@ -4,7 +4,9 @@ package org.qiunet.data.support;
 import org.qiunet.data.core.support.redis.IJedis;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
+import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.support.anno.LoadAllData;
+import org.qiunet.data.util.ServerConfig;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,7 +31,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	BaseRedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		this.redisUtil = redisUtil;
-		this.redisUpdateSyncSetKey = "SYNC_SET#"+doName;
+		this.redisUpdateSyncSetKey = getRedisKey(doName, "SYNC_SET");
 
 		if (doClass.isAnnotationPresent(LoadAllData.class)) {
 			List<Do> objects = databaseSupport().selectList(selectAllStatement, null);
@@ -138,11 +140,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @param keys
 	 * @return
 	 */
-	protected String getRedisKey(Object ... keys) {
-		StringJoiner sj = new StringJoiner("#");
-		for (Object key : keys) {
-			sj.add(String.valueOf(key));
-		}
-		return sj.toString();
+	protected String getRedisKey(String doName, Object ... keys) {
+		return DbUtil.buildRedisKey(doName, keys);
 	}
 }
