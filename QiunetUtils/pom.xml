@@ -81,6 +81,11 @@
 			<artifactId>okhttp</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.baidu</groupId>
+			<artifactId>jprotobuf</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.sun</groupId>
 			<artifactId>tools</artifactId>
 			<version>${java.version}</version>
