@@ -157,11 +157,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 每一分钟, 刷新server info
 	 */
 	public void refreshServerInfo() {
-		redisUtil.execCommands(jedis -> {
-			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
-			jedis.hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
-			return 0;
-		});
+		currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
+		redisUtil.returnJedis(false).hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
 		// 触发心跳.
 		ServerNodeTickEvent.instance.fireEventHandler();
 	}
