@@ -28,7 +28,6 @@ public class ShutdownHookUtil {
 		if (instance != null) {
 			throw new CustomException("Instance Duplication!");
 		}
-		Runtime.getRuntime().addShutdownHook(new Thread(this::shutdownNow));
 		instance = this;
 	}
 

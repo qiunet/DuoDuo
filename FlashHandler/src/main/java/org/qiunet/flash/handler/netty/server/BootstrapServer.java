@@ -10,7 +10,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
@@ -18,13 +17,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.DatagramChannel;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.locks.LockSupport;
 
 /**
+ * 服务器启动类
+ *
  * Created by qiunet.
  * 17/11/21
  */
@@ -139,6 +139,7 @@ public class BootstrapServer {
 		private boolean running = true;
 		private final Hook hook;
 		HookListener(Hook hook) {
+			Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 			this.hook = hook;
 		}
 
@@ -146,17 +147,15 @@ public class BootstrapServer {
 		 * 通过shutdown 监听. 停止服务
 		 */
 		private void shutdown(){
+			for (INettyServer server : nettyServers) {
+				server.shutdown();
+			}
+
 			ServerShutdownEventData.fireShutdownEventHandler();
 
 			if (hook != null) {
 				hook.shutdown();
 			}
-
-			for (INettyServer server : nettyServers) {
-				server.shutdown();
-			}
-
-			LockSupport.unpark(awaitThread);
 		}
 
 		/***
@@ -177,6 +176,8 @@ public class BootstrapServer {
 			if (msg.equals(hook.getShutdownMsg())) {
 				this.running = false;
 				this.shutdown();
+
+				LockSupport.unpark(awaitThread);
 			}else if (msg.equals(hook.getReloadCfgMsg())){
 				hook.reloadCfg();
 			}else {

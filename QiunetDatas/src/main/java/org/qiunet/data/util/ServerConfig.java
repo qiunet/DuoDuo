@@ -21,6 +21,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	instance;
 	// 部分的配置字段名. 外部需要. 所以需要定义.
 	public static final String CONFIG_FILE_NAME = "server.conf";
+	// server port
+	public static final String SERVER_PORT = "server.server_port";
+	// node port
+	public static final String NODE_PORT = "server.node_port";
 
 	@DConfigInstance(CONFIG_FILE_NAME)
 	private static DHocon config;
@@ -41,12 +45,12 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * 对外服务的端口.
 	 */
-	@DConfigValue("server.server_port")
+	@DConfigValue(value = SERVER_PORT, defaultVal = "0")
 	private static int serverPort;
 	/**
 	 * 服务之间通讯的端口.
 	 */
-	@DConfigValue("server.node_port")
+	@DConfigValue(value = NODE_PORT, defaultVal = "0")
 	private static int nodePort;
 	/**
 	 * 服务器是否开启
@@ -67,7 +71,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
 	 */
-	@DConfigValue("db.entity_to_table_range")
+	@DConfigValue(value = "db.entity_to_table_range", defaultVal = "")
 	private static StringSet entity2TableSourceRange;
 	/**
 	 * 是否是正式服.

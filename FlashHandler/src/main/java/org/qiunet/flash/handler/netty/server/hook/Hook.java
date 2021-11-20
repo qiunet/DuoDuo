@@ -1,6 +1,9 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
+import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 
 /**
  * 钩子. 先判断shutdown
@@ -14,26 +17,41 @@ public interface Hook {
 	 * 得到reload的消息
 	 * @return
 	 */
-	String getReloadCfgMsg();
+	default String getReloadCfgMsg(){
+			return "RELOAD";
+	}
 	/***
 	 * 调用reload
 	 */
-	void reloadCfg();
+	default void reloadCfg() {
+		try {
+			CfgManagers.getInstance().reloadSetting();
+		} catch (Throwable throwable) {
+			LoggerType.DUODUO.error("Exception: ", throwable);
+		}
+	}
 
 	/**
 	 * 得到shutdown端口
 	 * @return
 	 */
 	default int getHookPort() {
-		return ServerConfig.getServerPort();
+		if (ServerConfig.getServerPort() > 0) {
+			return ServerConfig.getServerPort();
+		}else if (ServerConfig.getNodePort() > 0) {
+			return ServerConfig.getNodePort();
+		}
+		throw new CustomException("Hook port absent!");
 	}
 	/**
 	 * 返回shutdown的msg
 	 * @return
 	 */
-	String getShutdownMsg();
+	default String getShutdownMsg() {
+		return "SHUTDOWN0";
+	}
 	/***
-	 * shudown 时候做的事情.
+	 * shutdown 时候做的事情.
 	 * 自己实现类.
 	 */
 	void shutdown();
