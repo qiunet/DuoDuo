@@ -39,6 +39,22 @@ public enum ServerType {
 	 * 登录服务
 	 */
 	LOGIN(3),
+	/**
+	 * 匹配服务器
+	 */
+	MATCH(4),
+	/**
+	 * 中心服
+	 */
+	CENTER(5),
+	/**
+	 * 后台
+	 */
+	BACK(6),
+	/**
+	 * 其它
+	 */
+	OTHER(9)
 	;
 	private final int type;
 

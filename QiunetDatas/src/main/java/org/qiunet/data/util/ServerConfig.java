@@ -21,7 +21,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	instance;
 	// 部分的配置字段名. 外部需要. 所以需要定义.
 	public static final String CONFIG_FILE_NAME = "server.conf";
-	public static final String HORT_PORT = "server.hook_port";
+	public static final String HOOK_PORT = "server.hook_port";
 
 	@DConfigInstance(CONFIG_FILE_NAME)
 	private static DHocon config;
@@ -42,7 +42,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * hook 的端口
 	 */
-	@DConfigValue(HORT_PORT)
+	@DConfigValue(HOOK_PORT)
 	private static int hookPort;
 	/**
 	 * 对外服务的端口.
