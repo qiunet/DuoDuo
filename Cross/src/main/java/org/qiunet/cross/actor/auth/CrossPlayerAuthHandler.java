@@ -1,6 +1,7 @@
 package org.qiunet.cross.actor.auth;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.cross.actor.event.CrossPlayerAuthSuccessEventData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 
@@ -15,6 +16,8 @@ public class CrossPlayerAuthHandler extends PersistConnPbHandler<CrossPlayerActo
 	public void handler(CrossPlayerActor playerActor, IPersistConnRequest<CrossPlayerAuthRequest> context) throws Exception {
 		playerActor.setServerId(context.getRequestData().getServerId());
 		playerActor.auth(context.getRequestData().getPlayerId());
+
+		playerActor.fireEvent(CrossPlayerAuthSuccessEventData.valueOf());
 	}
 
 	@Override
