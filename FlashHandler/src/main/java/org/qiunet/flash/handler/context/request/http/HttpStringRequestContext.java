@@ -26,7 +26,7 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	public void handlerRequest() {
 		FacadeHttpRequest<String, String> requestData = new FacadeHttpRequest<>(this);
 		if (logger.isInfoEnabled()) {
-			logger.info("Http Request: <<< {}", requestData.getRequestData());
+			logger.info("Http Request[{}]: <<< {}", messageContent.getUriPath(), requestData.getRequestData());
 		}
 		String responseData = null;
 		try {
@@ -35,7 +35,7 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 			logger.error("HttpStringRequestContext Exception", e);
 		}
 		if (logger.isInfoEnabled()) {
-			logger.info("Http Response: >>> {}", responseData);
+			logger.info("Http Response[{}]: >>> {}", messageContent.getUriPath(), responseData);
 		}
 		if (responseData == null){
 			throw new NullPointerException("Response String can not be null!");
