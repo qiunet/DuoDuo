@@ -8,7 +8,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -56,6 +55,15 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	public B header(String name, String val) {
 		this.headerBuilder.add(name, val);
+		return (B) this;
+	}
+
+	/**
+	 * 每次请求关闭 connect
+	 * @return
+	 */
+	public B closeConnectAlive() {
+		this.header("Connection", "close");
 		return (B) this;
 	}
 
