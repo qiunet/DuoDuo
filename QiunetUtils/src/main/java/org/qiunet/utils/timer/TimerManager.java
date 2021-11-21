@@ -22,12 +22,12 @@ public enum TimerManager {
 	 * 自定义的 ScheduledThreadPool
 	 * 需要调时间有效的, 使用该实例
 	 */
-	instance(new DScheduledThreadPoolExecutor(4, 1000, new DefaultThreadFactory("qiunet_fix_schedule_timerManager"))),
+	instance(new DScheduledThreadPoolExecutor(8, 1000, new DefaultThreadFactory("qiunet_fix_schedule_timerManager"))),
 	/**
 	 * 系统自带的 ScheduledThreadPool
 
 	 */
-	executor(new ScheduledThreadPoolExecutor(4, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
+	executor(new ScheduledThreadPoolExecutor(8, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
 	;
 
 	private final ScheduledExecutorService schedule;

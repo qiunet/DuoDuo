@@ -6,7 +6,6 @@ import redis.clients.jedis.params.SetParams;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -32,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisLock implements AutoCloseable {
 	private final IRedisUtil redisUtil;
-	private Future<Long> future;
+	private DFuture<Long> future;
 	private final String key;
 
 	RedisLock(IRedisUtil redisUtil, String key) {
@@ -62,9 +61,9 @@ public class RedisLock implements AutoCloseable {
 		if (lock0()) {
 			return true;
 		}
-
-		for (int i = 0; i < 5; i++) {
-			DFuture<Boolean> lockFuture = TimerManager.executor.scheduleWithDelay(this::lock0, 50, TimeUnit.MILLISECONDS);
+		// 渐进式延缓查询是否能获得锁.
+		for (int i = 1; i <= 10; i++) {
+			DFuture<Boolean> lockFuture = TimerManager.executor.scheduleWithDelay(this::lock0, i*10, TimeUnit.MILLISECONDS);
 			try {
 				if (lockFuture.get()) {
 					return true;
@@ -80,14 +79,13 @@ public class RedisLock implements AutoCloseable {
 	 * 延时
 	 */
 	private void prolongedTime(){
-		DFuture<Long> dFuture = TimerManager.executor.scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30L),
+		this.future = TimerManager.executor.scheduleWithDelay(() -> redisUtil.returnJedis().expire(key, 30L),
 			20, TimeUnit.SECONDS);
-		dFuture.whenComplete((res , e) -> {
+		this.future.whenComplete((res , e) -> {
 			if (! future.isCancelled()) {
 				this.prolongedTime();
 			}
 		});
-		this.future = dFuture;
 	}
 
 	/***
