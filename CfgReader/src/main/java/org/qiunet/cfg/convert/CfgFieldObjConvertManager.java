@@ -42,9 +42,6 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	 */
 	public Object covert(Field field, String val) {
 		Class clazz = field.getType();
-		if (clazz.isEnum() || Enum.class.isAssignableFrom(clazz)) {
-			return Enum.valueOf(clazz, val);
-		}
 
 		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
 			for (BaseObjConvert<?> convert : converts) {
