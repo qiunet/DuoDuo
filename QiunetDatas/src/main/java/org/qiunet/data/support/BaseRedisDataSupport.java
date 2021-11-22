@@ -6,12 +6,10 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.support.anno.LoadAllData;
-import org.qiunet.data.util.ServerConfig;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.StringJoiner;
 
 /***
  *
@@ -54,7 +52,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 		 */
 		Set<String> errorSyncParams = new HashSet<>();
 		String syncParams;
-		while ((syncParams = returnJedis().spop(redisUpdateSyncSetKey)) != null) {
+		while ((syncParams = redisUtil.returnJedis(false).spop(redisUpdateSyncSetKey)) != null) {
 			try {
 				Do aDo = getDoBySyncParams(syncParams);
 				if (aDo == null) {
@@ -111,7 +109,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	public void update(Do aDo) {
 		this.setDataObjectToRedis(aDo);
 		if (super.async) {
-			returnJedis().sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
+			redisUtil.returnJedis(false).sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
 		} else {
 			databaseSupport().update(updateStatement, aDo);
 		}

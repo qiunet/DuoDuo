@@ -51,7 +51,7 @@ public class NettyHttpServer implements INettyServer {
 			logger.error("[NettyHttpServer] Exception: ", e);
 			System.exit(1);
 		}finally {
-			logger.error("[NettyHttpServer] is shutdown! ");
+			logger.error("[NettyHttpServer] {} is shutdown! ", serverName());
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}

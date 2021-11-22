@@ -55,7 +55,7 @@ public final class NettyTcpServer implements INettyServer {
 			logger.error("[NettyTcpServer] Exception: ", e);
 			System.exit(1);
 		}finally {
-			logger.error("[NettyTcpServer] is shutdown! ");
+			logger.error("[NettyTcpServer] {} is shutdown! ", serverName());
 			boss.shutdownGracefully();
 			worker.shutdownGracefully();
 		}
