@@ -5,8 +5,10 @@ import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  * 奖励上下文
@@ -36,6 +38,10 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	 */
 	private IOperationType operationType;
 	/**
+	 * 是否校验过
+	 */
+	final AtomicBoolean verified = new AtomicBoolean();
+	/**
 	 * 真实奖励
 	 */
 	private final List<IRealReward> realRewards = Lists.newArrayList();
@@ -54,6 +60,10 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	 * 发放奖励
 	 */
 	public void grant(){
+		if (! verified.get()) {
+			throw new CustomException("Need verify first!");
+		}
+
 		rewards.grant(player, this);
 	}
 

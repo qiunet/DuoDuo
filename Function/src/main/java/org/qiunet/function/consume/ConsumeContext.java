@@ -22,7 +22,7 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	/**
 	 * 是否校验过
 	 */
-	private final AtomicBoolean verified = new AtomicBoolean();
+	final AtomicBoolean verified = new AtomicBoolean();
 	/**
 	 *  消耗的主体
 	 *  一般Player
