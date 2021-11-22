@@ -16,11 +16,11 @@ import java.util.function.Predicate;
 
 public class Consumes<Obj extends IThreadSafe> {
 	@AutoWired
-	private static IBasicFunction basicFunction;
+	protected static IBasicFunction basicFunction;
 	/**
 	 * 主要的消耗内容
 	 */
-	private final List<BaseConsume<Obj>> consumeList;
+	protected List<BaseConsume<Obj>> consumeList;
 
 	public Consumes() {
 		this(Lists.newArrayListWithCapacity(3));

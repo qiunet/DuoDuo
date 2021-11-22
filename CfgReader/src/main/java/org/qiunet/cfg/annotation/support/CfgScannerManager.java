@@ -15,7 +15,7 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
-import org.qiunet.utils.scanner.event.AutoWireCompleteEventData;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.lang.reflect.*;
 import java.util.Map;
@@ -35,6 +35,8 @@ enum CfgScannerManager implements IApplicationContextAware {
 		this.context = context;
 		this.scannerLoadOverMethod();
 		this.createCfgWrapper();
+		this.cfgAutoWired();
+		this.initCfg();
 	}
 
 	@Override
@@ -78,31 +80,28 @@ enum CfgScannerManager implements IApplicationContextAware {
 	/**
 	 * 自动注入
 	 */
-	private boolean cfgAutoWired(Field field) throws Exception {
-		if (!ICfgWrapper.class.isAssignableFrom(field.getType())) {
-			return false;
+	private void cfgAutoWired() throws Exception {
+		Set<Field> fieldSet = context.getFieldsAnnotatedWith(AutoWired.class);
+		for (Field field : fieldSet) {
+			if (! ICfgWrapper.class.isAssignableFrom(field.getType())) {
+				continue;
+			}
+
+			Type genericType = field.getGenericType();
+			if (! ParameterizedType.class.isAssignableFrom(genericType.getClass())){
+				throw new CustomException("ICfgWrapper must specify GenericType!");
+			}
+
+			Object obj = null;
+			if (! Modifier.isStatic(field.getModifiers())) {
+				obj = context.getInstanceOfClass(field.getDeclaringClass());
+			}
+			Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
+			Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
+
+			field.setAccessible(true);
+			field.set(obj, CfgType.getCfgWrapper(cfgClass));
 		}
-
-		Type genericType = field.getGenericType();
-		if (! ParameterizedType.class.isAssignableFrom(genericType.getClass())){
-			throw new CustomException("ICfgWrapper must specify GenericType!");
-		}
-
-		Object obj = null;
-		if (! Modifier.isStatic(field.getModifiers())) {
-			obj = context.getInstanceOfClass(field.getDeclaringClass());
-		}
-		Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
-		Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
-
-		field.setAccessible(true);
-		field.set(obj, CfgType.getCfgWrapper(cfgClass));
-		return true;
-	}
-
-	@EventListener
-	private void completeAutowire(AutoWireCompleteEventData data) {
-		this.initCfg();
 	}
 
 	@EventListener(EventHandlerWeightType.LESS)

@@ -1,12 +1,14 @@
 package org.qiunet.function.reward;
 
+import com.google.common.collect.Lists;
+import org.qiunet.cfg.base.IAfterLoad;
+import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.function.base.basic.IBasicFunction;
+import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.anno.AutoWired;
-import org.qiunet.utils.string.StringUtil;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /***
  * 奖励的管理类
@@ -22,7 +24,7 @@ public enum RewardManager {
 	/**
 	 * 空的 rewards
 	 */
-	public static final Rewards EMPTY_CONSUMES = new UnmodifiableRewards(Collections.emptyList());
+	public static final Rewards EMPTY_REWARDS = new UnmodifiableRewards(Collections.emptyList());
 	/**
 	 * 创建不可修改的 Rewards
 	 * @param configList 配置列表
@@ -30,24 +32,23 @@ public enum RewardManager {
 	 */
 	public Rewards createRewards(List<RewardConfig> configList) {
 		if (configList == null || configList.isEmpty()) {
-			return EMPTY_CONSUMES;
+			return EMPTY_REWARDS;
 		}
 
-		List<BaseReward> list = configList.stream().map(cfg -> {
-			return cfg.convertToRewardItem(id -> resourceManager.getResType(cfg.getCfgId()));
-		}).collect(Collectors.toList());
-		return new UnmodifiableRewards(list);
+		UnmodifiableRewards unmodifiableRewards = new UnmodifiableRewards(configList);
+		rewardList.add(unmodifiableRewards);
+		return unmodifiableRewards;
 	}
 
+	private static final List<Rewards> rewardList = Lists.newLinkedList();
+
 	/**
-	 * 创建不可修改的 Rewards
-	 * @param dbJsonString 配置
-	 * @return Consumes
+	 * 清理数据
+	 * @param data
 	 */
-	public Rewards createRewards(String dbJsonString) {
-		if (StringUtil.isEmpty(dbJsonString)) {
-			return EMPTY_CONSUMES;
-		}
-		return new UnmodifiableRewards(dbJsonString);
+	@EventListener
+	public void cfgLoadOver(CfgLoadCompleteEventData data) {
+		rewardList.forEach(rewards -> ((IAfterLoad)rewards).afterLoad());
+		rewardList.clear();
 	}
 }

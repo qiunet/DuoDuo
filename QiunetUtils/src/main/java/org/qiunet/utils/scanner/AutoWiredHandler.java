@@ -10,7 +10,6 @@ import org.qiunet.utils.scanner.anno.IgnoreEmptyWired;
 import org.qiunet.utils.scanner.event.AutoWireCompleteEventData;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
@@ -60,22 +59,23 @@ import java.util.Set;
 		AutoWireCompleteEventData.instance.fireEventHandler();
 	}
 
-	private static final LazyLoader<Class<?>> cfgScannerManagerClass = new LazyLoader<>(() -> {
-		String cfgAutoWireClass = "org.qiunet.cfg.annotation.support.CfgScannerManager";
+	private static final LazyLoader<Class<?>> cfgWrapperClass = new LazyLoader<>(() -> {
+		String cfgAutoWireClass = "org.qiunet.cfg.wrapper.ICfgWrapper";
 		try {
 			return Class.forName(cfgAutoWireClass);
 		}catch (Exception e) {
 			return null;
 		}
 	});
-	private boolean handlerCfgAutoWire(Field field) throws Exception {
-		if (cfgScannerManagerClass.get() == null) {
+	private boolean handlerCfgAutoWire(Field field) {
+		if (cfgWrapperClass.get() == null) {
 			return false;
 		}
-		Object cfgScannerManager = this.context.getInstanceOfClass(cfgScannerManagerClass.get());
-		Method method = cfgScannerManagerClass.get().getDeclaredMethod("cfgAutoWired", Field.class);
-		method.setAccessible(true);
-		Boolean result = (Boolean) method.invoke(cfgScannerManager, field);
-		return result;
+		return  cfgWrapperClass.get().isAssignableFrom(field.getType());
+	}
+
+	@Override
+	public int order() {
+		return 11;
 	}
 }

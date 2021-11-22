@@ -1,7 +1,5 @@
 package org.qiunet.function.reward;
 
-import com.alibaba.fastjson.TypeReference;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
@@ -24,11 +22,10 @@ import java.util.stream.Collectors;
  * 2020-12-28 20:35
  */
 public class Rewards<Obj extends IThreadSafe & IPlayer> {
-	protected static final TypeReference<List<RewardConfig>> CONFIG_JSON_TYPE = new TypeReference<List<RewardConfig>>(){};
 	@AutoWired
 	protected static IBasicFunction basicFunction;
 
-	private final List<BaseReward<Obj>> baseRewardList;
+	protected List<BaseReward<Obj>> baseRewardList;
 
 	public Rewards() {
 		this(Lists.newArrayListWithCapacity(5));
@@ -38,22 +35,6 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		this.baseRewardList = baseRewardList;
 	}
 
-	public Rewards(String dbJsonString) {
-		this(dbJsonString, false);
-	}
-
-	protected Rewards(String dbJsonString, boolean unmodifiable) {
-		List<RewardConfig> configList = JsonUtil.getGeneralObjWithField(dbJsonString, CONFIG_JSON_TYPE);
-		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(configList.size());
-		for (RewardConfig rewardConfig : configList) {
-			baseRewardList.add(rewardConfig.convertToRewardItem(id -> basicFunction.getResType(id)));
-		}
-		if (unmodifiable) {
-			baseRewardList = ImmutableList.copyOf(baseRewardList);
-		}
-
-		this.baseRewardList = baseRewardList;
-	}
 	/**
 	 * 校验 是否能扔进背包.
 	 * @param player 玩家对象
