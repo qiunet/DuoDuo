@@ -16,9 +16,8 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 		Do aDo = databaseSupport().selectOne(selectStatement, map);
 		if (aDo == null) return null;
 
-		return supplier.get(aDo);
+		return this.setEntity2NormalStatus(supplier.get(aDo));
 	}
-
 
 	/**
 	 * 删除

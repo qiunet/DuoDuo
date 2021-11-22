@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.db.entity.IDbEntityList;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 		List<Do> doList = databaseSupport().selectList(selectStatement, map);
 		if (doList == null) return Maps.newHashMap();
 
-		return doList.stream().collect(Collectors.toMap(Do::subKey, aDo -> supplier.get(aDo)));
+		return doList.stream().collect(Collectors.toMap(Do::subKey, aDo -> this.setEntity2NormalStatus(supplier.get(aDo))));
 	}
 	/**
 	 * 删除
