@@ -30,14 +30,16 @@ public final class CrossConstants {
 		.setProtocolHeaderType(ProtocolHeaderType.node)
 		.setPort(ServerConfig.getServerPort())
 		.setReadIdleCheckSeconds(60 * 10)
+		.setServerName("跨服玩法服")
 		.build();
 	/**
 	 * 服务与服务之间通讯的启动参数
 	 */
-	public static final TcpBootstrapParams COMMUNICATION_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
+	public static final TcpBootstrapParams NODE_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(DEFAULT_CROSS_NODE_START_CONTEXT)
 		.setProtocolHeaderType(ProtocolHeaderType.node)
 		.setPort(ServerConfig.getNodePort())
 		.setReadIdleCheckSeconds(60 * 10)
+		.setServerName("节点通讯")
 		.build();
 }

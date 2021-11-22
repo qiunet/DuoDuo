@@ -13,7 +13,6 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.net.BindException;
 import java.net.InetSocketAddress;
 
 /**
@@ -46,7 +45,7 @@ public class NettyHttpServer implements INettyServer {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			this.closeFuture = bootstrap.bind(params.getAddress()).sync();
-			logger.error("[NettyHttpServer]  Http server is started on port [{}]", ((InetSocketAddress) params.getAddress()).getPort());
+			logger.error("[NettyHttpServer]  Http server {} is started on port [{}]", serverName(), ((InetSocketAddress) params.getAddress()).getPort());
 			this.closeFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyHttpServer] Exception: ", e);
@@ -64,6 +63,11 @@ public class NettyHttpServer implements INettyServer {
 	@Override
 	public void shutdown(){
 		this.closeFuture.channel().close();
+	}
+
+	@Override
+	public String serverName() {
+		return this.params.getServerName();
 	}
 
 	@Override

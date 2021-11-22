@@ -49,7 +49,7 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
 			this.channelFuture = bootstrap.bind(params.getAddress());
-			logger.error("[NettyTcpServer]  Tcp server is Listener on port [{}]", ((InetSocketAddress) params.getAddress()).getPort());
+			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), ((InetSocketAddress) params.getAddress()).getPort());
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyTcpServer] Exception: ", e);
@@ -60,6 +60,12 @@ public final class NettyTcpServer implements INettyServer {
 			worker.shutdownGracefully();
 		}
 	}
+
+	@Override
+	public String serverName() {
+		return this.params.getServerName();
+	}
+
 	@Override
 	public void shutdown(){
 		this.channelFuture.channel().close();

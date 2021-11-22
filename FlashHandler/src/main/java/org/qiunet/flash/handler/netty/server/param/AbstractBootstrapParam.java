@@ -20,6 +20,10 @@ public abstract class AbstractBootstrapParam {
 	 * 接收端口
 	 */
 	protected SocketAddress address;
+	/**
+	 * 服务名
+	 */
+	protected String serverName;
 	/***
 	 * 读超时处理.默认300秒 (单位秒)
 	 */
@@ -46,6 +50,10 @@ public abstract class AbstractBootstrapParam {
 
 	public SocketAddress getAddress() {
 		return address;
+	}
+
+	public String getServerName() {
+		return serverName;
 	}
 
 	public boolean isEncryption() {
@@ -95,6 +103,11 @@ public abstract class AbstractBootstrapParam {
 
 		public B setReadIdleCheckSeconds(int readIdleCheckSeconds) {
 			AbstractBootstrapParam.this.readIdleCheckSeconds = readIdleCheckSeconds;
+			return (B)this;
+		}
+
+		public B setServerName(String serverName) {
+			AbstractBootstrapParam.this.serverName = serverName;
 			return (B)this;
 		}
 
