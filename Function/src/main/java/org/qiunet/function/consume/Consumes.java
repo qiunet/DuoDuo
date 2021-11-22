@@ -61,7 +61,6 @@ public class Consumes<Obj extends IThreadSafe> {
 				return context;
 			}
 		}
-		context.verified.compareAndSet(false, true);
 		return context;
 	}
 	/**

@@ -83,7 +83,6 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 				return context;
 			}
 		}
-		context.verified.compareAndSet(false, true);
 		return context;
 	}
 

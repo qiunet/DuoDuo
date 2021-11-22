@@ -4,10 +4,8 @@ import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *  消耗的上下文
@@ -19,10 +17,6 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 * 可能底层使用替代资源了.
 	 */
 	private final Map<Integer, Long> realConsumes = Maps.newHashMap();
-	/**
-	 * 是否校验过
-	 */
-	final AtomicBoolean verified = new AtomicBoolean();
 	/**
 	 *  消耗的主体
 	 *  一般Player
@@ -61,10 +55,6 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 * 执行消耗
 	 */
 	public void act() {
-		if (! verified.get()) {
-			throw new CustomException("Need verify first!");
-		}
-
 		consumes.act(this);
 	}
 
