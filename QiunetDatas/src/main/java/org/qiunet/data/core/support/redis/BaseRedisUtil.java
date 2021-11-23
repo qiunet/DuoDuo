@@ -1,6 +1,7 @@
 package org.qiunet.data.core.support.redis;
 
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -10,6 +11,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.concurrent.Callable;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
 	 static final Class [] JEDIS_INTERFACES = new Class[]{IJedis.class};
@@ -58,16 +60,17 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	}
 
 	@Override
-	public boolean redisLockRun(String key, Runnable run) throws IOException {
+	public <R> R redisLockRun(String key, Callable<R> call) throws IOException {
 		try (RedisLock lock = redisLock(key)) {
 			if (lock.lock()) {
-				run.run();
-				return true;
+				return call.call();
 			}
 		} catch (IOException e) {
 			throw e;
+		} catch (Exception e) {
+			throw new CustomException("call redis lock run exception: ", e);
 		}
-		return false;
+		return null;
 	}
 
 	/**

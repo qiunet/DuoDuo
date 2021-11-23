@@ -57,7 +57,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	@Override
 	public void auth(long serverId) {
 		this.serverId = (int)serverId;
-		boolean ret = ServerNodeManager0.instance.addNode(this);
+		ServerNodeManager0.instance.addNode(this);
 	}
 	/**
 	 * 服务与服务之间的事件触发 .走cross通道.

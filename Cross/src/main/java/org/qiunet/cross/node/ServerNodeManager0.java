@@ -25,6 +25,7 @@ import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,30 +42,26 @@ import java.util.stream.Collectors;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
-
+	// server node 创建同步锁redis key
+	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
+	// 所有当前的节点
+	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
-
 	// 服务判定离线时间
 	public static final long SERVER_OFFLINE_SECONDS = 110;
-
+	// redis
 	private IRedisUtil redisUtil;
 	/**
 	 * 服务器的信息. 支持增加自定义字段.
 	 */
 	private ServerInfo currServerInfo;
-
-	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
-
 	/**
 	 * 添加一个服务器节点
 	 * @param node
 	 */
-	synchronized boolean addNode(ServerNode node) {
+	synchronized void addNode(ServerNode node) {
 		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
 		ServerNode serverNode = nodes.get(node.getServerId());
-		if (serverNode != null && serverNode.getSender().isActive()) {
-			return false;
-		}
 
 		if (serverNode != null) {
 			serverNode.getSender().close(CloseCause.INACTIVE);
@@ -72,7 +69,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 		nodes.put(node.getServerId(), node);
 		node.getSender().addCloseListener(cause -> nodes.remove(node.getServerId()));
-		return true;
 	}
 
 	/**
@@ -100,7 +96,32 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
 		}
-		return nodes.computeIfAbsent(serverId, key -> new ServerNode(this.getServerInfo(key)));
+
+		ServerNode serverNode = nodes.get(serverId);
+		if (serverNode != null) {
+			return serverNode;
+		}
+		return lockAndCreateServerNode(serverId);
+	}
+
+	/**
+	 * 锁定. 然后创建serverNode
+	 * @param serverId
+	 */
+	private synchronized ServerNode lockAndCreateServerNode(int serverId) {
+		try {
+			return redisUtil.redisLockRun(this.createRedisKey(serverId), () -> {
+				if (nodes.containsKey(serverId)) {
+					return nodes.get(serverId);
+				}
+				ServerNode serverNode = new ServerNode(this.getServerInfo(serverId));
+				this.addNode(serverNode);
+				return serverNode;
+			});
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		throw new CustomException("Create server node [{}] fail", serverId);
 	}
 
 	@Override
@@ -195,5 +216,18 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		});
 		nodes.values().forEach(node -> node.getSender().close(CloseCause.SERVER_SHUTDOWN));
 		NettyTcpClient.shutdown();
+	}
+
+	/**
+	 * 获得创建使用的key
+	 * @param serverId
+	 * @return
+	 */
+	private String createRedisKey(int serverId) {
+		if (serverId < getCurrServerInfo().getServerId()) {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + serverId +"_"+ getCurrServerInfo().getServerId();
+		}else {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + getCurrServerInfo().getServerId() +"_"+  serverId;
+		}
 	}
 }
