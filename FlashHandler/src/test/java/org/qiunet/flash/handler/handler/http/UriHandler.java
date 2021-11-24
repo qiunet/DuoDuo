@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequest;
  * 17/11/23
  */
 @UriPathHandler("/back")
-public class UriHandler extends HttpStringHandler {
+public class UriHandler extends HttpStringHandler implements ISyncHttpHandler<String, String> {
 	@Override
 	public String handler(IHttpRequest<String> request) throws Exception {
 		return request.getRequestData();

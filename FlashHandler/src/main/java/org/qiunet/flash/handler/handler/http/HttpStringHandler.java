@@ -10,7 +10,7 @@ import java.nio.charset.StandardCharsets;
  * Created by qiunet.
  * 17/11/21
  */
-public abstract class HttpStringHandler extends BaseHandler<String> implements ISyncHttpHandler<String, String> {
+public abstract class HttpStringHandler extends BaseHandler<String> {
 
 	@Override
 	public DataType getDataType() {

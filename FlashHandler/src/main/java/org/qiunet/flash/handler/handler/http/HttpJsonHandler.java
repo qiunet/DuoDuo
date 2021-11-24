@@ -16,7 +16,7 @@ import java.util.Set;
  * 18/1/29
  */
 
-public abstract class HttpJsonHandler extends HttpStringHandler {
+public abstract class HttpJsonHandler extends HttpStringHandler implements ISyncHttpHandler<String, String> {
 
 	@Override
 	public String handler(IHttpRequest<String> request) throws Exception {
