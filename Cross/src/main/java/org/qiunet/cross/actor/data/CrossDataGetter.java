@@ -50,7 +50,7 @@ public final class CrossDataGetter<Data extends BaseCrossTransferData> {
 			CrossDataTransactionResponse response = transactionFuture.get();
 			return ProtobufDataManager.decode(crossData.getDataClass(), response.getBytes());
 		} catch (Exception e) {
-			throw new CustomException(e, "Exception");
+			throw new CustomException(e, "CrossDataGetter Exception!!");
 		}
 	}
 }

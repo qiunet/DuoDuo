@@ -36,6 +36,7 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 	@Override
 	public void handlerRequest() throws Exception{
 		if (handler.needAuth() && ! messageActor.isAuth()) {
+			logger.error("handler [{}] need auth. but not auth!", handler.getClass().getSimpleName());
 			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}

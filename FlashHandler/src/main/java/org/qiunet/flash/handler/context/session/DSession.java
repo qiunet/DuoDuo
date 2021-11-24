@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -107,17 +106,23 @@ public final class DSession implements IChannelMessageSender {
 					// 第一个协议一般是鉴权协议. 先发送. 等发送成功再发送后面的协议.
 					IDSessionFuture future = this.doSendMessage(msg.getMessage(), true);
 					future.addListener(f0 -> {
-						DMessageContentFuture msg0;
-						while ((msg0 = queue.poll()) != null) {
-							if (msg0.isCanceled()) {
-								continue;
+						if (f0.isSuccess()) {
+							msg.complete(f0);
+
+							DMessageContentFuture msg0;
+							while ((msg0 = queue.poll()) != null) {
+								if (msg0.isCanceled()) {
+									continue;
+								}
+
+								IDSessionFuture future1 = this.doSendMessage(msg0.getMessage(), false);
+								DMessageContentFuture finalMsg = msg0;
+								future1.addListener(f1 -> {
+									if (f1.isSuccess()) {
+										finalMsg.complete(f1);
+									}
+								});
 							}
-							IDSessionFuture future1 = this.doSendMessage(msg0.getMessage(), false);
-							msg0.getListeners().forEach(future1::addListener);
-							AtomicReference<DMessageContentFuture.Status> status = msg0.getStatus();
-							future1.addListener(f1 -> {
-								status.compareAndSet(DMessageContentFuture.Status.NONE, DMessageContentFuture.Status.SUCCESS);
-							});
 						}
 						this.flush0();
 					});
