@@ -317,19 +317,10 @@ public class StringUtil {
 	 * @return
 	 */
 	private static boolean isAllowChar(char ch) {
-		if (ch >= 'A' && ch <= 'Z') {
+		if (ch >= 33 && ch <=126) {
 			return true;
 		}
-
-		if (ch >= '0' && ch <= '9') {
-			return true;
-		}
-
-		if (ch >= 'a' && ch <= 'z') {
-			return true;
-		}
-		String chStr = String.valueOf(ch);
-		return regexChinese(chStr);
+		return ch >= start && ch <= end;
 	}
 
 	private static final int start = Integer.valueOf("4e00", 16);
