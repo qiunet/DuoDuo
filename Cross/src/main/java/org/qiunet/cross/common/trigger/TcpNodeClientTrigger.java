@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  * Cross Tcp客户端响应处理
@@ -36,6 +37,9 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		}
 
 		IHandler handler = ChannelDataMapping.getHandler(data.getProtocolId());
+		if (handler == null) {
+			LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());
+		}
 		IMessage message = handler.getHandlerType().createRequestContext(data, session.channel(), handler, iMessageActor);
 		iMessageActor.addMessage(message);
 	}

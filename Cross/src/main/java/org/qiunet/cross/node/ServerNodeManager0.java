@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -109,15 +110,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param serverId
 	 */
 	private synchronized ServerNode lockAndCreateServerNode(int serverId) {
+		RedisLock redisLock = redisUtil.redisLock(this.createRedisKey(serverId));
 		try {
-			return redisUtil.redisLockRun(this.createRedisKey(serverId), () -> {
+			if (redisLock.lock()) {
 				if (nodes.containsKey(serverId)) {
 					return nodes.get(serverId);
 				}
-				ServerNode serverNode = new ServerNode(this.getServerInfo(serverId));
-				this.addNode(serverNode);
-				return serverNode;
-			});
+				return new ServerNode(redisLock, this.getServerInfo(serverId));
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

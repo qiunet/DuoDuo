@@ -2,14 +2,18 @@ package org.qiunet.cross.node;
 
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.cross.event.CrossEventManager;
+import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.timer.timeout.TimeOutFuture;
+import org.qiunet.utils.timer.timeout.Timeout;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -27,15 +31,21 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		super(session);
 	}
 
-	ServerNode(ServerInfo serverInfo) {
-		DSession session = tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(),
-				f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this));
-
-		this.serverId = serverInfo.getServerId();
-		super.setSession(session);
-
+	ServerNode(RedisLock redisLock, ServerInfo serverInfo) {
+		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 3);
+		super.setSession(tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(), f -> {
+			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
+		}));
 		// 发送鉴权请求
-		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()));
+		IDSessionFuture sessionFuture = this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
+		sessionFuture.addListener(future -> {
+			if (future.isSuccess()) {
+				ServerNodeManager0.instance.addNode(this);
+				timeOutFuture.cancel();
+				redisLock.unlock();
+			}
+		});
+		this.serverId = serverInfo.getServerId();
 	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
@@ -81,5 +91,4 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	public long getId() {
 		return getServerId();
 	}
-
 }
