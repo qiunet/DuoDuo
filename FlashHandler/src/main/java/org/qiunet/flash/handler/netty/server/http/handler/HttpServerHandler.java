@@ -26,6 +26,7 @@ import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.net.URI;
@@ -142,12 +143,14 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		try {
-			context.handlerRequest();
-		} catch (Exception e) {
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
-			logger.error("Http Exception:", e);
-		}
+		ThreadPoolManager.NORMAL.submit(() -> {
+			try {
+				context.handlerRequest();
+			} catch (Exception e) {
+				sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+				logger.error("Http Exception:", e);
+			}
+		});
 	}
 	/***
 	 * 处理其它请求
@@ -165,12 +168,14 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		try {
-			context.handlerRequest();
-		} catch (Exception e) {
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
-			logger.error("Http Exception:", e);
-		}
+		ThreadPoolManager.NORMAL.submit(() -> {
+			try {
+				context.handlerRequest();
+			} catch (Exception e) {
+				sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+				logger.error("Http Exception:", e);
+			}
+		});
 	}
 
 	/***
