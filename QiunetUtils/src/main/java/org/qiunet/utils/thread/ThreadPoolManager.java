@@ -27,12 +27,12 @@ public enum ThreadPoolManager implements ExecutorService {
 	 * @return
 	 */
 	ThreadPoolManager(String poolName, int threadNum, int maxCap) {
-		this.executorService = new ThreadPoolExecutor(threadNum, threadNum,
+		this.executorService = new ThreadPoolExecutor(threadNum, threadNum*4,
 			60, TimeUnit.SECONDS,
 			new LinkedBlockingDeque<>(maxCap), new DefaultThreadFactory(poolName),
 			new ThreadPoolExecutor.CallerRunsPolicy());
 
-		ShutdownHookUtil.getInstance().addShutdownHook(() -> this.executorService.shutdown());
+		ShutdownHookUtil.getInstance().addShutdownHook(this.executorService::shutdown);
 	}
 	/**
 	 * 停止所有池资源

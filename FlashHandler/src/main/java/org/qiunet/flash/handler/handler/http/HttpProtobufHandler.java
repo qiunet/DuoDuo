@@ -5,6 +5,7 @@ import com.google.protobuf.CodedInputStream;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.utils.async.LazyLoader;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.nio.ByteBuffer;
  * Created by qiunet.
  * 17/7/21
  */
-public abstract class HttpProtobufHandler<RequestData extends IChannelData, ResponseData extends IChannelData> extends BaseHttpHandler<RequestData, ResponseData> {
+public abstract class HttpProtobufHandler<RequestData extends IChannelData, ResponseData extends IChannelData> extends BaseHandler<RequestData> {
 	private final LazyLoader<Codec<RequestData>> codec = new LazyLoader<>(() -> ProtobufDataManager.getCodec(getRequestClass()));
 
 	@Override

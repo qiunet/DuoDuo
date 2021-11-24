@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.handler.mapping;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.handler.http.IHttpHandler;
+import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -32,7 +32,7 @@ public class UrlRequestHandlerMapping implements IApplicationContextAware {
 	}
 
 	/**所有非游戏的 http handler*/
-	private static final Map<String, IHttpHandler> uriPathHandlers = Maps.newHashMap();
+	private static final Map<String, ISyncHttpHandler> uriPathHandlers = Maps.newHashMap();
 	/**
 	 * 通过请求的MessageContent 得到一个Handler
 	 * @param uriPath
@@ -51,7 +51,7 @@ public class UrlRequestHandlerMapping implements IApplicationContextAware {
 	 */
 	void addHandler(Class<?> clazz) {
 		UriPathHandler otherRequestHandler = clazz.getAnnotation(UriPathHandler.class);
-		IHttpHandler handler = (IHttpHandler) context.getInstanceOfClass(clazz);
+		ISyncHttpHandler handler = (ISyncHttpHandler) context.getInstanceOfClass(clazz);
 
 		String uriPath = otherRequestHandler.value();
 		if(! uriPath.startsWith("/")) uriPath = "/" + uriPath;

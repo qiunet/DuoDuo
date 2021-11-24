@@ -19,7 +19,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class HttpBootStrap {
 	protected static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
-	protected static final int port = 8080;
+	protected static final int port = 8090;
 	private static final Hook hook = new MyHook();
 	private static Thread currThread;
 	@BeforeClass

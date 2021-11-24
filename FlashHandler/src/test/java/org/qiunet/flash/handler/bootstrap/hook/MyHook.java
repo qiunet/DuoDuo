@@ -21,7 +21,7 @@ public class MyHook implements Hook {
 
 	@Override
 	public int getHookPort() {
-		return 8080;
+		return 8090;
 	}
 
 	@Override

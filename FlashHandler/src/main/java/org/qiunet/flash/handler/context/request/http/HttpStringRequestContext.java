@@ -23,28 +23,6 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
-	public void handlerRequest() {
-		FacadeHttpRequest<String, String> requestData = new FacadeHttpRequest<>(this);
-		if (logger.isInfoEnabled()) {
-			logger.info("Http Request[{}]: <<< {}", messageContent.getUriPath(), requestData.getRequestData());
-		}
-		String responseData = null;
-		try {
-			responseData = getHandler().handler(requestData);
-		} catch (Exception e) {
-			logger.error("HttpStringRequestContext Exception", e);
-		}
-		if (logger.isInfoEnabled()) {
-			logger.info("Http Response[{}]: >>> {}", messageContent.getUriPath(), responseData);
-		}
-		if (responseData == null){
-			throw new NullPointerException("Response String can not be null!");
-		}
-
-		this.response(responseData);
-	}
-
-	@Override
 	protected String contentType() {
 		return "text/plain; charset=UTF-8";
 	}

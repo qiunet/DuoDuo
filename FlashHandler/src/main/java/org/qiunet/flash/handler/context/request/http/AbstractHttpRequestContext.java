@@ -7,14 +7,17 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.context.response.IHttpResponse;
+import org.qiunet.flash.handler.handler.http.IAsyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
+import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.string.ToString;
 
 import java.util.*;
 
@@ -25,7 +28,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * @author qiunet
  *         Created on 17/3/17 14:28.
  */
-abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpResponse<ResponseData>, IHttpRequestContext<RequestData, ResponseData> {
+abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
 	private HttpRequest request;
 	protected HttpBootstrapParams params;
 	private QueryStringDecoder queryStringDecoder;
@@ -37,8 +40,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	}
 
 	@Override
-	public IHttpHandler<RequestData, ResponseData> getHandler() {
-		return (IHttpHandler<RequestData, ResponseData>) handler;
+	public IHttpHandler<RequestData> getHandler() {
+		return (IHttpHandler<RequestData>) handler;
 	}
 
 	private Map<String ,List<String>> parameters(){
@@ -48,6 +51,24 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	@Override
 	public List<String> getParametersByKey(String key) {
 		return this.parameters().get(key);
+	}
+
+	@Override
+	public void handlerRequest() throws Exception {
+		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+			logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
+		}
+
+		IHttpHandler<RequestData> handler = getHandler();
+		try {
+			if ( handler.isAsync()) {
+				this.processAsyncHttp((IAsyncHttpHandler<RequestData, ResponseData>) handler);
+			}else {
+				this.processSyncHttp(((ISyncHttpHandler<RequestData, ResponseData>) handler));
+			}
+		} catch (Exception e) {
+			logger.error("HttpProtobufRequestContext Exception: ", e);
+		}
 	}
 
 	@Override
@@ -96,6 +117,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	public void response(ResponseData responseData) {
 		if (responseData == null){
 			throw new NullPointerException("ResponseData can not be null");
+		}
+
+		if (logger.isInfoEnabled() && ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)) {
+			logger.info("HTTP >>> {}", ToString.toString(responseData));
 		}
 
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
@@ -164,5 +189,29 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	@Override
 	public Cookie getCookieByName(String name) {
 		return cookies().get(name);
+	}
+
+	/**
+	 * 处理异步http
+	 * @param handler
+	 * @throws Exception
+	 */
+	private void processAsyncHttp(IAsyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
+		FacadeAsyncHttpRequest<RequestData, ResponseData> request = new FacadeAsyncHttpRequest<>(this);
+		handler.handler(request);
+	}
+	/**
+	 * 处理同步http
+	 * @param handler
+	 * @throws Exception
+	 */
+	private void processSyncHttp(ISyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
+		FacadeHttpRequest<RequestData, ResponseData> request = new FacadeHttpRequest<>(this);
+		ResponseData data = handler.handler(request);
+
+		if (data == null) {
+			throw new NullPointerException("Response Protobuf data can not be null!");
+		}
+		this.response(data);
 	}
 }
