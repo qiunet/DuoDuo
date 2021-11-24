@@ -3,7 +3,7 @@ package org.qiunet.cross.transaction;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.TimeOutManager;
+import org.qiunet.utils.timer.timeout.Timeout;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -37,7 +37,7 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		this.reqData = reqData;
 		this.serverNode = serverNode;
 
-		this.timeOutFuture = TimeOutManager.newTimeOut(f -> this.compareAndSet(Status.INIT, Status.TIMEOUT), 2);
+		this.timeOutFuture = Timeout.newTimeOut(f -> this.compareAndSet(Status.INIT, Status.TIMEOUT), 2);
 	}
 
 	public void handler(Function<REQ, RESP> dataHandler) {

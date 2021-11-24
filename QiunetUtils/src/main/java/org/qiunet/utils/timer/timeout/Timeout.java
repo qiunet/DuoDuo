@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-10-20 09:45
  */
-public final class TimeOutManager {
+public final class Timeout {
 
 	/**
 	 * 几秒后超时

@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.TimeOutManager;
+import org.qiunet.utils.timer.timeout.Timeout;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ public class TransactionFuture<T extends BaseTransactionResponse> {
 	}
 
 	void beginCalTimeOut(int timeout, TimeUnit unit) {
-		TimeOutFuture timeOutFuture = TimeOutManager.newTimeOut(f -> {
+		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> {
 			future.tryFailure(new CustomException("Transaction Timeout"));
 			this.clear();
 		}, timeout, unit);
