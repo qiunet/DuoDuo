@@ -143,7 +143,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		ThreadPoolManager.NORMAL.submit(() -> {
+		ThreadPoolManager.MESSAGE_HANDLER.submit(() -> {
 			try {
 				context.handlerRequest();
 			} catch (Exception e) {
@@ -168,7 +168,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		ThreadPoolManager.NORMAL.submit(() -> {
+		ThreadPoolManager.MESSAGE_HANDLER.submit(() -> {
 			try {
 				context.handlerRequest();
 			} catch (Exception e) {

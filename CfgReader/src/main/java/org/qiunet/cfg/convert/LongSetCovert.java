@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * 2020/3/11 08:26
  **/
 public class LongSetCovert extends BaseObjConvert<LongSet> {
-	private static final String SPLIT = ",";
+	private static final String SPLIT = ";";
 	@Override
 	public LongSet fromString(Field field, String str) {
 		Long [] longs = StringUtil.conversion(str, SPLIT, Long.class);

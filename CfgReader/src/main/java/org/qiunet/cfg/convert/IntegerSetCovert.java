@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * 2020/3/11 08:26
  **/
 public class IntegerSetCovert extends BaseObjConvert<IntegerSet> {
-	private static final String SPLIT = ",";
+	private static final String SPLIT = ";";
 	@Override
 	public IntegerSet fromString(Field field, String str) {
 		Integer[] integers = StringUtil.conversion(str, SPLIT, Integer.class);

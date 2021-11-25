@@ -14,7 +14,7 @@ import java.util.stream.Stream;
  * 2020/3/11 08:26
  **/
 public class StringSetCovert extends BaseObjConvert<StringSet> {
-	private static final String SPLIT = ",";
+	private static final String SPLIT = ";";
 	@Override
 	public StringSet fromString(Field field, String str) {
 		String[] strings = StringUtil.split(str, SPLIT);
