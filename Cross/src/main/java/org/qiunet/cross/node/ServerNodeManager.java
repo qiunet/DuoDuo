@@ -45,12 +45,21 @@ public class ServerNodeManager {
 
 	/**
 	 * 获得指定type里面的指定id的serverInfo
-	 * @param serverType
-	 * @param groupId 不指定. 默认得到所有.
+	 * @param serverType  服务器类型
+	 * @param groupId 服务器组id
 	 * @return
 	 */
 	public static List<ServerInfo> getServerInfos(ServerType serverType, int groupId) {
 		return ServerNodeManager0.instance.getServerInfos(serverType, groupId);
+	}
+	/**
+	 * 获得指定type里面的指定组id的 数量
+	 * @param serverType 服务器类型
+	 * @param groupId 服务器组id
+	 * @return
+	 */
+	public static long getServerCount(ServerType serverType, int groupId) {
+		return ServerNodeManager0.instance.getServerCount(serverType, groupId);
 	}
 
 	/**

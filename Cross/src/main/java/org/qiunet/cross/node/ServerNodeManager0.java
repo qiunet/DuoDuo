@@ -27,7 +27,6 @@ import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -197,7 +196,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	List<ServerInfo> getServerInfos(ServerType serverType, int groupId) {
 		if (serverType == null) {
-			return Collections.emptyList();
+			throw new NullPointerException();
 		}
 
 		String redisKey = serverNodeRedisKey(serverType, groupId);
@@ -206,6 +205,22 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return stringList.stream()
 				.map(json -> JsonUtil.getGeneralObject(json, ServerInfo.class))
 				.collect(Collectors.toList());
+	}
+
+	/**
+	 * 获得该类型 该组的服务器数量
+	 * @param serverType
+	 * @param groupId
+	 * @return
+	 */
+	long getServerCount(ServerType serverType, int groupId) {
+		if (serverType == null) {
+			throw new NullPointerException();
+		}
+
+		String redisKey = serverNodeRedisKey(serverType, groupId);
+		Long val =  redisUtil.returnJedis().hlen(redisKey);
+		return val == null ? 0: val;
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
