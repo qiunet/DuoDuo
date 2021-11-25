@@ -2,10 +2,13 @@ package org.qiunet.data.db.loader;
 
 import com.google.common.collect.Maps;
 import org.qiunet.data.async.IAsyncNode;
-import org.qiunet.data.support.*;
-import org.qiunet.quartz.CronSchedule;
+import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
+import org.qiunet.data.support.DbDataListSupport;
+import org.qiunet.data.support.DbDataSupport;
+import org.qiunet.data.support.IDataSupport;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -34,6 +37,12 @@ enum DataLoaderManager implements IAsyncNode {
 
 	void registerPlayerLoader(long playerId, PlayerDataLoader loader) {
 		playerDataLoaders.put(playerId, loader);
+	}
+
+	@EventListener
+	private void kickOutPlayer(PlayerKickOutEvent event) {
+		PlayerDataLoader dataLoader = playerDataLoaders.get(event.getPlayerId());
+		dataLoader.destroy();
 	}
 	/**
 	 *

@@ -55,12 +55,22 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 		EventManager.fireEventHandler(new AuthEventData<>(this));
 	}
 
+	/**
+	 * 事件在当前服
+	 * @param eventData
+	 * @param <T>
+	 */
 	public  <T extends BaseCrossPlayerEventData> void fireEvent(T eventData) {
 		eventData.setPlayer(this);
 		EventManager.fireEventHandler(eventData);
 	}
 
-	public  <T extends BasePlayerEventData> void fireEvent(T eventData) {
+	/**
+	 * 事件发回玩家数据所在server
+	 * @param eventData
+	 * @param <T>
+	 */
+	public  <T extends BasePlayerEventData> void fireCrossEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
 		CrossEventManager.fireCrossEvent(getPlayerId(), getSender(), eventData);
 	}

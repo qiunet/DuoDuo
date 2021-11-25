@@ -55,6 +55,13 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	/**
+	 * 发送跨服事件
+	 * @param eventData
+	 */
+	public void fireEvent(IEventData eventData) {
+		CrossEventManager.fireCrossEvent(getServerId(), eventData);
+	}
+	/**
 	 * 必须设置 serverId
 	 *
 	 * @param serverId
