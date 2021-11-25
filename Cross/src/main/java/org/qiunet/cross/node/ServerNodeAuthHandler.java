@@ -15,6 +15,7 @@ public class ServerNodeAuthHandler extends PersistConnPbHandler<ServerNode, Serv
 	@Override
 	public void handler(ServerNode playerActor, IPersistConnRequest<ServerNodeAuthRequest> context) throws Exception {
 		playerActor.auth(context.getRequestData().getServerId());
+		playerActor.sendMessage(ServerNodeAuthResponse.valueOf(true));
 	}
 
 	@Override

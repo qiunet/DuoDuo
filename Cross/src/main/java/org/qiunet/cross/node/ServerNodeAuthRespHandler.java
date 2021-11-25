@@ -14,5 +14,6 @@ public class ServerNodeAuthRespHandler extends PersistConnPbHandler<ServerNode, 
 
 	@Override
 	public void handler(ServerNode serverNode, IPersistConnRequest<ServerNodeAuthResponse> context) throws Exception {
+		serverNode.complete();
 	}
 }

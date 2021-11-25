@@ -24,7 +24,8 @@ import org.qiunet.utils.timer.timeout.Timeout;
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeaderType(ProtocolHeaderType.node).build(), new TcpNodeClientTrigger());
-
+	private TimeOutFuture timeOutFuture;
+	private RedisLock redisLock;
 	private int serverId;
 
 	public ServerNode(DSession session) {
@@ -32,7 +33,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	ServerNode(RedisLock redisLock, ServerInfo serverInfo) {
-		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 3);
+		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30);
 		super.setSession(tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(), f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
 		}));
@@ -41,11 +42,10 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		sessionFuture.addListener(future -> {
 			if (future.isSuccess()) {
 				ServerNodeManager0.instance.addNode(this);
-				timeOutFuture.cancel();
-				redisLock.unlock();
 			}
 		});
 		this.serverId = serverInfo.getServerId();
+		this.redisLock = redisLock;
 	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
@@ -86,6 +86,16 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		return serverId;
 	}
 
+	/**
+	 * 完成serverNode 建立
+	 */
+	void complete() {
+		this.timeOutFuture.cancel();
+		this.timeOutFuture = null;
+		this.redisLock.unlock();
+		this.redisLock = null;
+
+	}
 
 	@Override
 	public long getId() {
