@@ -39,7 +39,6 @@ public enum UserOnlineManager {
 	private <T extends AbstractUserActor<T>> void addPlayerActor(AuthEventData<T> eventData) {
 		AbstractUserActor<T> userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
-		userActor.getSender().addCloseListener(cause -> onlinePlayers.remove(userActor.getId()));
 		onlinePlayers.put(userActor.getId(), userActor);
 	}
 	/**
@@ -47,8 +46,8 @@ public enum UserOnlineManager {
 	 * @param actor 玩家
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
-		this.destroyPlayer(actor, true);
-		actor.getSender().close(CloseCause.LOGOUT);
+		this.destroyPlayer(actor);
+		actor.session.close(CloseCause.LOGOUT);
 	}
 	/**
 	 * 登出事件
@@ -57,12 +56,20 @@ public enum UserOnlineManager {
 	@EventListener(EventHandlerWeightType.LESS)
 	private <T extends AbstractUserActor<T>> void onLogout(PlayerLogoutEventData<T> eventData) {
 		AbstractUserActor<T> userActor = eventData.getPlayer();
+		T actor = (T) onlinePlayers.remove(userActor.getId());
+		if (actor == null) {
+			return;
+		}
+
+		if (actor instanceof AbstractPlayerActor) {
+			((AbstractPlayerActor<?>) actor).dataLoader().syncToDb();
+		}
+
 		if (eventData.getCause() != CloseCause.LOGOUT && userActor.isAuth()) {
-			T actor = (T) onlinePlayers.remove(userActor.getId());
 			if (actor != null) {
 				waitReconnects.put(actor.getId(), actor);
 				// 给10分钟都重连时间
-				actor.scheduleMessage(p -> this.destroyPlayer(actor, false), 10, TimeUnit.MINUTES);
+				actor.scheduleMessage(p -> this.destroyPlayer(actor), 10, TimeUnit.MINUTES);
 			}
 		}
 	}
@@ -90,13 +97,11 @@ public enum UserOnlineManager {
 	 * 玩家销毁， 销毁后，不可重连
 	 * @param userActor
 	 */
-	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor, boolean quit) {
+	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor) {
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
-		if (quit) {
-			onlinePlayers.remove(userActor.getId());
-		}else {
-			waitReconnects.remove(userActor.getId());
-		}
+		onlinePlayers.remove(userActor.getId());
+		waitReconnects.remove(userActor.getId());
+		userActor.destroy();
 	}
 	/**
 	 * 在线本服玩家数量

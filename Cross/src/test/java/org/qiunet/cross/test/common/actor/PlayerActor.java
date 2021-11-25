@@ -8,14 +8,12 @@ import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
-import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -34,8 +32,6 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	private final AtomicBoolean crossing = new AtomicBoolean();
 
 	private DSession crossSession;
-
-	private long playerId;
 
 	public PlayerActor(DSession session) {
 		super(session);
@@ -64,12 +60,6 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 	}
 
 	@Override
-	public void auth(long playerId) {
-		this.playerId = playerId;
-		EventManager.fireEventHandler(new AuthEventData<>(this));
-	}
-
-	@Override
 	public boolean isCrossStatus() {
 		return crossing.get();
 	}
@@ -79,8 +69,4 @@ public class PlayerActor extends AbstractPlayerActor<PlayerActor> {
 		crossSession.sendMessage(channelData);
 	}
 
-	@Override
-	public long getId() {
-		return playerId;
-	}
 }

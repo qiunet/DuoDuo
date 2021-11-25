@@ -60,7 +60,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
 	 * 同步数据到db
 	 */
-	void syncToDb(){
+	public void syncToDb(){
 		cacheAsyncToDb.syncToDb();
 	}
 

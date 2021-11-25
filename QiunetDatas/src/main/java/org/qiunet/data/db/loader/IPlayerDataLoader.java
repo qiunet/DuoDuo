@@ -15,7 +15,7 @@ public interface IPlayerDataLoader {
 	 * dataLoader
 	 * @return
 	 */
-	PlayerDataLoader dataLoader();
+	IPlayerDataLoader dataLoader();
 	/**
 	 * 插入一个Do对象
 	 * @param entity IDbEntity
