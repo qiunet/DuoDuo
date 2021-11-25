@@ -1,27 +1,88 @@
 package org.qiunet.function.badword;
 
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /***
  * 涉及玩家输入的敏感词屏蔽
+ *
  * @Author qiunet
  * @Date Create in 2018/6/27 16:04
  **/
 public enum  BadWordFilter {
 	instance,;
 	private INode rootNode;
-	public static BadWordFilter getInstance() {
-		return instance;
+	// 默认class path下的bad word 文件名
+	private static final String DEFAULT_BAD_WORD_FILE_NAME = "bad_word.txt";
+
+	@EventListener
+	private void serverStart(ServerStartupEventData eventData) {
+		this.loadDefaultFile();
+	}
+
+	@EventListener
+	private void loadFile(LoadBadWordFileEventData eventData) {
+		if (eventData.getFile() == null) {
+			this.loadDefaultFile();
+			return;
+		}
+		this.loadFile(eventData.getFile());
+	}
+
+	@EventListener
+	private void loadData(LoadBadWordEventData eventData) {
+		this.loadBadWord(eventData.getBadWord());
+	}
+
+	/**
+	 * 加载默认的文件
+	 */
+	private void loadDefaultFile() {
+		URL url = Thread.currentThread().getContextClassLoader().getResource(DEFAULT_BAD_WORD_FILE_NAME);
+		if (url == null) {
+			return;
+		}
+		File file = new File(url.getFile());
+		this.loadFile(file);
+	}
+
+	/**
+	 * 按照文件加载
+	 * @param file
+	 */
+	private void loadFile(File file) {
+		if (! file.exists()) {
+			return;
+		}
+		ThreadPoolManager.NORMAL.submit(() -> {
+			try (FileReader fileReader = new FileReader(file);
+				 LineNumberReader lReader = new LineNumberReader(fileReader)){
+				List<String> collect = lReader.lines().collect(Collectors.toList());
+				this.loadBadWord(new DefaultBadWord(collect));
+			} catch (IOException e) {
+				LoggerType.DUODUO.error("Read bad word exception", e);
+			}
+		});
 	}
 
 	/***
 	 * 加载
 	 * @param badWords
 	 */
-	public void loadBadWord(IBadWord badWords) {
-		rootNode = new RootNode();
+	private void loadBadWord(IBadWord badWords) {
+		RootNode rootNode = new RootNode();
 		for (String badWord : badWords.getBadWordList()) {
 			if (badWord.length() == 0) continue;
 
@@ -38,6 +99,7 @@ public enum  BadWordFilter {
 				if (node.endChar()) break;
 			}while (++index < badWord.length());
 		}
+		this.rootNode = rootNode;
 	}
 	private static final String NOT_CHINESE_REGEX_STR = "[^\u4E00-\u9FA5]*?";
 	/**非汉字的正则表达式*/
