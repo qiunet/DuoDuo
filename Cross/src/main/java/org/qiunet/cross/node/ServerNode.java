@@ -7,7 +7,6 @@ import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -33,18 +32,14 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	ServerNode(RedisLock redisLock, ServerInfo serverInfo) {
-		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30);
+		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30 );
 		super.setSession(tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(), f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
 		}));
 		// 发送鉴权请求
-		IDSessionFuture sessionFuture = this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
-		sessionFuture.addListener(future -> {
-			if (future.isSuccess()) {
-				ServerNodeManager0.instance.addNode(this);
-			}
-		});
+		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
 		this.serverId = serverInfo.getServerId();
+		ServerNodeManager0.instance.addNode(this);
 		this.redisLock = redisLock;
 	}
 	@Override
