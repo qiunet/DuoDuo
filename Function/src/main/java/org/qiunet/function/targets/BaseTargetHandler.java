@@ -1,6 +1,6 @@
 package org.qiunet.function.targets;
 
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.utils.args.Argument;
 
 import java.util.function.BiConsumer;
@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
  * @author qiunet
  * 2020-11-23 17:10
  */
-public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType, Player extends AbstractPlayerActor<Player>> {
+public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType> {
 	/**
 	 * 获得类型
 	 * @return
@@ -22,9 +22,9 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType, P
 	 * @param player 玩家
 	 * @param consumer target
 	 */
-	protected void process(Player player, BiConsumer<Target, ITargetDef> consumer) {
+	protected void process(PlayerActor player, BiConsumer<Target, ITargetDef> consumer) {
 		Argument<TargetContainer> argument = player.getArgument(TargetContainer.TARGET_CONTAINER_KEY);
-		TargetContainer<Type, Player> targetContainer = argument.get();
+		TargetContainer<Type> targetContainer = argument.get();
 		targetContainer.forEachByType(getType(), consumer);
 	}
 
@@ -34,7 +34,7 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType, P
 	 * @param player
 	 * @param target
 	 */
-	void onStartWatch(Player player, Target target){
+	void onStartWatch(PlayerActor player, Target target){
 		// do nothing
 	}
 }

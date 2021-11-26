@@ -225,6 +225,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void onShutdown(ServerShutdownEventData data) {
+		if (redisUtil == null) {
+			return;
+		}
+
 		redisUtil.execCommands(jedis -> {
 			jedis.hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
 			return null;

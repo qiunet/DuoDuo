@@ -4,14 +4,15 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.function.attr.IAttrChangeObserver;
 import org.qiunet.function.attr.buff.AttrRctNodeBuff;
 import org.qiunet.function.attr.manager.AttrManager;
 import org.qiunet.function.attr.tree.AttrBox;
 import org.qiunet.function.attr.tree.AttrRoad;
+import org.qiunet.function.test.TestDSession;
 import org.qiunet.function.test.attr.equip.EquipAttrNode;
 import org.qiunet.function.test.attr.equip.EquipPostion;
-import org.qiunet.function.test.targets.PlayerActor;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -34,7 +35,7 @@ public class AttrTest {
 	@Test
 	public void test(){
 		AttrManager.printAttrTree();
-		PlayerActor playerActor = new PlayerActor(1000, "qiunet");
+		PlayerActor playerActor = new PlayerActor(new TestDSession());
 
 		AttrBox<PlayerActor, AttrType> attrBox = AttrManager.buildAttrBox(playerActor);
 		AttrRoad equipBaseRoad = EquipAttrNode.BASE.builderRoad();

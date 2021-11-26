@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * @author qiunet
  * 2020-09-22 12:30
  */
-@ChannelData(ID = 3001, desc = "tcp protobuf 测试")
+@ChannelData(ID = ProtocolId.Test.TCP_PB_LOGIN_REQ, desc = "tcp protobuf 测试")
 public class TcpPbLoginRequest implements IChannelData {
 
 	private String account;

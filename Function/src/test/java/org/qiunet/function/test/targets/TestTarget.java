@@ -2,9 +2,12 @@ package org.qiunet.function.test.targets;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.function.targets.ITargetDefGetter;
+import org.qiunet.function.targets.TargetContainer;
 import org.qiunet.function.targets.TargetDefList;
 import org.qiunet.function.targets.Targets;
+import org.qiunet.function.test.TestDSession;
 import org.qiunet.function.test.targets.event.KillBossEventData;
 import org.qiunet.function.test.targets.event.LevelUpEventData;
 import org.qiunet.utils.json.JsonUtil;
@@ -29,9 +32,9 @@ public class TestTarget {
 		ITargetDefGetter targetDefGetter = () ->
 			new TargetDefList(TargetDef.valueOf(TargetType.LEVEL, 10),
 				TargetDef.valueOf(TargetType.KILL_BOSS, 2, "111"));
-		PlayerActor playerActor = new PlayerActor(100000, "测试1");
+		PlayerActor playerActor = new PlayerActor(new TestDSession());
 
-		Targets targets = playerActor.getTargetContainer().createAndWatchTargets(targetDefGetter,
+		Targets targets = PlayerDataKey.targetContainer.computeIfAbsent(playerActor, () -> new TargetContainer<>(playerActor)).createAndWatchTargets(targetDefGetter,
 			(targets0, target) -> {
 				logger.info("任务ID:[{}],index:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getIndex(), target.getValue(), target.isFinished());
 				if (targets0.isFinished()) {
@@ -52,7 +55,7 @@ public class TestTarget {
 		logger.info("Targets Json: {}", json);
 
 		Targets targetsObj = JsonUtil.getGeneralObject(json, Targets.class);
-		playerActor.getTargetContainer().addTargets(targetDefGetter, (targets0, target) -> {
+		PlayerDataKey.targetContainer.get(playerActor).addTargets(targetDefGetter, (targets0, target) -> {
 			logger.info("=任务ID:[{}],index:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getIndex(), target.getValue(), target.isFinished());
 			if (targets0.isFinished()) {
 				logger.info("=任务ID:[{}]已经完成", targets0.getId());

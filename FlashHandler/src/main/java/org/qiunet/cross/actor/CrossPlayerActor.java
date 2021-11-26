@@ -44,12 +44,6 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	}
 
 	@Override
-	public boolean isCrossStatus() {
-		// 进入跨服了. 必然是跨服状态. 在另一个服有PlayerActor
-		return true;
-	}
-
-	@Override
 	public void auth(long playerId) {
 		this.playerId = playerId;
 		EventManager.fireEventHandler(new AuthEventData<>(this));
@@ -104,11 +98,6 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	public <Data extends BaseCrossTransferData> Data getCrossData(CrossData<Data> key) {
 		CrossDataGetter<Data> getter = crossDataHolder.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
 		return getter.get();
-	}
-
-	@Override
-	public boolean isCrossPlayer() {
-		return true;
 	}
 
 	/**

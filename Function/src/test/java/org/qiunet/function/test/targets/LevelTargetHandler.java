@@ -10,7 +10,7 @@ import org.qiunet.utils.listener.event.EventListener;
  * @author qiunet
  * 2020-11-23 17:49
  */
-public class LevelTargetHandler extends BaseTargetHandler<TargetType, PlayerActor> {
+public class LevelTargetHandler extends BaseTargetHandler<TargetType> {
 
 	@EventListener
 	public void handlerLevelUp(LevelUpEventData eventData) {

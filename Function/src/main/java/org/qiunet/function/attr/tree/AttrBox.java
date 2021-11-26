@@ -47,11 +47,11 @@ public class AttrBox<Owner extends AbstractUserActor<Owner>, Attr extends Enum<A
 	Map<AttrRoad, AttrRoadContent<Attr>> roadContentMap = Maps.newConcurrentMap();
 
 	AttrBox(Owner owner, AttrTree rootTree) {
-		this.rootTree = rootTree;
-		this.observer = new ObserverSupport<>(owner);
+		this.observer = owner.getObserverSupport();
 		ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 		this.writeLock = lock.writeLock();
 		this.readLock = lock.readLock();
+		this.rootTree = rootTree;
 	}
 
 	/**

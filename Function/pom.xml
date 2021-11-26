@@ -34,7 +34,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Cross</artifactId>
+			<artifactId>FlashHandler</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

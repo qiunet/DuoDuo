@@ -1,7 +1,7 @@
 package org.qiunet.cross.actor.data;
 
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 
@@ -54,5 +54,5 @@ public abstract class CrossData<Data extends BaseCrossTransferData> {
 	 * @param playerActor 自己强转成playerActor
 	 * @return
 	 */
-	public abstract Data create(AbstractPlayerActor playerActor);
+	public abstract Data create(PlayerActor playerActor);
 }

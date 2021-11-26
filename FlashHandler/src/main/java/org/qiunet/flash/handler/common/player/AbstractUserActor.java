@@ -13,23 +13,19 @@ import org.qiunet.utils.listener.event.EventManager;
  * 2020-10-13 20:51
  */
 public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T>  {
-
+	/**
+	 * 观察者
+	 */
 	private final ObserverSupport<T> observerSupport = new ObserverSupport<>((T)this);
 
 	public AbstractUserActor(DSession session) {
 		super(session);
 	}
-	/**
-	 * 是否跨服状态
-	 *
-	 * @return
-	 */
-	public abstract boolean isCrossStatus();
 
 	@Override
 	protected void setSession(DSession session) {
+		session.addCloseListener(cause -> this.fireEvent(new PlayerLogoutEventData<T>((T) this, cause)));
 		this.session = session;
-		this.session.addCloseListener(cause -> this.fireEvent(new PlayerLogoutEventData<T>((T) this, cause)));
 	}
 
 	public ObserverSupport<T> getObserverSupport() {
@@ -51,10 +47,4 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 		observerSupport.clear();
 		super.destroy();
 	}
-
-	/**
-	 * 是否是跨服玩家对象
-	 * @return
-	 */
-	public abstract boolean isCrossPlayer();
 }

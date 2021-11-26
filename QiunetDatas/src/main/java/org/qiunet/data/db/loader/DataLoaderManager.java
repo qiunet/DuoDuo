@@ -16,6 +16,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  *
@@ -25,17 +26,30 @@ import java.util.Set;
 enum DataLoaderManager implements IAsyncNode {
 	instance;
 
-	DataLoaderManager(){
-		this.addToAsyncJob();
-	}
-
 	private static final Map<Long, PlayerDataLoader> playerDataLoaders = Maps.newConcurrentMap();
+	/**
+	 * 注册到异步更新
+	 */
+	private static final AtomicBoolean registerToAsyncJob = new AtomicBoolean();
 
+	/**
+	 * 取消注册playerId
+	 * @param playerId
+	 */
 	void unRegisterPlayerLoader(long playerId) {
 		playerDataLoaders.remove(playerId);
 	}
 
+	/**
+	 * 注册玩家的数据加载器
+	 * @param playerId
+	 * @param loader
+	 */
 	void registerPlayerLoader(long playerId, PlayerDataLoader loader) {
+		if (registerToAsyncJob.compareAndSet(false, true)) {
+			// 放这里. 不会导致测试加载问题.
+			this.addToAsyncJob();
+		}
 		playerDataLoaders.put(playerId, loader);
 	}
 

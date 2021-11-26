@@ -1,7 +1,7 @@
 package org.qiunet.function.gm;
 
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
@@ -15,9 +15,9 @@ import org.qiunet.utils.logger.LoggerType;
  * @author qiunet
  * 2021-01-09 16:16
  */
-public class GmCommandHandler extends PersistConnPbHandler<AbstractPlayerActor, GmCommandReq> {
+public class GmCommandHandler extends PersistConnPbHandler<PlayerActor, GmCommandReq> {
 	@Override
-	public void handler(AbstractPlayerActor playerActor, IPersistConnRequest<GmCommandReq> context) throws Exception {
+	public void handler(PlayerActor playerActor, IPersistConnRequest<GmCommandReq> context) throws Exception {
 		if (ServerConfig.isOfficial()) {
 			LoggerType.DUODUO.error("Current is official server. can not access gm command!");
 			return;

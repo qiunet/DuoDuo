@@ -10,14 +10,23 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
  */
 public class CrossPlayerLogoutEvent extends BasePlayerEventData {
 	/**
+	 * 退出的serverId
+	 */
+	private int serverId;
+	/**
 	 * 原因
 	 */
 	private CloseCause cause;
 
-	public static CrossPlayerLogoutEvent valueOf(CloseCause cause){
+	public static CrossPlayerLogoutEvent valueOf(CloseCause cause, int serverId){
 		CrossPlayerLogoutEvent data = new CrossPlayerLogoutEvent();
+		data.serverId = serverId;
 		data.cause = cause;
 		return data;
+	}
+
+	public int getServerId() {
+		return serverId;
 	}
 
 	public CloseCause getCause() {

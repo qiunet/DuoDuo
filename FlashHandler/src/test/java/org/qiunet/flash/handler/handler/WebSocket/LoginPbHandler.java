@@ -1,10 +1,10 @@
 package org.qiunet.flash.handler.handler.WebSocket;
 
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.flash.handler.proto.LoginResponse;
 import org.qiunet.flash.handler.proto.WsPbLoginRequest;
-import org.qiunet.flash.handler.startup.context.PlayerActor;
 
 /**
  * Created by qiunet.
@@ -16,5 +16,10 @@ public class LoginPbHandler extends PersistConnPbHandler<PlayerActor, WsPbLoginR
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<WsPbLoginRequest> context) throws Exception {
 		playerActor.sendMessage(LoginResponse.valueOf(context.getRequestData().getAccount()));
+	}
+
+	@Override
+	public boolean needAuth() {
+		return false;
 	}
 }

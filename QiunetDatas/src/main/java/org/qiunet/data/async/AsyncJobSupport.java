@@ -49,7 +49,9 @@ import java.util.concurrent.TimeUnit;
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	public void onShutdown(ServerShutdownEventData data) {
-		this.asyncToDb();
+		if (! nodes.isEmpty()) {
+			this.asyncToDb();
+		}
 		logger.info("Shutdown async update success!");
 	}
 }

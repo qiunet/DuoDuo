@@ -1,9 +1,11 @@
 package org.qiunet.cross.event;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -30,7 +32,7 @@ public class CrossEventManager {
 		AbstractUserActor playerActor = UserOnlineManager.getPlayerActor(playerId);
 
 		Preconditions.checkNotNull(playerActor, "player actor null");
-		Preconditions.checkState(playerActor.isCrossStatus(), "player actor must be cross status");
+		Preconditions.checkState(playerActor instanceof CrossPlayerActor || ((PlayerActor) playerActor).isCrossStatus(),  "player actor must be cross status");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		crossSession.sendMessage(request.buildResponseMessage());

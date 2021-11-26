@@ -13,6 +13,8 @@ public interface ProtocolId extends IProtocolId {
 	interface Test {
 		int WS_PB_LOGIN_REQ = 1001;
 		int HTTP_PB_LOGIN_REQ = 2001;
+		int TCP_PB_LOGIN_REQ = 3001;
+
 
 		int LOGIN_RESP = 1001001;
 	}

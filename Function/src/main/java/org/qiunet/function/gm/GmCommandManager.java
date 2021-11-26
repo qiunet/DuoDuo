@@ -3,7 +3,7 @@ package org.qiunet.function.gm;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.function.gm.message.resp.GmCommandInfo;
 import org.qiunet.utils.args.ArgsContainer;
@@ -94,7 +94,7 @@ enum GmCommandManager implements IApplicationContextAware {
 			this.method = method;
 			this.annotation = method.getAnnotation(GmCommand.class);
 			this.paramList = Lists.newArrayListWithCapacity(method.getParameterCount() - 1);
-			if (! AbstractPlayerActor.class.isAssignableFrom(method.getParameters()[0].getType())) {
+			if (! PlayerActor.class.isAssignableFrom(method.getParameters()[0].getType())) {
 				throw new CustomException("Gm Command method {}#{} the first parameter must be PlayerActor", method.getDeclaringClass().getName(), method.getName());
 			}
 
@@ -118,7 +118,7 @@ enum GmCommandManager implements IApplicationContextAware {
 		 * @param param
 		 * @return
 		 */
-		public IGameStatus handler(AbstractPlayerActor player, List<String> param) throws InvocationTargetException, IllegalAccessException {
+		public IGameStatus handler(PlayerActor player, List<String> param) throws InvocationTargetException, IllegalAccessException {
 			List<Object> params = Lists.newArrayListWithCapacity(param.size() + 1);
 			params.add(player);
 			for (int i = 0; i < paramList.size(); i++) {

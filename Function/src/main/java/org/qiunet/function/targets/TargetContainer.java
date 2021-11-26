@@ -1,7 +1,7 @@
 package org.qiunet.function.targets;
 
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.utils.args.ArgumentKey;
 
 import java.util.LinkedList;
@@ -16,7 +16,7 @@ import java.util.function.BiConsumer;
  * @author qiunet
  * 2020-11-23 16:19
  */
-public class TargetContainer<Type extends Enum<Type> & ITargetType, Player extends AbstractPlayerActor<Player>> {
+public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	/**
 	 * 保存在player身上的key
 	 */
@@ -32,13 +32,13 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 	/**
 	 * 该container持有的玩家id.
 	 */
-	private Player player;
+	private PlayerActor player;
 
 	/**
 	 * 构造一个Container
 	 * @param player
 	 */
-	public TargetContainer(Player player) {
+	public TargetContainer(PlayerActor player) {
 		player.setVal(TARGET_CONTAINER_KEY, this);
 		this.player = player;
 	}
@@ -108,7 +108,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType, Player exten
 		try {
 			Type targetType = (Type) target.getTargetDef().getTargetType();
 			List<Target> targets = targetMap.computeIfAbsent(targetType, key -> new LinkedList<>());
-			BaseTargetHandler<Type, Player> handler = TargetHandlerManager.instance.getHandler(targetType);
+			BaseTargetHandler<Type> handler = TargetHandlerManager.instance.getHandler(targetType);
 			targets.add(target);
 			if (needInit) {
 				// onStartWatch中调用 set 和 addCount 都会调用该方法.

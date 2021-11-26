@@ -34,6 +34,6 @@ public class LevelCacheRankHandler extends BaseCacheRankHandler<RankType> {
 
 	@EventListener
 	public void LevelChange(LevelUpEventData eventData) {
-		this.updateRank(eventData.getPlayer().getId(), eventData.getPlayer().getName(), eventData.getLevel());
+		this.updateRank(eventData.getPlayer().getId(), "名称1", eventData.getLevel());
 	}
 }

@@ -1,7 +1,7 @@
 package org.qiunet.cross.test.common.data;
 
 import org.qiunet.cross.actor.data.CrossData;
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 
 /***
  *
@@ -13,7 +13,7 @@ public class PlayerCrossData {
 
 	public static final CrossData<TestCrossDataCross> TEST_CROSS_DATA = new CrossData<TestCrossDataCross>("TEST_CROSS_DATA") {
 		@Override
-		public TestCrossDataCross create(AbstractPlayerActor playerActor) {
+		public TestCrossDataCross create(PlayerActor playerActor) {
 			return TestCrossDataCross.valueOf("Qiunet", playerActor.getId());
 		}
 	};

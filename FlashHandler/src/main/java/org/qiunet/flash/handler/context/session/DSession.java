@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by qiunet.
  * 17/11/26
  */
-public final class DSession implements IChannelMessageSender {
+public class DSession implements IChannelMessageSender {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	/**
 	 * 如果是使用DSession 连接, 连接成功前. 发送的消息存储这里
@@ -71,6 +71,7 @@ public final class DSession implements IChannelMessageSender {
 	 */
 	private Channel channel;
 
+	protected DSession(){}
 	/**
 	 * 作为客户端. 也可以先使用连接参数. 构造一个DSession. 先发送消息.
 	 * 消息在连接前缓存

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.startup.context;
 
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 

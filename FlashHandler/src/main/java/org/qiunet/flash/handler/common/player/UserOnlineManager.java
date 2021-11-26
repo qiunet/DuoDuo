@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
@@ -63,8 +64,8 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		if (actor instanceof AbstractPlayerActor) {
-			((AbstractPlayerActor<?>) actor).dataLoader().syncToDb();
+		if (actor instanceof PlayerActor) {
+			((PlayerActor) actor).dataLoader().syncToDb();
 		}
 
 		if (eventData.getCause() != CloseCause.LOGOUT && userActor.isAuth()) {
@@ -101,8 +102,8 @@ public enum UserOnlineManager {
 	 */
 	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor, CloseCause cause) {
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
-		if (userActor.isCrossPlayer()) {
-			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(CloseCause.LOGOUT));
+		if (userActor instanceof CrossPlayerActor) {
+			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(cause, ServerConfig.getServerId()));
 		}
 		onlinePlayers.remove(userActor.getId());
 		waitReconnects.remove(userActor.getId());
@@ -113,14 +114,14 @@ public enum UserOnlineManager {
 	 * @return 数量
 	 */
 	public int onlinePlayerSize(){
-		return (int) onlinePlayers.values().stream().filter(actor -> actor instanceof AbstractPlayerActor).count();
+		return (int) onlinePlayers.values().stream().filter(actor -> actor instanceof PlayerActor).count();
 	}
 	/**
 	 * 在线跨服玩家数量
 	 * @return 数量
 	 */
 	public int crossPlayerSize(){
-		return (int) onlinePlayers.values().stream().filter(actor -> ! (actor instanceof AbstractPlayerActor)).count();
+		return (int) onlinePlayers.values().stream().filter(actor -> ! (actor instanceof PlayerActor)).count();
 	}
 
 	/**

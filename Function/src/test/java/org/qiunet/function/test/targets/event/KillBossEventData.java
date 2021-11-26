@@ -1,7 +1,6 @@
 package org.qiunet.function.test.targets.event;
 
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
-import org.qiunet.function.test.targets.PlayerActor;
 
 /***
  *
@@ -9,7 +8,7 @@ import org.qiunet.function.test.targets.PlayerActor;
  * @author qiunet
  * 2020-11-23 17:50
  */
-public class KillBossEventData extends BasePlayerEventData<PlayerActor> {
+public class KillBossEventData extends BasePlayerEventData {
 
 	private int bossId;
 

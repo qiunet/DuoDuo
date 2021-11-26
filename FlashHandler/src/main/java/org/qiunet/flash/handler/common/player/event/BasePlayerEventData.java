@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player.event;
 
-import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 
 /***
  * 带玩家参数的事件数据.
@@ -8,4 +8,4 @@ import org.qiunet.flash.handler.common.player.AbstractPlayerActor;
  * @author qiunet
  * 2020-10-13 20:27
  */
-public class BasePlayerEventData<T extends AbstractPlayerActor<T>> extends BaseUserEventData<T> {}
+public abstract class BasePlayerEventData extends BaseUserEventData<PlayerActor> {}
