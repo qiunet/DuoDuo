@@ -17,7 +17,7 @@ import java.awt.event.MouseListener;
 import java.io.File;
 
 /***
- *
+ * 右键操作
  *
  * @author qiunet
  * 2021-02-23 17:42
@@ -28,68 +28,68 @@ public class JTreeMouseListener extends MouseAdapter {
 	private final JMenuItem convertItem;
 	private final JMenuItem svnUpdateItem;
 	private final JMenuItem svnCommitItem;
+	private final JMenuItem svnLockItem;
 
 	public JTreeMouseListener(JTree jTree) {
 		this.jTree = jTree;
 		this.openItem = this.createMenuItem("打开", new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (jTree.getSelectionPath() == null) {
-					return;
-				}
-
-				CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
-				if (fileNode == null) {
-					return;
-				}
-
-				SwingUtil.open(fileNode.getFile());
+				handlerEvent(SwingUtil::open);
 			}
 		});
 
-		this.convertItem = this.createMenuItem("==", new MouseAdapter() {
+		this.convertItem = this.createMenuItem("转换", new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (jTree.getSelectionPath() == null) {
-					return;
-				}
-
-				CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
-				if (fileNode == null) {
-					return;
-				}
-				exportCfgs(fileNode.getFile());
+				handlerEvent(file -> exportCfgs(file));
 			}
 		});
+
 		this.svnUpdateItem = this.createMenuItem("更新", new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (jTree.getSelectionPath() == null) {
-					return;
-				}
-
-				CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
-				if (fileNode == null) {
-					return;
-				}
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, fileNode.getFile().getAbsolutePath());
+				handlerEvent(file -> SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, file.getAbsolutePath()));
 			}
 		});
 
 		this.svnCommitItem = this.createMenuItem("提交", new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (jTree.getSelectionPath() == null) {
-					return;
-				}
-
-				CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
-				if (fileNode == null) {
-					return;
-				}
-				SvnUtil.svnEvent(SvnUtil.SvnCommand.UPDATE, fileNode.getFile().getAbsolutePath());
+				handlerEvent(file -> SvnUtil.svnEvent(SvnUtil.SvnCommand.COMMIT, file.getAbsolutePath()));
 			}
 		});
+
+		this.svnLockItem = this.createMenuItem("锁定", new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				handlerEvent(file -> {
+					if (file.canWrite()) {
+						SvnUtil.svnEvent(SvnUtil.SvnCommand.UNLOCK, file.getAbsolutePath());
+						svnLockItem.setText("锁定");
+					}else {
+						SvnUtil.svnEvent(SvnUtil.SvnCommand.LOCK, file.getAbsolutePath());
+						svnLockItem.setText("解锁");
+					}
+				});
+			}
+		});
+	}
+
+	private void handlerEvent(IFileOperation runnable) {
+		if (jTree.getSelectionPath() == null) {
+			return;
+		}
+
+		CfgPanel.FileNode fileNode = (CfgPanel.FileNode) ((DefaultMutableTreeNode) jTree.getSelectionPath().getLastPathComponent()).getUserObject();
+		if (fileNode == null) {
+			return;
+		}
+		runnable.run(fileNode.getFile());
+	}
+	@FunctionalInterface
+	interface IFileOperation {
+		void run(File file);
 	}
 
 	@Override
@@ -112,9 +112,8 @@ public class JTreeMouseListener extends MouseAdapter {
 		jPopupMenu.add(new JSeparator());
 		jPopupMenu.add(convertItem);
 		jPopupMenu.add(svnUpdateItem);
-		if (Excel2CfgsUtil.isWindows()) {
-			jPopupMenu.add(svnCommitItem);
-		}
+		jPopupMenu.add(svnCommitItem);
+		jPopupMenu.add(svnLockItem);
 		jPopupMenu.show(jTree, e.getX(), e.getY());
 	}
 

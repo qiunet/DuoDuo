@@ -31,13 +31,15 @@ public class SvnUtil {
 				SwingUtil.alterError(e.getMessage());
 			}
 		}else {
-			if (command == SvnCommand.COMMIT) {
+			if (command == SvnCommand.COMMIT && needAdd(path)) {
 				handlerMacOrlinux(SvnCommand.ADD, path);
 			}
 			handlerMacOrlinux(command, path);
 		}
 	}
-
+	private static boolean needAdd(String path){
+		return false;
+	}
 	/**
 	 * 处理 mac 和 linux 的svn命令
 	 * 内容太长
@@ -95,6 +97,10 @@ public class SvnUtil {
 		COMMIT,
 		//更新
 		UPDATE,
+		// 得锁
+		LOCK,
+		// 解锁
+		UNLOCK,
 		// 清理
 		CLEANUP,
 		//添加
