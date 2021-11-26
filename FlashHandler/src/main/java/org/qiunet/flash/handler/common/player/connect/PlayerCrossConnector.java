@@ -2,6 +2,8 @@ package org.qiunet.flash.handler.common.player.connect;
 
 import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
+import org.qiunet.cross.event.BaseCrossPlayerEventData;
+import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -30,6 +32,10 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 */
 	private final DSession session;
 	/**
+	 *
+	 */
+	private final long playerId;
+	/**
 	 * serverId
 	 */
 	private final int serverId;
@@ -42,11 +48,11 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			throw new CustomException("connect to self!");
 		}
-
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
 
 		this.session = tcpClient.connect(serverInfo.getHost(), serverInfo.getServerPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor));
 		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId()));
+		this.playerId = actor.getPlayerId();
 		this.serverId = serverId;
 	}
 
@@ -67,6 +73,15 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 */
 	public DSession getSession() {
 		return session;
+	}
+
+	/**
+	 * 触发该服务的事件
+	 * @param event
+	 * @param <Event>
+	 */
+	public <Event extends BaseCrossPlayerEventData> void fireCrossEvent(Event event) {
+		CrossEventManager.fireCrossEvent(playerId, session, event);
 	}
 
 	@Override

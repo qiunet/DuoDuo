@@ -8,7 +8,6 @@ import org.qiunet.data.support.DataSupportMapping;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  * 跟玩家相关的数据加载管理
@@ -18,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PlayerDataLoader implements IPlayerDataLoader {
 	enum  EntityOperate {INSERT, UPDATE, DELETE}
-	private static final AtomicBoolean destroy = new AtomicBoolean();
 	static final Object NULL = new Object();
 	/**
 	 * 玩家的所有数据
@@ -44,17 +42,24 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	public PlayerDataLoader(long playerId, boolean readOnly) {
 		this.playerId = playerId;
 		this.readOnly = readOnly;
+		this.register();
+	}
+
+	/**
+	 * 注册
+	 */
+	public void register(){
 		DataLoaderManager.instance.registerPlayerLoader(playerId, this);
 	}
 
 	/**
 	 * 销毁. 顺便要更新入库
 	 */
-	public void destroy(){
-		if (destroy.compareAndSet(false, true)) {
-			DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
-			this.syncToDb();
-		}
+	public void unregister(){
+		DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
+		this.syncToDb();
+		// 清除数据. 下次上线重新获取新数据
+		dataCache.clear();
 	}
 
 	/**
@@ -62,14 +67,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	public void syncToDb(){
 		cacheAsyncToDb.syncToDb();
-	}
-
-	/**
-	 * 是否已经销毁
-	 * @return
-	 */
-	public boolean isDestroy(){
-		return destroy.get();
 	}
 	/**
 	 * 获得玩家ID
@@ -93,10 +90,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	@Override
 	public <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
-		if (isDestroy()) {
-			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
-		}
-
 		if (readOnly) {
 			throw new CustomException("Data loader read only!");
 		}
@@ -128,10 +121,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	@Override
 	public <Data extends DbEntityBo> Data getData(Class<Data> clazz) {
-		if (isDestroy()) {
-			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
-		}
-
 		Object data = dataCache.computeIfAbsent(clazz, key -> {
 			Object obj = DataLoaderManager.instance.getData(key, playerId);
 			if (obj == null) {
@@ -155,10 +144,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	@Override
 	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey, Bo>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
-		if (isDestroy()) {
-			throw new CustomException("PlayerDataLoader id[{}] is destroy!!!!", getPlayerId());
-		}
-
 		return (Map<SubKey, Bo>) dataCache.computeIfAbsent(clazz, key -> {
 			Map data = (Map) DataLoaderManager.instance.getData(key, playerId);
 			data.values().forEach(val -> ((DbEntityBo) val).playerDataLoader = this);

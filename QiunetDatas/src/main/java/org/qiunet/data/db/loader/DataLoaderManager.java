@@ -56,7 +56,7 @@ enum DataLoaderManager implements IAsyncNode {
 	@EventListener
 	private void kickOutPlayer(PlayerKickOutEvent event) {
 		PlayerDataLoader dataLoader = playerDataLoaders.get(event.getPlayerId());
-		dataLoader.destroy();
+		dataLoader.unregister();
 	}
 	/**
 	 *

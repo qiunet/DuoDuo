@@ -30,7 +30,6 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	protected void setSession(DSession session) {
-		session.addCloseListener(cause -> this.destroy());
 		this.session = session;
 	}
 

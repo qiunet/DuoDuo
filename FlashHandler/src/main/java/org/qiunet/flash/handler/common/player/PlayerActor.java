@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.common.player;
 
 import com.google.common.collect.Maps;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
-import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
@@ -68,6 +67,9 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	@Override
 	public void quitAllCross(CloseCause cause) {
+		if (cause.needWaitConnect()) {
+			return;
+		}
 		crossConnectors.keySet().forEach(type -> this.quitCross(type, cause));
 	}
 
@@ -103,11 +105,14 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			return;
 		}
 		playerCrossConnector.getSession().close(cause);
+		if (crossServerType == serverType) {
+			this.switchCross(null);
+		}
 	}
 
 	@Override
 	public void switchCross(ServerType serverType) {
-		if (! isCrossStatus(serverType)) {
+		if (serverType != null && ! isCrossStatus(serverType)) {
 			throw new CustomException("Current not cross a [{}] server!", serverType);
 		}
 		this.crossServerType = serverType;
@@ -147,10 +152,24 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	@Override
 	public void destroy() {
+		crossConnectors.values().forEach(c -> c.getSession().close(CloseCause.DESTROY));
 		if (dataLoader != null) {
-			dataLoader.destroy();
+			dataLoader.unregister();
 		}
 		super.destroy();
+	}
+
+	/**
+	 * 合并
+	 * @param handler
+	 */
+	public void merge(PlayerActor handler) {
+		if (playerId != handler.playerId) {
+			throw new CustomException("PlayerId not the same!");
+		}
+		super.merge(handler);
+		handler.dataLoader = null;
+		dataLoader.register();
 	}
 
 	/**
@@ -159,7 +178,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * @param <D>
 	 */
 	public <D extends BaseCrossPlayerEventData> void fireCrossEvent(D eventData) {
-		CrossEventManager.fireCrossEvent(getId(), crossConnectors.get(crossServerType).getSession(), eventData);
+		crossConnectors.get(crossServerType).fireCrossEvent(eventData);
 	}
 
 	public long getPlayerId() {

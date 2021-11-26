@@ -5,11 +5,13 @@ import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
+import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -36,7 +38,7 @@ public enum UserOnlineManager {
 	/**
 	 * 等待重连
 	 */
-	private static final Map<Long, AbstractUserActor> waitReconnects = Maps.newConcurrentMap();
+	private static final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
 
 	@EventListener
 	private <T extends AbstractUserActor<T>> void addPlayerActor(AuthEventData<T> eventData) {
@@ -49,7 +51,11 @@ public enum UserOnlineManager {
 	 * @param actor 玩家
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
-		this.destroyPlayer(actor, CloseCause.LOGOUT);
+		if (actor instanceof CrossPlayerActor) {
+			((CrossPlayerActor) actor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
+		}
+		this.destroyPlayer(actor);
+
 		actor.session.close(CloseCause.LOGOUT);
 	}
 	/**
@@ -64,16 +70,16 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		if (actor instanceof PlayerActor) {
-			((PlayerActor) actor).dataLoader().syncToDb();
+		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
+		if (actor instanceof CrossPlayerActor) {
+			return;
 		}
 
-		if (eventData.getCause() != CloseCause.LOGOUT && userActor.isAuth()) {
-			if (actor != null) {
-				waitReconnects.put(actor.getId(), actor);
-				// 给10分钟都重连时间
-				actor.scheduleMessage(p -> this.destroyPlayer(actor, eventData.getCause()), 10, TimeUnit.MINUTES);
-			}
+		((PlayerActor) actor).dataLoader().syncToDb();
+		if (eventData.getCause().needWaitConnect() && userActor.isAuth()) {
+			// 给10分钟都重连时间
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 10, TimeUnit.MINUTES);
+			waitReconnects.put(actor.getId(), new WaitActor(((PlayerActor) actor), future));
 		}
 	}
 	/**
@@ -83,27 +89,29 @@ public enum UserOnlineManager {
 	 * @param currActor 当前的actor
 	 * @return null 说明不能重连了. 否则之后使用返回的actor进行操作.
 	 */
-	public <T extends AbstractUserActor<T>> T reconnect(long playerId, T currActor) {
-		T actor = (T) waitReconnects.remove(playerId);
-		if (actor == null) {
+	public PlayerActor reconnect(long playerId, PlayerActor currActor) {
+		WaitActor waitActor = waitReconnects.remove(playerId);
+		if (waitActor == null) {
 			return null;
 		}
-		actor.merge(currActor);
+		waitActor.actor.merge(currActor);
+		waitActor.actor.setSession(currActor.session);
+		waitActor.future.cancel(true);
+		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
 
-		actor.setSession(currActor.session);
-		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
+		onlinePlayers.put(playerId, waitActor.actor);
+		currActor.destroy();
 
-		onlinePlayers.put(playerId, actor);
-		return actor;
+		return waitActor.actor;
 	}
 	/**
 	 * 玩家销毁， 销毁后，不可重连
 	 * @param userActor
 	 */
-	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor, CloseCause cause) {
+	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor) {
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
-		if (userActor instanceof CrossPlayerActor) {
-			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(cause, ServerConfig.getServerId()));
+		if (userActor instanceof CrossPlayerActor && userActor.getSender().isActive()) {
+			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
 		onlinePlayers.remove(userActor.getId());
 		waitReconnects.remove(userActor.getId());
@@ -159,6 +167,17 @@ public enum UserOnlineManager {
 	 * @return playerActor
 	 */
 	public static <T extends AbstractUserActor<T>> T getWaitReconnectPlayer(long playerId) {
-		return (T) waitReconnects.get(playerId);
+		WaitActor waitActor = waitReconnects.get(playerId);
+		return waitActor == null ? null : (T)waitActor.actor;
+	}
+
+	private static class WaitActor {
+		PlayerActor actor;
+		DFuture<Void> future;
+
+		public WaitActor(PlayerActor actor, DFuture<Void> future) {
+			this.actor = actor;
+			this.future = future;
+		}
 	}
 }
