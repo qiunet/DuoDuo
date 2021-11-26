@@ -78,11 +78,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>Cross</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>CfgReader</artifactId>
 			<optional>true</optional>
 		</dependency>

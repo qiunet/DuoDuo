@@ -51,4 +51,10 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 		observerSupport.clear();
 		super.destroy();
 	}
+
+	/**
+	 * 是否是跨服玩家对象
+	 * @return
+	 */
+	public abstract boolean isCrossPlayer();
 }

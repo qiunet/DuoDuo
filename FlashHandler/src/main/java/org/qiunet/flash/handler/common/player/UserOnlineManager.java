@@ -2,7 +2,9 @@ package org.qiunet.flash.handler.common.player;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
+import org.qiunet.flash.handler.common.player.event.CrossPlayerLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -46,7 +48,7 @@ public enum UserOnlineManager {
 	 * @param actor 玩家
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
-		this.destroyPlayer(actor);
+		this.destroyPlayer(actor, CloseCause.LOGOUT);
 		actor.session.close(CloseCause.LOGOUT);
 	}
 	/**
@@ -69,7 +71,7 @@ public enum UserOnlineManager {
 			if (actor != null) {
 				waitReconnects.put(actor.getId(), actor);
 				// 给10分钟都重连时间
-				actor.scheduleMessage(p -> this.destroyPlayer(actor), 10, TimeUnit.MINUTES);
+				actor.scheduleMessage(p -> this.destroyPlayer(actor, eventData.getCause()), 10, TimeUnit.MINUTES);
 			}
 		}
 	}
@@ -97,8 +99,11 @@ public enum UserOnlineManager {
 	 * 玩家销毁， 销毁后，不可重连
 	 * @param userActor
 	 */
-	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor) {
+	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor, CloseCause cause) {
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
+		if (userActor.isCrossPlayer()) {
+			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(CloseCause.LOGOUT));
+		}
 		onlinePlayers.remove(userActor.getId());
 		waitReconnects.remove(userActor.getId());
 		userActor.destroy();

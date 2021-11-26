@@ -1,6 +1,5 @@
 package org.qiunet.cross.event;
 
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerConfig;

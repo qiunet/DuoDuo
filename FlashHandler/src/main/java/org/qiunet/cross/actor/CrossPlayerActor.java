@@ -105,6 +105,12 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 		CrossDataGetter<Data> getter = crossDataHolder.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
 		return getter.get();
 	}
+
+	@Override
+	public boolean isCrossPlayer() {
+		return true;
+	}
+
 	/**
 	 * 调用该接口. 会直接转发给客户端
 	 * @param channelData

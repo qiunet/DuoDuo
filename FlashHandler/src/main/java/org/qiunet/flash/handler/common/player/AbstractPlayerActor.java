@@ -47,6 +47,11 @@ public abstract class AbstractPlayerActor<T extends AbstractPlayerActor<T>>
 		super.destroy();
 	}
 
+	@Override
+	public boolean isCrossPlayer() {
+		return false;
+	}
+
 	public long getPlayerId() {
 		return playerId;
 	}
