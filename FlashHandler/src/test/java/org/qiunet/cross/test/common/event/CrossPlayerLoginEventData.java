@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.event;
+package org.qiunet.cross.test.common.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;

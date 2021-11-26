@@ -1,13 +1,13 @@
-package org.qiunet.cross.test.handler;
+package org.qiunet.cross.test.common.handler;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.test.common.Constants;
 import org.qiunet.cross.test.common.actor.PlayerActor;
-import org.qiunet.cross.test.data.PlayerCrossData;
-import org.qiunet.cross.test.data.TestCrossDataCross;
-import org.qiunet.cross.test.event.CrossPlayerLoginEventData;
-import org.qiunet.cross.test.proto.req.EquipIndexRequest;
-import org.qiunet.cross.test.proto.resp.CrossLoginResponse;
+import org.qiunet.cross.test.common.data.PlayerCrossData;
+import org.qiunet.cross.test.common.data.TestCrossDataCross;
+import org.qiunet.cross.test.common.event.CrossPlayerLoginEventData;
+import org.qiunet.cross.test.common.proto.req.EquipIndexRequest;
+import org.qiunet.cross.test.common.proto.resp.CrossLoginResponse;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 
 /***

@@ -5,6 +5,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  * db 启动监听处理
@@ -16,6 +17,10 @@ class DbStartHandler {
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	public void onServerStartUp(ServerStartupEventData data) {
 		if (ServerConfig.instance.getBoolean(SKIP_TEST_START_LOADER)) {
+			return;
+		}
+		String string = ServerConfig.instance.getString(ServerConfig.ENTITY_TO_TABLE_RANGE);
+		if (StringUtil.isEmpty(string)) {
 			return;
 		}
 

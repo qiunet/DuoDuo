@@ -131,7 +131,7 @@ enum ConfigContext implements IApplicationContextAware {
 			if (StringUtil.isEmpty(keyName)) {
 				keyName = field.getName();
 			}
-			Preconditions.checkState(keyValueData.containKey(keyName) || !StringUtil.isEmpty(annotation.defaultVal()), "Config ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
+			Preconditions.checkState(keyValueData.containKey(keyName) || !"-".equals(annotation.defaultVal()), "Config ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
 			String val = keyValueData.getString(keyName, annotation.defaultVal());
 			Object instance = null;
 			if (!Modifier.isStatic(field.getModifiers())) {

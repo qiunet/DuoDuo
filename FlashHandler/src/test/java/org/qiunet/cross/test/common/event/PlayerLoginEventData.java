@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.event;
+package org.qiunet.cross.test.common.event;
 
 import org.qiunet.cross.test.common.actor.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;

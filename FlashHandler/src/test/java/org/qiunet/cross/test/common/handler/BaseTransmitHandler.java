@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.handler;
+package org.qiunet.cross.test.common.handler;
 
 import org.qiunet.cross.common.handler.BaseWsPbTransmitHandler;
 import org.qiunet.cross.test.common.actor.PlayerActor;

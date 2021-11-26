@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.redis;
+package org.qiunet.cross.test.common.redis;
 
 import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
 import org.qiunet.data.core.support.redis.IJedis;

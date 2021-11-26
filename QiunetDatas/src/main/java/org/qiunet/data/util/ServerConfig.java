@@ -25,6 +25,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	public static final String SERVER_PORT = "server.server_port";
 	// node port
 	public static final String NODE_PORT = "server.node_port";
+	// 生成数据表的范围
+	public static final String ENTITY_TO_TABLE_RANGE = "db.entity_to_table_range";
 
 	@DConfigInstance(CONFIG_FILE_NAME)
 	private static DHocon config;
@@ -60,7 +62,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * 服务没有开启提示
 	 */
-	@DConfigValue(value = "server.close_msg", defaultVal = "-")
+	@DConfigValue(value = "server.close_msg", defaultVal = "")
 	private static String serverCloseMsg;
 	/**
 	 * 白名单ip. 如果serverOpen = false
@@ -71,7 +73,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	/**
 	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
 	 */
-	@DConfigValue(value = "db.entity_to_table_range", defaultVal = "")
+	@DConfigValue(value = ENTITY_TO_TABLE_RANGE, defaultVal = "")
 	private static StringSet entity2TableSourceRange;
 	/**
 	 * 是否是正式服.

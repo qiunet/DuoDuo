@@ -1,8 +1,8 @@
-package org.qiunet.cross.test.proto.req;
+package org.qiunet.cross.test.common.proto.req;
 
-import org.qiunet.cross.test.handler.ProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.proto.ProtocolId;
 
 /***
  *

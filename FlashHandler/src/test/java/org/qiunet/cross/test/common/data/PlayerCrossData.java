@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.data;
+package org.qiunet.cross.test.common.data;
 
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.flash.handler.common.player.AbstractPlayerActor;

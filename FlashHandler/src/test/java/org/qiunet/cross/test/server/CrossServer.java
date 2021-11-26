@@ -4,7 +4,7 @@ import org.qiunet.cross.common.contants.CrossConstants;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.test.common.Constants;
-import org.qiunet.cross.test.redis.RedisDataUtil;
+import org.qiunet.cross.test.common.redis.RedisDataUtil;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;

@@ -1,4 +1,4 @@
-package org.qiunet.cross.test.transaction;
+package org.qiunet.cross.test.common.transaction;
 
 import org.qiunet.cross.transaction.BaseTransactionRequest;
 

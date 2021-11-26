@@ -1,8 +1,8 @@
-package org.qiunet.cross.test.handler;
+package org.qiunet.cross.test.common.handler;
 
 import org.qiunet.cross.test.common.actor.PlayerActor;
-import org.qiunet.cross.test.event.PlayerLoginEventData;
-import org.qiunet.cross.test.proto.req.LoginRequest;
+import org.qiunet.cross.test.common.event.PlayerLoginEventData;
+import org.qiunet.cross.test.common.proto.req.LoginRequest;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 
 /***

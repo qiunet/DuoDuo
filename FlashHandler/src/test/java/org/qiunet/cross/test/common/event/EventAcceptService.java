@@ -1,8 +1,8 @@
-package org.qiunet.cross.test.event;
+package org.qiunet.cross.test.common.event;
 
 import org.qiunet.cross.test.common.Constants;
-import org.qiunet.cross.test.transaction.TestTransactionRequest;
-import org.qiunet.cross.test.transaction.TestTransactionResponse;
+import org.qiunet.cross.test.common.transaction.TestTransactionRequest;
+import org.qiunet.cross.test.common.transaction.TestTransactionResponse;
 import org.qiunet.cross.transaction.TransactionFuture;
 import org.qiunet.cross.transaction.TransactionManager;
 import org.qiunet.utils.listener.event.EventListener;

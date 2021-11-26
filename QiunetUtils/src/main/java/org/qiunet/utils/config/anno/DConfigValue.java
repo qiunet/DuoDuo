@@ -25,7 +25,7 @@ public @interface DConfigValue {
 	 * 默认值. 如果没定义. 默认值.
 	 * @return
 	 */
-	String defaultVal() default "";
+	String defaultVal() default "-";
 
 	/**
 	 * 如果类没有指定{@link DConfig} 则需要指定这个文件名: file name
