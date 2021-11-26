@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /***
  * 玩家playerActor 的父类
@@ -27,7 +28,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 跨服的连接管理
 	 */
-	private static final Map<ServerType, PlayerCrossConnector> crossConnectors = Maps.newEnumMap(ServerType.class);
+	private final Map<ServerType, PlayerCrossConnector> crossConnectors = Maps.newEnumMap(ServerType.class);
 	/**
 	 * 玩家的数据加载器
 	 */
@@ -52,6 +53,14 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	public PlayerActor(DSession session) {
 		super(session);
 		session.addCloseListener(this::quitAllCross);
+		this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * 跨服session的心跳
+	 */
+	private void crossHeartBeat(){
+		crossConnectors.values().forEach(PlayerCrossConnector::heartBeat);
 	}
 
 	/**

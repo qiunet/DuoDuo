@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -51,6 +52,13 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 
 	public int getServerId() {
 		return serverId;
+	}
+
+	/**
+	 * 心跳
+	 */
+	public void heartBeat(){
+		sendMessage(ClientPingRequest.instance);
 	}
 
 	/**

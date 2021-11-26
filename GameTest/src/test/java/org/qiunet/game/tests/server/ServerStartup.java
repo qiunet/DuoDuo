@@ -33,6 +33,7 @@ public final class ServerStartup {
 						.setProtocolHeaderType(ProtocolHeaderType.server)
 						.setStartupContext(new StartupContext())
 						.setPort(ServerType.LC_ROOM.port())
+						.setServerName("测试服")
 						.build());
 				try {
 					Thread.sleep(1000);

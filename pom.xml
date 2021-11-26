@@ -24,7 +24,6 @@
 		<module>all</module>
 		<module>EventLog</module>
 		<module>Profile</module>
-		<module>Function</module>
 	</modules>
 
 	<packaging>pom</packaging>
@@ -179,11 +178,6 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>CfgReader</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>Function</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

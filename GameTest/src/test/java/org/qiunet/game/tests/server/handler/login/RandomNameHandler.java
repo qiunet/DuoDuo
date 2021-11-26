@@ -1,11 +1,11 @@
 package org.qiunet.game.tests.server.handler.login;
 
 import com.google.common.collect.Lists;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.game.tests.protocol.proto.login.RandomNameRequest;
 import org.qiunet.game.tests.protocol.proto.login.RandomNameResponse;
-import org.qiunet.game.tests.server.context.PlayerActor;
 import org.qiunet.game.tests.server.data.ServerData;
 import org.qiunet.game.tests.server.enums.GameStatus;
 import org.qiunet.game.tests.server.handler.base.GameHandler;

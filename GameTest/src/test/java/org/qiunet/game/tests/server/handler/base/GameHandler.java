@@ -1,8 +1,8 @@
 package org.qiunet.game.tests.server.handler.base;
 
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
-import org.qiunet.game.tests.server.context.PlayerActor;
 
 /***
  * 基础的handler

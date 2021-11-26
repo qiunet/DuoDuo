@@ -1,13 +1,11 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
 import com.google.common.base.Preconditions;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
@@ -58,14 +56,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		if (! ServerConfig.isServerOpen() && ! ServerConfig.getIpWhiteList().contains(ChannelUtil.getIp(ctx.channel()))) {
-			ChannelFuture channelFuture = ctx.writeAndFlush(params.getStartupContext().serverClose().encode());
-			channelFuture.addListener(f -> ctx.close());
-			content.release();
-			return;
-		}
 		// WebSocket ping pong 可以交给webSocket 自己的实现搞定
-
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());

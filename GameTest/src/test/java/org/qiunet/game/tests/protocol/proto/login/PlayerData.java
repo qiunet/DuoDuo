@@ -2,8 +2,8 @@ package org.qiunet.game.tests.protocol.proto.login;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.game.tests.protocol.proto.player.ExpChangePush;
-import org.qiunet.game.tests.server.context.PlayerActor;
 
 /***
  * 玩家的数据

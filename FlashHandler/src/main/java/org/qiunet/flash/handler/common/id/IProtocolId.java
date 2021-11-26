@@ -38,9 +38,9 @@ public interface IProtocolId {
 		/** 500 **/
 		int SERVER_EXCEPTION = 500;
 
-		/**客户端 ping pong */
+		/** ping pong 信息 */
 		int CLIENT_PING = 700;
-		int CLIENT_PONG = 700;
+		int SERVER_PONG = 701;
 
 		/**跨服事件**/
 		int CROSS_EVENT = 600;

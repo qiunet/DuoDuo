@@ -6,10 +6,11 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /***
  *
- * 服务器响应客户端ping信息
+ * 请求ping信息
  * qiunet
  * 2021/9/23 17:17
  **/
-@ChannelData(ID = IProtocolId.System.SERVER_PONG, desc = "服务器pong信息")
-public class ServerPongResponse implements IChannelData {
+@ChannelData(ID = IProtocolId.System.CLIENT_PING, desc = "ping信息")
+public enum ClientPingRequest implements IChannelData {
+	instance;
 }

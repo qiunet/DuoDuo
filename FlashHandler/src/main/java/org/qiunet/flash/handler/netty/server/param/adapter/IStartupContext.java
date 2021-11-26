@@ -59,6 +59,6 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	}
 
 	default IChannelMessage<IChannelData> serverPongMsg() {
-		return SERVER_CLOSE_MESSAGE.get();
+		return SERVER_PONG_MESSAGE.get();
 	}
 }
