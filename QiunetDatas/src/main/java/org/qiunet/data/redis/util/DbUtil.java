@@ -62,6 +62,10 @@ public final class DbUtil {
 	}
 	/***
 	 * 合成一个唯一的id.
+	 * id由 自增ID + serverGroupId + serverGroupId长度描述组成
+	 * 比如: 自增ID:123,  组ID:456
+	 * 则合成ID为: 1234563  (123 456 3)
+	 *
 	 * 适用于: 公会id  玩家id
 	 * @param incrId 自增id
 	 * @param serverGroupId 服务器组id
