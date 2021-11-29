@@ -8,7 +8,8 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
-import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -30,9 +31,13 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			&& iMessageActor instanceof PlayerActor) {
 			// 直接往客户端转发
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
-			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(response.getPid());
-			IChannelData channelData = ProtobufDataManager.decode(protocolClass, response.getBytes());
-			iMessageActor.getSender().sendMessage(channelData);
+			IChannelMessage<byte []> message = new DefaultBytesMessage(response.getPid(), response.getBytes());
+			iMessageActor.getSender().sendMessage(message);
+			return;
+		}
+
+		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
+			// pong 信息不需要处理
 			return;
 		}
 

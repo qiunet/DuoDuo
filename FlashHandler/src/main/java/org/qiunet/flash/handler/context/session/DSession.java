@@ -7,7 +7,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
-import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -277,7 +276,7 @@ public class DSession implements IChannelMessageSender {
 
 	public IDSessionFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
 		if ( logger.isInfoEnabled()
-				&& ! message.getContent().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+				&& message.needLogger()) {
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			if (messageActor != null) {
 				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());

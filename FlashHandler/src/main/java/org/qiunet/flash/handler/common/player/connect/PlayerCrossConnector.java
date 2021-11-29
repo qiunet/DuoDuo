@@ -64,7 +64,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 * 心跳
 	 */
 	public void heartBeat(){
-		sendMessage(ClientPingRequest.instance);
+		this.sendMessage(ClientPingRequest.valueOf());
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.utils.string.ToString;
@@ -32,6 +33,13 @@ public interface IChannelMessage<T> {
 	 * @return
 	 */
 	int getProtocolID();
+	/**
+	 * 是否需要打印输出
+	 * @return
+	 */
+	default boolean needLogger(){
+		return ! this.getContent().getClass().isAnnotationPresent(SkipDebugOut.class);
+	}
 
 	/**
 	 * 转logger 格式字符串

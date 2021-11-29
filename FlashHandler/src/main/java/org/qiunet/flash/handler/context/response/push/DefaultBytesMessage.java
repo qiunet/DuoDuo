@@ -18,6 +18,11 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 	}
 
 	@Override
+	public boolean needLogger() {
+		return false;
+	}
+
+	@Override
 	public int getProtocolID() {
 		return protocolId;
 	}
