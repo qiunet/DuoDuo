@@ -4,12 +4,10 @@ import com.google.common.collect.Lists;
 import org.qiunet.function.ai.builder.IBehaviorBuilder;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +26,7 @@ public enum BehaviorManager implements IApplicationContextAware {
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		Set<Class<? extends IBehaviorBuilder>> types = context.getSubTypesOf(IBehaviorBuilder.class);
 		for (Class<? extends IBehaviorBuilder> type : types) {
-			Object builder = context.getInstanceOfClass(type);
+			IBehaviorBuilder builder = (IBehaviorBuilder) context.getInstanceOfClass(type);
 			Method method = type.getMethod("buildExecutor", Object.class);
 			datas.add(new BehaviorBuilderData(builder, method));
 		}
@@ -52,22 +50,16 @@ public enum BehaviorManager implements IApplicationContextAware {
 	}
 
 	private static class BehaviorBuilderData {
-		private final Object obj;
+		private final IBehaviorBuilder obj;
 		private final Method method;
 
-		public BehaviorBuilderData(Object obj, Method method) {
+		public BehaviorBuilderData(IBehaviorBuilder obj, Method method) {
 			this.obj = obj;
 			this.method = method;
 		}
 
 		public IBehaviorNode build(Object param){
-			Object o = null;
-			try {
-				o = method.invoke(obj, param);
-			} catch (IllegalAccessException | InvocationTargetException e) {
-				throw new CustomException(e, "Call method {}.{} error!", obj.getClass().getSimpleName(), method.getName());
-			}
-			return ((IBehaviorNode) o);
+			return obj.buildExecutor(param);
 		}
 	}
 }

@@ -77,8 +77,8 @@ public enum UserOnlineManager {
 
 		((PlayerActor) actor).dataLoader().syncToDb();
 		if (eventData.getCause().needWaitConnect() && userActor.isAuth()) {
-			// 给10分钟都重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 10, TimeUnit.MINUTES);
+			// 给3分钟重连时间
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 3, TimeUnit.MINUTES);
 			waitReconnects.put(actor.getId(), new WaitActor(((PlayerActor) actor), future));
 		}
 	}
@@ -95,7 +95,6 @@ public enum UserOnlineManager {
 			return null;
 		}
 		waitActor.actor.merge(currActor);
-		waitActor.actor.setSession(currActor.session);
 		waitActor.future.cancel(true);
 		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
 

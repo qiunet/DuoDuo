@@ -18,6 +18,6 @@ public enum RobotCreator implements IRobotCreator {
 	@Override
 	public Robot create() {
 		// 或者读取名单. 或者从数据库读取. 都行
-		return new Robot("Account_"+idGenerator);
+		return new Robot("Account_"+idGenerator.makeId());
 	}
 }

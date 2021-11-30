@@ -245,6 +245,13 @@ public class DSession implements IChannelMessageSender {
 		this.closeListeners.add(listener);
 	}
 
+	/**
+	 * 清除所有的close listener
+ 	 */
+	public void clearCloseListener(){
+		this.closeListeners.clear();
+	}
+
 	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
 
 	@Override
