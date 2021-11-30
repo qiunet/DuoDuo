@@ -1,5 +1,6 @@
 package org.qiunet.cross.event;
 
+import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
@@ -13,14 +14,14 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-10-15 16:56
  */
-public class CrossEventHandler extends PersistConnPbHandler<AbstractUserActor, CrossEventRequest> {
+public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor, CrossEventRequest> {
 
 	@Override
-	public void handler(AbstractUserActor actor, IPersistConnRequest<CrossEventRequest> context) throws Exception {
+	public void handler(AbstractMessageActor actor, IPersistConnRequest<CrossEventRequest> context) throws Exception {
 		CrossEventRequest requestData = context.getRequestData();
 		IEventData obj = requestData.getData();
 		if (obj instanceof BaseUserEventData) {
-			((BaseUserEventData) obj).setPlayer(actor);
+			((BaseUserEventData) obj).setPlayer(((AbstractUserActor) actor));
 		}
 		// 可能是PlayerActor CrossPlayerActor . 也可能是ServerNode
 		EventManager.fireEventHandler(obj);
