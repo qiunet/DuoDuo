@@ -10,6 +10,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /***
@@ -130,29 +132,26 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (ServerConfig.getNodePort() == 0) {
-			return;
-		}
 
 		this.currServerInfo = argsContainer.isNull(ScannerParamKey.CUSTOM_SERVER_INFO)
 			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getNodePort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
-		if (argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).isNull()) {
-			throw new CustomException("Need Specify Redis Instance with key 'ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER'");
+		Argument<Supplier<IRedisUtil>> redisArg = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER);
+		if (! redisArg.isNull()) {
+			this.redisUtil = redisArg.get().get();
+
+			// 启动检测 redis 是否通畅.
+			this.redisUtil.returnJedis().exists("");
 		}
-
-
-		this.redisUtil = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER).get().get();
-		// 启动检测 redis 是否通畅.
-		this.redisUtil.returnJedis().exists("");
 	}
 
 	@EventListener
 	private void onServerStart(ServerStartupEventData data){
-		if (currServerInfo.getServerType() == ServerType.ALL) {
+		if (ServerConfig.getNodePort() == 0) {
 			return;
 		}
+
 		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
 
@@ -176,7 +175,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	/**
 	 * 每一分钟, 刷新server info
 	 */
-	public void refreshServerInfo() {
+	private void refreshServerInfo() {
 		currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
 		redisUtil.returnJedis(false).hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
 		// 触发心跳.
