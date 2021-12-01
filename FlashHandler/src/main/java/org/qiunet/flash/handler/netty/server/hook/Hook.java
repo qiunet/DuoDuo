@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.hook;
 
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
 /**
@@ -13,6 +12,10 @@ import org.qiunet.utils.logger.LoggerType;
  * 17/11/22
  */
 public interface Hook {
+	/**
+	 * 默认的端口
+	 */
+	int DEFAULT_HOOK_PORT = 1314;
 	/**
 	 * 得到reload的消息
 	 * @return
@@ -41,7 +44,8 @@ public interface Hook {
 		}else if (ServerConfig.getNodePort() > 0) {
 			return ServerConfig.getNodePort();
 		}
-		throw new CustomException("Hook port absent!");
+		LoggerType.DUODUO.error("!!Hook port absent, use default port {}!!", DEFAULT_HOOK_PORT);
+		return DEFAULT_HOOK_PORT;
 	}
 	/**
 	 * 返回shutdown的msg

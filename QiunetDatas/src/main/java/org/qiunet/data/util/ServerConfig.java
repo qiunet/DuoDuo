@@ -55,22 +55,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	@DConfigValue(value = NODE_PORT, defaultVal = "0")
 	private static int nodePort;
 	/**
-	 * 服务器是否开启
-	 */
-	@DConfigValue(value = "server.open", defaultVal = "TRUE")
-	private static boolean serverOpen;
-	/**
-	 * 服务没有开启提示
-	 */
-	@DConfigValue(value = "server.close_msg", defaultVal = "")
-	private static String serverCloseMsg;
-	/**
-	 * 白名单ip. 如果serverOpen = false
-	 * 允许指定的ip进入.
-	 */
-	@DConfigValue(value = "server.ip_white_list", defaultVal = "127.0.0.1")
-	private static StringSet ipWhiteList;
-	/**
 	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
 	 */
 	@DConfigValue(value = ENTITY_TO_TABLE_RANGE, defaultVal = "")
@@ -104,18 +88,6 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static ServerType getServerType() {
 		return serverType.get();
-	}
-
-	public static String getServerCloseMsg() {
-		return serverCloseMsg;
-	}
-
-	public static StringSet getIpWhiteList() {
-		return ipWhiteList;
-	}
-
-	public static boolean isServerOpen() {
-		return serverOpen;
 	}
 
 	public static int getServerPort() {
