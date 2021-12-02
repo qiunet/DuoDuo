@@ -23,10 +23,9 @@ import java.util.Map;
  */
 public enum ServerType {
 	/**
-	 * 全功能服务
-	 * 即服务包含所有的服务.
+	 * 没有分配类型
 	 */
-	ALL(0),
+	NONE(0),
 	/**
 	 * 普通逻辑服务
 	 */
@@ -51,10 +50,7 @@ public enum ServerType {
 	 * 后台
 	 */
 	BACK(6),
-	/**
-	 * 其它
-	 */
-	OTHER(9)
+
 	;
 	private final int type;
 

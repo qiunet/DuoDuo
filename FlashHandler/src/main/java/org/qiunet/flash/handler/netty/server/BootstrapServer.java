@@ -20,6 +20,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -136,10 +137,14 @@ public class BootstrapServer {
 	 */
 	private class HookListener implements Runnable {
 		private final ByteBuffer buffer = ByteBuffer.allocate(256);
-		private boolean running = true;
+		private final AtomicBoolean shutdown = new AtomicBoolean();
 		private final Hook hook;
 		HookListener(Hook hook) {
-			Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				if (shutdown.compareAndSet(false, true)) {
+					this.shutdown();
+				}
+			}));
 			this.hook = hook;
 		}
 
@@ -174,10 +179,10 @@ public class BootstrapServer {
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
 			if (msg.equals(hook.getShutdownMsg())) {
-				this.running = false;
-				this.shutdown();
-
-				LockSupport.unpark(awaitThread);
+				if (shutdown.compareAndSet(false, true)) {
+					this.shutdown();
+					LockSupport.unpark(awaitThread);
+				}
 			}else if (msg.equals(hook.getReloadCfgMsg())){
 				hook.reloadCfg();
 			}else {
@@ -196,7 +201,7 @@ public class BootstrapServer {
 					System.exit(1);
 				}
 
-				while (running) {
+				while (! shutdown.get()) {
 					this.handlerMsg(channel);
 				}
 			} catch (IOException e) {

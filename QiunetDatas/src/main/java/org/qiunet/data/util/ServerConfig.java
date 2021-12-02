@@ -35,7 +35,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 		return instance;
 	}
 
-	@DConfigValue("server.id")
+	@DConfigValue(value = "server.id", defaultVal = "0")
 	private static int serverId;
 	/**
 	 * 组ID

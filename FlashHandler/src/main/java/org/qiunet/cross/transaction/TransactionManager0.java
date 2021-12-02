@@ -3,8 +3,6 @@ package org.qiunet.cross.transaction;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.qiunet.cross.actor.data.CrossData;
-import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -28,10 +26,6 @@ class TransactionManager0 implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		if (ServerNodeManager.getCurrServerType() == ServerType.ALL) {
-			return;
-		}
-
 		Set<Class<? extends ITransactionHandler>> classes = context.getSubTypesOf(ITransactionHandler.class);
 		for (Class<? extends ITransactionHandler> clazz : classes) {
 			Method method = clazz.getMethod("handler", DTransaction.class);

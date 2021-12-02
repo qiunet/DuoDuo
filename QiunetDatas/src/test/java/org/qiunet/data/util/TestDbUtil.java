@@ -65,11 +65,11 @@ public class TestDbUtil {
 	@Test
 	public void testGroupId2(){
 		int groupId = 0;
-		ServerType serverType = ServerType.ALL;
+		ServerType serverType = ServerType.CROSS;
 
 		int serverId = serverType.buildServerId(groupId, 4);
 
-		Assert.assertEquals(4, serverId);
+		Assert.assertEquals(204, serverId);
 		Assert.assertEquals(groupId, ServerType.getGroupId(serverId));
 
 		Assert.assertEquals(serverType, ServerType.getServerType(serverId));

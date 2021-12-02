@@ -48,9 +48,9 @@ import java.util.concurrent.TimeUnit;
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
-	public void onShutdown(ServerShutdownEventData data) {
+	private void onShutdown(ServerShutdownEventData data) {
 		if (! nodes.isEmpty()) {
-			this.asyncToDb();
+			nodes.forEach(IAsyncNode::syncToDatabase);
 		}
 		logger.info("Shutdown async update success!");
 	}

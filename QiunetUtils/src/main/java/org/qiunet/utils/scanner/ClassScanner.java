@@ -10,6 +10,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
+import org.reflections.scanners.Scanner;
 import org.reflections.scanners.*;
 import org.slf4j.Logger;
 
@@ -17,10 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -102,10 +100,13 @@ public final class ClassScanner implements IApplicationContext {
 			.collect(Collectors.toList());
 
 		AtomicReference<Exception> reference = new AtomicReference<>();
-		CountDownLatch latch = new CountDownLatch(subTypesOf.size());
+		CountDownLatch latch = new CountDownLatch(collect.size());
 		Set<DFuture> futures = Sets.newHashSet();
 
-		logger.debug("scanner start: {}", collect.size());
+		if (logger.isDebugEnabled()) {
+			logger.debug("scanner start count: {}, detail: {}", collect.size(),
+					Arrays.toString(collect.stream().map(o -> o.getClass().getSimpleName()).toArray()));
+		}
 		for (IApplicationContextAware instance : collect) {
 			logger.debug("scanner start detail: {}", instance.getClass().getName());
 			// 不相同. 并且都不是ALL
@@ -132,9 +133,11 @@ public final class ClassScanner implements IApplicationContext {
 			future.whenComplete((res, ex) -> {
 				latch.countDown();
 				if (ex != null) {
+					logger.error("==scanner exception!==");
 					reference.compareAndSet(null, (Exception) ex);
 					futures.forEach(future0 -> future0.cancel(true));
-					for (long i = 0; i < latch.getCount(); i++) {
+					long count = latch.getCount();
+					for (long i = 0; i < count; i++) {
 						latch.countDown();
 					}
 				}
