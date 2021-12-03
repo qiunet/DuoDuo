@@ -22,6 +22,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.baidu.bjf.remoting.protobuf.utils.FieldInfo;
 import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
+import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.string.StringUtil;
@@ -33,6 +35,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -313,6 +316,14 @@ public class ProtobufIDLGenerator {
         }
 
     }
+
+    public static void generateEnumIDL(StringBuilder code, Map<String, Integer> protoContent) {
+		code.append("// 所有协议\n");
+		code.append("enum ").append("ProtoId").append(" {  \n");
+		Lists.newArrayList(protoContent.entrySet()).stream().sorted((o1, o2) -> ComparisonChain.start().compare(o1.getValue(), o2.getValue()).result())
+		.forEach(en -> code.append("ProtoId_").append(en.getKey()).append("=").append(en.getValue()).append(";\n"));
+		code.append("}\n\n");
+	}
 
     private static void generateEnumIDL(StringBuilder code, Class<Enum> cls) {
     	code.append(generatorComment(cls));

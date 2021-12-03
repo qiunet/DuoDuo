@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.IAfterLoad;
 import org.qiunet.flash.handler.common.IThreadSafe;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.json.JsonUtil;
 
 import java.util.List;
 
@@ -32,7 +34,11 @@ public final class UnmodifiableConsumes<Obj extends IThreadSafe> extends Consume
 
 		List<BaseConsume<Obj>> baseConsumeList = Lists.newArrayListWithCapacity(consumeConfigs.size());
 		for (ConsumeConfig config : consumeConfigs) {
-			baseConsumeList.add(config.convertToConsume(id -> basicFunction.getResType(id)));
+			BaseConsume baseConsume = config.convertToConsume(id -> basicFunction.getResType(id));
+			if (baseConsume == null) {
+				throw new CustomException("ConsumeConfig {} convert result is null", JsonUtil.toJsonString(config));
+			}
+			baseConsumeList.add(baseConsume);
 		}
 		super.consumeList = ImmutableList.copyOf(baseConsumeList);
 		consumeConfigs = null;

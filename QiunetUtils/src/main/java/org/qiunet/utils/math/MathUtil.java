@@ -143,4 +143,13 @@ public class MathUtil {
 	public static long getByRate(long val, long rate) {
 		return (val * rate)/BASE_RATE;
 	}
+
+	/**
+	 * 万分比概率是否命中
+	 * @param rate 概率值
+	 * @return
+	 */
+	public static boolean isHit(int rate) {
+		return random(10000) <= rate;
+	}
 }

@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.IAfterLoad;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.json.JsonUtil;
 
 import java.util.List;
 
@@ -31,7 +33,11 @@ public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewa
 
 		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(rewardConfigs.size());
 		for (RewardConfig rewardConfig : rewardConfigs) {
-			baseRewardList.add(rewardConfig.convertToRewardItem(id -> basicFunction.getResType(id)));
+			BaseReward baseReward = rewardConfig.convertToRewardItem(id -> basicFunction.getResType(id));
+			if (baseReward == null) {
+				throw new CustomException("rewardConfig {} convert result is null", JsonUtil.toJsonString(rewardConfig));
+			}
+			baseRewardList.add(baseReward);
 		}
 		super.baseRewardList = ImmutableList.copyOf(baseRewardList);
 		rewardConfigs = null;
