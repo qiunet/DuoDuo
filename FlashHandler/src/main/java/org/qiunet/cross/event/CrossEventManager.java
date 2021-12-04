@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.listener.event.IEventData;
 
@@ -27,7 +27,7 @@ public class CrossEventManager {
 	 * @param crossSession
 	 * @param eventData
 	 */
-	public static  <T extends BaseUserEventData> void fireCrossEvent(long playerId, DSession crossSession, T eventData) {
+	public static  <T extends BaseUserEventData> void fireCrossEvent(long playerId, IChannelMessageSender crossSession, T eventData) {
 		// 当前服的playerActor
 		AbstractUserActor playerActor = UserOnlineManager.getPlayerActor(playerId);
 

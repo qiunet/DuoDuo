@@ -165,9 +165,9 @@ public enum UserOnlineManager {
 	 * @param playerId 玩家id
 	 * @return playerActor
 	 */
-	public static <T extends AbstractUserActor<T>> T getWaitReconnectPlayer(long playerId) {
+	public static PlayerActor getWaitReconnectPlayer(long playerId) {
 		WaitActor waitActor = waitReconnects.get(playerId);
-		return waitActor == null ? null : (T)waitActor.actor;
+		return waitActor == null ? null : waitActor.actor;
 	}
 
 	private static class WaitActor {
