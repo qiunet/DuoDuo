@@ -10,6 +10,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
@@ -69,14 +70,13 @@ public class BootstrapServer {
 	 * @param msg 发送消息内容
 	 */
 	public static void sendHookMsg(int hookPort, String msg) {
-		try (DatagramChannel channel = DatagramChannel.open()){
-			if (hookPort <= 0) {
-				logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
-				System.exit(1);
-			}
-			logger.error("BootstrapServer sendHookMsg [{}]!", msg);
-
-			channel.send(ByteBuffer.wrap(msg.getBytes(CharsetUtil.UTF_8)), new InetSocketAddress("localhost", hookPort));
+		if (hookPort <= 0) {
+			logger.error("BootstrapServer sendHookMsg but hookPort is less than 0!");
+			System.exit(1);
+		}
+		logger.error("BootstrapServer sendHookMsg [{}]!", msg);
+		try {
+			NetUtil.udpSendData("localhost", hookPort, msg.getBytes(CharsetUtil.UTF_8));
 		} catch (IOException e) {
 			logger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);

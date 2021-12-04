@@ -32,6 +32,8 @@ public interface IProtocolId {
 		int SERVER_NOT_OPEN_RESP = 3;
 		/** 状态消息提示 */
 		int ERROR_STATUS_TIPS_RESP = 4;
+		/**玩家登出*/
+		int PLAYER_LOGOUT_PUSH = 5;
 
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;

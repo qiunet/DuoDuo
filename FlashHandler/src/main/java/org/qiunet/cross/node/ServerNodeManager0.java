@@ -69,8 +69,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			serverNode.getSender().close(CloseCause.INACTIVE);
 		}
 
+		node.getSender().addCloseListener((session, cause) -> nodes.remove(node.getServerId()));
 		nodes.put(node.getServerId(), node);
-		node.getSender().addCloseListener(cause -> nodes.remove(node.getServerId()));
 	}
 
 	/**

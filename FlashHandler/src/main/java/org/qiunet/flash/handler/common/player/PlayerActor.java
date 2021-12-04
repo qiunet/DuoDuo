@@ -9,6 +9,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -51,7 +52,12 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	public PlayerActor(DSession session) {
 		super(session);
-		session.addCloseListener(this::quitAllCross);
+		session.addCloseListener((s, cause) -> {
+			if (s.isActive()) {
+				s.sendMessage(PlayerLogoutPush.valueOf(cause));
+			}
+			this.quitAllCross(cause);
+		});
 		this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
 	}
 

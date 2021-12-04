@@ -39,23 +39,15 @@ public final class ServerInfo extends HashMap<String, Object> {
 	 * @return
 	 */
 	public static ServerInfo valueOf(int serverId, int serverPort, int nodePort) {
-		return valueOf(serverId, NetUtil.getInnerIp(), serverPort, nodePort);
-	}
-
-	/**
-	 *
-	 * @param serverId 分配的服务id
-	 * @param host 内网地址
-	 * @param serverPort 对外服务端口
-	 * @param nodePort 服务间交互端口
-	 * @return
-	 */
-	public static ServerInfo valueOf(int serverId, String host, int serverPort, int nodePort) {
 		ServerInfo node = new ServerInfo();
-		node.put("nodePort", nodePort);
+		node.put("host", NetUtil.getInnerIp());
 		node.put("serverPort", serverPort);
+		node.put("nodePort", nodePort);
 		node.put("serverId", serverId);
-		node.put("host", host);
+		String publicIp = NetUtil.getPublicIp();
+		if (publicIp != null) {
+			node.put("publicHost", publicIp);
+		}
 		return node;
 	}
 
@@ -92,6 +84,17 @@ public final class ServerInfo extends HashMap<String, Object> {
 		return (Integer) get("serverPort");
 	}
 
+	/**
+	 * 得到对外提供的地址
+	 * 优先判断有没有对外的地址. 然后再使用内网地址.
+	 * @return
+	 */
+	public String getPublicHost(){
+		if (containsKey("publicHost")) {
+			return (String) get("publicHost");
+		}
+		return getHost();
+	}
 	@Override
 	public String toString() {
 		return JsonUtil.toJsonString(this);

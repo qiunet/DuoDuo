@@ -30,6 +30,7 @@ public class TestNetUtil  extends BaseTest {
 		Assert.assertTrue(NetUtil.isInnerIp(ip));
 
 		ip = "127.0.0.1";
+		Assert.assertTrue(NetUtil.isInnerIp(ip));
 		Assert.assertTrue(NetUtil.isLocalIp(ip));
 	}
 

@@ -217,7 +217,7 @@ public class DSession implements IChannelMessageSender {
 			return;
 		}
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
-		closeListeners.forEach(l -> l.close(cause));
+		closeListeners.forEach(l -> l.close(this, cause));
 		if (channel != null && (channel.isActive() || channel.isOpen())) {
 			channel.close();
 		}
@@ -312,6 +312,6 @@ public class DSession implements IChannelMessageSender {
 
 	@FunctionalInterface
 	public interface SessionCloseListener {
-		void close(CloseCause cause);
+		void close(DSession session, CloseCause cause);
 	}
 }
