@@ -20,10 +20,6 @@ public class MyHook implements Hook {
 	}
 
 	@Override
-	public void reloadCfg() {
-	}
-
-	@Override
 	public int getHookPort() {
 		return port;
 	}

@@ -64,11 +64,6 @@ public final class ServerStartup {
 		}
 
 		@Override
-		public void reloadCfg() {
-
-		}
-
-		@Override
 		public int getHookPort() {
 			return 1314;
 		}

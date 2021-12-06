@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
-import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -23,17 +22,13 @@ public interface Hook {
 	default String getReloadCfgMsg(){
 			return "RELOAD";
 	}
-	/***
-	 * 调用reload
+	/**
+	 * 让该服务器过期
+	 * @return
 	 */
-	default void reloadCfg() {
-		try {
-			CfgManagers.getInstance().reloadSetting();
-		} catch (Throwable throwable) {
-			LoggerType.DUODUO.error("Exception: ", throwable);
-		}
+	default String getDeprecateMsg(){
+		return "DEPRECATE";
 	}
-
 	/**
 	 * 得到shutdown端口
 	 * @return

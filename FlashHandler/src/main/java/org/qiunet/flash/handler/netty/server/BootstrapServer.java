@@ -1,11 +1,18 @@
 package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
+import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
+import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
+import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
@@ -131,27 +138,37 @@ public class BootstrapServer {
 		awaitThread = Thread.currentThread();
 		LockSupport.park();
 	}
-
 	/***
 	 * Hook的监听
 	 */
-	private class HookListener implements Runnable {
+	private final class HookListener implements Runnable {
 		private final ByteBuffer buffer = ByteBuffer.allocate(256);
+		private final AtomicBoolean deprecated = new AtomicBoolean();
 		private final AtomicBoolean shutdown = new AtomicBoolean();
 		private final Hook hook;
 		HookListener(Hook hook) {
-			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-				if (shutdown.compareAndSet(false, true)) {
-					this.shutdown();
-				}
-			}));
+			Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
 			this.hook = hook;
 		}
 
 		/**
+		 * 重新加载配置
+		 */
+		private void reloadCfg(){
+			try {
+				CfgManagers.getInstance().reloadSetting();
+			} catch (Throwable throwable) {
+				LoggerType.DUODUO.error("Exception: ", throwable);
+			}
+		}
+		/**
 		 * 通过shutdown 监听. 停止服务
 		 */
 		private void shutdown(){
+			if (! shutdown.compareAndSet(false, true)) {
+				return;
+			}
+
 			for (INettyServer server : nettyServers) {
 				server.shutdown();
 			}
@@ -161,8 +178,38 @@ public class BootstrapServer {
 			if (hook != null) {
 				hook.shutdown();
 			}
-		}
 
+			LockSupport.unpark(awaitThread);
+		}
+		/**
+		 * 让服务器过期
+		 */
+		private void deprecated(){
+			if (! deprecated.compareAndSet(false, true)) {
+				return;
+			}
+
+			UserOnlineManager.instance.foreach(actor -> {
+				logger.info("Push message to online user {}", actor.getId());
+				if (actor instanceof PlayerActor) {
+					actor.sendMessage(PlayerReLoginPush.instance);
+				}else if (actor instanceof CrossPlayerActor) {
+					actor.sendMessage(CrossPlayerLogoutPush.instance);
+				}
+				return ForEachResult.CONTINUE;
+			});
+
+			if (UserOnlineManager.instance.onlineSize() <= 0) {
+				this.shutdown();
+				return;
+			}
+			logger.info("Add change listener to OnlineUserManager");
+			UserOnlineManager.instance.addChangeListener(ret -> {
+				if (UserOnlineManager.instance.onlineSize() <= 0) {
+					this.shutdown();
+				}
+			});
+		}
 		/***
 		 * 处理现有的消息. 可以用户自定义
 		 * @param channel channel
@@ -179,12 +226,11 @@ public class BootstrapServer {
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
 			if (msg.equals(hook.getShutdownMsg())) {
-				if (shutdown.compareAndSet(false, true)) {
-					this.shutdown();
-					LockSupport.unpark(awaitThread);
-				}
+				this.shutdown();
 			}else if (msg.equals(hook.getReloadCfgMsg())){
-				hook.reloadCfg();
+				this.reloadCfg();
+			}else if (msg.equals(hook.getDeprecateMsg())) {
+				this.deprecated();
 			}else {
 				hook.custom(msg);
 			}

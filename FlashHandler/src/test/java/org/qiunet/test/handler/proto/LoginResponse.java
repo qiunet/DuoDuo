@@ -22,6 +22,14 @@ public class LoginResponse implements IChannelData {
 		return response;
 	}
 
+	public void setTestString(String testString) {
+		this.testString = testString;
+	}
+
+	public void setGender(GenderType gender) {
+		this.gender = gender;
+	}
+
 	public GenderType getGender() {
 		return gender;
 	}

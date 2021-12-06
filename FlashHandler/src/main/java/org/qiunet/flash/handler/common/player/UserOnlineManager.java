@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.data.util.ServerConfig;
@@ -16,6 +17,7 @@ import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -31,6 +33,8 @@ import java.util.function.Function;
  */
 public enum UserOnlineManager {
 	instance;
+	/*监听*/
+	private List<IOnlineUserSizeChangeListener> changeListeners;
 	/**
 	 * 在线
 	 */
@@ -39,6 +43,7 @@ public enum UserOnlineManager {
 	 * 等待重连
 	 */
 	private static final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
+
 
 	@EventListener
 	private <T extends AbstractUserActor<T>> void addPlayerActor(AuthEventData<T> eventData) {
@@ -70,6 +75,7 @@ public enum UserOnlineManager {
 			return;
 		}
 
+		triggerChangeListeners(false);
 		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
 		if (actor instanceof CrossPlayerActor) {
 			return;
@@ -99,6 +105,7 @@ public enum UserOnlineManager {
 		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
 
 		onlinePlayers.put(playerId, waitActor.actor);
+		triggerChangeListeners(true);
 		currActor.destroy();
 
 		return waitActor.actor;
@@ -112,8 +119,11 @@ public enum UserOnlineManager {
 		if (userActor instanceof CrossPlayerActor && userActor.getSender().isActive()) {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
-		onlinePlayers.remove(userActor.getId());
 		waitReconnects.remove(userActor.getId());
+		AbstractUserActor remove = onlinePlayers.remove(userActor.getId());
+		if (remove != null) {
+			triggerChangeListeners(false);
+		}
 		userActor.destroy();
 	}
 	/**
@@ -141,11 +151,10 @@ public enum UserOnlineManager {
 	/**
 	 * 遍历在线玩家.
 	 * @param consume
-	 * @param <T>
 	 */
-	public <T extends AbstractUserActor<T>> void foreach(Function<T, ForEachResult> consume) {
+	public void foreach(Function<AbstractUserActor, ForEachResult> consume) {
 		for (AbstractUserActor actor : onlinePlayers.values()) {
-			ForEachResult result = consume.apply((T) actor);
+			ForEachResult result = consume.apply(actor);
 			if (result == ForEachResult.BREAK) {
 				break;
 			}
@@ -178,5 +187,37 @@ public enum UserOnlineManager {
 			this.actor = actor;
 			this.future = future;
 		}
+	}
+
+	/**
+	 * 添加变动监听
+	 * @param listener
+	 */
+	public synchronized void addChangeListener(IOnlineUserSizeChangeListener listener) {
+		if (this.changeListeners == null) {
+			this.changeListeners = Lists.newCopyOnWriteArrayList();
+		}
+		this.changeListeners.add(listener);
+	}
+
+	/**
+	 * 触发监听
+	 * @return
+	 */
+	private void triggerChangeListeners(boolean add){
+		if (changeListeners == null) {
+			return;
+		}
+		changeListeners.forEach(listener -> listener.change(add));
+	}
+	/**
+	 * 现在玩家变动监听
+	 */
+	@FunctionalInterface
+	public interface IOnlineUserSizeChangeListener {
+		/**
+		 * @param add true 加 false 减
+		 */
+		void change(boolean add);
 	}
 }

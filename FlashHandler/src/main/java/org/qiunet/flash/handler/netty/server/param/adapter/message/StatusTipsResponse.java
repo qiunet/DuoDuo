@@ -53,6 +53,14 @@ public class StatusTipsResponse implements IChannelData {
 		return valueOf(ex.getStatus(), ex.getArgs());
 	}
 
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public void setParams(List<String> params) {
+		this.params = params;
+	}
+
 	public int getStatus() {
 		return status;
 	}

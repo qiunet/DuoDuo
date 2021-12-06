@@ -5,6 +5,7 @@ import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 
@@ -47,8 +48,11 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 			) {
 				continue;
 			}
-
-			codecMap.put(clazz, ProtobufProxy.create(clazz));
+			try {
+				codecMap.put(clazz, ProtobufProxy.create(clazz));
+			}catch (Exception e) {
+				throw new CustomException(e, "Protobuf create codec [{}] error", clazz.getName());
+			}
 		}
 	}
 

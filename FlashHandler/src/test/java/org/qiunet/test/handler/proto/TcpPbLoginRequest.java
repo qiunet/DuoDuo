@@ -33,6 +33,23 @@ public class TcpPbLoginRequest implements IChannelData {
 		return request;
 	}
 
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public void setPhoneNum(int phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+
+	public void setGender(GenderType gender) {
+		this.gender = gender;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
 	public GenderType getGender() {
 		return gender;
 	}

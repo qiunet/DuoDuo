@@ -22,6 +22,10 @@ public class PlayerLogoutPush implements IChannelData {
 		return data;
 	}
 
+	public void setCause(CloseCause cause) {
+		this.cause = cause;
+	}
+
 	public CloseCause getCause() {
 		return cause;
 	}

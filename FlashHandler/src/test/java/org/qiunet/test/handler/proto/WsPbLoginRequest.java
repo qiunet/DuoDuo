@@ -42,6 +42,22 @@ public class WsPbLoginRequest implements IChannelData {
 		return account;
 	}
 
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public void setPhoneNum(int phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+
+	public void setGender(GenderType gender) {
+		this.gender = gender;
+	}
+
 	public String getSecret() {
 		return secret;
 	}

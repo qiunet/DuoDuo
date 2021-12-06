@@ -35,6 +35,11 @@ public interface IProtocolId {
 		/**玩家登出*/
 		int PLAYER_LOGOUT_PUSH = 5;
 
+		/**玩家需要重新登录*/
+		int PLAYER_RE_LOGIN_PUSH = 6;
+		/**跨服玩家需要退出当前服务器*/
+		int CROSS_PLAYER_NEED_LOGOUT_PUSH = 7;
+
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;
 		/** 500 **/
