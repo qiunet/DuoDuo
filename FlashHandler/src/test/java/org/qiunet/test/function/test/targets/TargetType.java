@@ -10,21 +10,10 @@ import org.qiunet.function.targets.ITargetType;
  */
 public enum TargetType implements ITargetType {
 
-	LEVEL("等级目标"),
+	LEVEL,
 	/**
 	 * 怪物类型由 ITargetParam 指定
 	 */
-	KILL_BOSS("杀怪目标"),
+	KILL_BOSS,
 	;
-
-	private String desc;
-
-	TargetType(String desc) {
-		this.desc = desc;
-	}
-
-	@Override
-	public String desc() {
-		return desc;
-	}
 }

@@ -88,13 +88,6 @@ public class Targets {
 		return targets;
 	}
 
-	public void setTargets(List<Target> targets) {
-		this.targets = targets;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
 
 	public int getId() {
 		return id;

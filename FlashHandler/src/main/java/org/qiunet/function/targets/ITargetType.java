@@ -13,10 +13,4 @@ public interface ITargetType {
 	 * @return
 	 */
 	String name();
-
-	/**
-	 * 描述
-	 * @return
-	 */
-	String desc();
 }

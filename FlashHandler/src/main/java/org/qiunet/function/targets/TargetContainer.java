@@ -24,15 +24,15 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	/**
 	 * 所有需要监听的任务
 	 */
-	private Map<Type, List<Target>> targetMap = Maps.newConcurrentMap();
+	private final Map<Type, List<Target>> targetMap = Maps.newConcurrentMap();
 	/**
 	 * 锁
 	 */
-	private ReentrantLock lock = new ReentrantLock();
+	private final ReentrantLock lock = new ReentrantLock();
 	/**
 	 * 该container持有的玩家id.
 	 */
-	private PlayerActor player;
+	private final PlayerActor player;
 
 	/**
 	 * 构造一个Container

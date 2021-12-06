@@ -22,7 +22,7 @@ public class Target {
 	/**
 	 * 进度值
 	 */
-	private int value;
+	private long value;
 
 	static Target valueOf(ITargetDefGetter targetDefGetter, Targets targets, int index) {
 		Target target = new Target();
@@ -43,7 +43,7 @@ public class Target {
 	 * 增加进度 并且 尝试完成
 	 * @param count 数量
 	 */
-	public synchronized void addCount(int count){
+	public synchronized void addCount(long count){
 		Preconditions.checkState(count > 0);
 		this.value += count;
 		targets.updateCallback(this);
@@ -87,11 +87,11 @@ public class Target {
 		this.index = index;
 	}
 
-	public int getValue() {
+	public long getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
+	public void setValue(long value) {
 		this.value = value;
 	}
 }
