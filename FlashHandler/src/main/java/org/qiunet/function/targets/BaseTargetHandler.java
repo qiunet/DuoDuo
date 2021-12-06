@@ -34,7 +34,7 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType> {
 	 * @param player
 	 * @param target
 	 */
-	void onStartWatch(PlayerActor player, Target target){
+	protected void onStartWatch(PlayerActor player, Target target){
 		// do nothing
 	}
 }

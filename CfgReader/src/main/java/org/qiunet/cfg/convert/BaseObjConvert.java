@@ -1,6 +1,8 @@
 package org.qiunet.cfg.convert;
 
 
+import org.qiunet.utils.exceptions.CustomException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -15,7 +17,10 @@ public abstract class BaseObjConvert<T> {
 	private Class<T> clazz;
 	public BaseObjConvert() {
 		Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-		clazz = (Class<T>) actualTypeArguments[0];
+		if (actualTypeArguments[0] instanceof Class) {
+			this.clazz = ((Class<T>) actualTypeArguments[0]);
+			// 其它泛型类型的. 由子类实现 canConvert(Field field) 判断是否可以转换.
+		}
 	}
 
 	/***
@@ -41,6 +46,9 @@ public abstract class BaseObjConvert<T> {
 	 * @return
 	 */
 	public boolean canConvert(Class<?> type) {
+		if (clazz == null) {
+			throw new CustomException("Generic class is absent! you need call canConvert(Field field)!");
+		}
 		return type == clazz;
 	}
 }

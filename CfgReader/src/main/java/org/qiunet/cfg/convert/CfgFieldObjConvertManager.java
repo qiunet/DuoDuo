@@ -11,6 +11,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -45,7 +46,7 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 
 		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
 			for (BaseObjConvert<?> convert : converts) {
-				if (convert.canConvert(clazz)) {
+				if (convert.canConvert(field)) {
 					return convert;
 				}
 			}
@@ -69,6 +70,7 @@ public enum CfgFieldObjConvertManager implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		this.converts = context.getSubTypesOf(BaseObjConvert.class).stream()
+			.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))
 			.filter(Objects::nonNull)
 			.collect(Collectors.toList());

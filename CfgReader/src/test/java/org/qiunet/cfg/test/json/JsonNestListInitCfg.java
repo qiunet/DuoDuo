@@ -3,6 +3,8 @@ package org.qiunet.cfg.test.json;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.INestListCfg;
 
+import java.util.List;
+
 /***
 **Excel 的内容
 **
@@ -19,11 +21,11 @@ import org.qiunet.cfg.base.INestListCfg;
 @Cfg("config/init/init_data.json")
 public class JsonNestListInitCfg implements INestListCfg<Integer> {
 	private int id;
-	private String val1;
+	private List<Integer> val1;
 	private long val2;
 	private double val3;
 
-	public String getVal1() {
+	public List<Integer> getVal1() {
 		return val1;
 	}
 

@@ -49,9 +49,9 @@ public class TestJsonManager {
 	}
 	@Test
 	public void testNestMap(){
-		Assert.assertTrue(nestMapCfgWrapper.contains(1111, "1,2,3"));
+		Assert.assertTrue(nestMapCfgWrapper.contains(1111, "1;2;3"));
 		Assert.assertEquals(3, nestMapCfgWrapper.size());
-		JsonNestMapInitCfg cfg = nestMapCfgWrapper.getCfgById(1111, "1,2,3");
+		JsonNestMapInitCfg cfg = nestMapCfgWrapper.getCfgById(1111, "1;2;3");
 
 		Assert.assertEquals(cfg.getVal2(), 123456);
 	}
@@ -63,6 +63,6 @@ public class TestJsonManager {
 		Assert.assertTrue(simpleMapCfgWrapper.contains(2222));
 		Assert.assertTrue(simpleMapCfgWrapper.contains(3333));
 
-		Assert.assertEquals(cfg.getVal1(), "1,2,3");
+		Assert.assertEquals(cfg.getVal1(), "1;2;3");
 	}
 }

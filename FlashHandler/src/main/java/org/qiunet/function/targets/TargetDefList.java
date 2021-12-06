@@ -12,22 +12,22 @@ import java.util.function.BiConsumer;
  * @author qiunet
  * 2020-11-23 15:08
  */
-public class TargetDefList {
+public class TargetDefList<T extends ITargetDef> implements ITargetDefGetter<T> {
 	/**
 	 * 一个任务需要的所有的目标
 	 */
-	private List<ITargetDef> defs;
+	private List<T> defs;
 
-	public TargetDefList(List<ITargetDef> defs) {
+	public TargetDefList(List<T> defs) {
 		this.defs = ImmutableList.copyOf(defs);
 	}
 
 
-	public TargetDefList(ITargetDef... defs) {
+	public TargetDefList(T... defs) {
 		this.defs = ImmutableList.copyOf(defs);
 	}
 
-	public ITargetDef get(int index) {
+	public T get(int index) {
 		return defs.get(index);
 	}
 
@@ -35,13 +35,18 @@ public class TargetDefList {
 		return defs.size();
 	}
 
-	public void forEach(BiConsumer<Integer, ITargetDef> consumer) {
+	public void forEach(BiConsumer<Integer, T> consumer) {
 		for (int i = 0; i < defs.size(); i++) {
 			consumer.accept(i, defs.get(i));
 		}
 	}
 
-	public List<ITargetDef> getDefs() {
+	public List<T> getDefs() {
 		return defs;
+	}
+
+	@Override
+	public TargetDefList<T> getTargetCfg() {
+		return this;
 	}
 }

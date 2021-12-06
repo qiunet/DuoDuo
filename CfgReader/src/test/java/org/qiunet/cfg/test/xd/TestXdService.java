@@ -40,9 +40,9 @@ public enum TestXdService {
 	}
 
 	public void testNestMap(){
-		Assert.assertTrue(nestMapCfgWrapper.contains(1111, "1,2,3"));
+		Assert.assertTrue(nestMapCfgWrapper.contains(1111, "1;2;3"));
 		Assert.assertEquals(3, nestMapCfgWrapper.size());
-		XdNestMapInitCfg cfg = nestMapCfgWrapper.getCfgById(1111, "1,2,3");
+		XdNestMapInitCfg cfg = nestMapCfgWrapper.getCfgById(1111, "1;2;3");
 
 		Assert.assertEquals(cfg.getVal2(), 123456);
 	}
@@ -54,6 +54,6 @@ public enum TestXdService {
 		Assert.assertTrue(simpleMapCfgWrapper.contains(2222));
 		Assert.assertTrue(simpleMapCfgWrapper.contains(3333));
 
-		Assert.assertEquals(cfg.getVal1(), "1,2,3");
+		Assert.assertEquals(cfg.getVal1(), "1;2;3");
 	}
 }

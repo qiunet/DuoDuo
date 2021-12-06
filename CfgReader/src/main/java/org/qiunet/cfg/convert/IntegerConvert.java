@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
  * @author qiunet
  * 2020-02-04 12:54
  **/
-public class IntConvert extends BaseObjConvert<Integer> {
+public class IntegerConvert extends BaseObjConvert<Integer> {
 	@Override
 	public Integer fromString(Field field, String str) {
 		if (StringUtil.isEmpty(str)) {

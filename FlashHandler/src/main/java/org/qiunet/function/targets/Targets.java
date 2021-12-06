@@ -44,8 +44,9 @@ public class Targets {
 						   BiConsumer<Targets, Target> updateCallback,
 						   int id) {
 		Targets targets0 = new Targets();
-		targets0.targets = Lists.newArrayListWithCapacity(targetDefGetter.getTargetList().size());
-		targetDefGetter.getTargetList().forEach((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, index)));
+		TargetDefList targetCfg = targetDefGetter.getTargetCfg();
+		targets0.targets = Lists.newArrayListWithCapacity(targetCfg.size());
+		targetCfg.forEach((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, ((Integer) index))));
 		targets0.updateCallback = updateCallback;
 		targets0.container = container;
 		targets0.id = id;
