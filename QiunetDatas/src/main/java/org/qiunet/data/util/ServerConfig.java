@@ -1,12 +1,13 @@
 package org.qiunet.data.util;
 
 import org.qiunet.utils.async.LazyLoader;
-import org.qiunet.utils.collection.generics.StringSet;
+import org.qiunet.utils.collection.generics.StringList;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 * 生成表时候的范围. 必须是这个里面的源才会生成. 功能服和玩法服这里配置不一样
 	 */
 	@DConfigValue(value = ENTITY_TO_TABLE_RANGE, defaultVal = "")
-	private static StringSet entity2TableSourceRange;
+	private static StringList entity2TableSourceRange;
 	/**
 	 * 是否是正式服.
 	 * 是正式服. 需要屏蔽很多测试功能.
@@ -105,6 +106,18 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 */
 	public static boolean isDbSourceInRange(String dbSource) {
 		return entity2TableSourceRange.contains(dbSource);
+	}
+
+	/**
+	 * 得到默认源 默认为entity_to_table_range的第一个.
+	 * 如果有的话
+	 * @return
+	 */
+	public static String getDefaultDbSource() {
+		if (entity2TableSourceRange.isEmpty()) {
+			throw new CustomException("entity_to_table_range is empty!");
+		}
+		return entity2TableSourceRange.get(0);
 	}
 
 	public static DHocon getConfig() {
