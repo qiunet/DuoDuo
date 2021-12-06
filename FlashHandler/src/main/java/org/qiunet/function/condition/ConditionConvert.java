@@ -41,7 +41,7 @@ public class ConditionConvert extends BaseObjConvert<IConditions> {
 	}
 
 	@Override
-	public boolean canConvert(Class<IConditions> aClass) {
+	public boolean canConvert(Class<?> aClass) {
 		return aClass.isAssignableFrom(IConditions.class);
 	}
 }

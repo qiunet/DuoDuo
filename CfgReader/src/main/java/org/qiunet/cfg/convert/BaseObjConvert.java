@@ -27,10 +27,20 @@ public abstract class BaseObjConvert<T> {
 
 	/**
 	 * 是否可以转换
+	 * 需要用泛型判断的. 需要重写该方法
+	 * @param field
+	 * @return
+	 */
+	public boolean canConvert(Field field) {
+		Class<?> type = field.getType();
+		return this.canConvert(type);
+	}
+	/**
+	 * 是否可以转换
 	 * @param type
 	 * @return
 	 */
-	public boolean canConvert(Class<T> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == clazz;
 	}
 }

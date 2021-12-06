@@ -36,7 +36,7 @@ public class EnumConvert extends BaseObjConvert<Enum> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Enum> type) {
+	public boolean canConvert(Class<?> type) {
 		return type.isEnum() || Enum.class.isAssignableFrom(type);
 	}
 }

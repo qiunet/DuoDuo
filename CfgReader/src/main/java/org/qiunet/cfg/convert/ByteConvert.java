@@ -19,7 +19,7 @@ public class ByteConvert extends BaseObjConvert<Byte> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Byte> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Byte.class || type == Byte.TYPE;
 	}
 }

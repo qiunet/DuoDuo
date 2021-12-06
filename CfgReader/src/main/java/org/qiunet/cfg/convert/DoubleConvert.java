@@ -19,7 +19,7 @@ public class DoubleConvert extends BaseObjConvert<Double> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Double> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Double.TYPE || type == Double.class;
 	}
 }

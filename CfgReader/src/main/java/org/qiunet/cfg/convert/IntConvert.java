@@ -19,7 +19,7 @@ public class IntConvert extends BaseObjConvert<Integer> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Integer> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Integer.class || type == Integer.TYPE;
 	}
 }

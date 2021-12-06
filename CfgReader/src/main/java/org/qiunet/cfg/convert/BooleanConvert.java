@@ -14,7 +14,7 @@ public class BooleanConvert extends BaseObjConvert<Boolean> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Boolean> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Boolean.class || type == Boolean.TYPE;
 	}
 }

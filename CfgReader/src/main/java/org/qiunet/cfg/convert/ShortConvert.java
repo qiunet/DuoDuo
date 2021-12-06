@@ -19,7 +19,7 @@ public class ShortConvert extends BaseObjConvert<Short> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Short> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Short.class || type == Short.TYPE;
 	}
 }

@@ -12,7 +12,7 @@ public class FormulaConvert extends BaseObjConvert<IFormula> {
 	}
 
 	@Override
-	public boolean canConvert(Class<IFormula> type) {
+	public boolean canConvert(Class<?> type) {
 		return IFormula.class.isAssignableFrom(type);
 	}
 }

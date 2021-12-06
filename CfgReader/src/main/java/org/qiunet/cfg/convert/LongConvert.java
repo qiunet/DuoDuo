@@ -19,7 +19,7 @@ public class LongConvert extends BaseObjConvert<Long> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Long> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == Long.class || type == Long.TYPE;
 	}
 }

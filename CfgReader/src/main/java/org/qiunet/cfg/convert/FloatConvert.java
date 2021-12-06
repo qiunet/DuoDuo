@@ -20,7 +20,7 @@ public class FloatConvert extends BaseObjConvert<Float> {
 	}
 
 	@Override
-	public boolean canConvert(Class<Float> type) {
+	public boolean canConvert(Class<?> type) {
 		return type == float.class || type == Float.class;
 	}
 }
