@@ -26,6 +26,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	public static final String SERVER_PORT = "server.server_port";
 	// node port
 	public static final String NODE_PORT = "server.node_port";
+	// secret key
+	public static final String SECRET_KEY = "server.secret_key";
 	// 生成数据表的范围
 	public static final String ENTITY_TO_TABLE_RANGE = "db.entity_to_table_range";
 
@@ -66,7 +68,11 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 */
 	@DConfigValue(value = "server.official", defaultVal = "true")
 	private static boolean official;
-
+	/**
+	 * 服务器通讯使用的key
+	 */
+	@DConfigValue(value = SECRET_KEY)
+	private static String secretKey;
 	/**
 	 * 是否是正式服.
 	 * 是正式服. 需要屏蔽很多测试功能.
@@ -77,6 +83,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static int getServerId() {
 		return serverId;
+	}
+
+	public static String getSecretKey() {
+		return secretKey;
 	}
 
 	/**

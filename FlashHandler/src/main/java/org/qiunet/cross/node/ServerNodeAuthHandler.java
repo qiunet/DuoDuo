@@ -2,6 +2,7 @@ package org.qiunet.cross.node;
 
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  * serverNode 鉴权请求
@@ -14,7 +15,14 @@ public class ServerNodeAuthHandler extends PersistConnPbHandler<ServerNode, Serv
 
 	@Override
 	public void handler(ServerNode playerActor, IPersistConnRequest<ServerNodeAuthRequest> context) throws Exception {
-		playerActor.auth(context.getRequestData().getServerId());
+		ServerNodeAuthRequest requestData = context.getRequestData();
+		String sign = ServerNodeAuthRequest.makeSign(requestData.getDt());
+		if (! sign.equals(requestData.getSign())) {
+			LoggerType.DUODUO_CROSS.error("Auth request [{}, {}, {}] sign error.", requestData.getServerId(), requestData.getDt(), requestData.getSign());
+			return;
+		}
+
+		playerActor.auth(requestData.getServerId());
 		playerActor.sendMessage(ServerNodeAuthResponse.valueOf(true));
 	}
 
