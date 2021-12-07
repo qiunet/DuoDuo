@@ -32,14 +32,15 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		super(session);
 	}
 
-	ServerNode(RedisLock redisLock, ServerInfo serverInfo) {
+	ServerNode(RedisLock redisLock, int serverId, String host, int port) {
+		this.serverId = serverId;
+
 		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30 );
-		super.setSession(tcpClient.connect(serverInfo.getHost(), serverInfo.getNodePort(), f -> {
+		super.setSession(tcpClient.connect(host, port, f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
 		}));
 		// 发送鉴权请求
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
-		this.serverId = serverInfo.getServerId();
 		ServerNodeManager0.instance.addNode(this);
 		this.redisLock = redisLock;
 	}

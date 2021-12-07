@@ -11,8 +11,17 @@ public interface IRedisUtil {
 	 * @param <T>
 	 * @return
 	 */
-	<T> T execCommands(IRedisCaller<T> caller);
-
+	default <T> T execCommands(IRedisCaller<T> caller) {
+		return execCommands(caller, true);
+	}
+	/***
+	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
+	 * @param caller
+	 * @param log true 打印日志 false 不打印
+	 * @param <T>
+	 * @return
+	 */
+	<T> T execCommands(IRedisCaller<T> caller, boolean log);
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close

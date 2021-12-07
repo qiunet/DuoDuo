@@ -7,11 +7,13 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -26,6 +28,7 @@ import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
+import redis.clients.jedis.params.SetParams;
 
 import java.io.IOException;
 import java.util.List;
@@ -91,9 +94,23 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	/**
 	 * 获得serverNode
+	 * 是没有办法获得ServerInfo的情况.
 	 * @param serverId
 	 * @return
 	 */
+	ServerNode getNode(int serverId, String host, int port) {
+		if (serverId == currServerInfo.getServerId()) {
+			throw new CustomException("It is current server!!");
+		}
+
+		ServerNode serverNode = nodes.get(serverId);
+		if (serverNode != null) {
+			return serverNode;
+		}
+		return lockAndCreateServerNode(serverId, host, port);
+	}
+
+
 	ServerNode getNode(int serverId) {
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
@@ -103,21 +120,26 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (serverNode != null) {
 			return serverNode;
 		}
-		return lockAndCreateServerNode(serverId);
+
+		ServerInfo serverInfo = this.getServerInfo(serverId);
+		if (serverInfo == null) {
+			throw new CustomException("ID:{} ServerInfo absent!!", serverId);
+		}
+		return lockAndCreateServerNode(serverId, serverInfo.getHost(), serverInfo.getNodePort());
 	}
 
 	/**
 	 * 锁定. 然后创建serverNode
 	 * @param serverId
 	 */
-	private synchronized ServerNode lockAndCreateServerNode(int serverId) {
+	private synchronized ServerNode lockAndCreateServerNode(int serverId, String host, int port) {
 		RedisLock redisLock = redisUtil.redisLock(this.createRedisKey(serverId));
 		try {
 			if (redisLock.lock()) {
 				if (nodes.containsKey(serverId)) {
 					return nodes.get(serverId);
 				}
-				return new ServerNode(redisLock, this.getServerInfo(serverId));
+				return new ServerNode(redisLock, serverId, host, port);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -176,8 +198,18 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 每一分钟, 刷新server info
 	 */
 	private void refreshServerInfo() {
+		int onlineSize = UserOnlineManager.instance.onlineSize();
+		currServerInfo.put(ServerInfo.onlineUserCount, onlineSize);
+		String onlinePlayerRedisKey = this.getOnlinePlayerRedisKey();
 		currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
-		redisUtil.returnJedis().hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
+		redisUtil.execCommands(jedis -> {
+			jedis.hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
+			jedis.set(CURRENT_ONLINE_PLAYER_REDIS_KEY, onlinePlayerRedisKey, SetParams.setParams().ex(180L));
+
+			jedis.hincrBy(onlinePlayerRedisKey, String.valueOf(ServerConfig.getServerGroupId()), onlineSize);
+			jedis.expire(onlinePlayerRedisKey, 3L * 60);
+			return null;
+		}, false);
 		// 触发心跳.
 		ServerNodeTickEvent.instance.fireEventHandler();
 	}
@@ -247,5 +279,29 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		}else {
 			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + getCurrServerInfo().getServerId() +"_"+  serverId;
 		}
+	}
+
+	/**
+	 * 每个组的人数
+	 * @return
+	 */
+	public Map<Integer, Integer> groupOnlineUserCounts() {
+		Map<String, String> stringMap = redisUtil.execCommands(jedis -> {
+			String key = jedis.get(CURRENT_ONLINE_PLAYER_REDIS_KEY);
+			return jedis.hgetAll(key);
+		});
+		return stringMap.entrySet().stream().collect(Collectors.toMap(en -> Integer.parseInt(en.getKey()), en -> Integer.parseInt(en.getValue())));
+	}
+
+	/**
+	 * 存放最新的人数统计 redis key
+	 */
+	private static final String CURRENT_ONLINE_PLAYER_REDIS_KEY = "CURRENT_ONLINE_PLAYER_REDIS_KEY";
+	/**
+	 * 在线人数key 前缀
+	 */
+	private static final String ONLINE_PLAYER_REDIS_KEY_PREFIX = "online_player_redis_key_";
+	private String getOnlinePlayerRedisKey(){
+		return ONLINE_PLAYER_REDIS_KEY_PREFIX + DateUtil.dateToString(System.currentTimeMillis(), "HH:mm");
 	}
 }

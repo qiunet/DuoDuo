@@ -3,6 +3,7 @@ package org.qiunet.cross.node;
 import org.qiunet.data.util.ServerType;
 
 import java.util.List;
+import java.util.Map;
 
 /***
  *
@@ -61,7 +62,15 @@ public class ServerNodeManager {
 	public static long getServerCount(ServerType serverType, int groupId) {
 		return ServerNodeManager0.instance.getServerCount(serverType, groupId);
 	}
-
+	/**
+	 * 获得serverNode
+	 * 是没有办法获得ServerInfo的情况.
+	 * @param serverId
+	 * @return
+	 */
+	public static ServerNode getNode(int serverId, String host, int port) {
+		return ServerNodeManager0.instance.getNode(serverId, host, port);
+	}
 	/**
 	 * 获得一个serverNode
 	 * @param serverId
@@ -69,5 +78,13 @@ public class ServerNodeManager {
 	 */
 	public static ServerNode getNode(int serverId) {
 		return ServerNodeManager0.instance.getNode(serverId);
+	}
+
+	/**
+	 * 每个组在线的人数
+	 * @return
+	 */
+	public static Map<Integer, Integer> groupOnlineUserCounts(){
+		return ServerNodeManager0.instance.groupOnlineUserCounts();
 	}
 }

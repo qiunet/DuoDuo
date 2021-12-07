@@ -62,8 +62,19 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 	 */
 	@Override
 	public <T> T execCommands(IRedisCaller<T> caller) {
+		return execCommands(caller, true);
+	}
+	/***
+	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
+	 * @param caller
+	 * @param log true 打印日志 false 不打印
+	 * @param <T>
+	 * @return
+	 */
+	@Override
+	public <T> T execCommands(IRedisCaller<T> caller, boolean log) {
 		try (Jedis jedis = jedisPool.getResource()){
-			JedisProxy handler = new JedisProxy(jedis, caller.log());
+			JedisProxy handler = new JedisProxy(jedis, log);
 			IJedis jc = (IJedis) Proxy.newProxyInstance(handler.getClass().getClassLoader(), JEDIS_INTERFACES, handler);
 			return caller.call(jc);
 		}
