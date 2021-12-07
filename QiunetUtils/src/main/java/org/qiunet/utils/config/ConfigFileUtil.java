@@ -55,7 +55,9 @@ public class ConfigFileUtil {
 	 * @return
 	 */
 	public static Config loadConf(String fileName) {
-		return ConfigFactory.load(fileName);
+		Config config = ConfigFactory.load(fileName);
+		config.resolve();
+		return config;
 	}
 
 	/***
