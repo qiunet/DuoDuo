@@ -51,40 +51,34 @@ public class ConfigFileUtil {
 
 	/**
 	 * 加载 Hocon 类型文件
-	 * @param file
+	 * @param fileName classpath 目录下的文件
 	 * @return
 	 */
-	private static Config loadConf(File file) {
-		return ConfigFactory.parseFile(file);
+	public static Config loadConf(String fileName) {
+		return ConfigFactory.load(fileName);
 	}
 
 	/***
 	 * 加载一个 config file
-	 * @param configFile classpath 目录下的文件
-	 * @return
-	 */
-	public static IKeyValueData<Object, Object> loadConfig(File configFile) {
-		if (configFile.getName().endsWith(".properties")) {
-			return new KeyValueData<>(loaderProperties(configFile));
-		}else if (configFile.getName().endsWith(".conf")) {
-			Config config = loadConf(configFile);
-			Map<Object, Object> collect = config.entrySet().stream()
-					.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
-			return new KeyValueData<>(collect);
-		}
-		throw new CustomException("Not support!");
-	}
-	/***
-	 * 加载一个配置文件
-	 * @param fileName classpath 目录下的相对地址
+	 * @param fileName classpath 目录下的文件
 	 * @return
 	 */
 	public static IKeyValueData<Object, Object> loadConfig(String fileName) {
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 		File file = new File(url.getFile());
-		return loadConfig(file);
+
+		if (fileName.endsWith(".properties")) {
+			return new KeyValueData<>(loaderProperties(file));
+		}else if (fileName.endsWith(".conf")) {
+			Config config = loadConf(fileName);
+			Map<Object, Object> collect = config.entrySet().stream()
+					.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
+			return new KeyValueData<>(collect);
+		}
+		throw new CustomException("Not support!");
 	}
+
 	/***
 	 * 加载一个配置文件
 	 * @param fileName classpath 目录下的相对地址
@@ -97,6 +91,6 @@ public class ConfigFileUtil {
 
 		File file = new File(url.getFile());
 		FileUtil.changeListener(file, changeCallback);
-		return loadConfig(file);
+		return loadConfig(fileName);
 	}
 }

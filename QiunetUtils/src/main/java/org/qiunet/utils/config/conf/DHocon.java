@@ -2,7 +2,7 @@ package org.qiunet.utils.config.conf;
 
 import com.google.common.base.Preconditions;
 import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
+import org.qiunet.utils.config.ConfigFileUtil;
 import org.qiunet.utils.data.KeyValueData;
 import org.qiunet.utils.file.FileUtil;
 
@@ -33,19 +33,18 @@ public final class DHocon extends KeyValueData<String, String> {
 	 */
 	public DHocon(String fileName, DataChangeListener<String, String> changeListener) {
 		super(changeListener);
-
 		URL url = Thread.currentThread().getContextClassLoader().getResource(fileName);
 		Preconditions.checkNotNull(url, "fileName %s has not find in classpath", fileName);
 
 		File file = new File(url.getFile());
 		if (changeListener != null) {
-			FileUtil.changeListener(file, this::load0);
+			FileUtil.changeListener(file, key -> this.load0(fileName));
 		}
-		load0(file);
+		load0(fileName);
 	}
 
-	private void load0(File file) {
-		this.config = ConfigFactory.parseFile(file);
+	private void load0(String fileName) {
+		this.config = ConfigFileUtil.loadConf(fileName);
 		Map<String, String> collect = config.entrySet().stream()
 				.collect(Collectors.toMap(Map.Entry::getKey, en -> en.getValue().unwrapped().toString()));
 		super.load(collect);
