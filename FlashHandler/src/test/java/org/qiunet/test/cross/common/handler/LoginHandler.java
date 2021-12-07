@@ -21,7 +21,7 @@ public class LoginHandler extends BaseHandler<LoginRequest> {
 
 		playerActor.fireEvent(new PlayerLoginEventData());
 
-		ServerNodeManager.getNode(Constants.CROSS_SERVER_ID).fireEvent(CrossNodeEvent.valueOf(playerActor.getPlayerId()));
+		ServerNodeManager.getNode(Constants.CROSS_SERVER_ID).fireCrossEvent(CrossNodeEvent.valueOf(playerActor.getPlayerId()));
 	}
 
 	@Override

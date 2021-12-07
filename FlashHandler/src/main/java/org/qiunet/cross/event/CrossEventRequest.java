@@ -25,17 +25,35 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 	private String className;
 	@Protobuf(description = "事件反序列化的数据.")
 	private String datas;
+	/**
+	 * 系统发给玩家的事件. 需要有playerID. 会在玩家的线程执行
+	 */
+	@Protobuf(description = "玩家ID")
+	private long playerId;
 	@Ignore
 	private IEventData data;
 
 	public static CrossEventRequest valueOf(IEventData data) {
+		return valueOf(data, 0);
+	}
+
+	public static CrossEventRequest valueOf(IEventData data, long playerId) {
 		Preconditions.checkNotNull(data);
 
 		CrossEventRequest request = new CrossEventRequest();
 		request.className = data.getClass().getName();
 		request.datas = JsonUtil.toJsonString(data);
+		request.playerId = playerId;
 		request.data = data;
 		return request;
+	}
+
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
 	}
 
 	public String getClassName() {

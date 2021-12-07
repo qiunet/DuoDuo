@@ -38,8 +38,10 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * @param eventData
 	 */
 	public <D extends BaseUserEventData<T>> void fireEvent(D eventData){
-		eventData.setPlayer((T) this);
-		EventManager.fireEventHandler(eventData);
+		this.addMessage(p -> {
+			eventData.setPlayer(p);
+			EventManager.fireEventHandler(eventData);
+		});
 	}
 
 	@Override

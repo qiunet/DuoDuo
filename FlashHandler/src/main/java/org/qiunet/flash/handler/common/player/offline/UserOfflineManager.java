@@ -1,0 +1,50 @@
+package org.qiunet.flash.handler.common.player.offline;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import org.qiunet.utils.exceptions.CustomException;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+/***
+ * OfflinePlayerActor 管理
+ *
+ * @author qiunet
+ * 2021/11/19 11:57
+ */
+public enum UserOfflineManager {
+	instance;
+	/**
+	 * 离线的玩家Actor
+	 */
+	private final Cache<Long, OfflinePlayerActor> data = CacheBuilder.newBuilder()
+			.expireAfterAccess(30, TimeUnit.MINUTES)
+			.removalListener(data -> {
+				OfflinePlayerActor actor = (OfflinePlayerActor) data.getValue();
+				if (actor != null) {
+					actor.destroy();
+				}
+			}).build();
+
+	/**
+	 * 获取. 没有就创建一个
+	 * @param playerId
+	 * @return
+	 */
+	public OfflinePlayerActor getOrCreate(long playerId) {
+		try {
+			return data.get(playerId, () -> new OfflinePlayerActor(playerId));
+		} catch (ExecutionException e) {
+			throw new CustomException(e, "Get OfflinePlayerActor error");
+		}
+	}
+
+	/**
+	 * 移除
+	 * @param playerId
+	 */
+	void remove(long playerId) {
+		data.invalidate(playerId);
+	}
+}

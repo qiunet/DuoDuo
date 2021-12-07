@@ -1,10 +1,11 @@
 package org.qiunet.cross.node;
 
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
-import org.qiunet.cross.event.CrossEventManager;
+import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
+import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
@@ -53,14 +54,6 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 			super.addMessage(msg);
 		}
 	}
-
-	/**
-	 * 发送跨服事件
-	 * @param eventData
-	 */
-	public void fireEvent(IEventData eventData) {
-		CrossEventManager.fireCrossEvent(getServerId(), eventData);
-	}
 	/**
 	 * 必须设置 serverId
 	 *
@@ -73,12 +66,21 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 	/**
 	 * 服务与服务之间的事件触发 .走cross通道.
-	 * @param serverId 对方serverId
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
-		CrossEventManager.fireCrossEvent(serverId, eventData);
+	public <T extends IEventData> void fireCrossEvent(T eventData) {
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
+		this.sendMessage(request);
+	}
+	/**
+	 * 服务给玩家的事件触发 .走cross通道.
+	 * @param eventData 事件
+	 * @param <T>
+	 */
+	public <T extends BaseUserEventData> void firePlayerCrossEvent(T eventData, long playerId) {
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData, playerId);
+		this.sendMessage(request);
 	}
 	/**
 	 * 获得serverId

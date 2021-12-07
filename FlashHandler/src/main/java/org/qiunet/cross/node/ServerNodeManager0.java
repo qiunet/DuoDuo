@@ -148,7 +148,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	private void onServerStart(ServerStartupEventData data){
-		if (ServerConfig.getNodePort() == 0) {
+		if (this.currServerInfo.getNodePort() == 0) {
 			return;
 		}
 
@@ -177,7 +177,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	private void refreshServerInfo() {
 		currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
-		redisUtil.returnJedis(false).hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
+		redisUtil.returnJedis().hset(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()), currServerInfo.toString());
 		// 触发心跳.
 		ServerNodeTickEvent.instance.fireEventHandler();
 	}

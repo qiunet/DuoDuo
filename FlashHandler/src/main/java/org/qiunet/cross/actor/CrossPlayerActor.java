@@ -7,7 +7,7 @@ import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
 import org.qiunet.cross.actor.message.Cross2PlayerResponse;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
-import org.qiunet.cross.event.CrossEventManager;
+import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
@@ -55,8 +55,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	 * @param <T>
 	 */
 	public  <T extends BaseCrossPlayerEventData> void fireEvent(T eventData) {
-		eventData.setPlayer(this);
-		EventManager.fireEventHandler(eventData);
+		super.fireEvent(eventData);
 	}
 
 	/**
@@ -66,7 +65,9 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	 */
 	public  <T extends BasePlayerEventData> void fireCrossEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
-		CrossEventManager.fireCrossEvent(getPlayerId(), getSender(), eventData);
+
+		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
+		session.sendMessage(request.buildResponseMessage());
 	}
 
 	public long getPlayerId() {

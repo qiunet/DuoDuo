@@ -16,12 +16,27 @@ public abstract class BaseUserEventData<T extends AbstractUserActor<T>> implemen
 	 */
 	@Ignore
 	private T player;
+	/**
+	 * 玩家id
+	 * 不在线的玩家触发的事件. player为null, playerId有.
+	 */
+	@Ignore
+	private long playerId;
 
 	public T getPlayer() {
 		return player;
 	}
 
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
+	}
+
 	public void setPlayer(T player) {
+		this.playerId = player.getId();
 		this.player = player;
 	}
 }

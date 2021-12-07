@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.common.player.connect;
 import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
 import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
-import org.qiunet.cross.event.CrossEventManager;
+import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -81,7 +81,8 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 * @param <Event>
 	 */
 	public <Event extends BaseCrossPlayerEventData> void fireCrossEvent(Event event) {
-		CrossEventManager.fireCrossEvent(playerId, session, event);
+		CrossEventRequest request = CrossEventRequest.valueOf(event);
+		session.sendMessage(request.buildResponseMessage());
 	}
 
 	@Override
