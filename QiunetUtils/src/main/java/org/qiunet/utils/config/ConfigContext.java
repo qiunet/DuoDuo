@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.collection.generics.StringSet;
+import org.qiunet.utils.collection.generics.StringList;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
@@ -175,8 +175,8 @@ enum ConfigContext implements IApplicationContextAware {
 				return "1".equals(val) || Boolean.parseBoolean(val);
 			}
 
-			if (fieldType == StringSet.class) {
-				return new StringSet(Arrays.asList(StringUtil.split(val, ",")));
+			if (fieldType == StringList.class) {
+				return new StringList(Arrays.asList(StringUtil.split(val, ";")));
 			}
 
 			if (fieldType.isEnum() || Enum.class.isAssignableFrom(fieldType)) {

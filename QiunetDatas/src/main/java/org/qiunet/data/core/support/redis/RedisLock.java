@@ -1,6 +1,7 @@
 package org.qiunet.data.core.support.redis;
 
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import redis.clients.jedis.params.SetParams;
 
@@ -33,8 +34,10 @@ public class RedisLock implements AutoCloseable {
 	private final IRedisUtil redisUtil;
 	private DFuture<Long> future;
 	private final String key;
+	private final String val;
 
 	RedisLock(IRedisUtil redisUtil, String key) {
+		this.val = StringUtil.randomString(5);
 		this.redisUtil = redisUtil;
 		this.key = key+".lock";
 	}
@@ -44,7 +47,7 @@ public class RedisLock implements AutoCloseable {
 	 * @return 是否获得锁
 	 */
 	private boolean lock0(){
-		String ret = redisUtil.returnJedis().set(key, "", SetParams.setParams().ex(30L).nx());
+		String ret = redisUtil.returnJedis().set(key, val, SetParams.setParams().ex(30L).nx());
 		boolean locked = "OK".equals(ret);
 		if (locked) {
 			this.prolongedTime();
@@ -94,8 +97,14 @@ public class RedisLock implements AutoCloseable {
 	public void unlock() {
 		if (this.future != null) {
 			this.future.cancel(true);
-			redisUtil.returnJedis().expire(key, 0L);
 		}
+		redisUtil.execCommands(jedis -> {
+			String val = jedis.get(key);
+			if (this.val.equals(val)) {
+				jedis.del(key);
+			}
+			return null;
+		});
 	}
 
 	@Override
