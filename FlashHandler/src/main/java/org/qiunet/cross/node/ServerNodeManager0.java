@@ -18,6 +18,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -52,6 +54,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	// 所有当前的节点
 	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
+	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
+	private final AtomicBoolean deprecated = new AtomicBoolean();
 	// 服务判定离线时间
 	public static final long SERVER_OFFLINE_SECONDS = 110;
 	// redis
@@ -60,6 +64,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 服务器的信息. 支持增加自定义字段.
 	 */
 	private ServerInfo currServerInfo;
+
+
 	/**
 	 * 添加一个服务器节点
 	 * @param node
@@ -198,6 +204,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * 每一分钟, 刷新server info
 	 */
 	private void refreshServerInfo() {
+		if (deprecated.get()) {
+			return;
+		}
+
 		int onlineSize = UserOnlineManager.instance.onlineSize();
 		currServerInfo.put(ServerInfo.onlineUserCount, onlineSize);
 		String onlinePlayerRedisKey = this.getOnlinePlayerRedisKey();
@@ -212,6 +222,13 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		}, false);
 		// 触发心跳.
 		ServerNodeTickEvent.instance.fireEventHandler();
+	}
+
+	@EventListener
+	private void deprecatedEvent(ServerDeprecatedEvent event) {
+		if (this.deprecated.compareAndSet(false, true)) {
+			redisUtil.returnJedis().hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
+		}
 	}
 
 	@Override

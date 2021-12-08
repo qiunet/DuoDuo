@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
@@ -188,6 +189,8 @@ public class BootstrapServer {
 			if (! deprecated.compareAndSet(false, true)) {
 				return;
 			}
+
+			ServerDeprecatedEvent.fireDeprecated();
 
 			UserOnlineManager.instance.foreach(actor -> {
 				logger.info("Push message to online user {}", actor.getId());
