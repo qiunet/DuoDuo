@@ -3,10 +3,8 @@ package org.qiunet.cross.event;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
-import org.qiunet.flash.handler.common.player.offline.OfflinePlayerActor;
-import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
+import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.utils.listener.event.EventManager;
@@ -35,9 +33,7 @@ public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor
 					// 在线的情况
 					playerActor.fireEvent(eventData);
 				}else {
-					// 不在线的情况
-					OfflinePlayerActor offlinePlayerActor = UserOfflineManager.instance.getOrCreate(requestData.getPlayerId());
-					offlinePlayerActor.fireEvent((BasePlayerEventData) eventData);
+					OfflineUserRequestEvent.valueOf(eventData, requestData.getPlayerId()).fireEventHandler();
 				}
 			}
 			return;

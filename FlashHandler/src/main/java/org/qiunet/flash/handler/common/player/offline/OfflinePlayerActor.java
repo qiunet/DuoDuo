@@ -49,7 +49,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	 */
 	public void fireEvent(IEventData eventData) {
 		if (eventData instanceof BasePlayerEventData) {
-			((BasePlayerEventData) eventData).setPlayerId(getPlayerId());
+			((BasePlayerEventData) eventData).setOfflinePlayerActor(this);
 		}
 		this.addMessage(a -> eventData.fireEventHandler());
 	}

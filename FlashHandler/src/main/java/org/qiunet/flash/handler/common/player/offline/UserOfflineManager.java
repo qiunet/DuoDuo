@@ -2,7 +2,9 @@ package org.qiunet.flash.handler.common.player.offline;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventListener;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -27,12 +29,28 @@ public enum UserOfflineManager {
 				}
 			}).build();
 
+
+	/**
+	 * 获取一个不在线的玩家actor
+	 * @param playerId
+	 * @return
+	 */
+	public OfflinePlayerActor get(long playerId) {
+		return data.getIfPresent(playerId);
+	}
+
+	@EventListener
+	private void requestEvent(OfflineUserRequestEvent event) {
+		OfflinePlayerActor playerActor = getOrCreate(event.getPlayerId());
+		playerActor.fireEvent(event.getEventData());
+	}
+
 	/**
 	 * 获取. 没有就创建一个
 	 * @param playerId
 	 * @return
 	 */
-	public OfflinePlayerActor getOrCreate(long playerId) {
+	OfflinePlayerActor getOrCreate(long playerId) {
 		try {
 			return data.get(playerId, () -> new OfflinePlayerActor(playerId));
 		} catch (ExecutionException e) {
