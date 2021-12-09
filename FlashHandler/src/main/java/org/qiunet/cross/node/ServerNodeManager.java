@@ -69,15 +69,7 @@ public class ServerNodeManager {
 	public static long getServerCount(ServerType serverType, int groupId) {
 		return ServerNodeManager0.instance.getServerCount(serverType, groupId);
 	}
-	/**
-	 * 获得serverNode
-	 * 是没有办法获得ServerInfo的情况.
-	 * @param serverId
-	 * @return
-	 */
-	public static ServerNode getNode(int serverId, String host, int port) {
-		return ServerNodeManager0.instance.getNode(serverId, host, port);
-	}
+
 	/**
 	 * 获得一个serverNode
 	 * @param serverId

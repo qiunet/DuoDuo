@@ -50,7 +50,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		}
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
 
-		this.session = tcpClient.connect(serverInfo.getHost(), serverInfo.getServerPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor));
+		this.session = tcpClient.connect(serverInfo.getPublicHost(), serverInfo.getServerPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor));
 		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId()));
 		this.playerId = actor.getPlayerId();
 		this.serverId = serverId;

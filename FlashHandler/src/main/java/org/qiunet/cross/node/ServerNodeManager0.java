@@ -98,25 +98,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);
 	}
 
-	/**
-	 * 获得serverNode
-	 * 是没有办法获得ServerInfo的情况.
-	 * @param serverId
-	 * @return
-	 */
-	ServerNode getNode(int serverId, String host, int port) {
-		if (serverId == currServerInfo.getServerId()) {
-			throw new CustomException("It is current server!!");
-		}
-
-		ServerNode serverNode = nodes.get(serverId);
-		if (serverNode != null) {
-			return serverNode;
-		}
-		return lockAndCreateServerNode(serverId, host, port);
-	}
-
-
 	ServerNode getNode(int serverId) {
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
@@ -131,7 +112,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (serverInfo == null) {
 			throw new CustomException("ID:{} ServerInfo absent!!", serverId);
 		}
-		return lockAndCreateServerNode(serverId, serverInfo.getHost(), serverInfo.getNodePort());
+		return lockAndCreateServerNode(serverId, serverInfo.getPublicHost(), serverInfo.getNodePort());
 	}
 
 	/**
