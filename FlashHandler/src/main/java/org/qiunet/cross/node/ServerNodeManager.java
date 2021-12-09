@@ -36,6 +36,13 @@ public class ServerNodeManager {
 	}
 
 	/**
+	 * 是否是废弃服务器
+	 * @return
+	 */
+	public static boolean isDeprecatedServer(){
+		return ServerNodeManager0.instance.deprecated.get();
+	}
+	/**
 	 * 获得serverInfo
 	 * @param serverId
 	 * @return

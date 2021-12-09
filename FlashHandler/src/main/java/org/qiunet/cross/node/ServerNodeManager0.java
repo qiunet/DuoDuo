@@ -55,7 +55,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
-	private final AtomicBoolean deprecated = new AtomicBoolean();
+	final AtomicBoolean deprecated = new AtomicBoolean();
 	// 服务判定离线时间
 	public static final long SERVER_OFFLINE_SECONDS = 110;
 	// redis

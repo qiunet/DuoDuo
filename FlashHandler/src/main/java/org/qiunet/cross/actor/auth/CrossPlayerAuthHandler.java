@@ -2,6 +2,8 @@ package org.qiunet.cross.actor.auth;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.actor.event.CrossPlayerAuthSuccessEventData;
+import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 
@@ -16,7 +18,10 @@ public class CrossPlayerAuthHandler extends PersistConnPbHandler<CrossPlayerActo
 	public void handler(CrossPlayerActor playerActor, IPersistConnRequest<CrossPlayerAuthRequest> context) throws Exception {
 		playerActor.setServerId(context.getRequestData().getServerId());
 		playerActor.auth(context.getRequestData().getPlayerId());
-
+		if (ServerNodeManager.isDeprecatedServer()) {
+			// 发送过期服务器推送 让客户端退出
+			playerActor.sendMessage(CrossPlayerLogoutPush.instance);
+		}
 		playerActor.fireEvent(CrossPlayerAuthSuccessEventData.valueOf());
 	}
 
