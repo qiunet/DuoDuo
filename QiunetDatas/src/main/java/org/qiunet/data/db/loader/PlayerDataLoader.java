@@ -52,6 +52,11 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 		DataLoaderManager.instance.registerPlayerLoader(playerId, this);
 	}
 
+	@Override
+	public long getId() {
+		return playerId;
+	}
+
 	/**
 	 * 销毁. 顺便要更新入库
 	 */

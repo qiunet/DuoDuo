@@ -16,6 +16,10 @@ public interface IPlayerDataLoader {
 	 * @return
 	 */
 	IPlayerDataLoader dataLoader();
+
+	default long getId() {
+		return dataLoader().getId();
+	}
 	/**
 	 * 插入一个Do对象
 	 * @param entity IDbEntity

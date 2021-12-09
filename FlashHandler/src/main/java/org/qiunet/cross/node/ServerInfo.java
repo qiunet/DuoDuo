@@ -5,6 +5,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.net.NetUtil;
+import org.qiunet.utils.string.StringUtil;
 
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ServerInfo extends HashMap<String, Object> {
 	static final String onlineUserCount = "onlineUserCount";
+	static final String publicHostKey = "server.public_host";
 	static final String lastUpdateDt = "lastUpdateDt";
 
 	private transient final LazyLoader<ServerType> serverType = new LazyLoader<>(() -> ServerType.getServerType(getServerId()));
@@ -45,10 +47,15 @@ public final class ServerInfo extends HashMap<String, Object> {
 		node.put("serverPort", serverPort);
 		node.put("nodePort", nodePort);
 		node.put("serverId", serverId);
-		String publicIp = NetUtil.getPublicIp();
-		if (publicIp != null) {
-			node.put("publicHost", publicIp);
+		String publicHost = ServerConfig.getInstance().getValue(publicHostKey);
+		if (StringUtil.isEmpty(publicHost)) {
+			publicHost = NetUtil.getPublicIp();
 		}
+
+		if (! StringUtil.isEmpty(publicHost)) {
+			node.put("publicHost", publicHost);
+		}
+
 		return node;
 	}
 

@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -82,9 +81,17 @@ public final class DateUtil {
 	 */
 	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 	/**
+	 * 一天的秒
+	 */
+	public static final long DAY_SECONDS = 24 * 3600;
+	/**
 	 * 一天的毫秒数
 	 */
-	public static final long DAY_MS = 24 * 3600 * 1000;
+	public static final long DAY_MS = DAY_SECONDS * 1000;
+	/**
+	 * 一周的毫秒数
+	 */
+	public static final long WEEK_SECONDS = 7L * DAY_SECONDS;
 	/**
 	 * 一周的毫秒数
 	 */
