@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common.player.offline;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventListener;
@@ -43,6 +44,12 @@ public enum UserOfflineManager {
 	private void requestEvent(OfflineUserRequestEvent event) {
 		OfflinePlayerActor playerActor = getOrCreate(event.getPlayerId());
 		playerActor.fireEvent(event.getEventData());
+	}
+
+	@EventListener
+	private void executeEvent(OfflineUserExecuteEvent event) {
+		OfflinePlayerActor playerActor = getOrCreate(event.getPlayerId());
+		playerActor.addMessage(a -> event.run());
 	}
 
 	/**
