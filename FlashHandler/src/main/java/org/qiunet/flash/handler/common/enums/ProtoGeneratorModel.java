@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.enums;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.util.ProtobufIDLGenerator;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
 import org.qiunet.utils.file.FileUtil;
@@ -78,21 +79,28 @@ public enum ProtoGeneratorModel {
 
 			StringBuilder sb = new StringBuilder(V3_HEADER);
 			sb.append("\n\n");
-			Map<String, Integer> protoIDEnum = Maps.newHashMapWithExpectedSize(256);
-			protoIDEnum.put("ProtoId_NONE", 0);
+			Map<String, Integer> protoReqIDEnum = Maps.newHashMapWithExpectedSize(128);
+			protoReqIDEnum.put("ProtoReqId_NONE", 0);
+			Map<String, Integer> protoRspIDEnum = Maps.newHashMapWithExpectedSize(128);
+			protoRspIDEnum.put("ProtoRspId_NONE", 0);
 			for (Class<?> pbClass : allPbClass) {
 				if (pbClass.isAnnotationPresent(SkipProtoGenerator.class)) {
 					continue;
 				}
 				int protocolId = ProtobufIDLGenerator.getProtocolId(pbClass);
 				if (protocolId != 0) {
-					protoIDEnum.put(pbClass.getSimpleName(), protocolId);
+					if (ChannelDataMapping.getHandler(protocolId) != null) {
+						protoReqIDEnum.put(pbClass.getSimpleName(), protocolId);
+					}else {
+						protoRspIDEnum.put(pbClass.getSimpleName(), protocolId);
+					}
 				}
 				String content = ProtoGeneratorModel.generatorProtoContent(pbClass, cachedEnumsTypes, cachedTypes, true);
 				sb.append(content);
 			}
 
-			ProtobufIDLGenerator.generateEnumIDL(sb, protoIDEnum);
+			ProtobufIDLGenerator.generateEnumIDL("ProtoReqId", "所有请求协议", sb, protoReqIDEnum);
+			ProtobufIDLGenerator.generateEnumIDL("ProtoRspId", "所有响应协议", sb, protoRspIDEnum);
 			FileUtil.createFileWithContent(new File(directory, "AllInOneProtobufProtocol.proto"), sb.toString());
 		}
 	},

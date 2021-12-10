@@ -317,11 +317,11 @@ public class ProtobufIDLGenerator {
 
     }
 
-    public static void generateEnumIDL(StringBuilder code, Map<String, Integer> protoContent) {
-		code.append("// 所有协议\n");
-		code.append("enum ").append("ProtoId").append(" {  \n");
+    public static void generateEnumIDL(String enumName, String comment, StringBuilder code, Map<String, Integer> protoContent) {
+		code.append("// ").append(comment).append("\n");
+		code.append("enum ").append(enumName).append(" {  \n");
 		Lists.newArrayList(protoContent.entrySet()).stream().sorted((o1, o2) -> ComparisonChain.start().compare(o1.getValue(), o2.getValue()).result())
-		.forEach(en -> code.append("ProtoId_").append(en.getKey()).append("=").append(en.getValue()).append(";\n"));
+		.forEach(en -> code.append(enumName).append("_").append(en.getKey()).append("=").append(en.getValue()).append(";\n"));
 		code.append("}\n\n");
 	}
 
