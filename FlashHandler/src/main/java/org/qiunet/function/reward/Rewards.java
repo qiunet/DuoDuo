@@ -1,11 +1,13 @@
 package org.qiunet.function.reward;
 
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IResourceType;
+import org.qiunet.function.base.basic.BasicFunctionManager;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -148,5 +150,22 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	public String toDbJsonString(){
 		List<RewardConfig> collect = baseRewardList.stream().map(BaseReward::toRewardConfig).collect(Collectors.toList());
 		return JsonUtil.toJsonString(collect);
+	}
+
+	private static final TypeReference<List<RewardConfig>> REWARD_CONFIG_TYPE = new TypeReference<List<RewardConfig>>() {};
+
+	/**
+	 * 从json 读取一个Rewards
+	 * json 可以是数据库读取出来的. 也可能是远程服务器发的字符串
+	 * @param json
+	 * @param <Obj>
+	 * @return
+	 */
+	public static <Obj extends IThreadSafe & IPlayer> Rewards<Obj> jsonToRewards(String json){
+		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObjWithField(json, REWARD_CONFIG_TYPE);
+		List<BaseReward> collect = rewardConfigs.stream()
+				.map(config -> config.convertToRewardItem(BasicFunctionManager.instance::getResType))
+				.collect(Collectors.toList());
+		return new Rewards(collect);
 	}
 }

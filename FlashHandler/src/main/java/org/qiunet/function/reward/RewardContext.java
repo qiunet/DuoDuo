@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /***
  * 奖励上下文
@@ -38,7 +39,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 真实奖励
 	 */
-	private final List<IRealReward> realRewards = Lists.newArrayList();
+	private final List<IRealReward> realRewards = Lists.newArrayListWithCapacity(5);
 
 	private RewardContext(){}
 	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(int multi, Obj player, Rewards<Obj> rewards, IOperationType operationType) {
@@ -83,5 +84,9 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 
 	public List<IRealReward> getRealRewards() {
 		return realRewards;
+	}
+
+	public List<RewardTo> rewardTos(){
+		return getRealRewards().stream().map(IRealReward::toRewardTo).collect(Collectors.toList());
 	}
 }

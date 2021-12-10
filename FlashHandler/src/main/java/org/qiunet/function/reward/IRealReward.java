@@ -22,7 +22,7 @@ public interface IRealReward {
 	 * @return
 	 */
 	long getValue();
-	
+
 	/**
 	 * 获得资源配置
 	 * @param <T>
@@ -30,5 +30,14 @@ public interface IRealReward {
 	 */
 	default <T extends IResourceCfg> T getResourceCfg() {
 		return BasicFunctionManager.instance.getResById(getCfgId());
+	}
+
+	/**
+	 * 转成RewardTo
+	 *
+	 * @return
+	 */
+	default RewardTo toRewardTo(){
+		return RewardTo.valueOf(getCfgId(), getValue());
 	}
 }
