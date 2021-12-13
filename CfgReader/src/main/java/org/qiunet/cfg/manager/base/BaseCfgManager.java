@@ -1,9 +1,9 @@
 package org.qiunet.cfg.manager.base;
 
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.exception.UnknownFieldException;
+import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -130,7 +130,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 			if (isInvalidField(field)) {
 				throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
-			Object obj = CfgFieldObjConvertManager.getInstance().covert(field, val);
+			Object obj = ConvertManager.getInstance().covert(field, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (IllegalAccessException e) {

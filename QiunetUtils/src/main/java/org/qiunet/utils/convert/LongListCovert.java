@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert;
+package org.qiunet.utils.convert;
 
 import org.qiunet.utils.collection.generics.LongList;
 import org.qiunet.utils.string.StringUtil;

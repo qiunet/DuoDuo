@@ -1,6 +1,6 @@
 package org.qiunet.cfg.test;
 
-import org.qiunet.cfg.convert.BaseObjConvert;
+import org.qiunet.utils.convert.BaseObjConvert;
 
 import java.lang.reflect.Field;
 

@@ -5,12 +5,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
 import org.qiunet.cfg.base.IKeyValCfg;
-import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.cfg.listener.CfgManagerAddEventData;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -79,7 +79,7 @@ class KeyValManager implements IApplicationContextAware {
 			String val = keyValDatas.get(keyName);
 			Preconditions.checkState(! StringUtil.isEmpty(val) , "No cfg value for KeyName [%s]", keyName);
 			field.setAccessible(true);
-			Object realVal = CfgFieldObjConvertManager.getInstance().covert(field, val);
+			Object realVal = ConvertManager.getInstance().covert(field, val);
 			Object instance = null;
 			if (! Modifier.isStatic(field.getModifiers())) {
 				instance = context.getInstanceOfClass(field.getDeclaringClass());

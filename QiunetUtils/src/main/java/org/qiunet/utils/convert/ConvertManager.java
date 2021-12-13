@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert;
+package org.qiunet.utils.convert;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -23,14 +23,14 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-02-04 13:09
  **/
-public enum CfgFieldObjConvertManager implements IApplicationContextAware {
+public enum ConvertManager implements IApplicationContextAware {
 	instance;
 	/***
 	 * 所有的convert
 	 */
 	private List<? extends BaseObjConvert> converts = Lists.newArrayList();
 
-	public static CfgFieldObjConvertManager getInstance() {
+	public static ConvertManager getInstance() {
 		return instance;
 	}
 

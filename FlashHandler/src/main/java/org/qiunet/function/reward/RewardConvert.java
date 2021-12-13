@@ -1,7 +1,7 @@
 package org.qiunet.function.reward;
 
 import com.alibaba.fastjson.TypeReference;
-import org.qiunet.cfg.convert.BaseObjConvert;
+import org.qiunet.utils.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 

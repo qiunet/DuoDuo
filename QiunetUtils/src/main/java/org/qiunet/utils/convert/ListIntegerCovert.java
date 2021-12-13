@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert;
+package org.qiunet.utils.convert;
 
 import java.lang.reflect.Field;
 import java.util.List;

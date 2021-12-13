@@ -4,8 +4,8 @@ import com.alibaba.fastjson.TypeReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-import org.qiunet.cfg.convert.CfgFieldObjConvertManager;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -109,7 +109,7 @@ public class ConditionManager {
 								 continue;
 							 }
 
-							 Object o = CfgFieldObjConvertManager.instance.covert(field, cfg.getValue(field.getName()));
+							 Object o = ConvertManager.instance.covert(field, cfg.getValue(field.getName()));
 							 ReflectUtil.setField(iCondition, field, o);
 						 }
 						 if (cfg.getBoolean("not")) {

@@ -4,12 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.collection.generics.StringList;
 import org.qiunet.utils.config.anno.DConfig;
 import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.config.properties.DProperties;
+import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -18,10 +18,7 @@ import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -139,57 +136,12 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 			try {
 				field.setAccessible(true);
-				field.set(instance, this.convertVal(field, val));
+				field.set(instance, ConvertManager.instance.covert(field, val));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		});
 	}
-
-	/**
-	 * 转换字段值
-	 * @param field
-	 * @param val
-	 * @return
-	 */
-	private Object convertVal(Field field, String val) {
-		try {
-			Class<?> aClass = Class.forName("org.qiunet.cfg.convert.CfgFieldObjConvertManager");
-			Method method = aClass.getMethod("covert", Field.class, String.class);
-			return method.invoke(context.getInstanceOfClass(aClass), field, val);
-		} catch (ClassNotFoundException e) {
-			Class fieldType = field.getType();
-			if (fieldType == String.class) {
-				return val;
-			}
-
-			if (fieldType == Integer.TYPE || fieldType == Integer.class) {
-				return Integer.parseInt(val);
-			}
-
-			if (fieldType == Long.TYPE || fieldType == Long.class) {
-				return Long.parseLong(val);
-			}
-
-			if (fieldType == Boolean.TYPE || fieldType == Boolean.class) {
-				return "1".equals(val) || Boolean.parseBoolean(val);
-			}
-
-			if (fieldType == StringList.class) {
-				return new StringList(Arrays.asList(StringUtil.split(val, ";")));
-			}
-
-			if (fieldType.isEnum() || Enum.class.isAssignableFrom(fieldType)) {
-				return Enum.valueOf(fieldType, val);
-			}
-
-
-		} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		throw new CustomException("Can not convert class type for ["+field.getName()+"]");
-	}
-
 	/**
 	 * 配置文件的 数据
 	 */

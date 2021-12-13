@@ -1,7 +1,7 @@
 package org.qiunet.function.formula;
 
-import org.qiunet.cfg.convert.BaseObjConvert;
 import org.qiunet.function.formula.parse.FormulaParseManager;
+import org.qiunet.utils.convert.BaseObjConvert;
 
 import java.lang.reflect.Field;
 

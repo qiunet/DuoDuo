@@ -1,4 +1,4 @@
-package org.qiunet.cfg.convert;
+package org.qiunet.utils.convert;
 
 
 import org.qiunet.utils.exceptions.CustomException;
