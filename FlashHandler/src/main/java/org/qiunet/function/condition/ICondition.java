@@ -3,7 +3,10 @@ package org.qiunet.function.condition;
 import org.qiunet.flash.handler.context.status.StatusResult;
 
 /***
+ * 需要注入值的字段.
+ * 使用{@link ConditionField 注解}
  *
+ * 字段不要命名为 not  or. 这些为关键字.
  *
  * @author qiunet
  * 2020-12-30 16:11
@@ -14,12 +17,6 @@ public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> exten
 	 * @return
 	 */
 	Type getType();
-
-	/**
-	 * 初始化
-	 * @param config 配置
-	 */
-	void init(ConditionConfig config);
 	/***
 	 * 公共的条件 父类.
 	 * 比如开服天数  条件等
@@ -35,6 +32,11 @@ public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> exten
 		}
 
 		StatusResult verify();
+	}
+
+	@Override
+	default ConditionNot<Obj, Type> not() {
+		return new ConditionNot<>(this);
 	}
 }
 

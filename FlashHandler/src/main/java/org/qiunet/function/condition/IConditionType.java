@@ -12,4 +12,10 @@ public interface IConditionType {
 	 * @return
 	 */
 	String name();
+
+	/**
+	 * 给策划的描述
+	 * @return
+	 */
+	String desc();
 }
