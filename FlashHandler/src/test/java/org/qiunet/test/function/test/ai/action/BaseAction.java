@@ -23,6 +23,9 @@ public abstract class BaseAction extends BaseBehaviorAction {
 
 	@Override
 	public boolean preCondition() {
+		if (preCondition == null) {
+			return true;
+		}
 		return preCondition.verify(hero).isSuccess();
 	}
 }

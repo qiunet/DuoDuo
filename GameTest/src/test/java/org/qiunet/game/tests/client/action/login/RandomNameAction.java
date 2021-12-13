@@ -1,6 +1,7 @@
 package org.qiunet.game.tests.client.action.login;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
 import org.qiunet.function.condition.ConditionManager;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
@@ -17,10 +18,14 @@ import org.qiunet.game.tests.protocol.proto.login.RandomNameResponse;
  * qiunet
  * 2021/8/8 10:08
  **/
+@BehaviorAction(desc = "随机名称")
 public class RandomNameAction extends TestAction {
 
 	public RandomNameAction(Robot robot) {
-		super(robot, (IConditions<Robot>) ConditionManager.EMPTY_CONDITION);
+		this(robot, (IConditions<Robot>) ConditionManager.EMPTY_CONDITION);
+	}
+	public RandomNameAction(Robot robot, IConditions<Robot> conditions) {
+		super(robot, conditions);
 	}
 
 	@Override

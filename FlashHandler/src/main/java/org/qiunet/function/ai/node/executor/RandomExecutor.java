@@ -54,10 +54,15 @@ public class RandomExecutor extends BaseBehaviorExecutor {
 
 	@Override
 	public boolean preCondition() {
+		if (! super.preCondition()) {
+			return false;
+		}
+
 		for (IBehaviorNode node : getChildNodes()) {
 			if (executedNodes.contains(node)) {
 				continue;
 			}
+
 			if (node.isRunning() || node.preCondition()) {
 				return true;
 			}

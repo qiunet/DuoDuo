@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root name="机器人逻辑">
+	<random condition="[{'type': 'SEE_GOBLIN', 'not': 'true'}, {'type': 'SEE_OMA', 'not': 'true'}]">
+		<action clazz="org.qiunet.test.function.test.ai.action.Idle" condition="" />
+		<action clazz="org.qiunet.test.function.test.ai.action.GetExp" condition="" />
+	</random>
+	<sequence>
+		<action clazz="org.qiunet.test.function.test.ai.action.RunToTarget" condition="[{'type': 'SEE_GOBLIN'}, {'type': 'SEE_OMA', 'not': 'true'}]" />
+		<action clazz="org.qiunet.test.function.test.ai.action.Fight" condition="[{'type': 'SEE_OMA', 'not': 'true'}]" />
+	</sequence>
+	<action clazz="org.qiunet.test.function.test.ai.action.Escape" condition="[{'type': 'SEE_OMA'}]" />
+</root>

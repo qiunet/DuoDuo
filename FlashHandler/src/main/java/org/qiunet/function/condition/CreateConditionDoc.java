@@ -61,7 +61,7 @@ public class CreateConditionDoc implements IApplicationContextAware {
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		conditions = context.getSubTypesOf(ICondition.class).stream()
 				.filter(clz -> ! Modifier.isAbstract(clz.getModifiers()))
-				.filter(clz -> clz == ConditionNot.class)
+				.filter(clz -> clz != ConditionNot.class)
 				.map(clz -> {
 					try {
 						return clz.newInstance();

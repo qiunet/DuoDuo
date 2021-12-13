@@ -1,9 +1,9 @@
 package org.qiunet.test.function.test.ai.action;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.test.function.test.ai.Hero;
-import org.qiunet.test.function.test.ai.condition.SeeGoblinCondition;
-import org.qiunet.test.function.test.ai.condition.SeeOmaCondition;
 
 /***
  *
@@ -11,10 +11,11 @@ import org.qiunet.test.function.test.ai.condition.SeeOmaCondition;
  * qiunet
  * 2021/8/17 10:16
  **/
+@BehaviorAction(desc = "跑向目标")
 public class RunToTarget extends BaseAction {
 
-	public RunToTarget(Hero hero) {
-		super(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
+	public RunToTarget(Hero hero, IConditions<Hero> conditions) {
+		super(hero, conditions);
 	}
 
 	@Override

@@ -1,6 +1,8 @@
 package org.qiunet.game.tests.client.action.player;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
@@ -18,6 +20,7 @@ import org.qiunet.game.tests.protocol.proto.player.GetExpResponse;
  * qiunet
  * 2021/9/2 11:32
  **/
+@BehaviorAction(desc = "获得经验")
 public class GetExpAction extends TestAction {
 
 	private boolean getResp;
@@ -29,7 +32,10 @@ public class GetExpAction extends TestAction {
 	}
 
 	public GetExpAction(Robot robot) {
-		super(robot, new ExpEnoughCondition().not());
+		this(robot, new ExpEnoughCondition().not());
+	}
+	public GetExpAction(Robot robot, IConditions<Robot> conditions) {
+		super(robot, conditions);
 	}
 
 	@Override

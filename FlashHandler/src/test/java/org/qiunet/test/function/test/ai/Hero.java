@@ -1,5 +1,6 @@
 package org.qiunet.test.function.test.ai;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.test.function.test.ai.enums.Enemy;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * qiunet
  * 2021/8/17 10:17
  **/
-public class Hero {
+public class Hero extends MessageHandler<Hero> {
 	/**
 	 * 看见的敌人
 	 */
@@ -60,5 +61,10 @@ public class Hero {
 	public void runFinished(){
 		LoggerType.DUODUO.info("Hero 跑步结束!");
 		runToTargetPoint.set(false);
+	}
+
+	@Override
+	public long getId() {
+		return 1000;
 	}
 }

@@ -2,6 +2,8 @@ package org.qiunet.game.tests.client.action.login;
 
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
@@ -21,6 +23,7 @@ import org.qiunet.game.tests.server.enums.GameStatus;
  * qiunet
  * 2021/8/5 10:55
  **/
+@BehaviorAction(desc = "注册新角色")
 public class RegisterAction extends TestAction {
 	/**
 	 * 是否错误
@@ -39,7 +42,10 @@ public class RegisterAction extends TestAction {
 	}
 
 	public RegisterAction(Robot robot) {
-		super(robot, new RandomNamePresent().and(new RegisterCountCondition(3)));
+		this(robot, new RandomNamePresent().and(new RegisterCountCondition(3)));
+	}
+	public RegisterAction(Robot robot, IConditions<Robot> conditions) {
+		super(robot, conditions);
 	}
 
 	@Override

@@ -2,10 +2,11 @@ package org.qiunet.test.function.test.ai;
 
 import org.junit.Test;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
-import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.test.function.test.ai.action.*;
+import org.qiunet.test.function.test.ai.condition.SeeGoblinCondition;
+import org.qiunet.test.function.test.ai.condition.SeeOmaCondition;
 import org.qiunet.test.function.test.ai.enums.Enemy;
 
 /***
@@ -23,16 +24,19 @@ public class AiTest {
 	@Test
 	public void test(){
 		Hero hero = new Hero();
-		Escape escape = new Escape(hero);
-		Fight fight = new Fight(hero);
-		RunToTarget runToTarget1 = new RunToTarget(hero);
-		Idle idle = new Idle(hero);
-		GetExp getExp = new GetExp(hero);
+		Escape escape = new Escape(hero, new SeeOmaCondition());
+		Fight fight = new Fight(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
+		RunToTarget runToTarget1 = new RunToTarget(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
+		Idle idle = new Idle(hero, null);
+		GetExp getExp = new GetExp(hero, null);
 
-		BehaviorRootTree tree = new BehaviorRootTree(new SelectorExecutor(false));
-		tree.addChild(new RandomExecutor().addChild(idle, getExp),
-				new SequenceExecutor().addChild(runToTarget1, fight),
-				escape);
+		RandomExecutor randomExecutor = new RandomExecutor(() -> {
+			return new SeeGoblinCondition().not().and(new SeeOmaCondition().not()).verify(hero).isSuccess();
+		});
+		randomExecutor.addChild(idle, getExp);
+
+		BehaviorRootTree tree = new BehaviorRootTree();
+		tree.addChild(randomExecutor, new SequenceExecutor().addChild(runToTarget1, fight), escape);
 
 
 		hero.seeEnemy(Enemy.GOBLIN);
@@ -51,4 +55,6 @@ public class AiTest {
 			tree.tick();
 		}
 	}
+
+
 }

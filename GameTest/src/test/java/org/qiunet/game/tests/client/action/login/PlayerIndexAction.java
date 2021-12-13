@@ -1,6 +1,8 @@
 package org.qiunet.game.tests.client.action.login;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
@@ -19,10 +21,15 @@ import java.util.List;
  * qiunet
  * 2021/8/16 21:07
  **/
+@BehaviorAction(desc = "进入首页")
 public class PlayerIndexAction extends TestAction {
 
 	public PlayerIndexAction(Robot robot) {
-		super(robot, new RoleCountCondition(1));
+		this(robot, new RoleCountCondition(1));
+	}
+
+	public PlayerIndexAction(Robot robot, IConditions<Robot> conditions) {
+		super(robot, conditions);
 	}
 
 	@Override

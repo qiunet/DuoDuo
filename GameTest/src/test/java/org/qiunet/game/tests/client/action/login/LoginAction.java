@@ -1,6 +1,8 @@
 package org.qiunet.game.tests.client.action.login;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
@@ -16,10 +18,15 @@ import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
  * qiunet
  * 2021/7/26 17:23
  **/
+@BehaviorAction(desc = "登录")
 public class LoginAction extends TestAction {
 
 	public LoginAction(Robot robot) {
-		super(robot, new LoginCondition().not());
+		this(robot, new LoginCondition().not());
+	}
+
+	public LoginAction(Robot robot, IConditions<Robot> conditions) {
+		super(robot, conditions);
 	}
 
 	@Override

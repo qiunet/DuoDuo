@@ -39,7 +39,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction
 
 	@Override
 	public boolean preCondition() {
-		return preCondition.verify(robot).isSuccess();
+		return preCondition == null || preCondition.verify(robot).isSuccess();
 	}
 
 	@Override
