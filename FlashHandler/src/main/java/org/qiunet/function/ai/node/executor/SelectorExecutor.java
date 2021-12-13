@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SelectorExecutor extends BaseBehaviorExecutor<SelectorExecutor> {
+public class SelectorExecutor extends BaseBehaviorExecutor {
 	/**
 	 * 按照优先级执行
 	 * 每次从左 -> 右

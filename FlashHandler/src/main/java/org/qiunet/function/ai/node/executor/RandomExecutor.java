@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * qiunet
  * 2021/8/9 12:10
  **/
-public class RandomExecutor extends BaseBehaviorExecutor<RandomExecutor> {
+public class RandomExecutor extends BaseBehaviorExecutor {
 	/**
 	 * 已经执行过的node
 	 * 如果 excludeExecuted == true

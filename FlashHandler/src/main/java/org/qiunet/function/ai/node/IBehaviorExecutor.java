@@ -13,6 +13,12 @@ import java.util.List;
  */
 public interface IBehaviorExecutor extends IBehaviorNode {
 	/**
+	 * 添加节点
+	 * @param actions
+	 * @return
+	 */
+	IBehaviorExecutor addChild(IBehaviorNode... actions);
+	/**
 	 * 移除某个节点
 	 * 某些节点生命周期只需要执行一次. 比如登录.
 	 * @param child 需要移除的节点

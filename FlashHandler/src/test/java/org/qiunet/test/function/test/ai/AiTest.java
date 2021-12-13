@@ -2,6 +2,7 @@ package org.qiunet.test.function.test.ai;
 
 import org.junit.Test;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
+import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.test.function.test.ai.action.*;
@@ -28,7 +29,7 @@ public class AiTest {
 		Idle idle = new Idle(hero);
 		GetExp getExp = new GetExp(hero);
 
-		BehaviorRootTree tree = new BehaviorRootTree();
+		BehaviorRootTree tree = new BehaviorRootTree(new SelectorExecutor(false));
 		tree.addChild(new RandomExecutor().addChild(idle, getExp),
 				new SequenceExecutor().addChild(runToTarget1, fight),
 				escape);

@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2021-07-08 10:50
  */
-public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> extends BaseBehaviorNode implements IBehaviorExecutor {
+public abstract class BaseBehaviorExecutor extends BaseBehaviorNode implements IBehaviorExecutor {
 	/**
 	 * 节点内所有的Node
 	 */
@@ -47,12 +47,13 @@ public abstract class BaseBehaviorExecutor<T extends BaseBehaviorExecutor<T>> ex
 	 * 添加action
 	 * @param actions
 	 */
-	public T addChild(IBehaviorNode... actions) {
+	@Override
+	public IBehaviorExecutor addChild(IBehaviorNode... actions) {
 		for (IBehaviorNode action : actions) {
 			action.setParent(this);
 			this.nodes.add(action);
 		}
-		return (T)this;
+		return this;
 	}
 
 	@Override

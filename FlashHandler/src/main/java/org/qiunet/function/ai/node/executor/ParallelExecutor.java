@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * qiunet
  * 2021/8/16 16:40
  **/
-public class ParallelExecutor extends BaseBehaviorExecutor<ParallelExecutor> {
+public class ParallelExecutor extends BaseBehaviorExecutor {
 	/**
 	 * 所有运行中的节点
 	 */

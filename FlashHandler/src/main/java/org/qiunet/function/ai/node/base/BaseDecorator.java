@@ -2,7 +2,9 @@ package org.qiunet.function.ai.node.base;
 
 import com.google.common.collect.ImmutableList;
 import org.qiunet.function.ai.node.IBehaviorDecorator;
+import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 
@@ -24,6 +26,11 @@ public abstract class BaseDecorator extends BaseBehaviorNode implements IBehavio
 		this.node = node;
 		node.setParent(this);
 		this.nodes = ImmutableList.of(this.node);
+	}
+
+	@Override
+	public IBehaviorExecutor addChild(IBehaviorNode... actions) {
+		throw new CustomException("Not support in decorator node!");
 	}
 
 	@Override

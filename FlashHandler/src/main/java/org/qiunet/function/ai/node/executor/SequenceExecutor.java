@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SequenceExecutor extends BaseBehaviorExecutor<SequenceExecutor> {
+public class SequenceExecutor extends BaseBehaviorExecutor {
 	/**
 	 * 当前执行
 	 */
