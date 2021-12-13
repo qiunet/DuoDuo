@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.context.status.StatusResult;
  * @author qiunet
  * 2021/12/13 11:19
  */
-public class ConditionNot<Obj, Type extends Enum<Type> & IConditionType> implements ICondition<Obj, Type> {
+public final class ConditionNot<Obj, Type extends Enum<Type> & IConditionType> implements ICondition<Obj, Type> {
 
 	private ICondition<Obj, Type> condition;
 

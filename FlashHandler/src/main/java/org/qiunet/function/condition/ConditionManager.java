@@ -125,7 +125,9 @@ public class ConditionManager {
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends ICondition>> classes = context.getSubTypesOf(ICondition.class);
 			for (Class<? extends ICondition> aClass : classes) {
-				if (Modifier.isAbstract(aClass.getModifiers())) {
+				if (Modifier.isAbstract(aClass.getModifiers())
+				 || aClass == ConditionNot.class
+				) {
 					continue;
 				}
 

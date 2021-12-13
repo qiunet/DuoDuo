@@ -48,7 +48,9 @@ public enum RewardManager {
 	 */
 	@EventListener
 	public void cfgLoadOver(CfgLoadCompleteEventData data) {
-		rewardList.forEach(rewards -> ((IAfterLoad)rewards).afterLoad());
+		rewardList.forEach(rewards -> {
+			((IAfterLoad)rewards).afterLoad();
+		});
 		rewardList.clear();
 	}
 }
