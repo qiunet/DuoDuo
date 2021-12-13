@@ -130,7 +130,7 @@ public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cf
 			if (isInvalidField(field)) {
 				throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 			}
-			Object obj = ConvertManager.getInstance().covert(field, val);
+			Object obj = ConvertManager.getInstance().convert(field, val);
 			field.setAccessible(true);
 			field.set(cfg, obj);
 		} catch (IllegalAccessException e) {

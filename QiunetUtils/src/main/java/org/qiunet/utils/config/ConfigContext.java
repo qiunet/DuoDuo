@@ -136,7 +136,7 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 			try {
 				field.setAccessible(true);
-				field.set(instance, ConvertManager.instance.covert(field, val));
+				field.set(instance, ConvertManager.instance.convert(field, val));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}

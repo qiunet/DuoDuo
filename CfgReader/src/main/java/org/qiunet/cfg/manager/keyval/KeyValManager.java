@@ -79,7 +79,7 @@ class KeyValManager implements IApplicationContextAware {
 			String val = keyValDatas.get(keyName);
 			Preconditions.checkState(! StringUtil.isEmpty(val) , "No cfg value for KeyName [%s]", keyName);
 			field.setAccessible(true);
-			Object realVal = ConvertManager.getInstance().covert(field, val);
+			Object realVal = ConvertManager.getInstance().convert(field, val);
 			Object instance = null;
 			if (! Modifier.isStatic(field.getModifiers())) {
 				instance = context.getInstanceOfClass(field.getDeclaringClass());

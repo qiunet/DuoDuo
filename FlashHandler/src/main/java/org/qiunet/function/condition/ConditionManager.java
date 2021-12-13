@@ -8,7 +8,6 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -109,8 +108,7 @@ public class ConditionManager {
 								 continue;
 							 }
 
-							 Object o = ConvertManager.instance.covert(field, cfg.getValue(field.getName()));
-							 ReflectUtil.setField(iCondition, field, o);
+							 ConvertManager.instance.covertAndSet(iCondition, field, cfg.getValue(field.getName()));
 						 }
 						 if (cfg.getBoolean("not")) {
 							 return iCondition.not();

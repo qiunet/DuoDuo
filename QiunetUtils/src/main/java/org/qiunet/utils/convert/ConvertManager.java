@@ -6,6 +6,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.string.StringUtil;
@@ -35,13 +36,23 @@ public enum ConvertManager implements IApplicationContextAware {
 	}
 
 	private static final Map<Class<?>, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
+
+	/**
+	 * 转换并且set到字段.
+	 * @param instance
+	 * @param field
+	 * @param val
+	 */
+	public void covertAndSet(Object instance, Field field, String val) {
+		ReflectUtil.setField(instance, field, this.convert(field, val));
+	}
 	/***
 	 * 按照指定的class 类型转换str
 	 * @param field
 	 * @param val
 	 * @return 没有转换器将抛出异常
 	 */
-	public Object covert(Field field, String val) {
+	public Object convert(Field field, String val) {
 		Class clazz = field.getType();
 
 		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
