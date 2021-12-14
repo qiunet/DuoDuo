@@ -7,11 +7,19 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.ICrossStatusActor;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
+import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -126,6 +134,41 @@ public final class ChannelUtil {
 		}
 
 		return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
+	}
 
+	/**
+	 * 处理长连接的通道读数据
+	 * @param channel
+	 * @param params
+	 * @param content
+	 */
+	public static void channelRead(Channel channel, AbstractBootstrapParam params, MessageContent content){
+		DSession session = ChannelUtil.getSession(channel);
+		Preconditions.checkNotNull(session);
+
+		if (! params.getStartupContext().userServerValidate(session)) {
+			return;
+		}
+
+		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
+		if (handler == null) {
+			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
+			content.release();
+			return;
+		}
+
+		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (handler instanceof ITransmitHandler
+				&& messageActor instanceof ICrossStatusActor
+				&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			return;
+		}
+		if (channel.isActive()) {
+			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
+			messageActor.addMessage(context);
+		}else{
+			content.release();
+		}
 	}
 }

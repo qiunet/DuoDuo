@@ -30,6 +30,13 @@ public interface Hook {
 		return "DEPRECATE";
 	}
 	/**
+	 * 停止服务(不是shutdown)
+	 * @return
+	 */
+	default String getServerCloseMsg(){
+		return "CLOSE";
+	}
+	/**
 	 * 得到shutdown端口
 	 * @return
 	 */

@@ -11,21 +11,6 @@ import org.qiunet.utils.logger.LoggerType;
 public class MyHook implements Hook {
 
 	@Override
-	public String getReloadCfgMsg() {
-		return "Reload";
-	}
-
-	@Override
-	public int getHookPort() {
-		return 8090;
-	}
-
-	@Override
-	public String getShutdownMsg() {
-		return "shutdown";
-	}
-
-	@Override
 	public void shutdown() {
 		LoggerType.DUODUO_FLASH_HANDLER.error("Called MyHook");
 	}

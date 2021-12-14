@@ -1,6 +1,10 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
+import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.cross.node.ServerNode;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -19,8 +23,34 @@ import org.qiunet.utils.logger.LoggerType;
 public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<IChannelMessage<IChannelData>> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
 	LazyLoader<IChannelMessage<IChannelData>> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
-	LazyLoader<IChannelMessage<IChannelData>> SERVER_CLOSE_MESSAGE = new LazyLoader<>(() -> new ServerCloseResponse().buildResponseMessage());
 	LazyLoader<IChannelMessage<IChannelData>> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildResponseMessage());
+	/**
+	 * 默认的cross 启动上下文
+	 */
+	IStartupContext<CrossPlayerActor> DEFAULT_CROSS_START_CONTEXT = CrossPlayerActor::new;
+	/**
+	 * 默认的cross server node 启动上下文
+	 */
+	IStartupContext<ServerNode> DEFAULT_CROSS_NODE_START_CONTEXT = ServerNode::new;
+	/**
+	 * 默认对玩家的服务启动上下文
+	 */
+	IStartupContext<PlayerActor> SERVER_STARTUP_CONTEXT = new IStartupContext<PlayerActor>() {
+		@Override
+		public PlayerActor buildMessageActor(DSession session) {
+			return new PlayerActor(session);
+		}
+
+		@Override
+		public boolean userServerValidate(DSession session) {
+			if (ServerNodeManager.isServerClosed()) {
+				session.sendMessage(ServerCloseResponse.valueOf());
+				return false;
+			}
+			return true;
+		}
+	};
+
 	/**
 	 * 构造MessageActor
 	 * http情况不会调用.
@@ -51,12 +81,11 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	}
 
 	/**
-	 * 服务没有开启
-	 * @return
+	 * 服务可用性校验
+	 * 不可用. 触发 {@link ServerCloseResponse}
+	 * @return true 可用 false 不可用
 	 */
-	default IChannelMessage<IChannelData> serverClose() {
-		return SERVER_CLOSE_MESSAGE.get();
-	}
+	default boolean userServerValidate(DSession session) { return true;}
 
 	default IChannelMessage<IChannelData> serverPongMsg() {
 		return SERVER_PONG_MESSAGE.get();

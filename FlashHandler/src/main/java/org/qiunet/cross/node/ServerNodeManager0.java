@@ -18,6 +18,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
@@ -56,6 +57,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	private final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
 	final AtomicBoolean deprecated = new AtomicBoolean();
+	/**服务器对外停止服务*/
+	final AtomicBoolean serverClosed = new AtomicBoolean();
 	// 服务判定离线时间
 	public static final long SERVER_OFFLINE_SECONDS = 110;
 	// redis
@@ -210,6 +213,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (this.deprecated.compareAndSet(false, true)) {
 			redisUtil.returnJedis().hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
 		}
+	}
+
+	@EventListener
+	private void serverClosed(ServerClosedEvent event) {
+		this.serverClosed.set(true);
 	}
 
 	@Override

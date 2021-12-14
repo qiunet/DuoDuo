@@ -1,23 +1,15 @@
 package org.qiunet.flash.handler.netty.server.tcp.handler;
 
-import com.google.common.base.Preconditions;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.ICrossStatusActor;
-import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
-import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -27,7 +19,7 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/8/13
  */
-public class TcpServerHandler extends ChannelInboundHandlerAdapter {
+public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final TcpBootstrapParams params;
 
@@ -46,35 +38,14 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		MessageContent content = ((MessageContent) msg);
+	public void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
+
 		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
 			ctx.writeAndFlush(params.getStartupContext().serverPongMsg().encode());
 			return;
 		}
 
-		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
-		if (handler == null) {
-			ctx.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
-			content.release();
-			return;
-		}
-		DSession session = ChannelUtil.getSession(ctx.channel());
-		Preconditions.checkNotNull(session);
-
-		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler instanceof ITransmitHandler
-			&& messageActor instanceof ICrossStatusActor
-			&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
-			return;
-		}
-		if (ctx.channel().isActive()) {
-			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, ctx.channel(), handler, messageActor);
-			messageActor.addMessage(context);
-		}else{
-			content.release();
-		}
+		ChannelUtil.channelRead(ctx.channel(), params, content);
 	}
 
 	@Override

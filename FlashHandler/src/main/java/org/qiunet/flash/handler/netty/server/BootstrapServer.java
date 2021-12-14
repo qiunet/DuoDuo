@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
@@ -146,6 +147,7 @@ public class BootstrapServer {
 		private final ByteBuffer buffer = ByteBuffer.allocate(256);
 		private final AtomicBoolean deprecated = new AtomicBoolean();
 		private final AtomicBoolean shutdown = new AtomicBoolean();
+		private final AtomicBoolean serverClose = new AtomicBoolean();
 		private final Hook hook;
 		HookListener(Hook hook) {
 			Runtime.getRuntime().addShutdownHook(new Thread(this::shutdown));
@@ -182,6 +184,17 @@ public class BootstrapServer {
 
 			LockSupport.unpark(awaitThread);
 		}
+
+		/**
+		 * 对外服务关闭
+		 */
+		private void serverClose() {
+			if (! serverClose.compareAndSet(false, true)) {
+				return;
+			}
+			ServerClosedEvent.fireClosed();
+		}
+
 		/**
 		 * 让服务器过期
 		 */
@@ -234,7 +247,9 @@ public class BootstrapServer {
 				this.reloadCfg();
 			}else if (msg.equals(hook.getDeprecateMsg())) {
 				this.deprecated();
-			}else {
+			}else if (msg.equals(hook.getServerCloseMsg())) {
+				this.serverClose();
+			} else {
 				hook.custom(msg);
 			}
 		}

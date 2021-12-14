@@ -42,6 +42,14 @@ public class ServerNodeManager {
 	public static boolean isDeprecatedServer(){
 		return ServerNodeManager0.instance.deprecated.get();
 	}
+
+	/**
+	 * 是否对外停止服务.
+	 * @return
+	 */
+	public static boolean isServerClosed(){
+		return ServerNodeManager0.instance.serverClosed.get();
+	}
 	/**
 	 * 获得serverInfo
 	 * @param serverId
