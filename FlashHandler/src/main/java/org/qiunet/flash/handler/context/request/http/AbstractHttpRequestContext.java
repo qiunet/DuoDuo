@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request.http;
 
+import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -10,12 +11,14 @@ import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
-import org.qiunet.flash.handler.handler.http.IAsyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
+import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
+import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
 import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 
@@ -197,8 +200,18 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	 * @throws Exception
 	 */
 	private void processAsyncHttp(IAsyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
-		FacadeAsyncHttpRequest<RequestData, ResponseData> request = new FacadeAsyncHttpRequest<>(this);
-		handler.handler(request);
+		FacadeHttpRequest<RequestData, ResponseData> request = new FacadeHttpRequest<>(this);
+		HttpAsyncTask<ResponseData> task = handler.handler(request);
+		Preconditions.checkNotNull(task);
+		task.onComplete((r, ex) -> {
+			if (ex != null) {
+				throw new CustomException(ex, "process async http exception");
+			}
+			if (r == null) {
+				throw new NullPointerException("Response data can not be null!");
+			}
+			this.response(r);
+		});
 	}
 	/**
 	 * 处理同步http
@@ -210,7 +223,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		ResponseData data = handler.handler(request);
 
 		if (data == null) {
-			throw new NullPointerException("Response Protobuf data can not be null!");
+			throw new NullPointerException("Response data can not be null!");
 		}
 		this.response(data);
 	}

@@ -1,9 +1,12 @@
-package org.qiunet.flash.handler.handler.http;
+package org.qiunet.flash.handler.handler.http.async;
 
-import org.qiunet.flash.handler.context.request.http.IAsyncHttpRequest;
+import org.qiunet.flash.handler.context.request.http.IHttpRequest;
+import org.qiunet.flash.handler.handler.http.IHttpHandler;
 
 /**
  * http的异步处理
+ * 一般业务自己实现在basic 基类里面
+ *
  * @author qiunet
  *         Created on 17/3/3 12:01.
  */
@@ -18,5 +21,5 @@ public interface IAsyncHttpHandler<RequestData, ResponseData> extends IHttpHandl
 	 * @param request
 	 * @return
 	 */
-	void handler(IAsyncHttpRequest<RequestData, ResponseData> request)throws Exception;
+	HttpAsyncTask<ResponseData> handler(IHttpRequest<RequestData> request)throws Exception;
 }
