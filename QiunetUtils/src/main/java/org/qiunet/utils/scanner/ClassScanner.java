@@ -11,7 +11,7 @@ import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanner;
-import org.reflections.scanners.*;
+import org.reflections.scanners.Scanners;
 import org.slf4j.Logger;
 
 import java.lang.annotation.Annotation;
@@ -32,10 +32,10 @@ import java.util.stream.Stream;
  */
 public final class ClassScanner implements IApplicationContext {
 	private static final Scanner [] scanners = new Scanner[]{
-		new FieldAnnotationsScanner(),
-		new MethodAnnotationsScanner(),
-		new TypeAnnotationsScanner(),
-		new SubTypesScanner()
+			Scanners.FieldsAnnotated,
+			Scanners.MethodsAnnotated,
+			Scanners.TypesAnnotated,
+			Scanners.SubTypes,
 	};
 
 	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
@@ -83,6 +83,7 @@ public final class ClassScanner implements IApplicationContext {
 			System.exit(1);
 		}
 	}
+	private Set<String> scannerClassNames;
 	private void scanner0(String ... packetPrefix) throws Exception {
 		if (scannered.get() || ! scannered.compareAndSet(false, true)) {
 			logger.warn("ClassScanner was initialization , ignore this!");
@@ -104,8 +105,9 @@ public final class ClassScanner implements IApplicationContext {
 		Set<DFuture> futures = Sets.newHashSet();
 
 		if (logger.isDebugEnabled()) {
+			scannerClassNames = collect.stream().map(o -> o.getClass().getSimpleName()).collect(Collectors.toSet());
 			logger.debug("scanner start count: {}, detail: {}", collect.size(),
-					Arrays.toString(collect.stream().map(o -> o.getClass().getSimpleName()).toArray()));
+					Arrays.toString(scannerClassNames.toArray()));
 		}
 		for (IApplicationContextAware instance : collect) {
 			logger.debug("scanner start detail: {}", instance.getClass().getName());
@@ -113,32 +115,32 @@ public final class ClassScanner implements IApplicationContext {
 			if (instance.scannerType() != this.scannerType
 			&& instance.scannerType() != ScannerType.ALL
 			&& this.scannerType != ScannerType.ALL) {
-				latch.countDown();
+				this.countdown(latch, instance.getClass().getSimpleName());
 				continue;
 			}
 
 			if (instance.order() > 0) {
 				this.run(instance);
-				latch.countDown();
+				this.countdown(latch, instance.getClass().getSimpleName());
 				continue;
 			}
 
-			DFuture<Boolean> future = TimerManager.executorNow(() -> {
+			DFuture<String> future = TimerManager.executorNow(() -> {
 				run(instance);
-				return true;
+				return instance.getClass().getSimpleName();
 			});
 
 			futures.add(future);
 
 			future.whenComplete((res, ex) -> {
-				latch.countDown();
+				this.countdown(latch, res);
 				if (ex != null) {
 					logger.error("==scanner exception!==");
 					reference.compareAndSet(null, (Exception) ex);
 					futures.forEach(future0 -> future0.cancel(true));
 					long count = latch.getCount();
 					for (long i = 0; i < count; i++) {
-						latch.countDown();
+						this.countdown(latch, null);
 					}
 				}
 			});
@@ -147,6 +149,15 @@ public final class ClassScanner implements IApplicationContext {
 		latch.await();
 		if (reference.get() != null) {
 			throw reference.get();
+		}
+	}
+
+	private void countdown(CountDownLatch latch, String className) {
+		latch.countDown();
+
+		if (logger.isDebugEnabled()) {
+			scannerClassNames.remove(className);
+			logger.debug("countdown  {}, last scanner class {}", className, Arrays.toString(scannerClassNames.toArray()));
 		}
 	}
 
