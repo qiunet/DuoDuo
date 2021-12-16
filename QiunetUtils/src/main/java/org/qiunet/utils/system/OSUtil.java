@@ -5,14 +5,6 @@ import java.lang.management.ManagementFactory;
 public class OSUtil {
 	private OSUtil(){}
 
-	/***
-	 * 得到当前机器的内存数byte
-	 * @return
-	 */
-	public static long freeMemory(){
-		return Runtime.getRuntime().freeMemory();
-	}
-
 	/**
 	 * 有效的cpu核数
 	 * @return
@@ -51,4 +43,43 @@ public class OSUtil {
 	public static boolean isMac() {
 		return SystemPropertyUtil.getOsName() == SystemPropertyUtil.OSType.MAC_OS;
 	}
+
+	/**
+	 * 获得JVM最大内存
+	 *
+	 * @return 最大内存
+	 */
+	public static long getMaxMemory() {
+		return Runtime.getRuntime().maxMemory();
+	}
+
+	/**
+	 * 获得JVM已分配内存
+	 *
+	 * @return 已分配内存
+	 */
+	public static long getTotalMemory() {
+		return Runtime.getRuntime().totalMemory();
+	}
+
+	/**
+	 * 获得JVM已分配内存中的剩余空间
+	 *
+	 * @return 已分配内存中的剩余空间
+	 */
+	public static long getFreeMemory() {
+		return Runtime.getRuntime().freeMemory();
+	}
+
+	/**
+	 * 获得JVM最大可用内存
+	 *
+	 * @return 最大可用内存
+	 */
+	public static long getUsableMemory() {
+		return getMaxMemory()
+				- getTotalMemory()
+				+ getFreeMemory();
+	}
+
 }

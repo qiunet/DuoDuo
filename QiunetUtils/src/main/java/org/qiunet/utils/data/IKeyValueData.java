@@ -1,5 +1,6 @@
 package org.qiunet.utils.data;
 
+import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.Map;
@@ -171,8 +172,7 @@ public interface IKeyValueData<K, V> {
 		if (! containKey(key)) {
 			return false;
 		}
-
-		return "true".equals(getString(key));
+		return CommonUtil.existInList(this.getString(key), "1", "yes", "true");
 	}
 
 	/**

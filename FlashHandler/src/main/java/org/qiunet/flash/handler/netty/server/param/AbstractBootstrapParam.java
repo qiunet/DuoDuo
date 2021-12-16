@@ -117,10 +117,8 @@ public abstract class AbstractBootstrapParam {
 		 */
 		public P build(){
 			if (address == null) throw new NullPointerException("Must set port for Listener! ");
-			if (protocolHeaderType == null) throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
 			return newParams();
 		}
-
 		/**
 		 * 得到一个新的param
 		 * @return

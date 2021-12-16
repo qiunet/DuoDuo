@@ -27,6 +27,10 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected TcpBootstrapParams newParams() {
+			if (protocolHeaderType == null) {
+				throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
+			}
+
 			return TcpBootstrapParams.this;
 		}
 	}

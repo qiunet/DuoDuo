@@ -15,173 +15,29 @@
  */
 package org.qiunet.utils.system;
 
+import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 /**
  * A collection of utility methods to retrieve and parse the values of the Java system properties.
  */
 public final class SystemPropertyUtil {
     private static final Logger logger = LoggerType.DUODUO.getLogger();
-
-    /**
-     * Returns {@code true} if and only if the system property with the specified {@code key}
-     * exists.
-     */
-    public static boolean contains(String key) {
-        return get(key) != null;
-    }
-
-    /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to {@code null} if the property access fails.
-     *
-     * @return the property value or {@code null}
-     */
-    public static String get(String key) {
-        return get(key, null);
-    }
-
-    /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
-     *         specified property is not allowed.
-     */
-    public static String get(final String key, String def) {
-        if (key == null) {
-            throw new NullPointerException("key");
-        }
-        if (key.isEmpty()) {
-            throw new IllegalArgumentException("key must not be empty.");
-        }
-
-        String value = null;
-        try {
-            if (System.getSecurityManager() == null) {
-                value = System.getProperty(key);
-            } else {
-                value = AccessController.doPrivileged(new PrivilegedAction<String>() {
-                    @Override
-                    public String run() {
-                        return System.getProperty(key);
-                    }
-                });
-            }
-        } catch (Exception e) {
-            logger.error("Unable to retrieve a system property '{"+key+"}'; default values will be used.", e);
-        }
-
-        if (value == null) {
-            return def;
-        }
-
-        return value;
-    }
-
-    /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
-     *         specified property is not allowed.
-     */
-    public static boolean getBoolean(String key, boolean def) {
-        String value = get(key);
-        if (value == null) {
-            return def;
-        }
-
-        value = value.trim().toLowerCase();
-        if (value.isEmpty()) {
-            return true;
-        }
-
-        if ("true".equals(value) || "yes".equals(value) || "1".equals(value)) {
-            return true;
-        }
-
-        if ("false".equals(value) || "no".equals(value) || "0".equals(value)) {
-            return false;
-        }
-
-        logger.error(
-                "Unable to parse the boolean system property '{"+key+"}':{"+value+"} - using the default value: {"+def+"}"
-        );
-
-        return def;
-    }
-
-    /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
-     *         specified property is not allowed.
-     */
-    public static int getInt(String key, int def) {
-        String value = get(key);
-        if (value == null) {
-            return def;
-        }
-
-        value = value.trim();
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception e) {
-            // Ignore
-        }
-
-        logger.warn(
-                "Unable to parse the integer system property '{"+key+"}':{"+value+"} - using the default value: {"+def+"}"
-        );
-
-        return def;
-    }
-
-    /**
-     * Returns the value of the Java system property with the specified
-     * {@code key}, while falling back to the specified default value if
-     * the property access fails.
-     *
-     * @return the property value.
-     *         {@code def} if there's no such property or if an access to the
-     *         specified property is not allowed.
-     */
-    public static long getLong(String key, long def) {
-        String value = get(key);
-        if (value == null) {
-            return def;
-        }
-
-        value = value.trim();
-        try {
-            return Long.parseLong(value);
-        } catch (Exception e) {
-            // Ignore
-        }
-
-        logger.warn(
-                "Unable to parse the long integer system property '{"+key+"}':{"+value+"} - using the default value: {"+def+"}"
-        );
-
-        return def;
-    }
+	private static final IKeyValueData<Object, Object> data = System::getProperties;
 
     private SystemPropertyUtil() {
         // Unused
     }
 
+	/**
+	 * 从环境变量获得数据
+	 * @param key
+	 * @return
+	 */
+	private static String get(String key) {
+		return String.valueOf(data.getValue(key));
+	}
 	/***
 	 * get user.home
 	 * @return
@@ -216,7 +72,7 @@ public final class SystemPropertyUtil {
 			return this == type;
 		}
 
-		public static OSType getOSType(String osName) {
+		private static OSType getOSType(String osName) {
 			if (osName.startsWith("Mac OS")) {
 				return OSType.MAC_OS;
 			} else if (osName.startsWith("Windows")) {
