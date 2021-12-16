@@ -35,8 +35,21 @@ public final class SystemPropertyUtil {
 	 * @param key
 	 * @return
 	 */
-	private static String get(String key) {
+	public static String get(String key) {
 		return String.valueOf(data.getValue(key));
+	}
+
+	/**
+	 * 从环境变量获得数据 没有. 则使用默认值.
+	 * @param key
+	 * @param defaultVal
+	 * @return
+	 */
+	public static String get(String key, String defaultVal) {
+		if (! data.containKey(key)) {
+			return defaultVal;
+		}
+		return get(key);
 	}
 	/***
 	 * get user.home
