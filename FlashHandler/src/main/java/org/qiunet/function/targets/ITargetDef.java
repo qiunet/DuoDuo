@@ -6,12 +6,12 @@ package org.qiunet.function.targets;
  * @author qiunet
  * 2020-11-23 12:58
  */
-public interface ITargetDef<T extends Enum<T> & ITargetType> {
+public interface ITargetDef {
 	/**
 	 * 任务类型
 	 * @return
 	 */
-	T getTargetType();
+	<T extends Enum<T> & ITargetType> T getTargetType();
 
 	/**
 	 * 任务参数

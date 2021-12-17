@@ -46,7 +46,7 @@ public class TargetDefList<T extends ITargetDef> implements ITargetDefGetter<T> 
 	}
 
 	@Override
-	public TargetDefList<T> getTargetCfg() {
+	public TargetDefList<T> getTargetDefList() {
 		return this;
 	}
 }

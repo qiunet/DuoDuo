@@ -14,11 +14,11 @@ public interface ITargetDefGetter<TargetDef extends ITargetDef> {
 	 * @return
 	 */
 	default TargetDef getTargetDef(int index) {
-		return getTargetCfg().get(index);
+		return getTargetDefList().get(index);
 	}
 	/**
 	 * 获得任务目标配置列表
 	 * @return
 	 */
-	TargetDefList<TargetDef> getTargetCfg();
+	TargetDefList<TargetDef> getTargetDefList();
 }

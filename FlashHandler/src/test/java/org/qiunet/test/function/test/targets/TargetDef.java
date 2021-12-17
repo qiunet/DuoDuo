@@ -7,7 +7,7 @@ import org.qiunet.function.targets.ITargetDef;
  * @author qiunet
  * 2020-11-23 21:44
  **/
-public class TargetDef implements ITargetDef<TargetType> {
+public class TargetDef implements ITargetDef {
 	private TargetType targetType;
 	private String targetParam;
 	private long value;

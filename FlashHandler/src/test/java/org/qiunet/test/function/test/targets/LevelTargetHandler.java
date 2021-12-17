@@ -14,7 +14,7 @@ public class LevelTargetHandler extends BaseTargetHandler<TargetType> {
 
 	@EventListener
 	public void handlerLevelUp(LevelUpEventData eventData) {
-		process(eventData.getPlayer(), (target, def) -> target.alterToCount(eventData.getLevel()));
+		process(eventData.getPlayer(), (target) -> target.alterToCount(eventData.getLevel()));
 	}
 
 	@Override

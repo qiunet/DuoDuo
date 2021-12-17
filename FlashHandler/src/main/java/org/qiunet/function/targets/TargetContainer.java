@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /***
- *
+ * 任务的容器
  *
  * @author qiunet
  * 2020-11-23 16:19
@@ -72,6 +73,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 
 	/**
 	 * 初始化时候, 从存储的数据库取出来的targets. 添加到容器里面.
+	 *
 	 * @param targetDefGetter 目标的配置列表getter
 	 * @param updateCallback 更新回调.
 	 * @param targets 任务集合
@@ -106,7 +108,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	private void watch(Target target, boolean needInit) {
 		lock.lock();
 		try {
-			Type targetType = (Type) target.getTargetDef().getTargetType();
+			Type targetType = target.getTargetDef().getTargetType();
 			List<Target> targets = targetMap.computeIfAbsent(targetType, key -> new LinkedList<>());
 			BaseTargetHandler<Type> handler = TargetHandlerManager.instance.getHandler(targetType);
 			targets.add(target);
@@ -142,12 +144,12 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	 * @param type
 	 * @param consumer
 	 */
-	void forEachByType(Type type, BiConsumer<Target, ITargetDef> consumer) {
+	void forEachByType(Type type, Consumer<Target> consumer) {
 		lock.lock();
 		try {
 			List<Target> targets = targetMap.computeIfAbsent(type, key -> new LinkedList<>());
 			for (Target target : targets) {
-				consumer.accept(target, target.targetDef);
+				consumer.accept(target);
 			}
 		}finally {
 			lock.unlock();
