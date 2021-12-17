@@ -20,7 +20,7 @@ import org.qiunet.game.tests.protocol.proto.player.GetExpResponse;
  * qiunet
  * 2021/9/2 11:32
  **/
-@BehaviorAction(desc = "获得经验")
+@BehaviorAction(name = "获得经验")
 public class GetExpAction extends TestAction {
 
 	private boolean getResp;
@@ -56,7 +56,7 @@ public class GetExpAction extends TestAction {
 
 	@TestResponse(ProtocolId.Player.EXP_CHANGE_PUSH)
 	public void expChange(ExpChangePush push) {
-		PlayerData data = BlackBoard.playerData.get(robot);
+		PlayerData data = BlackBoard.playerData.get(getOwner());
 		data.setExp(push.getExp());
 		data.setLv(push.getLevel());
 	}

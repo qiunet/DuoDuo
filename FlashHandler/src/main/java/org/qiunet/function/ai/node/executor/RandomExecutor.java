@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.math.MathUtil;
 
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Supplier;
 
 /***
  *
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * qiunet
  * 2021/8/9 12:10
  **/
-public class RandomExecutor extends BaseBehaviorExecutor {
+public class RandomExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 已经执行过的node
 	 * 如果 excludeExecuted == true
@@ -35,20 +35,16 @@ public class RandomExecutor extends BaseBehaviorExecutor {
 	 */
 	private final boolean excludeExecuted;
 
-	public RandomExecutor() {
-		this(false);
+
+	public RandomExecutor(IConditions<Owner> conditions) {
+		this(conditions, "随机节点");
 	}
 
-	public RandomExecutor(Supplier<Boolean> conditionResult) {
-		this(conditionResult, false);
+	public RandomExecutor(IConditions<Owner> conditions, String name) {
+		this(conditions, name, false);
 	}
-
-	public RandomExecutor(boolean excludeExecuted) {
-		this(null, excludeExecuted);
-	}
-
-	public RandomExecutor(Supplier<Boolean> conditionResult, boolean excludeExecuted) {
-		super(conditionResult);
+	public RandomExecutor(IConditions<Owner> conditions, String name, boolean excludeExecuted) {
+		super(conditions, name);
 		this.excludeExecuted = excludeExecuted;
 	}
 

@@ -17,7 +17,7 @@ import org.qiunet.game.tests.protocol.proto.player.UpgradeLevelResponse;
  * qiunet
  * 2021/9/2 12:10
  **/
-@BehaviorAction(desc = "升级")
+@BehaviorAction(name = "升级")
 public class UpgradeLvAction extends TestAction {
 	private boolean resp;
 

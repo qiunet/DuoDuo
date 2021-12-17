@@ -3,6 +3,8 @@ package org.qiunet.function.ai.node.base;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.condition.IConditions;
+import org.qiunet.utils.async.LazyLoader;
 
 /***
  *  几点类型
@@ -10,28 +12,50 @@ import org.qiunet.function.ai.node.IBehaviorNode;
  * @author qiunet
  * 2021-07-05 11:49
  */
-abstract class BaseBehaviorNode implements IBehaviorNode {
+public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
+	private final LazyLoader<Owner> owner = new LazyLoader<>(() -> this.parent().getOwner());
 	/**
 	 * 父节点
 	 */
-	protected IBehaviorExecutor parent;
+	protected IBehaviorExecutor<Owner> parent;
+
 	/**
 	 * 状态
 	 */
 	protected boolean running;
+	/**
+	 * 节点名称
+	 * 读取Ai.xml设置.
+	 * 自己手写ai逻辑没有
+	 */
+	private String name;
+
+	/**
+	 * 节点执行条件
+	 */
+	private final IConditions<Owner> conditions;
+
+	public BaseBehaviorNode(IConditions<Owner> conditions, String name) {
+		this.conditions = conditions;
+		this.name = name;
+	}
+
+	@Override
+	public Owner getOwner() {
+		return owner.get();
+	}
 
 	@Override
 	public boolean isRunning() {
 		return running;
 	}
 
-	@Override
-	public void setParent(IBehaviorExecutor parent) {
+	public void setParent(IBehaviorExecutor<Owner> parent) {
 		this.parent = parent;
 	}
 
 	@Override
-	public IBehaviorExecutor parent() {
+	public IBehaviorExecutor<Owner> parent() {
 		return parent;
 	}
 
@@ -40,6 +64,23 @@ abstract class BaseBehaviorNode implements IBehaviorNode {
 		ActionStatus status = execute();
 		this.running = status == ActionStatus.RUNNING;
 		return status;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean preCondition() {
+		if (conditions == null) {
+			return true;
+		}
+		return conditions.verify(this.getOwner()).isSuccess();
 	}
 
 	/**

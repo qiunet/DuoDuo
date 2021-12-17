@@ -17,5 +17,5 @@ public @interface BehaviorAction {
 	 * 描述
 	 * @return
 	 */
-	String desc();
+	String name();
 }

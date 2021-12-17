@@ -11,7 +11,7 @@ import org.qiunet.utils.math.IWeightObj;
  * @author qiunet
  * 2021-07-05 09:57
  */
-public interface IBehaviorNode extends IWeightObj {
+public interface IBehaviorNode<Owner> extends IWeightObj {
 	/**
 	 * 重置
 	 */
@@ -34,6 +34,16 @@ public interface IBehaviorNode extends IWeightObj {
 	 */
 	ActionStatus run();
 	/**
+	 * 名称
+	 * @return
+	 */
+	String getName();
+	/**
+	 *
+	 * @return
+	 */
+	Owner getOwner();
+	/**
 	 * 是否运行中.
 	 * @return
 	 */
@@ -47,13 +57,13 @@ public interface IBehaviorNode extends IWeightObj {
 	 * 设置父节点
 	 * @param parent
 	 */
-	void setParent(IBehaviorExecutor parent);
+	void setParent(IBehaviorExecutor<Owner> parent);
 
 	/**
 	 * 得到父节点
 	 * @return
 	 */
-	IBehaviorExecutor parent();
+	IBehaviorExecutor<Owner> parent();
 	/**
 	 * 权重.
 	 * 在 RANDOM 控制器下. 可以按照权重来.

@@ -6,16 +6,16 @@ package org.qiunet.function.ai.node;
  * @author qiunet
  * 2021-07-05 09:57
  */
-public interface IBehaviorDecorator extends IBehaviorExecutor {
+public interface IBehaviorDecorator<Owner> extends IBehaviorExecutor<Owner> {
 
 	/**
 	 * 获得装饰节点包含的节点
 	 * @return
 	 */
-	IBehaviorNode getNode();
+	IBehaviorNode<Owner> getNode();
 
 	@Override
-	default void removeChild(IBehaviorNode child) {
+	default void removeChild(IBehaviorNode<Owner> child) {
 		parent().removeChild(this);
 	}
 

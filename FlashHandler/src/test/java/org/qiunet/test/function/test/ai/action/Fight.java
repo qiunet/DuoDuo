@@ -12,11 +12,11 @@ import org.qiunet.utils.logger.LoggerType;
  * qiunet
  * 2021/8/17 10:16
  **/
-@BehaviorAction(desc = "战斗")
+@BehaviorAction(name = "战斗")
 public class Fight extends BaseAction {
 
-	public Fight(Hero hero, IConditions<Hero> conditions) {
-		super(hero, conditions);
+	public Fight(IConditions<Hero> conditions) {
+		super(conditions);
 	}
 
 	@Override

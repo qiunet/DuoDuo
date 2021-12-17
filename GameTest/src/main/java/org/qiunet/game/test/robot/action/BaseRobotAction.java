@@ -15,35 +15,23 @@ import org.qiunet.game.test.server.IServer;
  * qiunet
  * 2021/8/8 11:46
  **/
-public abstract class BaseRobotAction extends BaseBehaviorAction
+public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 		implements IChannelMessageSender, IStatusTipsHandler {
-	/**
-	 * 机器人
-	 */
-	protected final Robot robot;
-	/**
-	 * 前置条件
-	 */
-	protected IConditions<Robot> preCondition;
 	/**
 	 * 使用的连接方式
 	 */
 	private final IServer server;
 
 	public BaseRobotAction(Robot robot, IConditions<Robot> preConditions, IServer server) {
-		this.preCondition = preConditions;
+		super(preConditions);
+
 		robot.registerAction(this);
 		this.server = server;
-		this.robot = robot;
 	}
 
-	@Override
-	public boolean preCondition() {
-		return preCondition == null || preCondition.verify(robot).isSuccess();
-	}
 
 	@Override
 	public DSession getSender() {
-		return robot.getPersistConnClient(server);
+		return getOwner().getPersistConnClient(server);
 	}
 }

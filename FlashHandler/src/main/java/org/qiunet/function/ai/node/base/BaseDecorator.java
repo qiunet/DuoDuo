@@ -14,32 +14,33 @@ import java.util.List;
  * qiunet
  * 2021/8/16 21:38
  **/
-public abstract class BaseDecorator extends BaseBehaviorNode implements IBehaviorDecorator {
+public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> implements IBehaviorDecorator<Owner> {
 
 	/**
 	 * 需要翻转的节点
 	 */
-	protected IBehaviorNode node;
-	private final List<IBehaviorNode> nodes;
+	protected IBehaviorNode<Owner> node;
+	private final List<IBehaviorNode<Owner>> nodes;
 
-	public BaseDecorator(IBehaviorNode node) {
-		this.node = node;
+	public BaseDecorator(IBehaviorNode<Owner> node) {
+		super(null, node.getName());
+		this.nodes = ImmutableList.of(node);
 		node.setParent(this);
-		this.nodes = ImmutableList.of(this.node);
+		this.node = node;
 	}
 
 	@Override
-	public IBehaviorExecutor addChild(IBehaviorNode... actions) {
+	public IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions) {
 		throw new CustomException("Not support in decorator node!");
 	}
 
 	@Override
-	public List<IBehaviorNode> getChildNodes() {
+	public List<IBehaviorNode<Owner>> getChildNodes() {
 		return this.nodes;
 	}
 
 	@Override
-	public IBehaviorNode getNode() {
+	public IBehaviorNode<Owner> getNode() {
 		return node;
 	}
 

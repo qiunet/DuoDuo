@@ -4,10 +4,10 @@ import com.google.common.collect.Lists;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.condition.IConditions;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Supplier;
 
 /***
  * 并发执行. 根据策略返回成功失败. 默认全部成功. 返回成功.
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  * qiunet
  * 2021/8/16 16:40
  **/
-public class ParallelExecutor extends BaseBehaviorExecutor {
+public class ParallelExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 所有运行中的节点
 	 */
@@ -33,20 +33,12 @@ public class ParallelExecutor extends BaseBehaviorExecutor {
 	 */
 	private final ISuccessPolicy policy;
 
-	public ParallelExecutor() {
-		this(REQUIRE_ALL_SUCCESS);
+	public ParallelExecutor(IConditions<Owner> conditions, String name) {
+		this(conditions, REQUIRE_ALL_SUCCESS, name);
 	}
 
-	public ParallelExecutor(Supplier<Boolean> conditionResult) {
-		this(conditionResult, REQUIRE_ALL_SUCCESS);
-	}
-
-	public ParallelExecutor(ISuccessPolicy policy) {
-		this(null, policy);
-	}
-
-	public ParallelExecutor(Supplier<Boolean> conditionResult, ISuccessPolicy policy) {
-		super(conditionResult);
+	public ParallelExecutor(IConditions<Owner> conditions, ISuccessPolicy policy, String name) {
+		super(conditions, name);
 		this.policy = policy;
 	}
 

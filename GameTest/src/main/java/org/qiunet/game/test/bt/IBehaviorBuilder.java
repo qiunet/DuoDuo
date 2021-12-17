@@ -1,4 +1,4 @@
-package org.qiunet.function.ai.builder;
+package org.qiunet.game.test.bt;
 
 import org.qiunet.function.ai.node.IBehaviorNode;
 
@@ -14,5 +14,5 @@ public interface IBehaviorBuilder<Obj> {
 	 * 该行为的执行器
 	 * @return
 	 */
-	IBehaviorNode buildExecutor(Obj obj);
+	IBehaviorNode<Obj> buildExecutor(Obj obj);
 }

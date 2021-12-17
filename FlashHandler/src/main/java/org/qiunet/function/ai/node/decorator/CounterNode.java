@@ -13,11 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * qiunet
  * 2021/8/16 21:40
  **/
-public class CounterNode extends BaseDecorator {
+public class CounterNode<Owner> extends BaseDecorator<Owner> {
 	private final AtomicInteger currCount = new AtomicInteger();
 	private final int count;
 
-	public CounterNode(IBehaviorNode node, int count) {
+	public CounterNode(IBehaviorNode<Owner> node, int count) {
 		super(node);
 		Preconditions.checkArgument(count > 0, "count [%s] less than 1!");
 		this.count = count;

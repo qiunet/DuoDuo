@@ -10,5 +10,5 @@ package org.qiunet.function.ai.node;
  * @author qiunet
  * 2021-07-05 09:57
  */
-public interface IBehaviorAction extends IBehaviorNode {
+public interface IBehaviorAction<Owner> extends IBehaviorNode<Owner> {
 }

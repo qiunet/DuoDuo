@@ -2,7 +2,10 @@ package org.qiunet.function.ai.node.base;
 
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorAction;
+import org.qiunet.function.ai.node.action.BehaviorAction;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  * action的 基类
@@ -10,7 +13,11 @@ import org.qiunet.utils.exceptions.CustomException;
  * @author qiunet
  * 2021-07-07 10:37
  */
-public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBehaviorAction {
+public abstract class BaseBehaviorAction<Owner> extends BaseBehaviorNode<Owner> implements IBehaviorAction<Owner> {
+
+	public BaseBehaviorAction(IConditions<Owner> conditions) {
+		super(conditions, StringUtil.EMPTY_STRING);
+	}
 
 	@Override
 	public ActionStatus run() {
@@ -24,5 +31,11 @@ public abstract class BaseBehaviorAction extends BaseBehaviorNode implements IBe
 
 	protected ActionStatus runningStatusUpdate(){
 		throw new CustomException("Class [{}] need implements runningStatusUpdate!", getClass().getName());
+	}
+
+
+	@Override
+	public String getName() {
+		return getClass().getAnnotation(BehaviorAction.class).name();
 	}
 }

@@ -12,11 +12,11 @@ import org.qiunet.utils.logger.LoggerType;
  * qiunet
  * 2021/8/17 10:39
  **/
-@BehaviorAction(desc = "打经验")
+@BehaviorAction(name = "打经验")
 public class GetExp extends BaseAction {
 
-	public GetExp(Hero hero, IConditions<Hero> conditions) {
-		super(hero, conditions);
+	public GetExp(IConditions<Hero> conditions) {
+		super(conditions);
 	}
 
 	@Override

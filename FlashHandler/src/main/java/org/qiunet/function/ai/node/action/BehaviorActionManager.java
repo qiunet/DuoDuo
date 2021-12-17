@@ -1,9 +1,7 @@
 package org.qiunet.function.ai.node.action;
 
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.function.ai.node.IBehaviorAction;
-import org.qiunet.function.condition.Conditions;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
@@ -24,9 +22,19 @@ public enum BehaviorActionManager {
 	instance;
 	private static final Map<String, Constructor<? extends IBehaviorAction>> actions = Maps.newHashMap();
 
-
-	public <Obj> void createAction(String className, Obj obj, Conditions<Obj> conditions) {
-
+	/**
+	 * 构造一个action
+	 * @param className
+	 * @param conditions
+	 * @param <Owner>
+	 * @return
+	 */
+	public <Owner> IBehaviorAction<Owner> createAction(String className, IConditions<Owner> conditions) {
+		try {
+			return actions.get(className).newInstance(conditions);
+		} catch (Exception e) {
+			throw new CustomException(e, "BehaviorActionManager.createAction");
+		}
 	}
 
 	private enum BehaviorActionManager0 implements IApplicationContextAware {
@@ -46,15 +54,11 @@ public enum BehaviorActionManager {
 
 				Constructor<? extends IBehaviorAction> constructor = null;
 				for (Constructor<?> c : aClass.getConstructors()) {
-					if (c.getParameterCount() != 2) {
+					if (c.getParameterCount() != 1) {
 						continue;
 					}
 
-					if (IConditions.class != c.getParameterTypes()[1]) {
-						continue;
-					}
-
-					if (! IMessageHandler.class.isAssignableFrom(c.getParameterTypes()[0])) {
+					if (IConditions.class != c.getParameterTypes()[0]) {
 						continue;
 					}
 
@@ -63,7 +67,7 @@ public enum BehaviorActionManager {
 				}
 
 				if (constructor == null) {
-					throw new CustomException("action [{}] need a constructor with a messageHandler and a IConditions object", aClass.getName());
+					throw new CustomException("action [{}] need a constructor with a IConditions object", aClass.getName());
 				}
 
 				actions.put(aClass.getName(), constructor);

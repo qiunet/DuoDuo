@@ -1,8 +1,8 @@
-package org.qiunet.function.ai.node.root;
+package org.qiunet.game.test.bt;
 
 import com.google.common.collect.Lists;
-import org.qiunet.function.ai.builder.IBehaviorBuilder;
 import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -37,8 +37,8 @@ public enum BehaviorManager implements IApplicationContextAware {
 	 * @param obj 传入的参数
 	 * @return
 	 */
-	public BehaviorRootTree buildRootExecutor(Object obj) {
-		BehaviorRootTree root = new BehaviorRootTree();
+	public <Owner> BehaviorRootTree<Owner> buildRootExecutor(Owner obj) {
+		BehaviorRootTree<Owner> root = new BehaviorRootTree<>(obj);
 		datas.forEach(data -> root.addChild(data.build(obj)));
 		root.initialize();
 		return root;
@@ -49,16 +49,16 @@ public enum BehaviorManager implements IApplicationContextAware {
 		return ScannerType.TESTER;
 	}
 
-	private static class BehaviorBuilderData {
-		private final IBehaviorBuilder obj;
+	private static class BehaviorBuilderData<Owner> {
+		private final IBehaviorBuilder<Owner> obj;
 		private final Method method;
 
-		public BehaviorBuilderData(IBehaviorBuilder obj, Method method) {
+		public BehaviorBuilderData(IBehaviorBuilder<Owner> obj, Method method) {
 			this.obj = obj;
 			this.method = method;
 		}
 
-		public IBehaviorNode build(Object param){
+		public IBehaviorNode<Owner> build(Owner param){
 			return obj.buildExecutor(param);
 		}
 	}

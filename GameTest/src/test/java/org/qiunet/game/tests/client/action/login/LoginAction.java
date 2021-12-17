@@ -18,7 +18,7 @@ import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
  * qiunet
  * 2021/7/26 17:23
  **/
-@BehaviorAction(desc = "登录")
+@BehaviorAction(name = "登录")
 public class LoginAction extends TestAction {
 
 	public LoginAction(Robot robot) {
@@ -31,14 +31,14 @@ public class LoginAction extends TestAction {
 
 	@Override
 	public ActionStatus execute() {
-		LoginRequest loginRequest = LoginRequest.valueOf(robot.getAccount());
+		LoginRequest loginRequest = LoginRequest.valueOf(getOwner().getAccount());
 		this.sendMessage(loginRequest);
 		return ActionStatus.RUNNING;
 	}
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return 	BlackBoard.loginInfo.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
+		return 	BlackBoard.loginInfo.isNull(getOwner()) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	/**
@@ -47,6 +47,6 @@ public class LoginAction extends TestAction {
 	 */
 	@TestResponse(ProtocolId.Login.LOGIN_RSP)
 	public void loginResponse(LoginResponse loginResponse) {
-		BlackBoard.loginInfo.set(robot, loginResponse.getInfos());
+		BlackBoard.loginInfo.set(getOwner(), loginResponse.getInfos());
 	}
 }

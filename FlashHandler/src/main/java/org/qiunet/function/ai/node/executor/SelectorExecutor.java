@@ -3,9 +3,9 @@ package org.qiunet.function.ai.node.executor;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.condition.IConditions;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /***
  * 或行为逻辑
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SelectorExecutor extends BaseBehaviorExecutor {
+public class SelectorExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 按照优先级执行
 	 * 每次从左 -> 右
@@ -33,20 +33,15 @@ public class SelectorExecutor extends BaseBehaviorExecutor {
 	 */
 	private int currIndex;
 
-	public SelectorExecutor() {
-		this(true);
+	public SelectorExecutor(IConditions<Owner> conditions) {
+		this(conditions, "选择执行");
 	}
 
-	public SelectorExecutor(Supplier<Boolean> conditionResult) {
-		this(conditionResult, true);
+	public SelectorExecutor(IConditions<Owner> conditions, String name) {
+		this(conditions, name, true);
 	}
-
-	public SelectorExecutor(boolean prioritySelector) {
-		this(null, prioritySelector);
-	}
-
-	public SelectorExecutor(Supplier<Boolean> conditionResult, boolean prioritySelector) {
-		super(conditionResult);
+	public SelectorExecutor(IConditions<Owner> conditions, String name, boolean prioritySelector) {
+		super(conditions, name);
 		this.prioritySelector = prioritySelector;
 	}
 
@@ -66,10 +61,10 @@ public class SelectorExecutor extends BaseBehaviorExecutor {
 
 	@Override
 	public ActionStatus execute() {
-		List<IBehaviorNode> childNodes = this.getChildNodes();
+		List<IBehaviorNode<Owner>> childNodes = this.getChildNodes();
 		int start = this.currIndex(), limit = childSize(), loopCount = 0;
 		for (currIndex = start; currIndex < limit; currIndex++) {
-			IBehaviorNode currentNode = childNodes.get(currIndex);
+			IBehaviorNode<Owner> currentNode = childNodes.get(currIndex);
 			if (! prioritySelector) {
 				// 全部遍历完。 没有结果。
 				if (loopCount++ >= childSize()) {

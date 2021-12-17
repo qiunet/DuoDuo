@@ -13,20 +13,14 @@ import org.qiunet.utils.exceptions.CustomException;
  * qiunet
  * 2021/7/26 09:37
  **/
-public final class BehaviorRootTree extends BaseDecorator {
-
+public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
+	private final Owner owner;
 	/**
 	 * 默认使用 selector 节点作为root节点
 	 */
-	public BehaviorRootTree(){
-		this(new SelectorExecutor(false));
-	}
-	/**
-	 * 使用自定义的节点作为默认节点
-	 * @param node
-	 */
-	public BehaviorRootTree(IBehaviorExecutor node) {
-		super(node);
+	public BehaviorRootTree(Owner owner){
+		super(new SelectorExecutor<>(null, "Root"));
+		this.owner = owner;
 	}
 
 	public void tick(){
@@ -43,9 +37,14 @@ public final class BehaviorRootTree extends BaseDecorator {
 
 
 	@Override
-	public IBehaviorExecutor addChild(IBehaviorNode... actions) {
-		((IBehaviorExecutor) this.node).addChild(actions);
+	public IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions) {
+		((IBehaviorExecutor<Owner>) this.node).addChild(actions);
 		return this;
+	}
+
+	@Override
+	public Owner getOwner() {
+		return owner;
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import java.util.List;
  * qiunet
  * 2021/8/16 21:07
  **/
-@BehaviorAction(desc = "进入首页")
+@BehaviorAction(name = "进入首页")
 public class PlayerIndexAction extends TestAction {
 
 	public PlayerIndexAction(Robot robot) {
@@ -35,20 +35,20 @@ public class PlayerIndexAction extends TestAction {
 	@Override
 	protected ActionStatus execute() {
 		// 默认取最后一个角色. 客户端应该是玩家自己选择.
-		List<LoginInfo> loginInfos = BlackBoard.loginInfo.get(robot);
+		List<LoginInfo> loginInfos = BlackBoard.loginInfo.get(getOwner());
 		this.sendMessage(PlayerIndexRequest.valueOf(loginInfos.get(loginInfos.size() - 1).getPlayerId()));
 		return ActionStatus.RUNNING;
 	}
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return !robot.isAuth() ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
+		return !getOwner().isAuth() ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)
 	protected void indexResp(PlayerIndexResponse response) {
-		BlackBoard.playerData.set(robot, response.getPlayerData());
-		BlackBoard.items.set(robot, response.getItems());
-		robot.setId(response.getPlayerData().getPlayerId());
+		BlackBoard.playerData.set(getOwner(), response.getPlayerData());
+		BlackBoard.items.set(getOwner(), response.getItems());
+		getOwner().setId(response.getPlayerData().getPlayerId());
 	}
 }

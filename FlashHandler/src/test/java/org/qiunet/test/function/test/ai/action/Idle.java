@@ -12,11 +12,11 @@ import org.qiunet.utils.logger.LoggerType;
  * qiunet
  * 2021/8/17 10:39
  **/
-@BehaviorAction(desc = "空闲")
+@BehaviorAction(name = "空闲")
 public class Idle extends BaseAction {
 
-	public Idle(Hero hero, IConditions<Hero> conditions) {
-		super(hero, conditions);
+	public Idle(IConditions<Hero> conditions) {
+		super(conditions);
 	}
 
 	@Override

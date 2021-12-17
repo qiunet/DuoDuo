@@ -12,11 +12,11 @@ import org.qiunet.utils.logger.LoggerType;
  * qiunet
  * 2021/8/17 10:37
  **/
-@BehaviorAction(desc = "逃跑")
+@BehaviorAction(name = "逃跑")
 public class Escape extends BaseAction {
 
-	public Escape(Hero hero, IConditions<Hero> conditions) {
-		super(hero, conditions);
+	public Escape(IConditions<Hero> conditions) {
+		super(conditions);
 	}
 
 	@Override

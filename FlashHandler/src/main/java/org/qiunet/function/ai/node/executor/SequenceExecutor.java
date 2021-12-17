@@ -3,10 +3,10 @@ package org.qiunet.function.ai.node.executor;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
+import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 /***
  * 顺序执行容器 (与行为)
@@ -16,17 +16,18 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SequenceExecutor extends BaseBehaviorExecutor {
+public class SequenceExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 当前执行
 	 */
 	private int currIndex;
 
-	public SequenceExecutor(Supplier<Boolean> conditionResult) {
-		super(conditionResult);
+	public SequenceExecutor(IConditions<Owner> conditions) {
+		this(conditions,  "顺序执行");
 	}
 
-	public SequenceExecutor() {
+	public SequenceExecutor(IConditions<Owner> conditions, String name) {
+		super(conditions, name);
 	}
 
 	@Override
@@ -46,9 +47,9 @@ public class SequenceExecutor extends BaseBehaviorExecutor {
 
 	@Override
 	public ActionStatus execute() {
-		List<IBehaviorNode> childNodes = this.getChildNodes();
+		List<IBehaviorNode<Owner>> childNodes = this.getChildNodes();
 		for (; currIndex < childSize(); currIndex++) {
-			IBehaviorNode currentNode = childNodes.get(currIndex);
+			IBehaviorNode<Owner> currentNode = childNodes.get(currIndex);
 			if (!currentNode.isRunning() && ! currentNode.preCondition()) {
 				return ActionStatus.FAILURE;
 			}

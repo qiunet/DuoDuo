@@ -2,7 +2,6 @@ package org.qiunet.game.tests.client.action.login;
 
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.action.BehaviorAction;
-import org.qiunet.function.condition.ConditionManager;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
@@ -18,11 +17,11 @@ import org.qiunet.game.tests.protocol.proto.login.RandomNameResponse;
  * qiunet
  * 2021/8/8 10:08
  **/
-@BehaviorAction(desc = "随机名称")
+@BehaviorAction(name = "随机名称")
 public class RandomNameAction extends TestAction {
 
 	public RandomNameAction(Robot robot) {
-		this(robot, (IConditions<Robot>) ConditionManager.EMPTY_CONDITION);
+		this(robot, null);
 	}
 	public RandomNameAction(Robot robot, IConditions<Robot> conditions) {
 		super(robot, conditions);
@@ -36,11 +35,11 @@ public class RandomNameAction extends TestAction {
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return BlackBoard.randomName.isNull(robot) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
+		return BlackBoard.randomName.isNull(getOwner()) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
 	@TestResponse(ProtocolId.Login.RANDOM_NAME_RSP)
 	public void randomNameRsp(RandomNameResponse resp) {
-		BlackBoard.randomName.set(robot, resp.getNick());
+		BlackBoard.randomName.set(getOwner(), resp.getNick());
 	}
 }

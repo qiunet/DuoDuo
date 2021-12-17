@@ -10,22 +10,9 @@ import org.qiunet.test.function.test.ai.Hero;
  * qiunet
  * 2021/8/17 10:16
  **/
-public abstract class BaseAction extends BaseBehaviorAction {
+public abstract class BaseAction extends BaseBehaviorAction<Hero> {
 
-	protected final Hero hero;
-
-	private final IConditions<Hero> preCondition;
-
-	public BaseAction(Hero hero, IConditions<Hero> preCondition) {
-		this.hero = hero;
-		this.preCondition = preCondition;
-	}
-
-	@Override
-	public boolean preCondition() {
-		if (preCondition == null) {
-			return true;
-		}
-		return preCondition.verify(hero).isSuccess();
+	public BaseAction(IConditions<Hero> preCondition) {
+		super(preCondition);
 	}
 }

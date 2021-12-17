@@ -1,6 +1,7 @@
 package org.qiunet.test.function.test.ai;
 
 import org.junit.Test;
+import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
@@ -24,21 +25,25 @@ public class AiTest {
 	@Test
 	public void test(){
 		Hero hero = new Hero();
-		Escape escape = new Escape(hero, new SeeOmaCondition());
-		Fight fight = new Fight(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
-		RunToTarget runToTarget1 = new RunToTarget(hero, new SeeGoblinCondition().and(new SeeOmaCondition().not()));
-		Idle idle = new Idle(hero, null);
-		GetExp getExp = new GetExp(hero, null);
+		Escape escape = new Escape(new SeeOmaCondition());
+		Fight fight = new Fight(new SeeGoblinCondition().and(new SeeOmaCondition().not()));
+		RunToTarget runToTarget1 = new RunToTarget(new SeeGoblinCondition().and(new SeeOmaCondition().not()));
+		Idle idle = new Idle(null);
+		GetExp getExp = new GetExp(null);
 
-		RandomExecutor randomExecutor = new RandomExecutor(() -> {
-			return new SeeGoblinCondition().not().and(new SeeOmaCondition().not()).verify(hero).isSuccess();
-		});
+		BehaviorRootTree<Hero> tree = new BehaviorRootTree<>(hero)
+				;
+		RandomExecutor<Hero> randomExecutor = new RandomExecutor<>(new SeeGoblinCondition().not().and(new SeeOmaCondition().not()));
 		randomExecutor.addChild(idle, getExp);
 
-		BehaviorRootTree tree = new BehaviorRootTree();
-		tree.addChild(randomExecutor, new SequenceExecutor().addChild(runToTarget1, fight), escape);
+		IBehaviorExecutor<Hero> sequenceExecute = new SequenceExecutor<>(null);
+		sequenceExecute.addChild(runToTarget1, fight);
 
+		tree.addChild(randomExecutor, sequenceExecute, escape);
+	}
 
+	public static void aiTest(BehaviorRootTree<Hero> tree) {
+		Hero hero = tree.getOwner();
 		hero.seeEnemy(Enemy.GOBLIN);
 		// 第一次执行跑步中1
 		tree.tick();
@@ -55,6 +60,4 @@ public class AiTest {
 			tree.tick();
 		}
 	}
-
-
 }

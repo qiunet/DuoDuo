@@ -11,19 +11,19 @@ import java.util.List;
  * @author qiunet
  * 2021-07-08 11:09
  */
-public interface IBehaviorExecutor extends IBehaviorNode {
+public interface IBehaviorExecutor<Owner> extends IBehaviorNode<Owner> {
 	/**
 	 * 添加节点
 	 * @param actions
 	 * @return
 	 */
-	IBehaviorExecutor addChild(IBehaviorNode... actions);
+	IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions);
 	/**
 	 * 移除某个节点
 	 * 某些节点生命周期只需要执行一次. 比如登录.
 	 * @param child 需要移除的节点
 	 */
-	void removeChild(IBehaviorNode child);
+	void removeChild(IBehaviorNode<Owner> child);
 
 	@Override
 	default void check() {
@@ -37,7 +37,7 @@ public interface IBehaviorExecutor extends IBehaviorNode {
 	 * 获得所有的node
 	 * @return
 	 */
-	List<IBehaviorNode> getChildNodes();
+	List<IBehaviorNode<Owner>> getChildNodes();
 	/**
 	 *  子节点数
 	 * @return

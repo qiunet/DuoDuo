@@ -23,7 +23,7 @@ import org.qiunet.game.tests.server.enums.GameStatus;
  * qiunet
  * 2021/8/5 10:55
  **/
-@BehaviorAction(desc = "注册新角色")
+@BehaviorAction(name = "注册新角色")
 public class RegisterAction extends TestAction {
 	/**
 	 * 是否错误
@@ -50,7 +50,7 @@ public class RegisterAction extends TestAction {
 
 	@Override
 	public ActionStatus execute() {
-		this.sendMessage(RegisterRequest.valueOf(BlackBoard.randomName.get(robot), GenderType.MALE, 1));
+		this.sendMessage(RegisterRequest.valueOf(BlackBoard.randomName.get(getOwner()), GenderType.MALE, 1));
 		return ActionStatus.RUNNING;
 	}
 
@@ -70,7 +70,7 @@ public class RegisterAction extends TestAction {
 
 	@TestResponse(ProtocolId.Login.REGISTER_RSP)
 	public void registerResp(RegisterResponse response) {
-		BlackBoard.loginInfo.get(robot).add(response.getLoginInfo());
+		BlackBoard.loginInfo.get(getOwner()).add(response.getLoginInfo());
 		this.registered = true;
 	}
 }
