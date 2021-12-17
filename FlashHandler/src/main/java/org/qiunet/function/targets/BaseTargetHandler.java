@@ -25,6 +25,9 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType> {
 	protected void process(PlayerActor player, Consumer<Target> consumer) {
 		Argument<TargetContainer> argument = player.getArgument(TargetContainer.TARGET_CONTAINER_KEY);
 		TargetContainer<Type> targetContainer = argument.get();
+		if (targetContainer == null) {
+			return;
+		}
 		targetContainer.forEachByType(getType(), consumer);
 	}
 

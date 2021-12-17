@@ -19,57 +19,57 @@ import java.util.stream.Collectors;
 public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 	implements IRankHandler<Type> {
 	private static final CommMessageHandler messageHandler = new CommMessageHandler();
-	private Map<Long, RankVo> rankMap = Maps.newHashMap();
-	private TreeSet<RankVo> rankVos;
+	private final Map<Long, RankData> rankMap = Maps.newHashMap();
+	private final TreeSet<RankData> rankData;
 
 	protected BaseCacheRankHandler() {
 		Preconditions.checkState(getType().rankSize() > 0 && getType().rankSize() < 1000);
-		this.rankVos = new TreeSet<>(getType().comparator());
+		this.rankData = new TreeSet<>(getType().comparator());
 
-		List<RankVo> loadData = this.load();
-		for (RankVo rankVo : loadData) {
-			rankMap.put(rankVo.getId(), rankVo);
+		List<RankData> loadData = this.load();
+		for (RankData rankData : loadData) {
+			rankMap.put(rankData.getId(), rankData);
 		}
-		rankVos.addAll(loadData);
+		rankData.addAll(loadData);
 	}
 
 	@Override
-	public void updateRank(long id, String name, long value, Map<String, String> extraInfo) {
-		if (! getType().canRank(id, value)) {
-			if (rankMap.containsKey(id)) {
-				this.removeRank(id);
+	public void updateRank(RankData rankData) {
+		if (! getType().canRank(rankData.getId(), rankData.getValue())) {
+			if (rankMap.containsKey(rankData.getId())) {
+				this.removeRank(rankData.getId());
 			}
 			return;
 		}
 
 		messageHandler.addMessage(h -> {
-			this.alterRankValue0(id, name, value, extraInfo);
+			this.alterRankValue0(rankData);
 		});
 	}
 
-	private void alterRankValue0(long id, String name, long value, Map<String, String> extraInfo) {
-		RankVo rankVo = rankMap.get(id);
-		if (rankVo == null) {
+	private void alterRankValue0(RankData rankData) {
+		RankData currData = rankMap.get(rankData.getId());
+		if (currData == null) {
 			boolean rankFull;
-			if ((rankFull = rankVos.size() >= getType().rankSize())
-				&& value <= rankVos.last().getValue()) {
+			if ((rankFull = this.rankData.size() >= getType().rankSize())
+				&& rankData.getValue() <= this.rankData.last().getValue()) {
 				return;
 			}
 
-			rankVo = RankVo.valueOf(id, name, value, extraInfo);
 			if (rankFull) {
-				RankVo last = rankVos.pollLast();
-				rankMap.remove(last.getId());
+				RankData last = this.rankData.pollLast();
+				if (last != null) {
+					rankMap.remove(last.getId());
+				}
 			}
-			rankMap.put(id, rankVo);
+			rankMap.put(rankData.getId(), rankData);
 		}else {
-			rankVos.remove(rankVo);
-			rankVo.updateValue(value);
+			this.rankData.remove(currData);
 		}
-		rankVos.add(rankVo);
+		this.rankData.add(rankData);
 		this.resort();
 		messageHandler.addMessage(h -> {
-			this.save(Lists.newArrayList(rankVos));
+			this.save(Lists.newArrayList(this.rankData));
 		});
 	}
 
@@ -79,7 +79,7 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 	private void resort(){
 		messageHandler.addMessage(h -> {
 			int rank = 1;
-			for (RankVo vo : rankVos) {
+			for (RankData vo : rankData) {
 				vo.rank = rank++;
 			}
 		});
@@ -98,40 +98,40 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 	 * @param id
 	 * @return
 	 */
-	private RankVo removeRank0(long id) {
-		RankVo rankVo = rankMap.remove(id);
-		if (rankVo != null) rankVos.remove(rankVo);
-		return rankVo;
+	private RankData removeRank0(long id) {
+		RankData rankData = rankMap.remove(id);
+		if (rankData != null) this.rankData.remove(rankData);
+		return rankData;
 	}
 
 
 	@Override
-	public RankVo getRankVo(long id) {
+	public RankData getRankVo(long id) {
 		return rankMap.get(id);
 	}
 
 
 	@Override
-	public List<RankVo> getRankVos(int startRank, int size) {
-		return rankVos.stream()
+	public List<RankData> getRankVos(int startRank, int size) {
+		return rankData.stream()
 			.filter(vo -> vo.rank >= startRank)
 			.limit(size).collect(Collectors.toList());
 	}
 
 	@Override
 	public void clear() {
-		this.rankVos.clear();
+		this.rankData.clear();
 		this.rankMap.clear();
 	}
 
 	/**
 	 * 保存数据
 	 */
-	protected abstract void save(List<RankVo> rankVoList);
+	protected abstract void save(List<RankData> rankDataList);
 
 	/**
 	 * 加载数据
 	 * @return
 	 */
-	protected abstract List<RankVo> load();
+	protected abstract List<RankData> load();
 }

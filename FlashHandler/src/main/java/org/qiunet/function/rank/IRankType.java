@@ -34,7 +34,7 @@ public interface IRankType {
 	 *
 	 * @return
 	 */
-	default Comparator<RankVo> comparator() {
+	default Comparator<RankData> comparator() {
 		return (o1, o2) -> ComparisonChain.start()
 			.compare(o2.getValue(), o1.getValue())
 			.compare(o1.getDt(), o2.getDt())

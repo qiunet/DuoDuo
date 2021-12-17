@@ -34,7 +34,7 @@ public class TestTarget {
 				TargetDef.valueOf(TargetType.KILL_BOSS, 2, "111"));
 		PlayerActor playerActor = new PlayerActor(new TestDSession());
 
-		TargetContainer<TargetType> targetContainer = TargetContainer.TARGET_CONTAINER_KEY.computeIfAbsent(playerActor, () -> new TargetContainer<>(playerActor));
+		TargetContainer<TargetType> targetContainer = new TargetContainer<>(playerActor);
 		Targets targets = targetContainer.createAndWatchTargets(targetDefGetter,
 			(targets0, target) -> {
 				logger.info("任务ID:[{}],index:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getIndex(), target.getValue(), target.isFinished());

@@ -14,6 +14,11 @@ public enum RankType implements IRankType {
 		public boolean canRank(long id, long value) {
 			return value > 5;
 		}
+
+		@Override
+		public int rankSize() {
+			return 5;
+		}
 	},
 	;
 	private int type;
