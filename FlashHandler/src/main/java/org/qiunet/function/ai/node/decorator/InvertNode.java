@@ -10,14 +10,21 @@ import org.qiunet.function.ai.node.base.BaseDecorator;
  * qiunet
  * 2021/8/16 21:36
  **/
-public class InvertNode extends BaseDecorator {
+public class InvertNode<Owner> extends BaseDecorator<Owner> {
 
-	public InvertNode(IBehaviorNode node) {
+	public InvertNode(IBehaviorNode<Owner> node) {
 		super(node);
 	}
 
 	@Override
 	protected ActionStatus execute() {
-		return node.run();
+		ActionStatus status = node.run();
+		if (status == ActionStatus.RUNNING) {
+			return status;
+		}
+		if (status == ActionStatus.SUCCESS) {
+			return ActionStatus.FAILURE;
+		}
+		return ActionStatus.SUCCESS;
 	}
 }

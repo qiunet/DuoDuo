@@ -3,6 +3,7 @@ package org.qiunet.function.ai.node.base;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
+import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.async.LazyLoader;
 
@@ -13,7 +14,7 @@ import org.qiunet.utils.async.LazyLoader;
  * 2021-07-05 11:49
  */
 public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
-	private final LazyLoader<Owner> owner = new LazyLoader<>(() -> this.parent().getOwner());
+	private final LazyLoader<BehaviorRootTree<Owner>> rootNode = new LazyLoader<>(() -> this.parent().rootNode());
 	/**
 	 * 父节点
 	 */
@@ -41,22 +42,18 @@ public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 	}
 
 	@Override
-	public Owner getOwner() {
-		return owner.get();
-	}
-
-	@Override
 	public boolean isRunning() {
 		return running;
-	}
-
-	public void setParent(IBehaviorExecutor<Owner> parent) {
-		this.parent = parent;
 	}
 
 	@Override
 	public IBehaviorExecutor<Owner> parent() {
 		return parent;
+	}
+
+	@Override
+	public BehaviorRootTree<Owner> rootNode() {
+		return rootNode.get();
 	}
 
 	@Override

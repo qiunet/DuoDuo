@@ -54,6 +54,11 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 	}
 
 	@Override
+	public BehaviorRootTree<Owner> rootNode() {
+		return this;
+	}
+
+	@Override
 	public Owner getOwner() {
 		return owner;
 	}

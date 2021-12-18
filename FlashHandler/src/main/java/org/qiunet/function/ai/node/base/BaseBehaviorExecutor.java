@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.condition.IConditions;
+import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.util.List;
 
@@ -43,7 +44,7 @@ public abstract class BaseBehaviorExecutor<Owner> extends BaseBehaviorNode<Owner
 	@Override
 	public IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions) {
 		for (IBehaviorNode<Owner> action : actions) {
-			action.setParent(this);
+			ReflectUtil.setField(action, "parent", this);
 			this.nodes.add(action);
 		}
 		return this;

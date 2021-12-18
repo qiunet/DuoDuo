@@ -17,7 +17,7 @@ import org.qiunet.utils.scanner.ScannerType;
 public class TestProtobufData {
 	@BeforeClass
 	public static void beforeExec() throws Exception {
-		ClassScanner.getInstance(ScannerType.PROTOBUF_DATA, ScannerType.CHANNEL_DATA).scanner();
+		ClassScanner.getInstance(ScannerType.CHANNEL_DATA).scanner();
 	}
 	@Test
 	public void test(){

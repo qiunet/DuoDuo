@@ -3,6 +3,7 @@ package org.qiunet.function.ai.xml.reader;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.action.BehaviorActionManager;
+import org.qiunet.function.ai.node.executor.ParallelExecutor;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
 import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
@@ -33,6 +34,7 @@ public class AiBuilder<Owner> {
 	private static final String RANDOM_EXECUTOR_NAME = "random";
 	private static final String SELECTOR_EXECUTOR_NAME = "selector";
 	private static final String SEQUENCE_EXECUTOR_NAME = "sequence";
+	private static final String PARALLEL_EXECUTOR_NAME = "parallel";
 	private static final String ACTION_TAG_NAME = "action";
 
 	/**
@@ -96,6 +98,9 @@ public class AiBuilder<Owner> {
 					break;
 				case SEQUENCE_EXECUTOR_NAME:
 					behaviorNode = new SequenceExecutor<>(conditions);
+					break;
+				case PARALLEL_EXECUTOR_NAME:
+					behaviorNode = new ParallelExecutor<>(conditions);
 					break;
 				case ACTION_TAG_NAME:
 					behaviorNode = BehaviorActionManager.instance.createAction(element.getAttribute("clazz"), conditions);

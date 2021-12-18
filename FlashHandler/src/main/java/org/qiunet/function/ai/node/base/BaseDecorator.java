@@ -5,6 +5,7 @@ import org.qiunet.function.ai.node.IBehaviorDecorator;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.util.List;
 
@@ -24,8 +25,8 @@ public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> imple
 
 	public BaseDecorator(IBehaviorNode<Owner> node) {
 		super(null, node.getName());
+		ReflectUtil.setField(node, "parent", this);
 		this.nodes = ImmutableList.of(node);
-		node.setParent(this);
 		this.node = node;
 	}
 

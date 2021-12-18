@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node;
 
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.utils.math.IWeightObj;
 
 /***
@@ -27,7 +28,7 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	 */
 	default void prepare() {}
 	/**
-	 * 执行前 初始化
+	 * 每次重新执行前 都会初始化
 	 */
 	default void initialize(){}
 	/**
@@ -48,7 +49,15 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	 *
 	 * @return
 	 */
-	Owner getOwner();
+	default Owner getOwner() {
+		return rootNode().getOwner();
+	}
+
+	/**
+	 * 根节点
+	 * @return
+	 */
+	BehaviorRootTree<Owner> rootNode();
 	/**
 	 * 是否运行中.
 	 * @return
@@ -59,12 +68,6 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	 * @return
 	 */
 	boolean preCondition();
-	/**
-	 * 设置父节点
-	 * @param parent
-	 */
-	void setParent(IBehaviorExecutor<Owner> parent);
-
 	/**
 	 * 得到父节点
 	 * @return

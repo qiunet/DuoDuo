@@ -33,6 +33,10 @@ public class ParallelExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	 */
 	private final ISuccessPolicy policy;
 
+	public ParallelExecutor(IConditions<Owner> conditions) {
+		this(conditions, REQUIRE_ALL_SUCCESS, "并行执行");
+	}
+
 	public ParallelExecutor(IConditions<Owner> conditions, String name) {
 		this(conditions, REQUIRE_ALL_SUCCESS, name);
 	}

@@ -31,8 +31,8 @@ public enum  ScannerType {
 	CRON(1 << 11),
 	/**玩家的数据加载*/
 	PLAYER_DATA_LOADER(1 << 12, FILE_CONFIG),
-	/**通道数据. 请求*/
-	CHANNEL_DATA(1 << 13),
+	/**protobuf 数据compile*/
+	PROTOBUF_DATA(1 << 13),
 	/**公式**/
 	FORMULA(1 << 14, AUTO_WIRE, EVENT),
 	/**生成proto文件*/
@@ -41,8 +41,8 @@ public enum  ScannerType {
 	GM_COMMAND(1 << 16),
 	/***key val 配置*/
 	KEY_VAL_CFG(1 << 17, CFG_SCANNER),
-	/**protobuf 数据compile*/
-	PROTOBUF_DATA(1 << 18),
+	/**通道数据. 请求*/
+	CHANNEL_DATA(1 << 18, PROTOBUF_DATA),
 	/**响应*/
 	GAME_TEST_RESPONSE(1 << 19),
 	/**服务节点*/
