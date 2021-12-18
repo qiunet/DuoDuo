@@ -28,7 +28,13 @@ public interface IHttpRequest<RequestData> extends IRequest<RequestData> {
 	 * @param key
 	 * @return
 	 */
-	String getParameter(String key);
+	default String getParameter(String key) {
+		List<String> ret = this.getParametersByKey(key);
+		if (ret != null && !ret.isEmpty()) {
+			return ret.get(0);
+		}
+		return null;
+	}
 
 	/**
 	 * 得到get请求的参数. 返回是一个数组

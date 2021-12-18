@@ -57,7 +57,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	 */
 	@Test
 	public void testOtherHttpString(){
-		final String test = "测试[testOtherHttpString]";
+		final String test = "p1=val1&p2=val2";
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI("/back?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))

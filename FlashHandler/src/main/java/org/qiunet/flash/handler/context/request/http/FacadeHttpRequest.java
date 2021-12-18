@@ -42,11 +42,6 @@ class FacadeHttpRequest<RequestData, ResponseData> implements IHttpRequest<Reque
 	}
 
 	@Override
-	public String getParameter(String key) {
-		return context.getParameter(key);
-	}
-
-	@Override
 	public List<String> getParametersByKey(String key) {
 		return context.getParametersByKey(key);
 	}

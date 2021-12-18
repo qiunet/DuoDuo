@@ -19,4 +19,10 @@ public @interface UriPathHandler {
 	 * @return
 	 */
 	String value();
+	/**
+	 * 解析post里面的参数.
+	 * 内容格式: p1=val1&p2=val2
+	 * @return 是否解析
+	 */
+	boolean post_params() default false;
 }

@@ -53,11 +53,6 @@ public abstract class HttpJsonHandler extends HttpStringHandler implements ISync
 		}
 
 		@Override
-		public String getParameter(String key) {
-			return request.getParameter(key);
-		}
-
-		@Override
 		public List<String> getParametersByKey(String key) {
 			return request.getParametersByKey(key);
 		}

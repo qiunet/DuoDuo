@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.request.http;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -9,6 +10,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
+import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
@@ -34,7 +36,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
 	private HttpRequest request;
 	protected HttpBootstrapParams params;
-	private QueryStringDecoder queryStringDecoder;
+	private Map<String ,List<String>> parameters;
 
 	public AbstractHttpRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
 		super(content, channel);
@@ -48,8 +50,17 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	}
 
 	private Map<String ,List<String>> parameters(){
-		if (queryStringDecoder == null) queryStringDecoder = new QueryStringDecoder(request.uri());
-		return queryStringDecoder.parameters();
+		if (parameters == null) {
+			parameters = Maps.newHashMap();
+			QueryStringDecoder decoder1 = new QueryStringDecoder(request.uri());
+			parameters.putAll(decoder1.parameters());
+			UriPathHandler uriPathHandler = getHandler().getClass().getAnnotation(UriPathHandler.class);
+			if (uriPathHandler != null && uriPathHandler.post_params()) {
+				decoder1 = new QueryStringDecoder(getRequestData().toString(), false);
+				decoder1.parameters().forEach((key, list) -> parameters.computeIfAbsent(key, k -> new ArrayList<>(2)).addAll(list));
+			}
+		}
+		return parameters;
 	}
 	@Override
 	public List<String> getParametersByKey(String key) {
@@ -72,15 +83,6 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		} catch (Exception e) {
 			logger.error("HttpProtobufRequestContext Exception: ", e);
 		}
-	}
-
-	@Override
-	public String getParameter(String key) {
-		List<String> ret = this.parameters().get(key);
-		if (ret != null && !ret.isEmpty()) {
-			return ret.get(0);
-		}
-		return null;
 	}
 
 	@Override
