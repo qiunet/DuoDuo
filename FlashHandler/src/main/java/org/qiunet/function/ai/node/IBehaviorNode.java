@@ -14,6 +14,11 @@ import org.qiunet.utils.math.IWeightObj;
  */
 public interface IBehaviorNode<Owner> extends IWeightObj {
 	/**
+	 * 自动分配的id
+	 * @return
+	 */
+	int getId();
+	/**
 	 * 重置
 	 */
 	default void reset(){}

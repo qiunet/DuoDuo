@@ -8,6 +8,7 @@ import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *  执行器ROOT
@@ -21,6 +22,13 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 	 * 只执行一次
 	 */
 	private final AtomicBoolean prepared = new AtomicBoolean(false);
+	/**
+	 * id 分配
+	 */
+	private final AtomicInteger idMaker = new AtomicInteger();
+	/**
+	 * 属主
+	 */
 	private final Owner owner;
 	/**
 	 * 默认使用 selector 节点作为root节点
@@ -53,9 +61,23 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 		return this;
 	}
 
+	/**
+	 * 分配一个ID
+	 * @return
+	 */
+	public int generatorId(){
+		return idMaker.incrementAndGet();
+	}
+
 	@Override
 	public BehaviorRootTree<Owner> rootNode() {
 		return this;
+	}
+
+	@Override
+	public int getId() {
+		// root 的id为0
+		return 0;
 	}
 
 	@Override

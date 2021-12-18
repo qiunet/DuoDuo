@@ -15,6 +15,7 @@ import org.qiunet.utils.async.LazyLoader;
  */
 public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 	private final LazyLoader<BehaviorRootTree<Owner>> rootNode = new LazyLoader<>(() -> this.parent().rootNode());
+	private final LazyLoader<Integer> id = new LazyLoader<>(() -> rootNode().generatorId());
 	/**
 	 * 父节点
 	 */
@@ -61,6 +62,11 @@ public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 		ActionStatus status = execute();
 		this.running = status == ActionStatus.RUNNING;
 		return status;
+	}
+
+	@Override
+	public int getId() {
+		return id.get();
 	}
 
 	public void setName(String name) {
