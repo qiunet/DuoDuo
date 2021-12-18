@@ -1,6 +1,8 @@
 package org.qiunet.utils.scanner;
 
 /***
+ * 扫描类型.
+ * 可以细化到每个 Application 也可以组装.
  *
  * @author qiunet
  * 2020-04-25 20:11
@@ -35,14 +37,14 @@ public enum  ScannerType {
 	PROTOBUF_DATA(1 << 13),
 	/**公式**/
 	FORMULA(1 << 14, AUTO_WIRE, EVENT),
-	/**生成proto文件*/
-	GENERATOR_PROTO(1 << 15),
+	/**通道数据. 请求*/
+	CHANNEL_DATA(1 << 15, PROTOBUF_DATA),
 	/**gm命令**/
 	GM_COMMAND(1 << 16),
 	/***key val 配置*/
 	KEY_VAL_CFG(1 << 17, CFG_SCANNER),
-	/**通道数据. 请求*/
-	CHANNEL_DATA(1 << 18, PROTOBUF_DATA),
+	/**生成proto文件*/
+	GENERATOR_PROTO(1 << 18, CHANNEL_DATA),
 	/**响应*/
 	GAME_TEST_RESPONSE(1 << 19),
 	/**服务节点*/
