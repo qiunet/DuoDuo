@@ -3,6 +3,7 @@ package org.qiunet.utils.test.scanner;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 /**
@@ -18,7 +19,7 @@ public class TestClassScanner {
 
 	@Test
 	public void testClassScanner() {
-		ClassScanner.getInstance()
+		ClassScanner.getInstance(ScannerType.NONE, ScannerType.AUTO_WIRE)
 			.addParam(ArgKey.Test, 10)
 			.scanner();
 

@@ -9,20 +9,21 @@ import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.data.support.DbDataListSupport;
 import org.qiunet.data.support.DbDataSupport;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.Map;
 
 public class TestDbDataSupport {
 	@DataLoader(PlayerBo.class)
-	private static DbDataSupport<Long, PlayerDo, PlayerBo> dataSupport = new DbDataSupport<>(PlayerDo.class, PlayerBo::new);
+	private static final DbDataSupport<Long, PlayerDo, PlayerBo> dataSupport = new DbDataSupport<>(PlayerDo.class, PlayerBo::new);
 	@DataLoader(ItemBo.class)
-	private static DbDataListSupport<Long, Integer, ItemDo, ItemBo> dataListSupport = new DbDataListSupport<>(ItemDo.class, ItemBo::new);
+	private static final DbDataListSupport<Long, Integer, ItemDo, ItemBo> dataListSupport = new DbDataListSupport<>(ItemDo.class, ItemBo::new);
 
 	private static final PlayerDataLoader playerDataLoader = new PlayerDataLoader(10000);
 
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.PLAYER_DATA_LOADER).scanner();
 	}
 
 	@Test

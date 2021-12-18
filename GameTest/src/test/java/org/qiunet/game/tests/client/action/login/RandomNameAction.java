@@ -20,11 +20,8 @@ import org.qiunet.game.tests.protocol.proto.login.RandomNameResponse;
 @BehaviorAction(name = "随机名称")
 public class RandomNameAction extends TestAction {
 
-	public RandomNameAction(Robot robot) {
-		this(robot, null);
-	}
-	public RandomNameAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public RandomNameAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

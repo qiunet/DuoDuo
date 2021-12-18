@@ -9,6 +9,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
@@ -16,6 +17,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /***
@@ -30,12 +32,18 @@ public enum ConvertManager implements IApplicationContextAware {
 	 * 所有的convert
 	 */
 	private List<? extends BaseObjConvert> converts = Lists.newArrayList();
+	private final AtomicBoolean inited = new AtomicBoolean(false);
 
 	public static ConvertManager getInstance() {
 		return instance;
 	}
 
 	private static final Map<Class<?>, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.OBJ_CONVERT;
+	}
 
 	/**
 	 * 转换并且set到字段.
@@ -53,6 +61,9 @@ public enum ConvertManager implements IApplicationContextAware {
 	 * @return 没有转换器将抛出异常
 	 */
 	public Object convert(Field field, String val) {
+		if (! inited.get()) {
+			throw new CustomException("ConvertManager not init");
+		}
 		Class clazz = field.getType();
 
 		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
@@ -80,6 +91,10 @@ public enum ConvertManager implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
+		if (! inited.compareAndSet(false, true)) {
+			return;
+		}
+
 		this.converts = context.getSubTypesOf(BaseObjConvert.class).stream()
 			.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))

@@ -10,6 +10,7 @@ import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataSupport;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.thread.ThreadContextData;
 
 public class TestRedisDataSupport {
@@ -17,7 +18,7 @@ public class TestRedisDataSupport {
 
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 		dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
 	}
 

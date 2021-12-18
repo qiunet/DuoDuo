@@ -13,6 +13,7 @@ import org.qiunet.test.function.test.targets.event.LevelUpEventData;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
 /***
@@ -24,7 +25,7 @@ public class TestTarget {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.TARGET_HANDLER).scanner();
 	}
 
 	@Test

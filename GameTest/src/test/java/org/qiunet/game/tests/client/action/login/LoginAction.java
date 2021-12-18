@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.LoginCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.LoginRequest;
 import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
@@ -21,12 +20,8 @@ import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
 @BehaviorAction(name = "登录")
 public class LoginAction extends TestAction {
 
-	public LoginAction(Robot robot) {
-		this(robot, new LoginCondition().not());
-	}
-
-	public LoginAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public LoginAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

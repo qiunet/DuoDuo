@@ -8,6 +8,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -30,6 +31,11 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 		this.context = context;
 		this.handlerCodec();
 		instance = this;
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.PROTOBUF_DATA;
 	}
 
 	static ProtobufDataContext0 getInstance() {

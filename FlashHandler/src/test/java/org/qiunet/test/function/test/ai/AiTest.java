@@ -5,10 +5,13 @@ import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
+import org.qiunet.function.ai.xml.reader.AiBuilder;
 import org.qiunet.test.function.test.ai.action.*;
 import org.qiunet.test.function.test.ai.condition.SeeGoblinCondition;
 import org.qiunet.test.function.test.ai.condition.SeeOmaCondition;
 import org.qiunet.test.function.test.ai.enums.Enemy;
+import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  * 从前有一个胆小如鼠的英雄，
@@ -40,9 +43,22 @@ public class AiTest {
 		sequenceExecute.addChild(runToTarget1, fight);
 
 		tree.addChild(randomExecutor, sequenceExecute, escape);
+		this.aiTest(tree);
 	}
 
-	public static void aiTest(BehaviorRootTree<Hero> tree) {
+
+
+	@Test
+	public void readXML(){
+		ClassScanner.getInstance(ScannerType.BEHAVIOR_ACTION).scanner("org.qiunet");
+
+		Hero hero = new Hero();
+		AiBuilder<Hero> aiBuilder = new AiBuilder<>(hero, "ai.xml");
+		BehaviorRootTree<Hero> rootTree = aiBuilder.buildRootTree();
+		this.aiTest(rootTree);
+	}
+
+	private void aiTest(BehaviorRootTree<Hero> tree) {
 		Hero hero = tree.getOwner();
 		hero.seeEnemy(Enemy.GOBLIN);
 		// 第一次执行跑步中1

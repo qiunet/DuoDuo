@@ -10,6 +10,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
@@ -81,7 +82,12 @@ public class ConditionManager {
 	 enum ConditionManager0 implements IApplicationContextAware {
 		instance;
 
-		private final Map<String, Class<? extends ICondition>> conditionMap = Maps.newHashMap();
+		 @Override
+		 public ScannerType scannerType() {
+			 return ScannerType.CONDITION;
+		 }
+
+		 private final Map<String, Class<? extends ICondition>> conditionMap = Maps.newHashMap();
 
 		/**
 		 * 创建Condition

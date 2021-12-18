@@ -18,7 +18,7 @@ public class TestBadWord {
 
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance(ScannerType.TESTER).scanner();
+		ClassScanner.getInstance(ScannerType.EVENT).scanner();
 	}
 	@Test
 	public void testBadWord() {

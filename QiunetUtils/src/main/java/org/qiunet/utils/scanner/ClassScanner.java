@@ -38,27 +38,37 @@ public final class ClassScanner implements IApplicationContext {
 			Scanners.SubTypes,
 	};
 
-	private ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
-	private Logger logger = LoggerType.DUODUO.getLogger();
-	private Reflections reflections;
-	private ScannerType scannerType;
+	private final ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
+	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * 存储一些参数
 	 */
-	private ArgsContainer argsContainer = new ArgsContainer();
+	private final ArgsContainer argsContainer = new ArgsContainer();
 
 	private static ClassScanner instance;
+	/**
+	 * 扫描工具类
+	 */
+	private final Reflections reflections;
+	/**
+	 * 可以扫描的类型
+	 */
+	private final int scannerTypes;
 
-	private ClassScanner(ScannerType scannerType) {
+	private ClassScanner(ScannerType... scannerTypes) {
 		if (instance != null) {
 			throw new CustomException("Instance Duplication!");
 		}
 		this.reflections = new Reflections("org.qiunet", scanners);
-		this.scannerType = scannerType;
+		int scannerType = 0;
+		for (ScannerType type : scannerTypes) {
+			scannerType |= type.getStatus();
+		}
+		this.scannerTypes = scannerType;
 		instance = this;
 	}
 
-	public static ClassScanner getInstance(ScannerType scannerType) {
+	public static ClassScanner getInstance(ScannerType... scannerType) {
 		if (instance == null) {
 			synchronized (ClassScanner.class) {
 				if (instance == null)
@@ -68,10 +78,6 @@ public final class ClassScanner implements IApplicationContext {
 			}
 		}
 		return instance;
-	}
-
-	public static ClassScanner getInstance() {
-		return getInstance(ScannerType.ALL);
 	}
 
 	private AtomicBoolean scannered = new AtomicBoolean();
@@ -112,9 +118,7 @@ public final class ClassScanner implements IApplicationContext {
 		for (IApplicationContextAware instance : collect) {
 			logger.debug("scanner start detail: {}", instance.getClass().getName());
 			// 不相同. 并且都不是ALL
-			if (instance.scannerType() != this.scannerType
-			&& instance.scannerType() != ScannerType.ALL
-			&& this.scannerType != ScannerType.ALL) {
+			if (! instance.scannerType().test(this.scannerTypes)) {
 				this.countdown(latch, instance.getClass().getSimpleName());
 				continue;
 			}

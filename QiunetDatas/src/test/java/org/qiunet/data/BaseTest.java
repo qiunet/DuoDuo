@@ -2,6 +2,7 @@ package org.qiunet.data;
 
 import org.junit.BeforeClass;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  *
@@ -12,6 +13,6 @@ import org.qiunet.utils.scanner.ClassScanner;
 public class BaseTest {
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 	}
 }

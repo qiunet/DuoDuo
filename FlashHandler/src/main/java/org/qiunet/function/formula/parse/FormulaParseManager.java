@@ -10,6 +10,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,11 @@ public class FormulaParseManager {
 	 */
 	enum FormulaParseManager0 implements IApplicationContextAware {
 		instance;
+
+		@Override
+		public ScannerType scannerType() {
+			return ScannerType.FORMULA;
+		}
 
 		private final List<IFormulaParse> parses = Lists.newArrayList();
 		@Override

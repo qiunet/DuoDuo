@@ -26,9 +26,9 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2021/12/13 14:08
  */
-public class CreateConditionDoc implements IApplicationContextAware {
+public class CreateAiConfig implements IApplicationContextAware {
 	private static List<ICondition> conditions = Lists.newArrayList();
-	private CreateConditionDoc(){}
+	private CreateAiConfig(){}
 
 	/**
 	 * 生成condition 文件配置文件
@@ -74,6 +74,6 @@ public class CreateConditionDoc implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.TESTER;
+		return ScannerType.CREATE_AI_CONFIG;
 	}
 }

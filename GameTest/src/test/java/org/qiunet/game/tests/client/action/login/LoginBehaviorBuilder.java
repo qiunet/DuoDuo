@@ -6,8 +6,7 @@ import org.qiunet.function.ai.node.decorator.CounterNode;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.game.test.bt.IBehaviorBuilder;
 import org.qiunet.game.test.robot.Robot;
-import org.qiunet.game.tests.client.data.condition.AuthCondition;
-import org.qiunet.game.tests.client.data.condition.RegisterCountCondition;
+import org.qiunet.game.tests.client.data.condition.*;
 
 /***
  * 登录的行为树构造.
@@ -25,9 +24,9 @@ public class LoginBehaviorBuilder implements IBehaviorBuilder<Robot> {
 		SequenceExecutor<Robot> sequence = new SequenceExecutor<>(new AuthCondition().not());
 
 		IBehaviorExecutor<Robot> registerBehavior = new SequenceExecutor<>(new RegisterCountCondition(3))
-				.addChild(new RandomNameAction(robot), new RegisterAction(robot));
+				.addChild(new RandomNameAction(null), new RegisterAction(new RandomNamePresent().and(new RegisterCountCondition(3))));
 
-		sequence.addChild(new LoginAction(robot), registerBehavior, new PlayerIndexAction(robot));
+		sequence.addChild(new LoginAction(new LoginCondition().not()), registerBehavior, new PlayerIndexAction(new RoleCountCondition(1)));
 		return new CounterNode(sequence, 1);
 	}
 }

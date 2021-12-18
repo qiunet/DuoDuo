@@ -5,6 +5,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Modifier;
 import java.util.Map;
@@ -36,6 +37,11 @@ enum TargetHandlerManager implements IApplicationContextAware {
 				throw new CustomException("Type {} TargetHandler is repeated", obj.getType());
 			}
 		}
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.TARGET_HANDLER;
 	}
 
 	/**

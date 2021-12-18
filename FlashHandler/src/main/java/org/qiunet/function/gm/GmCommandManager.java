@@ -10,6 +10,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -60,6 +61,11 @@ enum GmCommandManager implements IApplicationContextAware {
 						.result()
 				).map(data -> GmCommandInfo.valueOf(data.annotation.type(), data.annotation.commandName(), data.paramList))
 				.collect(Collectors.toList());
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.GM_COMMAND;
 	}
 
 	/**

@@ -5,13 +5,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.io.IOException;
 
 public class TestRedis {
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner("org.qiunet.data");
+		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner("org.qiunet.data");
 	}
 
 	@Test

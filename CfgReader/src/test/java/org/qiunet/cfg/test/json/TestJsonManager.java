@@ -7,6 +7,7 @@ import org.qiunet.cfg.wrapper.INestListCfgWrapper;
 import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
 import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 /***
@@ -27,7 +28,7 @@ public class TestJsonManager {
 
 	@BeforeClass
 	public static void preExec() throws Throwable {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CFG).scanner();
 	}
 
 	@Test

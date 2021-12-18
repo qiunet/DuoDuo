@@ -246,7 +246,7 @@ class CreateTableController implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.SERVER;
+		return ScannerType.CREATE_TABLE;
 	}
 
 	/***

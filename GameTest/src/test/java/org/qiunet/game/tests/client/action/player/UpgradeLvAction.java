@@ -6,7 +6,6 @@ import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
-import org.qiunet.game.tests.client.data.condition.ExpEnoughCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.player.UpgradeLevelRequest;
 import org.qiunet.game.tests.protocol.proto.player.UpgradeLevelResponse;
@@ -27,12 +26,9 @@ public class UpgradeLvAction extends TestAction {
 		this.resp = false;
 	}
 
-	public UpgradeLvAction(Robot robot) {
-		this(robot, new ExpEnoughCondition());
-	}
 
-	public UpgradeLvAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public UpgradeLvAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

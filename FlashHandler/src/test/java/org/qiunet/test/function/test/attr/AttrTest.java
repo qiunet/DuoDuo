@@ -16,6 +16,7 @@ import org.qiunet.test.function.test.attr.equip.EquipPostion;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
 /***
@@ -29,7 +30,7 @@ public class AttrTest {
 
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.ATTR).scanner();
 	}
 
 	@Test

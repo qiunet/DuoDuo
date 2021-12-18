@@ -38,6 +38,25 @@ public interface IBehaviorExecutor<Owner> extends IBehaviorNode<Owner> {
 	 * @return
 	 */
 	List<IBehaviorNode<Owner>> getChildNodes();
+	@Override
+	default void initialize() {
+		getChildNodes().forEach(IBehaviorNode::initialize);
+	}
+
+	@Override
+	default void prepare() {
+		getChildNodes().forEach(IBehaviorNode::prepare);
+	}
+
+	@Override
+	default void reset() {
+		getChildNodes().forEach(IBehaviorNode::reset);
+	}
+
+	@Override
+	default void release() {
+		getChildNodes().forEach(IBehaviorNode::release);
+	}
 	/**
 	 *  子节点数
 	 * @return

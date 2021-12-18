@@ -28,6 +28,7 @@ public class ResponseMapping implements IApplicationContextAware {
 	private static final Map<Integer, Method> methodMapping = Maps.newHashMap();
 	private static final Map<Integer, Method> statusMapping = Maps.newHashMap();
 
+
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.handlerStatusTips(context, argsContainer);
@@ -122,6 +123,6 @@ public class ResponseMapping implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.TESTER;
+		return ScannerType.GAME_TEST_RESPONSE;
 	}
 }

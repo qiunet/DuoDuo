@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,7 +14,7 @@ public class TestListener {
 	public static final AtomicInteger levelUpEventCount = new AtomicInteger();
 	@BeforeClass
 	public static void init() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.EVENT).scanner();
 	}
 
 	public static final int uid = 100000;

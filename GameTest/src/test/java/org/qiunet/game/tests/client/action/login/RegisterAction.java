@@ -9,8 +9,6 @@ import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.anno.StatusTipsHandler;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.RandomNamePresent;
-import org.qiunet.game.tests.client.data.condition.RegisterCountCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.enums.GenderType;
 import org.qiunet.game.tests.protocol.proto.login.RegisterRequest;
@@ -41,11 +39,8 @@ public class RegisterAction extends TestAction {
 		this.registered = false;
 	}
 
-	public RegisterAction(Robot robot) {
-		this(robot, new RandomNamePresent().and(new RegisterCountCondition(3)));
-	}
-	public RegisterAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public RegisterAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

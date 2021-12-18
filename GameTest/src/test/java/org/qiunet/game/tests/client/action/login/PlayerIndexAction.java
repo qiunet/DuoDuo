@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.RoleCountCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
 import org.qiunet.game.tests.protocol.proto.login.PlayerIndexRequest;
@@ -24,12 +23,8 @@ import java.util.List;
 @BehaviorAction(name = "进入首页")
 public class PlayerIndexAction extends TestAction {
 
-	public PlayerIndexAction(Robot robot) {
-		this(robot, new RoleCountCondition(1));
-	}
-
-	public PlayerIndexAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public PlayerIndexAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

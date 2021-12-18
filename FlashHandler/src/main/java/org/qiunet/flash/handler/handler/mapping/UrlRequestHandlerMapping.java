@@ -65,6 +65,6 @@ public class UrlRequestHandlerMapping implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.ALL;
+		return ScannerType.URL_REQUEST;
 	}
 }

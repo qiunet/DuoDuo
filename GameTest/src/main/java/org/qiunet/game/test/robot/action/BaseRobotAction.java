@@ -22,13 +22,16 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	 */
 	private final IServer server;
 
-	public BaseRobotAction(Robot robot, IConditions<Robot> preConditions, IServer server) {
+	public BaseRobotAction(IConditions<Robot> preConditions, IServer server) {
 		super(preConditions);
-
-		robot.registerAction(this);
 		this.server = server;
 	}
 
+	@Override
+	public void prepare() {
+		super.prepare();
+		getOwner().registerAction(this);
+	}
 
 	@Override
 	public DSession getSender() {

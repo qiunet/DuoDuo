@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -24,7 +25,7 @@ public class HttpBootStrap {
 	private static Thread currThread;
 	@BeforeClass
 	public static void init() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {

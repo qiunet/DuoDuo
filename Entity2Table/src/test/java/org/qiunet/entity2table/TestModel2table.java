@@ -2,6 +2,7 @@ package org.qiunet.entity2table;
 
 import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /**
  * Created by zhengj
@@ -12,7 +13,7 @@ import org.qiunet.utils.scanner.ClassScanner;
 public class TestModel2table {
 
 	public static void main(String[] args) {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CREATE_TABLE, ScannerType.AUTO_WIRE).scanner();
 		new DbLoaderOverEventData().fireEventHandler();
 	}
 }

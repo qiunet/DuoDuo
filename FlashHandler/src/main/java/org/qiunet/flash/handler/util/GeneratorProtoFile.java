@@ -9,8 +9,6 @@ import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
-import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -68,13 +66,8 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		pbClasses.addAll(collect);
 	}
 
-	@EventListener
-	private void serverStart(ServerStartupEventData event){
-		pbClasses.clear();
-	}
-
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.SERVER;
+		return ScannerType.GENERATOR_PROTO;
 	}
 }

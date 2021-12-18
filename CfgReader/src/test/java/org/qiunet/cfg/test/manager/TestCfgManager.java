@@ -3,6 +3,7 @@ package org.qiunet.cfg.test.manager;
 import org.junit.Test;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  *
@@ -12,7 +13,7 @@ import org.qiunet.utils.scanner.ClassScanner;
 public class TestCfgManager {
 	@Test
 	public void test() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CFG).scanner();
 		try {
 			CfgManagers.getInstance().reloadSetting();
 		} catch (Throwable e) {

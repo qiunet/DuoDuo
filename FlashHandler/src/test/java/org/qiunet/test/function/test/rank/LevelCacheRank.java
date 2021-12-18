@@ -24,7 +24,7 @@ public enum LevelCacheRank implements IRankHandlerWrapper<RankType> {
 
 	@EventListener
 	private void LevelChange(LevelUpEventData eventData) {
-		rankHandler.get().updateRank(RankData.custom(eventData.getId(), eventData.getLevel()).addName(eventData.getPlayer().getOpenId()).build());
+		rankHandler.get().updateRank(RankData.custom(eventData.getPlayer().getId(), eventData.getLevel()).addName(eventData.getPlayer().getOpenId()).build());
 	}
 
 	@Override

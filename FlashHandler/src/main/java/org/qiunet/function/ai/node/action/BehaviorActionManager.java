@@ -7,6 +7,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
@@ -39,6 +40,11 @@ public enum BehaviorActionManager {
 
 	private enum BehaviorActionManager0 implements IApplicationContextAware {
 		instance;
+
+		@Override
+		public ScannerType scannerType() {
+			return ScannerType.BEHAVIOR_ACTION;
+		}
 
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {

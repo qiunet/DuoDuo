@@ -18,7 +18,7 @@ import java.util.Set;
  * qiunet
  * 2021/7/26 09:39
  **/
-public enum BehaviorManager implements IApplicationContextAware {
+public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 	instance;
 
 	private final List<BehaviorBuilderData> datas = Lists.newArrayList();
@@ -46,7 +46,7 @@ public enum BehaviorManager implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.TESTER;
+		return ScannerType.ROBOT_BEHAVIOR_BUILDER;
 	}
 
 	private static class BehaviorBuilderData<Owner> {

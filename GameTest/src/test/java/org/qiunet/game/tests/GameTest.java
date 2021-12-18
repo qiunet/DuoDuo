@@ -7,6 +7,7 @@ import org.qiunet.game.tests.client.anno.StatusTipsHandler;
 import org.qiunet.game.tests.server.ServerStartup;
 import org.qiunet.game.tests.server.enums.GameStatus;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -34,7 +35,7 @@ public class GameTest {
 		};
 
 		// 启动服务器
-		ClassScanner.getInstance().addParam(IStatusTipsHandler.STATUS_MAPPING_HANDLER, mapping).scanner();
+		ClassScanner.getInstance(ScannerType.GAME_TEST).addParam(IStatusTipsHandler.STATUS_MAPPING_HANDLER, mapping).scanner();
 		ServerStartup server = new ServerStartup();
 		server.startup();
 

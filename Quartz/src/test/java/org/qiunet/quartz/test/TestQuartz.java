@@ -4,11 +4,12 @@ import org.junit.Test;
 import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 public class TestQuartz {
 	@Test
 	public void testCron() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CRON).scanner();
 		Thread.sleep(10000);
 	}
 

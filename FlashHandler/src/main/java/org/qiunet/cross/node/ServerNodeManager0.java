@@ -222,7 +222,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.SERVER;
+		return ScannerType.SERVER_NODE;
 	}
 
 	/**

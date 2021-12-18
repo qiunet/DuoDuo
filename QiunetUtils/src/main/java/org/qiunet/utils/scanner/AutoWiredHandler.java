@@ -78,4 +78,9 @@ import java.util.Set;
 	public int order() {
 		return 11;
 	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.AUTO_WIRE;
+	}
 }

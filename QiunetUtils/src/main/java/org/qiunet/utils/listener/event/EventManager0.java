@@ -8,6 +8,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  * 监听器的manager
@@ -24,15 +26,20 @@ import java.util.Set;
 enum EventManager0 implements IApplicationContextAware {
 	instance;
 	private final Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
+	private final AtomicBoolean inited = new AtomicBoolean();;
 	private IApplicationContext context;
+
 	static EventManager0 getInstance() {
 		return instance;
 	}
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		this.context = context;
+		if (! inited.compareAndSet(false, true)) {
+			return;
+		}
 
+		this.context = context;
 		Set<Method> typesAnnotated = context.getMethodsAnnotatedWith(EventListener.class);
 		for (Method method : typesAnnotated) {
 			Class<? extends IEventData> eventDataClass = eventDataClass(method);
@@ -42,6 +49,11 @@ enum EventManager0 implements IApplicationContextAware {
 
 		this.listeners.values().forEach(list -> list.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()));
 		LoggerType.DUODUO.debug("EventManager find {} event!", this.listeners.size());
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.EVENT;
 	}
 
 	@Override
@@ -76,6 +88,10 @@ enum EventManager0 implements IApplicationContextAware {
 	 * @param eventData
 	 */
 	void fireEventHandler(IEventData eventData) {
+		if (! inited.get()) {
+			throw new CustomException("Event not init");
+		}
+
 		List<Wrapper> wrappers = listeners.get(eventData.getClass());
 		if (wrappers == null) {
 			return;

@@ -5,6 +5,7 @@ import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.game.test.bt.IBehaviorBuilder;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.data.condition.AuthCondition;
+import org.qiunet.game.tests.client.data.condition.ExpEnoughCondition;
 
 /***
  *
@@ -16,7 +17,7 @@ public class PlayerBehaviorBuilder implements IBehaviorBuilder<Robot> {
 	@Override
 	public IBehaviorNode<Robot> buildExecutor(Robot robot) {
 		SelectorExecutor<Robot> selectorExecutor = new SelectorExecutor<>(new AuthCondition());
-		selectorExecutor.addChild(new GetExpAction(robot), new UpgradeLvAction(robot));
+		selectorExecutor.addChild(new GetExpAction(new ExpEnoughCondition().not()), new UpgradeLvAction(new ExpEnoughCondition()));
 		return selectorExecutor;
 	}
 }

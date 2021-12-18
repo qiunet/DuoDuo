@@ -7,6 +7,8 @@ import org.qiunet.function.ai.node.base.BaseDecorator;
 import org.qiunet.function.ai.node.executor.SelectorExecutor;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /***
  *  执行器ROOT
  *
@@ -14,6 +16,11 @@ import org.qiunet.utils.exceptions.CustomException;
  * 2021/7/26 09:37
  **/
 public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
+	/**
+	 * 准备工作.
+	 * 只执行一次
+	 */
+	private final AtomicBoolean prepared = new AtomicBoolean(false);
 	private final Owner owner;
 	/**
 	 * 默认使用 selector 节点作为root节点
@@ -24,6 +31,10 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 	}
 
 	public void tick(){
+		if (! prepared.get() && prepared.compareAndSet(false, true)) {
+			node.prepare();
+		}
+
 		if (! node.isRunning()) {
 			// 有的执行器需执行前清理状态. 等
 			node.initialize();

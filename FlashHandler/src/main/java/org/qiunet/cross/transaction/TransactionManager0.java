@@ -60,7 +60,7 @@ class TransactionManager0 implements IApplicationContextAware {
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.SERVER;
+		return ScannerType.TRANSACTION;
 	}
 
 	@Override

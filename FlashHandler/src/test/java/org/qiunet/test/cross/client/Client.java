@@ -23,7 +23,7 @@ public class Client {
 	private static IChannelMessageSender websocketClient;
 	@BeforeClass
 	public static void connect(){
-		ClassScanner.getInstance(ScannerType.TESTER).scanner();
+		ClassScanner.getInstance(ScannerType.CLIENT).scanner();
 		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
 			System.out.println("--------------------------"+data.getProtocolId());
 		});

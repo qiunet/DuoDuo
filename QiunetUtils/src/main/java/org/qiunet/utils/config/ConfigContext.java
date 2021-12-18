@@ -15,6 +15,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
@@ -54,6 +55,11 @@ enum ConfigContext implements IApplicationContextAware {
 	@Override
 	public int order() {
 		return Integer.MAX_VALUE - 1;
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.FILE_CONFIG;
 	}
 
 	@Override

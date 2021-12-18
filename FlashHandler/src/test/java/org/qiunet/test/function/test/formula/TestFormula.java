@@ -18,7 +18,7 @@ import org.qiunet.utils.scanner.ScannerType;
 public class TestFormula {
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance(ScannerType.TESTER).scanner();
+		ClassScanner.getInstance(ScannerType.FORMULA).scanner();
 	}
 
 
@@ -33,7 +33,7 @@ public class TestFormula {
 	public void testRandom(){
 		String str = "[(3 + 6), (5 + 20)]";
 		IFormula parse = FormulaParseManager.parse(str);
-		Assert.assertEquals("[(3.0 + 6.0), (5.0 + 20.0)]", parse.toString());
+		Assert.assertEquals("[(3 + 6), (5 + 20)]", parse.toString());
 	}
 
 	@Test

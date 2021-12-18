@@ -18,6 +18,7 @@ import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -34,7 +35,7 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 
 	@BeforeClass
 	public static void init() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {

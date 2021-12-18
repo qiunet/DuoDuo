@@ -18,7 +18,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
-import org.qiunet.game.test.bt.BehaviorManager;
+import org.qiunet.game.test.bt.RobotBehaviorBuilderManager;
 import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.response.ResponseMapping;
 import org.qiunet.game.test.robot.action.BaseRobotAction;
@@ -76,7 +76,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 	protected RobotFunc(int tickMillis) {
 		this.tickMillis = tickMillis;
-		this.behaviorRootTree = BehaviorManager.instance.buildRootExecutor((this));
+		this.behaviorRootTree = RobotBehaviorBuilderManager.instance.buildRootExecutor((this));
 		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), MathUtil.random(20, 200), TimeUnit.MILLISECONDS);
 	}
 
@@ -132,7 +132,6 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(data.getProtocolId());
 			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.bytes());
 
-			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(realData));
 			try {
 				method.invoke(action, realData);
 			} catch (Exception e) {

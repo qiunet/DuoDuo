@@ -53,19 +53,4 @@ public abstract class BaseBehaviorExecutor<Owner> extends BaseBehaviorNode<Owner
 	public List<IBehaviorNode<Owner>> getChildNodes() {
 		return ImmutableList.copyOf(nodes);
 	}
-
-	@Override
-	public void initialize() {
-		nodes.forEach(IBehaviorNode::initialize);
-	}
-
-	@Override
-	public void reset() {
-		nodes.forEach(IBehaviorNode::reset);
-	}
-
-	@Override
-	public void release() {
-		nodes.forEach(IBehaviorNode::release);
-	}
 }

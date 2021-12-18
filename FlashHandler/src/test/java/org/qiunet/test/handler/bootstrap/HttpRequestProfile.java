@@ -17,6 +17,7 @@ import org.qiunet.test.handler.proto.ProtocolId;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.nio.ByteBuffer;
 
@@ -55,7 +56,7 @@ public class HttpRequestProfile {
 	}
 
 	public static void serverStartup(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
 			.setProtocolHeaderType(ProtocolHeaderType.server)

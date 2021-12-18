@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
 import org.qiunet.utils.collection.generics.IntegerSet;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  *
@@ -20,7 +21,7 @@ public class TestKeyValManager {
 
 	@BeforeClass
 	public static void preExec() throws Throwable {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CFG).scanner();
 	}
 
 	@Test

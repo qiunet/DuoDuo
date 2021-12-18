@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.Set;
 
@@ -20,5 +21,10 @@ public class ActionScannerHandler implements IApplicationContextAware {
 		for (Class<?> s : set) {
 			TestClassScanner.clazzName = s.getSimpleName();
 		}
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.NONE;
 	}
 }

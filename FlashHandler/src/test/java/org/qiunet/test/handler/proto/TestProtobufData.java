@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 
 /***
@@ -16,7 +17,7 @@ import org.qiunet.utils.scanner.ClassScanner;
 public class TestProtobufData {
 	@BeforeClass
 	public static void beforeExec() throws Exception {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.PROTOBUF_DATA, ScannerType.CHANNEL_DATA).scanner();
 	}
 	@Test
 	public void test(){

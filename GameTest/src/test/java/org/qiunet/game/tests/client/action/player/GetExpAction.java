@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.client.data.condition.ExpEnoughCondition;
 import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.PlayerData;
 import org.qiunet.game.tests.protocol.proto.player.ExpChangePush;
@@ -31,11 +30,8 @@ public class GetExpAction extends TestAction {
 		this.getResp = false;
 	}
 
-	public GetExpAction(Robot robot) {
-		this(robot, new ExpEnoughCondition().not());
-	}
-	public GetExpAction(Robot robot, IConditions<Robot> conditions) {
-		super(robot, conditions);
+	public GetExpAction(IConditions<Robot> conditions) {
+		super(conditions);
 	}
 
 	@Override

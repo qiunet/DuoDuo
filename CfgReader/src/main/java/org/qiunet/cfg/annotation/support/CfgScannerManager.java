@@ -15,6 +15,7 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.lang.reflect.*;
@@ -37,6 +38,11 @@ enum CfgScannerManager implements IApplicationContextAware {
 		this.createCfgWrapper();
 		this.cfgAutoWired();
 		this.initCfg();
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.CFG_SCANNER;
 	}
 
 	@Override

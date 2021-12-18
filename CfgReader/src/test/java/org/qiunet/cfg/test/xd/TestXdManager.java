@@ -3,6 +3,7 @@ package org.qiunet.cfg.test.xd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  *
@@ -14,7 +15,7 @@ public class TestXdManager {
 
 	@BeforeClass
 	public static void preExec() throws Throwable {
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.CFG).scanner();
 	}
 	@Test
 	public void test(){

@@ -46,7 +46,5 @@ public interface IApplicationContextAware {
 	 * 做下区分
 	 * @return
 	 */
-	default ScannerType scannerType() {
-		return ScannerType.ALL;
-	}
+	ScannerType scannerType();
 }

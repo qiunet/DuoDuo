@@ -4,6 +4,7 @@ package org.qiunet.quartz;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 /***
  * 扫描annotation
@@ -17,5 +18,10 @@ public class CronAnnotationScannerHandler implements IApplicationContextAware {
 				return new CommonCronJob(cron.value(), cron.warnExecMillis(), m, context.getInstanceOfClass(m.getDeclaringClass()));
 				}
 			).forEach(QuartzSchedule.getInstance()::addJob);
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.CRON;
 	}
 }

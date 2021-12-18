@@ -9,6 +9,7 @@ import org.qiunet.function.attr.tree.IAttrNodeType;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.Set;
 
@@ -70,5 +71,10 @@ enum AttrManager0 implements IApplicationContextAware {
 	 */
 	void printAttrTree(){
 		attrTree.printTree();
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.SERVER;
 	}
 }

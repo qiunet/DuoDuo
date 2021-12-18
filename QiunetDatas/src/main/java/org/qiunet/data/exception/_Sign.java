@@ -4,6 +4,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.secret.StrCodecUtil;
 
 /***
@@ -17,5 +18,10 @@ class _Sign implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		LoggerType.DUODUO.getLogger().trace(StrCodecUtil.decrypt(sign));
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.ALL;
 	}
 }

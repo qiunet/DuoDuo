@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.thread.ThreadContextData;
 
 import java.util.Map;
@@ -14,7 +15,7 @@ public class TestRedisDataListSupport {
 	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport;
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 		 dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
 	}
 

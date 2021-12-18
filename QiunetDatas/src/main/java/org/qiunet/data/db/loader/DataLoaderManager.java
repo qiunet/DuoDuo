@@ -12,6 +12,7 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -83,6 +84,11 @@ enum DataLoaderManager implements IAsyncNode {
 
 	private enum DataLoaderManager0 implements IApplicationContextAware {
 		instance;
+
+		@Override
+		public ScannerType scannerType() {
+			return ScannerType.PLAYER_DATA_LOADER;
+		}
 
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {

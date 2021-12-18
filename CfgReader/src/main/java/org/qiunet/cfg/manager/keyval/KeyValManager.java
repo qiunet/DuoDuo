@@ -14,6 +14,7 @@ import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
@@ -91,6 +92,11 @@ class KeyValManager implements IApplicationContextAware {
 	@Override
 	public int order() {
 		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.KEY_VAL_CFG;
 	}
 
 	@Override

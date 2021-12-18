@@ -21,7 +21,13 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	 */
 	default void check() {}
 	/**
-	 * 初始化
+	 * root 构造 后的准备工作.
+	 *
+	 * 只执行一次
+	 */
+	default void prepare() {}
+	/**
+	 * 执行前 初始化
 	 */
 	default void initialize(){}
 	/**

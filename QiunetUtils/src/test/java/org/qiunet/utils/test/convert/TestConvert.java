@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Field;
 
@@ -22,7 +23,7 @@ public class TestConvert {
 
 	@BeforeClass
 	public static void init(){
-		ClassScanner.getInstance().scanner();
+		ClassScanner.getInstance(ScannerType.OBJ_CONVERT).scanner();
 	}
 
 	@Test

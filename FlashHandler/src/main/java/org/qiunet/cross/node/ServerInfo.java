@@ -47,7 +47,10 @@ public final class ServerInfo extends HashMap<String, Object> {
 		node.put("serverPort", serverPort);
 		node.put("nodePort", nodePort);
 		node.put("serverId", serverId);
-		String publicHost = ServerConfig.getInstance().getValue(publicHostKey);
+		String publicHost = null;
+		if (ServerConfig.getConfig() != null) {
+			publicHost = ServerConfig.getInstance().getValue(publicHostKey);
+		}
 		if (StringUtil.isEmpty(publicHost)) {
 			publicHost = NetUtil.getPublicIp();
 		}

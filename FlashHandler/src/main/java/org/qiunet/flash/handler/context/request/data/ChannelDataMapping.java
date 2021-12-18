@@ -16,6 +16,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Modifier;
@@ -47,6 +48,11 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		this.context = context;
 		this.handlerPbChannelData(context);
 		this.requestHandlerProcess(context);
+	}
+
+	@Override
+	public ScannerType scannerType() {
+		return ScannerType.CHANNEL_DATA;
 	}
 
 	/**
