@@ -95,12 +95,12 @@ public class RedisLock implements AutoCloseable {
 	 * 在finally里面调用
 	 */
 	public void unlock() {
-		if (this.future != null) {
-			this.future.cancel(true);
-		}
 		redisUtil.execCommands(jedis -> {
 			String val = jedis.get(key);
 			if (this.val.equals(val)) {
+				if (this.future != null) {
+					this.future.cancel(true);
+				}
 				jedis.del(key);
 			}
 			return null;

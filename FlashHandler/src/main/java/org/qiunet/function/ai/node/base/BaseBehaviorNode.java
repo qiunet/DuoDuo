@@ -8,7 +8,7 @@ import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.async.LazyLoader;
 
 /***
- *  几点类型
+ *  节点类型
  *
  * @author qiunet
  * 2021-07-05 11:49

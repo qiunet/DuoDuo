@@ -31,6 +31,7 @@ public class AiBuilder<Owner> {
 	private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 	private static final String CONDITION_ATTRIBUTE_NAME = "condition";
+	private static final String NAME_ATTRIBUTE_NAME = "name";
 	private static final String RANDOM_EXECUTOR_NAME = "random";
 	private static final String SELECTOR_EXECUTOR_NAME = "selector";
 	private static final String SEQUENCE_EXECUTOR_NAME = "sequence";
@@ -85,22 +86,24 @@ public class AiBuilder<Owner> {
 			Element element = (Element) item;
 			String tagName = element.getTagName();
 
+			String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
+			boolean nameEmpty = element.hasAttribute(NAME_ATTRIBUTE_NAME);
 			String condition = element.getAttribute(CONDITION_ATTRIBUTE_NAME);
 			IConditions<Owner> conditions = ConditionManager.createCondition(condition);
 
 			IBehaviorNode<Owner> behaviorNode;
 			switch (tagName) {
 				case RANDOM_EXECUTOR_NAME:
-					behaviorNode = new RandomExecutor<>(conditions);
+					behaviorNode = nameEmpty ? new RandomExecutor<>(conditions) : new RandomExecutor<>(conditions, name);
 					break;
 				case SELECTOR_EXECUTOR_NAME:
-					behaviorNode = new SelectorExecutor<>(conditions);
+					behaviorNode = nameEmpty ? new SelectorExecutor<>(conditions) : new SelectorExecutor<>(conditions, name);
 					break;
 				case SEQUENCE_EXECUTOR_NAME:
-					behaviorNode = new SequenceExecutor<>(conditions);
+					behaviorNode = nameEmpty ? new SequenceExecutor<>(conditions) : new SequenceExecutor<>(conditions, name);
 					break;
 				case PARALLEL_EXECUTOR_NAME:
-					behaviorNode = new ParallelExecutor<>(conditions);
+					behaviorNode = nameEmpty ? new ParallelExecutor<>(conditions) : new ParallelExecutor<>(conditions, name);
 					break;
 				case ACTION_TAG_NAME:
 					behaviorNode = BehaviorActionManager.instance.createAction(element.getAttribute("clazz"), conditions);

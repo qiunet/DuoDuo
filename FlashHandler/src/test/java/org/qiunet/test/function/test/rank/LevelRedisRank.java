@@ -1,6 +1,7 @@
 package org.qiunet.test.function.test.rank;
 
 
+import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.function.rank.BaseRedisRankHandler;
 import org.qiunet.function.rank.IRankHandler;
 import org.qiunet.function.rank.IRankHandlerWrapper;
@@ -29,8 +30,9 @@ public enum LevelRedisRank implements IRankHandlerWrapper<RankType> {
 
 	private static class RankHandler extends BaseRedisRankHandler<RankType> {
 
-		public RankHandler() {
-			super(RedisDataUtil.getInstance());
+		@Override
+		protected IRedisUtil redisUtil() {
+			return RedisDataUtil.getInstance();
 		}
 
 		@Override

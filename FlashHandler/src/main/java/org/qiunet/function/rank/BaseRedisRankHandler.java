@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
  * 2020-11-25 15:43
  */
 public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> implements IRankHandler<Type> {
-	private final IRedisUtil redisUtil;
 	/**
 	 * 存放排名
 	 */
@@ -27,12 +26,12 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 	 */
 	private final String redisDataKey;
 
-	public BaseRedisRankHandler(IRedisUtil redisUtil) {
+	public BaseRedisRankHandler() {
 		this.redisDataKey = "_GAME_RANK_DATA_"+getType().name();
 		this.redisKey = "_GAME_RANK_"+getType().name();
-		this.redisUtil = redisUtil;
 	}
 
+	protected  abstract IRedisUtil redisUtil();
 	/**
 	 * 按照时间构造一个分数.
 	 * 分数一样. 按照时间排序
@@ -51,12 +50,12 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 	@Override
 	public void updateRank(RankData rankData) {
 		String string = JsonUtil.toJsonString(rankData);
-		long count = redisUtil.execCommands(jedis -> {
+		long count = redisUtil().execCommands(jedis -> {
 			String strId = String.valueOf(rankData.getId());
 			jedis.zadd(redisKey, this.buildScore(rankData.getValue()), strId);
 			jedis.hset(redisDataKey, strId, string);
 
-			Long card = redisUtil.returnJedis().zcard(redisKey);
+			Long card = redisUtil().returnJedis().zcard(redisKey);
 			return card == null ? 0 : card;
 		});
 		if (count <= getType().rankSize()) {
@@ -70,7 +69,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 	 * 限制长度
 	 */
 	private void trimRank(){
-		redisUtil.execCommands(jedis -> {
+		redisUtil().execCommands(jedis -> {
 			Set<String> strings = jedis.zrevrange(redisKey, getType().rankSize(), Integer.MAX_VALUE);
 			if (strings == null || strings.isEmpty()) {
 				return null;
@@ -84,7 +83,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 
 	@Override
 	public RankData getRankVo(long id) {
-		return redisUtil.execCommands(jedis -> {
+		return redisUtil().execCommands(jedis -> {
 			Long rank = jedis.zrevrank(redisKey, String.valueOf(id));
 			if (rank == null) {
 				return null;
@@ -102,8 +101,8 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 		startRank--;
 
 		// 本质是list
-		Set<String> range = redisUtil.returnJedis().zrevrange(redisKey, startRank, startRank + size);
-		List<String> strings = redisUtil.returnJedis().hmget(redisDataKey, range.toArray(new String[0]));
+		Set<String> range = redisUtil().returnJedis().zrevrange(redisKey, startRank, startRank + size);
+		List<String> strings = redisUtil().returnJedis().hmget(redisDataKey, range.toArray(new String[0]));
 		AtomicInteger rank = new AtomicInteger(startRank);
 		return strings.stream().map(str -> {
 			RankData rankData = JsonUtil.getGeneralObjWithField(str, RankData.class);
@@ -114,7 +113,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 
 	@Override
 	public void clear() {
-		redisUtil.execCommands(jedis -> {
+		redisUtil().execCommands(jedis -> {
 			jedis.del(redisDataKey);
 			jedis.del(redisKey);
 			return null;
