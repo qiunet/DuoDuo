@@ -11,6 +11,13 @@ import java.util.concurrent.TimeUnit;
  * 2020-03-02 10:50
  ***/
 public interface ICdType {
+	/**
+	 * N秒 能进行几次
+	 * @return
+	 */
+	default int limitCount() {
+		return 1;
+	};
 	/***
 	 * 必须间隔多长时间.
 	 * @return

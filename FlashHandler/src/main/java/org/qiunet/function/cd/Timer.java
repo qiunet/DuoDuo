@@ -17,27 +17,44 @@ class Timer {
 	 * 间隔
 	 */
 	private long period;
+	/**
+	 * 次数
+	 */
+	private int cfgCount;
+	/**
+	 * 记录次数
+	 */
+	private int recordCount;
 
-
-	Timer(long period) {
+	Timer(long period, int cfgCount) {
 		this.period = period;
-		this.nextTime = DateUtil.currentTimeMillis() +period;
+		this.cfgCount = cfgCount;
 	}
+	/**
+	 * 记录cd
+	 */
+	void recordCd(){
+		if (this.nextTime == 0) {
+			this.nextTime = DateUtil.currentTimeMillis() +period;
+		}
 
+		if (recordCount < cfgCount) {
+			this.recordCount ++;
+		}
+	}
 	/**
 	 * 如果cd失效, 重新cd
-	 * @param renew 如果已经失效, 重新计时.
 	 * @return 失效则返回true, 表示可以进行下面的逻辑. 并且已经重新cd
 	 */
-	 boolean isTimeout(boolean renew) {
-		long millieTime = DateUtil.currentTimeMillis();
-		if (validTimeout(millieTime)) {
-			if (renew) {
-				nextTime = millieTime + period;
-			}
+	 boolean isTimeout() {
+		 long millieTime = DateUtil.currentTimeMillis();
+		if (this.validTimeout(millieTime)) {
+			nextTime = millieTime + period;
+			this.recordCount = 0;
 			return true;
 		}
-		return false;
+		// 在cd内. 看次数
+		return recordCount < cfgCount;
 	}
 
 	/**
@@ -63,5 +80,13 @@ class Timer {
 
 	long getNextTime() {
 		return nextTime;
+	}
+
+	/**
+	 * 次数
+	 * @return
+	 */
+	public int getRecordCount() {
+		return recordCount;
 	}
 }

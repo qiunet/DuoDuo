@@ -20,5 +20,19 @@ public class TestCdTimer {
 
 		boolean timeout = cdTimer.isTimeout(CdType.CHAT);
 		Assert.assertFalse(timeout);
+
+		cdTimer.cleanCd(CdType.GUILD_JOIN);
+
+		cdTimer.recordCd(CdType.GUILD_JOIN);
+		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
+		Assert.assertTrue(timeout);
+
+		cdTimer.recordCd(CdType.GUILD_JOIN);
+		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
+		Assert.assertFalse(timeout);
+
+		cdTimer.recordCd(CdType.GUILD_JOIN);
+		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
+		Assert.assertFalse(timeout);
 	}
 }

@@ -33,16 +33,23 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	 * @param unit 时间单位
 	 */
 	public void recordCd(T cdType, long period, TimeUnit unit) {
+		this.recordCd(cdType, period, unit, cdType.limitCount());
+	}
+
+	/***
+	 * 使用自己指定的period 记录cd 并返回cd是否失效.
+	 * 有时候不一定是使用 cdType 定义的间隔时间.
+	 * @param cdType
+	 * @param period 自己指定的间隔时间
+	 * @param unit 时间单位
+	 * @param limitCount 单位时间能进行几次
+	 */
+	public void recordCd(T cdType, long period, TimeUnit unit, int limitCount) {
 		if (close) {
 			return;
 		}
 
-		Timer timer = cdTimers.get(cdType);
-		if (timer == null) {
-			cdTimers.putIfAbsent(cdType, new Timer(unit.toMillis(period)));
-			return;
-		}
-		timer.isTimeout(true);
+		cdTimers.computeIfAbsent(cdType, key -> new Timer(unit.toMillis(period), limitCount)).recordCd();
 	}
 	/***
 	 * 仅仅校验是否cd是否失效.
@@ -51,14 +58,10 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 	 * @return
 	 */
 	public boolean isTimeout(T cdType){
-		if (close) {
+		if (close || ! cdTimers.containsKey(cdType)) {
 			return true;
 		}
-		Timer timer = cdTimers.get(cdType);
-		if (timer == null) {
-			return true;
-		}
-		return timer.isTimeout(false);
+		return cdTimers.get(cdType).isTimeout();
 	}
 
 	/**
@@ -88,12 +91,19 @@ public class CdTimer<T extends Enum<T> & ICdType> {
 		return cdTimers.get(cdType).getNextTime();
 	}
 
-
+	/**
+	 * 是否关闭cdTimer
+	 * 测试时候关闭比较合适
+	 * @return
+	 */
 	public boolean isClose() {
 		return close;
 	}
 
-
+	/**
+	 * 清理某个cd记录
+	 * @param cdType
+	 */
 	public void cleanCd(T cdType) {
 		cdTimers.remove(cdType);
 	}
