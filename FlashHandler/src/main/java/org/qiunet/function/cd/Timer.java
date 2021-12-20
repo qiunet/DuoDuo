@@ -34,13 +34,12 @@ class Timer {
 	 * 记录cd
 	 */
 	void recordCd(){
-		if (this.nextTime == 0) {
-			this.nextTime = DateUtil.currentTimeMillis() +period;
+		long timeMillis = DateUtil.currentTimeMillis();
+		if (validTimeout(timeMillis) || this.nextTime == 0) {
+			this.nextTime =  timeMillis + period;
+			this.recordCount = 0;
 		}
-
-		if (recordCount < cfgCount) {
-			this.recordCount ++;
-		}
+		this.recordCount ++;
 	}
 	/**
 	 * 如果cd失效, 重新cd
@@ -49,8 +48,6 @@ class Timer {
 	 boolean isTimeout() {
 		 long millieTime = DateUtil.currentTimeMillis();
 		if (this.validTimeout(millieTime)) {
-			nextTime = millieTime + period;
-			this.recordCount = 0;
 			return true;
 		}
 		// 在cd内. 看次数
