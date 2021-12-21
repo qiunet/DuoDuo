@@ -14,7 +14,17 @@ public interface ICdTimerOwner<CdType extends Enum<CdType> & ICdType> {
 	 * @return
 	 */
 	CdTimer<CdType> getCdTimer();
-
+	/***
+	 * 使用自己指定的period 记录cd 并返回cd是否失效.
+	 * 有时候不一定是使用 cdType 定义的间隔时间.
+	 * @param cdType
+	 * @param period 自己指定的间隔时间
+	 * @param unit 时间单位
+	 * @param limitCount 单位时间能进行几次
+	 */
+	default void recordCd(CdType cdType, long period, TimeUnit unit, int limitCount) {
+		getCdTimer().recordCd(cdType, period, unit, limitCount);
+	}
 	/**
 	 * 使用指定间隔 刷新指定类型的cd
 	 * @param cdType 类型
@@ -22,23 +32,32 @@ public interface ICdTimerOwner<CdType extends Enum<CdType> & ICdType> {
 	 * @param unit 间隔单位
 	 */
 	default void recordCd(CdType cdType, long period, TimeUnit unit) {
-		getCdTimer().recordCd(cdType, period, unit);
+		this.recordCd(cdType, period, unit, 1);
 	}
 	/**
 	 * 使用CdType枚举默认间隔 刷新指定类型的cd
 	 * @param cdType 类型
 	 */
 	default void recordCd(CdType cdType) {
-		getCdTimer().recordCd(cdType);
+		this.recordCd(cdType, cdType.period(), cdType.unit());
 	}
 
 	/**
 	 * 指定类型的cd是否已经过期
 	 * @param cdType 类型
-	 * @return
+	 * @return true 不在cd中
 	 */
 	default boolean isCdTimeOut(CdType cdType) {
 		return getCdTimer().isTimeout(cdType);
+	}
+
+	/**
+	 * 是否在cd中
+	 * @param cdType
+	 * @return true cd中
+	 */
+	default boolean isCding(CdType cdType) {
+		return ! isCdTimeOut(cdType);
 	}
 
 	/**

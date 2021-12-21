@@ -16,11 +16,11 @@ class Timer {
 	/**
 	 * 间隔
 	 */
-	private long period;
+	private final long period;
 	/**
 	 * 次数
 	 */
-	private int cfgCount;
+	private final int cfgCount;
 	/**
 	 * 记录次数
 	 */
@@ -55,9 +55,9 @@ class Timer {
 	}
 
 	/**
-	 * 校验. 是否cd已经失效
-	 * @param millieTime
-	 * @return
+	 * 校验. 指定毫秒时间是否cd已经失效
+	 * @param millieTime 指定毫秒
+	 * @return true 是
 	 */
 	private boolean validTimeout(long millieTime) {
 		return millieTime >= nextTime;
@@ -65,7 +65,7 @@ class Timer {
 
 	/**
 	 * 得到cd剩余秒数
-	 * @return
+	 * @return cd剩余秒数
 	 */
 	 int getLeftSeconds() {
 		long now = DateUtil.currentTimeMillis();
@@ -81,7 +81,7 @@ class Timer {
 
 	/**
 	 * 次数
-	 * @return
+	 * @return 次数
 	 */
 	public int getRecordCount() {
 		return recordCount;
