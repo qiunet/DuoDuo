@@ -20,7 +20,7 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	}
 
 	public RewardConfig(int cfgId, long value) {
-		this.put("cfgId", String.valueOf(cfgId));
+		this.put("id", String.valueOf(cfgId));
 		this.put("value", String.valueOf(value));
 	}
 
@@ -34,7 +34,7 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	}
 
 	public int getCfgId() {
-		return getInt("cfgId");
+		return getInt("id");
 	}
 
 	public long getValue() {

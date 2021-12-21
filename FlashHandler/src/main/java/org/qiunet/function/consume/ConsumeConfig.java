@@ -1,7 +1,10 @@
 package org.qiunet.function.consume;
 
 import org.qiunet.function.base.IResourceType;
+import org.qiunet.utils.data.IKeyValueData;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /***
@@ -10,19 +13,7 @@ import java.util.function.Function;
  * @author qiunet
  * 2020-12-28 11:50
  */
-public class ConsumeConfig {
-	/**
-	 *  资源id
-	 */
-	private int cfgId;
-	/**
-	 * 数量
-	 */
-	private long value;
-	/**
-	 * 禁止替换
-	 */
-	private boolean banReplace;
+public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValueData<Object, String> {
 
 	public ConsumeConfig() {}
 
@@ -31,9 +22,9 @@ public class ConsumeConfig {
 	}
 
 	public ConsumeConfig(int cfgId, long value, boolean banReplace) {
-		this.cfgId = cfgId;
-		this.value = value;
-		this.banReplace = banReplace;
+		this.put("id", String.valueOf(cfgId));
+		this.put("value", String.valueOf(value));
+		this.put("banReplace", String.valueOf(banReplace));
 	}
 
 	/**
@@ -42,18 +33,35 @@ public class ConsumeConfig {
 	 * @return Consume
 	 */
 	public BaseConsume convertToConsume(Function<Integer, IResourceType> typeGetter) {
-		return typeGetter.apply(cfgId).createConsume(this);
+		return typeGetter.apply(getCfgId()).createConsume(this);
 	}
 
+	/**
+	 * 资源ID
+	 * @return
+	 */
 	public int getCfgId() {
-		return cfgId;
+		return getInt("id");
 	}
 
+	/**
+	 * 数量
+	 * @return
+	 */
 	public long getValue() {
-		return value;
+		return getLong("value");
 	}
 
+	/**
+	 * 是否禁止替换
+	 * @return
+	 */
 	public boolean isBanReplace() {
-		return banReplace;
+		return getBoolean("banReplace");
+	}
+
+	@Override
+	public Map<Object, String> returnMap() {
+		return this;
 	}
 }
