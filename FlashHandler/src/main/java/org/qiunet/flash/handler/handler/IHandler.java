@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.handler;
 
-import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
 

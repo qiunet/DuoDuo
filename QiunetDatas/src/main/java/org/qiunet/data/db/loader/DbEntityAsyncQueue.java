@@ -1,13 +1,11 @@
 package org.qiunet.data.db.loader;
 
 import com.google.common.collect.Maps;
-import org.qiunet.data.cache.entity.ICacheEntityList;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.IDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
-import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.db.entity.IDbEntityList;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.exceptions.CustomException;

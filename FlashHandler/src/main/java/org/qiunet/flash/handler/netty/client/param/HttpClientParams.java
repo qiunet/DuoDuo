@@ -1,9 +1,6 @@
 package org.qiunet.flash.handler.netty.client.param;
 
-import org.qiunet.flash.handler.common.enums.HandlerType;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-
-import java.net.URI;
 
 /**
  * 使用引导类 参数.

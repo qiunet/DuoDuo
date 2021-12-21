@@ -2,14 +2,12 @@ package org.qiunet.utils.test.string;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
 
 import java.util.List;
-import java.util.Map;
 
 /***
  *

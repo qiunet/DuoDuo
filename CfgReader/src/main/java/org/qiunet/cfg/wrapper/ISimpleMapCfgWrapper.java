@@ -2,7 +2,6 @@ package org.qiunet.cfg.wrapper;
 
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ISimpleMapCfg;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.List;
