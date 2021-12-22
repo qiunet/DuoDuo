@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
+import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
@@ -12,7 +13,7 @@ import org.qiunet.utils.listener.event.EventManager;
  * @author qiunet
  * 2020-10-13 20:51
  */
-public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T>  {
+public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T> implements IObserverSupportOwner<T> {
 	/**
 	 * 观察者
 	 */
@@ -28,6 +29,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 		this.session = session;
 	}
 
+	@Override
 	public ObserverSupport<T> getObserverSupport() {
 		return observerSupport;
 	}
