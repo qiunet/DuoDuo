@@ -22,7 +22,7 @@ public interface IRealReward {
 	 * 获得数量信息
 	 * @return
 	 */
-	long getCount();
+	long getValue();
 
 	/**
 	 * 获得资源配置

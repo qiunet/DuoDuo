@@ -136,7 +136,11 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
 			objBaseReward.grant(context);
 			if (objBaseReward instanceof IRealReward) {
-				context.getRealRewards().add((IRealReward) objBaseReward);
+				if (context.getMulti() > 1) {
+					context.getRealRewards().add((IRealReward) objBaseReward.copy(context.getMulti()));
+				}else {
+					context.getRealRewards().add((IRealReward) objBaseReward);
+				}
 			}
 		}
 
