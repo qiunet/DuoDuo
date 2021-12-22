@@ -4,8 +4,9 @@ import org.qiunet.function.base.IResourceCfg;
 import org.qiunet.function.base.basic.BasicFunctionManager;
 
 /***
- * 真实奖励.
- * 普通奖励就是BaseReward本身. 装备奖励是装备实例
+ * 真实奖励. 方便客户端展示
+ * 普通奖励就是BaseReward本身.
+ * 装备奖励是装备实例
  *
  * @author qiunet
  * 2021-01-07 15:42
@@ -21,7 +22,7 @@ public interface IRealReward {
 	 * 获得数量信息
 	 * @return
 	 */
-	long getValue();
+	long getCount();
 
 	/**
 	 * 获得资源配置
@@ -30,14 +31,5 @@ public interface IRealReward {
 	 */
 	default <T extends IResourceCfg> T getResourceCfg() {
 		return BasicFunctionManager.instance.getResById(getCfgId());
-	}
-
-	/**
-	 * 转成RewardTo
-	 *
-	 * @return
-	 */
-	default RewardTo toRewardTo(){
-		return RewardTo.valueOf(getCfgId(), getValue());
 	}
 }

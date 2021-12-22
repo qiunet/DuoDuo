@@ -7,7 +7,6 @@ import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /***
  * 奖励上下文
@@ -84,9 +83,5 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 
 	public List<IRealReward> getRealRewards() {
 		return realRewards;
-	}
-
-	public List<RewardTo> rewardTos(){
-		return getRealRewards().stream().map(IRealReward::toRewardTo).collect(Collectors.toList());
 	}
 }
