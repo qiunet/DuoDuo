@@ -148,7 +148,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * @return
 	 */
 	@Override
-	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey, Bo>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
+	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
 		return (Map<SubKey, Bo>) dataCache.computeIfAbsent(clazz, key -> {
 			Map data = (Map) DataLoaderManager.instance.getData(key, playerId);
 			data.values().forEach(val -> ((DbEntityBo) val).playerDataLoader = this);

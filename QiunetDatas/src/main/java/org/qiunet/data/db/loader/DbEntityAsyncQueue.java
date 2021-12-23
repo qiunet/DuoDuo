@@ -89,6 +89,7 @@ class DbEntityAsyncQueue {
 			switch (element.operate) {
 				case INSERT:
 					if (entity.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
+						entity.serialize();
 						databaseSupport.insert(insertStatement, entity.getDo());
 					}else {
 						logger.error("Entity status [{}] is error, can not insert to db.", entity.entityStatus());

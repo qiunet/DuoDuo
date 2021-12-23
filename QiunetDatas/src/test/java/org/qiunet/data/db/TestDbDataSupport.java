@@ -36,16 +36,19 @@ public class TestDbDataSupport {
 		playerDo.setLevel(10);
 		playerDo.setUid(playerDataLoader.getPlayerId());
 		PlayerBo playerBo = playerDataLoader.insertDo(playerDo);
+		playerDataLoader.syncToDb();
 
 		playerBo.getDo().setName(name);
 		playerBo.getDo().setLevel(100);
 		playerBo.update();
+		playerDataLoader.syncToDb();
 
 		PlayerBo bo = playerDataLoader.getData(PlayerBo.class);
 		Assert.assertEquals(bo.getDo().getName(), name);
 		Assert.assertEquals(bo.getDo().getLevel(), 100);
 
 		bo.delete();
+		playerDataLoader.syncToDb();
 
 		bo = playerDataLoader.getData(PlayerBo.class);
 		Assert.assertNull(bo);
@@ -53,18 +56,19 @@ public class TestDbDataSupport {
 
 	@Test
 	public void testEntityList(){
-
 		ItemDo itemDo1 = new ItemDo();
 		itemDo1.setUid(playerDataLoader.getPlayerId());
 		itemDo1.setItem_id(1);
 		itemDo1.setCount(1);
 		ItemBo bo1 = playerDataLoader.insertDo(itemDo1);
+		playerDataLoader.syncToDb();
 
 		ItemDo itemDo2 = new ItemDo();
 		itemDo2.setUid(playerDataLoader.getPlayerId());
 		itemDo2.setItem_id(2);
 		itemDo2.setCount(2);
 		ItemBo bo2 = playerDataLoader.insertDo(itemDo2);
+		playerDataLoader.syncToDb();
 
 		Map<Integer, ItemBo> boMap = playerDataLoader.getMapData(ItemBo.class);
 		Assert.assertEquals(boMap.size(), 2);
@@ -76,6 +80,7 @@ public class TestDbDataSupport {
 
 		bo2.getDo().setCount(3);
 		bo2.update();
+		playerDataLoader.syncToDb();
 
 		boMap = playerDataLoader.getMapData(ItemBo.class);
 		boMap.values().forEach(po -> {
@@ -85,6 +90,7 @@ public class TestDbDataSupport {
 		});
 
 		Maps.newHashMap(boMap).values().forEach(ItemBo::delete);
+		playerDataLoader.syncToDb();
 
 		boMap = playerDataLoader.getMapData(ItemBo.class);
 		Assert.assertTrue(boMap.isEmpty());

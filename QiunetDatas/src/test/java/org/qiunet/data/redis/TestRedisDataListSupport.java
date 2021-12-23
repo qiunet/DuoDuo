@@ -26,16 +26,17 @@ public class TestRedisDataListSupport {
 		equipDo1.setUid(uid);
 		equipDo1.setEquip_id(1);
 		equipDo1.setLevel(1);
-		equipDo1.insert();
+		dataListSupport.insert(equipDo1);
 
 		EquipDo equipDo2 = new EquipDo();
 		equipDo2.setUid(uid);
 		equipDo2.setEquip_id(2);
 		equipDo2.setLevel(2);
-		equipDo2.insert();
+		EquipBo equipBo = dataListSupport.insert(equipDo2);
 
 		equipDo2.setLevel(3);
-		equipDo2.update();
+		equipBo.update();
+
 		dataListSupport.syncToDatabase();
 		this.expire(uid);
 
@@ -66,7 +67,7 @@ public class TestRedisDataListSupport {
 		equipDo1.setUid(uid);
 		equipDo1.setEquip_id(1);
 		equipDo1.setLevel(1);
-		equipDo1.insert();
+		dataListSupport.insert(equipDo1);
 
 		ThreadContextData.removeAll();
 		map = dataListSupport.getBoMap(uid);
@@ -78,7 +79,7 @@ public class TestRedisDataListSupport {
 
 	public void expire(long uid) {
 		String redisKey = "EquipDo#"+uid;
-		RedisDataUtil.jedis().expire(redisKey, 0);
+		RedisDataUtil.jedis().expire(redisKey, 0L);
 		ThreadContextData.removeKey(redisKey);
 	}
 }

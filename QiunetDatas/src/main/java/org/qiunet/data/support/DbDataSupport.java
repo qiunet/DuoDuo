@@ -5,7 +5,8 @@ import org.qiunet.data.db.entity.IDbEntity;
 
 import java.util.Map;
 
-public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseDbDataSupport<Do, Bo> {
+public class DbDataSupport<Key, Do extends IDbEntity<Key>, Bo extends IEntityBo<Do>> extends BaseDbDataSupport<Do, Bo> {
+
 	public DbDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 
@@ -21,17 +22,17 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key, Bo>, Bo extends IEntit
 
 	/**
 	 * 删除
-	 * @param aDo
+	 * @param bo
 	 */
 	@Override
-	public void delete(Do aDo) {
-		this.delete(aDo.key());
+	public void delete(Bo bo) {
+		this.deleteByKey(bo.getDo().key());
 	}
 	/***
 	 * 删除指定key的do
 	 * @param key
 	 */
-	public void delete(Key key) {
+	public void deleteByKey(Key key) {
 		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
 		databaseSupport().delete(deleteStatement, map);
 	}

@@ -2,13 +2,12 @@ package org.qiunet.data.cache.entity;
 
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.db.entity.IDbEntity;
-import org.qiunet.data.support.IEntityBo;
 
 /***
  * 默认使用Cache
  * @param <Key>
  */
-public interface ICacheEntity<Key, Bo extends IEntityBo> extends IDbEntity<Key, Bo> {
+public interface ICacheEntity<Key> extends IDbEntity<Key> {
 	/**
 	 * 更新状态
 	 * @param status

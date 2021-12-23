@@ -6,9 +6,9 @@ public interface IDataSupport<Do extends IEntity, Bo> {
 
 	Bo insert(Do aDo);
 
-	void delete(Do aDo);
+	void delete(Bo bo);
 
-	void update(Do aDo);
+	void update(Bo bo);
 
 	Bo convertBo(Do aDo);
 }

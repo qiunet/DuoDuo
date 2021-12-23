@@ -16,12 +16,13 @@ abstract class BaseDbDataSupport<Do extends IDbEntity, Bo extends IEntityBo<Do>>
 
 	/***
 	 * 更新
-	 * @param aDo
+	 * @param bo
 	 * @return
 	 */
 	@Override
-	public void update(Do aDo) {
-		databaseSupport().update(updateStatement, aDo);
+	public void update(Bo bo) {
+		bo.serialize();
+		databaseSupport().update(updateStatement, bo.getDo());
 	}
 
 	 @Override

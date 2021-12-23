@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @param <Do>
  * @param <Bo>
  */
-public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
+public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, SubKey>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
 	/**保存的cache*/
 	private LocalCache<Key, Map<SubKey, Bo>> cache;
 

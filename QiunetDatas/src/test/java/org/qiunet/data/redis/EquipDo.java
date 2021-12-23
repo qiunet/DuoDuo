@@ -4,7 +4,7 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntityList;
 
 @Table(name = "equip", dbSource = "basic")
-public class EquipDo extends RedisEntityList<Long, Integer, EquipBo> {
+public class EquipDo extends RedisEntityList<Long, Integer> {
 	private long uid;
 	private int equip_id;
 	private int level;

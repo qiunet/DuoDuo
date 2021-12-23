@@ -16,7 +16,7 @@ import redis.clients.jedis.params.SetParams;
  * @author qiunet
  *
  */
-public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 	/**防止缓存击穿的 NULL*/
 	private final Do NULL;
 
@@ -90,10 +90,10 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 	}
 
 	@Override
-	public void delete(Do aDo) {
-		super.delete(aDo);
+	public void delete(Bo bo) {
+		super.delete(bo);
 
-		String redisKey = getRedisKey(doName, aDo.key());
+		String redisKey = getRedisKey(doName, bo.getDo().key());
 		ThreadContextData.removeKey(redisKey);
 	}
 

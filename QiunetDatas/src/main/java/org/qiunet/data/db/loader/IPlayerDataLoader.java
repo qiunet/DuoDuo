@@ -48,7 +48,7 @@ public interface IPlayerDataLoader {
 	 * @param <Do> Do类型
 	 * @return
 	 */
-	default <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey, Bo>> Map<SubKey, Bo> getMapData(Class<Bo> clazz){
+	default <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey>> Map<SubKey, Bo> getMapData(Class<Bo> clazz){
 		return dataLoader().getMapData(clazz);
 	}
 }

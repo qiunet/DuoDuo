@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * 2021/11/18 19:29
  */
 public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> , IDbEntityBo {
-	private transient volatile AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
+	private final transient AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
 	PlayerDataLoader playerDataLoader;
 	private boolean delete;
 
@@ -37,8 +37,7 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> 
 	@Override
 	public void update() {
 		if (playerDataLoader == null) {
-			this.serialize();
-			getDo().update();
+			IEntityBo.super.update();
 			return;
 		}
 
@@ -63,7 +62,7 @@ public abstract class DbEntityBo<Do extends IDbEntity> implements IEntityBo<Do> 
 	@Override
 	public void delete() {
 		if (playerDataLoader == null) {
-			getDo().update();
+			IEntityBo.super.delete();
 			return;
 		}
 

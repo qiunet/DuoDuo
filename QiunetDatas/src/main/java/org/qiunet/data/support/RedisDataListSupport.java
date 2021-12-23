@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey, Bo>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
 	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataListSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
@@ -136,11 +136,11 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	}
 
 	@Override
-	public void delete(Do aDo) {
-		String redisKey = getRedisKey(doName, aDo.key());
+	public void delete(Bo bo) {
+		String redisKey = getRedisKey(doName, bo.getDo().key());
 		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
 		Preconditions.checkNotNull(map);
-		map.remove(aDo.subKey());
-		super.delete(aDo);
+		map.remove(bo.getDo().subKey());
+		super.delete(bo);
 	}
 }

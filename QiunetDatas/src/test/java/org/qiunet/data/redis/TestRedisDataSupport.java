@@ -35,7 +35,7 @@ public class TestRedisDataSupport {
 		vipDo.setLevel(10);
 		vipDo.setExp(1000);
 
-		vipDo.insert();
+		dataSupport.insert(vipDo);
 		dataSupport.syncToDatabase();
 		this.expire(uid);
 
@@ -64,14 +64,14 @@ public class TestRedisDataSupport {
 		vipDo.setLevel(10);
 		vipDo.setExp(1000);
 
-		vipDo.insert();
+		VipBo vipBo = dataSupport.insert(vipDo);
 		dataSupport.syncToDatabase();
 
-		vipDo.delete();
+		vipBo.delete();
 		dataSupport.syncToDatabase();
 		this.expire(uid);
 
-		VipBo vipBo = dataSupport.getBo(uid);
+		vipBo = dataSupport.getBo(uid);
 		Assert.assertNull(vipBo);
 	}
 
@@ -88,29 +88,29 @@ public class TestRedisDataSupport {
 		vipDo.setUid(uid);
 		vipDo.setLevel(10);
 		vipDo.setExp(1000);
-		vipDo.insert();
+		VipBo vipBo = dataSupport.insert(vipDo);
 		dataSupport.syncToDatabase();
 
 		Table table = vipDo.getClass().getAnnotation(Table.class);
 		DbParamMap map = DbParamMap.create(table, vipDo.keyFieldName(), vipDo.key());
 		DbSourceDatabaseSupport.getInstance(table.dbSource()).insert("deleteVipDo", map);
 
-		vipDo.delete();
+		vipBo.delete();
 		dataSupport.syncToDatabase();
 
 		vipDo = new VipDo();
 		vipDo.setUid(uid);
 		vipDo.setLevel(8);
 		vipDo.setExp(100);
-		vipDo.insert();
+		vipBo = dataSupport.insert(vipDo);
 		dataSupport.syncToDatabase();
 
-		vipDo.delete();
+		vipBo.delete();
 		dataSupport.syncToDatabase();
 
 		this.expire(uid);
 
-		VipBo vipBo = dataSupport.getBo(uid);
+		vipBo = dataSupport.getBo(uid);
 		Assert.assertNull(vipBo);
 
 	}

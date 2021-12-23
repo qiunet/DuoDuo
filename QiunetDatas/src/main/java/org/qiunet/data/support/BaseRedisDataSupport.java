@@ -87,9 +87,9 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	}
 
 	@Override
-	public void delete(Do aDo) {
-		this.delFromRedis(aDo);
-		this.deleteFromDb(aDo);
+	public void delete(Bo bo) {
+		this.delFromRedis(bo.getDo());
+		this.deleteFromDb(bo.getDo());
 	}
 
 	/**
@@ -106,12 +106,13 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	}
 
 	@Override
-	public void update(Do aDo) {
-		this.setDataObjectToRedis(aDo);
+	public void update(Bo bo) {
+		 bo.serialize();
+		this.setDataObjectToRedis(bo.getDo());
 		if (super.async) {
-			redisUtil.returnJedis(false).sadd(redisUpdateSyncSetKey, buildSyncParams(aDo));
+			redisUtil.returnJedis(false).sadd(redisUpdateSyncSetKey, buildSyncParams(bo.getDo()));
 		} else {
-			databaseSupport().update(updateStatement, aDo);
+			databaseSupport().update(updateStatement, bo.getDo());
 		}
 	}
 

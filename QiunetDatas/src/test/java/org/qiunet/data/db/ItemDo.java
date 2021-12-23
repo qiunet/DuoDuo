@@ -6,7 +6,7 @@ import org.qiunet.data.db.entity.DbEntityList;
 
 @Alias("ItemDo")
 @Table(name = "item", dbSource = "basic")
-public class ItemDo extends DbEntityList<Long, Integer, ItemBo> {
+public class ItemDo extends DbEntityList<Long, Integer> {
 	private long uid;
 	private int item_id;
 	private int count;

@@ -6,7 +6,7 @@ import org.qiunet.data.db.entity.DbEntity;
 
 @Alias("PlayerDo")
 @Table(name = "player", dbSource = "basic")
-public class PlayerDo extends DbEntity<Long, PlayerBo> {
+public class PlayerDo extends DbEntity<Long> {
 	private long uid;
 	private String name;
 	private int level;

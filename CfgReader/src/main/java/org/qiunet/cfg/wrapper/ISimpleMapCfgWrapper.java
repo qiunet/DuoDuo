@@ -13,7 +13,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-04-23 11:54
  ***/
-public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg> extends ICfgWrapper<Cfg> {
+public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>> extends ICfgWrapper<Cfg> {
 	/**
 	 * 根据id获得配置对象
 	 * @param id

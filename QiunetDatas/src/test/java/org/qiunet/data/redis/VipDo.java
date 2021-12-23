@@ -4,7 +4,7 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntity;
 
 @Table(name = "vip", dbSource = "basic")
-public class VipDo extends RedisEntity<Long, VipBo> {
+public class VipDo extends RedisEntity<Long> {
 	private long uid;
 	private int level;
 	private long exp;

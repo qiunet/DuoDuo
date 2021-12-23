@@ -34,32 +34,34 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 		SyncEntityElement element;
 		while ((element = syncKeyQueue.poll()) != null) {
-			Do aDo = element.aDo;
+			Bo bo = element.bo;
 			if (element.operate != EntityOperate.DELETE
-				&& aDo.entityStatus() == EntityStatus.DELETE) {
+				&& bo.getDo().entityStatus() == EntityStatus.DELETE) {
 				// 队列后面有delete 操作. 留给delete 操作就行.
 				continue;
 			}
 			switch (element.operate) {
 				case INSERT:
-					if (aDo.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
-						databaseSupport().insert(insertStatement, aDo);
+					if (bo.getDo().atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
+						bo.serialize();
+						databaseSupport().insert(insertStatement, bo.getDo());
 					}else {
-						logger.error("Entity status [{}] is error, can not insert to db.", aDo.entityStatus());
+						logger.error("Entity status [{}] is error, can not insert to db.", bo.getDo().entityStatus());
 					}
 					break;
 				case UPDATE:
-					if (aDo.atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
-						databaseSupport().update(updateStatement, aDo);
+					if (bo.getDo().atomicSetEntityStatus(EntityStatus.UPDATE, EntityStatus.NORMAL)) {
+						bo.serialize();
+						databaseSupport().update(updateStatement, bo.getDo());
 					}else {
-						logger.error("Entity status [{}] is error, can not update to db.", aDo.entityStatus());
+						logger.error("Entity status [{}] is error, can not update to db.", bo.getDo().entityStatus());
 					}
 					break;
 				case DELETE:
-					this.deleteDoFromDb(aDo);
+					this.deleteDoFromDb(bo.getDo());
 					break;
 				default:
-					throw new CustomException("Db Sync Not Support status: [" + aDo.entityStatus() + "]");
+					throw new CustomException("Db Sync Not Support status: [" + bo.getDo().entityStatus() + "]");
 			}
 		}
 	}
@@ -74,8 +76,9 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 		if (aDo.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)){
 			if (async) {
-				syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.INSERT));
+				syncKeyQueue.add(new SyncEntityElement(bo, EntityOperate.INSERT));
 			}else {
+				bo.serialize();
 				databaseSupport().insert(insertStatement, aDo);
 				aDo.updateEntityStatus(EntityStatus.NORMAL);
 			}
@@ -93,22 +96,23 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	protected abstract void addToCache(Bo bo);
 	/***
 	 * 更新
-	 * @param aDo
+	 * @param bo
 	 * @return
 	 */
 	@Override
-	public void update(Do aDo) {
-		if (aDo.entityStatus() == EntityStatus.INIT) {
+	public void update(Bo bo) {
+		if (bo.getDo().entityStatus() == EntityStatus.INIT) {
 			throw new CustomException("Entity must insert first!");
 		}
 
 		if (! async) {
-			databaseSupport().update(updateStatement, aDo);
+			bo.serialize();
+			databaseSupport().update(updateStatement, bo.getDo());
 			return;
 		}
 
-		if (aDo.atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
-			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.UPDATE));
+		if (bo.getDo().atomicSetEntityStatus(EntityStatus.NORMAL, EntityStatus.UPDATE)){
+			syncKeyQueue.add(new SyncEntityElement(bo, EntityOperate.UPDATE));
 		}
 		// update 可能update在其它状态的po 所以不需要error打印.
 		// insert update 和 delete 状态都不需要操作了
@@ -116,27 +120,27 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 
 	/**
 	 * 删除
-	 * @param aDo
+	 * @param bo
 	 */
 	@Override
-	public void delete(Do aDo) {
-		if (aDo.entityStatus() == EntityStatus.INIT) {
+	public void delete(Bo bo) {
+		if (bo.getDo().entityStatus() == EntityStatus.INIT) {
 			throw new CustomException("Delete entity [{}] It's not insert, Can't delete!", doClass.getName());
 		}
 
-		if (aDo.entityStatus() == EntityStatus.DELETE) {
+		if (bo.getDo().entityStatus() == EntityStatus.DELETE) {
 			throw new CustomException("Delete entity [{}] double times!", doClass.getName());
 		}
 
 		// 直接删除缓存. 异步更新时候, 不校验状态
-		aDo.updateEntityStatus(EntityStatus.DELETE);
+		bo.getDo().updateEntityStatus(EntityStatus.DELETE);
 
 		if (async) {
-			this.asyncInvalidateCache(aDo);
-			syncKeyQueue.add(new SyncEntityElement(aDo, EntityOperate.DELETE));
+			this.asyncInvalidateCache(bo.getDo());
+			syncKeyQueue.add(new SyncEntityElement(bo, EntityOperate.DELETE));
 		}else {
-			this.invalidateCache(aDo);
-			this.deleteDoFromDb(aDo);
+			this.invalidateCache(bo.getDo());
+			this.deleteDoFromDb(bo.getDo());
 		}
 	}
 
@@ -161,11 +165,11 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	 * 队列的对象
 	 */
 	protected class SyncEntityElement {
-		private Do aDo;
+		private Bo bo;
 		private EntityOperate operate;
 
-		SyncEntityElement(Do aDo, EntityOperate operate) {
-			this.aDo = aDo;
+		SyncEntityElement(Bo bo, EntityOperate operate) {
+			this.bo = bo;
 			this.operate = operate;
 		}
 	}

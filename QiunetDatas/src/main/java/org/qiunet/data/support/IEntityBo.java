@@ -28,13 +28,15 @@ public interface IEntityBo<Do extends IEntity> {
 	 */
 	default void update() {
 		this.serialize();
-		getDo().update();
+		IDataSupport dataSupport = DataSupportMapping.getMapping(getDo().getClass());
+		dataSupport.update(this);
 	}
 
 	/**
 	 * 删除
 	 */
 	default void delete() {
-		getDo().delete();
+		IDataSupport dataSupport = DataSupportMapping.getMapping(getDo().getClass());
+		dataSupport.delete(this);
 	}
 }

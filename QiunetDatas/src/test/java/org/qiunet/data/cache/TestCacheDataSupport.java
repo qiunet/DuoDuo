@@ -12,7 +12,7 @@ public class TestCacheDataSupport extends BaseTest {
 	private static CacheDataSupport<Long, GuildDo, GuildBo> dataSupport = new CacheDataSupport<>(GuildDo.class, GuildBo::new);
 
 	private static CacheDataListSupport<Long, Long, GuildMemberDo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberDo.class, GuildMemberBo::new);
-	private long guildId = 100000;
+	private final long guildId = 100000;
 
 	@Test
 	public void testEntity(){
@@ -20,7 +20,7 @@ public class TestCacheDataSupport extends BaseTest {
 		guildDo.setGuildId(guildId);
 		guildDo.setName("公会1");
 		guildDo.setLevel(10);
-		GuildBo guildBo = guildDo.insert();
+		GuildBo guildBo = dataSupport.insert(guildDo);
 		dataSupport.syncToDatabase();
 
 		guildBo.getDo().setName("公会");
@@ -48,7 +48,7 @@ public class TestCacheDataSupport extends BaseTest {
 		memberDo1.setGuildId(guildId);
 		memberDo1.setMemberId(1);
 		memberDo1.setJob(1);
-		GuildMemberBo bo1 = memberDo1.insert();
+		GuildMemberBo bo1 = dataListSupport.insert(memberDo1);
 		bo1.delete();
 		bo1.delete();
 	}
@@ -66,7 +66,7 @@ public class TestCacheDataSupport extends BaseTest {
 		guildDo.setGuildId(guildId);
 		guildDo.setName("公会1");
 		guildDo.setLevel(10);
-		GuildBo bo1 = guildDo.insert();
+		GuildBo bo1 = dataSupport.insert(guildDo);
 		dataSupport.syncToDatabase();
 
 		bo = dataSupport.getBo(guildId);
@@ -89,22 +89,11 @@ public class TestCacheDataSupport extends BaseTest {
 		memberDo1.setGuildId(guildId);
 		memberDo1.setMemberId(1);
 		memberDo1.setJob(1);
-		memberDo1.insert();
-		memberDo1.delete();
-		memberDo1.insert();
+		GuildMemberBo memberBo = dataListSupport.insert(memberDo1);
+		memberBo.delete();
+		dataListSupport.insert(memberDo1);
 	}
-	/**
-	 * 没有insert 就update
-	 * 测试这个会抛出异常
-	 */
-	@Test(expected = RuntimeException.class)
-	public void testEntityUpdateException() {
-		GuildMemberDo memberDo1 = new GuildMemberDo();
-		memberDo1.setGuildId(guildId);
-		memberDo1.setMemberId(1);
-		memberDo1.setJob(1);
-		memberDo1.update();
-	}
+
 
 	@Test
 	public void testEntityList(){
@@ -112,20 +101,20 @@ public class TestCacheDataSupport extends BaseTest {
 		memberDo1.setGuildId(guildId);
 		memberDo1.setMemberId(1);
 		memberDo1.setJob(1);
-		GuildMemberBo bo1 = memberDo1.insert();
+		GuildMemberBo bo1 = dataListSupport.insert(memberDo1);
 		bo1.delete();
 
 		memberDo1 = new GuildMemberDo();
 		memberDo1.setGuildId(guildId);
 		memberDo1.setMemberId(1);
 		memberDo1.setJob(1);
-		bo1 = memberDo1.insert();
+		dataListSupport.insert(memberDo1);
 
 		GuildMemberDo memberDo2 = new GuildMemberDo();
 		memberDo2.setGuildId(guildId);
 		memberDo2.setMemberId(2);
 		memberDo2.setJob(2);
-		GuildMemberBo bo2 = memberDo2.insert();
+		GuildMemberBo bo2 = dataListSupport.insert(memberDo2);
 
 		dataListSupport.syncToDatabase();
 
