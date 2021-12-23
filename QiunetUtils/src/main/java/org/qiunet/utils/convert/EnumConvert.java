@@ -16,7 +16,7 @@ import java.lang.reflect.Method;
 public class EnumConvert extends BaseObjConvert<Enum> {
 	private static final LazyLoader<Class<?>> enumReadableClass = new LazyLoader<>(() -> {
 		try {
-			return Class.forName("com.baidu.bjf.remoting.protobuf");
+			return Class.forName("com.baidu.bjf.remoting.protobuf.EnumReadable");
 		} catch (ClassNotFoundException e) {
 			return null;
 		}

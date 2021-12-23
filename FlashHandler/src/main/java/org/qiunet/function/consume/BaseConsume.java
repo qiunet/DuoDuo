@@ -46,12 +46,8 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @return 结果
 	 */
 	final StatusResult verify(ConsumeContext<Obj> context) {
-		if (context.getMulti() < 1) {
-			throw new CustomException("Multi 数值 {} 不合法, 必须 >= 1", context.getMulti());
-		}
-
-		if (value * context.getMulti() < 0) {
-			throw new CustomException("Value {} 和 multi {} 相乘后会溢出!", value, context.getMulti());
+		if (value < 0) {
+			throw new CustomException("Value 小于 0!", value);
 		}
 
 		return doVerify(context);
@@ -65,7 +61,6 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @param context 上下文对象
 	 */
 	public void consume(ConsumeContext<Obj> context) {
-		context.getRealConsumes().merge(cfgId, value*context.getMulti(), Long::sum);
 		this.doConsume(context);
 	}
 	/**
@@ -79,7 +74,28 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * clone
 	 * @return 返回clone的对象
 	 */
-	public abstract BaseConsume<Obj> copy();
+	public final BaseConsume<Obj> copy() {
+		return copy(1);
+	}
+	/**
+	 * 按照倍数 copy
+	 *
+	 * @param multi
+	 * @return
+	 */
+	public final BaseConsume<Obj> copy(int multi) {
+		if (multi * value < 0) {
+			throw new CustomException("value {} 和 multi {} 相乘数值溢出!", value, multi);
+		}
+		return this.doCopy(multi);
+	}
+	/**
+	 * 按照倍数 copy
+	 *
+	 * @param multi
+	 * @return
+	 */
+	protected abstract BaseConsume<Obj> doCopy(int multi);
 
 	/**
 	 * 是否可以合并

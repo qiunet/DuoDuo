@@ -37,23 +37,11 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @return 消耗上下文
 	 */
 	public ConsumeContext<Obj> verify(Obj obj, IOperationType consumeType) {
-		return this.verify(obj, 1, consumeType);
-	}
-
-	/**
-	 * 多倍消耗校验
-	 * @param obj 消耗的主体对象
-	 * @param multi 倍数
-	 * @param consumeType 消耗的日志类型
-	 * @return 上下文对象
-	 */
-	public ConsumeContext<Obj> verify(Obj obj, int multi, IOperationType consumeType) {
 		if (! obj.inSelfThread()) {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		Preconditions.checkArgument(multi >= 1);
-		ConsumeContext<Obj> context = ConsumeContext.valueOf(obj, multi, this, consumeType);
+		ConsumeContext<Obj> context = ConsumeContext.valueOf(obj, this, consumeType);
 		for (BaseConsume<Obj> consume : consumeList) {
 			StatusResult result = consume.verify(context);
 			if (result.isFail()) {
@@ -61,6 +49,7 @@ public class Consumes<Obj extends IThreadSafe> {
 				return context;
 			}
 		}
+		context.result = StatusResult.SUCCESS;
 		return context;
 	}
 	/**
@@ -79,6 +68,17 @@ public class Consumes<Obj extends IThreadSafe> {
 		ConsumeEventData.valueOf(context).fireEventHandler();
 	}
 
+	/**
+	 * 创造倍率的消耗
+	 * @param multi 倍数
+	 * @return
+	 */
+	Consumes<Obj> createMulti(int multi) {
+		Preconditions.checkState(multi > 0);
+		Consumes<Obj> consumes = new Consumes<>();
+		this.forEach(item -> consumes.addConsume(item.copy(multi)));
+		return consumes;
+	}
 	/**
 	 * 添加消耗
 	 * @param cfgId 资源id

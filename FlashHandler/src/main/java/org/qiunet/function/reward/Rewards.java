@@ -1,6 +1,7 @@
 package org.qiunet.function.reward;
 
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
@@ -44,21 +45,11 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @return
 	 */
 	public RewardContext<Obj> verify(Obj player, IOperationType type) {
-		return verify(player, 1, type);
-	}
-	/**
-	 * 校验 是否能扔进背包.
-	 * @param player 玩家对象
-	 * @param multi 倍数
-	 * @param type 操作类型
-	 * @return
-	 */
-	public RewardContext<Obj> verify(Obj player, int multi, IOperationType type) {
 		if (! player.inSelfThread()) {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		RewardContext<Obj> context = RewardContext.valueOf(multi, player, this, type);
+		RewardContext<Obj> context = RewardContext.valueOf(player, this, type);
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
 			StatusResult result = objBaseReward.verify(context);
 			if (result.isFail()) {
@@ -66,6 +57,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 				return context;
 			}
 		}
+		context.result = StatusResult.SUCCESS;
 		return context;
 	}
 
@@ -75,6 +67,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @return 新的奖励
 	 */
 	public Rewards<Obj> createMulti(int multi) {
+		Preconditions.checkState(multi > 0);
+
 		Rewards<Obj> rewards = new Rewards<>();
 		this.forEach(item -> rewards.addRewardItem(item.copy(multi)));
 		return rewards;
@@ -136,11 +130,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		for (BaseReward<Obj> objBaseReward : baseRewardList) {
 			objBaseReward.grant(context);
 			if (objBaseReward instanceof IRealReward) {
-				if (context.getMulti() > 1) {
-					context.getRealRewards().add((IRealReward) objBaseReward.copy(context.getMulti()));
-				}else {
-					context.getRealRewards().add((IRealReward) objBaseReward);
-				}
+				context.getRealRewards().add((IRealReward) objBaseReward);
 			}
 		}
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
 
@@ -23,10 +24,6 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 */
 	private Obj obj;
 	/**
-	 * 消耗倍数
-	 */
-	private int multi;
-	/**
 	 * 消耗的内容
 	 */
 	private Consumes<Obj> consumes;
@@ -42,10 +39,9 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	private ConsumeContext(){}
 
 
-	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, int multi, Consumes<Obj> consumes, IOperationType operationType) {
+	static <Obj extends IThreadSafe> ConsumeContext<Obj> valueOf(Obj obj, Consumes<Obj> consumes, IOperationType operationType) {
 		ConsumeContext<Obj> context = new ConsumeContext<>();
 		context.obj = obj;
-		context.multi = multi;
 		context.consumes = consumes;
 		context.operationType = operationType;
 		return context;
@@ -55,6 +51,10 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 * 执行消耗
 	 */
 	public void act() {
+		if (isFail()) {
+			throw new CustomException("Verify consumes result is fail!");
+		}
+
 		consumes.act(this);
 	}
 
@@ -66,12 +66,8 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		return (T)operationType;
 	}
 
-	public int getMulti() {
-		return multi;
-	}
-
 	public boolean isSuccess(){
-		return result == null || result.isSuccess();
+		return result != null && result.isSuccess();
 	}
 
 	public boolean isFail(){

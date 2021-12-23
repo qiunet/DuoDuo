@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 
@@ -15,10 +16,6 @@ import java.util.List;
  * 2020-12-28 20:45
  */
 public class RewardContext<Obj extends IThreadSafe & IPlayer> {
-	/**
-	 * 倍数
-	 */
-	private int multi;
 	/**
 	 * 玩家主体
 	 */
@@ -41,12 +38,11 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	private final List<IRealReward> realRewards = Lists.newArrayListWithCapacity(5);
 
 	private RewardContext(){}
-	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(int multi, Obj player, Rewards<Obj> rewards, IOperationType operationType) {
+	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(Obj player, Rewards<Obj> rewards, IOperationType operationType) {
 		RewardContext<Obj> context = new  RewardContext<>();
 		context.operationType = operationType;
 		context.rewards = rewards;
 		context.player = player;
-		context.multi = multi;
 		return context;
 	}
 
@@ -54,6 +50,9 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 	 * 发放奖励
 	 */
 	public void grant(){
+		if (isFail()) {
+			throw new CustomException("Verify reward result is fail!");
+		}
 		rewards.grant(player, this);
 	}
 
@@ -61,12 +60,8 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 		return player;
 	}
 
-	public int getMulti() {
-		return multi;
-	}
-
 	public boolean isSuccess(){
-		return result == null || result.isSuccess();
+		return result != null && result.isSuccess();
 	}
 
 	public boolean isFail(){

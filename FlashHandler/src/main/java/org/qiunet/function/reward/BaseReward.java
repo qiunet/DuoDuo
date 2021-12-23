@@ -51,12 +51,9 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @return 结果.
 	 */
 	final StatusResult verify(RewardContext<Obj> context) {
-		if (context.getMulti() < 1) {
-			throw new CustomException("Multi 数值 {} 不合法, 必须 >= 1", context.getMulti());
-		}
 
-		if (value * context.getMulti() < 0) {
-			throw new CustomException("Value {} 和 multi {} 相乘后会溢出!", value, context.getMulti());
+		if (value < 0) {
+			throw new CustomException("Value 小于 0!", value);
 		}
 
 		return doVerify(context);
@@ -71,7 +68,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * 复制一份
 	 * @return
 	 */
-	public BaseReward<Obj> copy() {
+	public final BaseReward<Obj> copy() {
 		return copy(1);
 	}
 
@@ -80,7 +77,14 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @param multi
 	 * @return
 	 */
-	public abstract BaseReward<Obj> copy(int multi);
+	public final BaseReward<Obj> copy(int multi) {
+		if (multi * value < 0) {
+			throw new CustomException("value {} 和 multi {} 相乘数值溢出!", value, multi);
+		}
+		return doCopy(multi);
+	}
+
+	protected abstract BaseReward<Obj> doCopy(int multi);
 
 	/**
 	 * 转RewardConfig
