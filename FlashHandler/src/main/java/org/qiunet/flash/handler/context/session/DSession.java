@@ -291,10 +291,10 @@ public class DSession implements IChannelMessageSender {
 		}
 
 		if (flush) {
-			return new DChannelFutureWrapper(channel.writeAndFlush(message.encode()));
+			return new DChannelFutureWrapper(channel.writeAndFlush(message));
 		}
 
-		IDSessionFuture future = new DChannelFutureWrapper(channel.write(message.encode()));
+		IDSessionFuture future = new DChannelFutureWrapper(channel.write(message));
 		if (counter.incrementAndGet() >= 10) {
 			// 次数够也flush
 			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
