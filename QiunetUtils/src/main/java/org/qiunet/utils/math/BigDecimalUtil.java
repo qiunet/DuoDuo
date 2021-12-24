@@ -142,11 +142,11 @@ public class BigDecimalUtil {
 	}
 
 	public static boolean equalsTo(String b1, String b2) {
-		return equlsTo(new BigDecimal(b1), new BigDecimal(b2));
+		return equalsTo(new BigDecimal(b1), new BigDecimal(b2));
 	}
 
 	public static boolean moreThanOrEquals(String b1, String b2) {
-		return moreThanOrEquls(new BigDecimal(b1), new BigDecimal(b2));
+		return moreThanOrEquals(new BigDecimal(b1), new BigDecimal(b2));
 	}
 
 	public static boolean moreThan(BigDecimal b1, double b2) {
