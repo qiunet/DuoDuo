@@ -2,8 +2,8 @@ package org.qiunet.test.handler.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ public class TestProtobuf {
 		byte[] encode = codec.encode(pbData);
 
 		PbData pbData1 = codec.decode(encode);
-		Assert.assertEquals(111, pbData1.getPlayerId());
+		Assertions.assertEquals(111, pbData1.getPlayerId());
 
 	}
 }

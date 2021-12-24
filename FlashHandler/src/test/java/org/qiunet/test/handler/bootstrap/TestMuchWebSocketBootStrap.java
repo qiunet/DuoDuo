@@ -1,6 +1,6 @@
 package org.qiunet.test.handler.bootstrap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;

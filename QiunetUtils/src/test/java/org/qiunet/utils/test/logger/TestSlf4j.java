@@ -1,6 +1,6 @@
 package org.qiunet.utils.test.logger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;

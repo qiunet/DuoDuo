@@ -1,8 +1,8 @@
 package org.qiunet.utils.test.listener;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TestListener {
 	public static final AtomicInteger loginEventCount = new AtomicInteger();
 	public static final AtomicInteger levelUpEventCount = new AtomicInteger();
-	@BeforeClass
+	@BeforeAll
 	public static void init() throws Exception {
 		ClassScanner.getInstance(ScannerType.EVENT).scanner();
 	}
@@ -26,7 +26,7 @@ public class TestListener {
 		new LoginEventData(uid).fireEventHandler();
 		EventManager.fireEventHandler(new LevelUpEventData(uid, oldLevel, newLevel));
 
-		Assert.assertEquals(3, loginEventCount.get());
-		Assert.assertEquals(1, levelUpEventCount.get());
+		Assertions.assertEquals(3, loginEventCount.get());
+		Assertions.assertEquals(1, levelUpEventCount.get());
 	}
 }

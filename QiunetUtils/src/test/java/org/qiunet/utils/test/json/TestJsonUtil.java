@@ -1,8 +1,8 @@
 package org.qiunet.utils.test.json;
 
 import com.alibaba.fastjson.TypeReference;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -27,7 +27,7 @@ public class TestJsonUtil extends BaseTest{
 		logger.info(json);
 
 		Map<String,Integer> ret = JsonUtil.getGeneralObject(json, new TypeReference<Map<String,Integer>>(){});
-		Assert.assertEquals(111, ret.get("qiunet").intValue());
+		Assertions.assertEquals(111, ret.get("qiunet").intValue());
 	}
 	@Test
 	public void testGetGeneralList(){
@@ -39,9 +39,9 @@ public class TestJsonUtil extends BaseTest{
 		String json = JsonUtil.toJsonString(ls);
 		logger.info(json);
 		List<Integer> ret = JsonUtil.getGeneralList(json, Integer.class);
-		Assert.assertEquals(3, ret.size());
-		Assert.assertTrue(ret.contains(3));
-		Assert.assertFalse(ret.contains(5));
+		Assertions.assertEquals(3, ret.size());
+		Assertions.assertTrue(ret.contains(3));
+		Assertions.assertFalse(ret.contains(5));
 	}
 	@Test
 	public void testRefJson(){
@@ -54,11 +54,11 @@ public class TestJsonUtil extends BaseTest{
 		map.put(3, subMap);
 
 		String json = JsonUtil.toJsonString(map);
-		Assert.assertEquals("{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
+		Assertions.assertEquals("{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
 		map = JsonUtil.getGeneralObject(json, new TypeReference<Map<Integer, Map<String, String>>>(){});
 		subMap = map.get(2);
-		Assert.assertNotNull(subMap);
-		Assert.assertEquals("bb", subMap.get("DEF"));
+		Assertions.assertNotNull(subMap);
+		Assertions.assertEquals("bb", subMap.get("DEF"));
 	}
 
 	@Test
@@ -69,7 +69,7 @@ public class TestJsonUtil extends BaseTest{
 		String jsonString = JsonUtil.toJsonString(map);
 
 		User user = JsonUtil.getGeneralObjWithField(jsonString, User.class);
-		Assert.assertEquals(123456, user.getUserId());
+		Assertions.assertEquals(123456, user.getUserId());
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class TestJsonUtil extends BaseTest{
 		String value = "{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}";
 		Map<Integer, Map<String, String>>  map = (Map<Integer, Map<String, String>>) JsonUtil.getGeneralObject(value, testField.getType());
 		Map<String, String> subMap = map.get(2);
-		Assert.assertNotNull(subMap);
-		Assert.assertEquals("bb", subMap.get("DEF"));
+		Assertions.assertNotNull(subMap);
+		Assertions.assertEquals("bb", subMap.get("DEF"));
 	}
 }

@@ -1,6 +1,6 @@
 package org.qiunet.profile.test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.profile.Profile;
 import org.qiunet.profile.printer.LoggerPrintStream;
 import org.qiunet.utils.logger.LoggerType;

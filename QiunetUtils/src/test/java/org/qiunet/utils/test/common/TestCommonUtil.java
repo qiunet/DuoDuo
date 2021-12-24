@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.common;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -18,8 +18,8 @@ public class TestCommonUtil extends BaseTest {
 	@Test
 	public void testExistInArray(){
 		Integer [] arr = {1,2,3,4,5};
-		Assert.assertTrue(CommonUtil.existInList(3, arr));
-		Assert.assertFalse(CommonUtil.existInList(8, arr));
+		Assertions.assertTrue(CommonUtil.existInList(3, arr));
+		Assertions.assertFalse(CommonUtil.existInList(8, arr));
 	}
 
 	@Test
@@ -31,8 +31,8 @@ public class TestCommonUtil extends BaseTest {
 		list.add(3);
 		list.add(4);
 
-		Assert.assertTrue(CommonUtil.existInList(3, list));
-		Assert.assertFalse(CommonUtil.existInList(8, list));
+		Assertions.assertTrue(CommonUtil.existInList(3, list));
+		Assertions.assertFalse(CommonUtil.existInList(8, list));
 	}
 
 	@Test
@@ -41,9 +41,9 @@ public class TestCommonUtil extends BaseTest {
 		// skip
 		List<Integer> subList = CommonUtil.getSubListPage(list, 1 , 4);
 
-		Assert.assertEquals(subList.size(), 4);
-		Assert.assertTrue(subList.get(0) == 1);
-		Assert.assertTrue(subList.get(subList.size() - 1) == 4);
+		Assertions.assertEquals(subList.size(), 4);
+		Assertions.assertTrue(subList.get(0) == 1);
+		Assertions.assertTrue(subList.get(subList.size() - 1) == 4);
 	}
 	@Test
 	public void testReverse(){
@@ -53,7 +53,7 @@ public class TestCommonUtil extends BaseTest {
 		CommonUtil.reverse(arr1);
 		CommonUtil.reverse(arr2);
 
-		Assert.assertArrayEquals(new byte[]{4,3,2,1}, arr1);
-		Assert.assertArrayEquals(new byte[]{5, 4,3,2,1}, arr2);
+		Assertions.assertArrayEquals(new byte[]{4,3,2,1}, arr1);
+		Assertions.assertArrayEquals(new byte[]{5, 4,3,2,1}, arr2);
 	}
 }

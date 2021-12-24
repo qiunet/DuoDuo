@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.async;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.async.future.DPromise;
 
 /***
@@ -19,6 +19,6 @@ public class TestFuture {
 
 		String result = "qiunet";
 		promise.trySuccess(result);
-		Assert.assertEquals(result, val);
+		Assertions.assertEquals(result, val);
 	}
 }

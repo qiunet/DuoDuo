@@ -1,8 +1,8 @@
 package org.qiunet.cfg.test.keyval;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
 import org.qiunet.utils.collection.generics.IntegerSet;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -19,13 +19,13 @@ public class TestKeyValManager {
 	@CfgValAutoWired(key = "2222")
 	private static IntegerSet integers;
 
-	@BeforeClass
+	@BeforeAll
 	public static void preExec() throws Throwable {
 		ClassScanner.getInstance(ScannerType.CFG).scanner();
 	}
 
 	@Test
 	public void test(){
-		Assert.assertEquals(3, integers.size());
+		Assertions.assertEquals(3, integers.size());
 	}
 }

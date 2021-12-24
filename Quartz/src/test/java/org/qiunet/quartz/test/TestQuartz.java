@@ -1,6 +1,6 @@
 package org.qiunet.quartz.test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;

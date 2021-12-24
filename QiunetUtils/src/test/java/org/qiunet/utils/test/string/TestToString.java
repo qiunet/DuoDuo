@@ -2,8 +2,8 @@ package org.qiunet.utils.test.string;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
 
@@ -18,16 +18,16 @@ public class TestToString {
 	@Test
 	public void test(){
 		String s = ToString.toString(ImmutableMap.of("qiunet", "qiuyang"));
-		Assert.assertEquals(s, "{qiunet = qiuyang}");
+		Assertions.assertEquals(s, "{qiunet = qiuyang}");
 
 		s = ToString.toString(LoggerType.DUODUO);
-		Assert.assertEquals(s, "DUODUO");
+		Assertions.assertEquals(s, "DUODUO");
 
 		s = ToString.toString(new User("qiunet", ImmutableList.of(1, 2, 3)));
-		Assert.assertEquals(s, "User[account = qiunet, scores = {1, 2, 3}]");
+		Assertions.assertEquals(s, "User[account = qiunet, scores = {1, 2, 3}]");
 
 		s = ToString.toString(new int[]{1, 2, 3});
-		Assert.assertEquals(s, "int[]{1, 2, 3}");
+		Assertions.assertEquals(s, "int[]{1, 2, 3}");
 	}
 
 	public static class User {

@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.secret;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.secret.MD5Util;
 
 import java.net.URL;
@@ -19,7 +19,7 @@ public class TestMd5Util {
 		URL resource = MD5Util.class.getResource("/db.properties");
 		Path path = Paths.get(resource.toURI());
 
-		Assert.assertEquals("ebbcf0416182a049109d07f5a1b57cc4", MD5Util.encrypt(path.toFile()));
+		Assertions.assertEquals("ebbcf0416182a049109d07f5a1b57cc4", MD5Util.encrypt(path.toFile()));
 	}
 
 }

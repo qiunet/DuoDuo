@@ -1,7 +1,7 @@
 package org.qiunet.test.function.test.cd;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.function.cd.CdTimer;
 
 /***
@@ -19,20 +19,20 @@ public class TestCdTimer {
 		cdTimer.recordCd(CdType.CHAT);
 
 		boolean timeout = cdTimer.isTimeout(CdType.CHAT);
-		Assert.assertFalse(timeout);
+		Assertions.assertFalse(timeout);
 
 		cdTimer.cleanCd(CdType.GUILD_JOIN);
 
 		cdTimer.recordCd(CdType.GUILD_JOIN);
 		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
-		Assert.assertTrue(timeout);
+		Assertions.assertTrue(timeout);
 
 		cdTimer.recordCd(CdType.GUILD_JOIN);
 		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
-		Assert.assertFalse(timeout);
+		Assertions.assertFalse(timeout);
 
 		cdTimer.recordCd(CdType.GUILD_JOIN);
 		timeout = cdTimer.isTimeout(CdType.GUILD_JOIN);
-		Assert.assertFalse(timeout);
+		Assertions.assertFalse(timeout);
 	}
 }

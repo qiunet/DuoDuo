@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.string;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.secret.StrCodecUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -15,6 +15,6 @@ public class TestStrCodecUtils extends BaseTest{
 		String str = "星河战神";
 		String encrypt = StrCodecUtil.encrypt(str);
 		logger.info(encrypt);
-		Assert.assertEquals(str , StrCodecUtil.decrypt(encrypt));
+		Assertions.assertEquals(str , StrCodecUtil.decrypt(encrypt));
 	}
 }

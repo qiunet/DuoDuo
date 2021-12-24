@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.collection;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.collection.CounterMap;
 
 /***
@@ -15,15 +15,15 @@ public class TestCounterMap {
 	@Test
 	public void test(){
 		counterMap.increase(1);
-		Assert.assertEquals(counterMap.getCount(1), 1);
+		Assertions.assertEquals(counterMap.getCount(1), 1);
 		counterMap.increase(1);
-		Assert.assertEquals(counterMap.getCount(1), 2);
+		Assertions.assertEquals(counterMap.getCount(1), 2);
 
 		counterMap.increase(2, 10);
 		counterMap.increase(2, 11);
-		Assert.assertEquals(counterMap.getCount(2), 21);
+		Assertions.assertEquals(counterMap.getCount(2), 21);
 
 		counterMap.decrease(2, 1);
-		Assert.assertEquals(counterMap.getCount(2), 20);
+		Assertions.assertEquals(counterMap.getCount(2), 20);
 	}
 }

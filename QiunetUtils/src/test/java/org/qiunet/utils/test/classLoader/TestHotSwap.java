@@ -1,6 +1,6 @@
 package org.qiunet.utils.test.classLoader;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.classLoader.ClassHotSwap;
 
 import java.net.URISyntaxException;

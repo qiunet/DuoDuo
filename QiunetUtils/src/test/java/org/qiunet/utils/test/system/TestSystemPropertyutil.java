@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.system;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.system.SystemPropertyUtil;
 
 import java.io.File;
@@ -13,13 +13,13 @@ import java.io.File;
 public class TestSystemPropertyutil {
 	@Test
 	public void TestSystemPropertyutil(){
-		Assert.assertEquals(File.separator, SystemPropertyUtil.getFileSeparator());
-		Assert.assertEquals(File.pathSeparator, SystemPropertyUtil.getPathSeparator());
+		Assertions.assertEquals(File.separator, SystemPropertyUtil.getFileSeparator());
+		Assertions.assertEquals(File.pathSeparator, SystemPropertyUtil.getPathSeparator());
 
-		Assert.assertEquals(System.getProperty("user.dir"), SystemPropertyUtil.getUserDir());
-		Assert.assertEquals(System.getProperty("user.home"), SystemPropertyUtil.getUserHome());
+		Assertions.assertEquals(System.getProperty("user.dir"), SystemPropertyUtil.getUserDir());
+		Assertions.assertEquals(System.getProperty("user.home"), SystemPropertyUtil.getUserHome());
 
-		Assert.assertEquals(System.getProperty("line.separator"), SystemPropertyUtil.getLineSeparator());
+		Assertions.assertEquals(System.getProperty("line.separator"), SystemPropertyUtil.getLineSeparator());
 
 	}
 }

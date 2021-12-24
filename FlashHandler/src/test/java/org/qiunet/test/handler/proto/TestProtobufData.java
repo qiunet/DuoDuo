@@ -1,8 +1,8 @@
 package org.qiunet.test.handler.proto;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -15,7 +15,7 @@ import org.qiunet.utils.scanner.ScannerType;
  * 2020-09-22 12:57
  */
 public class TestProtobufData {
-	@BeforeClass
+	@BeforeAll
 	public static void beforeExec() throws Exception {
 		ClassScanner.getInstance(ScannerType.CHANNEL_DATA).scanner();
 	}
@@ -25,6 +25,6 @@ public class TestProtobufData {
 		byte[] bytes = request.toByteArray();
 
 		WsPbLoginRequest loginRequest = ProtobufDataManager.decode(WsPbLoginRequest.class, bytes);
-		Assert.assertEquals("qiunet", loginRequest.getAccount());
+		Assertions.assertEquals("qiunet", loginRequest.getAccount());
 	}
 }

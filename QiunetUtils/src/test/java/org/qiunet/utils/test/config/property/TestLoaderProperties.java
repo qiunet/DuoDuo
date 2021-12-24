@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.config.property;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -15,6 +15,6 @@ public class TestLoaderProperties {
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 
 		String str = DbProperties.getContent();
-		Assert.assertEquals(str, "公告测试\n内容");
+		Assertions.assertEquals(str, "公告测试\n内容");
 	}
 }

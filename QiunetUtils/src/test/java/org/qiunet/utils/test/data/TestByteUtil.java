@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.data;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.data.ByteUtil;
 
 
@@ -17,8 +17,8 @@ public class TestByteUtil {
 	@Test
 	public void test(){
 		byte[] bytes = ByteUtil.int2Bytes(num);
-		Assert.assertArrayEquals(bytes, arr);
+		Assertions.assertArrayEquals(bytes, arr);
 
-		Assert.assertEquals(num, ByteUtil.read32bit(arr, 0));
+		Assertions.assertEquals(num, ByteUtil.read32bit(arr, 0));
 	}
 }

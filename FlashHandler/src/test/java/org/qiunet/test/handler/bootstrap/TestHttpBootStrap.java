@@ -3,8 +3,8 @@ package org.qiunet.test.handler.bootstrap;
 import com.alibaba.fastjson.JSONObject;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
@@ -45,7 +45,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 				buffer.position(ADAPTER.getReqHeaderLength());
 
 				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, buffer);
-				Assert.assertEquals(test, loginResponse.getTestString());
+				Assertions.assertEquals(test, loginResponse.getTestString());
 				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();
@@ -62,8 +62,8 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		HttpRequest.post(params.getURI("/back?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
 			.asyncExecutor((call, httpResponse) -> {
-				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
-				Assert.assertEquals(httpResponse.body().string(), test);
+				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
+				Assertions.assertEquals(httpResponse.body().string(), test);
 				LockSupport.unpark(currThread);
 
 		});
@@ -80,11 +80,11 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
 		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
-				Assert.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
+				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
 				String responseString = httpResponse.body().string();
 				JsonResponse response = JsonResponse.parse(responseString);
-				Assert.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
-				Assert.assertEquals(response.get("test"), test);
+				Assertions.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
+				Assertions.assertEquals(response.get("test"), test);
 				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();

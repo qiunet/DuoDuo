@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.bootstrap;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -22,7 +22,7 @@ public abstract class MuchTcpRequest {
 	protected static int port = 8889;
 	protected static Hook hook = new MyHook();
 	private static Thread currThread;
-	@BeforeClass
+	@BeforeAll
 	public static void init() throws Exception {
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
@@ -46,7 +46,7 @@ public abstract class MuchTcpRequest {
 		LockSupport.park();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdown() {
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}

@@ -1,7 +1,7 @@
 package org.qiunet.cfg.test.xd;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -13,7 +13,7 @@ import org.qiunet.utils.scanner.ScannerType;
  ***/
 public class TestXdManager {
 
-	@BeforeClass
+	@BeforeAll
 	public static void preExec() throws Throwable {
 		ClassScanner.getInstance(ScannerType.CFG).scanner();
 	}

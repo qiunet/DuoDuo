@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.system;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.system.ShellUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -15,6 +15,6 @@ public class TestShellUtil extends BaseTest{
 		String[] cmd = {"ls"};
 		String ret = ShellUtil.execShell(cmd);
 		logger.info(ret);
-		Assert.assertNotNull(ret);
+		Assertions.assertNotNull(ret);
 	}
 }

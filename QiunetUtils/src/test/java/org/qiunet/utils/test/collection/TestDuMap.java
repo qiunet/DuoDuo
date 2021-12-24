@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.collection;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.collection.DuMap;
 
 /***
@@ -15,14 +15,14 @@ public class TestDuMap {
 		DuMap<Integer, String> duMap = new DuMap<>();
 		duMap.put(1, "1").put(2, "2");
 
-		Assert.assertEquals(duMap.size(), 2);
-		Assert.assertTrue(duMap.containsKey(1));
-		Assert.assertTrue(duMap.containsKey(2));
-		Assert.assertTrue(duMap.containsVal("1"));
-		Assert.assertTrue(duMap.containsVal("2"));
+		Assertions.assertEquals(duMap.size(), 2);
+		Assertions.assertTrue(duMap.containsKey(1));
+		Assertions.assertTrue(duMap.containsKey(2));
+		Assertions.assertTrue(duMap.containsVal("1"));
+		Assertions.assertTrue(duMap.containsVal("2"));
 
 
-		Assert.assertEquals(duMap.getKey("1"), Integer.valueOf(1));
-		Assert.assertEquals(duMap.getVal(2), "2");
+		Assertions.assertEquals(duMap.getKey("1"), Integer.valueOf(1));
+		Assertions.assertEquals(duMap.getVal(2), "2");
 	}
 }

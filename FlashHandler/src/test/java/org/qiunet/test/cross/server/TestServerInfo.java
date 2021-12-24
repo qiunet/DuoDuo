@@ -1,7 +1,7 @@
 package org.qiunet.test.cross.server;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.net.NetUtil;
@@ -30,10 +30,10 @@ public class TestServerInfo {
 	}
 
 	private void assert0(ServerInfo serverInfo0) {
-		Assert.assertEquals(NetUtil.getInnerIp(), serverInfo0.getHost());
-		Assert.assertEquals(serverId, serverInfo0.getServerId());
-		Assert.assertEquals(onlineNum, serverInfo0.get("onlineNum"));
-		Assert.assertEquals(serverPort, serverInfo0.getServerPort());
-		Assert.assertEquals(communicationPort, serverInfo0.getNodePort());
+		Assertions.assertEquals(NetUtil.getInnerIp(), serverInfo0.getHost());
+		Assertions.assertEquals(serverId, serverInfo0.getServerId());
+		Assertions.assertEquals(onlineNum, serverInfo0.get("onlineNum"));
+		Assertions.assertEquals(serverPort, serverInfo0.getServerPort());
+		Assertions.assertEquals(communicationPort, serverInfo0.getNodePort());
 	}
 }

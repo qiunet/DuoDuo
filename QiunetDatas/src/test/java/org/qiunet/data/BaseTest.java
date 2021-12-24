@@ -1,6 +1,6 @@
 package org.qiunet.data;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -11,7 +11,7 @@ import org.qiunet.utils.scanner.ScannerType;
  * 2020-11-25 11:11
  */
 public class BaseTest {
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 	}

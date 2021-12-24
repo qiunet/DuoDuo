@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.bootstrap;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -29,6 +29,6 @@ public class TestTcpBootStrap extends TcpBootStrap {
 		// test 的地方.直接使用bytes 解析. 免得release
 		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 		LoggerType.DUODUO_FLASH_HANDLER.info("=TCP Response Text:[{}]" , response.getTestString());
-		Assert.assertEquals(text, response.getTestString());
+		Assertions.assertEquals(text, response.getTestString());
 	}
 }

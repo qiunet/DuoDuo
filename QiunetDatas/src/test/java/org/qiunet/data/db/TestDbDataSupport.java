@@ -1,9 +1,9 @@
 package org.qiunet.data.db;
 
 import com.google.common.collect.Maps;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.data.db.loader.DataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.data.support.DbDataListSupport;
@@ -21,7 +21,7 @@ public class TestDbDataSupport {
 
 	private static final PlayerDataLoader playerDataLoader = new PlayerDataLoader(10000);
 
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.PLAYER_DATA_LOADER).scanner();
 	}
@@ -44,14 +44,14 @@ public class TestDbDataSupport {
 		playerDataLoader.syncToDb();
 
 		PlayerBo bo = playerDataLoader.getData(PlayerBo.class);
-		Assert.assertEquals(bo.getDo().getName(), name);
-		Assert.assertEquals(bo.getDo().getLevel(), 100);
+		Assertions.assertEquals(bo.getDo().getName(), name);
+		Assertions.assertEquals(bo.getDo().getLevel(), 100);
 
 		bo.delete();
 		playerDataLoader.syncToDb();
 
 		bo = playerDataLoader.getData(PlayerBo.class);
-		Assert.assertNull(bo);
+		Assertions.assertNull(bo);
 	}
 
 	@Test
@@ -71,11 +71,11 @@ public class TestDbDataSupport {
 		playerDataLoader.syncToDb();
 
 		Map<Integer, ItemBo> boMap = playerDataLoader.getMapData(ItemBo.class);
-		Assert.assertEquals(boMap.size(), 2);
+		Assertions.assertEquals(boMap.size(), 2);
 
 		for (ItemBo bo : boMap.values()) {
-			Assert.assertTrue(bo.getDo().getItem_id() >= 1 && bo.getDo().getItem_id() <= 2);
-			Assert.assertEquals(bo.getDo().getCount(), bo.getDo().getItem_id());
+			Assertions.assertTrue(bo.getDo().getItem_id() >= 1 && bo.getDo().getItem_id() <= 2);
+			Assertions.assertEquals(bo.getDo().getCount(), bo.getDo().getItem_id());
 		}
 
 		bo2.getDo().setCount(3);
@@ -85,7 +85,7 @@ public class TestDbDataSupport {
 		boMap = playerDataLoader.getMapData(ItemBo.class);
 		boMap.values().forEach(po -> {
 			if (po.getDo().getItem_id() == 2){
-				Assert.assertEquals(3, po.getDo().getCount());
+				Assertions.assertEquals(3, po.getDo().getCount());
 			}
 		});
 
@@ -93,6 +93,6 @@ public class TestDbDataSupport {
 		playerDataLoader.syncToDb();
 
 		boMap = playerDataLoader.getMapData(ItemBo.class);
-		Assert.assertTrue(boMap.isEmpty());
+		Assertions.assertTrue(boMap.isEmpty());
 	}
 }

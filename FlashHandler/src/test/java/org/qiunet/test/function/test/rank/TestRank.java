@@ -1,8 +1,8 @@
 package org.qiunet.test.function.test.rank;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.function.rank.RankData;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 2020-11-25 12:55
  */
 public class TestRank {
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 	}
@@ -36,11 +36,11 @@ public class TestRank {
 
 		Thread.sleep(500);
 		List<RankData> rankDatas = LevelCacheRank.instance.getRankVos(1000);
-		Assert.assertEquals(RankType.LEVEL.rankSize(), rankDatas.size());
-		Assert.assertEquals(max.intValue(), rankDatas.get(0).getValue());
+		Assertions.assertEquals(RankType.LEVEL.rankSize(), rankDatas.size());
+		Assertions.assertEquals(max.intValue(), rankDatas.get(0).getValue());
 
 		RankData rankData = LevelCacheRank.instance.getRankVo(rankDatas.get(0).getId());
-		Assert.assertEquals(1, rankData.gotRank());
+		Assertions.assertEquals(1, rankData.gotRank());
 	}
 
 
@@ -59,10 +59,10 @@ public class TestRank {
 
 		Thread.sleep(500);
 		List<RankData> rankDatas = LevelRedisRank.instance.getRankVos(1000);
-		Assert.assertEquals(RankType.LEVEL.rankSize(), rankDatas.size());
-		Assert.assertEquals(max.intValue(), rankDatas.get(0).getValue());
+		Assertions.assertEquals(RankType.LEVEL.rankSize(), rankDatas.size());
+		Assertions.assertEquals(max.intValue(), rankDatas.get(0).getValue());
 
 		RankData rankData = LevelRedisRank.instance.getRankVo(rankDatas.get(0).getId());
-		Assert.assertEquals(1, rankData.gotRank());
+		Assertions.assertEquals(1, rankData.gotRank());
 	}
 }

@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.http;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -23,7 +23,7 @@ public class TestHttpRequest extends BaseTest{
 		for (int i = 0 ; i < 2; i++){
 			String ret = HttpRequest.post(url).withFormData(params).executor();
 			System.out.println(ret);
-			Assert.assertNotNull(ret);
+			Assertions.assertNotNull(ret);
 		}
 	}
 
@@ -38,7 +38,7 @@ public class TestHttpRequest extends BaseTest{
 				(call, response) -> {
 					String result = response.body().string();
 					System.out.println(result);
-					Assert.assertNotNull(result);
+					Assertions.assertNotNull(result);
 					latch.countDown();
 				}
 			);
@@ -50,6 +50,6 @@ public class TestHttpRequest extends BaseTest{
 	public void testHttpRequest() throws Exception {
 		String url = "http://www.gameley.com";
 		String ret = HttpRequest.get(url).executor();
-		Assert.assertNotNull(ret);
+		Assertions.assertNotNull(ret);
 	}
 }

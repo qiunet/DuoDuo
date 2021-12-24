@@ -1,8 +1,8 @@
 package org.qiunet.data.redis;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.DbSourceDatabaseSupport;
 import org.qiunet.data.core.support.db.Table;
@@ -16,7 +16,7 @@ import org.qiunet.utils.thread.ThreadContextData;
 public class TestRedisDataSupport {
 	private static RedisDataSupport<Long, VipDo, VipBo> dataSupport;
 
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 		dataSupport = new RedisDataSupport<>(RedisDataUtil.getInstance(), VipDo.class, VipBo::new);
@@ -40,9 +40,9 @@ public class TestRedisDataSupport {
 		this.expire(uid);
 
 		VipBo bo = dataSupport.getBo(uid);
-		Assert.assertEquals(bo.getDo().getUid(), uid);
-		Assert.assertEquals(bo.getDo().getLevel(), 10);
-		Assert.assertEquals(bo.getDo().getExp(), 1000);
+		Assertions.assertEquals(bo.getDo().getUid(), uid);
+		Assertions.assertEquals(bo.getDo().getLevel(), 10);
+		Assertions.assertEquals(bo.getDo().getExp(), 1000);
 
 		bo.getDo().setExp(100);
 		bo.update();
@@ -50,12 +50,12 @@ public class TestRedisDataSupport {
 
 		this.expire(uid);
 		bo = dataSupport.getBo(uid);
-		Assert.assertEquals(bo.getDo().getExp(), 100);
+		Assertions.assertEquals(bo.getDo().getExp(), 100);
 
 		bo.delete();
 		dataSupport.syncToDatabase();
 		bo = dataSupport.getBo(uid);
-		Assert.assertNull(bo);
+		Assertions.assertNull(bo);
 	}
 	@Test
 	public void testDuplicateInsert(){
@@ -72,7 +72,7 @@ public class TestRedisDataSupport {
 		this.expire(uid);
 
 		vipBo = dataSupport.getBo(uid);
-		Assert.assertNull(vipBo);
+		Assertions.assertNull(vipBo);
 	}
 
 	/***
@@ -111,7 +111,7 @@ public class TestRedisDataSupport {
 		this.expire(uid);
 
 		vipBo = dataSupport.getBo(uid);
-		Assert.assertNull(vipBo);
+		Assertions.assertNull(vipBo);
 
 	}
 
@@ -120,11 +120,11 @@ public class TestRedisDataSupport {
 		long uid = 100000000;
 
 		VipBo bo = dataSupport.getBo(uid);
-		Assert.assertNull(bo);
+		Assertions.assertNull(bo);
 
 		for (int i = 0; i < 3; i++) {
 			bo = dataSupport.getBo(uid);
-			Assert.assertNull(bo);
+			Assertions.assertNull(bo);
 		}
 	}
 }

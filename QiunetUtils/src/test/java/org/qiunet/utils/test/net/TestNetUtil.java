@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.net;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -18,20 +18,20 @@ public class TestNetUtil  extends BaseTest {
 	@Test
 	public void testInnerIp(){
 		String ip = "192.168.1.200";
-		Assert.assertTrue(NetUtil.isInnerIp(ip));
+		Assertions.assertTrue(NetUtil.isInnerIp(ip));
 
 		ip = "172.21.0.9";
-		Assert.assertTrue(NetUtil.isInnerIp(ip));
+		Assertions.assertTrue(NetUtil.isInnerIp(ip));
 
 		ip = "123.196.125.13";
-		Assert.assertFalse(NetUtil.isInnerIp(ip));
+		Assertions.assertFalse(NetUtil.isInnerIp(ip));
 
 		ip = "10.154.197.234";
-		Assert.assertTrue(NetUtil.isInnerIp(ip));
+		Assertions.assertTrue(NetUtil.isInnerIp(ip));
 
 		ip = "127.0.0.1";
-		Assert.assertTrue(NetUtil.isInnerIp(ip));
-		Assert.assertTrue(NetUtil.isLocalIp(ip));
+		Assertions.assertTrue(NetUtil.isInnerIp(ip));
+		Assertions.assertTrue(NetUtil.isLocalIp(ip));
 	}
 
 	/**

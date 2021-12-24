@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.args;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 
@@ -16,18 +16,18 @@ public class TestArgsContainer {
 	public void test() throws Exception {
 		ArgsContainer container = new ArgsContainer();
 		Argument<Boolean> arg = container.getArgument(ArgumentKeys.TEST_KEY);
-		Assert.assertTrue(arg.isNull());
+		Assertions.assertTrue(arg.isNull());
 		arg.compareAndSet(null, true);
-		Assert.assertTrue(arg.get());
+		Assertions.assertTrue(arg.get());
 
 		arg = container.getArgument(ArgumentKeys.TEST_KEY, false);
-		Assert.assertTrue(arg.get());
+		Assertions.assertTrue(arg.get());
 	}
 
 	@Test
 	public void getArgument() {
 		ArgsContainer container = new ArgsContainer();
 		Argument<Boolean> arg = container.getArgument(ArgumentKeys.TEST_KEY, false);
-		Assert.assertNull(arg);
+		Assertions.assertNull(arg);
 	}
 }

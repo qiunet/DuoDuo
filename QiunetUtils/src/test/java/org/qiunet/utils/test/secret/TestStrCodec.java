@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.secret;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.secret.StrCodecUtil;
 
 /**
@@ -17,6 +17,6 @@ public class TestStrCodec {
 
 		String deStr = StrCodecUtil.decrypt(str);
 
-		Assert.assertEquals(deStr, name);
+		Assertions.assertEquals(deStr, name);
 	}
 }

@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.collection.safeCollections;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.collection.safe.SafeList;
 
 import java.util.Iterator;
@@ -17,14 +17,14 @@ public class TestSafeList {
 		list.add("a");
 		list.add("b");
 		list.convertToUnmodifiable();
-		Assert.assertTrue(list.contains("a"));
+		Assertions.assertTrue(list.contains("a"));
 		boolean exception = false;
 		try {
 			list.add("c");
 		}catch (Exception e){
 			exception = true;
 		}
-		Assert.assertTrue(exception);
+		Assertions.assertTrue(exception);
 
 		exception = false;
 		try {
@@ -39,7 +39,7 @@ public class TestSafeList {
 		}catch (Exception e){
 			exception = true;
 		}
-		Assert.assertTrue(exception);
+		Assertions.assertTrue(exception);
 
 	}
 }

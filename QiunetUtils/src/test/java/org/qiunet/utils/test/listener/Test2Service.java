@@ -1,6 +1,6 @@
 package org.qiunet.utils.test.listener;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.qiunet.utils.listener.event.EventListener;
 
 public class Test2Service {
@@ -8,13 +8,13 @@ public class Test2Service {
 	@EventListener
 	public void onLevelUp(LevelUpEventData data) {
 		TestListener.levelUpEventCount.incrementAndGet();
-		Assert.assertEquals(TestListener.uid, data.getUid());
-		Assert.assertEquals(TestListener.oldLevel, data.getOldLevel());
-		Assert.assertEquals(TestListener.newLevel, data.getNewLevel());
+		Assertions.assertEquals(TestListener.uid, data.getUid());
+		Assertions.assertEquals(TestListener.oldLevel, data.getOldLevel());
+		Assertions.assertEquals(TestListener.newLevel, data.getNewLevel());
 	}
 
 	@EventListener
 	private void onLogin(LoginEventData data) {
-		Assert.assertEquals(3, TestListener.loginEventCount.incrementAndGet());
+		Assertions.assertEquals(3, TestListener.loginEventCount.incrementAndGet());
 	}
 }

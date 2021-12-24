@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.file;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
@@ -27,20 +27,20 @@ public class TestFileUtil {
 		FileUtil.copy(targetFile, currPathFile);
 
 		File file = new File(currPathFile);
-		Assert.assertTrue(file.exists());
+		Assertions.assertTrue(file.exists());
 		file.delete();
 		//
 		FileUtil.move(targetFile, currPath);
 		file = new File(currPathFile);
-		Assert.assertTrue(file.exists());
+		Assertions.assertTrue(file.exists());
 
 		FileUtil.move(file, targetFilePath);
 		file = new File(targetFile);
-		Assert.assertTrue(file.exists());
+		Assertions.assertTrue(file.exists());
 
 		FileUtil.copy(targetFile, currPathFile);
 		file = new File(currPathFile);
-		Assert.assertTrue(file.exists());
+		Assertions.assertTrue(file.exists());
 		file.delete();
 	}
 	@Test
@@ -53,22 +53,22 @@ public class TestFileUtil {
 		}
 
 		List<String> list = FileUtil.tailFile(file, 10);
-		Assert.assertEquals(5, list.size());
+		Assertions.assertEquals(5, list.size());
 		for (int i = 0; i < list.size(); i++) {
-			Assert.assertEquals(list.get(i), "中Ha"+i);
+			Assertions.assertEquals(list.get(i), "中Ha"+i);
 		}
 
 		long startPos = FileUtil.getFileLength(file);
 
 		FileUtil.copy(file, file1.getAbsolutePath());
-		Assert.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
+		Assertions.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
 			"中Ha1\n" +
 			"中Ha2\n" +
 			"中Ha3\n" +
 			"中Ha4\n");
 
 		FileUtil.createFileWithContent(file1, FileUtil.getFileContent(file1));
-		Assert.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
+		Assertions.assertEquals(FileUtil.getFileContent(file1), "中Ha0\n" +
 			"中Ha1\n" +
 			"中Ha2\n" +
 			"中Ha3\n" +
@@ -79,11 +79,11 @@ public class TestFileUtil {
 		FileUtil.appendToFile(file, "中Ha5");
 
 		list = FileUtil.tailFile(file, startPos, 10);
-		Assert.assertEquals(1, list.size());
-		Assert.assertEquals("中Ha5", list.get(0));
+		Assertions.assertEquals(1, list.size());
+		Assertions.assertEquals("中Ha5", list.get(0));
 
-		Assert.assertTrue(file.exists());
+		Assertions.assertTrue(file.exists());
 		FileUtil.deleteFile(file);
-		Assert.assertTrue(! file.exists());
+		Assertions.assertTrue(! file.exists());
 	}
 }

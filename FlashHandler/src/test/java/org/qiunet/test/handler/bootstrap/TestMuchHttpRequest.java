@@ -1,8 +1,8 @@
 package org.qiunet.test.handler.bootstrap;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.handler.proto.HttpPbLoginRequest;
@@ -36,12 +36,12 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					HttpRequest.post(params.getURI())
 						.withBytes(ADAPTER.getAllBytes(request.buildResponseMessage().encode()))
 						.asyncExecutor((call, response) -> {
-							Assert.assertEquals(response.code() , HttpResponseStatus.OK.code());
+							Assertions.assertEquals(response.code() , HttpResponseStatus.OK.code());
 							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());
 							buffer.position(ADAPTER.getReqHeaderLength());
 
 							LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);
-							Assert.assertEquals(test, loginResponse.getTestString());
+							Assertions.assertEquals(test, loginResponse.getTestString());
 							latch.countDown();
 						});
 				}

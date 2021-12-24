@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.scanner;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -23,8 +23,8 @@ public class TestClassScanner {
 			.addParam(ArgKey.Test, 10)
 			.scanner();
 
-		Assert.assertNotNull(clazzName);
-		Assert.assertEquals("PlayerHandler", clazzName);
-		Assert.assertEquals(12345678, testInterface.getType());
+		Assertions.assertNotNull(clazzName);
+		Assertions.assertEquals("PlayerHandler", clazzName);
+		Assertions.assertEquals(12345678, testInterface.getType());
 	}
 }

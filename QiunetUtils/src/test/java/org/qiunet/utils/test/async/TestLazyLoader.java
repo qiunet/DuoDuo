@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.async;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.async.LazyLoader;
 
 import java.util.function.Supplier;
@@ -18,6 +18,6 @@ public class TestLazyLoader {
 	@Test
 	public void test(){
 		LazyLoader<Integer> lazyLoader = new LazyLoader<>(s);
-		Assert.assertEquals(Integer.valueOf(10), lazyLoader.get());
+		Assertions.assertEquals(Integer.valueOf(10), lazyLoader.get());
 	}
 }

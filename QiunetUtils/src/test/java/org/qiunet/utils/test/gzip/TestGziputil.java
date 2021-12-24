@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.gzip;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.gzip.GzipUtil;
 
 import java.io.*;
@@ -25,7 +25,7 @@ public class TestGziputil {
 
 		ByteArrayInputStream bis = new ByteArrayInputStream(unzipBytes);
 		DataInputStream dis = new DataInputStream(bis);
-		Assert.assertEquals(first, dis.readUTF());
-		Assert.assertTrue(second == dis.readInt());
+		Assertions.assertEquals(first, dis.readUTF());
+		Assertions.assertTrue(second == dis.readInt());
 	}
 }

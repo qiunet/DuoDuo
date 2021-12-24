@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.thread;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.test.base.BaseTest;
 import org.qiunet.utils.thread.ThreadContextData;
 
@@ -17,6 +17,6 @@ public class TestThreadContextData extends BaseTest{
 
 		int ret =  ThreadContextData.get("qiunet");
 
-		Assert.assertTrue(1111  == ret);
+		Assertions.assertTrue(1111  == ret);
 	}
 }

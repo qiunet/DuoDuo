@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.bootstrap;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
@@ -23,7 +23,7 @@ public class HttpBootStrap {
 	protected static final int port = 8090;
 	private static final Hook hook = new MyHook();
 	private static Thread currThread;
-	@BeforeClass
+	@BeforeAll
 	public static void init() throws Exception {
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
@@ -43,7 +43,7 @@ public class HttpBootStrap {
 		LockSupport.park();
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void shutdown(){
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}

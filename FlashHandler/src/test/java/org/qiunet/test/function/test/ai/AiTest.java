@@ -1,6 +1,6 @@
 package org.qiunet.test.function.test.ai;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
 import org.qiunet.function.ai.node.executor.SequenceExecutor;

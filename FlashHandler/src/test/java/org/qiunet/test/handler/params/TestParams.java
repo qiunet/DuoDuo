@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.params;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.test.handler.startup.context.StartupContext;
@@ -19,13 +19,13 @@ public class TestParams {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
 				.build();
-		Assert.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
+		Assertions.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
 
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setStartupContext(new StartupContext())
 				.setMaxReceivedLength(1024*1024)
 				.setPort(1315)
 				.build();
-		Assert.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
+		Assertions.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
 	}
 }

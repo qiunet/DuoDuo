@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.args;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.args.ArgsMapping;
 
 /**
@@ -15,8 +15,8 @@ public class TestArgsMapping {
 
 		ArgsMapping mapping = new ArgsMapping(args);
 
-		Assert.assertEquals(mapping.getValue("qiunet"), "qiuyang");
-		Assert.assertEquals(mapping.getValue("qiunet1"), "qiuyang1");
-		Assert.assertNull(mapping.getValue("qiu"));
+		Assertions.assertEquals(mapping.getValue("qiunet"), "qiuyang");
+		Assertions.assertEquals(mapping.getValue("qiunet1"), "qiuyang1");
+		Assertions.assertNull(mapping.getValue("qiu"));
 	}
 }

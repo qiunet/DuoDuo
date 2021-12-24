@@ -1,42 +1,31 @@
 package org.qiunet.utils.test.math;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author qiunet
  *         Created on 16/11/6 13:54.
  */
-@RunWith(Parameterized.class)
 public class TestMathUtilRandom {
-	private final int randStart;
-	private final int randEnd;
 
-	public TestMathUtilRandom(int randStart, int randEnd) {
-		this.randStart = randStart;
-		this.randEnd = randEnd;
-	}
-	@Parameterized.Parameters
-	public static Collection params(){
-		List<Object[]> ret = new ArrayList<>();
-		for (int i = 1 ; i <= 20; i++) {
-			ret.add(new Object[]{i, i*2});
-		}
-		return ret;
+	private static Stream<Arguments> params(){
+		return IntStream.range(1, 20)
+				.mapToObj(i -> Arguments.arguments(i, i*2));
 	}
 
-	@Test
-	public void testRandom(){
+	@ParameterizedTest
+	@MethodSource("params")
+	public void testRandom(int randStart, int randEnd){
 		int rand = MathUtil.random(randStart, randEnd);
 		LoggerType.DUODUO.info(randStart +", "+ randEnd+ ", "+rand);
-		Assert.assertTrue(rand >= randStart && rand < randEnd);
+		Assertions.assertTrue(rand >= randStart && rand < randEnd);
 	}
 }

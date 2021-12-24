@@ -1,8 +1,8 @@
 package org.qiunet.utils.test.convert;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -21,7 +21,7 @@ public class TestConvert {
 
 	private int num;
 
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.OBJ_CONVERT).scanner();
 	}
@@ -31,10 +31,10 @@ public class TestConvert {
 		Field field = TestConvert.class.getDeclaredField("type");
 
 		Object convert = ConvertManager.instance.convert(field, "2");
-		Assert.assertEquals(convert, TestType.TYPE1);
+		Assertions.assertEquals(convert, TestType.TYPE1);
 
 		convert = ConvertManager.instance.convert(field, "NONE");
-		Assert.assertEquals(convert, TestType.NONE);
+		Assertions.assertEquals(convert, TestType.NONE);
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class TestConvert {
 
 		Field field = TestConvert.class.getDeclaredField("num");
 		ConvertManager.instance.covertAndSet(this, field, String.valueOf(val));
-		Assert.assertEquals(val, this.num);
+		Assertions.assertEquals(val, this.num);
 	}
 }
 

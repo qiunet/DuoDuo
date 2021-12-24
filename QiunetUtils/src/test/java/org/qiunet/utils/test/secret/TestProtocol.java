@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.secret;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.secret.ProtocolUtil;
 
 import java.io.UnsupportedEncodingException;
@@ -20,6 +20,6 @@ public class TestProtocol {
 		byte [] secritBytes = ProtocolUtil.encryptData(srcBytes, chunkSize);
 		byte [] originBytes = ProtocolUtil.decryptData(secritBytes, chunkSize);
 		String originStr = new String(originBytes, StandardCharsets.UTF_8);
-		Assert.assertEquals(originStr, str);
+		Assertions.assertEquals(originStr, str);
 	}
 }

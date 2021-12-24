@@ -1,8 +1,8 @@
 package org.qiunet.data.redis.util;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -10,7 +10,7 @@ import org.qiunet.utils.scanner.ScannerType;
 import java.io.IOException;
 
 public class TestRedis {
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner("org.qiunet.data");
 	}
@@ -21,7 +21,7 @@ public class TestRedis {
 		RedisDataUtil.jedis().set("qiu2", "yang2");
 		String qiuVal = RedisDataUtil.jedis().get("qiu1");
 		RedisDataUtil.jedis().mget("qiu1", "qiu2");
-		Assert.assertEquals(qiuVal, "yang1");
+		Assertions.assertEquals(qiuVal, "yang1");
 	}
 	@Test
 	public void execCommands(){
@@ -31,20 +31,22 @@ public class TestRedis {
 				jedis.expire("qiu1", 100000L);
 				return qiuVal;
 			});
-			Assert.assertEquals("yang1", str);
+			Assertions.assertEquals("yang1", str);
 		}
 	}
 
 	/**
 	 * 测试是否导致异常
 	 */
-	@Test(expected = IOException.class)
+	@Test
 	public void testLock1() throws IOException {
-		try (RedisLock lock = RedisDataUtil.getInstance().redisLock("qiuyang")){
-			if (lock.lock()){
-				lock.lock();
+		Assertions.assertThrows(IOException.class, () -> {
+			try (RedisLock lock = RedisDataUtil.getInstance().redisLock("qiuyang")){
+				if (lock.lock()){
+					lock.lock();
+				}
 			}
-		}
+		});
 	}
 
 	/**

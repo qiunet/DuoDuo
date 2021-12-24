@@ -1,8 +1,8 @@
 package org.qiunet.data.redis;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class TestRedisDataListSupport {
 	private static RedisDataListSupport<Long, Integer, EquipDo, EquipBo> dataListSupport;
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
 		 dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
@@ -41,26 +41,26 @@ public class TestRedisDataListSupport {
 		this.expire(uid);
 
 		Map<Integer, EquipBo> map = dataListSupport.getBoMap(uid);
-		Assert.assertEquals(2, map.size());
-		Assert.assertEquals(3, map.get(2).getDo().getLevel());
+		Assertions.assertEquals(2, map.size());
+		Assertions.assertEquals(3, map.get(2).getDo().getLevel());
 
 		map.values().forEach(EquipBo::delete);
 		dataListSupport.syncToDatabase();
 
 
 		map = dataListSupport.getBoMap(uid);
-		Assert.assertTrue( map.isEmpty());
+		Assertions.assertTrue( map.isEmpty());
 	}
 
 	@Test
 	public void testEntityListHit(){
 		long uid = 100000000;
 		Map<Integer, EquipBo> map = dataListSupport.getBoMap(uid);
-		Assert.assertTrue(map.isEmpty());
+		Assertions.assertTrue(map.isEmpty());
 		for (int i = 0; i < 3; i++) {
 			ThreadContextData.removeAll();
 			map = dataListSupport.getBoMap(uid);
-			Assert.assertTrue(map.isEmpty());
+			Assertions.assertTrue(map.isEmpty());
 		}
 
 		EquipDo equipDo1 = new EquipDo();
@@ -71,7 +71,7 @@ public class TestRedisDataListSupport {
 
 		ThreadContextData.removeAll();
 		map = dataListSupport.getBoMap(uid);
-		Assert.assertFalse(map.isEmpty());
+		Assertions.assertFalse(map.isEmpty());
 
 		map.values().forEach(EquipBo::delete);
 		dataListSupport.syncToDatabase();

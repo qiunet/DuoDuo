@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.reflect;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -43,9 +43,9 @@ public class TestReflectUtil extends BaseTest {
 	@Test
 	public void test(){
 		Class<?> type0 = ReflectUtil.findGenericParameterizedType(ReflectTestClass.class, ITest2.class::isAssignableFrom);
-		Assert.assertEquals(type0, Test2.class);
+		Assertions.assertEquals(type0, Test2.class);
 
 		Class<?> type1 = ReflectUtil.findGenericParameterizedType(NoParamClass.class, clz -> true);
-		Assert.assertNull(type1);
+		Assertions.assertNull(type1);
 	}
 }

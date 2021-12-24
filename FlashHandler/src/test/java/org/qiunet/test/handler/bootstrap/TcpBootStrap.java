@@ -1,10 +1,10 @@
 package org.qiunet.test.handler.bootstrap;
 
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -33,7 +33,7 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 	protected TcpClientConnector tcpClientConnector;
 	private static Thread currThread;
 
-	@BeforeClass
+	@BeforeAll
 	public static void init() throws Exception {
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
@@ -53,13 +53,13 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 		thread.start();
 		LockSupport.park();
 	}
-	@Before
+	@BeforeEach
 	public void connect(){
 		currThread = Thread.currentThread();
 		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, this);
 		tcpClientConnector = tcpClient.connect(host, port);
 	}
-	@After
+	@AfterEach
 	public void closeConnect(){
 		currThread = Thread.currentThread();
 		LockSupport.park();
@@ -73,7 +73,7 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 
 	protected abstract void responseTcpMessage(DSession session, MessageContent data);
 
-	@AfterClass
+	@AfterAll
 	public static void shutdown() {
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}

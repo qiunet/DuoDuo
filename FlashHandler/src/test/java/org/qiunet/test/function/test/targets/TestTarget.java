@@ -1,7 +1,7 @@
 package org.qiunet.test.function.test.targets;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.function.targets.ITargetDefGetter;
 import org.qiunet.function.targets.TargetContainer;
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
  **/
 public class TestTarget {
 	private Logger logger = LoggerType.DUODUO.getLogger();
-	@BeforeClass
+	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.TARGET_HANDLER).scanner();
 	}

@@ -1,6 +1,6 @@
 package org.qiunet.event.log.test;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.qiunet.event.log.LogRecord;
 import org.qiunet.event.log.test.log.M1LogEvent;
 

@@ -1,7 +1,7 @@
 package org.qiunet.utils.test.date;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
@@ -22,8 +22,8 @@ public class TestDateUtil extends BaseTest {
 		LocalDateTime dt1 = DateUtil.stringToDate("2016-05-20 00:00:00");
 		LocalDateTime dt2 = DateUtil.stringToDate("2016-05-26 00:00:01");
 
-		Assert.assertTrue(DateUtil.isBetweenDays(dt1, date1, date2));
-		Assert.assertFalse(DateUtil.isBetweenDays(dt2, date1, date2));
+		Assertions.assertTrue(DateUtil.isBetweenDays(dt1, date1, date2));
+		Assertions.assertFalse(DateUtil.isBetweenDays(dt2, date1, date2));
 	}
 
 	/***
@@ -45,11 +45,11 @@ public class TestDateUtil extends BaseTest {
 			new Thread(
 					() -> {
 						for (int i1 = 0; i1 < 10; i1++) {
-							Assert.assertEquals(DateUtil.dateToString(time1), val1);
-							Assert.assertEquals(DateUtil.dateToString(time2), val2);
+							Assertions.assertEquals(DateUtil.dateToString(time1), val1);
+							Assertions.assertEquals(DateUtil.dateToString(time2), val2);
 
-							Assert.assertEquals(DateUtil.getMilliByTime(DateUtil.stringToDate(val1)), time1);
-							Assert.assertEquals(DateUtil.getMilliByTime(DateUtil.stringToDate(val2)), time2);
+							Assertions.assertEquals(DateUtil.getMilliByTime(DateUtil.stringToDate(val1)), time1);
+							Assertions.assertEquals(DateUtil.getMilliByTime(DateUtil.stringToDate(val2)), time2);
 
 							latch.countDown();
 						}
@@ -63,8 +63,8 @@ public class TestDateUtil extends BaseTest {
 	public void testAddHour() {
 		int hours = 5;
 		LocalDateTime now = DateUtil.currentLocalDateTime();
-		Assert.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, -hours)));
-		Assert.assertTrue((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, hours)));
+		Assertions.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, -hours)));
+		Assertions.assertTrue((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, hours)));
 	}
 
 	@Test
@@ -73,8 +73,8 @@ public class TestDateUtil extends BaseTest {
 		LocalDateTime date2 = DateUtil.stringToDate("2016-05-26 07:00:00");
 		LocalDateTime date3 = DateUtil.stringToDate("2016-05-26 17:00:00");
 
-		Assert.assertTrue(DateUtil.isSameDay(date1, date2));
-		Assert.assertTrue(DateUtil.isSameDay(date1, date3));
+		Assertions.assertTrue(DateUtil.isSameDay(date1, date2));
+		Assertions.assertTrue(DateUtil.isSameDay(date1, date3));
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class TestDateUtil extends BaseTest {
 		long milliByTimeUTC = DateUtil.getMilliByTime(nowLocalDateTimeUTC, ZoneOffset.UTC);
 
 		// 两次调用可能有个1毫秒时间的跨度.
-		Assert.assertTrue(Math.abs(milliByTime - milliByTimeUTC) < 2);
+		Assertions.assertTrue(Math.abs(milliByTime - milliByTimeUTC) < 2);
 
 		LocalDateTime localDateTime = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTime));
 		LocalDateTime localDateTimeUTC = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTimeUTC));
@@ -94,7 +94,7 @@ public class TestDateUtil extends BaseTest {
 		long milliByTime1 = DateUtil.getMilliByTime(localDateTime);
 		long milliByTime2 = DateUtil.getMilliByTime(localDateTimeUTC, ZoneOffset.UTC);
 
-		Assert.assertEquals(milliByTime1, milliByTime2);
+		Assertions.assertEquals(milliByTime1, milliByTime2);
 	}
 
 	@Test
@@ -109,9 +109,9 @@ public class TestDateUtil extends BaseTest {
 		String dateStr2 = DateUtil.dateToString(localDateTimeUTC);
 		String dateStr3 = DateUtil.dateToString(DateUtil.addHours(localDateTimeUTC, 8));
 
-		Assert.assertNotEquals(dateStr1, dateStr2);
+		Assertions.assertNotEquals(dateStr1, dateStr2);
 		//+8 hour
-		Assert.assertEquals(dateStr1, dateStr3);
+		Assertions.assertEquals(dateStr1, dateStr3);
 	}
 
 
