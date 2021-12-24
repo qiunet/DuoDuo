@@ -8,7 +8,7 @@ import org.qiunet.data.core.entity.IEntity;
  * @param <Bo>
  */
 @FunctionalInterface
-public interface BoSupplier<Do extends IEntity, Bo extends IEntityBo<Do>> {
+public interface BoSupplier<Do extends IEntity<?>, Bo extends IEntityBo<Do>> {
 	/**
 	 * Do得到一个Bo
 	 * @param aDo

@@ -1,7 +1,9 @@
 package org.qiunet.function.rank;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +19,7 @@ public class RankData extends HashMap<String, Object> implements IKeyValueData<S
 	/*** 值*/
 	private static final String VALUE = "_value";
 	/**名字*/
-	static final String NAME = "_name";
+	private static final String NAME = "_name";
 	/*** 排名的对象主键* 玩家id  公会id等*/
 	private static final String ID = "_id";
 	/**时间*/
@@ -28,8 +30,17 @@ public class RankData extends HashMap<String, Object> implements IKeyValueData<S
 	@JSONField(serialize = false, deserialize = false)
 	transient int rank;
 
-	public RankData(){};
+	/**
+	 * 默认构造
+	 */
+	public RankData(){}
 
+	/**
+	 * 构造一个builder
+	 * @param id 排行榜的id
+	 * @param value 排行榜的值
+	 * @return  RankDataBuilder
+	 */
 	public static RankDataBuilder custom(long id, long value) {
 		return new RankDataBuilder(id, value);
 	}
@@ -70,5 +81,45 @@ public class RankData extends HashMap<String, Object> implements IKeyValueData<S
 	@Override
 	public Map<String, Object> returnMap() {
 		return this;
+	}
+
+
+
+	/***
+	 * 构造一个RankData
+	 *
+	 * @author qiunet
+	 * 2021/12/17 15:32
+	 */
+	public static class RankDataBuilder {
+		private final RankData rankData;
+		private RankDataBuilder(long id, long value) {
+			this.rankData = RankData.valueOf(id, value);
+		}
+		/**
+		 * 添加名字
+		 * @param name 添加name
+		 * @return 实例本身
+		 */
+		public RankDataBuilder addName(String name) {
+			return addData(NAME, name);
+		}
+		/**
+		 * 添加一些字段.
+		 * @param key 增加key
+		 * @param val 增加值
+		 * @return 返回builder本实例
+		 */
+		public RankDataBuilder addData(String key, Object val) {
+			if (CommonUtil.existInList(key, DT, VALUE, NAME, ID)) {
+				throw new CustomException("{} is key word!", key);
+			}
+			this.rankData.put(key, val);
+			return this;
+		}
+
+		public RankData build(){
+			return rankData;
+		}
 	}
 }

@@ -27,7 +27,7 @@ public interface IPlayerDataLoader {
 	 * @param <Bo>  DbEntityBo
 	 * @return
 	 */
-	default <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+	default <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
 		return dataLoader().insertDo(entity);
 	}
 
@@ -37,7 +37,7 @@ public interface IPlayerDataLoader {
 	 * @param <Data>
 	 * @return
 	 */
-	default <Data extends DbEntityBo> Data getData(Class<Data> clazz){
+	default <Data extends DbEntityBo<?>> Data getData(Class<Data> clazz){
 		return dataLoader().getData(clazz);
 	}
 	/**

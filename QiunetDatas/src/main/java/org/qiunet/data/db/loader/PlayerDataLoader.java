@@ -94,7 +94,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * @return
 	 */
 	@Override
-	public <Do extends IDbEntity, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
 		if (readOnly) {
 			throw new CustomException("Data loader read only!");
 		}
@@ -125,7 +125,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * @return
 	 */
 	@Override
-	public <Data extends DbEntityBo> Data getData(Class<Data> clazz) {
+	public <Data extends DbEntityBo<?>> Data getData(Class<Data> clazz) {
 		Object data = dataCache.computeIfAbsent(clazz, key -> {
 			Object obj = DataLoaderManager.instance.getData(key, playerId);
 			if (obj == null) {
