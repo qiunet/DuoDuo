@@ -4,7 +4,7 @@ import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.db.loader.IDbEntityBo;
 
-abstract class BaseDbDataSupport<Do extends IDbEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
+abstract class BaseDbDataSupport<Key, Do extends IDbEntity<Key>, Bo extends IEntityBo<Do>> extends BaseDataSupport<Key, Do, Bo> {
 	 protected BaseDbDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		 super(doClass, supplier);
 	 }

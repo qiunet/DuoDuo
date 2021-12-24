@@ -7,7 +7,7 @@ import org.qiunet.data.core.support.cache.LocalCache;
 import org.qiunet.utils.exceptions.CustomException;
 
 
-public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Do, Bo> {
+public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Key, Do, Bo> {
 	/**防止缓存击穿的 NULL值*/
 	private Bo NULL;
 	/**保存的cache*/
@@ -19,8 +19,8 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 	}
 
 	@Override
-	protected void initCache(LocalCache cache) {
-		this.cache = cache;
+	protected void initCache(boolean loadAll) {
+		this.cache = loadAll ? LocalCache.createPermanentCache() : LocalCache.createTimeExpireCache();
 	}
 
 	@Override

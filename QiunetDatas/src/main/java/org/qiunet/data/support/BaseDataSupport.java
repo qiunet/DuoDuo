@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 /**
  * 基础的DataSupport
  */
- abstract class BaseDataSupport<Do extends IEntity, Bo extends IEntityBo<Do>> implements IDataSupport<Do, Bo>,IAsyncNode {
+ abstract class BaseDataSupport<Key, Do extends IEntity<Key>, Bo extends IEntityBo<Do>> implements IDataSupport<Key, Do, Bo>, IAsyncNode {
  	protected static final Logger logger = LoggerType.DUODUO.getLogger();
 	protected BoSupplier<Do, Bo> supplier;
 	protected Class<Do> doClass;

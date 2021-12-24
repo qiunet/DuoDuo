@@ -16,7 +16,7 @@ import redis.clients.jedis.params.SetParams;
  * @author qiunet
  *
  */
-public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Key, Do, Bo> {
 	/**防止缓存击穿的 NULL*/
 	private final Do NULL;
 

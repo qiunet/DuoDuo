@@ -17,7 +17,7 @@ import java.util.Set;
  * @param <Bo>
  * @author qiunet
  */
-public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
+public abstract class BaseRedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extends IEntityBo<Do>> extends BaseDataSupport<Key, Do, Bo> {
 	/***缓存一天*/
 	protected static final long NORMAL_LIFECYCLE=86400;
 

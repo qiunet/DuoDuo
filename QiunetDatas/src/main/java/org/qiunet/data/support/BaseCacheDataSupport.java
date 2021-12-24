@@ -2,14 +2,13 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.cache.entity.ICacheEntity;
 import org.qiunet.data.cache.status.EntityStatus;
-import org.qiunet.data.core.support.cache.LocalCache;
 import org.qiunet.data.support.anno.LoadAllData;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityBo<Do>> extends BaseDataSupport<Do, Bo> {
+abstract class BaseCacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEntityBo<Do>> extends BaseDataSupport<Key, Do, Bo> {
 	/***对Entity 的操作 **/
 	private enum  EntityOperate {INSERT, UPDATE, DELETE}
 
@@ -19,14 +18,14 @@ abstract class BaseCacheDataSupport<Do extends ICacheEntity, Bo extends IEntityB
 	protected BaseCacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
 		boolean localAllData = doClass.isAnnotationPresent(LoadAllData.class);
-		this.initCache(localAllData ? LocalCache.createPermanentCache() : LocalCache.createTimeExpireCache());
+		this.initCache(localAllData);
 		if (localAllData) {
 			List<Do> objects = databaseSupport().selectList(selectAllStatement, null);
 			objects.forEach(aDo -> this.addToCache(supplier.get(aDo)));
 		}
 	}
 
-	protected abstract void initCache(LocalCache cache);
+	protected abstract void initCache(boolean loadAll);
 
 	@Override
 	public void syncToDatabase() {

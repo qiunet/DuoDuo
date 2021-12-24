@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Do, Bo> {
+public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, SubKey>, Bo extends IEntityBo<Do>> extends BaseRedisDataSupport<Key, Do, Bo> {
 	private static final String PLACE_HOLDER = "PLACE_HOLDER";
 
 	public RedisDataListSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {

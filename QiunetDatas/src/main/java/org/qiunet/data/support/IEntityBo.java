@@ -7,7 +7,7 @@ import org.qiunet.data.core.entity.IEntity;
  * Bo( Business Object ) 的接口
  * @param <Do>
  */
-public interface IEntityBo<Do extends IEntity> {
+public interface IEntityBo<Do extends IEntity<?>> {
 	/**
 	 * 得到Do
 	 * @return
