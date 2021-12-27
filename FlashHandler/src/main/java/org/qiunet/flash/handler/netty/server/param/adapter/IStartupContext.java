@@ -13,6 +13,9 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.*;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 
+import java.io.IOException;
+import java.util.Objects;
+
 /***
  *
  * 长连接情况下, 需要根据给定参数给出业务自己的session 和playerActor的实例对象
@@ -74,7 +77,9 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	default IChannelMessage<IChannelData> exception(Throwable cause){
 		if (cause instanceof StatusResultException) {
 			return StatusTipsResponse.valueOf(((StatusResultException) cause)).buildResponseMessage();
-		}else {
+		} else if (cause instanceof IOException && Objects.equals(cause.getMessage(), "Connection reset by peer")) {
+			LoggerType.DUODUO_FLASH_HANDLER.error("Connection reset by peer");
+		} else {
 			LoggerType.DUODUO_FLASH_HANDLER.error("异常", cause);
 		}
 		return SERVER_EXCEPTION_MESSAGE.get();

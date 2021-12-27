@@ -7,6 +7,7 @@ import org.qiunet.excel2cfgs.setting.SettingManager;
 import org.qiunet.excel2cfgs.swing.SwingUtil;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * 一个文件的处理流程
@@ -21,11 +22,12 @@ public interface IAppender {
 	 default void sheetOver(String sheetName, AppenderAttachable attachable){
 		RoleType roleType = SettingManager.getInstance().getSetting().getRoleType();
 		String baseCfgPath = SettingManager.getInstance().getFirstCfgPath();
-		boolean justServer = sheetName.startsWith("s.");
-		boolean justClient = sheetName.startsWith("c.");
+		String[] strings = sheetName.split("\\.");
+		boolean justServer = Arrays.stream(strings).limit(Math.max(0, strings.length - 1)).anyMatch("s"::equals);
+		boolean justClient = Arrays.stream(strings).limit(Math.max(0, strings.length - 1)).anyMatch("c"::equals);
 		boolean all = !justClient && !justServer;
 		if (justClient || justServer) {
-			sheetName = sheetName.substring(2);
+			sheetName = strings[strings.length - 1];
 		}
 
 		if (roleType != RoleType.SCHEMER && StringUtil.isEmpty(baseCfgPath)) {
