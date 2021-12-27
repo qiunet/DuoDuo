@@ -18,12 +18,6 @@ public interface IBehaviorExecutor<Owner> extends IBehaviorNode<Owner> {
 	 * @return
 	 */
 	IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions);
-	/**
-	 * 移除某个节点
-	 * 某些节点生命周期只需要执行一次. 比如登录.
-	 * @param child 需要移除的节点
-	 */
-	void removeChild(IBehaviorNode<Owner> child);
 
 	@Override
 	default void check() {

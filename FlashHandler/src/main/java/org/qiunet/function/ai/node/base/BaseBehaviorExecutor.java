@@ -27,12 +27,6 @@ public abstract class BaseBehaviorExecutor<Owner> extends BaseBehaviorNode<Owner
 	}
 
 	@Override
-	public void removeChild(IBehaviorNode<Owner> child) {
-		nodes.remove(child);
-		this.check();
-	}
-
-	@Override
 	public int childSize() {
 		return nodes.size();
 	}

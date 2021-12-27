@@ -15,11 +15,6 @@ public interface IBehaviorDecorator<Owner> extends IBehaviorExecutor<Owner> {
 	IBehaviorNode<Owner> getNode();
 
 	@Override
-	default void removeChild(IBehaviorNode<Owner> child) {
-		parent().removeChild(this);
-	}
-
-	@Override
 	default int childSize() {
 		return 1;
 	}
