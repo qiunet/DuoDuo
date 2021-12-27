@@ -1,6 +1,7 @@
 package org.qiunet.function.condition;
 
 import org.qiunet.flash.handler.context.status.StatusResult;
+import org.qiunet.utils.json.JsonUtil;
 
 /***
  * 需要注入值的字段.
@@ -37,6 +38,16 @@ public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> exten
 	@Override
 	default ConditionNot<Obj, Type> not() {
 		return new ConditionNot<>(this);
+	}
+
+	/**
+	 * 转换成config
+	 * @return
+	 */
+	default ConditionConfig conditionConfig() {
+		ConditionConfig conditionConfig = new ConditionConfig(JsonUtil.toJsonObjectWithField(this));
+		conditionConfig.setType(getType().name());
+		return conditionConfig;
 	}
 }
 

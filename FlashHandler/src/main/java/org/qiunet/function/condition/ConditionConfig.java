@@ -14,14 +14,26 @@ import java.util.Map;
  * 2020-12-30 20:56
  */
 public class ConditionConfig
-		extends HashMap<Object, String> implements IKeyValueData<Object, String> {
+		extends HashMap<String, Object> implements IKeyValueData<String, Object> {
+
+	public ConditionConfig(Map<? extends String, ? extends Object> m) {
+		super(m);
+	}
+
+	public ConditionConfig() {
+		super(8);
+	}
 
 	public String getType() {
 		return getString("type");
 	}
 
+	public void setType(Object type) {
+		this.put("type", type);
+	}
+
 	@Override
-	public Map<Object, String> returnMap() {
+	public Map<String, Object> returnMap() {
 		return this;
 	}
 }

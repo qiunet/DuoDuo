@@ -114,7 +114,7 @@ public class ConditionManager {
 								 continue;
 							 }
 
-							 ConvertManager.instance.covertAndSet(iCondition, field, cfg.getValue(field.getName()));
+							 ConvertManager.instance.covertAndSet(iCondition, field, String.valueOf(cfg.getValue(field.getName())));
 						 }
 						 if (cfg.getBoolean("not")) {
 							 return iCondition.not();

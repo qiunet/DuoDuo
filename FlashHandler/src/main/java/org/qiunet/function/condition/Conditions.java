@@ -2,10 +2,12 @@ package org.qiunet.function.condition;
 
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.context.status.StatusResult;
+import org.qiunet.utils.json.JsonUtil;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /***
  * 对Obj 的条件校验.
@@ -60,5 +62,14 @@ public class Conditions<Obj> implements IConditions<Obj> {
 	public <Type extends Enum<Type> &IConditionType> Conditions<Obj> addConditions(ICondition<Obj, Type> ... conditions) {
 		this.conditions.addAll(Arrays.asList(conditions));
 		return this;
+	}
+
+	/**
+	 * 转成json string
+	 * @return
+	 */
+	public String toJsonString(){
+		List<ConditionConfig> collect = this.conditions.stream().map(ICondition::conditionConfig).collect(Collectors.toList());
+		return JsonUtil.toJsonString(collect);
 	}
 }
