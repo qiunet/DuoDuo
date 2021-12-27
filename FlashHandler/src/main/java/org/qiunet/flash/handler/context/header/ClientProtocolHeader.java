@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.CrcUtil;
@@ -48,7 +49,7 @@ public class ClientProtocolHeader implements IProtocolHeader {
 		this.crc = (int) CrcUtil.getCrc32Value(content.bytes());
 	}
 
-	public ClientProtocolHeader(ByteBuf in) {
+	public ClientProtocolHeader(ByteBuf in, Channel channel) {
 		this.magic = new byte[MAGIC_CONTENTS.length];
 		this.length = in.readInt();
 		this.protocolId = in.readInt();

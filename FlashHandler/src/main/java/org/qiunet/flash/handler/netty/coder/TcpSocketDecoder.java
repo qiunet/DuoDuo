@@ -31,7 +31,7 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 		if (! in.isReadable(adapter.getReqHeaderLength())) return;
 		in.markReaderIndex();
 
-		IProtocolHeader header = adapter.inHeader(in);
+		IProtocolHeader header = adapter.inHeader(in, ctx.channel());
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message, magic is error! {}", header);
 			ctx.channel().close();
