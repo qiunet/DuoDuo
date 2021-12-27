@@ -1,6 +1,7 @@
 package org.qiunet.utils.test.math;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,4 +28,10 @@ public class TestBigDecimal {
 		Assertions.assertTrue(BigDecimalUtil.equalsTo(BigDecimalUtil.mul(b, param), result));
 	}
 
+	@Test
+	public void testAdd() {
+		Assertions.assertEquals(
+				BigDecimalUtil.add("11111111111111111111111111111111111111", "11111111111111111111111111111111111111").toString(),
+				"22222222222222222222222222222222222222");
+	}
 }
