@@ -2,6 +2,7 @@ package org.qiunet.utils.date;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import org.qiunet.utils.common.IRunnable;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -102,6 +103,16 @@ public final class DateUtil {
 	 **/
 	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
 
+	/**
+	 * 计算Runnable 消耗毫秒
+	 * @param runnable 执行代码
+	 * @return 毫秒
+	 */
+	public static long calConsumeMillisSeconds(IRunnable runnable) throws Exception{
+		long start = System.currentTimeMillis();
+		runnable.run();
+		return System.currentTimeMillis() - start;
+	}
 	/**
 	 * 日期转字符串 默认格式
 	 *

@@ -89,7 +89,12 @@ public class ConditionManager {
 
 		 private final Map<String, Class<? extends ICondition>> conditionMap = Maps.newHashMap();
 
-		/**
+		 @Override
+		 public int order() {
+			 return Integer.MAX_VALUE - 1;
+		 }
+
+		 /**
 		 * 创建Condition
 		 * @param configList 配置
 		 * @return condition 实例

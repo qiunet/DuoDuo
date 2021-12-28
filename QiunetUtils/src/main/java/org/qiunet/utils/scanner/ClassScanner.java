@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -178,7 +179,12 @@ public final class ClassScanner implements IApplicationContext {
 	}
 
 	private void run(IApplicationContextAware applicationContextAware) throws Exception {
-		applicationContextAware.setApplicationContext(this, argsContainer);
+		long millisSeconds = DateUtil.calConsumeMillisSeconds(() -> {
+			applicationContextAware.setApplicationContext(this, argsContainer);
+		});
+		if (logger.isDebugEnabled()) {
+			logger.debug("ApplicationContext [{}] consume [{}] ms", applicationContextAware.getClass().getSimpleName(), millisSeconds);
+		}
 	}
 
 	@Override
