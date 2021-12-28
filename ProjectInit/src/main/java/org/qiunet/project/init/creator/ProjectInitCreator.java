@@ -111,7 +111,7 @@ public final class ProjectInitCreator {
 			entityCreator.parse();
 
 			mybatisConfig.addExtraFile(entityCreator.getEntityDefine().getNameSpace()+".xml");
-			mybatisConfig.addAliasPackage(entityCreator.getEntityDefine().getPackageName());
+			mybatisConfig.addAliasPackage(entityCreator.getEntityDefine().getPackageName() + ".entity");
 		}
 
 		// mybatis-config.xml 的输出
