@@ -1,4 +1,4 @@
-package org.qiunet.function.gm.message.resp;
+package org.qiunet.function.gm.proto.rsp;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -12,13 +12,13 @@ import org.qiunet.flash.handler.context.status.IGameStatus;
  * @author qiunet
  * 2021-01-09 11:08
  */
-@ChannelData(ID = IProtocolId.System.GM_COMMAND_RESP, desc = "执行结果响应")
-public class GmCommandResp implements IChannelData {
+@ChannelData(ID = IProtocolId.System.GM_COMMAND_RSP, desc = "执行结果响应")
+public class GmCommandRsp implements IChannelData {
 	@Protobuf(description = "执行结果")
 	private int status;
 
-	public static GmCommandResp valueOf(IGameStatus status) {
-		GmCommandResp resp = new GmCommandResp();
+	public static GmCommandRsp valueOf(IGameStatus status) {
+		GmCommandRsp resp = new GmCommandRsp();
 		resp.status = status.getStatus();
 		return resp;
 	}

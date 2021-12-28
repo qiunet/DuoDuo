@@ -10,10 +10,10 @@ import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
  * @author qiunet
  * 2020-10-22 12:39
  */
-public class TransactionResponseHandler extends PersistConnPbHandler<ServerNode, RouteTransactionResponse> {
+public class TransactionRspHandler extends PersistConnPbHandler<ServerNode, RouteTransactionRsp> {
 
 	@Override
-	public void handler(ServerNode playerActor, IPersistConnRequest<RouteTransactionResponse> context) throws Exception {
+	public void handler(ServerNode playerActor, IPersistConnRequest<RouteTransactionRsp> context) throws Exception {
 		TransactionManager.instance.completeTransaction(context.getRequestData());
 	}
 }

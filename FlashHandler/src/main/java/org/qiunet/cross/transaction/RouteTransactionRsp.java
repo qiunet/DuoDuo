@@ -18,8 +18,8 @@ import org.qiunet.utils.json.JsonUtil;
  * 2020-09-24 09:34
  */
 @SkipProtoGenerator
-@ChannelData(ID = IProtocolId.System.TRANSACTION_RESP, desc = "处理事务请求")
-public class RouteTransactionResponse implements IChannelData, IDataToString {
+@ChannelData(ID = IProtocolId.System.TRANSACTION_RSP, desc = "处理事务请求")
+public class RouteTransactionRsp implements IChannelData, IDataToString {
 	/**
 	 * 响应端维护自增的id, 需要带着返回给请求服务器.
 	 */
@@ -42,8 +42,8 @@ public class RouteTransactionResponse implements IChannelData, IDataToString {
 	@Ignore
 	private BaseTransactionResponse data;
 
-	public static RouteTransactionResponse valueOf(long id, BaseTransactionResponse data) {
-		RouteTransactionResponse response = new RouteTransactionResponse();
+	public static RouteTransactionRsp valueOf(long id, BaseTransactionResponse data) {
+		RouteTransactionRsp response = new RouteTransactionRsp();
 		response.respData = ProtobufDataManager.encode(data);
 		response.respClassName = data.getClass().getName();
 		response.data = data;

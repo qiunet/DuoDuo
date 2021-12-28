@@ -29,9 +29,9 @@ public interface IProtocolId {
 		/**玩家发送的请求 .转发到Cross*/
 		int PLAYER_2_CROSS_TRANSMIT_REQ = 2;
 		/**服务没有开启*/
-		int SERVER_NOT_OPEN_RESP = 3;
+		int SERVER_NOT_OPEN_RSP = 3;
 		/** 状态消息提示 */
-		int ERROR_STATUS_TIPS_RESP = 4;
+		int ERROR_STATUS_TIPS_RSP = 4;
 		/**玩家登出*/
 		int PLAYER_LOGOUT_PUSH = 5;
 
@@ -55,23 +55,25 @@ public interface IProtocolId {
 		/** 事务请求 **/
 		int TRANSACTION_REQ = 601;
 		/** 事务响应 **/
-		int TRANSACTION_RESP = 602;
+		int TRANSACTION_RSP = 602;
 		/** server Node 鉴权 */
 		int SERVER_NODE_AUTH = 603;
 
-		int SERVER_NODE_AUTH_RESP = 604;
+		int SERVER_NODE_AUTH_RSP = 604;
 		/** 跨服玩家鉴权. */
 		int CROSS_PLAYER_AUTH = 605;
 
 		/** gm 首页请求 */
 		int GM_COMMAND_INDEX_REQ = 606;
-		/** gm 首页响应 */
-		int GM_COMMAND_LIST_RESP = 607;
+		int GM_COMMAND_LIST_RSP = 607;
 
 		/** gm 调用响应 */
 		int GM_COMMAND_REQ = 608;
+		int GM_COMMAND_RSP = 609;
+
 		/** gm 调用响应 */
-		int GM_COMMAND_RESP = 609;
+		int GM_DEBUG_PROTOCOL_REQ = 610;
+		int GM_DEBUG_PROTOCOL_RSP = 611;
 
 
 	}

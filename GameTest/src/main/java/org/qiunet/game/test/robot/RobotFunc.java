@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.game.test.bt.RobotBehaviorBuilderManager;
@@ -115,7 +115,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 		}
 
 		private void response0(DSession session, MessageContent data) {
-			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RESP) {
+			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RSP) {
 				this.handlerStatus(data);
 				return;
 			}
@@ -140,7 +140,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 		}
 
 		private void handlerStatus(MessageContent data) {
-			StatusTipsResponse response = ProtobufDataManager.decode(StatusTipsResponse.class, data.bytes());
+			StatusTipsRsp response = ProtobufDataManager.decode(StatusTipsRsp.class, data.bytes());
 			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(response));
 			Method method = ResponseMapping.getStatusMethodByID(response.getStatus());
 			if (method == null) {

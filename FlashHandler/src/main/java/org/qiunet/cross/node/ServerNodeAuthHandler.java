@@ -23,7 +23,7 @@ public class ServerNodeAuthHandler extends PersistConnPbHandler<ServerNode, Serv
 		}
 
 		playerActor.auth(requestData.getServerId());
-		playerActor.sendMessage(ServerNodeAuthResponse.valueOf(true));
+		playerActor.sendMessage(ServerNodeAuthRsp.valueOf(true));
 	}
 
 	@Override

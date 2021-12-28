@@ -1,11 +1,11 @@
-package org.qiunet.function.gm;
+package org.qiunet.function.gm.handler;
 
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
-import org.qiunet.function.gm.message.req.GmCommandIndexReq;
-import org.qiunet.function.gm.message.resp.GmCommandIndexResp;
+import org.qiunet.function.gm.proto.req.GmCommandIndexReq;
+import org.qiunet.function.gm.proto.rsp.GmCommandIndexRsp;
 import org.qiunet.utils.logger.LoggerType;
 
 /***
@@ -22,6 +22,6 @@ public class GmCommandIndexHandler extends PersistConnPbHandler<PlayerActor, GmC
 			return;
 		}
 
-		playerActor.sendMessage(GmCommandIndexResp.valueOf(GmCommandManager.instance.getInfoList()));
+		playerActor.sendMessage(GmCommandIndexRsp.valueOf(GmCommandManager.instance.getInfoList()));
 	}
 }

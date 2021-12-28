@@ -1,4 +1,4 @@
-package org.qiunet.function.gm.message.resp;
+package org.qiunet.function.gm.proto.rsp;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;

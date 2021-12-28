@@ -1,12 +1,12 @@
-package org.qiunet.function.gm;
+package org.qiunet.function.gm.handler;
 
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
-import org.qiunet.function.gm.message.req.GmCommandReq;
-import org.qiunet.function.gm.message.resp.GmCommandResp;
+import org.qiunet.function.gm.proto.req.GmCommandReq;
+import org.qiunet.function.gm.proto.rsp.GmCommandRsp;
 import org.qiunet.utils.logger.LoggerType;
 
 /***
@@ -36,6 +36,6 @@ public class GmCommandHandler extends PersistConnPbHandler<PlayerActor, GmComman
 		}
 
 		IGameStatus status = commandInfo.handler(playerActor, requestData.getParams());
-		playerActor.sendMessage(GmCommandResp.valueOf(status));
+		playerActor.sendMessage(GmCommandRsp.valueOf(status));
 	}
 }

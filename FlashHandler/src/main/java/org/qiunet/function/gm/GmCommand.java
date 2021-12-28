@@ -19,12 +19,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface GmCommand {
-	/**
-	 * 类型值. 没法在DuoDuo搞定枚举. 只能枚举值.
-	 * @return
-	 */
-	int type();
-
 	/***
 	 * 排序 大排前.
 	 * 之后按照 name 字母顺序.

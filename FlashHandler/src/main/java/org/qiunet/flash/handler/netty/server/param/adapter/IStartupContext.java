@@ -47,7 +47,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 		@Override
 		public boolean userServerValidate(DSession session) {
 			if (ServerNodeManager.isServerClosed()) {
-				session.sendMessage(ServerCloseResponse.valueOf());
+				session.sendMessage(ServerCloseRsp.valueOf());
 				return false;
 			}
 			return true;
@@ -76,7 +76,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 */
 	default IChannelMessage<IChannelData> exception(Throwable cause){
 		if (cause instanceof StatusResultException) {
-			return StatusTipsResponse.valueOf(((StatusResultException) cause)).buildResponseMessage();
+			return StatusTipsRsp.valueOf(((StatusResultException) cause)).buildResponseMessage();
 		} else if (cause instanceof IOException && Objects.equals(cause.getMessage(), "Connection reset by peer")) {
 			LoggerType.DUODUO_FLASH_HANDLER.error("Connection reset by peer");
 		} else {
@@ -87,7 +87,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 
 	/**
 	 * 服务可用性校验
-	 * 不可用. 触发 {@link ServerCloseResponse}
+	 * 不可用. 触发 {@link ServerCloseRsp}
 	 * @return true 可用 false 不可用
 	 */
 	default boolean userServerValidate(DSession session) { return true;}

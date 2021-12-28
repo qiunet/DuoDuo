@@ -2,7 +2,7 @@ package org.qiunet.game.test.response;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
@@ -55,7 +55,7 @@ public class ResponseMapping implements IApplicationContextAware {
 
 			Method mtd = null;
 			try {
-				mtd = clz.getMethod("statusHandler", StatusTipsResponse.class);
+				mtd = clz.getMethod("statusHandler", StatusTipsRsp.class);
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			}

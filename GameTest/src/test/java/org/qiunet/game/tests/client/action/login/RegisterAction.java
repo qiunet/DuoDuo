@@ -1,6 +1,6 @@
 package org.qiunet.game.tests.client.action.login;
 
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.action.BehaviorAction;
 import org.qiunet.function.condition.IConditions;
@@ -59,7 +59,7 @@ public class RegisterAction extends TestAction {
 
 	@Override
 	@StatusTipsHandler({GameStatus.RANDOM_NAME_ALREADY_USED, GameStatus.REGISTER_COUNT_MAX})
-	public void statusHandler(StatusTipsResponse response) {
+	public void statusHandler(StatusTipsRsp response) {
 		this.errorMsg = response.getStatus();
 	}
 

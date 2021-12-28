@@ -1,4 +1,4 @@
-package org.qiunet.function.gm.message.req;
+package org.qiunet.function.gm.proto.req;
 
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;

@@ -1,11 +1,15 @@
-package org.qiunet.function.gm;
+package org.qiunet.function.gm.handler;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.status.IGameStatus;
-import org.qiunet.function.gm.message.resp.GmCommandInfo;
+import org.qiunet.function.gm.GmCommand;
+import org.qiunet.function.gm.GmParam;
+import org.qiunet.function.gm.GmParamDesc;
+import org.qiunet.function.gm.GmParamType;
+import org.qiunet.function.gm.proto.rsp.GmCommandInfo;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -18,7 +22,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /***
@@ -40,18 +44,21 @@ enum GmCommandManager implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		Set<Method> methods = context.getMethodsAnnotatedWith(GmCommand.class);
-		for (Method method : methods) {
-			GmCommand annotation = method.getAnnotation(GmCommand.class);
-			if (handlers.containsKey(annotation.type())) {
-				throw new CustomException("Gm command handler type {} repeated!", annotation.type());
-			}
+		List<Method> collect = context.getMethodsAnnotatedWith(GmCommand.class).stream().sorted(
+				(o1, o2) -> ComparisonChain.start()
+						.compare(o2.getAnnotation(GmCommand.class).order(), o1.getAnnotation(GmCommand.class).order())
+						.compare(o1.getAnnotation(GmCommand.class).order(), o2.getAnnotation(GmCommand.class).order())
+						.result()
+		).collect(Collectors.toList());
 
+		// 使用自己的排序. 不用外部给定type
+		AtomicInteger id = new AtomicInteger();
+		for (Method method : collect) {
 			if (! IGameStatus.class.isAssignableFrom(method.getReturnType())) {
 				throw new CustomException("method {}#{} must return IGameStatus type!", method.getDeclaringClass().getName(),method.getName());
 			}
 
-			handlers.put(annotation.type(), new CommandHandlerMethodInfo(context.getInstanceOfClass(method.getDeclaringClass()), method));
+			handlers.computeIfAbsent(id.incrementAndGet(), key -> new CommandHandlerMethodInfo(key, context.getInstanceOfClass(method.getDeclaringClass()), method));
 		}
 
 		this.infoList = handlers.values().stream()
@@ -59,7 +66,7 @@ enum GmCommandManager implements IApplicationContextAware {
 						.compare(o2.annotation.order(), o1.annotation.order())
 						.compare(o1.annotation.commandName(), o2.annotation.commandName())
 						.result()
-				).map(data -> GmCommandInfo.valueOf(data.annotation.type(), data.annotation.commandName(), data.paramList))
+				).map(data -> GmCommandInfo.valueOf(data.type, data.annotation.commandName(), data.paramList))
 				.collect(Collectors.toList());
 	}
 
@@ -89,20 +96,25 @@ enum GmCommandManager implements IApplicationContextAware {
 		/**
 		 * 所属对象实例
 		 */
-		private Object obj;
+		private final Object obj;
+		/*
+	     * 分配的类型
+		 */
+		private final int type;
 		/**
 		 * 注解
 		 */
 		GmCommand annotation;
 
-		public CommandHandlerMethodInfo(Object obj, Method method) {
-			this.obj = obj;
-			this.method = method;
-			this.annotation = method.getAnnotation(GmCommand.class);
+		public CommandHandlerMethodInfo(int type, Object obj, Method method) {
 			this.paramList = Lists.newArrayListWithCapacity(method.getParameterCount() - 1);
 			if (! PlayerActor.class.isAssignableFrom(method.getParameters()[0].getType())) {
 				throw new CustomException("Gm Command method {}#{} the first parameter must be PlayerActor", method.getDeclaringClass().getName(), method.getName());
 			}
+			this.annotation = method.getAnnotation(GmCommand.class);
+			this.method = method;
+			this.type = type;
+			this.obj = obj;
 
 
 			for (int i = 1; i < method.getParameters().length; i++) {

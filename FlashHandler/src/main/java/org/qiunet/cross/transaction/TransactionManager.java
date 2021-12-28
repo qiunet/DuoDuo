@@ -93,7 +93,7 @@ public enum TransactionManager {
 	 * 处理事务回来的数据
 	 * @param response
 	 */
-	void completeTransaction(RouteTransactionResponse response) {
+	void completeTransaction(RouteTransactionRsp response) {
 		Object obj = response.getData();
 		Preconditions.checkNotNull(obj);
 

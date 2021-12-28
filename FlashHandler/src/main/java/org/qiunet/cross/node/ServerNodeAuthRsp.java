@@ -13,13 +13,13 @@ import org.qiunet.flash.handler.util.SkipProtoGenerator;
  * 2020-11-06 11:42
  */
 @SkipProtoGenerator
-@ChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH_RESP, desc = "serverNode 鉴权请求响应")
-public class ServerNodeAuthResponse implements IChannelData {
+@ChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH_RSP, desc = "serverNode 鉴权请求响应")
+public class ServerNodeAuthRsp implements IChannelData {
 	@Protobuf(description = "鉴权结果")
 	private boolean result;
 
-	public static ServerNodeAuthResponse valueOf(boolean result) {
-		ServerNodeAuthResponse response = new ServerNodeAuthResponse();
+	public static ServerNodeAuthRsp valueOf(boolean result) {
+		ServerNodeAuthRsp response = new ServerNodeAuthRsp();
 		response.result = result;
 		return response;
 	}

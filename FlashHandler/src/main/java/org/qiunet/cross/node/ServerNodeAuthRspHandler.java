@@ -10,10 +10,10 @@ import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
  * 2020-10-22 16:13
  */
 
-public class ServerNodeAuthRespHandler extends PersistConnPbHandler<ServerNode, ServerNodeAuthResponse> {
+public class ServerNodeAuthRspHandler extends PersistConnPbHandler<ServerNode, ServerNodeAuthRsp> {
 
 	@Override
-	public void handler(ServerNode serverNode, IPersistConnRequest<ServerNodeAuthResponse> context) throws Exception {
+	public void handler(ServerNode serverNode, IPersistConnRequest<ServerNodeAuthRsp> context) throws Exception {
 		serverNode.complete();
 	}
 }

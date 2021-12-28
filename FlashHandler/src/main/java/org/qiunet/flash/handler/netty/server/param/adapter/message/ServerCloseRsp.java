@@ -12,8 +12,8 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * @author qiunet
  * 2020-11-11 10:04
  */
-@ChannelData(ID = IProtocolId.System.SERVER_NOT_OPEN_RESP, desc = "服务未开启响应")
-public class ServerCloseResponse implements IChannelData {
+@ChannelData(ID = IProtocolId.System.SERVER_NOT_OPEN_RSP, desc = "服务未开启响应")
+public class ServerCloseRsp implements IChannelData {
 	/**
 	 * 停服公告
 	 * 停服公告由 {@link org.qiunet.utils.listener.event.data.ServerClosedEvent} 触发放入.
@@ -24,8 +24,8 @@ public class ServerCloseResponse implements IChannelData {
 	@Protobuf(description = "服务没有开启提示")
 	private String serverCloseMsg;
 
-	public static ServerCloseResponse valueOf() {
-		ServerCloseResponse response = new ServerCloseResponse();
+	public static ServerCloseRsp valueOf() {
+		ServerCloseRsp response = new ServerCloseRsp();
 		response.serverCloseMsg = closeMsg;
 		return response;
 

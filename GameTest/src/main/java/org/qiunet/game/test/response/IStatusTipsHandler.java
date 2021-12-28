@@ -1,6 +1,6 @@
 package org.qiunet.game.test.response;
 
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.utils.args.ArgumentKey;
 
 import java.lang.reflect.Method;
@@ -24,5 +24,5 @@ public interface IStatusTipsHandler {
 	 *
 	 * @param response
 	 */
-	default void statusHandler(StatusTipsResponse response) {}
+	default void statusHandler(StatusTipsRsp response) {}
 }

@@ -1,4 +1,4 @@
-package org.qiunet.function.gm.message.resp;
+package org.qiunet.function.gm.proto.rsp;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -13,13 +13,13 @@ import java.util.List;
  * @author qiunet
  * 2021-01-09 10:35
  */
-@ChannelData(ID = IProtocolId.System.GM_COMMAND_LIST_RESP, desc = "gm 首页响应")
-public class GmCommandIndexResp implements IChannelData {
+@ChannelData(ID = IProtocolId.System.GM_COMMAND_LIST_RSP, desc = "gm 首页响应")
+public class GmCommandIndexRsp implements IChannelData {
 	@Protobuf(description = "所有gm命令列表")
 	private List<GmCommandInfo> list;
 
-	public static GmCommandIndexResp valueOf(List<GmCommandInfo> list) {
-		GmCommandIndexResp resp = new GmCommandIndexResp();
+	public static GmCommandIndexRsp valueOf(List<GmCommandInfo> list) {
+		GmCommandIndexRsp resp = new GmCommandIndexRsp();
 		resp.list = list;
 		return resp;
 	}

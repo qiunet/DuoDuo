@@ -47,7 +47,7 @@ public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends
 		this.timeOutFuture.cancel();
 
 		RESP response = dataHandler.apply(reqData);
-		RouteTransactionResponse transactionResponse = RouteTransactionResponse.valueOf(reqId, response);
+		RouteTransactionRsp transactionResponse = RouteTransactionRsp.valueOf(reqId, response);
 		if (serverNode != null) {
 			serverNode.sendMessage(transactionResponse);
 		}else {
