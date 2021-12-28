@@ -138,7 +138,6 @@ public final class ClassScanner implements IApplicationContext {
 			futures.add(future);
 
 			future.whenComplete((res, ex) -> {
-				this.countdown(latch, res);
 				if (ex != null) {
 					logger.error("==scanner exception!==");
 					reference.compareAndSet(null, (Exception) ex);
@@ -147,6 +146,8 @@ public final class ClassScanner implements IApplicationContext {
 					for (long i = 0; i < count; i++) {
 						this.countdown(latch, null);
 					}
+				}else {
+					this.countdown(latch, res);
 				}
 			});
 		}
@@ -159,8 +160,7 @@ public final class ClassScanner implements IApplicationContext {
 
 	private void countdown(CountDownLatch latch, String className) {
 		latch.countDown();
-
-		if (logger.isDebugEnabled()) {
+		if (logger.isDebugEnabled() && className != null) {
 			scannerClassNames.remove(className);
 			logger.debug("countdown  {}, last scanner class {}", className, Arrays.toString(scannerClassNames.toArray()));
 		}

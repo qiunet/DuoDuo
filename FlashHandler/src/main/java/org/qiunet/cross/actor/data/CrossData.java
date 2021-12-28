@@ -15,10 +15,10 @@ import java.util.Map;
  * @author qiunet
  * 2020-10-28 10:50
  */
-public abstract class CrossData<Data extends BaseCrossTransferData> {
-	private static final Map<String, CrossData> cacheDatas = Maps.newHashMap();
-	private Class<Data> clazz;
-	private String key;
+public abstract class CrossData<Data extends IUserTransferData> {
+	private static final Map<String, CrossData<? extends IUserTransferData>> cacheDatas = Maps.newHashMap();
+	private final Class<Data> clazz;
+	private final String key;
 	public CrossData(String key) {
 		if (StringUtil.isEmpty(key)) {
 			throw new CustomException("Key is empty string");

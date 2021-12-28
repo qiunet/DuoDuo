@@ -14,13 +14,13 @@ import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
  * @author qiunet
  * 2020-10-22 12:39
  */
-public class TransactionRequestHandler extends PersistConnPbHandler<ServerNode, RouteTransactionRequest> {
+public class TransactionReqHandler extends PersistConnPbHandler<ServerNode, RouteTransactionReq> {
 
 	@Override
-	public void handler(ServerNode serverNode, IPersistConnRequest<RouteTransactionRequest> context) throws Exception {
-		RouteTransactionRequest requestData = context.getRequestData();
+	public void handler(ServerNode serverNode, IPersistConnRequest<RouteTransactionReq> context) throws Exception {
+		RouteTransactionReq requestData = context.getRequestData();
 
-		BaseTransactionRequest transactionRequestData = requestData.getData();
+		ITransactionReq transactionRequestData = requestData.getData();
 		DTransaction transaction = new DTransaction(requestData.getId(), transactionRequestData, serverNode);
 		if (transactionRequestData instanceof IPlayer) {
 			AbstractUserActor actor = UserOnlineManager.getPlayerActor(((IPlayer) transactionRequestData).getId());

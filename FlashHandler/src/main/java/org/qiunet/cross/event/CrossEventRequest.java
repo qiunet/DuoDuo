@@ -1,15 +1,14 @@
 package org.qiunet.cross.event;
 
-import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.base.Preconditions;
+import org.qiunet.cross.transaction.TransferJsonData;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
-import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /***
@@ -21,17 +20,14 @@ import org.qiunet.utils.string.ToString;
 @SkipProtoGenerator
 @ChannelData(ID = IProtocolId.System.CROSS_EVENT, desc = "跨服事件处理")
 public class CrossEventRequest implements IChannelData, IDataToString {
-	@Protobuf(description = "事件的className")
-	private String className;
-	@Protobuf(description = "事件反序列化的数据.")
-	private String datas;
 	/**
 	 * 系统发给玩家的事件. 需要有playerID. 会在玩家的线程执行
 	 */
 	@Protobuf(description = "玩家ID")
 	private long playerId;
-	@Ignore
-	private IEventData data;
+
+	@Protobuf
+	private TransferJsonData jsonData;
 
 	public static CrossEventRequest valueOf(IEventData data) {
 		return valueOf(data, 0);
@@ -41,10 +37,8 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 		Preconditions.checkNotNull(data);
 
 		CrossEventRequest request = new CrossEventRequest();
-		request.className = data.getClass().getName();
-		request.datas = JsonUtil.toJsonString(data);
+		request.jsonData = new TransferJsonData(data);
 		request.playerId = playerId;
-		request.data = data;
 		return request;
 	}
 
@@ -56,35 +50,19 @@ public class CrossEventRequest implements IChannelData, IDataToString {
 		this.playerId = playerId;
 	}
 
-	public String getClassName() {
-		return className;
+	public TransferJsonData getJsonData() {
+		return jsonData;
 	}
 
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getDatas() {
-		return datas;
-	}
-
-	public void setDatas(String datas) {
-		this.datas = datas;
+	public void setJsonData(TransferJsonData jsonData) {
+		this.jsonData = jsonData;
 	}
 
 	public IEventData getData() {
-		if (data == null) {
-			try {
-				Class<?> aClass = Class.forName(className);
-				data = (IEventData) JsonUtil.getGeneralObjWithField(datas, aClass);
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
-		return data;
+		return (IEventData) jsonData.getData();
 	}
 	@Override
 	public String _toString() {
-		return "CrossEvent_"+ ToString.toString(data);
+		return "=CrossEvent= "+ ToString.toString(getData());
 	}
 }

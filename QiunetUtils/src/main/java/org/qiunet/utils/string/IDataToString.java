@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.context.request.data;
+package org.qiunet.utils.string;
 
 /***
  * data to toString

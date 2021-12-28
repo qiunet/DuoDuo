@@ -34,7 +34,7 @@ public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData 
 		try {
 			return codec.get().readFrom(CodedInputStream.newInstance(buffer));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Request data ["+this.getRequestClass().getName()+"] Protobuf decode exception", e);
 		}
 		return null;
 	}

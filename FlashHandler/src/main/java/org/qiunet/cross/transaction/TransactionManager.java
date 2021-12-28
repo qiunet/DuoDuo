@@ -40,7 +40,7 @@ public enum TransactionManager {
 	 * @param <Resp>
 	 * @return
 	 */
-	public <Req extends BaseTransactionRequest, Resp extends BaseTransactionResponse> TransactionFuture<Resp> beginTransaction(int serverId, Req req) {
+	public <Req extends ITransactionReq, Resp extends ITransactionRsp> TransactionFuture<Resp> beginTransaction(int serverId, Req req) {
 		return beginTransaction(serverId, req, 3, TimeUnit.SECONDS);
 	}
 
@@ -54,13 +54,13 @@ public enum TransactionManager {
 	 * @param <Resp>
 	 * @return
 	 */
-	public <Req extends BaseTransactionRequest, Resp extends BaseTransactionResponse> TransactionFuture<Resp> beginTransaction(int serverId, Req req, int timeout, TimeUnit unit) {
+	public <Req extends ITransactionReq, Resp extends ITransactionRsp> TransactionFuture<Resp> beginTransaction(int serverId, Req req, int timeout, TimeUnit unit) {
 		Preconditions.checkNotNull(req);
 		DPromise<Resp> promise = new DCompletePromise<>();
 
 		long reqId = idGenerator.makeId();
 		this.cacheRequests.put(reqId, promise);
-		RouteTransactionRequest routeTransactionRequest = RouteTransactionRequest.valueOf(reqId, req);
+		RouteTransactionReq routeTransactionReq = RouteTransactionReq.valueOf(reqId, req);
 		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			DTransaction<Req, Resp> dTransaction = new DTransaction<>(reqId, req);
@@ -69,7 +69,7 @@ public enum TransactionManager {
 		}
 
 		ServerNode node = ServerNodeManager.getNode(serverId);
-		IDSessionFuture channelFuture = node.sendMessage(routeTransactionRequest);
+		IDSessionFuture channelFuture = node.sendMessage(routeTransactionReq);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
 				respTransactionFuture.beginCalTimeOut(timeout, unit);
@@ -99,7 +99,7 @@ public enum TransactionManager {
 
 		DPromise dPromise = cacheRequests.get(response.getId());
 		if (dPromise == null) {
-			logger.error("Cross ITransactionHandler id[{}] Class [{}] Data [{}] is invalid!", response.getId(), response.getRespClassName(), JsonUtil.toJsonString(obj));
+			logger.error("Cross ITransactionHandler id[{}] Class [{}] Data [{}] is invalid!", response.getId(), response.getClassName(), JsonUtil.toJsonString(obj));
 			return;
 		}
 

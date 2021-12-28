@@ -5,8 +5,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.request.data.IDataToString;
 import org.qiunet.flash.handler.util.SkipProtoGenerator;
+import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /***

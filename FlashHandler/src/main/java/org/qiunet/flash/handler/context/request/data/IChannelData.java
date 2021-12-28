@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.request.data;
 
-import org.qiunet.flash.handler.common.protobuf.IProtobufClass;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 
@@ -10,7 +9,7 @@ import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
  * @author qiunet
  * 2020-09-21 16:07
  */
-public interface IChannelData extends IProtobufClass {
+public interface IChannelData {
 	/**
 	 * 转换为byte[]
 	 * @return

@@ -9,7 +9,7 @@ import java.util.function.Function;
  * @author qiunet
  * 2020-10-22 17:38
  */
-public interface ITransactionHandler<Req extends BaseTransactionRequest, Resp extends BaseTransactionResponse> {
+public interface ITransactionHandler<Req extends ITransactionReq, Resp extends ITransactionRsp> {
 
 	/**
 	 * 处理事务

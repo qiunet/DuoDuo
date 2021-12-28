@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.request.data.IDataToString;
+import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /**

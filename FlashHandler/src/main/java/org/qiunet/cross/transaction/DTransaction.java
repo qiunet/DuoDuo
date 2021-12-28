@@ -14,7 +14,7 @@ import java.util.function.Function;
  * @author qiunet
  * 2020-09-24 09:29
  */
-public final class DTransaction<REQ extends BaseTransactionRequest, RESP extends BaseTransactionResponse> {
+public final class DTransaction<REQ extends ITransactionReq, RESP extends ITransactionRsp> {
 	public enum Status {
 		/**初始化状态*/
 		INIT,

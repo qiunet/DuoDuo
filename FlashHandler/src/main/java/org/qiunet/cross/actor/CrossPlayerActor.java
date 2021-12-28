@@ -2,9 +2,9 @@ package org.qiunet.cross.actor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import org.qiunet.cross.actor.data.BaseCrossTransferData;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
+import org.qiunet.cross.actor.data.IUserTransferData;
 import org.qiunet.cross.actor.message.Cross2PlayerResponse;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventRequest;
@@ -96,7 +96,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	 * @param <Data>
 	 * @return
 	 */
-	public <Data extends BaseCrossTransferData> Data getCrossData(CrossData<Data> key) {
+	public <Data extends IUserTransferData> Data getCrossData(CrossData<Data> key) {
 		CrossDataGetter<Data> getter = crossDataHolder.computeIfAbsent(key, key0 -> new CrossDataGetter(this, key0));
 		return getter.get();
 	}

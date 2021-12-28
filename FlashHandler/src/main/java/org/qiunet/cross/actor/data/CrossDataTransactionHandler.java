@@ -2,7 +2,6 @@ package org.qiunet.cross.actor.data;
 
 import org.qiunet.cross.transaction.DTransaction;
 import org.qiunet.cross.transaction.ITransactionHandler;
-import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 
@@ -12,16 +11,16 @@ import org.qiunet.flash.handler.common.player.UserOnlineManager;
  * @author qiunet
  * 2020-10-28 12:37
  */
-public class CrossDataTransactionHandler implements ITransactionHandler<CrossDataTransactionRequest, CrossDataTransactionResponse> {
+public class CrossDataTransactionHandler implements ITransactionHandler<CrossDataTransactionReq, CrossDataTransactionRsp> {
 
 	@Override
-	public void handler(DTransaction<CrossDataTransactionRequest, CrossDataTransactionResponse> transaction) {
-		CrossDataTransactionRequest request = transaction.getReqData();
-		AbstractUserActor playerActor = UserOnlineManager.getPlayerActor(request.getPlayerId());
+	public void handler(DTransaction<CrossDataTransactionReq, CrossDataTransactionRsp> transaction) {
+		CrossDataTransactionReq request = transaction.getReqData();
+		PlayerActor playerActor = UserOnlineManager.getPlayerActor(request.getPlayerId());
 		playerActor.addMessage(p -> transaction.handler(req -> {
 			CrossData crossData = CrossData.get(req.getKey());
-			BaseCrossTransferData data = crossData.create((PlayerActor) p);
-			return CrossDataTransactionResponse.valueOf(data);
+			IUserTransferData data = crossData.create(p);
+			return CrossDataTransactionRsp.valueOf(data);
 		}));
 	}
 }

@@ -15,21 +15,22 @@ import org.qiunet.utils.string.ToString;
  * 2020-09-24 09:34
  */
 @SkipProtoGenerator
-@ChannelData(ID = IProtocolId.System.TRANSACTION_RSP, desc = "处理事务请求")
-public class RouteTransactionRsp implements IChannelData, IDataToString {
+@ChannelData(ID = IProtocolId.System.TRANSACTION_REQ, desc = "处理事务请求")
+public class RouteTransactionReq implements IChannelData, IDataToString {
 	/**
-	 * 响应端维护自增的id, 需要带着返回给请求服务器.
+	 * 请求端维护自增的id, 需要带着返回给请求服务器.
 	 */
 	@Protobuf
 	private long id;
 	@Protobuf
 	private TransferJsonData jsonData;
 
-	public static RouteTransactionRsp valueOf(long id, ITransactionRsp data) {
-		RouteTransactionRsp response = new RouteTransactionRsp();
-		response.jsonData = new TransferJsonData(data);
-		response.id = id;
-		return response;
+
+	static RouteTransactionReq valueOf(long id, ITransactionReq data) {
+		RouteTransactionReq request = new RouteTransactionReq();
+		request.id = id;
+		request.jsonData = new TransferJsonData(data);
+		return request;
 	}
 
 	public long getId() {
@@ -40,16 +41,20 @@ public class RouteTransactionRsp implements IChannelData, IDataToString {
 		this.id = id;
 	}
 
-	public String getClassName(){
-		return jsonData.getClazz();
+	public TransferJsonData getJsonData() {
+		return jsonData;
 	}
 
-	public ITransactionRsp getData() {
-		return (ITransactionRsp) jsonData.getData();
+	public void setJsonData(TransferJsonData jsonData) {
+		this.jsonData = jsonData;
+	}
+
+	public ITransactionReq getData() {
+		return (ITransactionReq) jsonData.getData();
 	}
 
 	@Override
 	public String _toString() {
-		return "=TransactionRsp= " + ToString.toString(getData())+"]";
+		return "=TransactionReq= " + ToString.toString(getData())+"]";
 	}
 }

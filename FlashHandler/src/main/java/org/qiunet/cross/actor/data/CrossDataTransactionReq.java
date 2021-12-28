@@ -1,6 +1,6 @@
 package org.qiunet.cross.actor.data;
 
-import org.qiunet.cross.transaction.BaseTransactionRequest;
+import org.qiunet.cross.transaction.ITransactionReq;
 
 /***
  * 跨服获取玩家数据的事务请求数据
@@ -8,14 +8,14 @@ import org.qiunet.cross.transaction.BaseTransactionRequest;
  * @author qiunet
  * 2020-10-28 12:03
  */
-public class CrossDataTransactionRequest extends BaseTransactionRequest {
+public class CrossDataTransactionReq implements ITransactionReq {
 
 	private String key;
 
 	private long playerId;
 
-	public static CrossDataTransactionRequest valueOf(String key, long playerId) {
-		CrossDataTransactionRequest request = new CrossDataTransactionRequest();
+	public static CrossDataTransactionReq valueOf(String key, long playerId) {
+		CrossDataTransactionReq request = new CrossDataTransactionReq();
 		request.key = key;
 		request.playerId = playerId;
 		return request;

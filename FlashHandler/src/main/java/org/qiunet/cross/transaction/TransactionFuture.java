@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
  * @author qiunet
  * 2020-10-22 14:52
  */
-public class TransactionFuture<T extends BaseTransactionResponse> {
+public class TransactionFuture<T extends ITransactionRsp> {
 
 	private final long id;
 

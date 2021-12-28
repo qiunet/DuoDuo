@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.base.Preconditions;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -43,7 +44,7 @@ class ProtobufDataContext0 implements IApplicationContextAware {
 	}
 
 	private void handlerCodec() {
-		Set<Class<? extends IProtobufClass>> classes0 = this.context.getSubTypesOf(IProtobufClass.class);
+		Set<Class<? extends IChannelData>> classes0 = this.context.getSubTypesOf(IChannelData.class);
 		Set<Class<?>> classes = this.context.getTypesAnnotatedWith(ProtobufClass.class);
 		classes.addAll(classes0);
 		for (Class<?> clazz : classes) {

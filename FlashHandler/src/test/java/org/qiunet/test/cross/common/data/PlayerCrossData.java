@@ -11,10 +11,10 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
  */
 public class PlayerCrossData {
 
-	public static final CrossData<TestCrossDataCross> TEST_CROSS_DATA = new CrossData<TestCrossDataCross>("TEST_CROSS_DATA") {
+	public static final CrossData<TestCrossDataUser> TEST_CROSS_DATA = new CrossData<TestCrossDataUser>("TEST_CROSS_DATA") {
 		@Override
-		public TestCrossDataCross create(PlayerActor playerActor) {
-			return TestCrossDataCross.valueOf("Qiunet", playerActor.getId());
+		public TestCrossDataUser create(PlayerActor playerActor) {
+			return TestCrossDataUser.valueOf("Qiunet", playerActor.getId());
 		}
 	};
 }

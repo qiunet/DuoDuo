@@ -1,18 +1,18 @@
 package org.qiunet.test.cross.common.transaction;
 
-import org.qiunet.cross.transaction.BaseTransactionResponse;
+import org.qiunet.cross.transaction.ITransactionRsp;
 
 /***
  *
  * @author qiunet
  * 2020-10-23 20:54
  **/
-public class TestTransactionResponse extends BaseTransactionResponse {
+public class TestTransactionRsp implements ITransactionRsp {
 
 	private long playerId;
 
-	public static TestTransactionResponse valueOf(long playerId) {
-		TestTransactionResponse response = new TestTransactionResponse();
+	public static TestTransactionRsp valueOf(long playerId) {
+		TestTransactionRsp response = new TestTransactionRsp();
 		response.playerId = playerId;
 		return response;
 	}

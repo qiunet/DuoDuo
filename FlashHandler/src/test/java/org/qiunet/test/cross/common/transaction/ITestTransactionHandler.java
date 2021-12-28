@@ -8,10 +8,10 @@ import org.qiunet.cross.transaction.ITransactionHandler;
  * @author qiunet
  * 2020-10-23 20:56
  **/
-public class ITestTransactionHandler implements ITransactionHandler<TestTransactionRequest, TestTransactionResponse> {
+public class ITestTransactionHandler implements ITransactionHandler<TestTransactionReq, TestTransactionRsp> {
 
 	@Override
-	public void handler(DTransaction<TestTransactionRequest, TestTransactionResponse> transaction) {
-		transaction.handler(req -> TestTransactionResponse.valueOf(req.getPlayerId()));
+	public void handler(DTransaction<TestTransactionReq, TestTransactionRsp> transaction) {
+		transaction.handler(req -> TestTransactionRsp.valueOf(req.getPlayerId()));
 	}
 }
