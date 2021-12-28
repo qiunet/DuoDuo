@@ -61,10 +61,10 @@ class LogBackLogger implements ILogger {
 		appender.start();
 
 		AsyncAppender asyncAppender = new AsyncAppender();
+		asyncAppender.setContext(lc);
 		asyncAppender.setDiscardingThreshold(0);
 		asyncAppender.addAppender(appender);
 		asyncAppender.setName(loggerName);
-		asyncAppender.setContext(lc);
 		asyncAppender.start();
 
 		logger.addAppender(asyncAppender);

@@ -1,8 +1,7 @@
 package org.qiunet.event.log.test.log;
 
+import org.qiunet.event.log.log.LogMessageBuilder;
 import org.qiunet.event.log.test.enums.EventLogType;
-
-import java.util.StringJoiner;
 
 /***
  *
@@ -10,7 +9,7 @@ import java.util.StringJoiner;
  * @author qiunet
  * 2020-04-02 15:33
  ***/
-public class M1LogEvent extends AbstractLogEvent {
+public class M1LogEvent extends GameLogEvent {
 	private long playerId;
 	private long currM1;
 	private int m1;
@@ -25,12 +24,10 @@ public class M1LogEvent extends AbstractLogEvent {
 	}
 
 	@Override
-	public String logMessage() {
-		StringJoiner sj = new StringJoiner("|");
-		sj.add(String.valueOf(playerId))
+	protected void appendLog(LogMessageBuilder builder) {
+		builder.add(String.valueOf(playerId))
 			.add(String.valueOf(currM1))
 			.add(String.valueOf(m1))
 			.add(operate);
-		return sj.toString();
 	}
 }
