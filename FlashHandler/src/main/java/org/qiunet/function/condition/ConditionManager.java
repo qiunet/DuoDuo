@@ -104,7 +104,7 @@ public class ConditionManager {
 						 ICondition iCondition = null;
 						 try {
 						 	Preconditions.checkNotNull(conditionMap.get(cfg.getType()), "ConditionType %s is not define!", cfg.getType());
-							 iCondition = conditionMap.get(cfg.getType()).newInstance();
+							 iCondition = conditionMap.get(cfg.getType().toUpperCase()).newInstance();
 						 } catch (InstantiationException | IllegalAccessException e) {
 							 e.printStackTrace();
 						 }
@@ -144,7 +144,7 @@ public class ConditionManager {
 						throw new CustomException("Condition 的字段不能命名为 not  or");
 					}
 				}
-				conditionMap.put(instanceOfClass.getType().name(), aClass);
+				conditionMap.put(instanceOfClass.getType().name().toUpperCase(), aClass);
 			}
 		}
 	}
