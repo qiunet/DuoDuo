@@ -55,4 +55,10 @@ public class StatusResult {
 	public boolean isFail(){
 		return !isSuccess();
 	}
+
+	public void failThrowException() {
+		if (isFail()) {
+			throw StatusResultException.valueOf(this);
+		}
+	}
 }

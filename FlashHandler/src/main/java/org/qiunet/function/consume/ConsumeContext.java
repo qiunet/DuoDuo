@@ -3,6 +3,7 @@ package org.qiunet.function.consume;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
+import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -56,6 +57,13 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		}
 
 		consumes.act(this);
+	}
+
+	public void failThrowException() {
+		// == null 说明没有校验.
+		if (result.isFail()) {
+			throw StatusResultException.valueOf(result);
+		}
 	}
 
 	public Obj getObj() {
