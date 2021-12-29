@@ -7,12 +7,15 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.StrCodecUtil;
+
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by qiunet.
@@ -49,6 +52,11 @@ public final class ServerConstants {
 	 * 使用的header adapter
 	 */
 	public static final AttributeKey<IProtocolHeaderType> PROTOCOL_HEADER_ADAPTER = AttributeKey.newInstance("PROTOCOL_HEADER_ADAPTER");
+	/**
+	 * 启动时间
+	 */
+	public static final AtomicLong startDt = new AtomicLong();
+
 	/** 祈福标 */
 	private static final String ICON = "0a2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2ee998bfe5bca5e99980e4bd9b2e2e" +
 		"2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e0a20202020202020202020202020202020202020202020205f6f6f306f6f5f202" +
@@ -75,10 +83,17 @@ public final class ServerConstants {
 		"04255472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e";
 
 
+	@EventListener
+	private void onStartupComplete(ServerStartupCompleteEvent event) {
+		if (startDt.get() > 0) {
+			LoggerType.DUODUO_FLASH_HANDLER.info("Server startup successful in {} ms", (System.currentTimeMillis() - startDt.get()));
+		}
+	}
+
 	@EventListener(EventHandlerWeightType.LESS)
 	private void onServerStart(ServerStartupEventData eventData){
-		if (LoggerType.DUODUO.getLogger().isInfoEnabled()) {
-			LoggerType.DUODUO.info(StrCodecUtil.decrypt(ICON));
+		if (LoggerType.DUODUO_FLASH_HANDLER.getLogger().isInfoEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.info(StrCodecUtil.decrypt(ICON));
 		}
 	}
 }

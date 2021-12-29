@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,6 +67,7 @@ public final class ClassScanner implements IApplicationContext {
 			scannerType |= type.getStatus();
 		}
 		this.scannerTypes = scannerType;
+		this.recordStartDt();
 		instance = this;
 	}
 
@@ -228,5 +230,17 @@ public final class ClassScanner implements IApplicationContext {
 
 			throw new NullPointerException("can not get instance for class ["+key.getName()+"]");
 		});
+	}
+
+	/**
+	 * 记录启服时间
+	 */
+	private void recordStartDt() {
+		try {
+			Class<?> aClass = Class.forName("org.qiunet.flash.handler.netty.server.constants.ServerConstants");
+			Field field = aClass.getField("startDt");
+			AtomicLong startDt = (AtomicLong) field.get(null);
+			startDt.compareAndSet(0, System.currentTimeMillis());
+		} catch (Exception e) {}
 	}
 }

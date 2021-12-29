@@ -7,6 +7,8 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -51,6 +53,7 @@ public class BootstrapServer {
 		if (hook == null) {
 			throw new CustomException("hook can not be null");
 		}
+		ServerConstants.startDt.compareAndSet(0, System.currentTimeMillis());
 		hookListener = new HookListener(hook);
 	}
 	/***
@@ -137,6 +140,7 @@ public class BootstrapServer {
 			thread.setDaemon(true);
 			thread.start();
 		}
+		ServerStartupCompleteEvent.fireStartupCompleteEvent();
 		awaitThread = Thread.currentThread();
 		LockSupport.park();
 	}
