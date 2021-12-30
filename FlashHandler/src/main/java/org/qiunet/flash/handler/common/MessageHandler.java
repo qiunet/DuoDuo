@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadContextData;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /***
@@ -36,7 +38,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	private volatile Thread currentThread;
 
-	private volatile boolean close;
+	private final AtomicBoolean destroyed = new AtomicBoolean();
 
 	private final UseTimer useTimer = new UseTimer(getIdentity(), 500);
 
@@ -88,7 +90,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 */
 	@Override
 	public void addMessage(IMessage<H> msg) {
-		if (close) {
+		if (this.isDestroyed()) {
 			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
 			return;
 		}
@@ -102,7 +104,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	@Override
 	public void runMessage(IMessage<H> message) {
-		if (close) {
+		if (this.isDestroyed()) {
 			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
 			return;
 		}
@@ -135,10 +137,19 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 */
 	@Override
 	public void destroy(){
+		if (! destroyed.compareAndSet(false, true)) {
+			throw new CustomException("Already destroyed");
+		}
 		this.cancelAllFuture(true);
-		this.close = true;
 	}
 
+	/**
+	 * 是否已经销毁
+	 * @return
+	 */
+	public boolean isDestroyed() {
+		return destroyed.get();
+	}
 	/**
 	 * 合并另一个的所有的消息
 	 * 然后销毁被合并方.

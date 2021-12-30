@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <root name="机器人逻辑"
-	  xmlns="https://github.com/qiunet/DuoDuo/AiBuild"
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	  xsi:schemaLocation="https://github.com/qiunet/DuoDuo/AiBuild"
+	  xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/qiunet/DuoDuo/master/FlashHandler/src/main/resources/AiBuild.xsd"
 >
 	<random condition="[{'type': 'SEE_GOBLIN', 'not': 'true'}, {'type': 'SEE_OMA', 'not': 'true'}]">
 		<action clazz="org.qiunet.test.function.test.ai.action.Idle" condition="" />
