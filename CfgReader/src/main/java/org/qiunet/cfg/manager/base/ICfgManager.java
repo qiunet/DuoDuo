@@ -7,7 +7,7 @@ import org.qiunet.cfg.base.ICfg;
  * @author qiunet
  *         Created on 17/2/9 12:18.
  */
-public interface ICfgManager<T extends ICfg> {
+public interface ICfgManager<ID, Cfg extends ICfg<ID>> {
 	/**
 	 * 设定加载
 	 * @return
@@ -24,7 +24,7 @@ public interface ICfgManager<T extends ICfg> {
 	 * 得到该类加载的cfg 类class
 	 * @return
 	 */
-	Class<T> getCfgClass();
+	Class<Cfg> getCfgClass();
 	/**
 	 * 加载顺序
 	 * @return

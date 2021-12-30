@@ -15,7 +15,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
-	extends BaseJsonCfgManager<Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
+	extends BaseJsonCfgManager<ID, Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgs;
 
 	public NestMapJsonCfgManager(Class<Cfg> cfgClass) {

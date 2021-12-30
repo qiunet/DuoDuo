@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public enum CfgManagers {
 	INSTANCE,;
-	private List<ICfgManager> gameSettingList = Lists.newArrayListWithCapacity(100);
-	private Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
-	private AtomicBoolean reloading = new AtomicBoolean();
+	private final List<ICfgManager> gameSettingList = Lists.newArrayListWithCapacity(100);
+	private final Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
+	private final AtomicBoolean reloading = new AtomicBoolean();
 
 	public static CfgManagers getInstance(){
 		return INSTANCE;

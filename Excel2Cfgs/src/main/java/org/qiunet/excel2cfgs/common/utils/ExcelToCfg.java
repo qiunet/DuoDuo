@@ -1,7 +1,10 @@
 package org.qiunet.excel2cfgs.common.utils;
 
 import org.apache.poi.ss.usermodel.*;
-import org.qiunet.excel2cfgs.appender.*;
+import org.qiunet.excel2cfgs.appender.AppenderAttachable;
+import org.qiunet.excel2cfgs.appender.AppenderData;
+import org.qiunet.excel2cfgs.appender.JsonAppender;
+import org.qiunet.excel2cfgs.appender.XmlAppender;
 import org.qiunet.excel2cfgs.common.enums.DataType;
 import org.qiunet.excel2cfgs.common.enums.OutPutType;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
@@ -154,9 +157,6 @@ public class ExcelToCfg {
 			String relativeDirPath = sourceFile.getParentFile().getAbsolutePath().substring(rootPath.length());
 
 			AppenderAttachable appenderAttachable = new AppenderAttachable(sourceFile.getName());
-			if (setting.isXdChecked()){
-				appenderAttachable.addAppender(new XdAppender(sourceFile, relativeDirPath, fileNamePrefix));
-			}
 			if (setting.isJsonChecked()) {
 				appenderAttachable.addAppender(new JsonAppender(sourceFile, relativeDirPath, fileNamePrefix));
 			}

@@ -17,7 +17,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
-	extends BaseJsonCfgManager<Cfg> implements INestListCfgManager<ID, Cfg> {
+	extends BaseJsonCfgManager<ID, Cfg> implements INestListCfgManager<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
 	public NestListJsonCfgManager(Class<Cfg> cfgClass) {

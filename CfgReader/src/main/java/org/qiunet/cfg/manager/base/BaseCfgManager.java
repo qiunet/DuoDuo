@@ -19,7 +19,7 @@ import java.lang.reflect.Modifier;
  * Time: 15:51.
  * To change this template use File | Settings | File Templates.
  */
-public abstract class BaseCfgManager<Cfg extends ICfg> implements ICfgManager<Cfg> {
+public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgManager<ID, Cfg> {
 	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 
 	protected String fileName;

@@ -10,7 +10,7 @@ import org.qiunet.cfg.base.BaseKeyValCfg;
  * 2020-09-18 17:56
  */
 
-@Cfg(value = "config/init/init_data.xd", order = 4444)
+@Cfg(value = "config/init/init_data.json", order = 4444)
 public class TestKeyValCfg extends BaseKeyValCfg {
 		private String id;
 		private String val1;

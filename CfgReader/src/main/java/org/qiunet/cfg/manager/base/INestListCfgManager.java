@@ -10,6 +10,6 @@ import org.qiunet.cfg.wrapper.INestListCfgWrapper;
  * 2020-04-23 11:54
  ***/
 public interface INestListCfgManager<ID, Cfg extends INestListCfg<ID>>
-	extends ICfgManager<Cfg>, INestListCfgWrapper<ID, Cfg> {
+	extends ICfgManager<ID, Cfg>, INestListCfgWrapper<ID, Cfg> {
 
 }

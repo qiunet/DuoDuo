@@ -13,9 +13,9 @@ import java.util.Map;
  * 2020-04-23 15:00
  ***/
  class NestMapCfgWrapper<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
-	extends BaseCfgWrapper<Cfg> implements INestMapCfgWrapper<ID, SubId, Cfg> {
+	extends BaseCfgWrapper<ID, Cfg> implements INestMapCfgWrapper<ID, SubId, Cfg> {
 
-	private INestMapCfgManager<ID, SubId, Cfg> cfgManager;
+	private final INestMapCfgManager<ID, SubId, Cfg> cfgManager;
 
 	 NestMapCfgWrapper(INestMapCfgManager<ID, SubId, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;

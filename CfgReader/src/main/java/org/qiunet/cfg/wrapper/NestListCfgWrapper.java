@@ -13,8 +13,8 @@ import java.util.Map;
  * 2020-04-23 16:28
  ***/
  class NestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
-	extends BaseCfgWrapper<Cfg> implements INestListCfgWrapper<ID, Cfg> {
-	private INestListCfgManager<ID, Cfg> cfgManager;
+	extends BaseCfgWrapper<ID, Cfg> implements INestListCfgWrapper<ID, Cfg> {
+	private final INestListCfgManager<ID, Cfg> cfgManager;
 
 	 NestListCfgWrapper(INestListCfgManager<ID, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;

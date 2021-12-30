@@ -26,10 +26,6 @@ public class Setting {
 	 */
 	private boolean xmlChecked;
 	/***
-	 * xd是否勾选
-	 */
-	private boolean xdChecked;
-	/***
 	 * json是否勾选
 	 */
 	private boolean jsonChecked;
@@ -63,14 +59,6 @@ public class Setting {
 
 	public void setXmlChecked(boolean xmlChecked) {
 		this.xmlChecked = xmlChecked;
-	}
-
-	public boolean isXdChecked() {
-		return xdChecked;
-	}
-
-	public void setXdChecked(boolean xdChecked) {
-		this.xdChecked = xdChecked;
 	}
 
 	public boolean isJsonChecked() {

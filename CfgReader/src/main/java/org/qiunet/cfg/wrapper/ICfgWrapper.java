@@ -11,7 +11,7 @@ import java.util.List;
  * @author qiunet
  * 2020-04-23 10:53
  ***/
-public interface ICfgWrapper<T extends ICfg> {
+public interface ICfgWrapper<ID, Cfg extends ICfg<ID>> {
 	/**
 	 * 配置数量
 	 * @return
@@ -22,5 +22,5 @@ public interface ICfgWrapper<T extends ICfg> {
 	 * 所有的配置
 	 * @return
 	 */
-	List<T> list();
+	List<Cfg> list();
 }

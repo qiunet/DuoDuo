@@ -10,6 +10,6 @@ import org.qiunet.cfg.wrapper.ISimpleMapCfgWrapper;
  * 2020-04-23 11:54
  ***/
 public interface ISimpleMapCfgManager<ID, Cfg extends ISimpleMapCfg<ID>>
-	extends ICfgManager<Cfg>, ISimpleMapCfgWrapper<ID, Cfg> {
+	extends ICfgManager<ID, Cfg>, ISimpleMapCfgWrapper<ID, Cfg> {
 
 }

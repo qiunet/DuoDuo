@@ -10,6 +10,6 @@ import org.qiunet.cfg.wrapper.INestMapCfgWrapper;
  * 2020-04-23 11:54
  ***/
 public interface INestMapCfgManager<ID, SubID, Cfg extends INestMapCfg<ID, SubID>>
-	extends ICfgManager<Cfg>, INestMapCfgWrapper<ID, SubID, Cfg> {
+	extends ICfgManager<ID, Cfg>, INestMapCfgWrapper<ID, SubID, Cfg> {
 
 }

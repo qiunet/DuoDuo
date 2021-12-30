@@ -3,7 +3,7 @@ package org.qiunet.cfg.test;
 import org.qiunet.utils.string.StringUtil;
 
 public class RewardData {
-	private String [] reward;
+	private final String [] reward;
 	public RewardData(String reward) {
 		this.reward = StringUtil.split(reward, ";");
 	}

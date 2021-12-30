@@ -30,16 +30,7 @@ public enum OutputFormatType {
 			SettingManager.getInstance().getSetting().setXmlChecked(true);
 		}
 	},
-	xd {
-		@Override
-		public void unchecked() {
-			SettingManager.getInstance().getSetting().setXdChecked(false);
-		}
-		@Override
-		public void saveStatus() {
-			SettingManager.getInstance().getSetting().setXdChecked(true);
-		}
-	};
+	;
 
 	public static void uncheckedAll(){
 		for (OutputFormatType type : values()) {

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Time: 10:47.
  * To change this template use File | Settings | File Templates.
  */
-abstract class BaseJsonCfgManager<Cfg extends ICfg> extends BaseCfgManager<Cfg> {
+abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManager<ID, Cfg> {
 	BaseJsonCfgManager(Class<Cfg> cfgClass) {
 		super(cfgClass);
 	}

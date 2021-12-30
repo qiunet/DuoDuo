@@ -60,7 +60,7 @@ class KeyValManager implements IApplicationContextAware {
 		}
 
 		Map<String, String> keyValDatas = Maps.newHashMap();
-		for (ICfgManager<IKeyValCfg> keyValManager : keyValManagers) {
+		for (ICfgManager<?, IKeyValCfg> keyValManager : keyValManagers) {
 			List<IKeyValCfg> list = ((ISimpleMapCfgManager) keyValManager).list();
 			for (IKeyValCfg iKeyValCfg : list) {
 				Preconditions.checkState(! keyValDatas.containsKey(iKeyValCfg.key()),

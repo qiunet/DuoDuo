@@ -15,7 +15,7 @@ import java.util.Map;
  * 2020-04-23 11:54
  ***/
 public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
-	extends ICfgWrapper<Cfg> {
+	extends ICfgWrapper<ID, Cfg> {
 	/**
 	 * 得到所有的配置
 	 * @return
