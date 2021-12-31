@@ -35,6 +35,7 @@ import redis.clients.jedis.params.SetParams;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -163,7 +164,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (this.currServerInfo.getNodePort() == 0) {
 			return;
 		}
-
+		redisUtil.returnJedis().sadd(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		TimerManager.executor.scheduleAtFixedRate(this::refreshServerInfo, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
 
@@ -178,6 +179,15 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	private String serverNodeRedisKey(ServerType serverType, int groupId) {
 		return "SERVER_NODE_REDIS_MAP_KEY#"+serverType + "#" + groupId;
+	}
+
+	/**
+	 * 所有的某个类型的服务器ID 集合
+	 * @param serverType
+	 * @return
+	 */
+	private String serverRegisterCenterRedisKey(ServerType serverType) {
+		return "server_register_center_"+serverType;
 	}
 
 	private final LazyLoader<String> REDIS_SERVER_NODE_INFO_KEY = new LazyLoader<>(() -> {
@@ -212,11 +222,13 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	private void deprecatedEvent(ServerDeprecatedEvent event) {
 		if (this.deprecated.compareAndSet(false, true)) {
 			redisUtil.returnJedis().hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
+			redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		}
 	}
 
 	@EventListener
 	private void serverClosed(ServerClosedEvent event) {
+		redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		this.serverClosed.set(true);
 	}
 
@@ -266,12 +278,25 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return;
 		}
 
+		redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
+
 		redisUtil.execCommands(jedis -> {
 			jedis.hdel(REDIS_SERVER_NODE_INFO_KEY.get(), String.valueOf(currServerInfo.getServerId()));
 			return null;
 		});
 		nodes.values().forEach(node -> node.getSender().close(CloseCause.SERVER_SHUTDOWN));
 		NettyTcpClient.shutdown();
+	}
+
+	/**
+	 * 指定类型 所有的serverId
+	 * @param serverType 指定类型
+	 * @return
+	 */
+	Set<Integer> getAllServerId(ServerType serverType) {
+		return redisUtil.returnJedis().smembers(serverRegisterCenterRedisKey(serverType))
+				.stream().map(Integer::parseInt)
+				.collect(Collectors.toSet());
 	}
 
 	/**

@@ -4,6 +4,7 @@ import org.qiunet.data.util.ServerType;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /***
  *
@@ -67,6 +68,14 @@ public class ServerNodeManager {
 	 */
 	public static List<ServerInfo> getServerInfos(ServerType serverType, int groupId) {
 		return ServerNodeManager0.instance.getServerInfos(serverType, groupId);
+	}
+	/**
+	 * 指定类型 所有的serverId
+	 * @param serverType 指定类型
+	 * @return
+	 */
+	public static Set<Integer> getAllServerId(ServerType serverType) {
+		return ServerNodeManager0.instance.getAllServerId(serverType);
 	}
 	/**
 	 * 获得指定type里面的指定组id的 数量

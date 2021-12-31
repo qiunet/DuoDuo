@@ -37,6 +37,15 @@ public class TestFormula {
 	}
 
 	@Test
+	public void testSqrt(){
+		String str = "sqrt(5 + 4)";
+		IFormula parse = FormulaParseManager.parse(str);
+		double cal = parse.cal();
+		Assertions.assertTrue(cal > 2.9d && cal < 3.1);
+		Assertions.assertEquals("sqrt(5 + 4)", parse.toString());
+	}
+
+	@Test
 	public void testAttr(){
 		String str = "self.ATT * 30% + var2";
 		IFormula<IFormulaParam> formula = FormulaParseManager.parse(str);
