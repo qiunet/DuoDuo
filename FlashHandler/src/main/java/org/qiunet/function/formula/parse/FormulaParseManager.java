@@ -12,6 +12,7 @@ import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Set;
 
@@ -51,7 +52,12 @@ public class FormulaParseManager {
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends IFormulaParse>> contextSubTypesOf = context.getSubTypesOf(IFormulaParse.class);
-			contextSubTypesOf.forEach(clz -> parses.add((IFormulaParse) context.getInstanceOfClass(clz)));
+			contextSubTypesOf.forEach(clz -> {
+				if (Modifier.isAbstract(clz.getModifiers())) {
+					return;
+				}
+				parses.add((IFormulaParse) context.getInstanceOfClass(clz));
+			});
 			parses.sort((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result());
 		}
 

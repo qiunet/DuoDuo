@@ -9,9 +9,9 @@ package org.qiunet.function.formula;
 public class FormulaValue<Obj extends IFormulaParam> implements IFormula<Obj> {
 	private final String strVal;
 	private final double value;
-	public FormulaValue(double value, String strVal) {
+	public FormulaValue(String strVal) {
 		this.strVal = strVal;
-		this.value = value;
+		this.value = Double.parseDouble(strVal);
 	}
 
 	@Override

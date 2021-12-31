@@ -4,6 +4,8 @@ import org.qiunet.function.formula.FormulaValue;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.IFormulaParam;
 
+import java.util.regex.Pattern;
+
 /***
  *
  *
@@ -11,21 +13,17 @@ import org.qiunet.function.formula.IFormulaParam;
  * 2020-12-02 11:03
  */
 public class ValueFormulaParse<Obj extends IFormulaParam> implements IFormulaParse<Obj> {
+	private static final Pattern pattern = Pattern.compile("[0-9]+(\\.[0-9]+)?");
+	@Override
+	public int order() {
+		return Integer.MAX_VALUE - 1;
+	}
 
 	@Override
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 		String value = formulaString.trim();
-		if (value.matches("[0-9]+%{0,2}")){
-			int length = value.length();
-			double val = 0;
-			if (value.endsWith("%%")) {
-				val = Double.parseDouble(value.substring(0, length - 2)) / 10000;
-			}else if (value.endsWith("%")) {
-				val = Double.parseDouble(value.substring(0, length - 1)) / 100;
-			}else {
-				val = Double.parseDouble(value);
-			}
-			return new FormulaValue<>(val, value);
+		if (pattern.matcher(value).matches()){
+			return new FormulaValue<>(value);
 		}
 		return null;
 	}
