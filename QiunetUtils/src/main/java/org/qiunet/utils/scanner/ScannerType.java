@@ -57,6 +57,9 @@ public enum  ScannerType {
 	URL_REQUEST(1 << 23),
 	/** 属性*/
 	ATTR(1 << 24),
+	/**假枚举*/
+	FAKE_ENUM(1 << 25),
+
 	/**配置读取*/
 	CFG (
 			EVENT,
@@ -70,6 +73,7 @@ public enum  ScannerType {
 			ATTR,
 			CRON,
 			FORMULA,
+			FAKE_ENUM,
 			CONDITION,
 			GM_COMMAND,
 			FILE_CONFIG,
