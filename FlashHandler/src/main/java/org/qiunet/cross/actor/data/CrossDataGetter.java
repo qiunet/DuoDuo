@@ -31,7 +31,7 @@ public final class CrossDataGetter<Data extends IUserTransferData> {
 	 * @return
 	 */
 	public String getKey(){
-		return crossData.getKey();
+		return crossData.name();
 	}
 
 	/**
