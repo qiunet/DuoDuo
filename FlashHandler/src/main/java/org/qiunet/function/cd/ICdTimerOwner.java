@@ -17,7 +17,7 @@ public interface ICdTimerOwner<CdType extends Enum<CdType> & ICdType> {
 	/***
 	 * 使用自己指定的period 记录cd 并返回cd是否失效.
 	 * 有时候不一定是使用 cdType 定义的间隔时间.
-	 * @param cdType
+	 * @param cdType cd 类型
 	 * @param period 自己指定的间隔时间
 	 * @param unit 时间单位
 	 * @param limitCount 单位时间能进行几次
@@ -38,8 +38,15 @@ public interface ICdTimerOwner<CdType extends Enum<CdType> & ICdType> {
 	 * 使用CdType枚举默认间隔 刷新指定类型的cd
 	 * @param cdType 类型
 	 */
+	default void recordCd(CdType cdType, long period) {
+		this.recordCd(cdType, period, cdType.unit());
+	}
+	/**
+	 * 使用CdType枚举默认间隔 刷新指定类型的cd
+	 * @param cdType 类型
+	 */
 	default void recordCd(CdType cdType) {
-		this.recordCd(cdType, cdType.period(), cdType.unit());
+		this.recordCd(cdType, cdType.period());
 	}
 
 	/**

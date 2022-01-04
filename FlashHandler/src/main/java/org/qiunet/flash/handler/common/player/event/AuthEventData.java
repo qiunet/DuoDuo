@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common.player.event;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.IPlayer;
 
 /***
  * 鉴权通过事件
@@ -9,15 +10,16 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
  * @author qiunet
  * 2020-10-15 12:51
  */
-public class AuthEventData<T extends AbstractUserActor<T>> extends BaseUserEventData<T> {
+public class AuthEventData extends UserEventData {
 
-	public AuthEventData(T player) {
+	public AuthEventData(AbstractUserActor player) {
 		this.setPlayer(player);
 	}
 
 	@Override
-	public void setPlayer(T player) {
-		Preconditions.checkState(player.isAuth(), "actor need auth!");
+	public AuthEventData setPlayer(IPlayer player) {
+		Preconditions.checkState(((AbstractUserActor) player).isAuth(), "actor need auth!");
 		super.setPlayer(player);
+		return this;
 	}
 }

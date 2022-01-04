@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
-import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
 import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
+import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.utils.listener.event.EventManager;
 
@@ -13,7 +13,7 @@ import org.qiunet.utils.listener.event.EventManager;
  * @author qiunet
  * 2020-10-13 20:51
  */
-public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T> implements IObserverSupportOwner<T> {
+public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends AbstractMessageActor<T> implements IObserverSupportOwner<T>, IPlayer {
 	/**
 	 * 观察者
 	 */
@@ -39,11 +39,25 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * 跨服的提交跨服那边. 本服调用自己的
 	 * @param eventData
 	 */
-	public <D extends BaseUserEventData<T>> void fireEvent(D eventData){
+	public <D extends UserEventData> void fireEvent(D eventData){
 		this.addMessage(p -> {
 			eventData.setPlayer(p);
 			EventManager.fireEventHandler(eventData);
 		});
+	}
+
+	/**
+	 * 是否是跨服对象
+	 * @return
+	 */
+	public abstract boolean isCrossPlayer();
+
+	/**
+	 * 是player Actor
+	 * @return
+	 */
+	public boolean isPlayerActor() {
+		return ! isCrossPlayer();
 	}
 
 	@Override

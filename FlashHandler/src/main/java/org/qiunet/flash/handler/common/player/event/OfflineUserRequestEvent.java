@@ -9,18 +9,18 @@ import org.qiunet.utils.listener.event.IEventData;
  */
 public class OfflineUserRequestEvent implements IEventData {
 
-	private BaseUserEventData eventData;
+	private UserEventData eventData;
 
 	private long playerId;
 
-	public static OfflineUserRequestEvent valueOf(BaseUserEventData eventData, long playerId) {
+	public static OfflineUserRequestEvent valueOf(UserEventData eventData, long playerId) {
 		OfflineUserRequestEvent data = new OfflineUserRequestEvent();
 		data.eventData = eventData;
 		data.playerId = playerId;
 		return data;
 	}
 
-	public BaseUserEventData getEventData() {
+	public UserEventData getEventData() {
 		return eventData;
 	}
 

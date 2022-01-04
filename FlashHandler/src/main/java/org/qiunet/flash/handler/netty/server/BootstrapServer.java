@@ -2,8 +2,6 @@ package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.cfg.manager.CfgManagers;
-import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
@@ -211,9 +209,9 @@ public class BootstrapServer {
 
 			UserOnlineManager.instance.foreach(actor -> {
 				logger.info("Push message to online user {}", actor.getId());
-				if (actor instanceof PlayerActor) {
+				if (! actor.isCrossPlayer()) {
 					actor.sendMessage(PlayerReLoginPush.instance);
-				}else if (actor instanceof CrossPlayerActor) {
+				}else if (actor.isCrossPlayer()) {
 					actor.sendMessage(CrossPlayerLogoutPush.instance);
 				}
 				return ForEachResult.CONTINUE;

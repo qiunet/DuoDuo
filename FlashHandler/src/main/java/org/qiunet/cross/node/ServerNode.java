@@ -5,7 +5,7 @@ import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
-import org.qiunet.flash.handler.common.player.event.BaseUserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
@@ -79,7 +79,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public <T extends BaseUserEventData> void firePlayerCrossEvent(T eventData, long playerId) {
+	public <T extends UserEventData> void fireUserCrossEvent(T eventData, long playerId) {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData, playerId);
 		this.sendMessage(request);
 	}

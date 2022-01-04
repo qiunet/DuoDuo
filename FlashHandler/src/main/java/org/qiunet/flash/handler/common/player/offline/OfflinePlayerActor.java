@@ -3,10 +3,10 @@ package org.qiunet.flash.handler.common.player.offline;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.flash.handler.common.MessageHandler;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.flash.handler.common.player.event.UserEventData;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2021/11/19 11:55
  */
-public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> implements IPlayerDataLoader  {
+public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> implements IPlayerDataLoader, IPlayer {
 	/**
 	 * 玩家的数据加载器
 	 */
@@ -26,7 +26,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 
 	OfflinePlayerActor(long playerId) {
 		this.dataLoader = new PlayerDataLoader(playerId);
-		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
+		this.fireEvent(OfflineUserCreateEvent.valueOf());
 	}
 
 	public long getPlayerId() {
@@ -47,10 +47,8 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	 * 触发事件
 	 * @param eventData
 	 */
-	public void fireEvent(IEventData eventData) {
-		if (eventData instanceof BasePlayerEventData) {
-			((BasePlayerEventData) eventData).setOfflinePlayerActor(this);
-		}
+	public void fireEvent(UserEventData eventData) {
+		eventData.setPlayer(this);
 		this.addMessage(a -> eventData.fireEventHandler());
 	}
 
@@ -59,7 +57,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 		if (! destroy.compareAndSet(false, true)) {
 			return;
 		}
-		this.fireEvent(OfflineUserDestroyEvent.valueOf(getPlayerId()));
+		this.fireEvent(OfflineUserDestroyEvent.valueOf());
 
 		UserOfflineManager.instance.remove(getPlayerId());
 		this.dataLoader.unregister();

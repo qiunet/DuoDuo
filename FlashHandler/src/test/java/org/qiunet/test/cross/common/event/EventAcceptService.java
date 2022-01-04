@@ -27,7 +27,7 @@ public enum EventAcceptService {
 		LoggerType.DUODUO_CROSS.info("PlayerId: {},跨服登录事件", eventData.getPlayer().getId());
 
 		try {
-			TransactionFuture<TestTransactionRsp> transactionFuture = TransactionManager.instance.beginTransaction(Constants.LOGIC_SERVER_ID, TestTransactionReq.valueOf(eventData.getPlayer().getPlayerId()));
+			TransactionFuture<TestTransactionRsp> transactionFuture = TransactionManager.instance.beginTransaction(Constants.LOGIC_SERVER_ID, TestTransactionReq.valueOf(eventData.getPlayer().getId()));
 			TestTransactionRsp response = transactionFuture.get();
 			LoggerType.DUODUO_CROSS.info("PlayerId: {},跨服事务", response.getPlayerId());
 		} catch (Exception e) {

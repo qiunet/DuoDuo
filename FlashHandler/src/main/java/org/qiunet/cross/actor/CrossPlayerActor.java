@@ -10,7 +10,7 @@ import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-10-14 17:20
  */
-public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
+public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	/***
 	 * 跨服的数据持有者
 	 */
@@ -44,18 +44,23 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	}
 
 	@Override
+	public boolean isCrossPlayer() {
+		return true;
+	}
+
+	@Override
 	public void auth(long playerId) {
 		this.playerId = playerId;
-		EventManager.fireEventHandler(new AuthEventData<>(this));
+		EventManager.fireEventHandler(new AuthEventData(this));
 	}
 
 	/**
 	 * 事件在当前服
-	 * @param eventData
+	 * @param event
 	 * @param <T>
 	 */
-	public  <T extends BaseCrossPlayerEventData> void fireEvent(T eventData) {
-		super.fireEvent(eventData);
+	public  <T extends BaseCrossPlayerEventData> void fireEvent(T event) {
+		super.fireEvent(event);
 	}
 
 	/**
@@ -63,7 +68,7 @@ public class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> {
 	 * @param eventData
 	 * @param <T>
 	 */
-	public  <T extends BasePlayerEventData> void fireCrossEvent(T eventData) {
+	public  <T extends UserEventData> void fireCrossEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);

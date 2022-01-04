@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
 import com.google.common.collect.Maps;
-import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
@@ -9,6 +8,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -137,15 +137,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		crossConnectors.get(crossServerType).sendMessage(channelData);
 	}
 
-	/**
-	 * 触发事件
-	 * @param eventData
-	 * @param <D>
-	 */
-	public <D extends BasePlayerEventData> void fireEvent(D eventData) {
-		super.fireEvent(eventData);
-	}
-
 	@Override
 	public void auth(long id) {
 		if (isAuth()) {
@@ -153,7 +144,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		}
 		this.playerId = id;
 		dataLoader = new PlayerDataLoader(id);
-		new AuthEventData<>(this).fireEventHandler();
+		new AuthEventData(this).fireEventHandler();
 	}
 
 	@Override
@@ -183,11 +174,21 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	/**
 	 * 对当前跨服的服务器发送跨服事件
-	 * @param eventData
+	 * @param event
 	 * @param <D>
 	 */
-	public <D extends BaseCrossPlayerEventData> void fireCrossEvent(D eventData) {
-		crossConnectors.get(crossServerType).fireCrossEvent(eventData);
+	public <D extends UserEventData> void fireCrossEvent(D event) {
+		crossConnectors.get(crossServerType).fireCrossEvent(event);
+	}
+
+	/**
+	 * 触发本服事件
+	 *
+	 * @param event
+	 * @param <D>
+	 */
+	public <D extends BasePlayerEventData> void fireEvent(D event) {
+		super.fireEvent(event);
 	}
 
 	public long getPlayerId() {
@@ -200,6 +201,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	public void setOpenId(String openId) {
 		this.openId = openId;
+	}
+
+	@Override
+	public boolean isCrossPlayer() {
+		return false;
 	}
 
 	@Override

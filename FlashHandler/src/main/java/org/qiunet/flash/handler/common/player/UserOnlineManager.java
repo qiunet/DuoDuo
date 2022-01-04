@@ -46,8 +46,8 @@ public enum UserOnlineManager {
 
 
 	@EventListener
-	private <T extends AbstractUserActor<T>> void addPlayerActor(AuthEventData<T> eventData) {
-		AbstractUserActor<T> userActor = eventData.getPlayer();
+	private void addPlayerActor(AuthEventData eventData) {
+		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
 		onlinePlayers.put(userActor.getId(), userActor);
 	}
@@ -56,7 +56,7 @@ public enum UserOnlineManager {
 	 * @param actor 玩家
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
-		if (actor instanceof CrossPlayerActor) {
+		if (actor.isCrossPlayer()) {
 			((CrossPlayerActor) actor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
 		}
 		this.destroyPlayer(actor);
@@ -77,7 +77,7 @@ public enum UserOnlineManager {
 
 		triggerChangeListeners(false);
 		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
-		if (actor instanceof CrossPlayerActor) {
+		if (actor.isCrossPlayer()) {
 			return;
 		}
 
@@ -116,7 +116,7 @@ public enum UserOnlineManager {
 	 */
 	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor) {
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
-		if (userActor instanceof CrossPlayerActor && userActor.getSender().isActive()) {
+		if (userActor.isCrossPlayer() && userActor.getSender().isActive()) {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
 		waitReconnects.remove(userActor.getId());
@@ -131,14 +131,14 @@ public enum UserOnlineManager {
 	 * @return 数量
 	 */
 	public int onlinePlayerSize(){
-		return (int) onlinePlayers.values().stream().filter(actor -> actor instanceof PlayerActor).count();
+		return (int) onlinePlayers.values().stream().filter(AbstractUserActor::isPlayerActor).count();
 	}
 	/**
 	 * 在线跨服玩家数量
 	 * @return 数量
 	 */
 	public int crossPlayerSize(){
-		return (int) onlinePlayers.values().stream().filter(actor -> ! (actor instanceof PlayerActor)).count();
+		return (int) onlinePlayers.values().stream().filter(AbstractUserActor::isCrossPlayer).count();
 	}
 
 	/**
