@@ -95,7 +95,7 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 	public final Class<E> getDeclaringClass() {
 		Class<?> clazz = getClass();
 		Class<?> zuper = clazz.getSuperclass();
-		return (zuper == Enum.class) ? (Class<E>)clazz : (Class<E>)zuper;
+		return (zuper == BasicFakeEnum.class) ? (Class<E>)clazz : (Class<E>)zuper;
 	}
 
 	protected final Object clone() throws CloneNotSupportedException {

@@ -7,5 +7,7 @@ import org.qiunet.utils.fakeenum.BasicFakeEnum;
  * @author qiunet
  * 2022/1/3 14:33
  */
-public final class MyFakeEnum extends BasicFakeEnum<MyFakeEnum> {
+public abstract class MyFakeEnum extends BasicFakeEnum<MyFakeEnum> {
+
+	public abstract void t();
 }
