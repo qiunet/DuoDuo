@@ -6,6 +6,8 @@ import org.qiunet.utils.fakeenum.EnumClass;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
+import java.util.List;
+
 /***
  * 假枚举测试
  *
@@ -23,6 +25,10 @@ public class TestFakeEnum {
 
 		Assertions.assertEquals("DATA1", DATA1.name());
 		Assertions.assertEquals("DATA2", DATA2.name());
+
+		List<MyFakeEnum> values = MyFakeEnum.values(MyFakeEnum.class);
+		Assertions.assertEquals(values.size(), 2);
+		Assertions.assertThrows(UnsupportedOperationException.class, () -> values.add(new MyFakeEnum()));
 
 		MyFakeEnum data1 = MyFakeEnum.valueOf(MyFakeEnum.class, "DATA1");
 		Assertions.assertEquals(data1, DATA1);

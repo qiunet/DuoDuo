@@ -4,6 +4,8 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Maps;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.common.collector.DCollectors;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -33,11 +35,25 @@ class FakeEnumManager {
 	 * @return
 	 */
 	static <T extends BasicFakeEnum<T>> T valueOfEnum(String enumType, String name) {
-		EnumData enumData = FakeEnumManager0.instance.enumConstants.get(enumType);
+		EnumData<T> enumData = (EnumData<T>) FakeEnumManager0.instance.enumConstants.get(enumType);
 		if (enumData == null) {
 			return null;
 		}
-		return (T) enumData.data.get(name);
+		return enumData.data.get(name);
+	}
+
+	/**
+	 * Return all enum constants by type
+	 * @param enumType
+	 * @param <T>
+	 * @return
+	 */
+	static <T extends BasicFakeEnum<T>> List<T> values(String enumType) {
+		EnumData<T> enumData = (EnumData<T>) FakeEnumManager0.instance.enumConstants.get(enumType);
+		if (enumData == null) {
+			return null;
+		}
+		return enumData.values();
 	}
 
 	private enum FakeEnumManager0 implements IApplicationContextAware {
@@ -50,7 +66,7 @@ class FakeEnumManager {
 		/**
 		 * class → {name:instance}
 		 */
-		private final Map<String, EnumData> enumConstants = Maps.newHashMap();
+		private final Map<String, EnumData<? extends BasicFakeEnum>> enumConstants = Maps.newHashMap();
 
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -62,9 +78,8 @@ class FakeEnumManager {
 					((o1, o2) -> ComparisonChain.start().compare(o1.getName(), o2.getName()).result())
 			).collect(Collectors.toList());
 			for (Field field : fieldList) {
-
 				if (! BasicFakeEnum.class.isAssignableFrom(field.getType())) {
-					throw new CustomException("FakeEnum type [{}] need implement IFakeEnum interface.", field.getType().getName());
+					continue;
 				}
 
 				if (! Modifier.isStatic(field.getModifiers())) {
@@ -78,6 +93,10 @@ class FakeEnumManager {
 				}
 
 				BasicFakeEnum fieldVal = (BasicFakeEnum) ReflectUtil.getField(field, (Object) null);
+				if (fieldVal != null && !Modifier.isFinal(field.getModifiers())) {
+					throw new CustomException("Valued field [{}] need be a final field", field.getName());
+				}
+
 				if (fieldVal == null) {
 					fieldVal = (BasicFakeEnum) ReflectUtil.newInstance(field.getType());
 					ReflectUtil.setField(null, field, fieldVal);
@@ -94,11 +113,12 @@ class FakeEnumManager {
 		}
 	}
 
-	private static class EnumData {
+	private static class EnumData<E extends BasicFakeEnum<E>> {
+		private final LazyLoader<List<E>> values = new LazyLoader<>(this::toValues);
 		/**
 		 * name → 枚举
 		 */
-		private final Map<String, BasicFakeEnum> data = Maps.newHashMap();
+		private final Map<String, E> data = Maps.newHashMap();
 		/**
 		 *
 		 */
@@ -114,13 +134,21 @@ class FakeEnumManager {
 		public boolean containsKey(String name) {
 			return data.containsKey(name);
 		}
-
+		/**
+		 * 得到values
+		 * @return
+		 */
+		public List<E> values() {
+			return values.get();
+		}
 		/**
 		 * 转成values 数组
 		 * @return
 		 */
-		public BasicFakeEnum[] toValues() {
-			return data.values().stream().sorted((o1, o2) -> ComparisonChain.start().compare(o1.ordinal(), o2.ordinal()).result()).toArray(BasicFakeEnum[]::new);
+		private List<E> toValues() {
+			return data.values().stream()
+					.sorted((o1, o2) -> ComparisonChain.start().compare(o1.ordinal(), o2.ordinal()).result())
+					.collect(DCollectors.toSafeList());
 		}
 
 		/**
@@ -128,7 +156,7 @@ class FakeEnumManager {
 		 * @param name
 		 * @param fakeEnum
 		 */
-		public void add(String name, BasicFakeEnum fakeEnum) {
+		public void add(String name, E fakeEnum) {
 			this.data.put(name, fakeEnum);
 		}
 	}

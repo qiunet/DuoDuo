@@ -1,6 +1,7 @@
 package org.qiunet.utils.fakeenum;
 
 import java.io.Serializable;
+import java.util.List;
 
 /***
  * 假枚举需要继承的基类
@@ -67,6 +68,16 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 
 		throw new IllegalArgumentException(
 				"No enum constant " + enumType + "." + name);
+	}
+
+	/**
+	 * Return all enum constants by type
+	 * @param enumType type
+	 * @param <T>
+	 * @return
+	 */
+	public static <T extends BasicFakeEnum<T>> List<T> values(Class<T> enumType){
+		return FakeEnumManager.values(enumType.getName());
 	}
 	/**
 	 * Returns the Class object corresponding to this enum constant's
