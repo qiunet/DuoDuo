@@ -34,7 +34,7 @@ class FakeEnumManager {
 	 * @param <T>
 	 * @return
 	 */
-	static <T extends BasicFakeEnum<T>> T valueOfEnum(String enumType, String name) {
+	static <T extends FakeEnum<T>> T valueOfEnum(String enumType, String name) {
 		EnumData<T> enumData = (EnumData<T>) FakeEnumManager0.instance.enumConstants.get(enumType);
 		if (enumData == null) {
 			return null;
@@ -48,7 +48,7 @@ class FakeEnumManager {
 	 * @param <T>
 	 * @return
 	 */
-	static <T extends BasicFakeEnum<T>> List<T> values(String enumType) {
+	static <T extends FakeEnum<T>> List<T> values(String enumType) {
 		EnumData<T> enumData = (EnumData<T>) FakeEnumManager0.instance.enumConstants.get(enumType);
 		if (enumData == null) {
 			return null;
@@ -66,11 +66,11 @@ class FakeEnumManager {
 		/**
 		 * class → {name:instance}
 		 */
-		private final Map<String, EnumData<? extends BasicFakeEnum>> enumConstants = Maps.newHashMap();
+		private final Map<String, EnumData<? extends FakeEnum>> enumConstants = Maps.newHashMap();
 
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-			Set<Class<?>> classSet = context.getTypesAnnotatedWith(EnumClass.class);
+			Set<Class<?>> classSet = context.getTypesAnnotatedWith(FakeEnumClass.class);
 			classSet.forEach(this::enumClassProcess);
 		}
 		public void enumClassProcess(Class<?> clazz) {
@@ -78,7 +78,7 @@ class FakeEnumManager {
 					((o1, o2) -> ComparisonChain.start().compare(o1.getName(), o2.getName()).result())
 			).collect(Collectors.toList());
 			for (Field field : fieldList) {
-				if (! BasicFakeEnum.class.isAssignableFrom(field.getType())) {
+				if (! FakeEnum.class.isAssignableFrom(field.getType())) {
 					continue;
 				}
 
@@ -92,13 +92,13 @@ class FakeEnumManager {
 					throw new CustomException("FakeEnum name [{}] in field [{}] is repeated", enumName, field.getName());
 				}
 
-				BasicFakeEnum fieldVal = (BasicFakeEnum) ReflectUtil.getField(field, (Object) null);
+				FakeEnum fieldVal = (FakeEnum) ReflectUtil.getField(field, (Object) null);
 				if (fieldVal != null && !Modifier.isFinal(field.getModifiers())) {
 					throw new CustomException("Valued field [{}] need be a final field", field.getName());
 				}
 
 				if (fieldVal == null) {
-					fieldVal = (BasicFakeEnum) ReflectUtil.newInstance(field.getType());
+					fieldVal = (FakeEnum) ReflectUtil.newInstance(field.getType());
 					ReflectUtil.setField(null, field, fieldVal);
 				}
 				ReflectUtil.setField(fieldVal, "ordinal", data.id.getAndIncrement());
@@ -113,7 +113,7 @@ class FakeEnumManager {
 		}
 	}
 
-	private static class EnumData<E extends BasicFakeEnum<E>> {
+	private static class EnumData<E extends FakeEnum<E>> {
 		private final LazyLoader<List<E>> values = new LazyLoader<>(this::toValues);
 		/**
 		 * name → 枚举

@@ -6,13 +6,13 @@ import java.util.List;
 /***
  * 假枚举需要继承的基类
  *
- * 会继承该类 并在有 {@link EnumClass}的类使用
- * 按照字段名注入{@link BasicFakeEnum#name()}
+ * 会继承该类 并在有 {@link FakeEnumClass}的类使用
+ * 按照字段名注入{@link FakeEnum#name()}
  *
  * @author qiunet
  * 2022/1/3 08:38
  */
-public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Comparable<E>, Serializable {
+public abstract class FakeEnum<E extends FakeEnum<E>> implements Comparable<E>, Serializable {
 	/**
 	 * 枚举名
 	 */
@@ -46,8 +46,8 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 		return name;
 	}
 
-	public static <T extends BasicFakeEnum<T>> T valueOf(Class<T> enumType,
-														 String name) {
+	public static <T extends FakeEnum<T>> T valueOf(Class<T> enumType,
+													String name) {
 		return valueOf(enumType.getName(), name);
 	}
 	/**
@@ -57,8 +57,8 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 	 * @param <T>
 	 * @return
 	 */
-	public static <T extends BasicFakeEnum<T>> T valueOf(String enumType,
-												String name) {
+	public static <T extends FakeEnum<T>> T valueOf(String enumType,
+													String name) {
 		if (name == null)
 			throw new NullPointerException("Name is null");
 
@@ -76,7 +76,7 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 	 * @param <T>
 	 * @return
 	 */
-	public static <T extends BasicFakeEnum<T>> List<T> values(Class<T> enumType){
+	public static <T extends FakeEnum<T>> List<T> values(Class<T> enumType){
 		return FakeEnumManager.values(enumType.getName());
 	}
 	/**
@@ -95,7 +95,7 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 	public final Class<E> getDeclaringClass() {
 		Class<?> clazz = getClass();
 		Class<?> zuper = clazz.getSuperclass();
-		return (zuper == BasicFakeEnum.class) ? (Class<E>)clazz : (Class<E>)zuper;
+		return (zuper == FakeEnum.class) ? (Class<E>)clazz : (Class<E>)zuper;
 	}
 
 	protected final Object clone() throws CloneNotSupportedException {
@@ -104,8 +104,8 @@ public abstract class BasicFakeEnum<E extends BasicFakeEnum<E>> implements Compa
 
 	@Override
 	public int compareTo(E o) {
-		BasicFakeEnum<?> other = (BasicFakeEnum<?>)o;
-		BasicFakeEnum<E> self = this;
+		FakeEnum<?> other = o;
+		FakeEnum<E> self = this;
 		if (self.getClass() != other.getClass() && // optimization
 				self.getDeclaringClass() != other.getDeclaringClass())
 			throw new ClassCastException();

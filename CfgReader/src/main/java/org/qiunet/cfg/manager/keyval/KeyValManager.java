@@ -11,6 +11,7 @@ import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.convert.ConvertManager;
+import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -19,9 +20,7 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /***
  * key val 的管理
@@ -29,79 +28,96 @@ import java.util.Set;
  * @author qiunet
  * 2020-09-18 17:18
  */
-class KeyValManager implements IApplicationContextAware {
-
-	private IApplicationContext context;
-	/**
-	 * key val 的数据
-	 */
-	private final List<ICfgManager> keyValManagers = Lists.newArrayList();
-	/**
-	 * 监听添加 ICfgManager
-	 * @param eventData
-	 */
-	@EventListener
-	public void addCfgManagerEvent(CfgManagerAddEventData eventData) {
-		if (! IKeyValCfg.class.isAssignableFrom(eventData.getCfgManager().getCfgClass())) {
-			return;
-		}
-
-		keyValManagers.add(eventData.getCfgManager());
-	}
-
-	/**
-	 * 监听加载完毕事件
-	 * @param eventData
-	 */
-	@EventListener
-	public void loadCompleteEvent(CfgLoadCompleteEventData eventData) throws IllegalAccessException {
-		if (keyValManagers.isEmpty()) {
-			return;
-		}
-
-		Map<String, String> keyValDatas = Maps.newHashMap();
-		for (ICfgManager<?, IKeyValCfg> keyValManager : keyValManagers) {
-			List<IKeyValCfg> list = ((ISimpleMapCfgManager) keyValManager).list();
-			for (IKeyValCfg iKeyValCfg : list) {
-				Preconditions.checkState(! keyValDatas.containsKey(iKeyValCfg.key()),
-					"key [%s] in [%s] cfg is repeated!", iKeyValCfg.key(), keyValManager.getCfgClass().getName());
-
-				keyValDatas.put(iKeyValCfg.key(), iKeyValCfg.val());
-			}
-		}
-		Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgValAutoWired.class);
-		for (Field field : fieldSet) {
-			CfgValAutoWired annotation = field.getAnnotation(CfgValAutoWired.class);
-			String keyName = annotation.key();
-			if (StringUtil.isEmpty(keyName)) {
-				keyName = field.getName();
-			}
-
-			String val = keyValDatas.get(keyName);
-			Preconditions.checkState(! StringUtil.isEmpty(val) , "No cfg value for KeyName [%s]", keyName);
-			field.setAccessible(true);
-			Object realVal = ConvertManager.getInstance().convert(field, val);
-			Object instance = null;
-			if (! Modifier.isStatic(field.getModifiers())) {
-				instance = context.getInstanceOfClass(field.getDeclaringClass());
-			}
-			field.set(instance, realVal);
-		}
-	}
+public enum KeyValManager implements IKeyValueData<String, String> {
+	instance;
 
 	@Override
-	public int order() {
-		return Integer.MAX_VALUE;
+	public Map<String, String> returnMap() {
+		return KeyValManager0.instance.keyValDatas;
 	}
 
-	@Override
-	public ScannerType scannerType() {
-		return ScannerType.KEY_VAL_CFG;
-	}
+	private enum KeyValManager0 implements IApplicationContextAware {
+		instance;
 
-	@Override
-	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		this.context = context;
-	}
+		private IApplicationContext context;
+		/**
+		 * key val 的数据
+		 */
+		private final List<ICfgManager> keyValManagers = Lists.newArrayList();
+		/**
+		 * 所有的key value Data
+		 */
+		private Map<String, String> keyValDatas = new HashMap<>();
+		/**
+		 * 监听添加 ICfgManager
+		 *
+		 * @param eventData
+		 */
+		@EventListener
+		public void addCfgManagerEvent(CfgManagerAddEventData eventData) {
+			if (!IKeyValCfg.class.isAssignableFrom(eventData.getCfgManager().getCfgClass())) {
+				return;
+			}
 
+			keyValManagers.add(eventData.getCfgManager());
+		}
+
+		/**
+		 * 监听加载完毕事件
+		 *
+		 * @param eventData
+		 */
+		@EventListener
+		public void loadCompleteEvent(CfgLoadCompleteEventData eventData) throws IllegalAccessException {
+			if (keyValManagers.isEmpty()) {
+				return;
+			}
+
+			Map<String, String> keyValDatas = Maps.newHashMap();
+			for (ICfgManager<?, IKeyValCfg> keyValManager : keyValManagers) {
+				List<IKeyValCfg> list = ((ISimpleMapCfgManager) keyValManager).list();
+				for (IKeyValCfg iKeyValCfg : list) {
+					Preconditions.checkState(!keyValDatas.containsKey(iKeyValCfg.key()),
+							"key [%s] in [%s] cfg is repeated!", iKeyValCfg.key(), keyValManager.getCfgClass().getName());
+
+					keyValDatas.put(iKeyValCfg.key(), iKeyValCfg.val());
+				}
+			}
+			this.keyValDatas = Collections.unmodifiableMap(keyValDatas);
+
+			Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgValAutoWired.class);
+			for (Field field : fieldSet) {
+				CfgValAutoWired annotation = field.getAnnotation(CfgValAutoWired.class);
+				String keyName = annotation.key();
+				if (StringUtil.isEmpty(keyName)) {
+					keyName = field.getName();
+				}
+
+				String val = keyValDatas.get(keyName);
+				Preconditions.checkState(!StringUtil.isEmpty(val), "No cfg value for KeyName [%s]", keyName);
+				field.setAccessible(true);
+				Object realVal = ConvertManager.getInstance().convert(field, val);
+				Object instance = null;
+				if (!Modifier.isStatic(field.getModifiers())) {
+					instance = context.getInstanceOfClass(field.getDeclaringClass());
+				}
+				field.set(instance, realVal);
+			}
+		}
+
+		@Override
+		public int order() {
+			return Integer.MAX_VALUE;
+		}
+
+		@Override
+		public ScannerType scannerType() {
+			return ScannerType.KEY_VAL_CFG;
+		}
+
+		@Override
+		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
+			this.context = context;
+		}
+	}
 }

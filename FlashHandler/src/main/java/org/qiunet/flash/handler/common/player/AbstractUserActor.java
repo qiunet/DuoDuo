@@ -53,6 +53,14 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	public abstract boolean isCrossPlayer();
 
 	/**
+	 * 获得session
+	 * @return
+	 */
+	public DSession getSession(){
+		return session;
+	}
+
+	/**
 	 * 是player Actor
 	 * @return
 	 */

@@ -2,7 +2,7 @@ package org.qiunet.utils.test.fakeenum;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.utils.fakeenum.EnumClass;
+import org.qiunet.utils.fakeenum.FakeEnumClass;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -14,7 +14,7 @@ import java.util.List;
  * @author qiunet
  * 2022/1/3 14:34
  */
-@EnumClass
+@FakeEnumClass
 public class TestFakeEnum {
 	private static final MyFakeEnum DATA1 = new MyFakeEnum() {
 		@Override

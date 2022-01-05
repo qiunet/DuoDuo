@@ -8,6 +8,7 @@ import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
+import org.qiunet.flash.handler.context.request.param.check.ParamCheckList;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.DuMap;
@@ -40,6 +41,10 @@ public class ChannelDataMapping implements IApplicationContextAware {
 	 * pbChannelData Class 和 Id的映射关系
 	 */
 	private static final DuMap<Class<? extends IChannelData>, Integer> mapping = new DuMap();
+	/**
+	 * 参数检查相关
+	 */
+	private static final Map<Class<? extends IChannelData>, ParamCheckList> paramChecks = Maps.newHashMap();
 
 	private ChannelDataMapping(){}
 
@@ -106,6 +111,10 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		return Integer.MAX_VALUE - 2;
 	}
 
+	public static ParamCheckList paramCheckList(Class<? extends IChannelData> clazz) {
+		return paramChecks.get(clazz);
+	}
+
 	public static int protocolId(Class<? extends IChannelData> clazz) {
 		return mapping.getVal(clazz);
 	}
@@ -136,5 +145,10 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		ReflectUtil.setField(handler, "protocolId", protocolId);
 		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		handlerMapping.put(protocolId, handler);
+
+		ParamCheckList paramCheckList = ParamCheckList.doParse(type);
+		if (paramCheckList != null) {
+			paramChecks.put(type, paramCheckList);
+		}
 	}
 }

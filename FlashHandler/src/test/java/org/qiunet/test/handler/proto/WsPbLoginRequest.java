@@ -3,6 +3,8 @@ package org.qiunet.test.handler.proto;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.param.check.NumberParam;
+import org.qiunet.flash.handler.context.request.param.check.StringParam;
 
 import static org.qiunet.test.handler.proto.ProtocolId.Test.WS_PB_LOGIN_REQ;
 
@@ -17,9 +19,12 @@ public class WsPbLoginRequest implements IChannelData {
 
 	private String account;
 
+	@StringParam(checkBadWord = true)
 	private String secret;
 
+	@NumberParam(min = 10, max = 100)
 	private int phoneNum;
+
 	@Protobuf(description = "性别")
 	private GenderType gender;
 

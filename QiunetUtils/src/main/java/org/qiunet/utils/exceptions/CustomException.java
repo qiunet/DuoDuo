@@ -19,6 +19,13 @@ public class CustomException extends RuntimeException {
 		super(MessageFormatter.arrayFormat(message, params).getMessage(), cause);
 	}
 
+	public static CustomException wrapper(Throwable cause) {
+		if (cause.getClass() == CustomException.class) {
+			return ((CustomException) cause);
+		}
+		return new CustomException(cause, cause.getMessage());
+	}
+
 	public void logger(Logger logger) {
 		if (getCause() != null) {
 			logger.error(getMessage(), getCause());

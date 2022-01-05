@@ -19,7 +19,14 @@ public interface IGameStatus {
 	IGameStatus MAINTENANCE = BasicGameStatus.MAINTENANCE;
 	/**禁止登陆 封禁了*/
 	IGameStatus BAN = BasicGameStatus.BAN;
-
+	/**数值参数错误*/
+	IGameStatus NUMBER_PARAM_ERROR = BasicGameStatus.NUMBER_PARAM_ERROR;
+	/**字符串为空错误*/
+	IGameStatus STRING_PARAM_EMPTY_ERROR = BasicGameStatus.STRING_PARAM_EMPTY_ERROR;
+	/**字符串长度错误*/
+	IGameStatus STRING_PARAM_LENGTH_ERROR = BasicGameStatus.STRING_PARAM_LENGTH_ERROR;
+	/**字符串屏蔽词错误*/
+	IGameStatus STRING_PARAM_BAD_WORD_ERROR = BasicGameStatus.STRING_PARAM_BAD_WORD_ERROR;
 	/** 参数错误 */
 	IGameStatus PARAMS_ERROR = BasicGameStatus.PARAMS_ERROR;
 	/**404*/
@@ -49,6 +56,12 @@ public interface IGameStatus {
 		FAIL(6, "失败"),
 
 		PARAMS_ERROR(10, "参数错误"),
+
+		NUMBER_PARAM_ERROR(11, "数值参数错误"),
+		STRING_PARAM_EMPTY_ERROR(12, "字符空错误"),
+		STRING_PARAM_LENGTH_ERROR(13, "字符长度错误"),
+		STRING_PARAM_BAD_WORD_ERROR(14, "字符含有屏蔽词"),
+
 
 		HANdLER_NOT_FOUND(404, "没有Cmdid对应的RequestHandler"),
 		EXCEPTION(500, "服务器出现问题了"),

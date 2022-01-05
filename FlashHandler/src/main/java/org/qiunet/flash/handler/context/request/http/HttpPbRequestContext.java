@@ -3,7 +3,9 @@ package org.qiunet.flash.handler.context.request.http;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.param.check.ParamCheckList;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -13,6 +15,11 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 public  class HttpPbRequestContext<RequestData extends IChannelData, ResponseData  extends IChannelData> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 	public HttpPbRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
 		super(content, channel, params, request);
+
+		ParamCheckList paramCheckList = ChannelDataMapping.paramCheckList(getHandler().getRequestClass());
+		if (paramCheckList != null) {
+			paramCheckList.check(getRequestData());
+		}
 	}
 
 	@Override

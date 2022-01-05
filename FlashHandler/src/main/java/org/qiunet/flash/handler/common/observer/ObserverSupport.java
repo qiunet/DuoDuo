@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	private final Owner owner;
 	private final AtomicInteger versions = new AtomicInteger();
-	private final Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newHashMap();
+	private final Map<Class<? extends IObserver>, ObserverList<? extends IObserver>> observerMaps = Maps.newConcurrentMap();
 
 	public ObserverSupport(Owner owner) {
 		this.owner = owner;

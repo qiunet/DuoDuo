@@ -4,7 +4,9 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.param.check.ParamCheckList;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -21,6 +23,11 @@ public class PersistConnPbRequestContext<RequestData, P extends IMessageActor<P>
 
 	public PersistConnPbRequestContext(MessageContent content, Channel channel, P messageActor) {
 		super(content, channel, messageActor);
+
+		ParamCheckList paramCheckList = ChannelDataMapping.paramCheckList((Class<? extends IChannelData>) getHandler().getRequestClass());
+		if (paramCheckList != null) {
+			paramCheckList.check((IChannelData) getRequestData());
+		}
 	}
 
 	@Override
