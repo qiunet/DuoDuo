@@ -55,7 +55,7 @@ public final class JavaAgent {
 		for (File file: fileList) {
 			try {
 				ClassFile classFile = new ClassFile(file);
-				String className = classFile.getName();
+				String className = classFile.getClassName();
 				className = className.replaceAll("\\/", ".");
 
 				logger("=======热加载Class名: "+className);

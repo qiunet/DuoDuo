@@ -1,10 +1,9 @@
 package org.qAgent;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -16,137 +15,6 @@ final class ConstPool
 	int numOfItems;
 	int thisClassInfo;
 	Map<ConstInfo,ConstInfo> itemsCache;
-
-	/**
-	 * <code>CONSTANT_Class</code>
-	 */
-	public static final int CONST_Class = ClassInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Fieldref</code>
-	 */
-	public static final int CONST_Fieldref = FieldrefInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Methodref</code>
-	 */
-	public static final int CONST_Methodref = MethodrefInfo.tag;
-
-	/**
-	 * <code>CONSTANT_InterfaceMethodref</code>
-	 */
-	public static final int CONST_InterfaceMethodref
-			= InterfaceMethodrefInfo.tag;
-
-	/**
-	 * <code>CONSTANT_String</code>
-	 */
-	public static final int CONST_String = StringInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Integer</code>
-	 */
-	public static final int CONST_Integer = IntegerInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Float</code>
-	 */
-	public static final int CONST_Float = FloatInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Long</code>
-	 */
-	public static final int CONST_Long = LongInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Double</code>
-	 */
-	public static final int CONST_Double = DoubleInfo.tag;
-
-	/**
-	 * <code>CONSTANT_NameAndType</code>
-	 */
-	public static final int CONST_NameAndType = NameAndTypeInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Utf8</code>
-	 */
-	public static final int CONST_Utf8 = Utf8Info.tag;
-
-	/**
-	 * <code>CONSTANT_MethodHandle</code>
-	 */
-	public static final int CONST_MethodHandle = MethodHandleInfo.tag;
-
-	/**
-	 * <code>CONSTANT_MethodHandle</code>
-	 */
-	public static final int CONST_MethodType = MethodTypeInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Dynamic</code>
-	 */
-	public static final int CONST_Dynamic = DynamicInfo.tag;
-
-	/**
-	 * <code>CONSTANT_InvokeDynamic</code>
-	 */
-	public static final int CONST_InvokeDynamic = InvokeDynamicInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Module</code>
-	 */
-	public static final int CONST_Module = ModuleInfo.tag;
-
-	/**
-	 * <code>CONSTANT_Package</code>
-	 */
-	public static final int CONST_Package = PackageInfo.tag;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_getField = 1;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_getStatic = 2;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_putField = 3;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_putStatic = 4;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_invokeVirtual = 5;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_invokeStatic = 6;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_invokeSpecial = 7;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_newInvokeSpecial = 8;
-
-	/**
-	 * <code>reference_kind</code> of <code>CONSTANT_MethodHandle_info</code>.
-	 */
-	public static final int REF_invokeInterface = 9;
 
 	/**
 	 * Constructs a constant pool table from the given byte stream.
@@ -162,36 +30,6 @@ final class ConstPool
 		read(in);
 	}
 
-	void prune()
-	{
-		itemsCache = null;
-	}
-
-	/**
-	 * Returns the number of entries in this table.
-	 */
-	public int getSize()
-	{
-		return numOfItems;
-	}
-
-	/**
-	 * Returns the name of the class using this constant pool table.
-	 */
-	public String getClassName()
-	{
-		return getClassInfo(thisClassInfo);
-	}
-
-	/**
-	 * Returns the index of <code>CONSTANT_Class_info</code> structure
-	 * specifying the class using this constant pool table.
-	 */
-	public int getThisClassInfo()
-	{
-		return thisClassInfo;
-	}
-
 	void setThisClassInfo(int i)
 	{
 		thisClassInfo = i;
@@ -200,18 +38,6 @@ final class ConstPool
 	ConstInfo getItem(int n)
 	{
 		return items.elementAt(n);
-	}
-
-	/**
-	 * Returns the <code>tag</code> field of the constant pool table
-	 * entry at the given index.
-	 *
-	 * @return either <code>CONST_Class</code>, <code>CONST_Fieldref</code>,
-	 *         <code>CONST_Methodref</code>, or ...
-	 */
-	public int getTag(int index)
-	{
-		return getItem(index).getTag();
 	}
 
 	/**
@@ -234,373 +60,6 @@ final class ConstPool
 	}
 
 	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * at the given index.
-	 */
-	public int getNameAndTypeName(int index)
-	{
-		NameAndTypeInfo ntinfo = (NameAndTypeInfo)getItem(index);
-		return ntinfo.memberName;
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * at the given index.
-	 */
-	public int getNameAndTypeDescriptor(int index)
-	{
-		NameAndTypeInfo ntinfo = (NameAndTypeInfo)getItem(index);
-		return ntinfo.typeDescriptor;
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_Fieldref_info</code>,
-	 * <code>CONSTANT_Methodref_info</code>,
-	 * or <code>CONSTANT_Interfaceref_info</code>,
-	 * structure at the given index.
-	 *
-	 * @since 3.6
-	 */
-	public int getMemberClass(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.classIndex;
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_Fieldref_info</code>,
-	 * <code>CONSTANT_Methodref_info</code>,
-	 * or <code>CONSTANT_Interfaceref_info</code>,
-	 * structure at the given index.
-	 *
-	 * @since 3.6
-	 */
-	public int getMemberNameAndType(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.nameAndTypeIndex;
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_Fieldref_info</code> structure
-	 * at the given index.
-	 */
-	public int getFieldrefClass(int index)
-	{
-		FieldrefInfo finfo = (FieldrefInfo)getItem(index);
-		return finfo.classIndex;
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_Fieldref_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the name of the class at that <code>class_index</code>.
-	 */
-	public String getFieldrefClassName(int index)
-	{
-		FieldrefInfo f = (FieldrefInfo)getItem(index);
-		if (f == null)
-			return null;
-		return getClassInfo(f.classIndex);
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_Fieldref_info</code> structure
-	 * at the given index.
-	 */
-	public int getFieldrefNameAndType(int index)
-	{
-		FieldrefInfo finfo = (FieldrefInfo)getItem(index);
-		return finfo.nameAndTypeIndex;
-	}
-
-	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_Fieldref_info</code>.
-	 * @return  the name of the field.
-	 */
-	public String getFieldrefName(int index)
-	{
-		FieldrefInfo f = (FieldrefInfo)getItem(index);
-		if (f == null)
-			return null;
-		NameAndTypeInfo n = (NameAndTypeInfo)getItem(f.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.memberName);
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_Fieldref_info</code>.
-	 * @return  the type descriptor of the field.
-	 */
-	public String getFieldrefType(int index)
-	{
-		FieldrefInfo f = (FieldrefInfo)getItem(index);
-		if (f == null)
-			return null;
-		NameAndTypeInfo n = (NameAndTypeInfo)getItem(f.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.typeDescriptor);
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_Methodref_info</code> structure
-	 * at the given index.
-	 */
-	public int getMethodrefClass(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.classIndex;
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_Methodref_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the name of the class at that <code>class_index</code>.
-	 */
-	public String getMethodrefClassName(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (minfo == null)
-			return null;
-		return getClassInfo(minfo.classIndex);
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_Methodref_info</code> structure
-	 * at the given index.
-	 */
-	public int getMethodrefNameAndType(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.nameAndTypeIndex;
-	}
-
-	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_Methodref_info</code>.
-	 * @return  the name of the method.
-	 */
-	public String getMethodrefName(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (minfo == null)
-			return null;
-		NameAndTypeInfo n
-				= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.memberName);
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_Methodref_info</code>.
-	 * @return  the descriptor of the method.
-	 */
-	public String getMethodrefType(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (minfo == null)
-			return null;
-		NameAndTypeInfo n
-				= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.typeDescriptor);
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_InterfaceMethodref_info</code> structure
-	 * at the given index.
-	 */
-	public int getInterfaceMethodrefClass(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.classIndex;
-	}
-
-	/**
-	 * Reads the <code>class_index</code> field of the
-	 * <code>CONSTANT_InterfaceMethodref_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the name of the class at that <code>class_index</code>.
-	 */
-	public String getInterfaceMethodrefClassName(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return getClassInfo(minfo.classIndex);
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_InterfaceMethodref_info</code> structure
-	 * at the given index.
-	 */
-	public int getInterfaceMethodrefNameAndType(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		return minfo.nameAndTypeIndex;
-	}
-
-	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to
-	 *                  a <code>CONSTANT_InterfaceMethodref_info</code>.
-	 * @return  the name of the method.
-	 */
-	public String getInterfaceMethodrefName(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (minfo == null)
-			return null;
-		NameAndTypeInfo n
-				= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.memberName);
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to
-	 *                  a <code>CONSTANT_InterfaceMethodref_info</code>.
-	 * @return  the descriptor of the method.
-	 */
-	public String getInterfaceMethodrefType(int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (minfo == null)
-			return null;
-		NameAndTypeInfo n
-				= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.typeDescriptor);
-	}
-	/**
-	 * Reads <code>CONSTANT_Integer_info</code>, <code>_Float_info</code>,
-	 * <code>_Long_info</code>, <code>_Double_info</code>, or
-	 * <code>_String_info</code> structure.
-	 * These are used with the LDC instruction.
-	 *
-	 * @return a <code>String</code> value or a wrapped primitive-type
-	 * value.
-	 */
-	public Object getLdcValue(int index)
-	{
-		ConstInfo constInfo = this.getItem(index);
-		Object value = null;
-		if (constInfo instanceof StringInfo)
-			value = this.getStringInfo(index);
-		else if (constInfo instanceof FloatInfo)
-			value = Float.valueOf(getFloatInfo(index));
-		else if (constInfo instanceof IntegerInfo)
-			value = Integer.valueOf(getIntegerInfo(index));
-		else if (constInfo instanceof LongInfo)
-			value = Long.valueOf(getLongInfo(index));
-		else if (constInfo instanceof DoubleInfo)
-			value = Double.valueOf(getDoubleInfo(index));
-
-		return value;
-	}
-
-	/**
-	 * Reads <code>CONSTANT_Integer_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the value specified by this entry.
-	 */
-	public int getIntegerInfo(int index)
-	{
-		IntegerInfo i = (IntegerInfo)getItem(index);
-		return i.value;
-	}
-
-	/**
-	 * Reads <code>CONSTANT_Float_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the value specified by this entry.
-	 */
-	public float getFloatInfo(int index)
-	{
-		FloatInfo i = (FloatInfo)getItem(index);
-		return i.value;
-	}
-
-	/**
-	 * Reads <code>CONSTANT_Long_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the value specified by this entry.
-	 */
-	public long getLongInfo(int index)
-	{
-		LongInfo i = (LongInfo)getItem(index);
-		return i.value;
-	}
-
-	/**
-	 * Reads <code>CONSTANT_Double_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the value specified by this entry.
-	 */
-	public double getDoubleInfo(int index)
-	{
-		DoubleInfo i = (DoubleInfo)getItem(index);
-		return i.value;
-	}
-
-	/**
-	 * Reads <code>CONSTANT_String_info</code> structure
-	 * at the given index.
-	 *
-	 * @return the string specified by <code>string_index</code>.
-	 */
-	public String getStringInfo(int index)
-	{
-		StringInfo si = (StringInfo)getItem(index);
-		return getUtf8Info(si.string);
-	}
-
-	/**
 	 * Reads <code>CONSTANT_utf8_info</code> structure
 	 * at the given index.
 	 *
@@ -612,230 +71,7 @@ final class ConstPool
 		return utf.string;
 	}
 
-	/**
-	 * Reads the <code>reference_kind</code> field of the
-	 * <code>CONSTANT_MethodHandle_info</code> structure
-	 * at the given index.
-	 *
-	 * @see #REF_getField
-	 * @see #REF_getStatic
-	 * @see #REF_invokeInterface
-	 * @see #REF_invokeSpecial
-	 * @see #REF_invokeStatic
-	 * @see #REF_invokeVirtual
-	 * @see #REF_newInvokeSpecial
-	 * @see #REF_putField
-	 * @see #REF_putStatic
-	 * @since 3.17
-	 */
-	public int getMethodHandleKind(int index)
-	{
-		MethodHandleInfo mhinfo = (MethodHandleInfo)getItem(index);
-		return mhinfo.refKind;
-	}
 
-	/**
-	 * Reads the <code>reference_index</code> field of the
-	 * <code>CONSTANT_MethodHandle_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.17
-	 */
-	public int getMethodHandleIndex(int index)
-	{
-		MethodHandleInfo mhinfo = (MethodHandleInfo)getItem(index);
-		return mhinfo.refIndex;
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_MethodType_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.17
-	 */
-	public int getMethodTypeInfo(int index)
-	{
-		MethodTypeInfo mtinfo = (MethodTypeInfo)getItem(index);
-		return mtinfo.descriptor;
-	}
-
-	/**
-	 * Reads the <code>bootstrap_method_attr_index</code> field of the
-	 * <code>CONSTANT_InvokeDynamic_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.17
-	 */
-	public int getInvokeDynamicBootstrap(int index)
-	{
-		InvokeDynamicInfo iv = (InvokeDynamicInfo)getItem(index);
-		return iv.bootstrap;
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_InvokeDynamic_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.17
-	 */
-	public int getInvokeDynamicNameAndType(int index)
-	{
-		InvokeDynamicInfo iv = (InvokeDynamicInfo)getItem(index);
-		return iv.nameAndType;
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_InvokeDynamic_info</code>.
-	 * @return  the descriptor of the bootstrap method.
-	 * @since 3.17
-	 */
-	public String getInvokeDynamicType(int index)
-	{
-		InvokeDynamicInfo iv = (InvokeDynamicInfo)getItem(index);
-		if (iv == null)
-			return null;
-		NameAndTypeInfo n = (NameAndTypeInfo)getItem(iv.nameAndType);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.typeDescriptor);
-	}
-
-	/**
-	 * Reads the <code>bootstrap_method_attr_index</code> field of the
-	 * <code>CONSTANT_Dynamic_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.26
-	 */
-	public int getDynamicBootstrap(int index)
-	{
-		DynamicInfo iv = (DynamicInfo)getItem(index);
-		return iv.bootstrap;
-	}
-
-	/**
-	 * Reads the <code>name_and_type_index</code> field of the
-	 * <code>CONSTANT_Dynamic_info</code> structure
-	 * at the given index.
-	 *
-	 * @since 3.26
-	 */
-	public int getDynamicNameAndType(int index)
-	{
-		DynamicInfo iv = (DynamicInfo)getItem(index);
-		return iv.nameAndType;
-	}
-
-	/**
-	 * Reads the <code>descriptor_index</code> field of the
-	 * <code>CONSTANT_NameAndType_info</code> structure
-	 * indirectly specified by the given index.
-	 *
-	 * @param index     an index to a <code>CONSTANT_Dynamic_info</code>.
-	 * @return  the descriptor of the bootstrap method.
-	 * @since 3.26
-	 */
-	public String getDynamicType(int index)
-	{
-		DynamicInfo iv = (DynamicInfo)getItem(index);
-		if (iv == null)
-			return null;
-		NameAndTypeInfo n = (NameAndTypeInfo)getItem(iv.nameAndType);
-		if(n == null)
-			return null;
-		return getUtf8Info(n.typeDescriptor);
-	}
-
-	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_Module_info</code> structure at the given index.
-	 *
-	 * @return the module name at <code>name_index</code>.
-	 * @since 3.22
-	 */
-	public String getModuleInfo(int index)
-	{
-		ModuleInfo mi = (ModuleInfo)getItem(index);
-		return getUtf8Info(mi.name);
-	}
-
-	/**
-	 * Reads the <code>name_index</code> field of the
-	 * <code>CONSTANT_Package_info</code> structure at the given index.
-	 *
-	 * @return the package name at <code>name_index</code>.  It is a slash-
-	 * separated name such as com/oracle/net.
-	 * @since 3.22
-	 */
-	public String getPackageInfo(int index)
-	{
-		PackageInfo mi = (PackageInfo)getItem(index);
-		return getUtf8Info(mi.name);
-	}
-
-
-	/**
-	 * Determines whether <code>CONSTANT_Methodref_info</code>,
-	 * <code>CONSTANT_Fieldref_info</code>, or
-	 * <code>CONSTANT_InterfaceMethodref_info</code> structure
-	 * at the given index represents the member with the specified
-	 * name and declaring class.
-	 *
-	 * @param classname         the class declaring the member
-	 * @param membername        the member name
-	 * @param index             the index into the constant pool table
-	 *
-	 * @return          the <code>descriptor_index</code> specifying
-	 *                  the type descriptor of that member.
-	 *                  If it is not that member,
-	 *                  <code>isMember()</code> returns 0.
-	 */
-	public int isMember(String classname, String membername, int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		if (getClassInfo(minfo.classIndex).equals(classname)) {
-			NameAndTypeInfo ntinfo
-					= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-			if (getUtf8Info(ntinfo.memberName).equals(membername))
-				return ntinfo.typeDescriptor;
-		}
-
-		return 0;       // false
-	}
-
-	/**
-	 * Determines whether <code>CONSTANT_Methodref_info</code>,
-	 * <code>CONSTANT_Fieldref_info</code>, or
-	 * <code>CONSTANT_InterfaceMethodref_info</code> structure
-	 * at the given index has the name and the descriptor
-	 * given as the arguments.
-	 *
-	 * @param membername        the member name
-	 * @param desc              the descriptor of the member.
-	 * @param index             the index into the constant pool table
-	 *
-	 * @return          the name of the target class specified by
-	 *                  the <code>..._info</code> structure
-	 *                  at <code>index</code>.
-	 *                  Otherwise, null if that structure does not
-	 *                  match the given member name and descriptor.
-	 */
-	public String eqMember(String membername, String desc, int index)
-	{
-		MemberrefInfo minfo = (MemberrefInfo)getItem(index);
-		NameAndTypeInfo ntinfo
-				= (NameAndTypeInfo)getItem(minfo.nameAndTypeIndex);
-		if (getUtf8Info(ntinfo.memberName).equals(membername)
-				&& getUtf8Info(ntinfo.typeDescriptor).equals(desc))
-			return getClassInfo(minfo.classIndex);
-		return null;       // false
-	}
 
 	private int addItem0(ConstInfo info)
 	{
@@ -1108,7 +344,6 @@ final class ConstPool
 	 * structure.
 	 *
 	 * @param kind      <code>reference_kind</code>
-	 *                  such as {@link #REF_invokeStatic <code>REF_invokeStatic</code>}.
 	 * @param index     <code>reference_index</code>.
 	 * @return          the index of the added entry.
 	 *
@@ -1182,55 +417,7 @@ final class ConstPool
 		return addItem(new PackageInfo(nameIndex, numOfItems));
 	}
 
-	/**
-	 * Get all the class names.
-	 *
-	 * @return a set of class names (<code>String</code> objects).
-	 */
-	public Set<String> getClassNames()
-	{
-		Set<String> result = new HashSet<String>();
-		LongVector v = items;
-		int size = numOfItems;
-		for (int i = 1; i < size; ++i) {
-			String className = v.elementAt(i).getClassName(this);
-			if (className != null)
-				result.add(className);
-		}
-		return result;
-	}
 
-	/**
-	 * Replaces all occurrences of a class name.
-	 *
-	 * @param oldName           the replaced name (JVM-internal representation).
-	 * @param newName           the substituted name (JVM-internal representation).
-	 */
-	public void renameClass(String oldName, String newName)
-	{
-		LongVector v = items;
-		int size = numOfItems;
-		for (int i = 1; i < size; ++i) {
-			ConstInfo ci = v.elementAt(i);
-			ci.renameClass(this, oldName, newName, itemsCache);
-		}
-	}
-
-	/**
-	 * Replaces all occurrences of class names.
-	 *
-	 * @param classnames        specifies pairs of replaced and substituted
-	 *                          name.
-	 */
-	public void renameClass(Map<String,String> classnames)
-	{
-		LongVector v = items;
-		int size = numOfItems;
-		for (int i = 1; i < size; ++i) {
-			ConstInfo ci = v.elementAt(i);
-			ci.renameClass(this, classnames, itemsCache);
-		}
-	}
 
 	private void read(DataInputStream in) throws IOException
 	{
@@ -1327,39 +514,6 @@ final class ConstPool
 		addItem0(info);
 		return tag;
 	}
-
-	/**
-	 * Writes the contents of the constant pool table.
-	 */
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeShort(numOfItems);
-		LongVector v = items;
-		int size = numOfItems;
-		for (int i = 1; i < size; ++i)
-			v.elementAt(i).write(out);
-	}
-
-	/**
-	 * Prints the contents of the constant pool table.
-	 */
-	public void print()
-	{
-		print(new PrintWriter(System.out, true));
-	}
-
-	/**
-	 * Prints the contents of the constant pool table.
-	 */
-	public void print(PrintWriter out)
-	{
-		int size = numOfItems;
-		for (int i = 1; i < size; ++i) {
-			out.print(i);
-			out.print(" ");
-			items.elementAt(i).print(out);
-		}
-	}
 }
 
 abstract class ConstInfo
@@ -1368,27 +522,10 @@ abstract class ConstInfo
 
 	public ConstInfo(int i) { index = i; }
 
-	public abstract int getTag();
-
-	public String getClassName(ConstPool cp) { return null; }
-	public void renameClass(ConstPool cp, String oldName, String newName,
-							Map<ConstInfo,ConstInfo> cache) {}
-	public void renameClass(ConstPool cp, Map<String,String> classnames,
-							Map<ConstInfo,ConstInfo> cache) {}
 	public abstract int copy(ConstPool src, ConstPool dest,
 							 Map<String, String> classnames);
 	// ** classnames is a mapping between JVM names.
 
-	public abstract void write(DataOutputStream out) throws IOException;
-	public abstract void print(PrintWriter out);
-
-	@Override
-	public String toString() {
-		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		PrintWriter out = new PrintWriter(bout);
-		print(out);
-		return bout.toString();
-	}
 }
 
 /* padding following DoubleInfo or LongInfo.
@@ -1398,21 +535,9 @@ class ConstInfoPadding extends ConstInfo
 	public ConstInfoPadding(int i) { super(i); }
 
 	@Override
-	public int getTag() { return 0; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addConstInfoPadding();
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException {}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.println("padding");
 	}
 }
 
@@ -1443,15 +568,6 @@ class ClassInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
-	public String getClassName(ConstPool cp)
-	{
-		return cp.getUtf8Info(name);
-	}
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		String classname = src.getUtf8Info(name);
@@ -1462,20 +578,6 @@ class ClassInfo extends ConstInfo
 		}
 
 		return dest.addClassInfo(classname);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(name);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Class #");
-		out.println(name);
 	}
 }
 
@@ -1514,30 +616,10 @@ class NameAndTypeInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String, String> classnames) {
 		return 0;
 	}
 
-
-	@Override
-	public void write(DataOutputStream out) throws IOException {
-		out.writeByte(tag);
-		out.writeShort(memberName);
-		out.writeShort(typeDescriptor);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("NameAndType #");
-		out.print(memberName);
-		out.print(", type #");
-		out.println(typeDescriptor);
-	}
 }
 
 abstract class MemberrefInfo extends ConstInfo
@@ -1583,25 +665,6 @@ abstract class MemberrefInfo extends ConstInfo
 	}
 
 	abstract protected int copy2(ConstPool dest, int cindex, int ntindex);
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(getTag());
-		out.writeShort(classIndex);
-		out.writeShort(nameAndTypeIndex);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print(getTagName() + " #");
-		out.print(classIndex);
-		out.print(", name&type #");
-		out.println(nameAndTypeIndex);
-	}
-
-	public abstract String getTagName();
 }
 
 class FieldrefInfo extends MemberrefInfo
@@ -1618,12 +681,6 @@ class FieldrefInfo extends MemberrefInfo
 	{
 		super(in, thisIndex);
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
-	@Override
-	public String getTagName() { return "Field"; }
 
 	@Override
 	protected int copy2(ConstPool dest, int cindex, int ntindex)
@@ -1648,12 +705,6 @@ class MethodrefInfo extends MemberrefInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
-	public String getTagName() { return "Method"; }
-
-	@Override
 	protected int copy2(ConstPool dest, int cindex, int ntindex)
 	{
 		return dest.addMethodrefInfo(cindex, ntindex);
@@ -1674,12 +725,6 @@ class InterfaceMethodrefInfo extends MemberrefInfo
 	{
 		super(in, thisIndex);
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
-	@Override
-	public String getTagName() { return "Interface"; }
 
 	@Override
 	protected int copy2(ConstPool dest, int cindex, int ntindex)
@@ -1715,26 +760,9 @@ class StringInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addStringInfo(src.getUtf8Info(string));
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(string);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("String #");
-		out.println(string);
 	}
 }
 
@@ -1765,26 +793,9 @@ class IntegerInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addIntegerInfo(value);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeInt(value);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Integer ");
-		out.println(value);
 	}
 }
 
@@ -1815,27 +826,11 @@ class FloatInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addFloatInfo(value);
 	}
 
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeFloat(value);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Float ");
-		out.println(value);
-	}
 }
 
 class LongInfo extends ConstInfo
@@ -1862,28 +857,10 @@ class LongInfo extends ConstInfo
 	public boolean equals(Object obj) {
 		return obj instanceof LongInfo && ((LongInfo)obj).value == value;
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
 	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addLongInfo(value);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeLong(value);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Long ");
-		out.println(value);
 	}
 }
 
@@ -1916,28 +893,10 @@ class DoubleInfo extends ConstInfo
 		return obj instanceof DoubleInfo
 				&& ((DoubleInfo)obj).value == value;
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
 	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return dest.addDoubleInfo(value);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeDouble(value);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Double ");
-		out.println(value);
 	}
 }
 
@@ -1969,30 +928,11 @@ class Utf8Info extends ConstInfo
 		return obj instanceof Utf8Info
 				&& ((Utf8Info)obj).string.equals(string);
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
 	@Override
 	public int copy(ConstPool src, ConstPool dest,
 					Map<String,String> map)
 	{
 		return dest.addUtf8Info(string);
-	}
-
-	@Override
-	public void write(DataOutputStream out)
-			throws IOException
-	{
-		out.writeByte(tag);
-		out.writeUTF(string);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("UTF8 \"");
-		out.print(string);
-		out.println("\"");
 	}
 }
 
@@ -2028,30 +968,11 @@ class MethodHandleInfo extends ConstInfo {
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest,
 					Map<String,String> map)
 	{
 		return dest.addMethodHandleInfo(refKind,
 				src.getItem(refIndex).copy(src, dest, map));
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeByte(refKind);
-		out.writeShort(refIndex);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("MethodHandle #");
-		out.print(refKind);
-		out.print(", index #");
-		out.println(refIndex);
 	}
 }
 
@@ -2085,25 +1006,9 @@ class MethodTypeInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String,String> map)
 	{
 		return 0;
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(descriptor);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("MethodType #");
-		out.println(descriptor);
 	}
 }
 
@@ -2141,32 +1046,12 @@ class InvokeDynamicInfo extends ConstInfo
 		}
 		return false;
 	}
-
-	@Override
-	public int getTag() { return tag; }
-
 	@Override
 	public int copy(ConstPool src, ConstPool dest,
 					Map<String,String> map)
 	{
 		return dest.addInvokeDynamicInfo(bootstrap,
 				src.getItem(nameAndType).copy(src, dest, map));
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(bootstrap);
-		out.writeShort(nameAndType);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("InvokeDynamic #");
-		out.print(bootstrap);
-		out.print(", name&type #");
-		out.println(nameAndType);
 	}
 }
 
@@ -2202,28 +1087,8 @@ class DynamicInfo extends ConstInfo {
 	}
 
 	@Override
-	public int getTag() {
-		return tag;
-	}
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest, Map<String, String> map) {
 		return dest.addDynamicInfo(bootstrap, src.getItem(nameAndType).copy(src, dest, map));
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException {
-		out.writeByte(tag);
-		out.writeShort(bootstrap);
-		out.writeShort(nameAndType);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("Dynamic #");
-		out.print(bootstrap);
-		out.print(", name&type #");
-		out.println(nameAndType);
 	}
 }
 
@@ -2256,33 +1121,12 @@ class ModuleInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	public String getModuleName(ConstPool cp)
-	{
-		return cp.getUtf8Info(name);
-	}
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest,
 					Map<String,String> map)
 	{
 		String moduleName = src.getUtf8Info(name);
 		int newName = dest.addUtf8Info(moduleName);
 		return dest.addModuleInfo(newName);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(name);
-	}
-
-	@Override
-	public void print(PrintWriter out) {
-		out.print("Module #");
-		out.println(name);
 	}
 }
 
@@ -2314,33 +1158,11 @@ class PackageInfo extends ConstInfo
 	}
 
 	@Override
-	public int getTag() { return tag; }
-
-	public String getPackageName(ConstPool cp)
-	{
-		return cp.getUtf8Info(name);
-	}
-
-	@Override
 	public int copy(ConstPool src, ConstPool dest,
 					Map<String,String> map)
 	{
 		String packageName = src.getUtf8Info(name);
 		int newName = dest.addUtf8Info(packageName);
 		return dest.addModuleInfo(newName);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException
-	{
-		out.writeByte(tag);
-		out.writeShort(name);
-	}
-
-	@Override
-	public void print(PrintWriter out)
-	{
-		out.print("Package #");
-		out.println(name);
 	}
 }
