@@ -108,4 +108,12 @@ public class MessageContent {
 			buffer.release();
 		}
 	}
+
+	@Override
+	public String toString() {
+		if (protocolId > 0) {
+			return "protocolID: " + protocolId;
+		}
+		return "uriPath: "+uriPath;
+	}
 }

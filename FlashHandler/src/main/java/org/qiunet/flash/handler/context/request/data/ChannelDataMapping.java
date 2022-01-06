@@ -108,7 +108,7 @@ public class ChannelDataMapping implements IApplicationContextAware {
 
 	@Override
 	public int order() {
-		return Integer.MAX_VALUE - 2;
+		return 9;
 	}
 
 	public static ParamCheckList paramCheckList(Class<? extends IChannelData> clazz) {

@@ -140,7 +140,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@Override
 	public int order() {
-		return 10;
+		return 8;
 	}
 
 	@Override

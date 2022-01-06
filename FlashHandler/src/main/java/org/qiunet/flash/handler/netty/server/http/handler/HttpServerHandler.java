@@ -26,10 +26,12 @@ import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.util.function.Supplier;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -135,8 +137,20 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			content.release();
 			return;
 		}
-		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
+		this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
+	}
+
+	/**
+	 * 处理请求
+	 * @param handlerGetter
+	 * @param content
+	 * @param ctx
+	 * @param request
+	 */
+	private void handlerRequest(Supplier<IHandler> handlerGetter, MessageContent content, ChannelHandlerContext ctx, FullHttpRequest request) {
+		IHandler handler = handlerGetter.get();
 		if (handler == null) {
+			logger.error("Handler [{}] not found!", content.toString());
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			content.release();
 			return;
@@ -149,6 +163,8 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			} catch (Exception e) {
 				sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 				logger.error("Http Exception:", e);
+			}finally {
+				ThreadContextData.removeAll();
 			}
 		});
 	}
@@ -159,23 +175,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		ByteBuf byteBuf = request.content();
 		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
-		IHandler handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
-		if (handler == null) {
-			logger.error("uriPath ["+uriPath+"] not found !");
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
-			content.release();
-			return;
-		}
-
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		ThreadPoolManager.MESSAGE_HANDLER.submit(() -> {
-			try {
-				context.handlerRequest();
-			} catch (Exception e) {
-				sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
-				logger.error("Http Exception:", e);
-			}
-		});
+		this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
 	}
 
 	/***
