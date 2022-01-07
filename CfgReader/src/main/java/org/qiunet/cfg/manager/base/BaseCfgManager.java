@@ -124,7 +124,7 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 	protected <Cfg extends ICfg> void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
 		Field field = ReflectUtil.findField(cfgClass, name);
 		if (field == null) {
-			throw new UnknownFieldException(cfgClass.getName(), name);
+			throw new UnknownFieldException(cfgClass.getName(), fileName, name);
 		}
 		try {
 			if (isInvalidField(field)) {

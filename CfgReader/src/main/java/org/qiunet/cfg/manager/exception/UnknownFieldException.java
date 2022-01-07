@@ -15,8 +15,10 @@ public class UnknownFieldException extends CustomException {
 	private static final String SEPARATOR = "\n-------------------------------";
 	private final Map<String, Object> stuff = new LinkedHashMap<>();
 
-	public UnknownFieldException(String type, String field) {
-		super("No such field {}.{}", type, field);
+	public UnknownFieldException(String type, String cfgFile, String field) {
+		super("No such field {} in cfg class {}", field, type);
+		add("cfgFile", cfgFile);
+		add("cfgClass", type);
 		add("field", field);
 	}
 

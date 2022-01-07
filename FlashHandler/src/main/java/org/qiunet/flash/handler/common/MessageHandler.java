@@ -156,10 +156,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @return
 	 */
 	public void merge(MessageHandler<H> handler){
-//		this.scheduleFutures.addAll(handler.scheduleFutures);
 		this.messages.addAll(handler.messages);
-//		handler.scheduleFutures.clear();
-		handler.destroy();
 	}
 
 	/**

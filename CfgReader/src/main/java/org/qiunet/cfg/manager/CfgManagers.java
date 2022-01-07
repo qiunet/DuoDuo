@@ -36,7 +36,7 @@ public enum CfgManagers {
 	 */
 	public synchronized void initSetting() {
 		gameSettingList.sort(((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result()));
-		this.reloadSetting();
+		this.reloadSetting(false);
 	}
 
 	/***
@@ -45,6 +45,9 @@ public enum CfgManagers {
 	 * @throws Exception
 	 */
 	public synchronized void reloadSetting() {
+		this.reloadSetting(true);
+	}
+	private synchronized void reloadSetting(boolean needLogger) {
 		if (reloading.get()) {
 			logger.error("Game Setting Data is loading now.....");
 			return;
@@ -55,7 +58,9 @@ public enum CfgManagers {
 			reloading.compareAndSet(false, true);
 			this.loadDataSetting();
 		}catch (CustomException e) {
-			e.logger(logger);
+			if (needLogger) {
+				e.logger(logger);
+			}
 			throw e;
 		} finally {
 			reloading.compareAndSet(true, false);

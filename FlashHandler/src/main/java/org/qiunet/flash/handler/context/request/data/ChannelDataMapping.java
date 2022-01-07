@@ -111,8 +111,15 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		return 9;
 	}
 
-	public static ParamCheckList paramCheckList(Class<? extends IChannelData> clazz) {
-		return paramChecks.get(clazz);
+	/**
+	 * 对参数进行检查.  会抛出{@link org.qiunet.flash.handler.context.status.StatusResultException}异常.
+	 * @param channelData
+	 */
+	public static void paramCheck(IChannelData channelData) {
+		ParamCheckList paramCheckList = paramChecks.get(channelData.getClass());
+		if (paramCheckList != null) {
+			paramCheckList.check(channelData);
+		}
 	}
 
 	public static int protocolId(Class<? extends IChannelData> clazz) {

@@ -402,4 +402,41 @@ public final class DateUtil {
 		}
 		return formatter;
 	}
+
+	/**
+	 * 是否是闰年
+	 * @param year
+	 * @return
+	 */
+	public static boolean isLeapYear(int year) {
+		return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
+	}
+
+	/**
+	 * 获得最后天数
+	 * @param monthNum
+	 * @param year
+	 * @return
+	 */
+	public static int getLastDayOfMonth(int monthNum, int year) {
+		switch (monthNum) {
+			case 2:
+				return (isLeapYear(year)) ? 29 : 28;
+			case 1:
+			case 3:
+			case 5:
+			case 7:
+			case 8:
+			case 10:
+			case 12:
+				return 31;
+			case 4:
+			case 6:
+			case 9:
+			case 11:
+				return 30;
+			default:
+				throw new IllegalArgumentException("Illegal month number: " + monthNum);
+		}
+	}
 }

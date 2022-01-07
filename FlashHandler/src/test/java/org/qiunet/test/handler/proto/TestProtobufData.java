@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
-import org.qiunet.flash.handler.context.request.param.check.ParamCheckList;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.badword.DefaultBadWord;
@@ -37,18 +36,15 @@ public class TestProtobufData {
 
 	@Test
 	public void testParamCheck() {
-		ParamCheckList paramCheckList = ChannelDataMapping.paramCheckList(WsPbLoginRequest.class);
-		Assertions.assertNotNull(paramCheckList);
-
 		WsPbLoginRequest request1 = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 1);
 		StatusResultException exception = Assertions.assertThrows(StatusResultException.class, () -> {
-			paramCheckList.check(request1);
+			ChannelDataMapping.paramCheck(request1);
 		});
 		Assertions.assertEquals(IGameStatus.NUMBER_PARAM_ERROR, exception.getStatus());
 
 		WsPbLoginRequest request2 = WsPbLoginRequest.valueOf("qiunet", "毛泽~东", 11);
 		exception = Assertions.assertThrows(StatusResultException.class, () -> {
-			paramCheckList.check(request2);
+			ChannelDataMapping.paramCheck(request2);
 		});
 		Assertions.assertEquals(IGameStatus.STRING_PARAM_BAD_WORD_ERROR, exception.getStatus());
 
