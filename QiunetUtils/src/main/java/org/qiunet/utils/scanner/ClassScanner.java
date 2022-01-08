@@ -83,7 +83,7 @@ public final class ClassScanner implements IApplicationContext {
 		return instance;
 	}
 
-	private AtomicBoolean scannered = new AtomicBoolean();
+	private final AtomicBoolean scannered = new AtomicBoolean();
 	public void scanner(String ... packetPrefix) {
 		try {
 			this.scanner0(packetPrefix);
@@ -121,7 +121,7 @@ public final class ClassScanner implements IApplicationContext {
 		for (IApplicationContextAware instance : collect) {
 			logger.debug("scanner start detail: {}", instance.getClass().getName());
 			// 不相同. 并且都不是ALL
-			if (! instance.scannerType().test(this.scannerTypes)) {
+			if (! this.isPrepare(instance.scannerType())) {
 				this.countdown(latch, instance.getClass().getSimpleName());
 				continue;
 			}
@@ -207,6 +207,11 @@ public final class ClassScanner implements IApplicationContext {
 	@Override
 	public Set<Method> getMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
 		return reflections.getMethodsAnnotatedWith(annotation);
+	}
+
+	@Override
+	public boolean isPrepare(ScannerType scannerType) {
+		return scannerType.test(this.scannerTypes);
 	}
 
 	@Override

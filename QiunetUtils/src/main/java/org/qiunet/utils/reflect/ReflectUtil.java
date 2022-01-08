@@ -263,6 +263,7 @@ public final class ReflectUtil {
 					continue;
 				}
 				try {
+					makeAccessible(field);
 					consumer.accept(field);
 				}
 				catch (Exception ex) {
@@ -327,6 +328,7 @@ public final class ReflectUtil {
 				continue;
 			}
 			try {
+				makeAccessible(method);
 				mc.accept(method);
 			}
 			catch (Exception ex) {

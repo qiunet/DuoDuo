@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.utils.reflect.ReflectUtil;
-import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
 
@@ -32,17 +31,8 @@ class NumberParamCheck implements IParamCheck {
 		this.field = field;
 
 		NumberParam param = this.field.getAnnotation(NumberParam.class);
-		if (! StringUtil.isEmpty(param.maxKey())) {
-			this.max = KeyValManager.instance.getLong(param.maxKey());
-		}else {
-			this.max = param.max();
-		}
-
-		if (! StringUtil.isEmpty(param.minKey())) {
-			this.min = KeyValManager.instance.getLong(param.minKey());
-		}else {
-			this.min = param.min();
-		}
+		this.max = KeyValManager.instance.getLong(param.maxKey(), param.max());
+		this.min = KeyValManager.instance.getLong(param.minKey(), param.min());
 	}
 
 	@Override

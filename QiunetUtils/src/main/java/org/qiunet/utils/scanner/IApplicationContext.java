@@ -37,4 +37,11 @@ public interface IApplicationContext {
 	 * @return
 	 */
 	Object getInstanceOfClass(Class clazz, Object... params);
+
+	/**
+	 * 是否有扫描 scannerType
+	 * @param scannerType
+	 * @return
+	 */
+	boolean isPrepare(ScannerType scannerType);
 }

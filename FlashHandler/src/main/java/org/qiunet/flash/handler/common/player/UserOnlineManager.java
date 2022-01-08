@@ -52,7 +52,7 @@ public enum UserOnlineManager {
 		onlinePlayers.put(userActor.getId(), userActor);
 	}
 	/**
-	 * 玩家退出，
+	 * 玩家自主退出，会完整走登出流程
 	 * @param actor 玩家
 	 */
 	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {

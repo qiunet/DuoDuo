@@ -43,17 +43,8 @@ class StringParamCheck implements IParamCheck {
 		this.field = field;
 
 		StringParam param = this.field.getAnnotation(StringParam.class);
-		if (! StringUtil.isEmpty(param.maxKey())) {
-			this.max = KeyValManager.instance.getLong(param.maxKey());
-		}else {
-			this.max = param.max();
-		}
-
-		if (! StringUtil.isEmpty(param.minKey())) {
-			this.min = KeyValManager.instance.getLong(param.minKey());
-		}else {
-			this.min = param.min();
-		}
+		this.max = KeyValManager.instance.getLong(param.maxKey(), param.max());
+		this.min = KeyValManager.instance.getLong(param.minKey(), param.min());
 
 		this.checkBadWorld = param.checkBadWord();
 		this.checkEmpty = param.checkEmpty();
