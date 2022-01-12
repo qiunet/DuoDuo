@@ -1,5 +1,6 @@
 package org.qiunet.excel2cfgs.appender;
 
+import org.apache.commons.compress.utils.Sets;
 import org.qiunet.excel2cfgs.common.enums.DataType;
 import org.qiunet.excel2cfgs.common.enums.OutPutType;
 import org.qiunet.excel2cfgs.common.enums.RoleType;
@@ -7,6 +8,7 @@ import org.qiunet.excel2cfgs.common.enums.RoleType;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -14,6 +16,10 @@ import java.util.stream.Collectors;
  * 17/10/30
  */
 public class AppenderAttachable {
+	/**true 的字符串值**/
+	private static final Set<String> TRUE_VAL_SET = Sets.newHashSet("yes", "1", "true");
+	/**如果字段名为 该名. 该行数据忽略. */
+	private static final String IGNORE_FIELD_NAME = ".ignore";
 	/**
 	 * 文件名
 	 */
@@ -34,6 +40,10 @@ public class AppenderAttachable {
 	 * 保存的数值字段名称
 	 */
 	private final List<NameAppenderData> nameAppenderDatas = new ArrayList<>();
+	/**
+	 * 忽略的数据
+	 */
+	private boolean ignoreData;
 
 	public AppenderAttachable (String fileName) {
 		this.fileName = fileName;
@@ -66,11 +76,17 @@ public class AppenderAttachable {
 	}
 
 	public void rowRecordOver() {
-		appenderDatas.add(rowDatas);
+		if (! ignoreData) {
+			appenderDatas.add(rowDatas);
+		}
 		rowDatas = new ArrayList<>();
+		ignoreData = false;
 	}
 
 	public void append(AppenderData appenderData) {
+		if (appenderData.name.equals(IGNORE_FIELD_NAME) && TRUE_VAL_SET.contains(appenderData.getVal())) {
+			ignoreData = true;
+		}
 		this.rowDatas.add(appenderData);
 	}
 

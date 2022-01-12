@@ -74,8 +74,9 @@ public enum UserOnlineManager {
 		if (actor == null) {
 			return;
 		}
-
 		triggerChangeListeners(false);
+		// 清理 observers 避免重连重复监听.
+		actor.clearObservers();
 		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
 		if (actor.isCrossPlayer()) {
 			return;

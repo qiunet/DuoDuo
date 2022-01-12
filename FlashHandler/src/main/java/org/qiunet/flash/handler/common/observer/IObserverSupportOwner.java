@@ -21,7 +21,7 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	 * @param <O>
 	 * @return
 	 */
-	default <O extends IObserver> Observer<O> attach(Class<O> clazz, O o) {
+	default <O extends IObserver> Observer<O> attachObserver(Class<O> clazz, O o) {
 		return getObserverSupport().attach(clazz, o);
 	}
 	/***
@@ -29,7 +29,7 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	 * @param observer
 	 * @return
 	 */
-	default boolean remove(Observer observer) {
+	default boolean removeObserver(Observer observer) {
 		return getObserverSupport().remove(observer);
 	}
 
@@ -37,14 +37,14 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	 * 移除某一类观察者
 	 * @param
 	 */
-	default void remove(Class<? extends IObserver> observerType) {
+	default void removeObserver(Class<? extends IObserver> observerType) {
 		getObserverSupport().remove(observerType);
 	}
 
 	/**
 	 * 清除该support的所有观察者
 	 */
-	default void clear() {
+	default void clearObservers() {
 		getObserverSupport().clear();
 	}
 	/**
@@ -53,7 +53,7 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	 * @param consumer
 	 * @param <O>
 	 */
-	default  <O extends IObserver> void asyncFire(Class<O> clazz, Consumer<O> consumer) {
+	default  <O extends IObserver> void asyncFireObserver(Class<O> clazz, Consumer<O> consumer) {
 		getObserverSupport().asyncFire(clazz, consumer);
 	}
 
@@ -63,7 +63,7 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	 * @param consumer
 	 * @param <O>
 	 */
-	default  <O extends IObserver> void syncFire(Class<O> clazz, Consumer<O> consumer) {
+	default  <O extends IObserver> void syncFireObserver(Class<O> clazz, Consumer<O> consumer) {
 		getObserverSupport().syncFire(clazz, consumer);
 	}
 }

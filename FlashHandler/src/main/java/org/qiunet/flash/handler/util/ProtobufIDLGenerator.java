@@ -331,27 +331,31 @@ public class ProtobufIDLGenerator {
 
         Field[] fields = cls.getFields();
         for (Field field : fields) {
-
-            String name = field.getName();
-			Protobuf annotation = field.getAnnotation(Protobuf.class);
-			if (annotation != null && !StringUtil.isEmpty(annotation.description())) {
-				code.append("//").append(annotation.description()).append("\n");
+			if (field.getType() != cls) {
+				continue;
 			}
-            code.append(cls.getSimpleName()+"_"+name).append("=");
+
             try {
-                Enum value = Enum.valueOf(cls, name);
+				String name = field.getName();
+				Enum value = Enum.valueOf(cls, name);
+
+				Protobuf annotation = field.getAnnotation(Protobuf.class);
+				if (annotation != null && !StringUtil.isEmpty(annotation.description())) {
+					code.append("//").append(annotation.description()).append("\n");
+				}
+				code.append('\t').append(cls.getSimpleName()).append("_").append(name).append("=");
+
                 if (value instanceof EnumReadable) {
                     code.append(((EnumReadable) value).value());
                 } else {
                     code.append(value.ordinal());
                 }
                 code.append(";\n");
-            } catch (Exception e) {
-                continue;
-            }
+            } catch (Exception ignored) {
+			}
         }
 
-        code.append("}\n ");
+        code.append("}\n");
 		code.append("\n\n");
     }
 
