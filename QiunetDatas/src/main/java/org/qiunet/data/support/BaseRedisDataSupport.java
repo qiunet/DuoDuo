@@ -88,6 +88,7 @@ public abstract class BaseRedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo
 
 	@Override
 	public void delete(Bo bo) {
+		redisUtil.returnJedis(false).srem(redisUpdateSyncSetKey, buildSyncParams(bo.getDo()));
 		this.delFromRedis(bo.getDo());
 		this.deleteFromDb(bo.getDo());
 	}
