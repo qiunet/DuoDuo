@@ -48,7 +48,9 @@ public enum ConsumesManager {
 	 */
 	@EventListener
 	public void cfgLoadOver(CfgLoadCompleteEventData data) {
-		consumeList.forEach(rewards -> ((IAfterLoad)rewards).afterLoad());
+		for (Consumes consumes : consumeList) {
+			((IAfterLoad) consumes).afterLoad();
+		}
 		consumeList.clear();
 	}
 }

@@ -18,7 +18,11 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 * 记录真实消耗.
 	 * 可能底层使用替代资源了.
 	 */
-	private final Map<Integer, Long> realConsumes = Maps.newHashMap();
+	private final Map<BaseConsume<Obj>, Map<Integer, Long>> realConsumes = Maps.newHashMap();
+	/**
+	 * 使用ItemId 记录的消耗数据
+	 */
+	private final Map<Integer, Long> itemIdConsumes = Maps.newHashMap();
 	/**
 	 *  消耗的主体
 	 *  一般Player
@@ -82,7 +86,20 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 		return !isSuccess();
 	}
 
-	public Map<Integer, Long> getRealConsumes() {
-		return realConsumes;
+	/**
+	 * 获得某个consume 产生的真实消耗
+	 * @param consume
+	 * @return
+	 */
+	public Map<Integer, Long> getRealConsumes(BaseConsume<Obj> consume) {
+		return realConsumes.computeIfAbsent(consume, key -> Maps.newHashMapWithExpectedSize(8));
+	}
+
+	/**
+	 * 得到itemId 对应的数量.
+	 * @return
+	 */
+	public Map<Integer, Long> getItemIdConsumes() {
+		return itemIdConsumes;
 	}
 }
