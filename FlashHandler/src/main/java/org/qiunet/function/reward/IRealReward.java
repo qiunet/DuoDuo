@@ -13,6 +13,12 @@ import org.qiunet.function.base.basic.BasicFunctionManager;
  */
 public interface IRealReward {
 	/**
+	 * 有唯一id的给唯一id.
+	 * 没有为 0
+	 * @return
+	 */
+	int getUid();
+	/**
 	 * 配置id
 	 * @return
 	 */
