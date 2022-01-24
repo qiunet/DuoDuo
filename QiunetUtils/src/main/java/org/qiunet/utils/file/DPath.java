@@ -1,5 +1,11 @@
 package org.qiunet.utils.file;
 
+import org.qiunet.utils.exceptions.CustomException;
+
+import java.io.File;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
 /***
  *
  * @author qiunet
@@ -32,5 +38,28 @@ public class DPath {
 			return path.substring(0, path.lastIndexOf("\\"));
 		}
 		return path.substring(0, path.lastIndexOf("/"));
+	}
+
+	/**
+	 * 返回文件夹下面的文件数组
+	 * @param dirPath
+	 * @return
+	 */
+	public static void listDir(String dirPath, Consumer<File> consumer, Predicate<File> filter) {
+		File dir = new File(dirPath);
+		if (! dir.isDirectory()) {
+			throw new CustomException("{} not a directory", dirPath);
+		}
+		File[] files = dir.listFiles();
+		if (files == null) {
+			return;
+		}
+
+		for (File file : files) {
+			if (filter != null && ! filter.test(file)) {
+				continue;
+			}
+			consumer.accept(file);
+		}
 	}
 }

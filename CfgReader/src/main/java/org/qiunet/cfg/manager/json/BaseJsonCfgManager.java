@@ -2,9 +2,11 @@ package org.qiunet.cfg.manager.json;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.base.BaseCfgManager;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.file.DPath;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -12,6 +14,7 @@ import org.qiunet.utils.string.StringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -39,8 +42,16 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 	 * @param fileName
 	 * @return
 	 */
-	protected File getFile(String fileName) {
-		return new File(getClass().getClassLoader().getResource(fileName).getFile());
+	private File [] getFile(String fileName) {
+		if(fileName.contains("*")) {
+			List<File> files = Lists.newLinkedList();
+			String dirName = Objects.requireNonNull(getClass().getClassLoader().getResource(DPath.dirName(fileName))).getFile();
+			String finalFileName = DPath.fileName(fileName).replaceAll("\\.", "\\\\.").replaceAll("\\*", "(.*)");
+			DPath.listDir(dirName, files::add, file -> file.getName().matches(finalFileName));
+			return files.toArray(new File[0]);
+		}
+		String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).getFile();
+		return new File[]{ new File(filePath)};
 	}
 
 	/**
@@ -51,21 +62,26 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 	protected List<Cfg> getSimpleListCfg() {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
 		String json;
-		File file = getFile(fileName);
-		try {
-			json = FileUtil.getFileContent(getFile(fileName));
-			if(StringUtil.isEmpty(json)){
-				logger.debug("读取配置文件 [ " + fileName + " ] content is null , path:" + file.getAbsolutePath());
+		List<JSONObject> jsonObjects = Lists.newLinkedList();
+		File [] files = getFile(fileName);
+		for (File file : files) {
+			try {
+				json = FileUtil.getFileContent(file);
+				if(StringUtil.isEmpty(json)){
+					logger.debug("读取配置文件 [{}] content is null!", file.getAbsolutePath());
+				}
+			} catch (IOException e) {
+				throw new CustomException(e, "读取[{}]异常!", file.getAbsolutePath());
 			}
-		} catch (IOException e) {
-			throw new CustomException(e, "读取[{}]异常!", file.getAbsolutePath());
+
+			List<JSONObject> generalList = JsonUtil.getGeneralList(json, JSONObject.class);
+			if (generalList == null) {
+				throw new NullPointerException("FileName ["+file.getAbsolutePath()+"] is not JsonList!");
+			}
+			jsonObjects.addAll(generalList);
 		}
 
-		List<JSONObject> generalList = JsonUtil.getGeneralList(json, JSONObject.class);
-		if (generalList == null) {
-			throw new NullPointerException("FileName ["+fileName+"] is not JsonList!");
-		}
-		return generalList.stream().map(this::generalCfg).collect(Collectors.toList());
+		return jsonObjects.stream().map(this::generalCfg).collect(Collectors.toList());
 	}
 
 
