@@ -52,4 +52,9 @@ public @interface StringParam {
 	 * @return
 	 */
 	boolean checkEmpty() default false;
+	/**
+	 * 按照中文2个长度校验.
+	 * @return
+	 */
+	boolean cnCheck() default false;
 }

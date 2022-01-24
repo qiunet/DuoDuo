@@ -23,6 +23,10 @@ class StringParamCheck implements IParamCheck {
 	 */
 	private final long min;
 	/**
+	 * 中文校验
+	 */
+	private final boolean cnCheck;
+	/**
 	 * 自定义 最大值
 	 */
 	private final long max;
@@ -49,6 +53,8 @@ class StringParamCheck implements IParamCheck {
 		this.checkBadWorld = param.checkBadWord();
 		this.checkEmpty = param.checkEmpty();
 		this.trim = param.trim();
+
+		this.cnCheck = param.cnCheck();
 	}
 
 	@Override
@@ -62,12 +68,16 @@ class StringParamCheck implements IParamCheck {
 		if (checkEmpty && StringUtil.isEmpty(val)) {
 			throw StatusResultException.valueOf(IGameStatus.STRING_PARAM_EMPTY_ERROR);
 		}
+		int length = val.length();
+		if (cnCheck) {
+			length = StringUtil.getMixedStringLength(val);
+		}
 
-		if (min != 0 &&  val.length() < min) {
+		if (min != 0 &&  length < min) {
 			throw StatusResultException.valueOf(IGameStatus.STRING_PARAM_LENGTH_ERROR);
 		}
 
-		if (max != 0 && val.length() > max) {
+		if (max != 0 && length > max) {
 			throw StatusResultException.valueOf(IGameStatus.STRING_PARAM_LENGTH_ERROR);
 		}
 
