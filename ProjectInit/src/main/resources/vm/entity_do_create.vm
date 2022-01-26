@@ -2,7 +2,6 @@
 package ${define.entityPackage};
 
 import org.apache.ibatis.type.Alias;
-import ${define.entityClass.name};
 #if(${define.needImportColumnJdbcType})
 import org.qiunet.data.core.enums.ColumnJdbcType;
 #end
@@ -11,8 +10,9 @@ import org.qiunet.data.core.support.db.Table;
 #if(${define.loadAllData})
 import org.qiunet.data.support.anno.LoadAllData;
 #end
+import ${define.entityClass.name};
 /**
-* #if(!${define.commentEmpty}), comment="${define.comment}"#end
+*#if(!${define.commentEmpty}), comment="${define.comment}"#end
 *
 * 对象为自动创建 不要修改
 */

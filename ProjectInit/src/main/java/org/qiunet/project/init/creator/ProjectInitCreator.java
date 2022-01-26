@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by qiunet on 4/8/17.
@@ -27,9 +30,9 @@ public final class ProjectInitCreator {
 	 * 默认的mybatis config 文件名
 	 */
 	private static final String DEFAULT_MYBATIS_CONFIG_FILE_NAME = "MybatisConfig.xml";
-	private static Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
+	private static final Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
 	private String mybatisConfigFileName;
-	private File xmlDirectory;
+	private final File xmlDirectory;
 
 	public ProjectInitCreator(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
 		if (outputModuleDir == null) {
@@ -101,7 +104,8 @@ public final class ProjectInitCreator {
 		if (listFiles == null) {
 			throw new NullPointerException("No file in xmlDirectory ["+xmlDirectory+"]");
 		}
-		for (File file : listFiles) {
+		List<File> files = Arrays.stream(listFiles).sorted().collect(Collectors.toList());
+		for (File file : files) {
 			if (mybatisConfigFileName.equals(file.getName())) {
 				continue;
 			}

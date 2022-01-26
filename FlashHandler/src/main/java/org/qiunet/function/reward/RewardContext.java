@@ -6,6 +6,10 @@ import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.args.Argument;
+import org.qiunet.utils.args.ArgumentKey;
+import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
@@ -16,7 +20,8 @@ import java.util.List;
  * @author qiunet
  * 2020-12-28 20:45
  */
-public class RewardContext<Obj extends IThreadSafe & IPlayer> {
+public class RewardContext<Obj extends IThreadSafe & IPlayer> implements IArgsContainer {
+	private final ArgsContainer argsContainer = new ArgsContainer();
 	/**
 	 * 玩家主体
 	 */
@@ -86,5 +91,10 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> {
 
 	public List<IRealReward> getRealRewards() {
 		return realRewards;
+	}
+
+	@Override
+	public <T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent) {
+		return argsContainer.getArgument(key, computeIfAbsent);
 	}
 }

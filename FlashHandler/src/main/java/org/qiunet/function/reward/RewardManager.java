@@ -1,6 +1,5 @@
 package org.qiunet.function.reward;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.IAfterLoad;
 import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
 import org.qiunet.function.base.basic.IBasicFunction;
@@ -9,6 +8,7 @@ import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /***
  * 奖励的管理类
@@ -40,7 +40,7 @@ public enum RewardManager {
 		return unmodifiableRewards;
 	}
 
-	private static final List<Rewards> rewardList = Lists.newLinkedList();
+	private static final List<Rewards> rewardList = new CopyOnWriteArrayList<>();
 
 	/**
 	 * 清理数据

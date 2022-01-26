@@ -79,6 +79,14 @@ public abstract class FakeEnum<E extends FakeEnum<E>> implements Comparable<E>, 
 	public static <T extends FakeEnum<T>> List<T> values(Class<T> enumType){
 		return FakeEnumManager.values(enumType.getName());
 	}
+
+	/**
+	 * 自己的values
+	 * @return
+	 */
+	public List<E> values() {
+		return FakeEnumManager.values(this.getClass().getName());
+	}
 	/**
 	 * Returns the Class object corresponding to this enum constant's
 	 * enum type.  Two enum constants e1 and  e2 are of the

@@ -36,4 +36,9 @@ public @interface NumberParam {
 	 * @return
 	 */
 	String maxKey() default "";
+	/***
+	 * 必须非负数
+	 * @return
+	 */
+	boolean positive() default true;
 }

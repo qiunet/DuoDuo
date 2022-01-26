@@ -41,7 +41,7 @@ public enum ConsumesManager {
 		return unmodifiableConsumes;
 	}
 
-	private static final List<Consumes> consumeList = Lists.newLinkedList();
+	private static final List<Consumes> consumeList = Lists.newCopyOnWriteArrayList();
 	/**
 	 * 清理数据
 	 * @param data

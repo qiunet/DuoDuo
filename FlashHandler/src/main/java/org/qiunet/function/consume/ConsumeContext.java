@@ -5,6 +5,10 @@ import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.base.IOperationType;
+import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.args.Argument;
+import org.qiunet.utils.args.ArgumentKey;
+import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
@@ -13,7 +17,8 @@ import java.util.Map;
  *  消耗的上下文
  * @param <Obj>
  */
-public class ConsumeContext<Obj extends IThreadSafe> {
+public class ConsumeContext<Obj extends IThreadSafe> implements IArgsContainer {
+	private final ArgsContainer argsContainer = new ArgsContainer();
 	/**
 	 * 记录真实消耗.
 	 * 可能底层使用替代资源了.
@@ -101,5 +106,10 @@ public class ConsumeContext<Obj extends IThreadSafe> {
 	 */
 	public Map<Integer, Long> getItemIdConsumes() {
 		return itemIdConsumes;
+	}
+
+	@Override
+	public <T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent) {
+		return argsContainer.getArgument(key, computeIfAbsent);
 	}
 }

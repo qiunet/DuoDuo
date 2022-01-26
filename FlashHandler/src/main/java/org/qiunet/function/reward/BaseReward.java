@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IResourceType;
 import org.qiunet.function.base.basic.IBasicFunction;
+import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
@@ -16,6 +17,11 @@ import org.qiunet.utils.scanner.anno.AutoWired;
  * 2020-12-28 20:37
  */
 public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
+	/**
+	 * 需要格子总和
+	 */
+	protected static final ArgumentKey<Integer> needGridSum = new ArgumentKey<>();
+
 	@AutoWired
 	private static IBasicFunction basicFunction;
 
@@ -115,7 +121,7 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @param reward
 	 */
 	public void doMerge(BaseReward<Obj> reward) {
-		this.value += reward.value;;
+		this.value += reward.value;
 	}
 	/**
 	 * 获得type
