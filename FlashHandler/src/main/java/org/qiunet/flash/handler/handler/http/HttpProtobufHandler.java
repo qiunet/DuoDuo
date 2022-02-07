@@ -13,10 +13,15 @@ public abstract class HttpProtobufHandler<RequestData, ResponseData> extends Bas
 	private Method method;
 	@Override
 	public RequestData parseRequestData(byte[] bytes) {
+//		logger.error("=================RequestClass:"+getRequestClass().getName()+"\tHttpProtobufHandler parseRequestData data length:"+ bytes.length);
+//		for (byte aByte : bytes) {
+//			System.out.print(aByte+",");
+//		}
 		try {
 			if (method == null) method = getRequestClass().getMethod("parseFrom", byte[].class);
 			return (RequestData) method.invoke(null, bytes);
 		} catch (Exception e) {
+//			logger.error("===============error=="+e + "\t" + e.getMessage());
 			e.printStackTrace();
 		}
 	return null;

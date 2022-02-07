@@ -13,9 +13,11 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Arrays;
 
@@ -94,6 +96,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
+
+//		logger.error("["+getRealIp(request.headers())+"]=====FullHttpRequest byte length:"+request.content().readableBytes());
+
 		ProtocolHeader header = new ProtocolHeader(request.content());
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message magic! client is "+ Arrays.toString(header.getMagic()));
@@ -111,6 +116,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 		MessageContent content = new MessageContent(header.getProtocolId(), bytes);
+//		logger.error("==================content data length is :"+ content.bytes().length);
 		IHandler handler = params.getAdapter().getHandler(content);
 		if (handler == null) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
@@ -149,5 +155,40 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
 		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 		ctx.close();
+	}
+
+	/**
+	 * 得到真实ip. http类型的父类
+	 * 2019/08/05 zhengj修改
+	 * @param headers
+	 * @return
+	 */
+	protected String getRealIp(HttpHeaders headers) {
+		String ip;
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("X-Forwarded-For")) && !"unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		return "ip is empty";
 	}
 }

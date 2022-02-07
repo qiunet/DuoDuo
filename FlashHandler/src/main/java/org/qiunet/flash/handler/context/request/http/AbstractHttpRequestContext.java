@@ -16,6 +16,8 @@ import org.qiunet.flash.handler.netty.bytebuf.PooledBytebufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.encryptAndDecrypt.CrcUtil;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -92,6 +94,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	@Override
 	public void response(ResponseData responseData) {
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
+//		Logger logger = LoggerFactory.getLogger("game");
+//		logger.info("---------keepAlive:"+keepAlive);
 		byte [] data = getResponseDataBytes(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
@@ -104,12 +108,15 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
 				HTTP_1_1, OK,  content);
-		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS, "*");
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS,"*");			//允许headers自定义
+		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS,"GET, POST");
 		response.headers().set(HttpHeaderNames.CONTENT_LENGTH, content.readableBytes());
 		response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType());
 		if (keepAlive) {
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 		}
+		response.headers().set(HttpHeaderNames.CONNECTION, "close");
 		// 下面的 `writeAndFlush(Unpooled.EMPTY_BUFFER)` 会flush
 		ctx.write(response);
 

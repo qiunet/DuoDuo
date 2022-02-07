@@ -6,7 +6,11 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.message.UriHttpMessageContent;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.RequestHandlerMapping;
+import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -21,6 +25,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected ChannelHandlerContext ctx;
 	private IHandler<RequestData> handler;
 	private Map<String , Object> attributes;
+	private static final Logger logger = LoggerFactory.getLogger(LoggerType.DUODUO);
 
 	protected BaseRequestContext(MessageContent content, ChannelHandlerContext ctx) {
 		this.ctx = ctx;
@@ -49,6 +54,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 
 	/**
 	 * 得到真实ip. http类型的父类
+	 * 2019/08/05 zhengj修改
 	 * @param headers
 	 * @return
 	 */
@@ -58,21 +64,25 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 			return ip;
 		}
 
-//		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
-//
-//		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
-//			return ip;
-//		}
+		if (!StringUtil.isEmpty(ip = headers.get("X-Forwarded-For")) && !"unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
 
 		return ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress().getHostAddress();
 	}

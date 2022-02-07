@@ -12,18 +12,28 @@ import org.qiunet.utils.string.StringUtil;
 
 /**
  * 时间date相关的工具类
- * @author qiunet
  *
+ * @author qiunet
  */
 public final class DateUtil {
 	private static final ThreadLocal<Map<String, SimpleDateFormat>> simpleDataFormatThreadLocal = new ThreadLocal<>();
+
+	/**
+	 * 系统当前时间戳
+	 * @return
+	 */
+	public static long currMilSeconds() {
+		return System.currentTimeMillis();
+	}
+
 	/***
 	 * 当前的秒
 	 * @return
 	 */
-	public static long currSeconds(){
-		return System.currentTimeMillis()/1000;
+	public static long currSeconds() {
+		return System.currentTimeMillis() / 1000;
 	}
+
 
 	private static SimpleDateFormat returnSdf(String format) {
 		Map<String, SimpleDateFormat> map = simpleDataFormatThreadLocal.get();
@@ -38,13 +48,21 @@ public final class DateUtil {
 		}
 		return sdf;
 	}
-	private DateUtil(){}
 
-	/**默认的时间格式(日期 时间)*/
+	private DateUtil() {
+	}
+
+	/**
+	 * 默认的时间格式(日期 时间)
+	 */
 	public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	/**默认的时间格式(日期)*/
+	/**
+	 * 默认的时间格式(日期)
+	 */
 	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-	/** 时分秒的 */
+	/**
+	 * 时分秒的
+	 */
 	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
 	public static final long DAY_MS = 24 * 3600 * 1000;
 	public static final long WEEK_MS = 7L * DAY_MS;
@@ -56,9 +74,10 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static String dateToString(Date date) {
-		if(date == null) return "";
+		if (date == null) return "";
 		return dateToString(date, DEFAULT_DATE_TIME_FORMAT);
 	}
+
 	/**
 	 * 日期转字符串 指定格式
 	 *
@@ -69,53 +88,63 @@ public final class DateUtil {
 	public static String dateToString(Date date, String format) {
 		return returnSdf(format).format(date);
 	}
+
 	/**
 	 * 字符串转日期 按指定格式
+	 *
 	 * @param stringValue
 	 * @param format
 	 * @return
 	 * @throws ParseException
 	 */
-	public static Date stringToDate(String stringValue,String format) throws ParseException{
+	public static Date stringToDate(String stringValue, String format) throws ParseException {
 		return returnSdf(format).parse(stringValue);
 	}
+
 	/**
 	 * 字符串转日期 按默认格式
+	 *
 	 * @param stringValue
 	 * @return
 	 * @throws ParseException
 	 */
-	public static Date stringToDate(String stringValue) throws ParseException{
-		return stringToDate(stringValue,DEFAULT_DATE_TIME_FORMAT);
+	public static Date stringToDate(String stringValue) throws ParseException {
+		return stringToDate(stringValue, DEFAULT_DATE_TIME_FORMAT);
 	}
+
 	/**
 	 * 获取当前日期是本周的周几
+	 *
 	 * @param date
 	 * @return
 	 */
-	public static int getDayOfWeek(Date date){
-		Calendar calendar=Calendar.getInstance();
+	public static int getDayOfWeek(Date date) {
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(date);
 		return calendar.get(Calendar.DAY_OF_WEEK);
 	}
+
 	/**
 	 * 获取当前日期是今年的第几周
+	 *
 	 * @param date
 	 * @return
 	 */
-	public static int getWeekOfYear(Date date){
-		Calendar cal=Calendar.getInstance();
+	public static int getWeekOfYear(Date date) {
+		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
 		return cal.get(Calendar.WEEK_OF_YEAR);
 	}
+
 	/**
 	 * 是否介于两个日期之间
+	 *
 	 * @param date
 	 * @param dateBefore
 	 * @param dateLast
 	 * @return
 	 */
-	public static boolean isBetweenDays(Date date,Date dateBefore,Date dateLast){
+	public static boolean isBetweenDays(Date date, Date dateBefore, Date dateLast) {
 		long d = date.getTime();
 		long d1 = dateBefore.getTime();
 		long d2 = dateLast.getTime();
@@ -125,18 +154,20 @@ public final class DateUtil {
 
 	/**
 	 * 时间的格式验证
+	 *
 	 * @param quartzStr
 	 * @param dt
 	 * @return
 	 */
-	public static  boolean anyCheckDate(String quartzStr,Date dt){
-		if(StringUtil.isEmpty(quartzStr))return false;
+	public static boolean anyCheckDate(String quartzStr, Date dt) {
+		if (StringUtil.isEmpty(quartzStr)) return false;
 		return new CronExpressionData(quartzStr).isValid(dt);
 	}
 
 	/**
 	 * 指定时间 加减 天数
-	 * @param dt 时间
+	 *
+	 * @param dt   时间
 	 * @param days 天数
 	 * @return
 	 */
@@ -173,6 +204,7 @@ public final class DateUtil {
 	public static Date addMonths(Date dt, int months) {
 		return dateAdjust(dt, months, Calendar.MONTH);
 	}
+
 	/***
 	 * 指定时间  加减 秒
 	 * @param dt
@@ -182,6 +214,7 @@ public final class DateUtil {
 	public static Date addSeconds(Date dt, int seconds) {
 		return dateAdjust(dt, seconds, Calendar.SECOND);
 	}
+
 	/***
 	 * 指定时间  加减 毫秒
 	 * @param dt
@@ -198,17 +231,19 @@ public final class DateUtil {
 		calendar.add(field, count);
 		return calendar.getTime();
 	}
+
 	/**
-	 *获取两个日期相差的秒数
+	 * 获取两个日期相差的秒数
+	 *
 	 * @return
-     */
-	public static Long getDiffSecond(Date endDate){
+	 */
+	public static Long getDiffSecond(Date endDate) {
 		Date current = new Date();
 		return getDiffSecond(current, endDate);
 	}
 
-	public static Long getDiffSecond(Date beginDate, Date endDate){
-		return (endDate.getTime() - beginDate.getTime())/1000;
+	public static Long getDiffSecond(Date beginDate, Date endDate) {
+		return (endDate.getTime() - beginDate.getTime()) / 1000;
 	}
 
 	/***
