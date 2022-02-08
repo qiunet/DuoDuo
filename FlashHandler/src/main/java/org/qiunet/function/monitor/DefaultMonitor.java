@@ -33,15 +33,15 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 	/**
 	 * 获取次数的一个接口
 	 */
-	private IMonitorTriggerNumMapping<SubType> numMapping;
+	private final IMonitorTriggerNumMapping<SubType> numMapping;
 	/**
 	 * 触发监控的接口
 	 */
-	private IMonitorTrigger<Type, SubType> trigger;
+	private final IMonitorTrigger<Type, SubType> trigger;
 	/**
-	 * 获取每个subType的监控触发时间的接口
+	 * 获取每个subType的监控触发毫秒时间的接口
 	 */
-	private ITriggerTimeMapping<SubType> timeMapping;
+	private final ITriggerTimeMapping<SubType> timeMapping;
 
 	/***
 	 * 以分为单位构造该类
@@ -70,6 +70,12 @@ public class DefaultMonitor<Type, SubType> implements IMonitor<Type, SubType> {
 		this(numMapping, trigger, subType -> unit.toMillis(triggerTime));
 	}
 
+	/**
+	 * 数量  时间 触发反馈都交给外面传入.
+	 * @param numMapping 数量mapping
+	 * @param trigger 对外触发器
+	 * @param timeMapping 毫秒间隔时间mapping
+	 */
 	public DefaultMonitor(IMonitorTriggerNumMapping<SubType> numMapping,
 						  IMonitorTrigger<Type, SubType> trigger,
 						  ITriggerTimeMapping<SubType> timeMapping) {

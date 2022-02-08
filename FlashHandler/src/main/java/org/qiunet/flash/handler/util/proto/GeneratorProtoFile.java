@@ -1,11 +1,9 @@
-package org.qiunet.flash.handler.util;
+package org.qiunet.flash.handler.util.proto;
 
-import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
@@ -30,10 +28,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	public static final String PROTO_OUTPUT_DIR = "proto_output_dir";
 
 	private static final List<Class<?>> pbClasses = Lists.newArrayList();
-	static {
-		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("$");
-		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("_");
-	}
+
 	private GeneratorProtoFile(){}
 	/**
 	 * 生成协议文件
@@ -42,9 +37,18 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @throws Exception -
 	 */
 	public static void generator(File directory, ProtoGeneratorModel model) throws Exception {
+		generator(directory, model, ProtobufVersion.V3);
+	}
+	/**
+	 * 生成协议文件
+	 * @param directory 生成的目录
+	 * @param model 生成类型
+	 * @throws Exception -
+	 */
+	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-		model.generatorProto(directory, pbClasses);
+		model.generatorProto(new GeneratorProtoParam(pbClasses, version, directory));
 	}
 
 	@Override

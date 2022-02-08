@@ -5,7 +5,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.util.SkipProtoGenerator;
+import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.secret.MD5Util;
 

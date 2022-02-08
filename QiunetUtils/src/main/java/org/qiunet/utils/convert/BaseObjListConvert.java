@@ -2,7 +2,6 @@ package org.qiunet.utils.convert;
 
 
 import org.qiunet.utils.exceptions.CustomException;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -17,7 +16,7 @@ import java.util.List;
  * 2020-02-04 12:13
  **/
 public abstract class BaseObjListConvert<T> extends BaseObjConvert<List<T>> {
-	private Class<T> clazz;
+	private final Class<T> clazz;
 
 	public BaseObjListConvert() {
 		Type[] actualTypeArguments = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
@@ -36,7 +35,7 @@ public abstract class BaseObjListConvert<T> extends BaseObjConvert<List<T>> {
 			return false;
 		}
 
-		return ((ParameterizedTypeImpl) genericType).getActualTypeArguments()[0] == clazz;
+		return ((ParameterizedType) genericType).getActualTypeArguments()[0] == clazz;
 	}
 
 	@Override

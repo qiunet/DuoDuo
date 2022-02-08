@@ -2,7 +2,7 @@ package org.qiunet.test.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
-import org.qiunet.flash.handler.util.NeedProtoGenerator;
+import org.qiunet.flash.handler.util.proto.NeedProtoGenerator;
 
 /***
  *

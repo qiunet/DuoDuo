@@ -6,7 +6,7 @@ import org.qiunet.cross.transaction.TransferJsonData;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.util.SkipProtoGenerator;
+import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;

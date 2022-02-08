@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.proto;
 
-import org.qiunet.flash.handler.common.enums.ProtoGeneratorModel;
-import org.qiunet.flash.handler.util.GeneratorProtoFile;
+import org.qiunet.flash.handler.util.proto.GeneratorProtoFile;
+import org.qiunet.flash.handler.util.proto.ProtoGeneratorModel;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 

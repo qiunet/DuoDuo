@@ -453,4 +453,23 @@ public final class ReflectUtil {
 		}while (clazz != Object.class);
 		return null;
 	}
+
+	/**
+	 * 得到list field class的泛型
+	 * @return
+	 */
+	public static Class<?> getListGenericParameterizedType(Field field) {
+		if (! List.class.isAssignableFrom(field.getType())) {
+			throw new CustomException("Field {}.{} not list type field!", field.getDeclaringClass().getName(), field.getName());
+		}
+
+		Type genericType = field.getGenericType();
+		if (! (genericType instanceof ParameterizedType)) {
+			throw new CustomException("Field {}.{} not have generic type field!", field.getDeclaringClass().getName(), field.getName());
+		}
+
+		ParameterizedType ptype = (ParameterizedType) genericType;
+		Type[] actualTypeArguments = ptype.getActualTypeArguments();
+		return (Class<?>) actualTypeArguments[0];
+	}
 }

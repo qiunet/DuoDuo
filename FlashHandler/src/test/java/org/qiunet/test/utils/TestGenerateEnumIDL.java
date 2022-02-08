@@ -2,7 +2,8 @@ package org.qiunet.test.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.flash.handler.util.ProtobufIDLGenerator;
+import org.qiunet.flash.handler.util.proto.ProtoIDLGenerator;
+import org.qiunet.flash.handler.util.proto.ProtobufVersion;
 import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,10 +20,10 @@ public class TestGenerateEnumIDL {
 
 	@Test
 	public void test() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-		Method method = ProtobufIDLGenerator.class.getDeclaredMethod("generateEnumIDL", StringBuilder.class, Class.class);
+		Method method = ProtoIDLGenerator.class.getDeclaredMethod("generateEnumIDL", StringBuilder.class, Class.class);
 		ReflectUtil.makeAccessible(method);
 		StringBuilder sb = new StringBuilder();
-		method.invoke(null, sb, SortType.class);
+		method.invoke(new ProtoIDLGenerator(ProtobufVersion.V3), sb, SortType.class);
 
 		Assertions.assertEquals(sb.toString(), "enum SortType {  \n" +
 				"\tSortType_A=0;\n" +

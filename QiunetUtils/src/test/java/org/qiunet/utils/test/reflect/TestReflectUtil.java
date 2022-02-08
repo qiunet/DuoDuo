@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.test.base.BaseTest;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 /***
  * 测试 ReflectUtil
  *
@@ -18,6 +21,8 @@ public class TestReflectUtil extends BaseTest {
 
 	public static class Test1 implements ITest1 {}
 	public static class Test2 implements ITest2 {}
+
+	private List<ITest1> list;
 
 	public static abstract class BaseReflectTestClass<T extends ITest1, F extends ITest2> {
 		abstract T getTest1();
@@ -47,5 +52,12 @@ public class TestReflectUtil extends BaseTest {
 
 		Class<?> type1 = ReflectUtil.findGenericParameterizedType(NoParamClass.class, clz -> true);
 		Assertions.assertNull(type1);
+	}
+
+	@Test
+	public void testListGenericType() throws NoSuchFieldException {
+		Field field = TestReflectUtil.class.getDeclaredField("list");
+		Class<?> type = ReflectUtil.getListGenericParameterizedType(field);
+		Assertions.assertEquals(type, ITest1.class);
 	}
 }
