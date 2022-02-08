@@ -21,5 +21,12 @@ public class TestBitUtil {
 
 		int ss3 = BitUtil.setBit(0, 12);
 		Assertions.assertTrue(BitUtil.isBitSet(ss3, 12));
+
+		int ss4 = BitUtil.setBit(ss3, 1);
+		int ss5 = BitUtil.setBit(ss4, 2);
+
+		int ss6 = BitUtil.removeBit(ss5, 12);
+		Assertions.assertEquals(6, ss6);
+		Assertions.assertFalse(BitUtil.isBitSet(ss6, 12));
 	}
 }

@@ -23,11 +23,32 @@ public final class BitUtil {
 		return ori & flag;
 	}
 
-
+	/**
+	 * 给ori值设置index位值
+	 * 超大值可以参考{@link java.util.BitSet}
+	 *
+	 * @param ori 原始值
+	 * @param index index
+	 * @return 最新值
+	 */
 	public static int setBit(int ori, int index) {
 		return ori | (1 << index);
 	}
-
+	/**
+	 * 给ori值取消设置index位值
+	 * @param ori 原始值
+	 * @param index index
+	 * @return 最新值
+	 */
+	public static int removeBit(int ori, int index) {
+		 return ori & (~(1 << index));
+	}
+	/**
+	 * 判断ori值index位是否有值
+	 * @param ori 原始值
+	 * @param index index
+	 * @return 最新值
+	 */
 	public static boolean isBitSet(int ori, int index) {
 		return (ori & (1 << index)) != 0;
 	}
