@@ -1,6 +1,8 @@
-package org.qiunet.flash.handler.context.request.param.check;
+package org.qiunet.flash.handler.context.request.check.param;
 
+import io.netty.channel.Channel;
 import org.qiunet.cfg.manager.keyval.KeyValManager;
+import org.qiunet.flash.handler.context.request.check.IRequestCheck;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -14,7 +16,7 @@ import java.lang.reflect.Field;
  * @author qiunet
  * 2022/1/5 17:03
  */
-class NumberParamCheck implements IParamCheck {
+class RequestNumberParamCheck implements IRequestCheck {
 
 	private final Field field;
 	/**
@@ -31,7 +33,7 @@ class NumberParamCheck implements IParamCheck {
 	private final boolean positive;
 
 
-	public NumberParamCheck(Field field) {
+	public RequestNumberParamCheck(Field field) {
 		this.field = field;
 
 		NumberParam param = this.field.getAnnotation(NumberParam.class);
@@ -41,7 +43,7 @@ class NumberParamCheck implements IParamCheck {
 	}
 
 	@Override
-	public void check(IChannelData data) {
+	public void check(Channel channel, IChannelData data) {
 		Number val = (Number) ReflectUtil.getField(this.field, data);
 		if (positive && val.longValue() < 0) {
 			throw StatusResultException.valueOf(IGameStatus.NUMBER_PARAM_ERROR);

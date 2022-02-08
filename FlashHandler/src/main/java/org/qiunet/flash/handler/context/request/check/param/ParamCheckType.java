@@ -1,4 +1,6 @@
-package org.qiunet.flash.handler.context.request.param.check;
+package org.qiunet.flash.handler.context.request.check.param;
+
+import org.qiunet.flash.handler.context.request.check.IRequestCheck;
 
 import java.lang.reflect.Field;
 
@@ -7,23 +9,23 @@ import java.lang.reflect.Field;
  * @author qiunet
  * 2022/1/5 17:56
  */
-enum ParamCheckType {
+public enum ParamCheckType {
 
 	STRING {
 		@Override
-		boolean match(Field field) {
+		public boolean match(Field field) {
 			return field.isAnnotationPresent(StringParam.class) && field.getType() == String.class;
 		}
 
 		@Override
-		IParamCheck build(Field field) {
-			return new StringParamCheck(field);
+		public IRequestCheck build(Field field) {
+			return new RequestStringParamCheck(field);
 		}
 	},
 
 	NUMBER {
 		@Override
-		boolean match(Field field) {
+		public boolean match(Field field) {
 			return field.isAnnotationPresent(NumberParam.class) && (
 					Number.class.isAssignableFrom(field.getType())
 					|| field.getType() == double.class
@@ -34,8 +36,8 @@ enum ParamCheckType {
 		}
 
 		@Override
-		IParamCheck build(Field field) {
-			return new NumberParamCheck(field);
+		public IRequestCheck build(Field field) {
+			return new RequestNumberParamCheck(field);
 		}
 	};
 
@@ -44,13 +46,13 @@ enum ParamCheckType {
 	 * @param field
 	 * @return
 	 */
-	abstract boolean match(Field field);
+	public abstract boolean match(Field field);
 
 	/**
 	 * 给出  IParamCheck
 	 * @param field
 	 * @return
 	 */
-	abstract IParamCheck build(Field field);
-	static final ParamCheckType [] values = values();
+	public abstract IRequestCheck build(Field field);
+	public static final ParamCheckType [] values = values();
 }

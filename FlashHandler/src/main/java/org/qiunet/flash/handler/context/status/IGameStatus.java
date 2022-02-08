@@ -27,6 +27,10 @@ public interface IGameStatus {
 	IGameStatus STRING_PARAM_LENGTH_ERROR = BasicGameStatus.STRING_PARAM_LENGTH_ERROR;
 	/**字符串屏蔽词错误*/
 	IGameStatus STRING_PARAM_BAD_WORD_ERROR = BasicGameStatus.STRING_PARAM_BAD_WORD_ERROR;
+	/**请求cd中*/
+	IGameStatus REQUEST_CD_ING = BasicGameStatus.REQUEST_CD_ING;
+
+
 	/** 参数错误 */
 	IGameStatus PARAMS_ERROR = BasicGameStatus.PARAMS_ERROR;
 	/**404*/
@@ -62,6 +66,7 @@ public interface IGameStatus {
 		STRING_PARAM_LENGTH_ERROR(13, "字符长度错误"),
 		STRING_PARAM_BAD_WORD_ERROR(14, "字符含有屏蔽词"),
 
+		REQUEST_CD_ING(15, "请求cd中"),
 
 		HANdLER_NOT_FOUND(404, "没有Cmdid对应的RequestHandler"),
 		EXCEPTION(500, "服务器出现问题了"),

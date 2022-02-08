@@ -27,7 +27,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	@Override
 	public void execute(P p) {
 		try {
-			ChannelDataMapping.paramCheck(getRequestData());
+			ChannelDataMapping.requestCheck(channel, getRequestData());
 			this.handlerRequest();
 		}catch (Exception e) {
 			IChannelMessage<IChannelData> protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);

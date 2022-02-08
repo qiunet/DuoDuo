@@ -56,7 +56,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 		IChannelData channelData = JsonUtil.getGeneralObjWithField(data, aClass);
 
-		ChannelDataMapping.paramCheck(channelData);
+		ChannelDataMapping.requestCheck(context.channel(), channelData);
 
 		GmRequestContext<IChannelData> debugContext = new GmRequestContext<>(playerActor, channelData, protocolID);
 		((IPersistConnHandler<PlayerActor, IChannelData>) handler).handler(playerActor, new IPersistConnRequest<IChannelData>() {

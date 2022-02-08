@@ -1,10 +1,10 @@
 package org.qiunet.test.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.flash.handler.context.request.check.param.NumberParam;
+import org.qiunet.flash.handler.context.request.check.param.StringParam;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.request.param.check.NumberParam;
-import org.qiunet.flash.handler.context.request.param.check.StringParam;
 
 import static org.qiunet.test.handler.proto.ProtocolId.Test.WS_PB_LOGIN_REQ;
 

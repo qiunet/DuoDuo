@@ -1,6 +1,8 @@
-package org.qiunet.flash.handler.context.request.param.check;
+package org.qiunet.flash.handler.context.request.check.param;
 
+import io.netty.channel.Channel;
 import org.qiunet.cfg.manager.keyval.KeyValManager;
+import org.qiunet.flash.handler.context.request.check.IRequestCheck;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -16,7 +18,7 @@ import java.lang.reflect.Field;
  * @author qiunet
  * 2022/1/5 18:01
  */
-class StringParamCheck implements IParamCheck {
+class RequestStringParamCheck implements IRequestCheck {
 	private final Field field;
 	/**
 	 * 自定义 最小值
@@ -43,7 +45,7 @@ class StringParamCheck implements IParamCheck {
 	 */
 	private final boolean checkBadWorld;
 
-	public StringParamCheck(Field field) {
+	public RequestStringParamCheck(Field field) {
 		this.field = field;
 
 		StringParam param = this.field.getAnnotation(StringParam.class);
@@ -58,7 +60,7 @@ class StringParamCheck implements IParamCheck {
 	}
 
 	@Override
-	public void check(IChannelData data) {
+	public void check(Channel channel, IChannelData data) {
 		String val = (String) ReflectUtil.getField(this.field, data);
 		if (this.trim && !StringUtil.isEmpty(val)) {
 			val = StringUtil.powerfulTrim(val);

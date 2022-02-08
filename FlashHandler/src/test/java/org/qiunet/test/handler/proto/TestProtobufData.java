@@ -38,13 +38,13 @@ public class TestProtobufData {
 	public void testParamCheck() {
 		WsPbLoginRequest request1 = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 1);
 		StatusResultException exception = Assertions.assertThrows(StatusResultException.class, () -> {
-			ChannelDataMapping.paramCheck(request1);
+			ChannelDataMapping.requestCheck(null, request1);
 		});
 		Assertions.assertEquals(IGameStatus.NUMBER_PARAM_ERROR, exception.getStatus());
 
 		WsPbLoginRequest request2 = WsPbLoginRequest.valueOf("qiunet", "毛泽~东", 11);
 		exception = Assertions.assertThrows(StatusResultException.class, () -> {
-			ChannelDataMapping.paramCheck(request2);
+			ChannelDataMapping.requestCheck(null, request2);
 		});
 		Assertions.assertEquals(IGameStatus.STRING_PARAM_BAD_WORD_ERROR, exception.getStatus());
 

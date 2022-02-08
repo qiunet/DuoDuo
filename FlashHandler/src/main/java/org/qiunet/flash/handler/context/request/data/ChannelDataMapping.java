@@ -3,12 +3,13 @@ package org.qiunet.flash.handler.context.request.data;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import io.netty.channel.Channel;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
-import org.qiunet.flash.handler.context.request.param.check.ParamCheckList;
+import org.qiunet.flash.handler.context.request.check.RequestCheckList;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.collection.DuMap;
@@ -44,7 +45,7 @@ public class ChannelDataMapping implements IApplicationContextAware {
 	/**
 	 * 参数检查相关
 	 */
-	private static final Map<Class<? extends IChannelData>, ParamCheckList> paramChecks = Maps.newHashMap();
+	private static final Map<Class<? extends IChannelData>, RequestCheckList> paramChecks = Maps.newHashMap();
 
 	private ChannelDataMapping(){}
 
@@ -112,13 +113,13 @@ public class ChannelDataMapping implements IApplicationContextAware {
 	}
 
 	/**
-	 * 对参数进行检查.  会抛出{@link org.qiunet.flash.handler.context.status.StatusResultException}异常.
+	 * 对请求进行检查.  会抛出{@link org.qiunet.flash.handler.context.status.StatusResultException}异常.
 	 * @param channelData
 	 */
-	public static void paramCheck(IChannelData channelData) {
-		ParamCheckList paramCheckList = paramChecks.get(channelData.getClass());
-		if (paramCheckList != null) {
-			paramCheckList.check(channelData);
+	public static void requestCheck(Channel channel, IChannelData channelData) {
+		RequestCheckList requestCheckList = paramChecks.get(channelData.getClass());
+		if (requestCheckList != null) {
+			requestCheckList.check(channel, channelData);
 		}
 	}
 
@@ -153,9 +154,9 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		logger.info("ProtocolID [{}] RequestHandler [{}] was found and mapping.", protocolId, handler.getClass().getSimpleName());
 		handlerMapping.put(protocolId, handler);
 
-		ParamCheckList paramCheckList = ParamCheckList.doParse(type);
-		if (paramCheckList != null) {
-			paramChecks.put(type, paramCheckList);
+		RequestCheckList requestCheckList = RequestCheckList.doParse(protocolId, type);
+		if (requestCheckList != null) {
+			paramChecks.put(type, requestCheckList);
 		}
 	}
 }
