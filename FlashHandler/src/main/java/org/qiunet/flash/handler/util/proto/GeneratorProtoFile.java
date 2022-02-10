@@ -27,7 +27,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	// 如果使用server.conf配置, 协议存放目录
 	public static final String PROTO_OUTPUT_DIR = "proto_output_dir";
 
-	private static final List<Class<?>> pbClasses = Lists.newArrayList();
+	private static final List<Class<?>> classes = Lists.newArrayList();
 
 	private GeneratorProtoFile(){}
 	/**
@@ -48,7 +48,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-		model.generatorProto(new GeneratorProtoParam(pbClasses, version, directory));
+		model.generatorProto(new GeneratorProtoParam(classes, version, directory));
 	}
 
 	@Override
@@ -59,6 +59,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 
 		List<Class<?>> collect = classes.stream()
 			.filter(clz -> !Modifier.isInterface(clz.getModifiers()))
+			.filter(clz -> ! clz.isAnnotationPresent(SkipProtoGenerator.class))
 			.filter(clz -> !Modifier.isAbstract(clz.getModifiers()))
 				.sorted((o1, o2) -> {
 					int protocolId1 = o1.isAnnotationPresent(ChannelData.class) ? o1.getAnnotation(ChannelData.class).ID() : 0;
@@ -67,7 +68,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 				})
 			.collect(Collectors.toList());
 
-		pbClasses.addAll(collect);
+		GeneratorProtoFile.classes.addAll(collect);
 	}
 
 	@Override

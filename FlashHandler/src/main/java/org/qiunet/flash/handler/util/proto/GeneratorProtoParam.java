@@ -1,9 +1,12 @@
 package org.qiunet.flash.handler.util.proto;
 
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+
 import java.io.File;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /***
  *
@@ -20,7 +23,7 @@ public class GeneratorProtoParam {
 	 */
 	private final Set<Class<?>> subClasses = new HashSet<>();
 	/**
-	 * 所有需要generator proto的类
+	 * 所有需要generator proto的 IChannelData类
 	 */
 	private final List<Class<?>> allPbClass;
 	/**
@@ -32,17 +35,21 @@ public class GeneratorProtoParam {
 	 */
 	private final File directory;
 
-	public GeneratorProtoParam(List<Class<?>> allPbClass, ProtobufVersion version, File directory) {
-		this.allPbClass = allPbClass;
+	public GeneratorProtoParam(List<Class<?>> allClass, ProtobufVersion version, File directory) {
 		this.directory = directory;
 		this.version = version;
 
-		for (Class<?> aClass : allPbClass) {
+		for (Class<?> aClass : allClass) {
 			if (ProtoIDLGenerator.recursiveObjClass(aClass, subClasses)) {
 				haveSubClass.add(aClass);
 			}
 		}
+
+		this.allPbClass = allClass.stream()
+				.filter(IChannelData.class::isAssignableFrom)
+				.collect(Collectors.toList());
 	}
+
 
 	public List<Class<?>> getAllPbClass() {
 		return allPbClass;

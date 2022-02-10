@@ -207,7 +207,6 @@ public class ProtoIDLGenerator {
 	 */
 	public void generateCommonClassIDL(StringBuilder code, Set<Class<?>> subClassSet) {
 		subClassSet.stream()
-		.filter(cls -> ! cls.isAnnotationPresent(SkipProtoGenerator.class))
 		.sorted(((o1, o2) -> ComparisonChain.start().compare(o1.getSimpleName(), o2.getSimpleName()).result()))
 		.forEach(cls -> {
 			if (cls.isEnum()) {
@@ -313,10 +312,6 @@ public class ProtoIDLGenerator {
 		Map<String, Integer> protoRspIDEnum = Maps.newHashMapWithExpectedSize(allPbClass.size());
 		protoRspIDEnum.put("ProtoRspId_NONE", 0);
 		for (Class<?> pbClass : allPbClass) {
-			if (pbClass.isAnnotationPresent(SkipProtoGenerator.class)) {
-				continue;
-			}
-
 			int protocolId = getProtocolId(pbClass);
 			if (protocolId != 0) {
 				if (ChannelDataMapping.getHandler(protocolId) != null) {

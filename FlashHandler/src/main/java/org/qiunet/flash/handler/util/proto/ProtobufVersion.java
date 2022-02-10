@@ -53,7 +53,7 @@ public enum ProtobufVersion {
 	/**
 	 * 共用class的proto文件名.
 	 */
-	public static final String COMMON_CLASS_PROTO_FILE_NAME = "common.proto";
+	public static final String COMMON_CLASS_PROTO_FILE_NAME = "__common__.proto";
 	/**
 	 * import 语句
 	 */
