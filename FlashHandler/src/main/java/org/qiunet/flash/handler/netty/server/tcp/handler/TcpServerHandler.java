@@ -41,7 +41,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 	public void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 
 		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
-			ctx.writeAndFlush(params.getStartupContext().serverPongMsg().encode());
+			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
 			return;
 		}
 
@@ -55,7 +55,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause).encode()).addListener(ChannelFutureListener.CLOSE);
+			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
 			if (session != null) {
 				session.close(CloseCause.EXCEPTION);
 			}else {

@@ -5,7 +5,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
@@ -35,10 +34,9 @@ public class TestHttpBootStrap extends HttpBootStrap {
 	public void testHttpProtobuf() {
 		final String test = "[测试testHttpProtobuf]";
 		HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
-		MessageContent content = new MessageContent(ProtocolId.Test.HTTP_PB_LOGIN_REQ, request.toByteArray());
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
-			.withBytes(ADAPTER.getAllBytes(content))
+			.withBytes(ADAPTER.getAllBytes(ProtocolId.Test.HTTP_PB_LOGIN_REQ, request.toByteArray()))
 			.asyncExecutor((call, resp) -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				// 跳过头

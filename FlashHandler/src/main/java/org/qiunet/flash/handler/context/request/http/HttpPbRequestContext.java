@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -21,7 +22,7 @@ public  class HttpPbRequestContext<RequestData extends IChannelData, ResponseDat
 	}
 
 	@Override
-	protected byte[] getResponseDataBytes(ResponseData responseData) {
-		return  responseData.toByteArray();
+	protected DefaultProtobufMessage getResponseDataMessage(ResponseData responseData) {
+		return  responseData.buildResponseMessage();
 	}
 }

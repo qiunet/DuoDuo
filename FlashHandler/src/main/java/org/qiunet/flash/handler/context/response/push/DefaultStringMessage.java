@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import io.netty.util.CharsetUtil;
-import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * 默认的string 的message
@@ -10,22 +9,20 @@ import org.qiunet.flash.handler.common.message.MessageContent;
  */
 public class DefaultStringMessage implements IChannelMessage<String> {
 
-	private int protocolId;
-	private String message;
+	private final int protocolId;
 
+	private final String message;
+
+	private final byte[] bytes;
 	public DefaultStringMessage(int protocolId, String message) {
 		this.message = message;
 		this.protocolId = protocolId;
-	}
-
-	@Override
-	public MessageContent encode() {
-		return new MessageContent(protocolId, bytes());
+		this.bytes = message.getBytes(CharsetUtil.UTF_8);
 	}
 
 	@Override
 	public byte[] bytes() {
-		return message.getBytes(CharsetUtil.UTF_8);
+		return bytes;
 	}
 
 	@Override

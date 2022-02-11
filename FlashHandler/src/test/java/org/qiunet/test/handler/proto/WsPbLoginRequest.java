@@ -2,7 +2,6 @@ package org.qiunet.test.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.context.request.check.param.NumberParam;
-import org.qiunet.flash.handler.context.request.check.param.StringParam;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
@@ -19,7 +18,6 @@ public class WsPbLoginRequest implements IChannelData {
 
 	private String account;
 
-	@StringParam(checkBadWord = true)
 	private String secret;
 
 	@NumberParam(min = 10, max = 100)

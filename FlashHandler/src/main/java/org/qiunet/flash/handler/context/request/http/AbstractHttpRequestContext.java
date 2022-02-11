@@ -13,11 +13,11 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
-import org.qiunet.flash.handler.netty.bytebuf.ByteBufFactory;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.exceptions.CustomException;
@@ -34,7 +34,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  *         Created on 17/3/17 14:28.
  */
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
-	private HttpRequest request;
+	private final HttpRequest request;
 	protected HttpBootstrapParams params;
 	private Map<String ,List<String>> parameters;
 
@@ -129,14 +129,14 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		}
 
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
-		byte [] data = getResponseDataBytes(responseData);
+		IChannelMessage<?> responseDataMessage = getResponseDataMessage(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
 		if (getUriPath().equals(params.getGameURIPath())) {
 			// 不是游戏业务. 不写业务头.
-			content = ChannelUtil.messageContentToByteBuf(new MessageContent(messageContent.getProtocolId(), data), channel);
+			content = ChannelUtil.messageContentToByteBuf(responseDataMessage, channel);
 		}else {
-			content = ByteBufFactory.getInstance().alloc(data);
+			content = ChannelUtil.messageContentToByteBufWithoutHeader(responseDataMessage);
 		}
 
 		FullHttpResponse response = new DefaultFullHttpResponse(
@@ -169,7 +169,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	 * @param responseData
 	 * @return
 	 */
-	protected abstract byte[] getResponseDataBytes(ResponseData responseData);
+	protected abstract IChannelMessage<?> getResponseDataMessage(ResponseData responseData);
 
 	private Map<String, Cookie> cookieMap;
 	private Map<String, Cookie> cookies(){

@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.response.push;
 
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 /**
@@ -18,18 +17,13 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 	 */
 	private final IChannelData message;
 	/**
-	 * 消息体
+	 * 消息体内容
 	 */
-	private final MessageContent msgContent;
+	private final byte [] bytes;
 	public DefaultProtobufMessage(int protocolId, IChannelData message) {
 		this.message = message;
 		this.protocolId = protocolId;
-		this.msgContent = new MessageContent(protocolId, bytes());
-	}
-
-	@Override
-	public MessageContent encode() {
-		return msgContent;
+		this.bytes = message.toByteArray();
 	}
 
 	@Override
@@ -39,7 +33,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 
 	@Override
 	public byte[] bytes() {
-		return message.toByteArray();
+		return bytes;
 	}
 
 	@Override

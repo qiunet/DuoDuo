@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.message.MessageContent;
 
 /***
  * 协议头类型
@@ -16,8 +15,8 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	server {
 		@Override
-		public IProtocolHeader outHeader(MessageContent content) {
-			return new ServerProtocolHeader(content);
+		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+			return new ServerProtocolHeader(protocolId, bytes);
 		}
 
 		@Override
@@ -40,8 +39,8 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	node{
 		@Override
-		public IProtocolHeader outHeader(MessageContent content) {
-			return new NodeProtocolHeader(content);
+		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+			return new NodeProtocolHeader(protocolId, bytes);
 		}
 
 		@Override
@@ -64,8 +63,8 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	client{
 		@Override
-		public IProtocolHeader outHeader(MessageContent content) {
-			return new ClientProtocolHeader(content);
+		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+			return new ClientProtocolHeader(protocolId, bytes);
 		}
 
 		@Override

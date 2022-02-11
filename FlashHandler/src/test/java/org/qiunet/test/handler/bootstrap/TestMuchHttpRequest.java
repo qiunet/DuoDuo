@@ -12,6 +12,8 @@ import org.qiunet.utils.http.HttpRequest;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
+import static org.qiunet.test.handler.proto.ProtocolId.Test.HTTP_PB_LOGIN_REQ;
+
 /**
  * 大量请求的泄漏测试
  * Created by qiunet.
@@ -34,7 +36,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					final String test = "[测试testHttpProtobuf]"+i;
 					HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 					HttpRequest.post(params.getURI())
-						.withBytes(ADAPTER.getAllBytes(request.buildResponseMessage().encode()))
+						.withBytes(ADAPTER.getAllBytes(HTTP_PB_LOGIN_REQ, request.toByteArray()))
 						.asyncExecutor((call, response) -> {
 							Assertions.assertEquals(response.code() , HttpResponseStatus.OK.code());
 							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());

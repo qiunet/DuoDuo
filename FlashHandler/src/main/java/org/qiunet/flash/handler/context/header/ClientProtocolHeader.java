@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
@@ -40,13 +39,13 @@ public class ClientProtocolHeader implements IProtocolHeader {
 	 * 构造函数
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
-	 * @param content 后面byte数组
+	 * @param bytes 后面byte数组
 	 */
-	public ClientProtocolHeader(MessageContent content) {
+	public ClientProtocolHeader(int protocolId, byte [] bytes) {
 		this.magic = MAGIC_CONTENTS;
-		this.length = content.bytes().length;
-		this.protocolId = content.getProtocolId();
-		this.crc = (int) CrcUtil.getCrc32Value(content.bytes());
+		this.length = bytes.length;
+		this.protocolId = protocolId;
+		this.crc = (int) CrcUtil.getCrc32Value(bytes);
 	}
 
 	public ClientProtocolHeader(ByteBuf in, Channel channel) {

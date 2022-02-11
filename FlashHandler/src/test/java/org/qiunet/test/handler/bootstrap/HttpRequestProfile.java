@@ -47,7 +47,7 @@ public class HttpRequestProfile {
 		final String test = "[测试testHttpProtobuf]";
 		MessageContent content = new MessageContent(ProtocolId.Test.HTTP_PB_LOGIN_REQ, test.getBytes(CharsetUtil.UTF_8));
 		return HttpRequest.post(params.getURI())
-			.withBytes(ADAPTER.getAllBytes(content))
+			.withBytes(ADAPTER.getAllBytes(content.getProtocolId(), content.bytes()))
 			.executor(resp -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				buffer.position(ADAPTER.getReqHeaderLength());

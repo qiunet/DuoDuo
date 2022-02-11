@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 
 /**
@@ -18,8 +19,8 @@ public class HttpStringRequestContext extends AbstractHttpRequestContext<String,
 	}
 
 	@Override
-	protected byte[] getResponseDataBytes(String s) {
-		return s.getBytes(CharsetUtil.UTF_8);
+	protected DefaultBytesMessage getResponseDataMessage(String s) {
+		return new DefaultBytesMessage(getHandler().getProtocolID(), s.getBytes(CharsetUtil.UTF_8));
 	}
 
 	@Override

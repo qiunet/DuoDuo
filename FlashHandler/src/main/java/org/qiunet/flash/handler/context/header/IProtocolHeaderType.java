@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.message.MessageContent;
 
 import java.nio.ByteBuffer;
 
@@ -16,7 +15,7 @@ public interface IProtocolHeaderType {
 	 * @param content
 	 * @return
 	 */
-	IProtocolHeader outHeader(MessageContent content);
+	IProtocolHeader outHeader(int protocolId, byte [] bytes);
 	/***
 	 * 使用ByteBuf
 	 * @param in
@@ -50,12 +49,11 @@ public interface IProtocolHeaderType {
 	 * 获得所有bytes数据
 	 * @return
 	 */
-	default byte[] getAllBytes(MessageContent content){
-		IProtocolHeader header = outHeader(content);
-		byte[] bytes = header.dataBytes();
-		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + content.bytes().length);
+	default byte[] getAllBytes(int protocolId, byte [] bytes){
+		IProtocolHeader header = outHeader(protocolId, bytes);
+		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + bytes.length);
+		allocate.put(header.dataBytes());
 		allocate.put(bytes);
-		allocate.put(content.bytes());
 		return allocate.array();
 	}
 }

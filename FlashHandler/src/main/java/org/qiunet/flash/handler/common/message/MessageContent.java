@@ -30,11 +30,6 @@ public class MessageContent {
 		this.byteBuffer = buffer.nioBuffer();
 	}
 
-	public MessageContent(String uriPath, byte[] bytes) {
-		this.uriPath = uriPath;
-		this.bytes = bytes;
-	}
-
 	public MessageContent(String uriPath, ByteBuf buffer) {
 		this.byteBuffer = buffer.nioBuffer();
 		this.uriPath = uriPath;
@@ -58,6 +53,10 @@ public class MessageContent {
 	}
 
 	public ByteBuffer byteBuffer(){
+		if (bytes != null) {
+			return ByteBuffer.wrap(bytes);
+		}
+
 		return byteBuffer;
 	}
 

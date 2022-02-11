@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
@@ -11,12 +10,6 @@ import org.qiunet.utils.string.ToString;
  * 17/12/11
  */
 public interface IChannelMessage<T> {
-	/***
-	 * push 消息 编码
-	 * @return
-	 */
-	MessageContent encode();
-
 	/***
 	 * 得到消息的内容
 	 * @return

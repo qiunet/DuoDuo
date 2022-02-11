@@ -30,7 +30,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 					.setAddress("localhost", port).build(), new Trigger());
 				for (int j = 0; j < requestCount; j++) {
 					String text = "testMuchWebSocket: "+j;
-					WsPbLoginRequest wsPbLoginRequest = WsPbLoginRequest.valueOf(text, text, 1000);
+					WsPbLoginRequest wsPbLoginRequest = WsPbLoginRequest.valueOf(text, text, 99);
 					client.sendMessage(wsPbLoginRequest);
 				}
 			}).start();

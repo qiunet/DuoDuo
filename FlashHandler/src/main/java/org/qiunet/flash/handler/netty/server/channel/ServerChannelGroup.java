@@ -40,7 +40,7 @@ public abstract class ServerChannelGroup extends DefaultChannelGroup {
 	 * @return
 	 */
 	public ChannelGroupFuture broadcast(IChannelMessage message, ChannelMatcher matcher) {
-		return super.writeAndFlush(message.encode(), matcher, false);
+		return super.writeAndFlush(message, matcher, false);
 	}
 
 	@Override

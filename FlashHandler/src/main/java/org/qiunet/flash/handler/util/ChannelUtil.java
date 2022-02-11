@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -40,32 +41,37 @@ public final class ChannelUtil {
 	}
 
 	/***
-	 * 将一个MessageContent 写入byteBuf
-	 * @param content
-	 * @param channel
-	 */
-	public static void messageContentToByteBuf(MessageContent content, Channel channel, ByteBuf out) {
-		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(content);
-		out.writeBytes(header.dataBytes());
-		out.writeBytes(content.bytes());
-		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes()));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(content.bytes()));
-		}
-	}
-	/***
 	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
-	 * @param content
+	 * @param message
 	 * @param channel
 	 * @return
 	 */
-	public static ByteBuf messageContentToByteBuf(MessageContent content, Channel channel) {
+	public static ByteBuf messageContentToByteBuf(IChannelMessage<?> message, Channel channel) {
+		byte[] bytes = message.bytes();
+
 		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(content);
-		//必须先执行encodeBytes 函数, 内部可能会压缩,加密, 修改header.getLength().
-		byte[] headerBytes = header.dataBytes();
-		return Unpooled.wrappedBuffer(headerBytes, content.bytes());
+		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), bytes);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.dataBytes(), bytes);
+
+		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes()));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(bytes));
+		}
+		return byteBuf;
+	}
+
+	/***
+	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
+	 * @param message
+	 * @return
+	 */
+	public static ByteBuf messageContentToByteBufWithoutHeader(IChannelMessage<?> message) {
+		byte[] bytes = message.bytes();
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(bytes));
+		}
+		return byteBuf;
 	}
 
 	/***
@@ -152,7 +158,7 @@ public final class ChannelUtil {
 
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
-			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound().encode());
+			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			content.release();
 			return;
 		}
