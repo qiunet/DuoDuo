@@ -1,5 +1,7 @@
 package org.qiunet.cfg.manager.base;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.exception.UnknownFieldException;
@@ -16,6 +18,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,6 +30,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgManager<ID, Cfg> {
 	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
+	/**
+	 * 需要热加载的cfgManagers
+	 */
+	private static final Set<ICfgManager> needReloadCfgs = Sets.newConcurrentHashSet();
 	/**
 	 * 是否需要重新加载.
 	 */
@@ -54,7 +61,7 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 	 * 一个cfgManager 可能有多个文件. 延时500 毫秒再加载.
 	 * @param file
 	 */
-	protected static void fileChangeListener(File file) {
+	protected void fileChangeListener(File file) {
 		if ( SystemPropertyUtil.getOsName().is(SystemPropertyUtil.OSType.LINUX)) {
 			// linux 正式环境. 还是人来决定什么时候更新好点.
 			return;
@@ -62,19 +69,31 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 
 		FileUtil.changeListener(file, (file1) -> {
 			LoggerType.DUODUO_CFG_READER.debug("Cfg file [{}] changing", file1.getPath());
+			synchronized (this) {
+				needReloadCfgs.add(this);
+			}
+
 			if (needReloadCfg.compareAndSet(false, true)) {
 				TimerManager.instance.scheduleWithDelay(() -> {
-					if (needReloadCfg.compareAndSet(true, false)) {
-						// 有加载顺序问题. 统一都加载
-
-						LoggerType.DUODUO_CFG_READER.error("=======================文件热加载开始=======================");
-						CfgManagers.getInstance().reloadSetting();
-						LoggerType.DUODUO_CFG_READER.error("=======================文件热加载结束=======================");
+					try {
+						this.handlerReload();
+					}finally {
+						needReloadCfgs.clear();
 					}
 					return null;
 				}, 2, TimeUnit.SECONDS);
 			}
 		});
+	}
+
+	private synchronized void handlerReload() {
+		if (needReloadCfg.compareAndSet(true, false)) {
+			// 有加载顺序问题. 统一都加载
+
+			LoggerType.DUODUO_CFG_READER.error("=======================文件热加载开始=======================");
+			CfgManagers.getInstance().reloadSetting(Lists.newArrayList(needReloadCfgs));
+			LoggerType.DUODUO_CFG_READER.error("=======================文件热加载结束=======================");
+		}
 	}
 
 	@Override

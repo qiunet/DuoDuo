@@ -5,7 +5,7 @@ import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.annotation.CfgLoadOver;
 import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.event.CfgLoadCompleteEvent;
-import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cfg.event.StartInitCfgEvent;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
 import org.qiunet.utils.args.ArgsContainer;
@@ -51,7 +51,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 	}
 
 	private void initCfg() {
-		CfgManagers.getInstance().initSetting();
+		StartInitCfgEvent.instance.fireEventHandler();
 	}
 	/**
 	 * 扫描所有cfgLoadOver method

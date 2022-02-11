@@ -65,7 +65,7 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 		List<JSONObject> jsonObjects = Lists.newLinkedList();
 		File [] files = getFile(fileName);
 		for (File file : files) {
-			fileChangeListener(file);
+			this.fileChangeListener(file);
 			try {
 				json = FileUtil.getFileContent(file);
 				if(StringUtil.isEmpty(json)){
