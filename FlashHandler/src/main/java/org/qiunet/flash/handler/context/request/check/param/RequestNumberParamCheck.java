@@ -37,8 +37,8 @@ class RequestNumberParamCheck implements IRequestCheck {
 		this.field = field;
 
 		NumberParam param = this.field.getAnnotation(NumberParam.class);
-		this.max = KeyValManager.instance.getLong(param.maxKey(), param.max());
-		this.min = KeyValManager.instance.getLong(param.minKey(), param.min());
+		this.max = KeyValManager.instance.getOrDefault(param.maxKey(), param.max());
+		this.min = KeyValManager.instance.getOrDefault(param.minKey(), param.min());
 		this.positive = param.positive();
 	}
 

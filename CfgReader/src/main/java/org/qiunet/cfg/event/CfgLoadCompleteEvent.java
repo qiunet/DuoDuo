@@ -1,4 +1,4 @@
-package org.qiunet.cfg.listener;
+package org.qiunet.cfg.event;
 
 
 import org.qiunet.utils.listener.event.IEventData;
@@ -9,8 +9,8 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-04-24 11:25
  ***/
-public class CfgLoadCompleteEventData implements IEventData {
+public class CfgLoadCompleteEvent implements IEventData {
 	public static void fireEvent(){
-		new CfgLoadCompleteEventData().fireEventHandler();
+		new CfgLoadCompleteEvent().fireEventHandler();
 	}
 }

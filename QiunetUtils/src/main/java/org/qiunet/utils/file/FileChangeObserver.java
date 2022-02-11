@@ -15,7 +15,7 @@ class FileChangeObserver {
 	/**
 	 * 需要监听的文件
 	 */
-	private File file;
+	private final File file;
 	/**
 	 * 长度
 	 */
@@ -27,10 +27,10 @@ class FileChangeObserver {
 	/**
 	 * 有变动需要通知的callback
 	 */
-	private List<IFileChangeCallback> changeCallbacks;
+	private final List<IFileChangeCallback> changeCallbacks;
 
 	FileChangeObserver(File file) {
-		this.changeCallbacks = Lists.newCopyOnWriteArrayList();
+		this.changeCallbacks = Lists.newArrayListWithCapacity(3);
 		this.lastModified = file.lastModified();
 		this.length = file.length();
 		this.file = file;
@@ -44,7 +44,7 @@ class FileChangeObserver {
 		return file;
 	}
 
-	void addCallback(IFileChangeCallback changeCallback) {
+	synchronized void addCallback(IFileChangeCallback changeCallback) {
 		this.changeCallbacks.add(changeCallback);
 	}
 	/**
@@ -52,13 +52,24 @@ class FileChangeObserver {
 	 */
 	void checkAndNotify(){
 		long lastModify = file.lastModified();
-		long len = file.lastModified();
+		long len = file.length();
 
 		if (this.lastModified != lastModify || this.length != len) {
-			changeCallbacks.forEach(changeCallback -> changeCallback.call(file));
+			synchronized (this) {
+				changeCallbacks.forEach(changeCallback -> changeCallback.call(file));
+			}
 		}
 
 		this.lastModified = lastModify;
 		this.length = len;
+	}
+
+	@Override
+	public String toString() {
+		return "FileChangeObserver{" +
+				"file=" + file +
+				", length=" + length +
+				", lastModified=" + lastModified +
+				'}';
 	}
 }

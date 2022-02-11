@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.annotation.CfgLoadOver;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
+import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.cfg.wrapper.ICfgWrapper;
@@ -111,7 +111,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 	}
 
 	@EventListener(EventHandlerWeightType.LESS)
-	private void completeLoader(CfgLoadCompleteEventData data) {
+	private void completeLoader(CfgLoadCompleteEvent data) {
 		loadOverMap.values().forEach(LoadOverMethod::call);
 	}
 

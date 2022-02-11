@@ -1,4 +1,4 @@
-package org.qiunet.cfg.listener;
+package org.qiunet.cfg.event;
 
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.listener.event.IEventData;
@@ -9,12 +9,12 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-09-18 17:19
  */
-public class CfgManagerAddEventData implements IEventData {
+public class CfgManagerAddEvent implements IEventData {
 
 	private ICfgManager cfgManager;
 
 	public static void fireEvent(ICfgManager cfgManager) {
-		CfgManagerAddEventData data = new CfgManagerAddEventData();
+		CfgManagerAddEvent data = new CfgManagerAddEvent();
 		data.cfgManager = cfgManager;
 		data.fireEventHandler();
 	}

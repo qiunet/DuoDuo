@@ -49,8 +49,8 @@ class RequestStringParamCheck implements IRequestCheck {
 		this.field = field;
 
 		StringParam param = this.field.getAnnotation(StringParam.class);
-		this.max = KeyValManager.instance.getLong(param.maxKey(), param.max());
-		this.min = KeyValManager.instance.getLong(param.minKey(), param.min());
+		this.max = KeyValManager.instance.getOrDefault(param.maxKey(), param.max());
+		this.min = KeyValManager.instance.getOrDefault(param.minKey(), param.min());
 
 		this.checkBadWorld = param.checkBadWord();
 		this.checkEmpty = param.checkEmpty();

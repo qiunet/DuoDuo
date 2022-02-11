@@ -17,7 +17,7 @@ class FileChangeMonitor implements IScheduledTask {
 	/**
 	 * 观察者map
 	 */
-	private Map<String, FileChangeObserver> observerMap = Maps.newConcurrentMap();
+	private final Map<String, FileChangeObserver> observerMap = Maps.newConcurrentMap();
 
 	void addObserver(File file, IFileChangeCallback callback) {
 		Preconditions.checkState(file != null && file.exists() && file.isFile());

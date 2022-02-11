@@ -2,8 +2,8 @@ package org.qiunet.cfg.manager;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
-import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
-import org.qiunet.cfg.listener.CfgManagerAddEventData;
+import org.qiunet.cfg.event.CfgLoadCompleteEvent;
+import org.qiunet.cfg.event.CfgManagerAddEvent;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
@@ -47,6 +47,7 @@ public enum CfgManagers {
 	public synchronized void reloadSetting() {
 		this.reloadSetting(true);
 	}
+
 	private synchronized void reloadSetting(boolean needLogger) {
 		if (reloading.get()) {
 			logger.error("Game Setting Data is loading now.....");
@@ -66,7 +67,7 @@ public enum CfgManagers {
 			reloading.compareAndSet(true, false);
 		}
 		logger.error("Game Setting Data Load over.....");
-		CfgLoadCompleteEventData.fireEvent();
+		CfgLoadCompleteEvent.fireEvent();
 	}
 
 	/**
@@ -74,7 +75,7 @@ public enum CfgManagers {
 	 * @param manager
 	 */
 	public void addCfgManager(ICfgManager manager) {
-		CfgManagerAddEventData.fireEvent(manager);
+		CfgManagerAddEvent.fireEvent(manager);
 		this.gameSettingList.add(manager);
 	}
 

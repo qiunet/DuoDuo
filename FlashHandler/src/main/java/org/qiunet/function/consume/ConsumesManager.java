@@ -2,7 +2,7 @@ package org.qiunet.function.consume;
 
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.IAfterLoad;
-import org.qiunet.cfg.listener.CfgLoadCompleteEventData;
+import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.anno.AutoWired;
@@ -47,7 +47,7 @@ public enum ConsumesManager {
 	 * @param data
 	 */
 	@EventListener
-	public void cfgLoadOver(CfgLoadCompleteEventData data) {
+	public void cfgLoadOver(CfgLoadCompleteEvent data) {
 		for (Consumes consumes : consumeList) {
 			((IAfterLoad) consumes).afterLoad();
 		}

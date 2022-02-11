@@ -5,13 +5,19 @@ import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.exception.UnknownFieldException;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
+import org.qiunet.utils.system.SystemPropertyUtil;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author  zhengj
@@ -21,6 +27,10 @@ import java.lang.reflect.Modifier;
  */
 public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgManager<ID, Cfg> {
 	protected Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
+	/**
+	 * 是否需要重新加载.
+	 */
+	private static final AtomicBoolean needReloadCfg = new AtomicBoolean(false);
 
 	protected String fileName;
 
@@ -39,6 +49,33 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 
 	}
 
+	/**
+	 * 监听文件变动.
+	 * 一个cfgManager 可能有多个文件. 延时500 毫秒再加载.
+	 * @param file
+	 */
+	protected static void fileChangeListener(File file) {
+		if ( SystemPropertyUtil.getOsName().is(SystemPropertyUtil.OSType.LINUX)) {
+			// linux 正式环境. 还是人来决定什么时候更新好点.
+			return;
+		}
+
+		FileUtil.changeListener(file, (file1) -> {
+			LoggerType.DUODUO_CFG_READER.debug("Cfg file [{}] changing", file1.getPath());
+			if (needReloadCfg.compareAndSet(false, true)) {
+				TimerManager.instance.scheduleWithDelay(() -> {
+					if (needReloadCfg.compareAndSet(true, false)) {
+						// 有加载顺序问题. 统一都加载
+
+						LoggerType.DUODUO_CFG_READER.error("=======================文件热加载开始=======================");
+						CfgManagers.getInstance().reloadSetting();
+						LoggerType.DUODUO_CFG_READER.error("=======================文件热加载结束=======================");
+					}
+					return null;
+				}, 2, TimeUnit.SECONDS);
+			}
+		});
+	}
 
 	@Override
 	public String getLoadFileName() {
@@ -126,15 +163,10 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 		if (field == null) {
 			throw new UnknownFieldException(cfgClass.getName(), fileName, name);
 		}
-		try {
-			if (isInvalidField(field)) {
-				throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
-			}
-			Object obj = ConvertManager.getInstance().convert(field, val);
-			field.setAccessible(true);
-			field.set(cfg, obj);
-		} catch (IllegalAccessException e) {
-			throw new CustomException(e, "Cfg [{}] name [{}] assign error", cfg.getClass().getName(), name);
+		if (isInvalidField(field)) {
+			throw new CustomException("Class ["+cfg.getClass().getName()+"] field ["+field.getName()+"] is invalid!");
 		}
+		Object obj = ConvertManager.getInstance().convert(field, val);
+		ReflectUtil.setField(cfg, field, obj);
 	}
 }
