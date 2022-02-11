@@ -34,7 +34,11 @@ public class RequestCdCheck implements IRequestCheck {
 	public void check(Channel channel, IChannelData data) {
 		TouchTimer timer;
 		if ((timer = channel.attr(timerAttribute).get()) == null) {
-			timer = channel.attr(timerAttribute).setIfAbsent(new TouchTimer());
+			timer = new TouchTimer();
+			TouchTimer touchTimer = channel.attr(timerAttribute).setIfAbsent(timer);
+			if (touchTimer != null) {
+				timer = touchTimer;
+			}
 		}
 		if (timer.isCding(protocolId, requestCD.value(), requestCD.unit(), requestCD.limitCount())) {
 			throw StatusResultException.valueOf(IGameStatus.REQUEST_CD_ING);
