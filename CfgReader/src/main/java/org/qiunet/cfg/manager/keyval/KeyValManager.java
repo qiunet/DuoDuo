@@ -1,10 +1,8 @@
 package org.qiunet.cfg.manager.keyval;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
 import org.qiunet.cfg.base.IKeyValCfg;
 import org.qiunet.cfg.event.CfgLoadCompleteEvent;
-import org.qiunet.cfg.event.CfgManagerAddEvent;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.convert.ConvertManager;
@@ -19,7 +17,6 @@ import org.qiunet.utils.string.StringUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,28 +45,12 @@ public enum KeyValManager {
 
 	private enum KeyValManager0 implements IApplicationContextAware {
 		instance;
-
-		/**
-		 * key val 的数据
-		 */
-		private final List<ISimpleMapCfgManager<String, ? extends IKeyValCfg>> keyValManagers = Lists.newArrayList();
 		/**
 		 * 所有的key -> field 映射
 		 */
 		final Map<String, CfgAutoFieldInfo> keyFields = new HashMap<>();
 
 		private IApplicationContext context;
-		/**
-		 * 所有的key -> field 映射
-		 */
-		@EventListener
-		public void addCfgManagerEvent(CfgManagerAddEvent eventData) {
-			if (!IKeyValCfg.class.isAssignableFrom(eventData.getCfgManager().getCfgClass())) {
-				return;
-			}
-
-			keyValManagers.add((ISimpleMapCfgManager<String, ? extends IKeyValCfg>) eventData.getCfgManager());
-		}
 
 		/**
 		 * 监听加载完毕事件
@@ -82,7 +63,8 @@ public enum KeyValManager {
 				return;
 			}
 
-			keyValManagers.forEach(cfgManager -> cfgManager.allCfgs().forEach((key, data) -> {
+			eventData.getList().stream().filter(cfg -> IKeyValCfg.class.isAssignableFrom(cfg.getCfgClass()))
+					.forEach(cfgManager -> ((ISimpleMapCfgManager<String, IKeyValCfg>) cfgManager).allCfgs().forEach((key, data) -> {
 				CfgAutoFieldInfo fieldInfo = keyFields.get(key);
 				if (fieldInfo == null) {
 					return;
@@ -94,7 +76,7 @@ public enum KeyValManager {
 				}
 
 				if (fieldInfo.cfgManager == null) {
-					fieldInfo.cfgManager = cfgManager;
+					fieldInfo.cfgManager = (ISimpleMapCfgManager<String, IKeyValCfg>) cfgManager;
 				}
 
 				fieldInfo.injectVal();

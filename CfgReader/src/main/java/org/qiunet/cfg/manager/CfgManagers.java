@@ -26,8 +26,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public enum CfgManagers {
 	INSTANCE,;
-	private final Comparator<ICfgManager> comparator = ((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result());
-	private final List<ICfgManager> gameSettingList = Lists.newArrayListWithCapacity(100);
+	private final Comparator<ICfgManager<?, ?>> comparator = ((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result());
+	private final List<ICfgManager<?, ?>> gameSettingList = Lists.newArrayListWithCapacity(100);
 	private final Logger logger = LoggerType.DUODUO_CFG_READER.getLogger();
 	private final AtomicBoolean reloading = new AtomicBoolean();
 
@@ -50,7 +50,7 @@ public enum CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 * @throws Exception
 	 */
-	public synchronized void reloadSetting(List<ICfgManager> gameSettingList) {
+	public synchronized void reloadSetting(List<ICfgManager<?, ?>> gameSettingList) {
 		gameSettingList.sort(comparator);
 		this.reloadSetting(gameSettingList, true);
 	}
@@ -63,7 +63,7 @@ public enum CfgManagers {
 		this.reloadSetting(gameSettingList, true);
 	}
 
-	private synchronized void reloadSetting(List<ICfgManager> gameSettingList, boolean needLogger) {
+	private synchronized void reloadSetting(List<ICfgManager<?, ?>> gameSettingList, boolean needLogger) {
 		if (reloading.get()) {
 			logger.error("Game Setting Data is loading now.....");
 			return;
@@ -82,14 +82,14 @@ public enum CfgManagers {
 			reloading.compareAndSet(true, false);
 		}
 		logger.error("Game Setting Data Load over.....");
-		CfgLoadCompleteEvent.fireEvent();
+		CfgLoadCompleteEvent.valueOf(gameSettingList).fireEventHandler();
 	}
 
 	/**
 	 * 添加 Manager
 	 * @param manager
 	 */
-	public void addCfgManager(ICfgManager manager) {
+	public void addCfgManager(ICfgManager<?, ?> manager) {
 		CfgManagerAddEvent.fireEvent(manager);
 		this.gameSettingList.add(manager);
 	}
@@ -98,11 +98,11 @@ public enum CfgManagers {
 	 * 加载设定文件
 	 * @return 返回加载失败的文件名称
 	 */
-	private synchronized void loadDataSetting(List<ICfgManager> gameSettingList) {
+	private synchronized void loadDataSetting(List<ICfgManager<?, ?>> gameSettingList) {
 		int size = gameSettingList.size();
 		CountDownLatch latch = new CountDownLatch(size);
 		AtomicReference<CustomException> reference = new AtomicReference<>();
-		for (ICfgManager cfgManager : gameSettingList) {
+		for (ICfgManager<?, ?> cfgManager : gameSettingList) {
 			if (cfgManager.order() > 0) {
 				try {
 					cfgManager.loadCfg();

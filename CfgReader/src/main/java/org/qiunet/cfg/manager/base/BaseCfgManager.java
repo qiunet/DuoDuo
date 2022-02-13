@@ -33,7 +33,7 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 	/**
 	 * 需要热加载的cfgManagers
 	 */
-	private static final Set<ICfgManager> needReloadCfgs = Sets.newConcurrentHashSet();
+	private static final Set<ICfgManager<?, ?>> needReloadCfgs = Sets.newConcurrentHashSet();
 	/**
 	 * 是否需要重新加载.
 	 */
