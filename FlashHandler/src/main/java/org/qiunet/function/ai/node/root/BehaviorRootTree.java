@@ -34,7 +34,7 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 	 * 默认使用 selector 节点作为root节点
 	 */
 	public BehaviorRootTree(Owner owner){
-		super(new SelectorExecutor<>(null, "Root"));
+		super(new SelectorExecutor<>(null, "Root"), "Root");
 		this.owner = owner;
 	}
 

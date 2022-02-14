@@ -3,14 +3,15 @@
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/qiunet/DuoDuo/master/FlashHandler/src/main/resources/AiBuild.xsd"
 >
-	<random condition="[{'type': 'SEE_GOBLIN', 'not': 'true'}, {'type': 'SEE_OMA', 'not': 'true'}]">
+	<random name="空闲随机动作" condition="[{'type': 'SEE_GOBLIN', 'count': 2, 'not': 'true'}, {'type': 'SEE_OMA', 'not': 'true'}]">
 		<action clazz="org.qiunet.test.function.test.ai.action.Idle" condition="" />
 		<action clazz="org.qiunet.test.function.test.ai.action.GetExp" condition="" />
 	</random>
 
-	<sequence>
+	<sequence name="打哥布林">
 		<action clazz="org.qiunet.test.function.test.ai.action.RunToTarget" condition="[{'type': 'SEE_GOBLIN'}, {'type': 'SEE_OMA', 'not': 'true'}]" />
 		<action clazz="org.qiunet.test.function.test.ai.action.Fight" condition="[{'type': 'SEE_OMA', 'not': 'true'}]" />
 	</sequence>
+
 	<action clazz="org.qiunet.test.function.test.ai.action.Escape" condition="[{'type': 'SEE_OMA'}]" />
 </root>

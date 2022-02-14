@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -117,6 +118,11 @@ public class ConditionManager {
 						 for (Field field : declaredFields) {
 							 if (! field.isAnnotationPresent(ConditionField.class)) {
 								 continue;
+							 }
+
+							 if (CommonUtil.existInList(field.getName(), "not", "type")) {
+								 // 使用到Condition的关键字了.
+								 throw new CustomException("condition field {}#{} use key word", field.getDeclaringClass().getName(), field.getName());
 							 }
 
 							 ConvertManager.instance.covertAndSet(iCondition, field, String.valueOf(cfg.getValue(field.getName())));

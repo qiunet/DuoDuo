@@ -1,6 +1,7 @@
 package org.qiunet.utils.reflect;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.ClassUtils;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -25,6 +26,26 @@ public final class ReflectUtil {
 	private static final Logger LOGGER = LoggerType.DUODUO.getLogger();
 	private ReflectUtil(){}
 
+	/**
+	 * Attempt to find a {@link Field field} on the supplied {@link Class} with the
+	 * supplied {@code name}. Searches all superclasses up to {@link Object}.
+	 * @param clazz the class to introspect
+	 * @return the corresponding Field object, or {@code null} if not found
+	 */
+	public static List<Field> findFieldList(Class<?> clazz, Predicate<Field> filter) {
+		Class<?> searchType = clazz;
+		List<Field> list = Lists.newArrayListWithCapacity(5);
+		while (Object.class != searchType && searchType != null) {
+			Field[] fields = getDeclaredFields(searchType);
+			for (Field field : fields) {
+				if (filter.test(field)) {
+					list.add(field);
+				}
+			}
+			searchType = searchType.getSuperclass();
+		}
+		return list;
+	}
 	/**
 	 * Attempt to find a {@link Field field} on the supplied {@link Class} with the
 	 * supplied {@code name}. Searches all superclasses up to {@link Object}.

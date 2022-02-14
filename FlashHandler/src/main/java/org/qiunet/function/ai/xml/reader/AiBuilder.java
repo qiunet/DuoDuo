@@ -1,8 +1,12 @@
 package org.qiunet.function.ai.xml.reader;
 
+import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.action.BehaviorActionManager;
+import org.qiunet.function.ai.node.action.BehaviorActionParam;
+import org.qiunet.function.ai.node.decorator.InvertNode;
+import org.qiunet.function.ai.node.decorator.RepeatNode;
 import org.qiunet.function.ai.node.executor.ParallelExecutor;
 import org.qiunet.function.ai.node.executor.RandomExecutor;
 import org.qiunet.function.ai.node.executor.SelectorExecutor;
@@ -10,7 +14,11 @@ import org.qiunet.function.ai.node.executor.SequenceExecutor;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.function.condition.ConditionManager;
 import org.qiunet.function.condition.IConditions;
+import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.json.TypeReferences;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,6 +26,8 @@ import org.w3c.dom.Node;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
@@ -36,6 +46,8 @@ public class AiBuilder<Owner> {
 	private static final String SELECTOR_EXECUTOR_NAME = "selector";
 	private static final String SEQUENCE_EXECUTOR_NAME = "sequence";
 	private static final String PARALLEL_EXECUTOR_NAME = "parallel";
+	private static final String REPEAT_TAG_NAME = "repeat";
+	private static final String INVERT_TAG_NAME = "invert";
 	private static final String ACTION_TAG_NAME = "action";
 
 	/**
@@ -66,7 +78,7 @@ public class AiBuilder<Owner> {
 			DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 			Document document = documentBuilder.parse(inputStream);
 			Element rootElement = document.getDocumentElement();
-			rootTree.setName(rootElement.getAttribute("name"));
+			rootTree.setName(rootElement.getAttribute(NAME_ATTRIBUTE_NAME));
 
 
 			this.forEachChild(rootElement, rootTree);
@@ -82,40 +94,56 @@ public class AiBuilder<Owner> {
 			if (item.getNodeType() != ELEMENT_NODE) {
 				continue;
 			}
-
 			Element element = (Element) item;
-			String tagName = element.getTagName();
+			IBehaviorNode<Owner> behaviorNode = buildBehaviorNode(element);
 
-			String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
-			boolean nameEmpty = element.hasAttribute(NAME_ATTRIBUTE_NAME);
-			String condition = element.getAttribute(CONDITION_ATTRIBUTE_NAME);
-			IConditions<Owner> conditions = ConditionManager.createCondition(condition);
-
-			IBehaviorNode<Owner> behaviorNode;
-			switch (tagName) {
-				case RANDOM_EXECUTOR_NAME:
-					behaviorNode = nameEmpty ? new RandomExecutor<>(conditions) : new RandomExecutor<>(conditions, name);
-					break;
-				case SELECTOR_EXECUTOR_NAME:
-					behaviorNode = nameEmpty ? new SelectorExecutor<>(conditions) : new SelectorExecutor<>(conditions, name);
-					break;
-				case SEQUENCE_EXECUTOR_NAME:
-					behaviorNode = nameEmpty ? new SequenceExecutor<>(conditions) : new SequenceExecutor<>(conditions, name);
-					break;
-				case PARALLEL_EXECUTOR_NAME:
-					behaviorNode = nameEmpty ? new ParallelExecutor<>(conditions) : new ParallelExecutor<>(conditions, name);
-					break;
-				case ACTION_TAG_NAME:
-					behaviorNode = BehaviorActionManager.instance.createAction(element.getAttribute("clazz"), conditions);
-					break;
-				default:
-					throw new CustomException("Not support for tag {}", tagName);
-			}
 			parent.addChild(behaviorNode);
 			if (behaviorNode instanceof IBehaviorExecutor) {
 				this.forEachChild(item, (IBehaviorExecutor<Owner>) behaviorNode);
 			}
 		}
 
+	}
+
+	private IBehaviorNode<Owner> buildBehaviorNode(Element element) {
+		String tagName = element.getTagName();
+
+		String name = element.getAttribute(NAME_ATTRIBUTE_NAME);
+		boolean nameEmpty = element.hasAttribute(NAME_ATTRIBUTE_NAME);
+		String condition = element.getAttribute(CONDITION_ATTRIBUTE_NAME);
+		IConditions<Owner> conditions = ConditionManager.createCondition(condition);
+
+		switch (tagName) {
+			// executor
+			case RANDOM_EXECUTOR_NAME:
+				return nameEmpty ? new RandomExecutor<>(conditions) : new RandomExecutor<>(conditions, name);
+			case SELECTOR_EXECUTOR_NAME:
+				return nameEmpty ? new SelectorExecutor<>(conditions) : new SelectorExecutor<>(conditions, name);
+			case SEQUENCE_EXECUTOR_NAME:
+				return nameEmpty ? new SequenceExecutor<>(conditions) : new SequenceExecutor<>(conditions, name);
+			case PARALLEL_EXECUTOR_NAME:
+				return nameEmpty ? new ParallelExecutor<>(conditions) : new ParallelExecutor<>(conditions, name);
+			// action
+			case ACTION_TAG_NAME:
+				IBehaviorAction<Owner> action = BehaviorActionManager.instance.createAction(element.getAttribute("clazz"), conditions);
+				if (element.hasAttribute("params")) {
+					Map<String, String> params = JsonUtil.getGeneralObject(element.getAttribute("params"), TypeReferences.STRING_STRING_MAP);
+					params.forEach((fieldName, val) -> {
+						Field field = ReflectUtil.findField(action.getClass(), fieldName);
+						if (field == null || ! field.isAnnotationPresent(BehaviorActionParam.class)) {
+							return;
+						}
+						ConvertManager.getInstance().covertAndSet(action, field, val);
+					});
+				}
+				return action;
+				// action decorator
+			case REPEAT_TAG_NAME:
+				return new RepeatNode<>(name, Integer.parseInt(element.getAttribute("count")));
+			case INVERT_TAG_NAME:
+				return new InvertNode<>(name);
+			default:
+				throw new CustomException("Not support for tag {}", tagName);
+		}
 	}
 }

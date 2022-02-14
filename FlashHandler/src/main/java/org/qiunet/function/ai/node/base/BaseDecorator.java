@@ -16,23 +16,36 @@ import java.util.List;
  * 2021/8/16 21:38
  **/
 public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> implements IBehaviorDecorator<Owner> {
-
 	/**
 	 * 需要翻转的节点
 	 */
 	protected IBehaviorNode<Owner> node;
-	private final List<IBehaviorNode<Owner>> nodes;
+	private List<IBehaviorNode<Owner>> nodes;
 
-	public BaseDecorator(IBehaviorNode<Owner> node) {
-		super(null, node.getName());
-		ReflectUtil.setField(node, "parent", this);
-		this.nodes = ImmutableList.of(node);
-		this.node = node;
+	public BaseDecorator(String name) {
+		super(null, name);
+	}
+
+	public BaseDecorator(IBehaviorNode<Owner> node, String name) {
+		super(null, name);
+		this.addChild(node);
 	}
 
 	@Override
 	public IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions) {
-		throw new CustomException("Not support in decorator node!");
+		if (this.node != null || actions.length > 1) {
+			throw new CustomException("Not support multi node in decorator node!");
+		}
+
+		if (actions.length == 0) {
+			throw new NullPointerException();
+		}
+
+		IBehaviorNode<Owner> node = actions[0];
+		ReflectUtil.setField(node, "parent", this);
+		this.nodes = ImmutableList.of(node);
+		this.node = node;
+		return this;
 	}
 
 	@Override
@@ -43,6 +56,31 @@ public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> imple
 	@Override
 	public IBehaviorNode<Owner> getNode() {
 		return node;
+	}
+
+	@Override
+	public void prepare() {
+		node.prepare();
+	}
+
+	@Override
+	public void initialize() {
+		node.initialize();
+	}
+
+	@Override
+	public void reset() {
+		node.reset();
+	}
+
+	@Override
+	public void check() {
+		node.check();
+	}
+
+	@Override
+	public void release() {
+		node.release();
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.qiunet.function.ai.node.decorator;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseDecorator;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  * 使颠倒
@@ -13,7 +14,16 @@ import org.qiunet.function.ai.node.base.BaseDecorator;
 public class InvertNode<Owner> extends BaseDecorator<Owner> {
 
 	public InvertNode(IBehaviorNode<Owner> node) {
-		super(node);
+		this(node, "");
+	}
+
+	public InvertNode(IBehaviorNode<Owner> node, String name) {
+		this(name);
+		this.addChild(node);
+	}
+
+	public InvertNode(String name) {
+		super(StringUtil.isEmpty(name) ? "Invert": name);
 	}
 
 	@Override
