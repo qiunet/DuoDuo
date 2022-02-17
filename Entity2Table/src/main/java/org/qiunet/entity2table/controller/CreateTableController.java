@@ -5,6 +5,7 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.util.DbUtil;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
 import org.qiunet.entity2table.command.TableAlterParam;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  */
 class CreateTableController implements IApplicationContextAware {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
+	private final ServerConfig serverConfig = ServerConfig.instance;
 	private volatile static CreateTableController instance;
 
 	private CreateTableService createTableService = CreateTableService.getInstance();
@@ -32,6 +34,52 @@ class CreateTableController implements IApplicationContextAware {
 	private CreateTableController() {
 		if (instance != null) throw new RuntimeException("Instance Duplication!");
 		instance = this;
+	}
+
+	@Override
+	public void setApplicationContext(IApplicationContext context) {
+		//做个开关　server.load_db:true
+		if (serverConfig.containKey("server.load_db") && serverConfig.getBoolean("server.load_db")) {
+			context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
+		}
+	}
+
+	/***
+	 * 处理Entity类.
+	 * 判断是否新建表,  有字段改动等
+	 * @param clazz
+	 */
+	private void handlerTable(Class<? extends IEntity> clazz) {
+		try {
+			Table table = clazz.getAnnotation(Table.class);
+			if (table == null) {
+				logger.info("===========扫描到:" + clazz + "\t table is null");
+				return;
+			}
+
+			String dbSourceName = DbUtil.getDbSource(clazz);
+
+			// 迭代出当前clazz所有fields存到newFieldList中
+			List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
+
+			int tableExist = createTableService.findTableCountByTableName(dbSourceName, table.name());
+			// 不存在时
+			if (tableExist == 0) {
+				TableCreateParam tableParam = new TableCreateParam(dbSourceName, table, entityFieldList);
+				createTable(tableParam);
+			} else {
+				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
+				// 1. 找出增加的字段
+				// 2. 找出更新的字段
+				handlerAddAndModifyFields(entityFieldList, clazz);
+			}
+		} catch (Exception e) {
+			logger.error("===========扫描到:" + clazz + "\t e:", e);
+			Table table = clazz.getAnnotation(Table.class);
+			logger.info("===============1 " + clazz.getName());
+			logger.info("===============2 " + table);
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -210,49 +258,5 @@ class CreateTableController implements IApplicationContextAware {
 		logger.info("开始创建表：" + tableParam.getTableName());
 		createTableService.createTable(tableParam);
 		logger.info("完成创建表：" + tableParam.getTableName());
-	}
-
-	@Override
-	public void setApplicationContext(IApplicationContext context) {
-		context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
-	}
-
-	/***
-	 * 处理Entity类.
-	 * 判断是否新建表,  有字段改动等
-	 * @param clazz
-	 */
-	private void handlerTable(Class<? extends IEntity> clazz) {
-		try {
-			Table table = clazz.getAnnotation(Table.class);
-			if (table == null) {
-				logger.info("===========扫描到:" + clazz + "\t table is null");
-				return;
-			}
-
-			String dbSourceName = DbUtil.getDbSource(clazz);
-
-			// 迭代出当前clazz所有fields存到newFieldList中
-			List<FieldParam> entityFieldList = tableFieldsConstruct(clazz);
-
-			int tableExist = createTableService.findTableCountByTableName(dbSourceName, table.name());
-			// 不存在时
-			if (tableExist == 0) {
-				TableCreateParam tableParam = new TableCreateParam(dbSourceName, table, entityFieldList);
-				createTable(tableParam);
-			} else {
-				// 验证对比从model中解析的fieldList与从数据库查出来的columnList
-				// 1. 找出增加的字段
-				// 2. 找出更新的字段
-				handlerAddAndModifyFields(entityFieldList, clazz);
-			}
-		} catch (Exception e) {
-			logger.error("===========扫描到:" + clazz + "\t e:", e);
-			Table table = clazz.getAnnotation(Table.class);
-			logger.info("===============1 " + clazz.getName());
-			logger.info("===============2 " + table);
-			e.printStackTrace();
-		}
-
 	}
 }
