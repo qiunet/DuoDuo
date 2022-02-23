@@ -1,29 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-		   elementFormDefault="qualified"
->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 
-  <xs:complexType name="actionType">
-    <xs:simpleContent>
-      <xs:extension base="xs:string">
-        <xs:attribute type="xs:string" name="clazz" use="required" />
-        <xs:attribute type="xs:string" name="condition" />
-      </xs:extension>
-    </xs:simpleContent>
-  </xs:complexType>
+	<xs:complexType name="ActionType">
+		<xs:simpleContent>
+		  <xs:extension base="xs:string">
+			<xs:attribute type="xs:string" name="clazz" use="required" />
+			<xs:attribute type="xs:string" name="condition" />
+			<xs:attribute type="xs:string" name="params" />
+		  </xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
 
-	<xs:complexType name="RootExecutorContent">
-		<xs:choice maxOccurs="unbounded">
-			<xs:element type="executorContent" name="sequence" />
-			<xs:element type="executorContent" name="selector" />
-			<xs:element type="executorContent" name="random" />
-			<xs:element type="executorContent" name="parallel" />
-			<xs:element type="actionType" name="action" />
+	<xs:group name="ChoiceNode">
+		<xs:choice>
+			<xs:element type="RepeatNodeContent" name="repeat"/>
+			<xs:element type="InvertNodeContent" name="invert"/>
+			<xs:element type="ExecutorContent" name="sequence"/>
+			<xs:element type="ExecutorContent" name="selector"/>
+			<xs:element type="ExecutorContent" name="random"/>
+			<xs:element type="ExecutorContent" name="parallel"/>
+			<xs:element type="ActionType" name="action"/>
+		</xs:choice>
+	</xs:group>
+
+	<xs:complexType name="RepeatNodeContent">
+		<xs:choice>
+			<xs:group ref="ChoiceNode" />
+		</xs:choice>
+		<xs:attribute type="xs:integer" name="count" use="required"/>
+		<xs:attribute type="xs:string" name="name"/>
+	</xs:complexType>
+
+	<xs:complexType name="InvertNodeContent">
+		<xs:choice>
+			<xs:group ref="ChoiceNode" />
 		</xs:choice>
 		<xs:attribute type="xs:string" name="name"/>
 	</xs:complexType>
 
-	<xs:complexType name="executorContent">
+	<xs:complexType name="RootExecutorContent">
+		<xs:choice maxOccurs="unbounded">
+			<xs:group ref="ChoiceNode" />
+		</xs:choice>
+		<xs:attribute type="xs:string" name="name"/>
+	</xs:complexType>
+
+	<xs:complexType name="ExecutorContent">
 		<xs:complexContent>
 			<xs:extension base="RootExecutorContent">
 				<xs:attribute type="xs:string" name="condition" />
@@ -31,6 +53,5 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:element name="root" type="RootExecutorContent">
-	</xs:element>
+	<xs:element name="root" type="RootExecutorContent" />
 </xs:schema>
