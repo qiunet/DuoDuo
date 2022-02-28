@@ -9,6 +9,17 @@ import java.util.function.Supplier;
  * 2020-10-16 16:38
  */
 public final class ArgumentKey<T> {
+	/**
+	 * 默认值
+	 */
+	T defaultVal;
+
+	public ArgumentKey() {
+	}
+
+	public ArgumentKey(T defaultVal) {
+		this.defaultVal = defaultVal;
+	}
 
 	Argument<T> newAttribute() {
 		return new Argument<>(this);

@@ -19,16 +19,23 @@ public enum ProtobufVersion {
 			if (needImportCommonProto) {
 				sb.append(IMPORT_COMMON_PROTO);
 			}
+			if (GeneratorProtoFeature.DEFAULT_PROTO_PACKAGE.prepare()) {
+				sb.append(PACKAGE_MESSAGE);
+			}
 			return sb;
 		}
 
 		@Override
 		public String getFieldDescribe() {
-			return "optional";
+			return "\toptional ";
 		}
 
 		@Override
 		public String getRepeatedFieldDescribe(Class<?> type) {
+			if (type.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
+				type = int.class;
+			}
+
 			if (type == String.class || ! FieldInfo.isPrimitiveType(type)) {
 				return "";
 			}
@@ -45,11 +52,15 @@ public enum ProtobufVersion {
 			if (needImportCommonProto) {
 				sb.append(IMPORT_COMMON_PROTO);
 			}
+			if (GeneratorProtoFeature.DEFAULT_PROTO_PACKAGE.prepare()) {
+				sb.append(PACKAGE_MESSAGE);
+			}
 			return sb;
 		}
 
 	},
 	;
+	public static final String PACKAGE_MESSAGE = "package proto;\n\n";
 	/**
 	 * 共用class的proto文件名.
 	 */
@@ -77,7 +88,7 @@ public enum ProtobufVersion {
 	 * @return
 	 */
 	public String getFieldDescribe() {
-		return "";
+		return "\t";
 	}
 	/**
 	 * list 字段修尾缀饰符.

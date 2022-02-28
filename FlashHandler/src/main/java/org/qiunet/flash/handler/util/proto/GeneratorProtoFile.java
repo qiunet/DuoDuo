@@ -36,8 +36,8 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @param model 生成类型
 	 * @throws Exception -
 	 */
-	public static void generator(File directory, ProtoGeneratorModel model) throws Exception {
-		generator(directory, model, ProtobufVersion.V3);
+	public static void generator(File directory, ProtoGeneratorModel model, GeneratorProtoFeature... features) throws Exception {
+		generator(directory, model, ProtobufVersion.V3, features);
 	}
 	/**
 	 * 生成协议文件
@@ -45,10 +45,12 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @param model 生成类型
 	 * @throws Exception -
 	 */
-	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version) throws Exception {
+	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version, GeneratorProtoFeature... features) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-		model.generatorProto(new GeneratorProtoParam(classes, version, directory));
+		GeneratorProtoParam protoParam = new GeneratorProtoParam(classes, version, directory);
+		GeneratorProtoFeature.features = Sets.newHashSet(features);
+		model.generatorProto(protoParam);
 	}
 
 	@Override

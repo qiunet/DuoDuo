@@ -13,11 +13,13 @@ public class Observer<O extends IObserver> {
 	 */
 	private final int version;
 	private final O observer;
+	private final boolean once;
 
-	Observer(ObserverSupport support, O observer, int version) {
+	Observer(ObserverSupport support, O observer, int version, boolean once) {
 		this.observer = observer;
 		this.version = version;
 		this.support = support;
+		this.once = once;
 	}
 
 	/**
@@ -30,6 +32,10 @@ public class Observer<O extends IObserver> {
 
 	public int getVersion() {
 		return version;
+	}
+
+	public boolean isOnce() {
+		return once;
 	}
 
 	/**

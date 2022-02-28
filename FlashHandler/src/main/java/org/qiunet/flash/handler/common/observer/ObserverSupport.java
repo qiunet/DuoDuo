@@ -33,8 +33,24 @@ public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	 * @return
 	 */
 	public <O extends IObserver> Observer<O> attach(Class<O> clazz, O o) {
+		return this.attach(clazz, o, false);
+	}
+	/**
+	 * 往该support添加一个观察者.
+	 * @param o
+	 * @param <O>
+	 * @return
+	 */
+	public <O extends IObserver> Observer<O> once(Class<O> clazz, O o) {
+		return this.attach(clazz, o, true);
+	}
+
+	/**
+	 * attach
+	 */
+	private <O extends IObserver> Observer<O> attach(Class<O> clazz, O o, boolean once) {
 		ObserverList<O> observers = this.computeIfAbsent(clazz);
-		Observer<O> observer = new Observer<>(this, o, versions.getAndIncrement());
+		Observer<O> observer = new Observer<>(this, o, versions.getAndIncrement(), once);
 		observers.getObservers().add(observer);
 		return observer;
 	}
@@ -88,7 +104,10 @@ public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	 */
 	public <O extends IObserver> void syncFire(Class<O> clazz, Consumer<O> consumer) {
 		ObserverList<O> observers = this.computeIfAbsent(clazz);
-		observers.forEach(o -> consumer.accept(o.getObserver()));
+		observers.forEach(o -> {
+			if (o.isOnce()) {this.remove(o);}
+			consumer.accept(o.getObserver());
+		});
 	}
 
 	protected static class ObserverList<O extends IObserver> {

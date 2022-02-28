@@ -21,4 +21,10 @@ public @interface EventListener {
 	 * @return
 	 */
 	EventHandlerWeightType value() default EventHandlerWeightType.NORMAL;
+	/**
+	 * 执行次数
+	 * 0 不限制
+	 * @return
+	 */
+	int limitCount() default 0;
 }

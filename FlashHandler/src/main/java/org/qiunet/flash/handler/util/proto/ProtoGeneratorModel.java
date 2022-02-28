@@ -122,7 +122,9 @@ public enum ProtoGeneratorModel {
 	 * 起始处理 生成common.proto
 	 */
 	protected void startHandle(StringBuilder code, GeneratorProtoParam param, ProtoIDLGenerator protoIDLGenerator) {
-		StringBuilder content = new StringBuilder(protoIDLGenerator.protocolIdMapping(param.getAllPbClass()));
+		protoIDLGenerator.createProtocolMappingMarkDown(param);
+
+		StringBuilder content = new StringBuilder(protoIDLGenerator.protocolIdMapping(param));
 		protoIDLGenerator.generateCommonClassIDL(content, param.getSubClasses());
 
 		if (this == ALL_IN_ONE) {

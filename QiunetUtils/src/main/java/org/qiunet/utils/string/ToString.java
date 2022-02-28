@@ -154,7 +154,8 @@ public final class ToString {
 		 || aClass == Long.class || aClass == Boolean.class
 		 || aClass == Short.class || aClass == Float.class
 		 || aClass == Byte.class || aClass == Double.class
-		 || aClass.isEnum()
+		// 协议中. j protobuf 可能使用的反射生成的子类.
+		 || aClass.isEnum() || aClass.getSuperclass().isEnum()
 		) {
 			return String.valueOf(obj);
 		}

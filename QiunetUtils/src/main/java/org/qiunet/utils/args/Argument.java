@@ -59,6 +59,10 @@ public class Argument<T> {
 	 * @return
 	 */
 	public T get(){
+		if (refData.get() == null) {
+			// key.defaultVal == null 也是返回null
+			return key.defaultVal;
+		}
 		return refData.get();
 	}
 

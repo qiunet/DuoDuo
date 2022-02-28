@@ -7,6 +7,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -492,5 +493,24 @@ public final class ReflectUtil {
 		ParameterizedType ptype = (ParameterizedType) genericType;
 		Type[] actualTypeArguments = ptype.getActualTypeArguments();
 		return (Class<?>) actualTypeArguments[0];
+	}
+
+	/**
+	 * 修改注解的值
+	 * @param annotation 注解对象
+	 * @param key 注解字段名.
+	 * @param value 设置的值
+	 */
+	public static void modifyAnnotationValue(Annotation annotation, String key, Object value) {
+		InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+		Field memberValues = null;
+		try {
+			memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
+			memberValues.setAccessible(true);
+			Map<String, Object> obj = (Map<String, Object>) memberValues.get(invocationHandler);
+			obj.put(key, value);
+		} catch (Exception e) {
+			LoggerType.DUODUO.error("modifyAnnotationValue error", e);
+		}
 	}
 }

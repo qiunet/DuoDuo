@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 enum EventManager0 implements IApplicationContextAware {
 	instance;
 	private final Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
-	private final AtomicBoolean inited = new AtomicBoolean();;
+	private final AtomicBoolean inited = new AtomicBoolean();
 	private IApplicationContext context;
 
 	static EventManager0 getInstance() {
@@ -80,7 +80,7 @@ enum EventManager0 implements IApplicationContextAware {
 	private Wrapper wrapper(Method method) {
 		EventListener annotation = method.getAnnotation(EventListener.class);
 		Object implInstance = context.getInstanceOfClass(method.getDeclaringClass());
-		return new Wrapper(implInstance, method, annotation.value().ordinal());
+		return new Wrapper(implInstance, method, annotation.value().ordinal(), annotation.limitCount());
 	}
 
 	/***
@@ -104,15 +104,22 @@ enum EventManager0 implements IApplicationContextAware {
 		private final int weight;
 		private final Method method;
 		private final Object caller;
+		private final int limitCount;
+		private int currCount;
 
-		private Wrapper(Object caller, Method method, int weight) {
+		private Wrapper(Object caller, Method method, int weight, int limitCount) {
 			this.caller = caller;
 			this.weight = weight;
 			this.method = method;
+			this.limitCount = limitCount;
 			method.setAccessible(true);
 		}
 
 		void fireEventHandler(IEventData data) {
+			if (this.limitCount != 0 && (currCount >= this.limitCount || (currCount++) >= this.limitCount)) {
+				return;
+			}
+
 			try {
 				method.invoke(caller, data);
 			} catch (IllegalAccessException e) {

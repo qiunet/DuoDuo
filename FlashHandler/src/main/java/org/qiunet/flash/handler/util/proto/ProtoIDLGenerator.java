@@ -13,16 +13,18 @@ import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /***
  *
@@ -41,6 +43,10 @@ public class ProtoIDLGenerator {
 	protected final ProtobufVersion version;
 
 	public ProtoIDLGenerator(ProtobufVersion version) {
+		if (version == ProtobufVersion.V3) {
+			// V3 支持enum了. V2 部分语言不支持
+			GeneratorProtoFeature.features.remove(GeneratorProtoFeature.ENUM_TO_INT);
+		}
 		this.version = version;
 	}
 
@@ -58,13 +64,40 @@ public class ProtoIDLGenerator {
 			return null;
 		}
 
-		if (! cls.isAnnotationPresent(ChannelData.class) && ! cls.isAnnotationPresent(NeedProtoGenerator.class)) {
-			throw new CustomException("Class {} not a channel data or NeedProtoGenerator class", cls.getName());
-		}
 
 		StringBuilder code = new StringBuilder();
 		this.generateIDL(code, cls);
 		return code.toString();
+	}
+
+	/***
+	 * enum 的注解
+	 */
+	private final Map<Class<?>, String> enumComment = Maps.newHashMap();
+	private String getEnumComment(Class<?> enumClass) {
+		if (enumClass == null || ! enumClass.isEnum()) {
+			return StringUtil.EMPTY_STRING;
+		}
+		return enumComment.computeIfAbsent(enumClass, clz -> {
+			StringBuilder sb = new StringBuilder();
+			Stream.of(clz.getFields()).filter(f -> f.getType() == clz).forEach(field -> {
+				try {
+					String name = field.getName();
+					Enum value = Enum.valueOf((Class<? extends Enum>) clz, name);
+					if (value instanceof EnumReadable) {
+						sb.append(((EnumReadable) value).value());
+					} else {
+						sb.append(value.ordinal());
+					}
+					sb.append("=");
+					Protobuf annotation = field.getAnnotation(Protobuf.class);
+					if (annotation != null && !StringUtil.isEmpty(annotation.description())) {
+						sb.append(annotation.description()).append("\t");
+					}
+				} catch (Exception ignored) {}
+			});
+			return sb.toString();
+		});
 	}
 
 	/**
@@ -72,67 +105,50 @@ public class ProtoIDLGenerator {
 	 * @param code
 	 * @param cls
 	 */
-	protected void generateIDL(StringBuilder code, Class<?> cls) {
+	private void generateIDL(StringBuilder code, Class<?> cls) {
 		code.append(generatorComment(cls)).append("message ").append(cls.getSimpleName()).append(" {  \n");
 
 		List<FieldInfo> fieldInfos = ProtobufProxyUtils.fetchFieldInfos(cls, false);
-		boolean isMap = false;
 		for (FieldInfo field : fieldInfos) {
 			if (field.hasDescription()) {
-				code.append("// ").append(field.getDescription()).append("\n");
+				code.append("\t// ").append(field.getDescription()).append("\n");
 			}
+
+			String fieldTypeName = field.getFieldType().getType().toLowerCase();
+			String required = version.getFieldDescribe();
+			Class<?> c = field.getField().getType();
+			if (field.isList()) {
+				c = ReflectUtil.getListGenericParameterizedType(field.getField());
+				required = "\trepeated ";
+			}
+
 			if (field.getFieldType() == FieldType.OBJECT || field.getFieldType() == FieldType.ENUM) {
-				if (field.isList()) {
-					Class<?> c = ReflectUtil.getListGenericParameterizedType(field.getField());
-					if (c != null) {
-						String fieldTypeName = c.getSimpleName();
-						if (ProtobufProxyUtils.isScalarType(c)) {
-							FieldType fieldType = ProtobufProxyUtils.TYPE_MAPPING.get(c);
-							fieldTypeName = fieldType.getType();
-						}
-						code.append("repeated ").append(fieldTypeName).append(" ")
-								.append(field.getField().getName()).append("=").append(field.getOrder())
-								.append(version.getRepeatedFieldDescribe(c)).append(";\n");
-					}
-				} else {
-					Class<?> c = field.getField().getType();
-					code.append(version.getFieldDescribe()).append(" ").append(c.getSimpleName()).append(" ")
-							.append(field.getField().getName()).append("=").append(field.getOrder()).append(";\n");
-				}
-			} else {
-				String type = field.getFieldType().getType().toLowerCase();
-
-				if (field.getFieldType() == FieldType.ENUM) {
-					// if enum type
-					Class c = field.getField().getType();
-					if (Enum.class.isAssignableFrom(c)) {
-						type = c.getSimpleName();
-					}
-				} else if (field.getFieldType() == FieldType.MAP) {
-					isMap = true;
-					Class keyClass = field.getGenericKeyType();
-					Class valueClass = field.getGenericeValueType();
-					type = type + "<" + ProtobufProxyUtils.processProtobufType(keyClass) + ", ";
-					type = type + ProtobufProxyUtils.processProtobufType(valueClass)  + ">";
-				}
-
-				String required = version.getFieldDescribe();
-				if (isMap) {
-					required = "";
-				}
-
-				if (field.isList()) {
-					required = "repeated";
-				}
-
-				code.append(required).append(" ").append(type).append(" ").append(field.getField().getName()).append("=").append(field.getOrder());
-				if (required.equals("repeated"))code.append(version.getRepeatedFieldDescribe(field.getGenericKeyType()));
-				code.append(";\n");
+				fieldTypeName = c.getSimpleName();
 			}
-		}
 
-		code.append("}\n");
-		code.append("\n\n");
+			if (ProtobufProxyUtils.isScalarType(c)) {
+				fieldTypeName = field.getFieldType().getType().toLowerCase();
+			}
+
+			if (c.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
+				code.append("\t// ").append(this.getEnumComment(c)).append("\n");
+				fieldTypeName = FieldType.INT32.getType();
+			}
+
+			if (field.getFieldType() == FieldType.MAP) {
+				Class keyClass = field.getGenericKeyType();
+				Class valueClass = field.getGenericeValueType();
+				fieldTypeName = fieldTypeName + "<" + ProtobufProxyUtils.processProtobufType(keyClass) + ", ";
+				fieldTypeName = fieldTypeName + ProtobufProxyUtils.processProtobufType(valueClass)  + ">";
+				required = "\t";
+			}
+
+			code.append(required).append(fieldTypeName).append(" ").append(field.getField().getName()).append("=").append(field.getOrder());
+			if (field.isList())code.append(version.getRepeatedFieldDescribe(field.getGenericKeyType()));
+			code.append(";\n");
+
+		}
+		code.append("}\n\n\n");
 	}
 	/**
 	 * 生成枚举的
@@ -140,6 +156,10 @@ public class ProtoIDLGenerator {
 	 * @param cls
 	 */
 	protected void generateEnumIDL(StringBuilder code, Class<Enum> cls) {
+		if (GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
+			return;
+		}
+
 		code.append(this.generatorComment(cls));
 		code.append("enum ").append(cls.getSimpleName()).append(" {  \n");
 
@@ -253,7 +273,9 @@ public class ProtoIDLGenerator {
 		}
 
 		if (cls.isEnum()) {
-			classCache.add(cls);
+			if (! GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
+				classCache.add(cls);
+			}
 			return false;
 		}
 
@@ -267,7 +289,7 @@ public class ProtoIDLGenerator {
 				}
 
 				if (!ProtobufProxyUtils.isScalarType(type)) {
-					haveCommonProtoMessage = true;
+					haveCommonProtoMessage = ! (type.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare());
 				}
 				continue;
 			}
@@ -285,6 +307,7 @@ public class ProtoIDLGenerator {
 
 				if (ProtobufProxyUtils.isObjectType(keyClass)
 						|| ProtobufProxyUtils.isObjectType(valueClass)) {
+					// 支持map了. 肯定支持enum .不需要判断enum
 					haveCommonProtoMessage = true;
 				}
 				continue;
@@ -294,7 +317,7 @@ public class ProtoIDLGenerator {
 				if (classCache.add(fieldInfo.getField().getType())) {
 					recursiveObjClass(fieldInfo.getField().getType(), classCache);
 				}
-				haveCommonProtoMessage = true;
+				haveCommonProtoMessage = ! (fieldInfo.getField().getType().isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare());
 			}
 		}
 		return haveCommonProtoMessage;
@@ -302,11 +325,14 @@ public class ProtoIDLGenerator {
 
 	/**
 	 * 输出 协议名 协议ID映射关系
-	 * @param allPbClass
+	 * @param param
 	 */
-	public String protocolIdMapping(List<Class<?>> allPbClass) {
-		StringBuilder code = new StringBuilder();
+	public String protocolIdMapping(GeneratorProtoParam param) {
+		if (! GeneratorProtoFeature.OUTPUT_PROTOCOL_LIST_ENUM.prepare()) {
+			return "";
+		}
 
+		List<Class<?>> allPbClass = param.getAllPbClass();
 		Map<String, Integer> protoReqIDEnum = Maps.newHashMapWithExpectedSize(allPbClass.size());
 		protoReqIDEnum.put("ProtoReqId_NONE", 0);
 		Map<String, Integer> protoRspIDEnum = Maps.newHashMapWithExpectedSize(allPbClass.size());
@@ -321,9 +347,34 @@ public class ProtoIDLGenerator {
 				}
 			}
 		}
-
+		StringBuilder code = new StringBuilder();
 		this.generateProtocolIdMapping("ProtoReqId", "所有请求协议", code, protoReqIDEnum);
 		this.generateProtocolIdMapping("ProtoRspId", "所有响应协议", code, protoRspIDEnum);
 		return code.toString();
+	}
+
+	/**
+	 * 生成markdown
+	 * @param param
+	 */
+	public void createProtocolMappingMarkDown(GeneratorProtoParam param) {
+		if (!GeneratorProtoFeature.OUTPUT_PROTOCOL_MAPPING_MD.prepare()) {
+			return;
+		}
+
+		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|\n|----|----|-----|\n");
+		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|\n|----|----|-----|\n");
+		for (Class<?> pbClass : param.getAllPbClass()) {
+			ChannelData annotation = pbClass.getAnnotation(ChannelData.class);
+			if (annotation == null) {
+				continue;
+			}
+			if (ChannelDataMapping.getHandler(annotation.ID()) != null) {
+				req.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|\n");
+			}else {
+				rsp.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|\n");
+			}
+		}
+		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + req + "\n" + rsp+ "\n");
 	}
 }
