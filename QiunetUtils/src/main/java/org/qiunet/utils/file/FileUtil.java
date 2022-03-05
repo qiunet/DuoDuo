@@ -212,7 +212,32 @@ public class FileUtil {
 	}
 
 	/**
+	 * 按行读取文件内容
+	 *
+	 * @return
+	 */
+	public static List<String> getFileContentByLine(String fileName) throws IOException {
+		List<String> result = new ArrayList<>();
+		File file = new File(fileName);
+		if (!file.exists() || !file.isFile()) return result;
+		BufferedReader in = null;
+		String str = "";
+		try {
+			in = new BufferedReader(new FileReader(file));
+			while ((str = in.readLine()) != null) {
+				result.add(str);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (in != null) in.close();
+		}
+		return result;
+	}
+
+	/**
 	 * 读取文件内容, 兼容jar包内配置文件读取
+	 *
 	 * @param inputStream
 	 * @return
 	 * @throws IOException
@@ -220,5 +245,12 @@ public class FileUtil {
 	public static String getFileContent(InputStream inputStream) throws IOException {
 		String result = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 		return result;
+	}
+
+	public static void main(String[] args) throws Exception {
+		List<String> fileContentByLine = FileUtil.getFileContentByLine("C:\\Users\\jian\\Desktop\\kronus-link-result.txt");
+		System.out.println(fileContentByLine.size());
+		System.out.println(fileContentByLine.get(0));
+		System.out.println(fileContentByLine.get(fileContentByLine.size() - 1));
 	}
 }
