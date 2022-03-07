@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -45,7 +46,10 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * 玩家平台ID
 	 */
 	private String openId;
-
+	/**
+	 * 跨服心跳feature
+	 */
+	private final Future<?> beatFuture;
 	/**
 	 * 玩家的构造
 	 * @param session
@@ -58,7 +62,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			}
 			this.quitAllCross(cause);
 		});
-		this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
+		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
 	}
 
 	/**
@@ -153,6 +157,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		if (dataLoader != null) {
 			dataLoader.unregister();
 		}
+		this.beatFuture.cancel(false);
 		super.destroy();
 	}
 

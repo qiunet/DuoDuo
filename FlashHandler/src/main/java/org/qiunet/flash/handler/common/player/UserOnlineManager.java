@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /***
  * 用户的actor管理.
@@ -59,9 +60,9 @@ public enum UserOnlineManager {
 		if (actor.isCrossPlayer()) {
 			((CrossPlayerActor) actor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
 		}
-		this.destroyPlayer(actor);
 
 		actor.session.close(CloseCause.LOGOUT);
+		this.destroyPlayer(actor);
 	}
 	/**
 	 * 登出事件
@@ -76,7 +77,7 @@ public enum UserOnlineManager {
 		}
 		triggerChangeListeners(false);
 		// 清理 observers 避免重连重复监听.
-		actor.clearObservers();
+		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
 		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
 		if (actor.isCrossPlayer()) {
 			return;
@@ -101,6 +102,7 @@ public enum UserOnlineManager {
 		if (waitActor == null) {
 			return null;
 		}
+		waitActor.actor.clearObservers();
 		waitActor.actor.merge(currActor);
 		waitActor.future.cancel(true);
 		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
@@ -154,7 +156,17 @@ public enum UserOnlineManager {
 	 * @param consume
 	 */
 	public void foreach(Function<AbstractUserActor, ForEachResult> consume) {
+		this.foreach(consume, null);
+	}
+	/**
+	 * 遍历在线玩家.
+	 * @param consume
+	 */
+	public void foreach(Function<AbstractUserActor, ForEachResult> consume, Predicate<AbstractUserActor> filter) {
 		for (AbstractUserActor actor : onlinePlayers.values()) {
+			if (filter != null && filter.test(actor)) {
+				continue;
+			}
 			ForEachResult result = consume.apply(actor);
 			if (result == ForEachResult.BREAK) {
 				break;

@@ -19,4 +19,15 @@ public @interface GmParamDesc {
 	 * @return
 	 */
 	String value();
+	/**
+	 * 校验的正则表达式
+	 * 填写了表达式. 需要同步填写示例.
+	 * @return
+	 */
+	String regex() default "";
+	/**
+	 * 示例
+	 * @return
+	 */
+	String example() default "";
 }

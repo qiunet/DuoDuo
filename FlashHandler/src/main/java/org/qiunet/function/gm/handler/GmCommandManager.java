@@ -15,7 +15,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
-import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -119,14 +118,13 @@ enum GmCommandManager implements IApplicationContextAware {
 
 			for (int i = 1; i < method.getParameters().length; i++) {
 				Parameter parameter = method.getParameters()[i];
-				String name = parameter.getName();
-				if (parameter.isAnnotationPresent(GmParamDesc.class)) {
-					name = parameter.getAnnotation(GmParamDesc.class).value();
-				}
-				if (StringUtil.isEmpty(name)) {
-					throw new CustomException("Gm command {}#{} parameter name is absent!", method.getDeclaringClass().getName(), method.getName());
-				}
-				this.paramList.add(GmParam.valueOf(GmParamType.parse(parameter.getType()), name));
+				GmParamDesc paramDesc = parameter.getAnnotation(GmParamDesc.class);
+
+				String regex = paramDesc == null ? "" : paramDesc.regex();
+				String example = paramDesc == null ? "" : paramDesc.example();
+				String name = paramDesc == null ? parameter.getName() : paramDesc.value();
+
+				this.paramList.add(GmParam.valueOf(GmParamType.parse(parameter.getType()), name, regex, example));
 			}
 		}
 

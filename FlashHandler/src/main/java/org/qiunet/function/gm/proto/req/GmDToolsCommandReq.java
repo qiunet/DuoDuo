@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 
 import java.util.List;
 
@@ -13,18 +14,22 @@ import java.util.List;
  * @author qiunet
  * 2021-01-08 12:58
  */
-@ChannelData(ID = IProtocolId.System.GM_COMMAND_REQ, desc = "处理gm请求")
-public class GmCommandReq implements IChannelData {
+@SkipProtoGenerator
+@ChannelData(ID = IProtocolId.System.GM_dTOOLS_COMMAND_REQ, desc = "处理dTools gm请求")
+public class GmDToolsCommandReq implements IChannelData {
+	@Protobuf(description="处理的id")
+	private long playerId;
 	@Protobuf(description = "类型")
 	private int type;
 	@Protobuf(description = "参数值")
 	private List<String> params;
 
-	public static GmCommandReq valueOf(int type, List<String> params) {
-		GmCommandReq data = new GmCommandReq();
-		data.type = type;
-		data.params = params;
-		return data;
+	public long getPlayerId() {
+		return playerId;
+	}
+
+	public void setPlayerId(long playerId) {
+		this.playerId = playerId;
 	}
 
 	public int getType() {

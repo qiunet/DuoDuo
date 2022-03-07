@@ -25,7 +25,9 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 
 	@Override
 	protected void setSession(DSession session) {
-		session.addCloseListener((s, cause) -> this.fireEvent(new PlayerLogoutEventData<T>((T) this, cause)));
+		session.addCloseListener((s, cause) -> {
+			EventManager.fireEventHandler(new PlayerLogoutEventData<T>((T) this, cause));
+		});
 		this.session = session;
 	}
 

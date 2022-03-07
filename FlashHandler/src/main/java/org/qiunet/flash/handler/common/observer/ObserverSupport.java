@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /***
  *
@@ -77,6 +78,12 @@ public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	 */
 	public void clear(){
 		this.observerMaps.clear();
+	}
+	/**
+	 * 清除该support的所有观察者
+	 */
+	public void clear(Predicate<Class<?>> filter){
+		this.observerMaps.entrySet().removeIf(entry -> filter.test(entry.getKey()));
 	}
 	/**
 	 * 根据class返回所有观察者

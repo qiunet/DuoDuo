@@ -75,6 +75,16 @@ public interface IProtocolId {
 		int GM_DEBUG_PROTOCOL_REQ = 610;
 		int GM_DEBUG_PROTOCOL_RSP = 611;
 
+		/**
+		 * 在线玩家返回
+		 */
+		int GM_ONLINE_USER_REQ = 612;
+		int GM_ONLINE_USER_RSP = 613;
+		/**
+		 * dtools 调用 gm命令
+		 */
+		int GM_dTOOLS_COMMAND_REQ = 614;
+		int GM_dTOOLS_COMMAND_RSP = 615;
 
 	}
 }
