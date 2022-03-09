@@ -15,6 +15,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
+import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -123,6 +124,10 @@ enum GmCommandManager implements IApplicationContextAware {
 				String regex = paramDesc == null ? "" : paramDesc.regex();
 				String example = paramDesc == null ? "" : paramDesc.example();
 				String name = paramDesc == null ? parameter.getName() : paramDesc.value();
+
+				if (!StringUtil.isEmpty(regex) && StringUtil.isEmpty(example)) {
+					throw new CustomException("When regex not empty, example must specify value!");
+				}
 
 				this.paramList.add(GmParam.valueOf(GmParamType.parse(parameter.getType()), name, regex, example));
 			}

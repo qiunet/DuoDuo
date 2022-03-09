@@ -56,13 +56,24 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 		ctx.close();
 	}
+
+
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) {
 		ctx.flush();
+		ctx.fireChannelReadComplete();
 	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+		try {
+			this.channelRead1(ctx, msg);
+		}finally {
+			ctx.fireChannelRead(msg.retain());
+		}
+	}
+
+	protected void channelRead1(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		FullHttpRequest request = (msg);
 		if (! request.decoderResult().isSuccess()) {
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
@@ -80,7 +91,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				handlerGameUriPathRequest(ctx, request);
 			} else if (params.getWebsocketPath() != null && params.getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
-				handlerWebSocketHandshark(ctx, request);
+				handlerWebSocketHandShark(ctx, request);
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
@@ -95,7 +106,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	/***
 	 * 处理升级握手信息
 	 */
-	private void handlerWebSocketHandshark(ChannelHandlerContext ctx, FullHttpRequest request){
+	private void handlerWebSocketHandShark(ChannelHandlerContext ctx, FullHttpRequest request){
 		ChannelPipeline pipeline = ctx.pipeline();
 
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));

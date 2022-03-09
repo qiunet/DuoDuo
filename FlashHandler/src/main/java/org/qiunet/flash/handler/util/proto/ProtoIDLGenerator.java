@@ -10,6 +10,7 @@ import com.baidu.bjf.remoting.protobuf.utils.ProtobufProxyUtils;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -334,13 +335,13 @@ public class ProtoIDLGenerator {
 
 		List<Class<?>> allPbClass = param.getAllPbClass();
 		Map<String, Integer> protoReqIDEnum = Maps.newHashMapWithExpectedSize(allPbClass.size());
-		protoReqIDEnum.put("ProtoReqId_NONE", 0);
+		protoReqIDEnum.put("NONE", 0);
 		Map<String, Integer> protoRspIDEnum = Maps.newHashMapWithExpectedSize(allPbClass.size());
-		protoRspIDEnum.put("ProtoRspId_NONE", 0);
+		protoRspIDEnum.put("NONE", 0);
 		for (Class<?> pbClass : allPbClass) {
 			int protocolId = getProtocolId(pbClass);
 			if (protocolId != 0) {
-				if (ChannelDataMapping.getHandler(protocolId) != null) {
+				if (protocolId == IProtocolId.System.CLIENT_PING || ChannelDataMapping.getHandler(protocolId) != null) {
 					protoReqIDEnum.put(pbClass.getSimpleName(), protocolId);
 				}else {
 					protoRspIDEnum.put(pbClass.getSimpleName(), protocolId);

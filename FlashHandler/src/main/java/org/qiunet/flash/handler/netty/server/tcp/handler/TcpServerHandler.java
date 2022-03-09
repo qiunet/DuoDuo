@@ -35,11 +35,19 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		ChannelUtil.bindSession(session);
 		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
 		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
+		ctx.fireChannelActive();
 	}
 
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
+		try {
+			channelRead1(ctx, content);
+		}finally {
+			ctx.fireChannelRead(content);
+		}
+	}
 
+	public void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
 			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
 			return;
