@@ -24,6 +24,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	public static final String CONFIG_FILE_NAME = "server.conf";
 	// server port
 	public static final String SERVER_PORT = "server.server_port";
+	// 游戏服到游戏服-跨服端口. Cross服历史原因.对外是Server_port
+	public static final String CROSS_PORT = "server.cross_port";
 	// node port
 	public static final String NODE_PORT = "server.node_port";
 	// secret key

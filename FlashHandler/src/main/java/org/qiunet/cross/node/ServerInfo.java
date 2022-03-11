@@ -47,6 +47,9 @@ public final class ServerInfo extends HashMap<String, Object> {
 		node.put("serverPort", serverPort);
 		node.put("nodePort", nodePort);
 		node.put("serverId", serverId);
+		if (ServerConfig.getConfig() != null && ServerConfig.getConfig().containKey(ServerConfig.CROSS_PORT)) {
+			node.put("crossPort", ServerConfig.getConfig().getInt(ServerConfig.CROSS_PORT));
+		}
 		String publicHost = null;
 		if (ServerConfig.getConfig() != null) {
 			publicHost = ServerConfig.getInstance().getValue(publicHostKey);
@@ -120,4 +123,15 @@ public final class ServerInfo extends HashMap<String, Object> {
 		return JsonUtil.toJsonString(this);
 	}
 
+	/**
+	 * 玩法服叫 server_port
+	 * 游戏服叫 cross_port
+	 * @return
+	 */
+	public int getCrossPort() {
+		if (getServerType() == ServerType.CROSS) {
+			return getServerPort();
+		}
+		return (Integer) get("crossPort");
+	}
 }
