@@ -6,7 +6,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -30,8 +29,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			ChannelDataMapping.requestCheck(channel, getRequestData());
 			this.handlerRequest();
 		}catch (Exception e) {
-			IChannelMessage<IChannelData> protobufMessage = channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(e);
-			ChannelUtil.getSession(channel).sendMessage(protobufMessage);
+			channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(channel, e);
 		}
 	}
 

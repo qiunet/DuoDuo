@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -93,7 +94,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			throw new CustomException("Can not cross to self!");
 		}
-
+		LoggerType.DUODUO_FLASH_HANDLER.info("player {} cross to serverId {}", this.getId(), serverId);
 		crossConnectors.computeIfAbsent(serverType, key -> new PlayerCrossConnector(this, serverId));
 		this.crossServerType = serverType;
 	}
@@ -111,6 +112,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	@Override
 	public void quitCross(ServerType serverType, CloseCause cause) {
 		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverType);
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server type {}", this.getId(), serverType);
 		if (playerCrossConnector == null) {
 			return;
 		}

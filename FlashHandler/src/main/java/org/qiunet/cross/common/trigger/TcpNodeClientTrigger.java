@@ -41,6 +41,10 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			return;
 		}
 
+		if (data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION) {
+			return;
+		}
+
 		IHandler handler = ChannelDataMapping.getHandler(data.getProtocolId());
 		if (handler == null) {
 			LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());

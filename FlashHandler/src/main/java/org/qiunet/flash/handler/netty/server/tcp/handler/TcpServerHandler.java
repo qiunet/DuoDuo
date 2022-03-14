@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.tcp.handler;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
@@ -63,12 +62,14 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			ctx.writeAndFlush(params.getStartupContext().exception(cause)).addListener(ChannelFutureListener.CLOSE);
-			if (session != null) {
-				session.close(CloseCause.EXCEPTION);
-			}else {
-				ctx.close();
-			}
+			params.getStartupContext().exception(ctx.channel(), cause)
+			.addListener(f -> {
+				if (session != null) {
+					session.close(CloseCause.EXCEPTION);
+				}else {
+					ctx.close();
+				}
+			});
 		}
 	}
 }

@@ -24,7 +24,8 @@ public class Client {
 	@BeforeAll
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.CLIENT).scanner();
-		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(), (session, data) -> {
+		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(),
+		(session, data) -> {
 			System.out.println("--------------------------"+data.getProtocolId());
 		});
 	}
@@ -33,8 +34,8 @@ public class Client {
 	public void request() throws InterruptedException {
 		websocketClient.sendMessage(LoginRequest.valueOf(100000));
 		websocketClient.sendMessage(new EquipIndexRequest());
-		Thread.sleep(1000);
-		// 第二次将转发到Cross服务
+		Thread.sleep(2000);
+		//// 第二次将转发到Cross服务
 		websocketClient.sendMessage(new EquipIndexRequest());
 		LockSupport.park();
 	}

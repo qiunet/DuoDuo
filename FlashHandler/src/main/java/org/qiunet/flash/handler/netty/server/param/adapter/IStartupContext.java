@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
@@ -9,12 +11,10 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.*;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
-
-import java.io.IOException;
-import java.util.Objects;
 
 /***
  *
@@ -25,8 +25,8 @@ import java.util.Objects;
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<IChannelMessage<IChannelData>> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildResponseMessage());
-	LazyLoader<IChannelMessage<IChannelData>> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(() -> new ServerExceptionResponse().buildResponseMessage());
 	LazyLoader<IChannelMessage<IChannelData>> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildResponseMessage());
+	LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
 	/**
 	 * 默认的cross 启动上下文
 	 */
@@ -74,15 +74,21 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @param cause
 	 * @return
 	 */
-	default IChannelMessage<IChannelData> exception(Throwable cause){
+	default ChannelFuture exception(Channel channel, Throwable cause){
+		IChannelData message;
 		if (cause instanceof StatusResultException) {
-			return StatusTipsRsp.valueOf(((StatusResultException) cause)).buildResponseMessage();
-		} else if (cause instanceof IOException && Objects.equals(cause.getMessage(), "Connection reset by peer")) {
-			LoggerType.DUODUO_FLASH_HANDLER.error("Connection reset by peer");
+			message = StatusTipsRsp.valueOf(((StatusResultException) cause));
 		} else {
-			LoggerType.DUODUO_FLASH_HANDLER.error("异常", cause);
+			LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
+			message = SERVER_EXCEPTION_MESSAGE.get();
 		}
-		return SERVER_EXCEPTION_MESSAGE.get();
+
+		IMessageActor messageActor = channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		if (messageActor instanceof CrossPlayerActor) {
+			// 在cross平台. 如果是玩家抛出的异常. 直接发送给客户端
+			return messageActor.sendMessage(message).future();
+		}
+		return channel.writeAndFlush(message);
 	}
 
 	/**

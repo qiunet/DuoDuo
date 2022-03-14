@@ -97,8 +97,6 @@ public class DSession implements IChannelMessageSender {
 			if (! f.isSuccess()) {
 				throw new CustomException("Tcp Connect fail!");
 			}
-			f.channel().attr(ServerConstants.SESSION_KEY).set(this);
-			this.setChannel(f.channel());
 			try {
 				sessionLock.lock();
 				DMessageContentFuture msg = queue.poll();
@@ -134,6 +132,8 @@ public class DSession implements IChannelMessageSender {
 		};
 
 		ChannelFuture connectFuture = connectParam.connect();
+		connectFuture.channel().attr(ServerConstants.SESSION_KEY).set(this);
+		this.setChannel(connectFuture.channel());
 		connectFuture.addListener(listener);
 	}
 
@@ -270,7 +270,7 @@ public class DSession implements IChannelMessageSender {
 			try {
 				sessionLock.lock();
 				if (connecting.get()) {
-					DMessageContentFuture contentFuture = new DMessageContentFuture(message);
+					DMessageContentFuture contentFuture = new DMessageContentFuture(channel, message);
 					this.queue.add(contentFuture);
 					return contentFuture;
 				}

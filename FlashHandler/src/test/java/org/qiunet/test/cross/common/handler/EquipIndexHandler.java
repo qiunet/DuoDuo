@@ -9,6 +9,7 @@ import org.qiunet.test.cross.common.data.TestCrossDataUser;
 import org.qiunet.test.cross.common.event.CrossPlayerLoginEventData;
 import org.qiunet.test.cross.common.proto.req.EquipIndexRequest;
 import org.qiunet.test.cross.common.proto.resp.CrossLoginResponse;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  *
@@ -21,12 +22,15 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 	@Override
 	public void crossHandler(CrossPlayerActor actor, EquipIndexRequest equipIndexRequest) {
 		TestCrossDataUser crossData = actor.getCrossData(PlayerCrossData.TEST_CROSS_DATA);
-		logger.info("取到CrossData: PlayerId: {} playerName: {}", crossData.getUid(), crossData.getPlayerName());
+		logger.info("Cross服: 第二次EquipIndexRequest: 取到CrossData: PlayerId: {} playerName: {}", crossData.getUid(), crossData.getPlayerName());
 		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"));
 	}
 
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<EquipIndexRequest> context) throws Exception {
+		if (playerActor.isCrossStatus()) {
+			throw new CustomException("{} 已经跨服. 需要去crossHandler", playerActor.toString());
+		}
 		playerActor.crossToServer(Constants.CROSS_SERVER_ID);
 		playerActor.fireCrossEvent(new CrossPlayerLoginEventData());
 	}

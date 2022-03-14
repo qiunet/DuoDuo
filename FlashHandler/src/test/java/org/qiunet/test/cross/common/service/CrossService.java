@@ -15,6 +15,6 @@ public enum CrossService {
 
 	@EventListener
 	private void nodeEvent(CrossNodeEvent event) {
-		LoggerType.DUODUO_FLASH_HANDLER.info("=====server node event is trigger {}!======", event.getPlayerId());
+		LoggerType.DUODUO_FLASH_HANDLER.info("Cross服. ServerNode事件触发. {}!======", event.getPlayerId());
 	}
 }

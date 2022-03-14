@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session.future;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -28,4 +29,6 @@ boolean cancel(boolean mayInterruptIfRunning);
  boolean isSuccess();
 
  boolean isCanceled();
+
+ ChannelFuture future();
 }

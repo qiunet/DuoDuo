@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -68,13 +67,14 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		logger.error(errMeg, cause);
 
 		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
-			ChannelUtil.getSession(ctx.channel()).sendMessage(params.getStartupContext().exception(cause))
-					.addListener(ChannelFutureListener.CLOSE);
-			if (session == null) {
-				ctx.close();
-			}else {
-				session.close(CloseCause.EXCEPTION);
-			}
+			params.getStartupContext().exception(ctx.channel(), cause)
+				.addListener(f -> {
+				if (session == null) {
+					ctx.close();
+				}else {
+					session.close(CloseCause.EXCEPTION);
+				}
+			});
 		}
 	}
 }

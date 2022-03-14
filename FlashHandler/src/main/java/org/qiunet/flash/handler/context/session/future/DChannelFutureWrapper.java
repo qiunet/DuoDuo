@@ -44,4 +44,9 @@ public class DChannelFutureWrapper implements IDSessionFuture {
 	public boolean isCanceled() {
 		return channelFuture.isCancelled();
 	}
+
+	@Override
+	public ChannelFuture future() {
+		return this.channelFuture;
+	}
 }
