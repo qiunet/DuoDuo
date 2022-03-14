@@ -70,6 +70,13 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 		return ! isCrossPlayer();
 	}
 
+	/**
+	 * 玩家主动退出
+	 */
+	public void logout() {
+		UserOnlineManager.instance.playerQuit((T)this);
+	}
+
 	@Override
 	public void destroy() {
 		observerSupport.clear();
