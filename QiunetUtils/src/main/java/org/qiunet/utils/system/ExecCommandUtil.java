@@ -2,29 +2,33 @@ package org.qiunet.utils.system;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.string.StringUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.StringJoiner;
 
-public class ShellUtil {
-	private ShellUtil(){}
+public class ExecCommandUtil {
+	private ExecCommandUtil(){}
 	/**
 	 * 执行系统脚本 主要是linux 带参数
-	 * @param shell 数组第一位为命令 后面是参数
+	 * @param commandPath 命令路径 或者命令名
 	 * @return
 	 */
-	public static String execShell(String... shell){
-		if(! "/".equals(File.separator)) return "";
+	public static String exec(Path commandPath, String ... args){
+		return exec(commandPath.toString(), args);
+	}
 
-		shell[0] = shell[0].replace("~", System.getProperty("user.home"));
+	public static String exec(String commandPath, String ... args){
+		String command = commandPath;
+		command = command.replace("~", System.getProperty("user.home"));
 		StringJoiner sb = new StringJoiner("\n");
 		Process process = null;
 		try {
-			process = Runtime.getRuntime().exec(shell);
+			process = Runtime.getRuntime().exec(StringUtil.arraysToString(args, command+" ", "", " "));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
