@@ -73,7 +73,8 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 			}
 
 			dataMaxLength = 0;
-			byteBuf = null;
+//			byteBuf = null;
+			byteBuf.release();
 			readLength = 0;
 
 			MessageContent context = new MessageContent(header.getProtocolId(), dataBytes);
