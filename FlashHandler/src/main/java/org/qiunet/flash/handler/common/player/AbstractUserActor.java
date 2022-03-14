@@ -2,8 +2,8 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
-import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserLogoutEventData;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.utils.listener.event.EventManager;
 
@@ -26,7 +26,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	@Override
 	protected void setSession(DSession session) {
 		session.addCloseListener((s, cause) -> {
-			EventManager.fireEventHandler(new PlayerLogoutEventData<T>((T) this, cause));
+			EventManager.fireEventHandler(new UserLogoutEventData<T>((T) this, cause));
 		});
 		this.session = session;
 	}

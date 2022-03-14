@@ -8,7 +8,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerLogoutEvent;
-import org.qiunet.flash.handler.common.player.event.PlayerLogoutEventData;
+import org.qiunet.flash.handler.common.player.event.UserLogoutEventData;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -69,7 +69,7 @@ public enum UserOnlineManager {
 	 * @param eventData
 	 */
 	@EventListener(EventHandlerWeightType.LESS)
-	private <T extends AbstractUserActor<T>> void onLogout(PlayerLogoutEventData<T> eventData) {
+	private <T extends AbstractUserActor<T>> void onLogout(UserLogoutEventData<T> eventData) {
 		AbstractUserActor<T> userActor = eventData.getPlayer();
 		T actor = (T) onlinePlayers.remove(userActor.getId());
 		if (actor == null) {
