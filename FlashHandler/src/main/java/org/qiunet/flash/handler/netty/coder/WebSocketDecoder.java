@@ -68,14 +68,17 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 			byte[] dataBytes = new byte[dataMaxLength];
 			byteBuf.readBytes(dataBytes);
 			if (encryption && (dataBytes = header.validAndDecryptBytes(dataBytes)) == null) {
+				dataMaxLength = 0;
+				readLength = 0;
+				byteBuf.release();
 				ctx.channel().close();
 				return;
 			}
 
 			dataMaxLength = 0;
-//			byteBuf = null;
-			byteBuf.release();
 			readLength = 0;
+			byteBuf.release();
+//			byteBuf = null;
 
 			MessageContent context = new MessageContent(header.getProtocolId(), dataBytes);
 			out.add(context);
