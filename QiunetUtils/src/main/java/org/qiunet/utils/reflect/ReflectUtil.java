@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -455,10 +456,19 @@ public final class ReflectUtil {
 	/**
 	 * 找出Class 上对应的泛型参数类型
 	 * @param oriClazz 原始class
-	 * @param filter 类型过滤
+	 * @param filter 类型过滤 仅给出泛型class
 	 * @return
 	 */
 	public static Class<?> findGenericParameterizedType(Class<?> oriClazz, Predicate<Class<?>> filter) {
+		return findGenericParameterizedType(oriClazz, (c1, c2) -> filter == null || filter.test(c2));
+	}
+	/**
+	 * 找出Class 上对应的泛型参数类型
+	 * @param oriClazz 原始class
+	 * @param filter 类型过滤 给出所在class 以及 泛型class
+	 * @return
+	 */
+	public static Class<?> findGenericParameterizedType(Class<?> oriClazz, BiPredicate<Class<?>, Class<?>> filter) {
 		Class<?> clazz = oriClazz;
 		do {
 			if (! (clazz.getGenericSuperclass() instanceof ParameterizedType)) {
@@ -467,7 +477,7 @@ public final class ReflectUtil {
 			}
 			Type[] types = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments();
 			for (Type type : types) {
-				if (type instanceof Class && filter.test((Class<?>) type)) {
+				if (type instanceof Class && filter.test(clazz, (Class<?>) type)) {
 					return  (Class<?>) type;
 				}
 			}

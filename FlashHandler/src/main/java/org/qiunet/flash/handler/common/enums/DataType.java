@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.http.HttpJsonRequestContext;
 import org.qiunet.flash.handler.context.request.http.HttpPbRequestContext;
 import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
@@ -25,11 +26,6 @@ public enum DataType {
 		@Override
 		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
 			return new HttpStringRequestContext(content, channel, params, request);
-		}
-
-		@Override
-		public IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			throw new IllegalStateException("Not Support");
 		}
 	},
 	/**
@@ -53,12 +49,7 @@ public enum DataType {
 	JSON {
 		@Override
 		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
-			return null;
-		}
-
-		@Override
-		public IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			return null;
+			return new HttpJsonRequestContext(content, channel, params, request);
 		}
 	}
 	;
@@ -78,6 +69,8 @@ public enum DataType {
 	 * @param channel
 	 * @return
 	 */
-	public abstract IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor);
+	public IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
+		throw new IllegalStateException("Not Support");
+	}
 
 }

@@ -6,13 +6,14 @@ import io.netty.util.CharsetUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.response.json.JsonResponse;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.test.handler.handler.http.JTestResponseData;
 import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.ProtocolId;
 import org.qiunet.utils.http.HttpRequest;
+import org.qiunet.utils.json.JsonUtil;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -80,9 +81,10 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
 				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
 				String responseString = httpResponse.body().string();
-				JsonResponse response = JsonResponse.parse(responseString);
-				Assertions.assertEquals(response.status(), IGameStatus.SUCCESS.getStatus());
-				Assertions.assertEquals(response.get("test"), test);
+
+				JTestResponseData data = JsonUtil.getGeneralObjWithField(responseString, JTestResponseData.class);
+				Assertions.assertEquals(data.getStatus().getStatus(), IGameStatus.SUCCESS.getStatus());
+				Assertions.assertEquals(data.getTest(), test);
 				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();

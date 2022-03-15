@@ -123,11 +123,9 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		if (responseData == null){
 			throw new NullPointerException("ResponseData can not be null");
 		}
-
 		if (logger.isInfoEnabled() && ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("HTTP >>> {}", ToString.toString(responseData));
 		}
-
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
 		IChannelMessage<?> responseDataMessage = getResponseDataMessage(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
@@ -207,6 +205,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		Preconditions.checkNotNull(task);
 		task.onComplete((r, ex) -> {
 			if (ex != null) {
+				ex.printStackTrace();
 				throw new CustomException(ex, "process async http exception");
 			}
 			if (r == null) {
