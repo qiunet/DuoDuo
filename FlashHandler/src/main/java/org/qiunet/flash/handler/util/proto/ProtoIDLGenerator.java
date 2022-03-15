@@ -145,7 +145,7 @@ public class ProtoIDLGenerator {
 			}
 
 			code.append(required).append(fieldTypeName).append(" ").append(field.getField().getName()).append("=").append(field.getOrder());
-			if (field.isList())code.append(version.getRepeatedFieldDescribe(field.getGenericKeyType()));
+			if (field.isList())code.append(version.getRepeatedFieldDescribe(field));
 			code.append(";\n");
 
 		}

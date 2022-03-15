@@ -11,7 +11,7 @@ public interface IResultResponse {
 	HttpStatus SUCCESS = new HttpStatus(IGameStatus.SUCCESS);
 
 	class HttpStatus {
-		private int status;
+		private int code;
 		private String desc;
 
 		public HttpStatus() {}
@@ -20,13 +20,13 @@ public interface IResultResponse {
 			this(gameStatus.getStatus(), gameStatus.getDesc());
 		}
 
-		public HttpStatus(int status, String desc) {
-			this.status = status;
+		public HttpStatus(int code, String desc) {
+			this.code = code;
 			this.desc = desc;
 		}
 
-		public int getStatus() {
-			return status;
+		public int getCode() {
+			return code;
 		}
 
 		public String getDesc() {
@@ -38,7 +38,20 @@ public interface IResultResponse {
 	 * @return
 	 */
 	HttpStatus getStatus();
-
+	/**
+	 * 是否成功
+	 * @return
+	 */
+	default boolean isSuccess() {
+		return this.statusCode() == IGameStatus.SUCCESS.getStatus();
+	}
+	/**
+	 * 返回响应码
+	 * @return
+	 */
+	default int statusCode() {
+		return getStatus().getCode();
+	}
 	/**
 	 * 设置
 	 * @param status

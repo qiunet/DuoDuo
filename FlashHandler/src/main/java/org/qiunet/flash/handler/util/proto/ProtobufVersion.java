@@ -31,15 +31,30 @@ public enum ProtobufVersion {
 		}
 
 		@Override
-		public String getRepeatedFieldDescribe(Class<?> type) {
+		public String getRepeatedFieldDescribe(FieldInfo field) {
+			Class<?> type = field.getGenericKeyType();
+			if (type == String.class) {
+				return "";
+			}
+
+			if (! field.isPacked()) {
+				// version2 默认false
+				return "";
+			}
+
 			if (type.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
 				type = int.class;
 			}
 
-			if (type == String.class || ! FieldInfo.isPrimitiveType(type)) {
-				return "";
+			if (FieldInfo.isPrimitiveType(type)
+			 || type == Boolean.class
+			 || type == Integer.class
+			 || type == Long.class
+			) {
+				return " [packed = true]";
 			}
-			return " [packed = true]";
+
+			return super.getRepeatedFieldDescribe(field);
 		}
 	},
 
@@ -58,6 +73,14 @@ public enum ProtobufVersion {
 			return sb;
 		}
 
+		@Override
+		public String getRepeatedFieldDescribe(FieldInfo field) {
+			if (! field.isPacked()) {
+				// version3 默认true
+				return "[packed = false]";
+			}
+			return super.getRepeatedFieldDescribe(field);
+		}
 	},
 	;
 	public static final String PACKAGE_MESSAGE = "package proto;\n\n";
@@ -94,7 +117,7 @@ public enum ProtobufVersion {
 	 * list 字段修尾缀饰符.
 	 * @return
 	 */
-	public String getRepeatedFieldDescribe(Class<?> type) {
+	public String getRepeatedFieldDescribe(FieldInfo field) {
 		return "";
 	}
 }

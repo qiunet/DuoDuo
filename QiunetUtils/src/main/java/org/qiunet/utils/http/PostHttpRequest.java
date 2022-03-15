@@ -48,6 +48,16 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	/**
 	 * 使用json的方式提交数据
 	 *
+	 * @param params
+	 * @return
+	 */
+	public PostHttpRequest withJsonData(Object params) {
+		return this.withJsonData(JsonUtil.toJsonString(params));
+	}
+
+	/**
+	 * 使用json的方式提交数据
+	 *
 	 * @param json
 	 * @return
 	 */

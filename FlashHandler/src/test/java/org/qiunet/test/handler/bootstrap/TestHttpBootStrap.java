@@ -83,7 +83,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 				String responseString = httpResponse.body().string();
 
 				JTestResponseData data = JsonUtil.getGeneralObjWithField(responseString, JTestResponseData.class);
-				Assertions.assertEquals(data.getStatus().getStatus(), IGameStatus.SUCCESS.getStatus());
+				Assertions.assertEquals(data.getStatus().getCode(), IGameStatus.SUCCESS.getStatus());
 				Assertions.assertEquals(data.getTest(), test);
 				LockSupport.unpark(currThread);
 		});
