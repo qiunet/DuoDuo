@@ -11,8 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.StringJoiner;
 
-public class ExecCommandUtil {
-	private ExecCommandUtil(){}
+public class CmdUtil {
+	private CmdUtil(){}
 	/**
 	 * 执行系统脚本 主要是linux 带参数
 	 * @param commandPath 命令路径 或者命令名
