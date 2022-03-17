@@ -29,7 +29,7 @@
 | [QiunetDatas](QiunetDatas/README.md)   | Mysql和Redis以及本地Cache使用模块, 实现了异步更新等功能. |
 | [Entity2Table](Entity2Table/README.md) | 根据Do对象自动生成和更新数据库结构的模块                 |
 | [ProjectInit](ProjectInit/README.md)   | 通过xml配置.自动生成Do Bo xml Service和调用的类          |
-| [Excel2Cfgs](Excel2Cfgs/README.md)     | Excel转设定的工具. 打包成可以执行的jar包.                |
+| [Excel2Cfgs](Excel2Cfgs/README.md)     | 已经废弃, 使用[DTools](https://github.com/qiunet/DTools)              |
 | [FlashHandler](FlashHandler/README.md) | 能启动Tcp Http WebSocket作为服务的模块                   |
 | [Function](Function/README.md)         | 部分业务中通用代码, 抽象出来做成的模块                   |
 | [GameTest](GameTest/README.md)         | 模拟机器人测试的模块                                     |
