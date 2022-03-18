@@ -1,6 +1,7 @@
 package org.qiunet.test.handler.bootstrap;
 
 
+import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,6 +36,8 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 
 	@BeforeAll
 	public static void init() throws Exception {
+		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		currThread = Thread.currentThread();
@@ -75,6 +78,7 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 
 	@AfterAll
 	public static void shutdown() {
+		System.gc();
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}
 }
