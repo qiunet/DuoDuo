@@ -169,6 +169,7 @@ public final class ChannelUtil {
 				&& messageActor instanceof ICrossStatusActor
 				&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
 			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			content.release();
 			return;
 		}
 		if (channel.isActive()) {

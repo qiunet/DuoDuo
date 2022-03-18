@@ -122,7 +122,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
 		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
 
-		ctx.fireChannelRead(request.retain());
 		pipeline.remove(this);
 	}
 
@@ -145,7 +144,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
-			content.release();
 			return;
 		}
 		this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
@@ -163,7 +161,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (handler == null) {
 			logger.error("Handler [{}] not found!", content.toString());
 			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
-			content.release();
 			return;
 		}
 

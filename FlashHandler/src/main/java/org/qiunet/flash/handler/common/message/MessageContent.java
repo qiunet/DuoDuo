@@ -69,9 +69,7 @@ public class MessageContent {
 	}
 
 	public void release(){
-		if (buffer != null && buffer.refCnt() > 0) {
-			buffer.release();
-		}
+		buffer.release();
 	}
 
 	public boolean hasArray(){

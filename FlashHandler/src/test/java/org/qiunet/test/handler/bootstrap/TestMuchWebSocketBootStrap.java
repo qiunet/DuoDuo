@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
@@ -8,6 +9,8 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
+import org.qiunet.function.badword.DefaultBadWord;
+import org.qiunet.function.badword.LoadBadWordEventData;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.WsPbLoginRequest;
 
@@ -23,6 +26,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
 	@Test
 	public void testMuchWebSocket() throws InterruptedException {
+		LoadBadWordEventData.valueOf(new DefaultBadWord(Lists.newArrayList("毛泽东"))).fireEventHandler();
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {
