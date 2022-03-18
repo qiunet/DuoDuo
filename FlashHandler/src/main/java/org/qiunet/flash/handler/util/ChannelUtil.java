@@ -153,6 +153,7 @@ public final class ChannelUtil {
 		Preconditions.checkNotNull(session);
 
 		if (! params.getStartupContext().userServerValidate(session)) {
+			content.release();
 			return;
 		}
 

@@ -49,6 +49,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
 			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
+			content.release();
 			return;
 		}
 
