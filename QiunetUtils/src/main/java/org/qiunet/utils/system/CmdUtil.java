@@ -11,6 +11,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.StringJoiner;
 
+/**
+ * 这个工具会启动一个子进程执行.
+ * 不建议大量调用. 大量调用会造成负担.
+ * 如果大量需要. 建议找对应的java api搞定
+ */
 public class CmdUtil {
 	private CmdUtil(){}
 	/**
