@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.action.BehaviorAction;
 import org.qiunet.function.ai.node.action.BehaviorActionParam;
+import org.qiunet.function.ai.node.action.IgnoreBehaviorDoc;
 import org.qiunet.function.condition.ConditionField;
 import org.qiunet.function.condition.ConditionNot;
 import org.qiunet.function.condition.ICondition;
@@ -76,6 +77,10 @@ public class CreateAiConfig {
 			List<AiActionDoc> actionDocs = new ArrayList<>();
 			Set<String> descSet = new HashSet<>();
 			for (Class<? extends IBehaviorAction> action : actions) {
+				if (action.isAnnotationPresent(IgnoreBehaviorDoc.class)) {
+					continue;
+				}
+
 				BehaviorAction behaviorAction = action.getAnnotation(BehaviorAction.class);
 				if (! descSet.add(behaviorAction.name())) {
 					throw new CustomException("BehaviorAction.name [{}] is repeated!", behaviorAction.name());
