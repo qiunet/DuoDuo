@@ -3,16 +3,17 @@
 
 	<xs:complexType name="ActionType">
 		<xs:simpleContent>
-		  <xs:extension base="xs:string">
-			<xs:attribute type="xs:string" name="clazz" use="required" />
-			<xs:attribute type="xs:string" name="condition" />
-			<xs:attribute type="xs:string" name="params" />
-		  </xs:extension>
+			<xs:extension base="xs:string">
+				<xs:attribute type="xs:string" name="clazz" use="required" />
+				<xs:attribute type="xs:string" name="condition" />
+				<xs:attribute type="xs:string" name="params" />
+			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
 
 	<xs:group name="ChoiceNode">
 		<xs:choice>
+			<xs:element type="CounterNodeContent" name="counter"/>
 			<xs:element type="RepeatNodeContent" name="repeat"/>
 			<xs:element type="InvertNodeContent" name="invert"/>
 			<xs:element type="ExecutorContent" name="sequence"/>
@@ -24,6 +25,14 @@
 	</xs:group>
 
 	<xs:complexType name="RepeatNodeContent">
+		<xs:choice>
+			<xs:group ref="ChoiceNode" />
+		</xs:choice>
+		<xs:attribute type="xs:integer" name="count" use="required"/>
+		<xs:attribute type="xs:string" name="name"/>
+	</xs:complexType>
+
+	<xs:complexType name="CounterNodeContent">
 		<xs:choice>
 			<xs:group ref="ChoiceNode" />
 		</xs:choice>

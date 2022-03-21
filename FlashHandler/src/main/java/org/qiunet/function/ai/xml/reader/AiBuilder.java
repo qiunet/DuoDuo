@@ -5,6 +5,7 @@ import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.action.BehaviorActionManager;
 import org.qiunet.function.ai.node.action.BehaviorActionParam;
+import org.qiunet.function.ai.node.decorator.CounterNode;
 import org.qiunet.function.ai.node.decorator.InvertNode;
 import org.qiunet.function.ai.node.decorator.RepeatNode;
 import org.qiunet.function.ai.node.executor.ParallelExecutor;
@@ -48,6 +49,7 @@ public class AiBuilder<Owner> {
 	private static final String PARALLEL_EXECUTOR_NAME = "parallel";
 	private static final String REPEAT_TAG_NAME = "repeat";
 	private static final String INVERT_TAG_NAME = "invert";
+	private static final String COUNTER_TAG_NAME = "counter";
 	private static final String ACTION_TAG_NAME = "action";
 
 	/**
@@ -140,6 +142,8 @@ public class AiBuilder<Owner> {
 				// action decorator
 			case REPEAT_TAG_NAME:
 				return new RepeatNode<>(name, Integer.parseInt(element.getAttribute("count")));
+			case COUNTER_TAG_NAME:
+				return new CounterNode<>(name, Integer.parseInt(element.getAttribute("count")));
 			case INVERT_TAG_NAME:
 				return new InvertNode<>(name);
 			default:
