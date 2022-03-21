@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 enum EventManager0 implements IApplicationContextAware {
 	instance;
-	private final Map<Class<? extends IEventData>, List<Wrapper>> listeners = new HashMap<>();
+	private final Map<Class<? extends IEventData>, List<EventSubscriber>> listeners = new HashMap<>();
 	private final AtomicBoolean inited = new AtomicBoolean();
 	private IApplicationContext context;
 
@@ -43,8 +43,8 @@ enum EventManager0 implements IApplicationContextAware {
 		Set<Method> typesAnnotated = context.getMethodsAnnotatedWith(EventListener.class);
 		for (Method method : typesAnnotated) {
 			Class<? extends IEventData> eventDataClass = eventDataClass(method);
-			List<Wrapper> wrapperList = this.listeners.computeIfAbsent(eventDataClass, key -> Lists.newArrayList());
-			wrapperList.add(wrapper(method));
+			List<EventSubscriber> subscriberList = this.listeners.computeIfAbsent(eventDataClass, key -> Lists.newArrayList());
+			subscriberList.add(wrapper(method));
 		}
 
 		this.listeners.values().forEach(list -> list.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()));
@@ -77,37 +77,37 @@ enum EventManager0 implements IApplicationContextAware {
 	 * @param method
 	 * @return
 	 */
-	private Wrapper wrapper(Method method) {
+	private EventSubscriber wrapper(Method method) {
 		EventListener annotation = method.getAnnotation(EventListener.class);
 		Object implInstance = context.getInstanceOfClass(method.getDeclaringClass());
-		return new Wrapper(implInstance, method, annotation.value().ordinal(), annotation.limitCount());
+		return new EventSubscriber(implInstance, method, annotation.value().ordinal(), annotation.limitCount());
 	}
 
 	/***
 	 *
 	 * @param eventData
 	 */
-	void fireEventHandler(IEventData eventData) {
+	void post(IEventData eventData) {
 		if (! inited.get()) {
 			throw new CustomException("Event not init");
 		}
 
-		List<Wrapper> wrappers = listeners.get(eventData.getClass());
+		List<EventSubscriber> wrappers = listeners.get(eventData.getClass());
 		if (wrappers == null) {
 			return;
 		}
 
-		wrappers.forEach(w -> w.fireEventHandler(eventData));
+		wrappers.forEach(w -> w.handleEvent(eventData));
 	}
 
-	private static class Wrapper {
+	private static class EventSubscriber {
 		private final int weight;
 		private final Method method;
 		private final Object caller;
 		private final int limitCount;
 		private int currCount;
 
-		private Wrapper(Object caller, Method method, int weight, int limitCount) {
+		private EventSubscriber(Object caller, Method method, int weight, int limitCount) {
 			this.caller = caller;
 			this.weight = weight;
 			this.method = method;
@@ -115,7 +115,7 @@ enum EventManager0 implements IApplicationContextAware {
 			method.setAccessible(true);
 		}
 
-		void fireEventHandler(IEventData data) {
+		void handleEvent(IEventData data) {
 			if (this.limitCount != 0 && (currCount >= this.limitCount || (currCount++) >= this.limitCount)) {
 				return;
 			}

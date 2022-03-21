@@ -34,7 +34,7 @@ public final class ProjectInitCreator {
 	private String mybatisConfigFileName;
 	private final File xmlDirectory;
 
-	public ProjectInitCreator(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
+	private ProjectInitCreator(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
 		if (outputModuleDir == null) {
 			outputModuleDir = InitProjectUtil.getRealUserDir();
 		}

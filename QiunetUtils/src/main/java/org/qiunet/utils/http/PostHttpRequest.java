@@ -16,7 +16,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
 	private RequestBody requestBody;
 
-	PostHttpRequest(String url) {
+	protected PostHttpRequest(String url) {
 		super(url);
 	}
 
