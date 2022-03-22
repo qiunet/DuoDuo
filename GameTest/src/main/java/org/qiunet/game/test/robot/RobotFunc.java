@@ -9,6 +9,7 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -22,7 +23,6 @@ import org.qiunet.game.test.bt.RobotBehaviorBuilderManager;
 import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.response.ResponseMapping;
 import org.qiunet.game.test.robot.action.BaseRobotAction;
-import org.qiunet.game.test.server.IServer;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
@@ -92,17 +92,35 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 		return tickFuture;
 	}
 
-	public DSession getPersistConnClient(IServer server) {
-		return clients.computeIfAbsent(server.name(), serverName -> {
-			switch (server.getType()) {
+	/**
+	 * 获取已经有的连接
+	 * @param name
+	 * @return
+	 */
+	public DSession getConnector(String name) {
+		if (! clients.containsKey(name)) {
+			throw new CustomException("Session {} not connect!", name);
+		}
+		return clients.get(name);
+	}
+
+	/**
+	 * 连接指定服务器
+	 * @param config
+	 * @param name
+	 * @return
+	 */
+	public DSession connect(IClientConfig config, String name) {
+		return clients.computeIfAbsent(name, serverName -> {
+			switch (config.getConnType()) {
 				case WS:
-					return NettyWebSocketClient.create(((WebSocketClientParams) server.getClientConfig()), trigger);
+					return NettyWebSocketClient.create(((WebSocketClientParams) config), trigger);
 				case TCP:
-					return NettyTcpClient.create((TcpClientParams) server.getClientConfig(), trigger)
-							.connect(server.host(), server.port())
+					return NettyTcpClient.create((TcpClientParams) config, trigger)
+							.connect(config.getAddress().getHostString(), config.getAddress().getPort())
 							.getSender();
 				default:
-					throw new CustomException("Type [{}] is not support", server.getType());
+					throw new CustomException("Type [{}] is not support", config.getConnType());
 			}
 		});
 	}

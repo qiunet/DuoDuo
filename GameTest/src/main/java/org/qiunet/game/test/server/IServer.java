@@ -13,7 +13,7 @@ public interface IServer {
 	 * 所以一种HandlerTYpe 可能对应多种服
 	 * @return
 	 */
-	String name();
+	String getName();
 
 	/**
 	 * 得到端口

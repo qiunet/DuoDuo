@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.LoginInfo;
 import org.qiunet.game.tests.protocol.proto.login.PlayerIndexRequest;
 import org.qiunet.game.tests.protocol.proto.login.PlayerIndexResponse;
@@ -40,7 +39,7 @@ public class PlayerIndexAction extends TestAction {
 		return !getOwner().isAuth() ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
-	@TestResponse(ProtocolId.Login.PLAYER_INDEX_RSP)
+	@TestResponse
 	protected void indexResp(PlayerIndexResponse response) {
 		BlackBoard.playerData.set(getOwner(), response.getPlayerData());
 		BlackBoard.items.set(getOwner(), response.getItems());

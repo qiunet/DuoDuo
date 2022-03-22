@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.status;
 
 import com.google.common.collect.Maps;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /***
@@ -60,5 +61,13 @@ public class StatusResult {
 		if (isFail()) {
 			throw StatusResultException.valueOf(this);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "StatusResult{" +
+				"desc=" + status.getDesc() +
+				", params=" + Arrays.toString(params) +
+				'}';
 	}
 }

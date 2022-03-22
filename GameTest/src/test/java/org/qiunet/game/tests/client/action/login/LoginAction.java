@@ -7,9 +7,9 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.LoginRequest;
 import org.qiunet.game.tests.protocol.proto.login.LoginResponse;
+import org.qiunet.game.tests.server.enums.ServerType;
 
 /***
  * 登录行为构造
@@ -26,6 +26,9 @@ public class LoginAction extends TestAction {
 
 	@Override
 	public ActionStatus execute() {
+
+		this.connector(ServerType.LC_ROOM.getClientConfig());
+
 		LoginRequest loginRequest = LoginRequest.valueOf(getOwner().getAccount());
 		this.sendMessage(loginRequest);
 		return ActionStatus.RUNNING;
@@ -40,7 +43,7 @@ public class LoginAction extends TestAction {
 	 * 登录的响应.
 	 * @param loginResponse 登录下行数据
 	 */
-	@TestResponse(ProtocolId.Login.LOGIN_RSP)
+	@TestResponse
 	public void loginResponse(LoginResponse loginResponse) {
 		BlackBoard.loginInfo.set(getOwner(), loginResponse.getInfos());
 	}

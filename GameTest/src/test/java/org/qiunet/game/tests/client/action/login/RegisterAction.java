@@ -9,7 +9,6 @@ import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.anno.StatusTipsHandler;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.enums.GenderType;
 import org.qiunet.game.tests.protocol.proto.login.RegisterRequest;
 import org.qiunet.game.tests.protocol.proto.login.RegisterResponse;
@@ -63,7 +62,7 @@ public class RegisterAction extends TestAction {
 		this.errorMsg = response.getStatus();
 	}
 
-	@TestResponse(ProtocolId.Login.REGISTER_RSP)
+	@TestResponse
 	public void registerResp(RegisterResponse response) {
 		BlackBoard.loginInfo.get(getOwner()).add(response.getLoginInfo());
 		this.registered = true;

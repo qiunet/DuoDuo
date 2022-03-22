@@ -15,6 +15,6 @@ import org.qiunet.game.tests.server.enums.ServerType;
 public abstract class TestAction extends BaseRobotAction {
 
 	public TestAction(IConditions<Robot> preConditions) {
-		super(preConditions, ServerType.LC_ROOM);
+		super(preConditions, ServerType.LC_ROOM.getName());
 	}
 }

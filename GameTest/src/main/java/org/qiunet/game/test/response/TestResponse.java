@@ -13,10 +13,4 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TestResponse {
-	/**
-	 * 响应ID
-	 * @return
-	 */
-	int value();
-}
+public @interface TestResponse {}

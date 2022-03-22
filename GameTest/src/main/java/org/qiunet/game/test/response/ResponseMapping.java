@@ -1,6 +1,7 @@
 package org.qiunet.game.test.response;
 
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
@@ -81,23 +82,24 @@ public class ResponseMapping implements IApplicationContextAware {
 
 	private void handlerResponse(IApplicationContext context) {
 		context.getMethodsAnnotatedWith(TestResponse.class).forEach(mtd -> {
-			TestResponse annotation = mtd.getAnnotation(TestResponse.class);
-			if (methodMapping.containsKey(annotation.value())) {
-				throw new CustomException("game.test Response [id:{}] is repeated!", annotation.value());
-			}
-
-			if (! IBehaviorAction.class.isAssignableFrom(mtd.getDeclaringClass())) {
-				throw new CustomException("Response [id:{}] need define in IBehaviorAction!", annotation.value());
-			}
-
 			if (mtd.getParameterCount() != 1) {
-				throw new CustomException("Response [id:{}] just need a IChannelData parameter.", annotation.value());
+				throw new CustomException("Response [{}#{}] just need a IChannelData parameter.", mtd.getDeclaringClass().getName(), mtd.getName());
 			}
 
 			if (! IChannelData.class.isAssignableFrom(mtd.getParameterTypes()[0])) {
-				throw new CustomException("Response [id:{}] parameter need implement IChannelData.", annotation.value());
+				throw new CustomException("Response [{}#{}] parameter need implement IChannelData.", mtd.getDeclaringClass().getName(), mtd.getName());
 			}
-			methodMapping.put(annotation.value(), mtd);
+
+			ChannelData channelData = mtd.getParameterTypes()[0].getAnnotation(ChannelData.class);
+			if (methodMapping.containsKey(channelData.ID())) {
+				throw new CustomException("game.test Response [id:{}] is repeated!", channelData.ID());
+			}
+
+			if (! IBehaviorAction.class.isAssignableFrom(mtd.getDeclaringClass())) {
+				throw new CustomException("Response [id:{}] need define in IBehaviorAction!", channelData.ID());
+			}
+
+			methodMapping.put(channelData.ID(), mtd);
 			ReflectUtil.makeAccessible(mtd);
 		});
 	}

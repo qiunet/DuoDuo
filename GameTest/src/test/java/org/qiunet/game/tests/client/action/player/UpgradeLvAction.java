@@ -6,7 +6,6 @@ import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.player.UpgradeLevelRequest;
 import org.qiunet.game.tests.protocol.proto.player.UpgradeLevelResponse;
 
@@ -42,7 +41,7 @@ public class UpgradeLvAction extends TestAction {
 		return resp ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
 	}
 
-	@TestResponse(ProtocolId.Player.UPGRADE_LV_RSP)
+	@TestResponse
 	public void resp(UpgradeLevelResponse response) {
 		this.resp = true;
 	}

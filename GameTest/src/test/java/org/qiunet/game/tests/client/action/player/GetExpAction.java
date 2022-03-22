@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.PlayerData;
 import org.qiunet.game.tests.protocol.proto.player.ExpChangePush;
 import org.qiunet.game.tests.protocol.proto.player.GetExpRequest;
@@ -45,12 +44,12 @@ public class GetExpAction extends TestAction {
 		return this.getResp ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
 	}
 
-	@TestResponse(ProtocolId.Player.GET_EXP_RSP)
+	@TestResponse
 	public void resp(GetExpResponse response) {
 		this.getResp = true;
 	}
 
-	@TestResponse(ProtocolId.Player.EXP_CHANGE_PUSH)
+	@TestResponse
 	public void expChange(ExpChangePush push) {
 		PlayerData data = BlackBoard.playerData.get(getOwner());
 		data.setExp(push.getExp());

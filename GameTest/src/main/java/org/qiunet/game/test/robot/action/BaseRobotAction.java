@@ -2,11 +2,11 @@ package org.qiunet.game.test.robot.action;
 
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.function.ai.node.base.BaseBehaviorAction;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.robot.Robot;
-import org.qiunet.game.test.server.IServer;
 
 /***
  * 基础的 ActionNode
@@ -18,13 +18,13 @@ import org.qiunet.game.test.server.IServer;
 public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 		implements IChannelMessageSender, IStatusTipsHandler {
 	/**
-	 * 使用的连接方式
+	 * 使用的连接名
 	 */
-	private final IServer server;
+	private final String connectorName;
 
-	public BaseRobotAction(IConditions<Robot> preConditions, IServer server) {
+	public BaseRobotAction(IConditions<Robot> preConditions, String connectorName) {
 		super(preConditions);
-		this.server = server;
+		this.connectorName = connectorName;
 	}
 
 	@Override
@@ -35,6 +35,17 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 
 	@Override
 	public DSession getSender() {
-		return getOwner().getPersistConnClient(server);
+		return getOwner().getConnector(this.connectorName);
+	}
+
+	/**
+	 * action 使用自己的连接名连接服务器
+	 * action 自己在第一个连接时候. 连接服务器.
+	 *
+	 * @param config
+	 * @return
+	 */
+	public DSession connector(IClientConfig config) {
+		return getOwner().connect(config, this.connectorName);
 	}
 }

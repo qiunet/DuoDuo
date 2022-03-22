@@ -7,7 +7,6 @@ import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
-import org.qiunet.game.tests.protocol.ProtocolId;
 import org.qiunet.game.tests.protocol.proto.login.RandomNameRequest;
 import org.qiunet.game.tests.protocol.proto.login.RandomNameResponse;
 
@@ -35,7 +34,7 @@ public class RandomNameAction extends TestAction {
 		return BlackBoard.randomName.isNull(getOwner()) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
 	}
 
-	@TestResponse(ProtocolId.Login.RANDOM_NAME_RSP)
+	@TestResponse
 	public void randomNameRsp(RandomNameResponse resp) {
 		BlackBoard.randomName.set(getOwner(), resp.getNick());
 	}

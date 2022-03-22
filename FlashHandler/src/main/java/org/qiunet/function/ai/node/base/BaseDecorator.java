@@ -28,11 +28,16 @@ public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> imple
 
 	public BaseDecorator(IBehaviorNode<Owner> node, String name) {
 		super(null, name);
-		this.addChild(node);
+		this.addChild0(node);
 	}
 
 	@Override
 	public IBehaviorExecutor<Owner> addChild(IBehaviorNode<Owner>... actions) {
+		return this.addChild0(actions);
+	}
+
+
+	public IBehaviorExecutor<Owner> addChild0(IBehaviorNode<Owner>... actions) {
 		if (this.node != null || actions.length > 1) {
 			throw new CustomException("Not support multi node in decorator node!");
 		}

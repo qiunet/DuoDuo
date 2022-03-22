@@ -24,6 +24,11 @@ public enum ServerType implements IServer {
 	}
 
 	@Override
+	public String getName() {
+		return name();
+	}
+
+	@Override
 	public IClientConfig getClientConfig() {
 		return config;
 	}

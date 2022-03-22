@@ -14,7 +14,7 @@ import java.util.Map;
  ***/
 public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
-	private RequestBody requestBody;
+	protected RequestBody requestBody;
 
 	protected PostHttpRequest(String url) {
 		super(url);
