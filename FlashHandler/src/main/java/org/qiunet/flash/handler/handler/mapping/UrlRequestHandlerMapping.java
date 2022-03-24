@@ -40,7 +40,7 @@ public class UrlRequestHandlerMapping implements IApplicationContextAware {
 	 */
 	public static IHandler getHandler(String uriPath) {
 		if (! uriPathHandlers.containsKey(uriPath)) {
-			logger.error("Have not handler For UriPath [{}]", uriPath);
+			logger.error("No handler for UriPath [{}]", uriPath);
 		}
 		return uriPathHandlers.get(uriPath);
 	}

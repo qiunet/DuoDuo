@@ -1,13 +1,10 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolConfig;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
@@ -33,8 +30,6 @@ import org.slf4j.Logger;
 import java.net.URI;
 import java.util.function.Supplier;
 
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
 /**
  * handler 是每次处理new 一个新的. 如果keep alive 则使用同一个实例.
  *
@@ -53,7 +48,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		logger.error("HttpServerHandler throw Exception : ", cause);
-		sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+		ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 		ctx.close();
 	}
 
@@ -76,11 +71,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	protected void channelRead1(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		FullHttpRequest request = (msg);
 		if (! request.decoderResult().isSuccess()) {
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
 		}
 		if (request.uri().equals("/favicon.ico")) {
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
 		try {
@@ -97,7 +92,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
 			}
 		}catch (Exception e) {
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 
 			logger.error("HttpServerHandler Parse request error: ", e);
 		}
@@ -135,7 +130,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message magic! client is "+ header);
 			// encryption 不对, 不被认证的请求
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}
 
@@ -143,7 +138,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		MessageContent content = new MessageContent(header.getProtocolId(), byteBuf);
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 			return;
 		}
 		this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
@@ -160,7 +155,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		IHandler handler = handlerGetter.get();
 		if (handler == null) {
 			logger.error("Handler [{}] not found!", content.toString());
-			sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
 
@@ -169,7 +164,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			try {
 				context.handlerRequest();
 			} catch (Exception e) {
-				sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 				logger.error("Http Exception:", e);
 			}finally {
 				ThreadContextData.removeAll();
@@ -184,17 +179,5 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		ByteBuf byteBuf = request.content();
 		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
 		this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
-	}
-
-	/***
-	 * 发送响应.
-	 * @param ctx
-	 * @param status 对应的响应码
-	 */
-	private static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
-		logger.error("Http message response status ["+status+"]");
-		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
-		ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-		ctx.close();
 	}
 }

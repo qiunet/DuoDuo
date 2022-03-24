@@ -4,7 +4,12 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
@@ -27,6 +32,8 @@ import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.Arrays;
+
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public final class ChannelUtil {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
@@ -178,5 +185,16 @@ public final class ChannelUtil {
 		}else{
 			content.release();
 		}
+	}
+
+	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {
+		logger.error("Http message response status ["+status+"]");
+		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
+		channel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+		channel.close();
+	}
+
+	public static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
+		sendHttpResponseStatusAndClose(ctx.channel(), status);
 	}
 }

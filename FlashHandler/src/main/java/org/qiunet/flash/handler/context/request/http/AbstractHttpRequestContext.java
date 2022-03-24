@@ -69,6 +69,12 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public void handlerRequest() throws Exception {
+		if (getRequestData() == null) {
+			logger.info("HTTP <<< null, cancel request!");
+			ChannelUtil.sendHttpResponseStatusAndClose(channel, HttpResponseStatus.NO_CONTENT);
+			return;
+		}
+
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
 		}
