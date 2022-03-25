@@ -1,15 +1,15 @@
 package org.qiunet.flash.handler.handler.http.async;
 
-import com.google.common.base.Preconditions;
-import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.timer.TimerManager;
-import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.Timeout;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.cookie.Cookie;
+import org.qiunet.flash.handler.context.request.http.IHttpRequest;
+import org.qiunet.flash.handler.context.response.IHttpResponse;
+import org.qiunet.utils.exceptions.CustomException;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeoutException;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /***
  * 异步http的处理
@@ -17,69 +17,103 @@ import java.util.function.BiConsumer;
  * @author qiunet
  * 2021/12/15 15:50
  */
-public class HttpAsyncTask<R> {
+public class HttpAsyncTask<Req, Rsp> implements IHttpRequest<Req>, IHttpResponse<Rsp> {
 	/**
-	 * 超时返回 callable
+	 * request context
 	 */
-	private final Callable<R> timeoutCallable;
+	private final IHttpRequest<Req> context;
 	/**
-	 * 结果 callable
+	 * complete 调用
 	 */
-	private final Callable<R> callable;
+	private final Consumer<Rsp> completedConsumer;
 	/**
-	 * 超时秒数
+	 * 允许调用一次.
 	 */
-	private final int timeoutSeconds;
+	private final AtomicBoolean completed = new AtomicBoolean(false);
 
-	public HttpAsyncTask(Callable<R> callable) {
-		this(callable, 3);
+	public HttpAsyncTask(IHttpRequest<Req> context, Consumer<Rsp> completedConsumer) {
+		this.completedConsumer =  completedConsumer;
+		this.context = context;
 	}
 
-	public HttpAsyncTask(Callable<R> callable, int timeoutSeconds) {
-		this(callable, null, timeoutSeconds);
-	}
-
-	public HttpAsyncTask(Callable<R> callable, Callable<R> timeoutCallable, int timeoutSeconds) {
-		Preconditions.checkState(timeoutSeconds > 0 && timeoutSeconds < 100);
-		Preconditions.checkNotNull(callable);
-
-		this.timeoutCallable = timeoutCallable;
-		this.timeoutSeconds = timeoutSeconds;
-		this.callable = callable;
+	public Req getRequest() {
+		return context.getRequestData();
 	}
 
 	/**
 	 * 回调结果获取
-	 * @param consumer
+	 * @param response
 	 */
-	public void onComplete(BiConsumer<R, Throwable> consumer) {
-		DFuture<R> rdFuture = TimerManager.executorNow(callable);
-		final AtomicBoolean finished = new AtomicBoolean();
+	@Override
+	public void response(Rsp response) {
+		if (response == null) {
+			throw new NullPointerException("Response data can not be null!");
+		}
 
-		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> {
-			if (!finished.compareAndSet(false, true)) {
-				return;
-			}
-			rdFuture.cancel(false);
-			if (timeoutCallable == null) {
-				consumer.accept(null, new TimeoutException());
-				return;
-			}
-			try {
-				consumer.accept(timeoutCallable.call(), null);
-			} catch (Exception e) {
-				consumer.accept(null, e);
-			}
+		if (! completed.compareAndSet(false, true)) {
+			throw new CustomException("Task already completed!");
+		}
 
-		}, timeoutSeconds);
+		this.completedConsumer.accept(response);
+	}
 
-		rdFuture.whenComplete((r, ex) -> {
-			if (!finished.compareAndSet(false, true)) {
-				return;
-			}
+	@Override
+	public Req getRequestData() {
+		return context.getRequestData();
+	}
 
-			timeOutFuture.cancel();
-			consumer.accept(r, ex);
-		});
+	@Override
+	public String getRemoteAddress() {
+		return context.getRemoteAddress();
+	}
+
+	@Override
+	public Object getAttribute(String key) {
+		return context.getAttribute(key);
+	}
+
+	@Override
+	public void setAttribute(String key, Object val) {
+		context.setAttribute(key, val);
+	}
+
+	@Override
+	public boolean otherRequest() {
+		return context.otherRequest();
+	}
+
+	@Override
+	public String getUriPath() {
+		return context.getUriPath();
+	}
+
+	@Override
+	public List<String> getParametersByKey(String key) {
+		return context.getParametersByKey(key);
+	}
+
+	@Override
+	public String getHttpHeader(String name) {
+		return context.getHttpHeader(name);
+	}
+
+	@Override
+	public List<String> getHttpHeadersByName(String name) {
+		return context.getHttpHeadersByName(name);
+	}
+
+	@Override
+	public HttpVersion getProtocolVersion() {
+		return context.getProtocolVersion();
+	}
+
+	@Override
+	public Set<Cookie> getCookieSet() {
+		return context.getCookieSet();
+	}
+
+	@Override
+	public Cookie getCookieByName(String name) {
+		return context.getCookieByName(name);
 	}
 }

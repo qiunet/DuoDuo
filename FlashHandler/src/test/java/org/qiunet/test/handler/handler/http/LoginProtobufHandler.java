@@ -1,6 +1,5 @@
 package org.qiunet.test.handler.handler.http;
 
-import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.http.HttpProtobufHandler;
 import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
@@ -16,9 +15,8 @@ public class LoginProtobufHandler extends HttpProtobufHandler<HttpPbLoginRequest
 		implements IAsyncHttpHandler<HttpPbLoginRequest, LoginResponse> {
 
 	@Override
-	public HttpAsyncTask<LoginResponse> handler(IHttpRequest<HttpPbLoginRequest> request) throws Exception {
-		return new HttpAsyncTask<>(() ->
-				LoginResponse.valueOf(request.getRequestData().getAccount())
-		);
+	public void handler(HttpAsyncTask<HttpPbLoginRequest, LoginResponse> asyncTask) throws Exception {
+		HttpPbLoginRequest request = asyncTask.getRequest();
+		asyncTask.response(LoginResponse.valueOf(request.getAccount()));
 	}
 }

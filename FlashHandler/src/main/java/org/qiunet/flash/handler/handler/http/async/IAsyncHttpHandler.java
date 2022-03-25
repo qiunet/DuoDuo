@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.handler.http.async;
 
-import org.qiunet.flash.handler.context.request.http.IHttpRequest;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 
 /**
@@ -18,8 +17,8 @@ public interface IAsyncHttpHandler<RequestData, ResponseData> extends IHttpHandl
 	}
 	/**
 	 * http返回处理后的Response
-	 * @param request
+	 * @param asyncTask
 	 * @return
 	 */
-	HttpAsyncTask<ResponseData> handler(IHttpRequest<RequestData> request)throws Exception;
+	void handler(HttpAsyncTask<RequestData, ResponseData> asyncTask)throws Exception;
 }

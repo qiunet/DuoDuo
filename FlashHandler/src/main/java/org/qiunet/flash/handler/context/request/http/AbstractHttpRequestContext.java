@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.request.http;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -20,7 +19,6 @@ import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 
@@ -87,7 +85,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 				this.processSyncHttp(((ISyncHttpHandler<RequestData, ResponseData>) handler));
 			}
 		} catch (Exception e) {
-			logger.error("HttpProtobufRequestContext Exception: ", e);
+			logger.error("HttpRequestContext Exception: ", e);
 		}
 	}
 
@@ -206,19 +204,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	 * @throws Exception
 	 */
 	private void processAsyncHttp(IAsyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
-		FacadeHttpRequest<RequestData, ResponseData> request = new FacadeHttpRequest<>(this);
-		HttpAsyncTask<ResponseData> task = handler.handler(request);
-		Preconditions.checkNotNull(task);
-		task.onComplete((r, ex) -> {
-			if (ex != null) {
-				ex.printStackTrace();
-				throw new CustomException(ex, "process async http exception");
-			}
-			if (r == null) {
-				throw new NullPointerException("Response data can not be null!");
-			}
-			this.response(r);
-		});
+		handler.handler(new HttpAsyncTask<>(this, this::response));
 	}
 	/**
 	 * 处理同步http
