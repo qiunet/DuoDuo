@@ -81,8 +81,8 @@ public abstract class BaseRedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo
 
 	@Override
 	public Bo insert(Do aDo) {
-		this.setDataObjectToRedis(aDo);
 		databaseSupport().insert(insertStatement, aDo);
+		this.setDataObjectToRedis(aDo);
 		return supplier.get(aDo);
 	}
 

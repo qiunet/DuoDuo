@@ -16,9 +16,7 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /***
  * key val 的管理
@@ -99,12 +97,12 @@ public enum KeyValManager {
 
 			Set<Field> fieldSet = context.getFieldsAnnotatedWith(CfgValAutoWired.class);
 			for (Field field : fieldSet) {
-				CfgAutoFieldInfo fieldInfo = new CfgAutoFieldInfo(field);
-				String keyName = fieldInfo.getKey();
-				if (keyFields.containsKey(keyName)) {
-					throw new CustomException("Duplicate CfgValAutoWired field with key {}", keyName);
+				String keyName = field.getName();
+				CfgValAutoWired annotation = field.getAnnotation(CfgValAutoWired.class);
+				if (!StringUtil.isEmpty(annotation.key())) {
+					keyName = annotation.key();
 				}
-				keyFields.put(keyName, fieldInfo);
+				keyFields.computeIfAbsent(keyName, CfgAutoFieldInfo::new).addField(field);
 			}
 		}
 
@@ -113,28 +111,36 @@ public enum KeyValManager {
 		 */
 		private class CfgAutoFieldInfo {
 			/**
-			 * 需要注入的字段
-			 */
-			final Field field;
-			/**
 			 * 对应的manager
 			 */
 			ISimpleMapCfgManager<String, ? extends IKeyValCfg> cfgManager;
+			/**
+			 * 需要注入的字段
+			 */
+			private final List<Field> fields = new LinkedList<>();
+			/**
+			 * key
+			 */
+			private final String keyName;
 
-			public CfgAutoFieldInfo(Field field) {
-				this.field = field;
+
+			public CfgAutoFieldInfo(String keyName) {
+				this.keyName = keyName;
 			}
 
+			/**
+			 * 添加field
+			 *
+			 * @param field
+			 */
+			void addField(Field field) {
+				this.fields.add(field);
+			}
 			/**
 			 * 获得key
 			 * @return
 			 */
 			public String getKey() {
-				CfgValAutoWired annotation = field.getAnnotation(CfgValAutoWired.class);
-				String keyName = annotation.key();
-				if (StringUtil.isEmpty(keyName)) {
-					keyName = field.getName();
-				}
 				return keyName;
 			}
 
@@ -150,12 +156,14 @@ public enum KeyValManager {
 			 * 给字段注入值
 			 */
 			public void injectVal() {
-				Object realVal = ConvertManager.getInstance().convert(field, this.getVal());
-				Object instance = null;
-				if (! Modifier.isStatic(field.getModifiers())) {
-					instance = context.getInstanceOfClass(field.getDeclaringClass());
-				}
-				ReflectUtil.setField(instance, field, realVal);
+				fields.forEach(field -> {
+					Object realVal = ConvertManager.getInstance().convert(field, this.getVal());
+					Object instance = null;
+					if (! Modifier.isStatic(field.getModifiers())) {
+						instance = context.getInstanceOfClass(field.getDeclaringClass());
+					}
+					ReflectUtil.setField(instance, field, realVal);
+				});
 			}
 		}
 	}

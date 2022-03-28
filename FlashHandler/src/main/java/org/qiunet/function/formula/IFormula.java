@@ -11,7 +11,7 @@ public interface IFormula<Obj extends IFormulaParam> {
 	/**
 	 * 计算数值.
 	 * @param params 需要的参数
-	 * @return
+	 * @return 计算出来的值
 	 */
 	double cal(Obj params);
 

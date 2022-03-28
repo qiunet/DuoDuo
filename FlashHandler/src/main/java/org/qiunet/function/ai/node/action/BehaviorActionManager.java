@@ -54,7 +54,7 @@ public enum BehaviorActionManager {
 					continue;
 				}
 
-				if (! aClass.isAnnotationPresent(BehaviorAction.class)) {
+				if (! aClass.isAnnotationPresent(IgnoreBehaviorDoc.class) && ! aClass.isAnnotationPresent(BehaviorAction.class)) {
 					throw new CustomException("action [{}] need specify @BehaviorAction", aClass.getName());
 				}
 

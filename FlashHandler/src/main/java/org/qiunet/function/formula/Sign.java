@@ -37,7 +37,7 @@ public enum Sign {
 	/**
 	 * 乘
 	 */
-	multi('*'){
+	times('*'){
 		@Override
 		public double cal(double left, double right) {
 			return left * right;
@@ -45,7 +45,7 @@ public enum Sign {
 	};
 
 
-	private char symbol;
+	private final char symbol;
 	Sign(char symbol) {
 		this.symbol = symbol;
 	}
@@ -62,7 +62,7 @@ public enum Sign {
 
 	/**
 	 * 得到符号
-	 * @return
+	 * @return symbol
 	 */
 	public char getSymbol() {
 		return symbol;

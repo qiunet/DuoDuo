@@ -4,6 +4,8 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.function.Supplier;
+
 /***
  *
  * @author qiunet
@@ -15,7 +17,7 @@ public class UseTimer {
 	/**
 	 * 用时表名称
 	 */
-	private final String name;
+	private final Supplier<String> nameGetter;
 	/**
 	 * 警告时间 毫秒
 	 */
@@ -26,7 +28,11 @@ public class UseTimer {
 	private final StopWatch stopWatch;
 
 	public UseTimer(String name, long warnUseTime) {
-		this.name = name;
+		this(() -> name, warnUseTime);
+	}
+
+	public UseTimer(Supplier<String> nameGetter, long warnUseTime) {
+		this.nameGetter = nameGetter;
 		this.warnUseTime = warnUseTime;
 		this.stopWatch = new StopWatch();
 		this.start();
@@ -50,13 +56,13 @@ public class UseTimer {
 	public long printUseTime(){
 		long useTime = countUseTime();
 		if (useTime > warnUseTime) {
-			logger.error("{} use {} ms", name, useTime);
+			logger.error("{} use {} ms", nameGetter.get(), useTime);
 		}
 		return useTime;
 	}
 
 	@Override
 	public String toString() {
-		return name + " current use [" + this.stopWatch.getTime() + "]ms";
+		return nameGetter.get() + " current use [" + this.stopWatch.getTime() + "]ms";
 	}
 }

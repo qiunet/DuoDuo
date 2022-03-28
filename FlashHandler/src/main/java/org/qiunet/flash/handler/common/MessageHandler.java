@@ -40,7 +40,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	private final AtomicBoolean destroyed = new AtomicBoolean();
 
-	private final UseTimer useTimer = new UseTimer(getIdentity(), 500);
+	private final UseTimer useTimer = new UseTimer(this::getIdentity, 500);
 
 	@Override
 	public void run() {

@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import redis.clients.jedis.params.SetParams;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -319,6 +320,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	public Map<Integer, Integer> groupOnlineUserCounts() {
 		Map<String, String> stringMap = redisUtil.execCommands(jedis -> {
 			String key = jedis.get(CURRENT_ONLINE_PLAYER_REDIS_KEY);
+			if (StringUtil.isEmpty(key)) {
+				return Collections.emptyMap();
+			}
 			return jedis.hgetAll(key);
 		});
 		return stringMap.entrySet().stream().collect(Collectors.toMap(en -> Integer.parseInt(en.getKey()), en -> Integer.parseInt(en.getValue())));
