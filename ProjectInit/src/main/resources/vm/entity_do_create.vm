@@ -16,7 +16,7 @@ import org.qiunet.data.core.enums.ColumnJdbcType;
 public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}#if(${define.list}), ${define.subKeyType}#end, ${define.BoName}> {
 #foreach(${field} in ${define.fieldDefines})
 	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key} || ${field.name} == ${define.subKey}), isKey = true#end#if(${field.haveDefaultVal}), defaultValue="${field.defaultVal}" , isNull = false#end#if(${field.jdbcTypeNotEmpty}), jdbcType = ColumnJdbcType.${field.jdbcType}#end)
-	private ${field.type} ${field.name};
+	private ${field.type} ${field.name}#if(${field.haveDefaultVal}) = #if(${field.type} == "String")"#end${field.defaultVal}#if(${field.type} == "String")"#end#end;
 #end
 ### constructor
 

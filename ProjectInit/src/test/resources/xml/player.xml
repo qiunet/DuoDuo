@@ -10,6 +10,8 @@
 	>
 	<field name="uid" type="long" comment="玩家id" />
 	<field name="level" type="int" comment="等级"/>
+	<field name="gem" type="String" comment="二货币" defaultVal="0"/>
+
 	<constructor>
 		<constructor_arg field="uid"/>
 	</constructor>
