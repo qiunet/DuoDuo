@@ -27,7 +27,7 @@ public class HttpJsonRequestContext<RequestData, ResponseData extends IResultRes
 
 	@Override
 	protected String contentType() {
-		return "text/plain; charset=UTF-8";
+		return "application/json; charset=UTF-8";
 	}
 
 }
