@@ -8,9 +8,11 @@
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="https://github.com/qiunet/DuoDuo/DbEntity"
 	>
-	<field name="uid" type="long" comment="玩家id" />
-	<field name="level" type="int" comment="等级"/>
+	<field name="uid" type="long" comment="玩家id" defaultVal="0"/>
+	<field name="level" type="int" comment="等级" defaultVal="1"/>
 	<field name="gem" type="String" comment="二货币" defaultVal="0"/>
+	<field name="m1" type="int" comment="m1" defaultVal="0"/>
+	<field name="name" type="String" comment="name" defaultVal="无名"/>
 
 	<constructor>
 		<constructor_arg field="uid"/>
