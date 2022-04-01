@@ -16,8 +16,8 @@ import java.util.Set;
  * 2020-08-24 22:44
  **/
 public class DuMap<Key, Val> {
-	private BiMap<Key, Val> map1;
-	private BiMap<Val, Key> map2;
+	private final BiMap<Key, Val> map1;
+	private final BiMap<Val, Key> map2;
 
 
 	public DuMap(int expectedSize){

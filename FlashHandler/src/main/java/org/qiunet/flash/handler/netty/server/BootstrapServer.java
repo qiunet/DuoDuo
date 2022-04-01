@@ -210,7 +210,7 @@ public class BootstrapServer {
 			UserOnlineManager.instance.foreach(actor -> {
 				logger.info("Push message to online user {}", actor.getId());
 				if (! actor.isCrossPlayer()) {
-					actor.sendMessage(PlayerReLoginPush.instance);
+					actor.sendMessage(PlayerReLoginPush.valueOf());
 				}else if (actor.isCrossPlayer()) {
 					actor.sendMessage(CrossPlayerLogoutPush.instance);
 				}

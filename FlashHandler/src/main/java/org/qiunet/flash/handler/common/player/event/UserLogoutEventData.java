@@ -12,8 +12,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 public class UserLogoutEventData<T extends AbstractUserActor<T>> extends UserEventData {
 	private final CloseCause cause;
 
-	public UserLogoutEventData(T player, CloseCause cause) {
-		this.setPlayer(player);
+	public UserLogoutEventData(CloseCause cause) {
 		this.cause = cause;
 	}
 

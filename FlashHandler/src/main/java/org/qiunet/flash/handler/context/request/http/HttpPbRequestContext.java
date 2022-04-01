@@ -23,6 +23,6 @@ public  class HttpPbRequestContext<RequestData extends IChannelData, ResponseDat
 
 	@Override
 	protected DefaultProtobufMessage getResponseDataMessage(ResponseData responseData) {
-		return  responseData.buildResponseMessage();
+		return  responseData.buildChannelMessage();
 	}
 }

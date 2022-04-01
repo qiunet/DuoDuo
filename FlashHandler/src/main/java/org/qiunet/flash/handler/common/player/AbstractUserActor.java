@@ -26,7 +26,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	@Override
 	protected void setSession(DSession session) {
 		session.addCloseListener((s, cause) -> {
-			EventManager.fireEventHandler(new UserLogoutEventData<T>((T) this, cause));
+			this.fireEvent(new UserLogoutEventData<T>(cause));
 		});
 		this.session = session;
 	}
@@ -42,9 +42,17 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * @param eventData
 	 */
 	public <D extends UserEventData> void fireEvent(D eventData){
+		EventManager.fireEventHandler(eventData.setPlayer(this));
+	}
+
+	/**
+	 * 对事件的处理.
+	 * 跨服的提交跨服那边. 本服调用自己的
+	 * @param eventData
+	 */
+	public <D extends UserEventData> void fireAsyncEvent(D eventData){
 		this.addMessage(p -> {
-			eventData.setPlayer(p);
-			EventManager.fireEventHandler(eventData);
+			EventManager.fireEventHandler(eventData.setPlayer(p));
 		});
 	}
 

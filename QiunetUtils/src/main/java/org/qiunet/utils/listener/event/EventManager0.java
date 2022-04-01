@@ -12,6 +12,7 @@ import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,11 @@ enum EventManager0 implements IApplicationContextAware {
 	 */
 	private EventSubscriber wrapper(Method method) {
 		EventListener annotation = method.getAnnotation(EventListener.class);
-		Object implInstance = context.getInstanceOfClass(method.getDeclaringClass());
+		Object implInstance = null;
+		// 允许静态方法
+		if (Modifier.isStatic(method.getModifiers())) {
+			implInstance = context.getInstanceOfClass(method.getDeclaringClass());
+		}
 		return new EventSubscriber(implInstance, method, annotation.value().ordinal(), annotation.limitCount());
 	}
 

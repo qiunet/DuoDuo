@@ -29,14 +29,14 @@ public interface IChannelMessageSender {
 	 * @param message
 	 */
 	default IDSessionFuture sendMessage(IChannelData message) {
-		return this.sendMessage(message.buildResponseMessage());
+		return this.sendMessage(message.buildChannelMessage());
 	}
 	/**
 	 * 发送消息
 	 * @param message
 	 */
 	default IDSessionFuture sendMessage(IChannelData message, boolean flush) {
-		return this.sendMessage(message.buildResponseMessage(), flush);
+		return this.sendMessage(message.buildChannelMessage(), flush);
 	}
 	/**
 	 * 发送消息

@@ -13,5 +13,9 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 @ChannelData(ID = IProtocolId.System.PLAYER_RE_LOGIN_PUSH, desc = "玩家重新去登录通知.当前服务器要关闭!")
 public class PlayerReLoginPush implements IChannelData {
 	@Ignore
-	public static final PlayerReLoginPush instance = new PlayerReLoginPush();
+	private static final PlayerReLoginPush instance = new PlayerReLoginPush();
+
+	public static PlayerReLoginPush valueOf(){
+		return instance;
+	}
 }

@@ -113,7 +113,7 @@ public interface IArgsContainer {
 	 * 是否有存储值
 	 * @return
 	 */
-	default boolean notNull(ArgumentKey key) {
+	default boolean isNotNull(ArgumentKey key) {
 		return ! isNull(key);
 	}
 }

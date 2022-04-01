@@ -29,8 +29,6 @@ import java.util.List;
 @State(Scope.Thread)
 @Measurement(iterations = 2)
 public class TestJsonAndProtobuf {
-	private float val1;
-	private int val2;
 	public static void main(String[] args) throws RunnerException {
 		new Runner(
 				new OptionsBuilder()
@@ -46,11 +44,11 @@ public class TestJsonAndProtobuf {
 	/**
 	 * protobuf codec
 	 */
-	private Codec<PlayerObj> codec = ProtobufProxy.create(PlayerObj.class);
+	private final Codec<PlayerObj> codec = ProtobufProxy.create(PlayerObj.class);
 	/**
 	 * 一个player list
 	 */
-	private List<PlayerData> playerObjs = Lists.newArrayListWithCapacity(count);
+	private final List<PlayerData> playerObjs = Lists.newArrayListWithCapacity(count);
 
 	@Setup
 	public void setup() {
@@ -94,9 +92,9 @@ public class TestJsonAndProtobuf {
 	}
 
 	private class PlayerData {
-		private PlayerObj playerObj;
+		private final PlayerObj playerObj;
 
-		private String json;
+		private final String json;
 
 		private byte[] data;
 		public PlayerData(PlayerObj playerObj) {

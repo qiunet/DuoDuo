@@ -12,9 +12,9 @@ import java.util.function.Supplier;
  **/
 public class LazyLoader<T> {
 
-	private AtomicReference<T> objRef = new AtomicReference<>();
+	private final AtomicReference<T> objRef = new AtomicReference<>();
 
-	private Supplier<T> supplier;
+	private final Supplier<T> supplier;
 
 	public LazyLoader(Supplier<T> supplier) {
 		this.supplier = supplier;

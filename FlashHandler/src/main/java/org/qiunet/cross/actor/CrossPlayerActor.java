@@ -72,7 +72,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 		Preconditions.checkState(isAuth(), "Need auth!");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
-		session.sendMessage(request.buildResponseMessage());
+		session.sendMessage(request.buildChannelMessage());
 	}
 
 	public long getPlayerId() {

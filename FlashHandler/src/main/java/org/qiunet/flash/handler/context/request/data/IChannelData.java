@@ -22,7 +22,7 @@ public interface IChannelData {
 	 * 构造一个IResponseMessage
 	 * @return
 	 */
-	default DefaultProtobufMessage buildResponseMessage(){
+	default DefaultProtobufMessage buildChannelMessage(){
 		return new DefaultProtobufMessage(protocolId(), this);
 	}
 

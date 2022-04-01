@@ -86,6 +86,10 @@ public class Argument<T> {
 		return refData.get() == null;
 	}
 
+	public boolean isNotNull(){
+		return ! isNull();
+	}
+
 	/**
 	 * 获得名称
 	 * @return

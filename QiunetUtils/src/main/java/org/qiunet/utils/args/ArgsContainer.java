@@ -11,7 +11,7 @@ public class ArgsContainer implements IArgsContainer {
 	/**
 	 * 能根绝container 保存不同的Argument.
 	 */
-	private ArgsDataMap argumentMap = new ArgsDataMap();
+	private final ArgsDataMap argumentMap = new ArgsDataMap();
 
 
 	/**

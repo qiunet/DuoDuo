@@ -81,7 +81,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 */
 	public <Event extends UserEventData> void fireCrossEvent(Event event) {
 		CrossEventRequest request = CrossEventRequest.valueOf(event);
-		session.sendMessage(request.buildResponseMessage());
+		session.sendMessage(request.buildChannelMessage());
 	}
 
 	@Override
