@@ -2,6 +2,7 @@ package org.qiunet.function.gm.handler;
 
 import io.netty.channel.Channel;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -15,6 +16,7 @@ import org.qiunet.function.gm.proto.req.GmDebugProtocolReq;
 import org.qiunet.function.gm.proto.rsp.GmDebugProtocolRsp;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.ToString;
 
 /***
  * 调试协议
@@ -44,9 +46,11 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 
 		IChannelData channelData = JsonUtil.getGeneralObjWithField(data, aClass);
+		if (logger.isInfoEnabled() && ! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+			logger.info("[{}] <<< {}", playerActor.getIdentity(), ToString.toString(channelData));
+		}
 
 		ChannelDataMapping.requestCheck(context.channel(), channelData);
-
 		((IPersistConnHandler<PlayerActor, IChannelData>) handler).handler(playerActor, new IPersistConnRequest<IChannelData>() {
 			@Override
 			public Object getAttribute(String key) {
