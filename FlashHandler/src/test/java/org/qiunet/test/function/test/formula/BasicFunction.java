@@ -13,7 +13,7 @@ import org.qiunet.function.base.basic.IBasicFunction;
 public class BasicFunction implements IBasicFunction {
 
 	@Override
-	public <T extends IResourceCfg> T getResById(int cfgId) {
+	public <T extends IResourceCfg> T getResById(String cfgId) {
 		return null;
 	}
 

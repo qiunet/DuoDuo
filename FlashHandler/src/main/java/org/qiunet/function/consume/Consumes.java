@@ -84,7 +84,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param cfgId 资源id
 	 * @param count 数量
 	 */
-	public void addConsume(int cfgId, long count) {
+	public void addConsume(String cfgId, long count) {
 		this.addConsume(cfgId, count, false);
 	}
 
@@ -94,7 +94,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param count 数量
 	 * @param banReplace 禁止替换
 	 */
-	public void addConsume(int cfgId, long count, boolean banReplace) {
+	public void addConsume(String cfgId, long count, boolean banReplace) {
 		IResourceType type = basicFunction.getResType(cfgId);
 		this.addConsume(type.createConsume(new ConsumeConfig(cfgId, count, banReplace)));
 	}

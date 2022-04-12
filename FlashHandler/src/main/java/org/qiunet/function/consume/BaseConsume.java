@@ -13,7 +13,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	/**
 	 * 消耗资源的id
 	 */
-	protected int cfgId;
+	protected String cfgId;
 	/**
 	 * 消耗资源的数量
 	 */
@@ -28,11 +28,11 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 		this(consumeConfig.getCfgId(), consumeConfig.getValue(), consumeConfig.isBanReplace());
 	}
 
-	public BaseConsume(int cfgId, long value) {
+	public BaseConsume(String cfgId, long value) {
 		this(cfgId, value, false);
 	}
 
-	public BaseConsume(int cfgId, long value, boolean banReplace) {
+	public BaseConsume(String cfgId, long value, boolean banReplace) {
 		this.cfgId = cfgId;
 		this.value = value;
 		this.banReplace = banReplace;
@@ -127,7 +127,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 		this.value += consume.value;
 	}
 
-	public int getCfgId() {
+	public String getCfgId() {
 		return cfgId;
 	}
 

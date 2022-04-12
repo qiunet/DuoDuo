@@ -79,7 +79,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @param cfgId 资源id
 	 * @param count 数量
 	 */
-	public void addRewardItem(int cfgId, long count) {
+	public void addRewardItem(String cfgId, long count) {
 		IResourceType type = basicFunction.getResType(cfgId);
 		this.addRewardItem(type.createRewardItem(new RewardConfig(cfgId, count)));
 	}
