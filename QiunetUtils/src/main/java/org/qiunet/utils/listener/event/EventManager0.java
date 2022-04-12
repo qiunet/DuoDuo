@@ -82,7 +82,7 @@ enum EventManager0 implements IApplicationContextAware {
 		EventListener annotation = method.getAnnotation(EventListener.class);
 		Object implInstance = null;
 		// 允许静态方法
-		if (Modifier.isStatic(method.getModifiers())) {
+		if (! Modifier.isStatic(method.getModifiers())) {
 			implInstance = context.getInstanceOfClass(method.getDeclaringClass());
 		}
 		return new EventSubscriber(implInstance, method, annotation.value().ordinal(), annotation.limitCount());
