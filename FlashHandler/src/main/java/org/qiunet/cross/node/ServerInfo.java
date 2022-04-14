@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
  * 2020-10-09 11:07
  */
 public final class ServerInfo extends HashMap<String, Object> {
-	static final String onlineUserCount = "onlineUserCount";
 	static final String publicHostKey = "server.public_host";
 	static final String lastUpdateDt = "lastUpdateDt";
 
@@ -92,15 +91,6 @@ public final class ServerInfo extends HashMap<String, Object> {
 	public boolean isOffline(){
 		Long dt = (Long) get(lastUpdateDt);
 		return dt != null && System.currentTimeMillis() - dt > TimeUnit.SECONDS.toMillis(ServerNodeManager0.SERVER_OFFLINE_SECONDS);
-	}
-
-	/**
-	 * 该服务器在线人数
-	 * 包含 本服登录和跨服的
-	 * @return
-	 */
-	public int getOnlineUserCount(){
-		return (int) get(onlineUserCount);
 	}
 
 	public int getServerPort() {
