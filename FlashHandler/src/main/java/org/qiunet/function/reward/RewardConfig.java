@@ -19,8 +19,8 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	public RewardConfig() {
 	}
 
-	public RewardConfig(int cfgId, long value) {
-		this.put("id", String.valueOf(cfgId));
+	public RewardConfig(String cfgId, long value) {
+		this.put("id", cfgId);
 		this.put("value", String.valueOf(value));
 	}
 
@@ -29,12 +29,12 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	 * @param subTypeGetter subType 获取
 	 * @return rewardItem 实例
 	 */
-	public BaseReward convertToRewardItem(Function<Integer, IResourceType> subTypeGetter) {
+	public BaseReward convertToRewardItem(Function<String, IResourceType> subTypeGetter) {
 		return subTypeGetter.apply(getCfgId()).createRewardItem(this);
 	}
 
-	public int getCfgId() {
-		return getInt("id");
+	public String getCfgId() {
+		return getString("id");
 	}
 
 	public long getValue() {

@@ -15,13 +15,13 @@ public interface IResourceFunction {
 	 * @param <Cfg>
 	 * @return
 	 */
-	<Cfg extends IResourceCfg> Cfg getResById(int cfgId);
+	<Cfg extends IResourceCfg> Cfg getResById(String cfgId);
 	/**
 	 * 获得指定资源的type
 	 * @param cfgId 资源id
 	 * @return type
 	 */
-	default <Type extends Enum<Type> & IResourceType> Type getResType(int cfgId) {
+	default <Type extends Enum<Type> & IResourceType> Type getResType(String cfgId) {
 		return getResById(cfgId).type();
 	}
 }

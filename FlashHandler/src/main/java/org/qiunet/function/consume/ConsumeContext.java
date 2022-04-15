@@ -27,7 +27,7 @@ public class ConsumeContext<Obj extends IThreadSafe> implements IArgsContainer {
 	/**
 	 * 使用ItemId 记录的消耗数据
 	 */
-	private final Map<Integer, Long> itemIdConsumes = Maps.newHashMap();
+	private final Map<String, Long> itemIdConsumes = Maps.newHashMap();
 	/**
 	 *  消耗的主体
 	 *  一般Player
@@ -104,7 +104,7 @@ public class ConsumeContext<Obj extends IThreadSafe> implements IArgsContainer {
 	 * 得到itemId 对应的数量.
 	 * @return
 	 */
-	public Map<Integer, Long> getItemIdConsumes() {
+	public Map<String, Long> getItemIdConsumes() {
 		return itemIdConsumes;
 	}
 
