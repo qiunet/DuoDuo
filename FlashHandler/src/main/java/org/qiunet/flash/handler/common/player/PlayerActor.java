@@ -8,6 +8,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -57,6 +58,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	public PlayerActor(DSession session) {
 		super(session);
+
+		session.addCloseListener((s, cause) -> {
+			this.fireEvent(new PlayerActorLogoutEvent(cause));
+		});
+
 		session.addCloseListener((s, cause) -> {
 			if (s.isActive()) {
 				s.sendMessage(PlayerLogoutPush.valueOf(cause));

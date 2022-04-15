@@ -170,7 +170,17 @@ public final class ChannelUtil {
 			content.release();
 			return;
 		}
+		processHandler(channel, handler, content);
+	}
 
+	/**
+	 * 正式处理handler
+	 * @param channel
+	 * @param handler
+	 * @param content
+	 */
+	public static void processHandler(Channel channel, IHandler handler, MessageContent content) {
+		DSession session = ChannelUtil.getSession(channel);
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (handler instanceof ITransmitHandler
 				&& messageActor instanceof ICrossStatusActor

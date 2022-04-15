@@ -10,6 +10,7 @@ import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.AuthEventData;
+import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -41,6 +42,10 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 
 	public CrossPlayerActor(DSession session) {
 		super(session);
+
+		session.addCloseListener((s, cause) -> {
+			this.fireEvent(new CrossActorLogoutEvent(cause));
+		});
 	}
 
 	@Override
@@ -112,7 +117,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	 */
 	@Override
 	public IDSessionFuture sendMessage(IChannelData channelData) {
-		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData));
+		return this.sendMessage(channelData, false);
 	}
 
 	@Override

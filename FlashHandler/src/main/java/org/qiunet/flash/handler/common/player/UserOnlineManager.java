@@ -5,10 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.flash.handler.common.player.event.AuthEventData;
-import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
-import org.qiunet.flash.handler.common.player.event.CrossPlayerLogoutEvent;
-import org.qiunet.flash.handler.common.player.event.UserLogoutEventData;
+import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -69,26 +66,39 @@ public enum UserOnlineManager {
 	 * @param eventData
 	 */
 	@EventListener(EventHandlerWeightType.LESS)
-	private <T extends AbstractUserActor<T>> void onLogout(UserLogoutEventData<T> eventData) {
-		AbstractUserActor<T> userActor = eventData.getPlayer();
-		T actor = (T) onlinePlayers.remove(userActor.getId());
+	private void onLogout(PlayerActorLogoutEvent eventData) {
+		PlayerActor actor = (PlayerActor) onlinePlayers.remove(eventData.getPlayer().getId());
 		if (actor == null) {
 			return;
 		}
 		triggerChangeListeners(false);
 		// 清理 observers 避免重连重复监听.
 		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
-		// CrossPlayerActor 如果断连. 由playerActor维护心跳.
-		if (actor.isCrossPlayer()) {
-			return;
-		}
 
-		((PlayerActor) actor).dataLoader().syncToDb();
-		if (eventData.getCause().needWaitConnect() && userActor.isAuth()) {
+		actor.dataLoader().syncToDb();
+
+		if (eventData.getCause().needWaitConnect() && actor.isAuth()) {
 			// 给3分钟重连时间
 			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 3, TimeUnit.MINUTES);
-			waitReconnects.put(actor.getId(), new WaitActor(((PlayerActor) actor), future));
+			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
 		}
+
+	}
+	/**
+	 * 登出事件
+	 * @param eventData
+	 */
+	@EventListener(EventHandlerWeightType.LESS)
+	private void onLogout(CrossActorLogoutEvent eventData) {
+		CrossPlayerActor actor = (CrossPlayerActor) onlinePlayers.remove(eventData.getPlayer().getId());
+		if (actor == null) {
+			return;
+		}
+		triggerChangeListeners(false);
+		// 清理 observers 避免重连重复监听.
+		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
+		// 退出
+		this.playerQuit(actor);
 	}
 	/**
 	 * 重连
@@ -118,6 +128,10 @@ public enum UserOnlineManager {
 	 * @param userActor
 	 */
 	private <T extends AbstractUserActor<T>> void destroyPlayer(T userActor) {
+		if (userActor.isDestroyed()) {
+			return;
+		}
+
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
 		if (userActor.isCrossPlayer() && userActor.getSender().isActive()) {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));

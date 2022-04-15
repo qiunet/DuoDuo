@@ -25,19 +25,19 @@ import org.qiunet.utils.logger.LoggerType;
 public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(DSession session, MessageContent data) {
-		IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
+			// pong 信息不需要处理
+			return;
+		}
 
+		IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (data.getProtocolId() == IProtocolId.System.CROSS_2_PLAYER_MSG
 			&& iMessageActor instanceof PlayerActor) {
 			// 直接往客户端转发
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
 			IChannelMessage<byte []> message = new DefaultBytesMessage(response.getPid(), response.getBytes());
+			LoggerType.DUODUO_FLASH_HANDLER.debug("tcp node trigger Data.protocolId: {}", response.getPid());
 			iMessageActor.getSender().sendMessage(message);
-			return;
-		}
-
-		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
-			// pong 信息不需要处理
 			return;
 		}
 

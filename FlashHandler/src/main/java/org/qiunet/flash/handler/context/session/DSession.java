@@ -216,6 +216,9 @@ public class DSession implements IChannelMessageSender {
 			// 避免多次调用close. 多次调用监听.
 			return;
 		}
+
+		this.flush0();
+
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(this, cause));
 		if (channel != null && (channel.isActive() || channel.isOpen())) {
