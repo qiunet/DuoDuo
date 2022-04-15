@@ -3,6 +3,7 @@ package org.qiunet.data.util;
 import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,11 @@ public class RedisMapUtil {
 	public static Map<String, String> toMap(Object obj) {
 		Map<String, String> map = new HashMap<>();
 		for (Field field : obj.getClass().getDeclaredFields()) {
+			if (Modifier.isStatic(field.getModifiers())
+			 || Modifier.isFinal(field.getModifiers())) {
+				continue;
+			}
+
 			Object val = ReflectUtil.getField(field, obj);
 			if (val == null) {
 				continue;

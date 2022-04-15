@@ -13,7 +13,7 @@ import java.util.Map;
 public class TestRedisMapUtil {
 
 	public static class User {
-
+		public static final String CONSTANT = "111";
 		private int id;
 
 		private String name;
@@ -64,6 +64,7 @@ public class TestRedisMapUtil {
 		Assertions.assertEquals(score+"", map.get("score"));
 		Assertions.assertEquals(id+"", map.get("id"));
 		Assertions.assertEquals(name, map.get("name"));
+		Assertions.assertEquals(3, map.size());
 
 		User user1 = RedisMapUtil.toObj(map, User.class);
 		Assertions.assertEquals(score, user1.score);

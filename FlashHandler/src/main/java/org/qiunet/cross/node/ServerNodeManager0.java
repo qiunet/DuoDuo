@@ -165,10 +165,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			if (deprecated.get()) {
 				return;
 			}
+			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
+
 			// 触发心跳 业务可能修改ServerInfo数据.
 			ServerNodeTickEvent.instance.fireEventHandler();
 
-			currServerInfo.put(ServerInfo.lastUpdateDt, System.currentTimeMillis());
 			redisUtil.returnJedis(false).set(REDIS_SERVER_NODE_INFO_KEY, currServerInfo.toString(), SetParams.setParams().ex(SERVER_OFFLINE_SECONDS));
 		}, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
