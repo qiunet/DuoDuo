@@ -4,10 +4,6 @@ import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.netty.channel.Channel;
-import net.bytebuddy.ByteBuddy;
-import net.bytebuddy.agent.ByteBuddyAgent;
-import net.bytebuddy.description.annotation.AnnotationDescription;
-import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.context.request.check.RequestCheckList;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -16,11 +12,13 @@ import org.qiunet.utils.collection.DuMap;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
+import org.qiunet.utils.reflect.RuntimeAnnotations;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
@@ -78,7 +76,6 @@ public class ChannelDataMapping implements IApplicationContextAware {
 	 */
 	private void handlerPbChannelData(IApplicationContext context) {
 		Set<Integer> protocolIds = Sets.newHashSet();
-		ByteBuddyAgent.install();
 		for (Class<? extends IChannelData> clazz : context.getSubTypesOf(IChannelData.class)) {
 			if (Modifier.isAbstract(clazz.getModifiers())
 					|| Modifier.isInterface(clazz.getModifiers())
@@ -95,12 +92,24 @@ public class ChannelDataMapping implements IApplicationContextAware {
 				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+ channelData.ID()+"] is repeated!");
 			}
 
-			new ByteBuddy().redefine(clazz).annotateType(
-					AnnotationDescription.Builder.ofType(ProtobufClass.class)
-							.define("description", channelData.desc())
-							.build()
-			).make()
-					.load(clazz.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
+			RuntimeAnnotations.putAnnotation(clazz, ProtobufClass.class, new ProtobufClass(){
+
+				@Override
+				public Class<? extends Annotation> annotationType() {
+					return ProtobufClass.class;
+				}
+
+				@Override
+				public String description() {
+					return channelData.desc();
+				}
+			});
+			//new ByteBuddy().redefine(clazz).annotateType(
+			//		AnnotationDescription.Builder.ofType(ProtobufClass.class)
+			//				.define("description", channelData.desc())
+			//				.build()
+			//).make()
+			//		.load(clazz.getClassLoader(), ClassReloadingStrategy.fromInstalledAgent());
 
 			protocolIds.add(channelData.ID());
 			mapping.put(clazz, channelData.ID());
