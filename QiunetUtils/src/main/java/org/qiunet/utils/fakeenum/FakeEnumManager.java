@@ -2,7 +2,6 @@ package org.qiunet.utils.fakeenum;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Maps;
-import net.bytebuddy.agent.ByteBuddyAgent;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.common.collector.DCollectors;
@@ -60,7 +59,7 @@ class FakeEnumManager {
 		instance;
 
 		FakeEnumManager0() {
-			ByteBuddyAgent.install();
+
 		}
 
 		/**
