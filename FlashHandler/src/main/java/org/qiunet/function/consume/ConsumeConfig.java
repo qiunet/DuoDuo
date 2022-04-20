@@ -17,12 +17,12 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 
 	public ConsumeConfig() {}
 
-	public ConsumeConfig(String cfgId, long value) {
+	public ConsumeConfig(int cfgId, long value) {
 		this(cfgId, value, false);
 	}
 
-	public ConsumeConfig(String cfgId, long value, boolean banReplace) {
-		this.put("id", cfgId);
+	public ConsumeConfig(int cfgId, long value, boolean banReplace) {
+		this.put("id", String.valueOf(cfgId));
 		this.put("value", String.valueOf(value));
 		this.put("banReplace", String.valueOf(banReplace));
 	}
@@ -32,7 +32,7 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 	 * @param typeGetter cfgId → type
 	 * @return Consume
 	 */
-	public BaseConsume convertToConsume(Function<String, IResourceType> typeGetter) {
+	public BaseConsume convertToConsume(Function<Integer, IResourceType> typeGetter) {
 		return typeGetter.apply(getCfgId()).createConsume(this);
 	}
 
@@ -40,8 +40,8 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 	 * 资源ID
 	 * @return
 	 */
-	public String getCfgId() {
-		return getString("id");
+	public int getCfgId() {
+		return getInt("id");
 	}
 
 	/**

@@ -20,7 +20,7 @@ public enum BasicFunctionManager implements IResourceFunction, IAttrFunction {
 	}
 
 	@Override
-	public <T extends IResourceCfg> T getResById(String cfgId) {
+	public <T extends IResourceCfg> T getResById(int cfgId) {
 		return basicFunction.getResById(cfgId);
 	}
 }

@@ -22,7 +22,7 @@ public interface IRealReward {
 	 * 配置id
 	 * @return
 	 */
-	String getCfgId();
+	int getCfgId();
 
 	/**
 	 * 获得数量信息
