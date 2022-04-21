@@ -59,6 +59,13 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	public PlayerActor(DSession session) {
 		super(session);
 
+		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
+	}
+
+	@Override
+	protected void setSession(DSession session) {
+		super.setSession(session);
+
 		session.addCloseListener((s, cause) -> {
 			this.fireEvent(new PlayerActorLogoutEvent(cause));
 		});
@@ -69,7 +76,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			}
 			this.quitAllCross(cause);
 		});
-		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
 	}
 
 	/**

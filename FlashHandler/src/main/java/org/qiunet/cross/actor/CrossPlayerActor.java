@@ -42,6 +42,11 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 
 	public CrossPlayerActor(DSession session) {
 		super(session);
+	}
+
+	@Override
+	protected void setSession(DSession session) {
+		super.setSession(session);
 
 		session.addCloseListener((s, cause) -> {
 			this.fireEvent(new CrossActorLogoutEvent(cause));
