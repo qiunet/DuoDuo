@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadContextData;
@@ -137,10 +136,11 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 */
 	@Override
 	public void destroy(){
-		if (! destroyed.compareAndSet(false, true)) {
-			throw new CustomException("Already destroyed");
+		if (destroyed.compareAndSet(false, true)) {
+			this.cancelAllFuture(true);
+		}else {
+			logger.warn("{} was destroy repeated!", getIdentity());
 		}
-		this.cancelAllFuture(true);
 	}
 
 	/**

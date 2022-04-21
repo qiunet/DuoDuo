@@ -83,7 +83,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 
 	@Override
 	public void destroy() {
-		observerSupport.clear();
 		super.destroy();
+		observerSupport.clear();
 	}
 }

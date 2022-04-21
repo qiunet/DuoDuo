@@ -8,8 +8,6 @@ import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 /***
  * 离线玩家actor
  * 仅仅是读取数据使用.
@@ -52,15 +50,17 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 		this.addMessage(a -> eventData.fireEventHandler());
 	}
 
-	private final AtomicBoolean destroy = new AtomicBoolean();
 	public void destroy(){
-		if (! destroy.compareAndSet(false, true)) {
+		if (isDestroyed()) {
 			return;
 		}
+
+		super.destroy();
+
 		this.fireEvent(OfflineUserDestroyEvent.valueOf());
 
 		UserOfflineManager.instance.remove(getPlayerId());
 		this.dataLoader.unregister();
-		super.destroy();
+
 	}
 }

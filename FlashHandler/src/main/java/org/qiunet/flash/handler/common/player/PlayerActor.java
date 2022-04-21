@@ -167,12 +167,17 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	@Override
 	public void destroy() {
+		if (this.isDestroyed()) {
+			return;
+		}
+
+		super.destroy();
+
 		crossConnectors.values().forEach(c -> c.getSession().close(CloseCause.DESTROY));
 		if (dataLoader != null) {
 			dataLoader.unregister();
 		}
 		this.beatFuture.cancel(false);
-		super.destroy();
 	}
 
 	/**
