@@ -79,7 +79,7 @@ public enum UserOnlineManager {
 
 		if (eventData.getCause().needWaitConnect() && actor.isAuth()) {
 			// 给3分钟重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 3, TimeUnit.MINUTES);
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 90, TimeUnit.SECONDS);
 			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
 		}
 
@@ -123,6 +123,22 @@ public enum UserOnlineManager {
 
 		return waitActor.actor;
 	}
+
+	/**
+	 * 销毁等待重连的对象.
+	 * 注意. 仅销毁. 不会触发 IDestroyPlayer
+	 * @param playerId
+	 */
+	public void destroyWaiter(long playerId) {
+		WaitActor waitActor = waitReconnects.remove(playerId);
+		if (waitActor == null) {
+			return;
+		}
+		waitActor.future.cancel(true);
+		waitActor.actor.clearObservers();
+		waitActor.actor.destroy();
+	}
+
 	/**
 	 * 玩家销毁， 销毁后，不可重连
 	 * @param userActor

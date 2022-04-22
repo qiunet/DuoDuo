@@ -41,10 +41,10 @@ public interface Hook {
 	 * @return
 	 */
 	default int getHookPort() {
-		if (ServerConfig.getServerPort() > 0) {
-			return ServerConfig.getServerPort();
-		}else if (ServerConfig.getNodePort() > 0) {
+		if (ServerConfig.getNodePort() > 0) {
 			return ServerConfig.getNodePort();
+		}else if (ServerConfig.getServerPort() > 0) {
+			return ServerConfig.getServerPort();
 		}
 		LoggerType.DUODUO.error("!!Hook port absent, use default port {}!!", DEFAULT_HOOK_PORT);
 		return DEFAULT_HOOK_PORT;
