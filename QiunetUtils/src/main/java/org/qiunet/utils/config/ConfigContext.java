@@ -136,10 +136,28 @@ enum ConfigContext implements IApplicationContextAware {
 			}
 			Preconditions.checkState(keyValueData.containKey(keyName) || !"-".equals(annotation.defaultVal()), "Config ["+name+"] do not have key ["+keyName+"], but field annotation defaultVal is empty!");
 			String val = keyValueData.getString(keyName, annotation.defaultVal());
+
+			if (! StringUtil.isEmpty(annotation.prefixKey())) {
+				String prefixVal = keyValueData.getString(annotation.prefixKey());
+				if (prefixVal == null) {
+					throw new CustomException("Prefix key {} value is empty", annotation.prefixKey());
+				}
+				val = (prefixVal + val);
+			}
+
+			if (! StringUtil.isEmpty(annotation.postfixKey())) {
+				String postfixVal = keyValueData.getString(annotation.postfixKey());
+				if (postfixVal == null) {
+					throw new CustomException("Postfix key {} value is empty", annotation.postfixKey());
+				}
+				val = val + postfixVal;
+			}
+
 			Object instance = null;
 			if (!Modifier.isStatic(field.getModifiers())) {
 				instance = context.getInstanceOfClass(field.getDeclaringClass());
 			}
+
 			try {
 				field.setAccessible(true);
 				field.set(instance, ConvertManager.instance.convert(field, val));

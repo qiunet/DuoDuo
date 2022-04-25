@@ -16,6 +16,17 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DConfigValue {
 	/**
+	 * 前缀 key
+	 * @return
+	 */
+	String prefixKey() default "";
+	/**
+	 * 后缀 key
+	 * @return
+	 */
+	String postfixKey() default "";
+
+	/**
 	 * 该字段在(配置文件[conf, properties])的对应key
 	 * @return
 	 */
