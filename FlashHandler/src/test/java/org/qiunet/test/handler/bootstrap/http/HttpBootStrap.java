@@ -1,11 +1,13 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.http;
 
+import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -15,30 +17,28 @@ import java.util.concurrent.locks.LockSupport;
 
 /**
  * Created by qiunet.
- * 17/11/27
+ * 17/11/25
  */
-public abstract class MuchTcpRequest {
-	protected static String host = "localhost";
-	protected static int port = 8889;
-	protected static Hook hook = new MyHook();
+public class HttpBootStrap {
+	protected static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
+	protected static final int port = 8090;
+	private static final Hook hook = new MyHook();
 	private static Thread currThread;
 	@BeforeAll
 	public static void init() throws Exception {
+		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
-				.setProtocolHeaderType(ProtocolHeaderType.server)
-				.setStartupContext(new StartupContext())
-				.setPort(port)
-				.build();
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
+					.setProtocolHeaderType(ProtocolHeaderType.server)
+					.setStartupContext(new StartupContext())
+					.setWebsocketPath("/ws")
+					.setPort(port)
+					.build();
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
 			LockSupport.unpark(currThread);
 			server.await();
 		});
@@ -47,9 +47,8 @@ public abstract class MuchTcpRequest {
 	}
 
 	@AfterAll
-	public static void shutdown() {
+	public static void shutdown(){
+		System.gc();
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}
 }
-
-

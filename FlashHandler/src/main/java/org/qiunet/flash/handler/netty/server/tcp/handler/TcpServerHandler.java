@@ -3,10 +3,8 @@ package org.qiunet.flash.handler.netty.server.tcp.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -47,30 +45,14 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 	}
 
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		if (content.getProtocolId() == IProtocolId.System.CLIENT_PING) {
-			ctx.writeAndFlush(params.getStartupContext().serverPongMsg());
-			content.release();
+		if (ChannelUtil.handlerPing(ctx.channel(), content)) {
 			return;
 		}
-
 		ChannelUtil.channelRead(ctx.channel(), params, content);
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		DSession session = ChannelUtil.getSession(ctx.channel());
-		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		logger.error(errMeg, cause);
-
-		if (ctx.channel().isOpen() || ctx.channel().isActive()) {
-			params.getStartupContext().exception(ctx.channel(), cause)
-			.addListener(f -> {
-				if (session != null) {
-					session.close(CloseCause.EXCEPTION);
-				}else {
-					ctx.close();
-				}
-			});
-		}
+		ChannelUtil.cause(params.getStartupContext(), ctx.channel(), cause);
 	}
 }

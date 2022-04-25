@@ -7,7 +7,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -62,19 +61,6 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		DSession session = ChannelUtil.getSession(ctx.channel());
-		String errMeg = "Exception session ["+(session != null ? session.toString(): "")+"]";
-		logger.error(errMeg, cause);
-
-		if (ctx.channel().isActive() || ctx.channel().isOpen()) {
-			params.getStartupContext().exception(ctx.channel(), cause)
-				.addListener(f -> {
-				if (session == null) {
-					ctx.close();
-				}else {
-					session.close(CloseCause.EXCEPTION);
-				}
-			});
-		}
+		ChannelUtil.cause(params.getStartupContext(), ctx.channel(), cause);
 	}
 }

@@ -9,7 +9,9 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
+import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.collection.enums.ForEachResult;
@@ -110,12 +112,20 @@ public class BootstrapServer {
 	 */
 	public BootstrapServer tcpListener(TcpBootstrapParams params) {
 
-		NettyTcpServer tcpServer = new NettyTcpServer(params);
-		this.nettyServers.add(tcpServer);
-
+		this.nettyServers.add(new NettyTcpServer(params));
 		if (params.isUdpOpen()) {
-
+			// kcp 依赖tcp来鉴权
+			this.kcpListener(params.toKcpBootstrapParams());
 		}
+		return this;
+	}
+	/**
+	 * 启动tcp监听
+	 * @param params Tcp 启动参数
+	 * @return server实例
+	 */
+	public BootstrapServer kcpListener(KcpBootstrapParams params) {
+		this.nettyServers.add(new NettyKcpServer(params));
 		return this;
 	}
 

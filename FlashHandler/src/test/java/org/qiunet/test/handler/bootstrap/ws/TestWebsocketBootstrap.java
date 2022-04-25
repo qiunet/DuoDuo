@@ -1,4 +1,4 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.ws;
 
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
@@ -6,12 +6,13 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.function.badword.DefaultBadWord;
 import org.qiunet.function.badword.LoadBadWordEventData;
+import org.qiunet.test.handler.bootstrap.http.HttpBootStrap;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.logger.LoggerType;
@@ -41,7 +42,7 @@ public class TestWebsocketBootstrap extends HttpBootStrap {
 
 	public class ResponseTrigger implements IPersistConnResponseTrigger {
 		@Override
-		public void response(DSession session, MessageContent data) {
+		public void response(ISession session, MessageContent data) {
 			// test 的地方.直接使用bytes 解析. 免得release
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
 			LoggerType.DUODUO_FLASH_HANDLER.info("=WS Response Text:[{}]" , response.getTestString());

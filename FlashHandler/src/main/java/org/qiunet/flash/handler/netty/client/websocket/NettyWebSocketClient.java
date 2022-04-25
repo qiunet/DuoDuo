@@ -16,6 +16,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -43,7 +44,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 	private final IPersistConnResponseTrigger trigger;
 	private final WebSocketClientParams params;
 	private final Bootstrap bootstrap;
-	private DSession session;
+	private ISession session;
 
 	private NettyWebSocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
@@ -57,12 +58,12 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 		bootstrap.handler(new NettyWebSocketClient.NettyClientInitializer());
 	}
 
-	public static DSession create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
+	public static ISession create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
 		NettyWebSocketClient client = new NettyWebSocketClient(params, trigger);
 		return client.connect();
 	}
 
-	private DSession connect() {
+	private ISession connect() {
 		DPromise<ChannelFuture> promise = DPromise.create();
 		ChannelFuture future = bootstrap.connect(params.getAddress());
 		future.addListener(f1 -> {
@@ -140,7 +141,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 	}
 
 	@Override
-	public DSession getSender() {
+	public ISession getSender() {
 		return session;
 	}
 

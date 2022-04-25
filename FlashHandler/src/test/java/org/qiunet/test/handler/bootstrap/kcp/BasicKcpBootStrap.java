@@ -1,13 +1,13 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.kcp;
+
 
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -19,11 +19,12 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/25
  */
-public class HttpBootStrap {
-	protected static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
-	protected static final int port = 8090;
-	private static final Hook hook = new MyHook();
-	private static Thread currThread;
+public abstract class BasicKcpBootStrap {
+	protected static final String host = "localhost";
+	protected static final int port = 8888;
+	protected static final Hook hook = new MyHook();
+	protected static Thread currThread;
+
 	@BeforeAll
 	public static void init() throws Exception {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
@@ -32,13 +33,15 @@ public class HttpBootStrap {
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-					.setProtocolHeaderType(ProtocolHeaderType.server)
-					.setStartupContext(new StartupContext())
-					.setWebsocketPath("/ws")
-					.setPort(port)
-					.build();
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
+			KcpBootstrapParams params = KcpBootstrapParams.custom()
+				.setProtocolHeaderType(ProtocolHeaderType.server)
+				.setStartupContext(new StartupContext())
+				.setServerName("游戏服")
+				.setEncryption(true)
+				.setPort(port)
+				.build();
+
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).kcpListener(params);
 			LockSupport.unpark(currThread);
 			server.await();
 		});
@@ -47,7 +50,7 @@ public class HttpBootStrap {
 	}
 
 	@AfterAll
-	public static void shutdown(){
+	public static void shutdown() {
 		System.gc();
 		BootstrapServer.sendHookMsg(hook.getHookPort(), hook.getShutdownMsg());
 	}

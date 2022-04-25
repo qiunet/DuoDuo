@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import java.net.InetSocketAddress;
+
 /**
  * 使用引导类 参数.
  * 建造者模式
@@ -10,7 +12,7 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	/**
 	 * 放开udp
 	 */
-	private boolean udpOpen;
+	private KcpBootstrapParams.KcpParam kcpParam;
 
 	private TcpBootstrapParams(){}
 
@@ -24,7 +26,27 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	}
 
 	public boolean isUdpOpen() {
-		return udpOpen;
+		return kcpParam != null;
+	}
+
+	/**
+	 * 转为kcp 参数
+	 * @return
+	 */
+	public KcpBootstrapParams toKcpBootstrapParams() {
+		if (! isUdpOpen()) {
+			throw new IllegalArgumentException("Can not use to kcp!");
+		}
+		return KcpBootstrapParams.custom()
+				.setPort(((InetSocketAddress) this.getAddress()).getPort())
+				.setReadIdleCheckSeconds(this.readIdleCheckSeconds)
+				.setProtocolHeaderType(this.protocolHeaderType)
+				.setMaxReceivedLength(this.maxReceivedLength)
+				.setStartupContext(this.startupContext)
+				.setEncryption(this.encryption)
+				.setServerName(this.serverName)
+				.setDependOnTcpWs()
+				.build();
 	}
 
 	/***
@@ -48,7 +70,15 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 		 * @return
 		 */
 		public Builder setUdpOpen() {
-			TcpBootstrapParams.this.udpOpen = true;
+			TcpBootstrapParams.this.kcpParam = KcpBootstrapParams.KcpParam.DEFAULT_KCP_PARAM;
+			return this;
+		}
+		/**
+		 * 设置 udp open
+		 * @return
+		 */
+		public Builder setUdpOpen(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
+			TcpBootstrapParams.this.kcpParam = new KcpBootstrapParams.KcpParam(snd_wnd, rcv_wnd, interval, noDelay, mtu, fastResend, noCwnd);
 			return this;
 		}
 	}

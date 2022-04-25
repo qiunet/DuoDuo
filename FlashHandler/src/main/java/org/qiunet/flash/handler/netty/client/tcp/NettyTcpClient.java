@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -55,7 +56,7 @@ public class NettyTcpClient {
 	 * @param port
 	 * @return
 	 */
-	public DSession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
+	public ISession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
 		return new DSession(
 				DSessionConnectParam.newBuilder(() -> bootstrap.connect(host, port))
 				.setConnectListener(listener)

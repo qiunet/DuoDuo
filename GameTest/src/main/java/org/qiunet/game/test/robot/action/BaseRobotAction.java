@@ -1,7 +1,7 @@
 package org.qiunet.game.test.robot.action;
 
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.function.ai.node.base.BaseBehaviorAction;
 import org.qiunet.function.condition.IConditions;
@@ -34,7 +34,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	}
 
 	@Override
-	public DSession getSender() {
+	public ISession getSender() {
 		return getOwner().getConnector(this.connectorName);
 	}
 
@@ -45,7 +45,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	 * @param config
 	 * @return
 	 */
-	public DSession connector(IClientConfig config) {
+	public ISession connector(IClientConfig config) {
 		return getOwner().connect(config, this.connectorName);
 	}
 }

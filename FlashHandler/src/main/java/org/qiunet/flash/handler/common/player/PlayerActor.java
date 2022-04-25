@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
@@ -56,14 +56,14 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * 玩家的构造
 	 * @param session
 	 */
-	public PlayerActor(DSession session) {
+	public PlayerActor(ISession session) {
 		super(session);
 
 		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
 	}
 
 	@Override
-	protected void setSession(DSession session) {
+	protected void setSession(ISession session) {
 		super.setSession(session);
 
 		session.addCloseListener((s, cause) -> {

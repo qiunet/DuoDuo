@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.string.StringUtil;
 
 /***
@@ -29,7 +29,7 @@ public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandl
 	 * 获得session
 	 * @return
 	 */
-	DSession getSender();
+	ISession getSender();
 	/**
 	 * 是否已经鉴权认证.
 	 * 一般初始化是只有DSession,

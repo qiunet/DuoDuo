@@ -13,31 +13,19 @@ import java.nio.ByteBuffer;
  *         Created on 17/3/13 19:50.
  */
 public class MessageContent {
-	private ByteBuffer byteBuffer;
-	private ByteBuf buffer;
+	private final ByteBuf buffer;
 	private byte [] bytes;
 	private int protocolId;
 	private String uriPath;
 
-	public MessageContent(int protocolId, byte [] bytes) {
-		this.protocolId = protocolId;
-		this.bytes = bytes;
-	}
-
 	public MessageContent(int protocolId, ByteBuf buffer) {
 		this.buffer = buffer;
 		this.protocolId = protocolId;
-		this.byteBuffer = buffer.nioBuffer();
 	}
 
 	public MessageContent(String uriPath, ByteBuf buffer) {
-		this.byteBuffer = buffer.nioBuffer();
 		this.uriPath = uriPath;
 		this.buffer = buffer;
-	}
-
-	public boolean isProtocolMsg(){
-		return protocolId > 0;
 	}
 
 	public boolean isUriPathMsg(){
@@ -57,7 +45,7 @@ public class MessageContent {
 			return ByteBuffer.wrap(bytes);
 		}
 
-		return byteBuffer;
+		return this.buffer.nioBuffer();
 	}
 
 	/***
@@ -77,7 +65,8 @@ public class MessageContent {
 	}
 
 	/**
-	 * 获得数据
+	 * 获得数据,
+	 * 读取后, 会释放掉 bytebuf
 	 * @return
 	 */
 	public byte[] bytes(){

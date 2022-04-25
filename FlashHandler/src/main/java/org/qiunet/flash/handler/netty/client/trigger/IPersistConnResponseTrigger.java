@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.client.trigger;
 
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 
 /**
  * Created by qiunet.
@@ -12,5 +12,5 @@ public interface IPersistConnResponseTrigger {
 	 * 触发的响应
 	 * @param data
 	 */
-	void response(DSession session, MessageContent data);
+	void response(ISession session, MessageContent data);
 }

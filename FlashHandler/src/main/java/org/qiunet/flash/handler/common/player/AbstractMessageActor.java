@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
@@ -19,22 +19,22 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	extends MessageHandler<P> implements IMessageActor<P>, IChannelMessageSender, IArgsContainer {
 	private final ArgsContainer container = new ArgsContainer();
 
-	protected DSession session;
+	protected ISession session;
 
 	protected AbstractMessageActor() {
 
 	}
 
-	public AbstractMessageActor(DSession session) {
+	public AbstractMessageActor(ISession session) {
 		this.setSession(session);
 	}
 
-	protected void setSession(DSession session) {
+	protected void setSession(ISession session) {
 		this.session = session;
 	}
 
 	@Override
-	public DSession getSender() {
+	public ISession getSender() {
 		return session;
 	}
 

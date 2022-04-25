@@ -1,18 +1,10 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.tcp;
 
 
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
-import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
-import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -27,12 +19,11 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/25
  */
-public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
+public abstract class BasicTcpBootStrap {
 	protected static final String host = "localhost";
 	protected static final int port = 8888;
 	protected static final Hook hook = new MyHook();
-	protected TcpClientConnector tcpClientConnector;
-	private static Thread currThread;
+	protected static Thread currThread;
 
 	@BeforeAll
 	public static void init() throws Exception {
@@ -56,25 +47,6 @@ public abstract class TcpBootStrap implements IPersistConnResponseTrigger {
 		thread.start();
 		LockSupport.park();
 	}
-	@BeforeEach
-	public void connect(){
-		currThread = Thread.currentThread();
-		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, this);
-		tcpClientConnector = tcpClient.connect(host, port);
-	}
-	@AfterEach
-	public void closeConnect(){
-		currThread = Thread.currentThread();
-		LockSupport.park();
-	}
-
-	@Override
-	public void response(DSession session, MessageContent data) {
-		this.responseTcpMessage(session, data);
-		LockSupport.unpark(currThread);
-	}
-
-	protected abstract void responseTcpMessage(DSession session, MessageContent data);
 
 	@AfterAll
 	public static void shutdown() {

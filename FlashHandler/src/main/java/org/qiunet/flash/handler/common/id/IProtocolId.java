@@ -40,14 +40,18 @@ public interface IProtocolId {
 		/**跨服玩家需要退出当前服务器*/
 		int CROSS_PLAYER_NEED_LOGOUT_PUSH = 7;
 
+		/**申请kcp的token. 仅tcp WebSocket使用. */
+		int KCP_TOKEN_REQ = 8;
+		int KCP_TOKEN_RSP = 9;
+		/**申请kcp 绑定*/
+		int KCP_BIND_AUTH_REQ = 10;
+		int KCP_BIND_AUTH_RSP = 11;
+
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;
 		/** 500 **/
 		int SERVER_EXCEPTION = 500;
 
-		/** ping pong 信息 */
-		int CLIENT_PING = 700;
-		int SERVER_PONG = 701;
 
 		/**跨服事件**/
 		int CROSS_EVENT = 600;
@@ -86,5 +90,8 @@ public interface IProtocolId {
 		int GM_dTOOLS_COMMAND_REQ = 614;
 		int GM_dTOOLS_COMMAND_RSP = 615;
 
+		/** ping pong 信息 */
+		int CLIENT_PING = 700;
+		int SERVER_PONG = 701;
 	}
 }

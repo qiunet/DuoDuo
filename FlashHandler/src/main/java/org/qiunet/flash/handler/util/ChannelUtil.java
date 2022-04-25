@@ -11,19 +11,24 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
+import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.logger.LoggerType;
@@ -86,9 +91,9 @@ public final class ChannelUtil {
 	 * @param val
 	 * @return
 	 */
-	public static boolean bindSession(DSession val) {
+	public static boolean bindSession(ISession val) {
 		Preconditions.checkNotNull(val);
-		Attribute<DSession> attr = val.channel().attr(ServerConstants.SESSION_KEY);
+		Attribute<ISession> attr = val.channel().attr(ServerConstants.SESSION_KEY);
 		boolean result = attr.compareAndSet(null, val);
 		if (! result) {
 			logger.error("Session [{}] Duplicate", val);
@@ -102,7 +107,7 @@ public final class ChannelUtil {
 	 * @param channel
 	 * @return
 	 */
-	public static DSession getSession(Channel channel) {
+	public static ISession getSession(Channel channel) {
 		return channel.attr(ServerConstants.SESSION_KEY).get();
 	}
 
@@ -150,13 +155,30 @@ public final class ChannelUtil {
 	}
 
 	/**
+	 * 处理ping信息
+	 * @param channel
+	 * @param content
+	 * @return
+	 */
+	public static boolean handlerPing(Channel channel, MessageContent content) {
+		if (content.getProtocolId() != IProtocolId.System.CLIENT_PING) {
+			return false;
+		}
+
+		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
+		channel.writeAndFlush(ServerPongResponse.valueOf(pingRequest.getBytes()));
+		content.release();
+		return true;
+	}
+
+	/**
 	 * 处理长连接的通道读数据
 	 * @param channel
 	 * @param params
 	 * @param content
 	 */
 	public static void channelRead(Channel channel, AbstractBootstrapParam params, MessageContent content){
-		DSession session = ChannelUtil.getSession(channel);
+		ISession session = ChannelUtil.getSession(channel);
 		Preconditions.checkNotNull(session);
 
 		if (! params.getStartupContext().userServerValidate(session)) {
@@ -180,7 +202,7 @@ public final class ChannelUtil {
 	 * @param content
 	 */
 	public static void processHandler(Channel channel, IHandler handler, MessageContent content) {
-		DSession session = ChannelUtil.getSession(channel);
+		ISession session = ChannelUtil.getSession(channel);
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (handler instanceof ITransmitHandler
 				&& messageActor instanceof ICrossStatusActor
@@ -205,5 +227,28 @@ public final class ChannelUtil {
 
 	public static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
 		sendHttpResponseStatusAndClose(ctx.channel(), status);
+	}
+
+	/**
+	 * 异常处理
+	 * @param startupContext
+	 * @param channel
+	 * @param cause
+	 */
+	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
+		ISession session = ChannelUtil.getSession(channel);
+		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
+		logger.error(errMeg, cause);
+
+		if (channel.isOpen() || channel.isActive()) {
+			startupContext.exception(channel, cause)
+					.addListener(f -> {
+						if (session != null) {
+							session.close(CloseCause.EXCEPTION);
+						}else {
+							channel.close();
+						}
+					});
+		}
 	}
 }

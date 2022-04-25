@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -30,7 +30,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * session
 	 */
-	private final DSession session;
+	private final ISession session;
 	/**
 	 *
 	 */
@@ -71,7 +71,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	 * 获得session
 	 * @return
 	 */
-	public DSession getSession() {
+	public ISession getSession() {
 		return session;
 	}
 

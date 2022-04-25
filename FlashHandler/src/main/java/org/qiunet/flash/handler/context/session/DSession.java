@@ -1,10 +1,8 @@
 package org.qiunet.flash.handler.context.session;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -15,15 +13,9 @@ import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
-import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.logger.LoggerType;
-import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,8 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by qiunet.
  * 17/11/26
  */
-public class DSession implements IChannelMessageSender {
-	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+public class DSession extends BaseSession implements IChannelMessageSender {
 	/**
 	 * 如果是使用DSession 连接, 连接成功前. 发送的消息存储这里
 	 */
@@ -65,10 +56,6 @@ public class DSession implements IChannelMessageSender {
 	 * 如果是作为客户端的DSession, 这里是连接参数
 	 */
 	private DSessionConnectParam connectParam;
-	/**
-	 * netty Channel
-	 */
-	private Channel channel;
 
 	protected DSession(){}
 	/**
@@ -137,13 +124,6 @@ public class DSession implements IChannelMessageSender {
 		connectFuture.addListener(listener);
 	}
 
-	private void setChannel(Channel channel) {
-		if (channel != null) {
-			// 测试可能为null
-			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
-		}
-		this.channel = channel;
-	}
 	/**
 	 * 设置 session 的参数
 	 */
@@ -151,32 +131,6 @@ public class DSession implements IChannelMessageSender {
 		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 10000));
 		this.sessionConfig = config;
 		return this;
-	}
-
-	/**
-	 * session是否是活跃的.
-	 * @return
-	 */
-	public boolean isActive() {
-		return channel != null && channel.isActive();
-	}
-
-	/**
-	 * 得到channel
-	 * 如果是client模式. 会阻塞知道拿到channel
-	 *
-	 * @return
-	 */
-	public Channel channel() {
-		return channel;
-	}
-
-	/**
-	 * 获得ip
-	 * @return
-	 */
-	public String getIp() {
-		return ChannelUtil.getIp(channel);
 	}
 
 	private ScheduledFuture<?> flushSchedule;
@@ -190,77 +144,6 @@ public class DSession implements IChannelMessageSender {
 		channel.flush();
 	}
 
-	/**
-	 * 获得channel里面的对象.
-	 * @param key
-	 * @param <T>
-	 * @return
-	 */
-	public <T> T getAttachObj(AttributeKey<T> key) {
-		return channel.attr(key).get();
-	}
-
-	/**
-	 * 往channel上面挂载数据.
-	 * @param key
-	 * @param obj
-	 * @param <T>
-	 */
-	public <T> void attachObj(AttributeKey<T> key, T obj) {
-		channel.attr(key).set(obj);
-	}
-
-	private final AtomicBoolean closed = new AtomicBoolean();
-	public void close(CloseCause cause) {
-		if (! closed.compareAndSet(false, true)) {
-			// 避免多次调用close. 多次调用监听.
-			return;
-		}
-
-		this.flush0();
-
-		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
-		closeListeners.forEach(l -> l.close(this, cause));
-		if (channel != null && (channel.isActive() || channel.isOpen())) {
-			channel.close();
-		}
-	}
-
-	@Override
-	public String toString() {
-		StringJoiner sj = new StringJoiner(",", "[", "]");
-		if (channel != null) {
-			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (messageActor != null) {
-				sj.add(messageActor.getIdentity());
-			}
-			sj.add("ID = " + channel.id().asShortText());
-			sj.add("Ip = " + getIp());
-		}
-		return sj.toString();
-	}
-
-	/**
-	 * 添加一个close监听.
-	 * @param listener
-	 */
-	public void addCloseListener(SessionCloseListener listener) {
-		this.closeListeners.add(listener);
-	}
-
-	/**
-	 * 清除所有的close listener
- 	 */
-	public void clearCloseListener(){
-		this.closeListeners.clear();
-	}
-
-	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
-
-	@Override
-	public DSession getSender() {
-		return this;
-	}
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
@@ -313,8 +196,4 @@ public class DSession implements IChannelMessageSender {
 		return future;
 	}
 
-	@FunctionalInterface
-	public interface SessionCloseListener {
-		void close(DSession session, CloseCause cause);
-	}
 }

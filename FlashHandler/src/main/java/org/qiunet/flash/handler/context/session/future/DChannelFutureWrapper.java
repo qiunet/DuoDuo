@@ -16,8 +16,15 @@ public class DChannelFutureWrapper implements IDSessionFuture {
 	 */
 	private final ChannelFuture channelFuture;
 
+	private static final GenericFutureListener<? extends Future<? super Void>>  listener = f -> {
+		if (! f.isSuccess()) {
+			f.cause().printStackTrace();
+		}
+	};
+
 	public DChannelFutureWrapper(ChannelFuture channelFuture) {
 		this.channelFuture = channelFuture;
+		this.channelFuture.addListener(listener);
 	}
 
 	@Override

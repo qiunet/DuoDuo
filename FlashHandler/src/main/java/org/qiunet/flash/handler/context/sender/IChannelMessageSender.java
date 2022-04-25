@@ -16,6 +16,27 @@ public interface IChannelMessageSender {
 	IChannelMessageSender getSender();
 
 	/**
+	 * 如果有绑定udp session.
+	 * 发送udp消息
+	 *
+	 * @param message
+	 * @return
+	 */
+	default IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
+		return getSender().sendKcpMessage(message);
+	}
+
+	/**
+	 * 如果有绑定udp session.
+	 * 发送udp消息
+	 *
+	 * @param message
+	 * @return
+	 */
+	default IDSessionFuture sendKcpMessage(IChannelData message) {
+		return this.sendKcpMessage(message.buildChannelMessage());
+	}
+	/**
 	 * 发送消息
 	 * @param message
 	 * @return

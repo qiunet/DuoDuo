@@ -28,16 +28,45 @@ public class Cross2PlayerResponse implements IChannelData, IDataToString {
 	 */
 	@Protobuf(description = "消息的内容")
 	private byte [] bytes;
+	/**
+	 * 是否走kcp通道
+	 */
+	@Protobuf(description = "走kcp通道")
+	private boolean kcpChannel;
 
+	@Protobuf(description = "是否flush")
+	private boolean flush;
 	@Ignore
 	private IChannelData data;
 
-	public static Cross2PlayerResponse valueOf(IChannelData responseData) {
+	public static Cross2PlayerResponse valueOf(IChannelData responseData, boolean flush) {
+		return valueOf(responseData, flush, false);
+	}
+
+	public static Cross2PlayerResponse valueOf(IChannelData responseData, boolean flush, boolean kcpChannel) {
 		Cross2PlayerResponse response = new Cross2PlayerResponse();
 		response.pid = responseData.protocolId();
 		response.bytes = responseData.toByteArray();
+		response.kcpChannel = kcpChannel;
 		response.data = responseData;
+		response.flush = flush;
 		return response;
+	}
+
+	public boolean isFlush() {
+		return flush;
+	}
+
+	public void setFlush(boolean flush) {
+		this.flush = flush;
+	}
+
+	public boolean isKcpChannel() {
+		return kcpChannel;
+	}
+
+	public void setKcpChannel(boolean kcpChannel) {
+		this.kcpChannel = kcpChannel;
 	}
 
 	public int getPid() {

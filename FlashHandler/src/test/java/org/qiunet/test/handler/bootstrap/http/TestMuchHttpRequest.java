@@ -1,4 +1,4 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.http;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Assertions;

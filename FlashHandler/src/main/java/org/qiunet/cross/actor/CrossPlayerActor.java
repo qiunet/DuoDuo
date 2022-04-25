@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.listener.event.EventManager;
 
@@ -40,12 +40,12 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	private int serverId;
 
 
-	public CrossPlayerActor(DSession session) {
+	public CrossPlayerActor(ISession session) {
 		super(session);
 	}
 
 	@Override
-	protected void setSession(DSession session) {
+	protected void setSession(ISession session) {
 		super.setSession(session);
 
 		session.addCloseListener((s, cause) -> {
@@ -127,6 +127,12 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelData channelData, boolean flush) {
-		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData), flush);
+		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData, flush), flush);
+	}
+
+	@Override
+	public IDSessionFuture sendKcpMessage(IChannelData channelData) {
+		// kcp 要求实时. 直接发送出去
+		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData, true, true), true);
 	}
 }

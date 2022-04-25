@@ -11,5 +11,7 @@ public enum ServerConnType {
 
 	TCP,
 
+	KCP,
+
 	WS,
 }

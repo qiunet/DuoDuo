@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.client.tcp;
 
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 
 /***
  * Tcp client 专门连接服务器的对象.
@@ -11,14 +11,14 @@ import org.qiunet.flash.handler.context.session.DSession;
  * 2020-11-06 12:25
  */
 public class TcpClientConnector implements IChannelMessageSender {
-	private final DSession session;
+	private final ISession session;
 
-	TcpClientConnector(DSession session) {
+	TcpClientConnector(ISession session) {
 		this.session = session;
 	}
 
 	@Override
-	public DSession getSender() {
+	public ISession getSender() {
 		return session;
 	}
 

@@ -9,10 +9,14 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.*;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerCloseRsp;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
@@ -26,7 +30,6 @@ import org.qiunet.utils.logger.LoggerType;
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<IChannelMessage<IChannelData>> HANDLER_NOT_FOUND_MESSAGE = new LazyLoader<>(() -> new HandlerNotFoundResponse().buildChannelMessage());
-	LazyLoader<IChannelMessage<IChannelData>> SERVER_PONG_MESSAGE = new LazyLoader<>(() -> new ServerPongResponse().buildChannelMessage());
 	LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
 	/**
 	 * 默认的cross 启动上下文
@@ -46,7 +49,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 		}
 
 		@Override
-		public boolean userServerValidate(DSession session) {
+		public boolean userServerValidate(ISession session) {
 			if (ServerNodeManager.isServerClosed()) {
 				session.sendMessage(ServerCloseRsp.valueOf());
 				return false;
@@ -97,9 +100,5 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * 不可用. 触发 {@link ServerCloseRsp}
 	 * @return true 可用 false 不可用
 	 */
-	default boolean userServerValidate(DSession session) { return true;}
-
-	default IChannelMessage<IChannelData> serverPongMsg() {
-		return SERVER_PONG_MESSAGE.get();
-	}
+	default boolean userServerValidate(ISession session) { return true;}
 }

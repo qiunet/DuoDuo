@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -24,7 +24,7 @@ import org.qiunet.utils.logger.LoggerType;
  */
 public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
-	public void response(DSession session, MessageContent data) {
+	public void response(ISession session, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
 			// pong 信息不需要处理
 			return;
@@ -37,7 +37,11 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
 			IChannelMessage<byte []> message = new DefaultBytesMessage(response.getPid(), response.getBytes());
 			LoggerType.DUODUO_FLASH_HANDLER.debug("tcp node trigger Data.protocolId: {}", response.getPid());
-			iMessageActor.getSender().sendMessage(message);
+			if (response.isKcpChannel()) {
+				iMessageActor.getSender().sendKcpMessage(message);
+			}else {
+				iMessageActor.getSender().sendMessage(message, response.isFlush());
+			}
 			return;
 		}
 

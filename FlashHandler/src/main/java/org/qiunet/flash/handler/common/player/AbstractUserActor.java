@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.listener.event.EventManager;
 
 /***
@@ -18,12 +18,12 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 */
 	private final ObserverSupport<T> observerSupport = new ObserverSupport<>((T)this);
 
-	public AbstractUserActor(DSession session) {
+	public AbstractUserActor(ISession session) {
 		super(session);
 	}
 
 	@Override
-	protected void setSession(DSession session) {
+	protected void setSession(ISession session) {
 		this.session = session;
 	}
 
@@ -62,7 +62,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * 获得session
 	 * @return
 	 */
-	public DSession getSession(){
+	public ISession getSession(){
 		return session;
 	}
 

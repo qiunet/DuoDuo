@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
@@ -60,7 +60,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	/***
 	 * 长连接的session map
 	 */
-	private final Map<String, DSession> clients = Maps.newConcurrentMap();
+	private final Map<String, ISession> clients = Maps.newConcurrentMap();
 	/**
 	 * 心跳future
 	 */
@@ -97,7 +97,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	 * @param name
 	 * @return
 	 */
-	public DSession getConnector(String name) {
+	public ISession getConnector(String name) {
 		if (! clients.containsKey(name)) {
 			throw new CustomException("Session {} not connect!", name);
 		}
@@ -110,7 +110,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	 * @param name
 	 * @return
 	 */
-	public DSession connect(IClientConfig config, String name) {
+	public ISession connect(IClientConfig config, String name) {
 		return clients.computeIfAbsent(name, serverName -> {
 			switch (config.getConnType()) {
 				case WS:
@@ -128,11 +128,11 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 	private class PersistConnResponseTrigger implements IPersistConnResponseTrigger {
 
 		@Override
-		public void response(DSession session, MessageContent data) {
+		public void response(ISession session, MessageContent data) {
 			RobotFunc.this.addMessage(h -> response0(session, data));
 		}
 
-		private void response0(DSession session, MessageContent data) {
+		private void response0(ISession session, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RSP) {
 				this.handlerStatus(data);
 				return;

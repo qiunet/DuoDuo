@@ -1,4 +1,4 @@
-package org.qiunet.test.handler.bootstrap;
+package org.qiunet.test.handler.bootstrap.http;
 
 import com.alibaba.fastjson.JSONObject;
 import io.netty.handler.codec.http.HttpResponseStatus;

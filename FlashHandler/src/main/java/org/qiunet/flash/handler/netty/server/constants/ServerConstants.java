@@ -6,7 +6,7 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -35,7 +35,7 @@ public final class ServerConstants {
 	/**
 	 * Session key
 	 */
-	public static final AttributeKey<DSession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
+	public static final AttributeKey<ISession> SESSION_KEY = AttributeKey.newInstance("SESSION_CHANNEL_KEY");
 	/***
 	 * 启动参数
 	 */
