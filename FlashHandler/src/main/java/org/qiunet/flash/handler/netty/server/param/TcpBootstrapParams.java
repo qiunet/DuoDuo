@@ -7,6 +7,11 @@ package org.qiunet.flash.handler.netty.server.param;
  * 17/7/19
  */
 public final class TcpBootstrapParams extends AbstractBootstrapParam {
+	/**
+	 * 放开udp
+	 */
+	private boolean udpOpen;
+
 	private TcpBootstrapParams(){}
 
 	/***
@@ -16,6 +21,10 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 	public static Builder custom(){
 		TcpBootstrapParams params = new TcpBootstrapParams();
 		return params.new Builder();
+	}
+
+	public boolean isUdpOpen() {
+		return udpOpen;
 	}
 
 	/***
@@ -32,6 +41,15 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 			}
 
 			return TcpBootstrapParams.this;
+		}
+
+		/**
+		 * 设置 udp open
+		 * @return
+		 */
+		public Builder setUdpOpen() {
+			TcpBootstrapParams.this.udpOpen = true;
+			return this;
 		}
 	}
 }

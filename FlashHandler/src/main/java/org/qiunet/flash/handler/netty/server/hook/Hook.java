@@ -41,6 +41,7 @@ public interface Hook {
 	 * @return
 	 */
 	default int getHookPort() {
+		// Server Port 可能开了udp. 优先使用 node port.
 		if (ServerConfig.getNodePort() > 0) {
 			return ServerConfig.getNodePort();
 		}else if (ServerConfig.getServerPort() > 0) {

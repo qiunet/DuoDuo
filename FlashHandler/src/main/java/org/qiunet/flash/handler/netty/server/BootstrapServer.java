@@ -112,6 +112,10 @@ public class BootstrapServer {
 
 		NettyTcpServer tcpServer = new NettyTcpServer(params);
 		this.nettyServers.add(tcpServer);
+
+		if (params.isUdpOpen()) {
+
+		}
 		return this;
 	}
 

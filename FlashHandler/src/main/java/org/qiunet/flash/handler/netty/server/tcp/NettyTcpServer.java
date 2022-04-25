@@ -20,9 +20,9 @@ import java.net.InetSocketAddress;
  * 17/8/13
  */
 public final class NettyTcpServer implements INettyServer {
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private TcpBootstrapParams params;
+	private final TcpBootstrapParams params;
 
 	private ChannelFuture channelFuture;
 	/***

@@ -107,6 +107,10 @@
 			<artifactId>netty-all</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.jpower.kcp</groupId>
+			<artifactId>kcp-netty</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>JavaAgent</artifactId>
 		</dependency>
