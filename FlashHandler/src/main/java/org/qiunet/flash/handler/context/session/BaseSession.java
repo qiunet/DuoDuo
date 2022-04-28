@@ -2,9 +2,7 @@ package org.qiunet.flash.handler.context.session;
 
 import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
-import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
-import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -13,7 +11,6 @@ import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -26,15 +23,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2022/4/26 15:13
  */
-public class BaseSession implements ISession {
+public abstract class BaseSession implements ISession {
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	protected Channel channel;
-	/**
-	 * 绑定的kcp session
-	 */
-	protected KcpSession kcpSession;
 
 	protected void setChannel(Channel channel) {
 		if (channel != null) {
@@ -87,21 +80,18 @@ public class BaseSession implements ISession {
 		}
 	}
 
-	@Override
-	public void bindKcpSession(KcpSession kcpSession) {
-		Attribute<ServerConnType> attr = this.channel.attr(ServerConstants.HANDLER_TYPE_KEY);
-		if (attr.get() != ServerConnType.TCP && attr.get() != ServerConnType.WS) {
-			throw new CustomException("Not support!");
+	/**
+	 * 消息打印
+	 * @param message
+	 */
+	protected void messageLogger(IChannelMessage<?> message) {
+		if ( logger.isInfoEnabled()
+				&& message.needLogger()) {
+			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			if (messageActor != null) {
+				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
+			}
 		}
-		this.kcpSession = kcpSession;
-	}
-
-	@Override
-	public IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
-		if (this.kcpSession == null) {
-			throw new CustomException("Not bind kcp session");
-		}
-		return this.kcpSession.sendKcpMessage(message);
 	}
 
 	@Override
@@ -111,6 +101,7 @@ public class BaseSession implements ISession {
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+		this.messageLogger(message);
 		return new DChannelFutureWrapper(this.channel.writeAndFlush(message));
 	}
 

@@ -1,7 +1,7 @@
 package org.qiunet.test.handler.startup.context;
 
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
 /***
@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
  **/
 public class StartupContext implements IStartupContext<PlayerActor> {
 	@Override
-	public PlayerActor buildMessageActor(DSession session) {
+	public PlayerActor buildMessageActor(ISession session) {
 		return new PlayerActor(session);
 	}
 }

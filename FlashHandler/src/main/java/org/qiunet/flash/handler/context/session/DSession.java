@@ -3,9 +3,10 @@ package org.qiunet.flash.handler.context.session;
 import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.Attribute;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.ScheduledFuture;
-import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
@@ -56,6 +57,10 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	 * 如果是作为客户端的DSession, 这里是连接参数
 	 */
 	private DSessionConnectParam connectParam;
+	/**
+	 * 绑定的kcp session
+	 */
+	protected KcpSession kcpSession;
 
 	protected DSession(){}
 	/**
@@ -168,13 +173,8 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	public IDSessionFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
-		if ( logger.isInfoEnabled()
-				&& message.needLogger()) {
-			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (messageActor != null) {
-				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
-			}
-		}
+		// 打印消息
+		this.messageLogger(message);
 
 		if (flush) {
 			return new DChannelFutureWrapper(channel.writeAndFlush(message));
@@ -194,6 +194,23 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			this.flushSchedule = channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
 		}
 		return future;
+	}
+
+	@Override
+	public void bindKcpSession(KcpSession kcpSession) {
+		Attribute<ServerConnType> attr = this.channel.attr(ServerConstants.HANDLER_TYPE_KEY);
+		if (attr.get() != ServerConnType.TCP && attr.get() != ServerConnType.WS) {
+			throw new CustomException("Not support!");
+		}
+		this.kcpSession = kcpSession;
+	}
+
+	@Override
+	public IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
+		if (this.kcpSession == null) {
+			throw new CustomException("Not bind kcp session");
+		}
+		return this.kcpSession.sendKcpMessage(message);
 	}
 
 }

@@ -1,13 +1,15 @@
 package org.qiunet.flash.handler.netty.server.kcp;
 
+import io.jpower.kcp.netty.UkcpChannel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
@@ -17,6 +19,8 @@ import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
+
+import java.util.Objects;
 
 /***
  *
@@ -37,7 +41,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.KCP);
-		DSession session = new DSession(ctx.channel());
+		ISession session = new KcpSession(ctx.channel());
 
 		ChannelUtil.bindSession(session);
 		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
@@ -67,15 +71,31 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			KcpBindAuthReq req = ProtobufDataManager.decode(KcpBindAuthReq.class, content.byteBuffer());
 			content.release();
 
-			PlayerActor playerActor = KcpPlayerTokenMapping.getPlayer(req.getToken());
-			ctx.writeAndFlush(KcpBindAuthRsp.valueOf(playerActor != null));
-			if (playerActor != null) {
-				// 从mapping那取到PlayerActor
-				playerActor.getSession().bindKcpSession(((KcpSession) ChannelUtil.getSession(ctx.channel())));
-				ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(playerActor);
+			KcpPlayerTokenMapping.PlayerKcpParamInfo kcpParamInfo = KcpPlayerTokenMapping.getPlayer(req.getPlayerId());
+			PlayerActor playerActor;
+			if (kcpParamInfo == null
+				|| ! Objects.equals(req.getToken(), kcpParamInfo.getToken())
+				|| (playerActor = UserOnlineManager.getPlayerActor(kcpParamInfo.getPlayerId())) == null
+			 	|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
+			) {
+				ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false));
+				ctx.channel().close();
+				return;
 			}
+
+			// 从mapping那取到PlayerActor
+			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(true).buildChannelMessage());
+			playerActor.getSession().bindKcpSession(((KcpSession) ChannelUtil.getSession(ctx.channel())));
+			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(playerActor);
+			return;
 		}
 
+		// 没有鉴权
+		if (ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get() == null) {
+			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false).buildChannelMessage());
+			content.release();
+			return;
+		}
 
 		ChannelUtil.channelRead(ctx.channel(), params, content);
 	}

@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.context.session;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  *
@@ -13,8 +13,12 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 public class KcpSession extends BaseSession {
 
 	public KcpSession(Channel channel) {
-		channel.attr(ServerConstants.SESSION_KEY).set(this);
 		this.setChannel(channel);
+	}
+
+	@Override
+	public void bindKcpSession(KcpSession kcpSession) {
+		throw new CustomException("Not Support!");
 	}
 
 	@Override

@@ -166,7 +166,7 @@ public final class ChannelUtil {
 		}
 
 		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
-		channel.writeAndFlush(ServerPongResponse.valueOf(pingRequest.getBytes()));
+		ChannelUtil.getSession(channel).sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
 		content.release();
 		return true;
 	}

@@ -15,15 +15,25 @@ public class KcpTokenRsp implements IChannelData {
 
 	@Protobuf(description = "用来做kcp关联,有效时间60秒!")
 	private String token;
-
+	@Protobuf(description = "会话ID")
+	private int convId;
 	@Protobuf(description = "端口")
 	private int port;
 
-	public static KcpTokenRsp valueOf(String token, int port) {
+	public static KcpTokenRsp valueOf(int convId, String token, int port) {
 		KcpTokenRsp data = new KcpTokenRsp();
+		data.convId = convId;
 		data.token = token;
 		data.port = port;
 		return data;
+	}
+
+	public int getConvId() {
+		return convId;
+	}
+
+	public void setConvId(int convId) {
+		this.convId = convId;
 	}
 
 	public int getPort() {

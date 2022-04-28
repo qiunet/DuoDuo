@@ -8,7 +8,6 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -44,7 +43,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 */
 	IStartupContext<PlayerActor> SERVER_STARTUP_CONTEXT = new IStartupContext<PlayerActor>() {
 		@Override
-		public PlayerActor buildMessageActor(DSession session) {
+		public PlayerActor buildMessageActor(ISession session) {
 			return new PlayerActor(session);
 		}
 
@@ -64,7 +63,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @param session
 	 * @return
 	 */
-	T buildMessageActor(DSession session);
+	T buildMessageActor(ISession session);
 	/***
 	 *  没有找到handler 404
 	 * @return

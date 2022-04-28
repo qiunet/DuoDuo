@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -28,7 +28,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private RedisLock redisLock;
 	private int serverId;
 
-	public ServerNode(DSession session) {
+	public ServerNode(ISession session) {
 		super(session);
 	}
 

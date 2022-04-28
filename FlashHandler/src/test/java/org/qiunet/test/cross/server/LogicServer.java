@@ -4,7 +4,7 @@ import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -33,7 +33,7 @@ public class LogicServer {
 			BootstrapServer.createBootstrap(hook)
 				.httpListener(HttpBootstrapParams.custom().setStartupContext(new IStartupContext<PlayerActor>() {
 					@Override
-					public PlayerActor buildMessageActor(DSession session) {
+					public PlayerActor buildMessageActor(ISession session) {
 						return new PlayerActor(session);
 					}
 				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).setProtocolHeaderType(ProtocolHeaderType.server).build())
