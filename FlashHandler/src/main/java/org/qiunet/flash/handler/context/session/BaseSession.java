@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2022/4/26 15:13
  */
-public abstract class BaseSession implements ISession {
+abstract class BaseSession implements ISession {
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
@@ -73,12 +73,16 @@ public abstract class BaseSession implements ISession {
 			return;
 		}
 
+
 		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(this, cause));
 		if (channel != null && (channel.isActive() || channel.isOpen())) {
+			this.flush();
 			channel.close();
 		}
 	}
+
+	protected abstract void flush();
 
 	/**
 	 * 消息打印

@@ -20,9 +20,9 @@ public class TimeOutFuture {
 		TIMEOUT
 	}
 
-	private AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
+	private final AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
-	private TimeOutCaller caller;
+	private final TimeOutCaller caller;
 
 	DFuture<Void> dFuture;
 

@@ -151,6 +151,11 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 
 
 	@Override
+	protected void flush() {
+		this.flush0();
+	}
+
+	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, sessionConfig.isDefault_flush());
 	}

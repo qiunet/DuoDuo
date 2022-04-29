@@ -72,7 +72,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 		session.addCloseListener((s, cause) -> {
 			if (s.isActive()) {
-				s.sendMessage(PlayerLogoutPush.valueOf(cause));
+				s.sendMessage(PlayerLogoutPush.valueOf(cause), true);
 			}
 			this.quitAllCross(cause);
 		});

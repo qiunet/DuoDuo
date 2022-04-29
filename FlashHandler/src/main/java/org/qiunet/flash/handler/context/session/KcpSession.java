@@ -17,6 +17,11 @@ public class KcpSession extends BaseSession {
 	}
 
 	@Override
+	protected void flush() {
+		// do nothing
+	}
+
+	@Override
 	public void bindKcpSession(KcpSession kcpSession) {
 		throw new CustomException("Not Support!");
 	}
