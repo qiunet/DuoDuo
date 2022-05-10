@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
-import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -178,14 +177,11 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	public IDSessionFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
-		// 打印消息
-		this.messageLogger(message);
-
 		if (flush) {
-			return new DChannelFutureWrapper(channel.writeAndFlush(message));
+			return this.realSendMessage(message, true);
 		}
 
-		IDSessionFuture future = new DChannelFutureWrapper(channel.write(message));
+		IDSessionFuture future = this.realSendMessage(message, false);
 		if (counter.incrementAndGet() >= 10) {
 			// 次数够也flush
 			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
@@ -208,6 +204,10 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			throw new CustomException("Not support!");
 		}
 		this.kcpSession = kcpSession;
+		this.addCloseListener((session, cause) -> {
+			logger.debug("Close kcp session!");
+			this.kcpSession.channel().close();
+		});
 	}
 
 	@Override

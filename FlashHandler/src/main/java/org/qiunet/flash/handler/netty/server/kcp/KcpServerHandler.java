@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.kcp;
 
-import io.jpower.kcp.netty.UkcpChannel;
 import io.jpower.kcp.netty.UkcpServerChildChannel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -69,7 +68,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		}
 
 		if (content.getProtocolId() == IProtocolId.System.KCP_CONNECT_REQ) {
-			ChannelUtil.getSession(ctx.channel()).sendMessage(KcpConnectRsp.valueOd(((UkcpServerChildChannel) ctx.channel()).conv()));
+			ChannelUtil.getSession(ctx.channel()).sendMessage(KcpConnectRsp.valueOf(((UkcpServerChildChannel) ctx.channel()).conv()));
 			content.release();
 			return;
 		}
@@ -84,7 +83,8 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			if (kcpParamInfo == null
 				|| ! Objects.equals(req.getToken(), kcpParamInfo.getToken())
 				|| (playerActor = UserOnlineManager.getPlayerActor(kcpParamInfo.getPlayerId())) == null
-			 	|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
+				// 客户端先不用这个.
+			 	//|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
 			) {
 				ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false));
 				ctx.channel().close();

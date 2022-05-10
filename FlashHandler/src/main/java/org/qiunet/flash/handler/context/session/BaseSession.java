@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
+import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -84,20 +85,6 @@ abstract class BaseSession implements ISession {
 
 	protected abstract void flush();
 
-	/**
-	 * 消息打印
-	 * @param message
-	 */
-	protected void messageLogger(IChannelMessage<?> message) {
-		if ( logger.isInfoEnabled()
-				&& message.needLogger()) {
-			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (messageActor != null) {
-				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
-			}
-		}
-	}
-
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, true);
@@ -105,8 +92,35 @@ abstract class BaseSession implements ISession {
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush) {
-		this.messageLogger(message);
-		return new DChannelFutureWrapper(this.channel.writeAndFlush(message));
+		return this.realSendMessage(message, flush);
+	}
+
+	/**
+	 * 发送消息在这里
+	 * @param message
+	 * @param flush
+	 * @return
+	 */
+	protected IDSessionFuture realSendMessage(IChannelMessage<?> message, boolean flush) {
+		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (! this.channel.isOpen()) {
+			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
+			logger.error("[{}] discard message: {}", identityDesc, message.toStr());
+			return new DMessageContentFuture(channel, message);
+		}
+
+		if ( logger.isInfoEnabled()
+				&& message.needLogger()) {
+			if (messageActor != null) {
+				logger.info("[{}] >>> {}", messageActor.getIdentity(), message.toStr());
+			}
+		}
+
+		if (flush) {
+			return new DChannelFutureWrapper(this.channel.writeAndFlush(message));
+		}else {
+			return new DChannelFutureWrapper(this.channel.write(message));
+		}
 	}
 
 	@Override

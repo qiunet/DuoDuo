@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.session.config;
 
+import com.google.common.base.Preconditions;
+
 /***
  * Session 的一些配置
  *
@@ -56,6 +58,7 @@ public final class DSessionConfig {
 		}
 
 		public DSessionConfigBuilder setFlush_delay_ms(int flush_delay_ms) {
+			Preconditions.checkState(flush_delay_ms > 10, "flush delay must grant than 10 ms!");
 			this.flush_delay_ms = flush_delay_ms;
 			return this;
 		}

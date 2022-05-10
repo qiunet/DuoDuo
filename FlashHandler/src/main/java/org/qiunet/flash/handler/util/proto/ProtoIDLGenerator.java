@@ -371,16 +371,14 @@ public class ProtoIDLGenerator {
 				continue;
 			}
 			String packageDesc = "-";
-			if (param.getModel() == ProtoGeneratorModel.GROUP_BY_MODULE) {
-				ProtoModule pm = pbClass.getPackage().getAnnotation(ProtoModule.class);
-				if (pm != null) {
-					packageDesc = pm.value();
-				}
-				if (annotation.ID() < 1000) {
-					packageDesc = "System";
-				}
+			ProtoModule pm = pbClass.getPackage().getAnnotation(ProtoModule.class);
+			if (pm != null) {
+				packageDesc = pm.value();
 			}
-
+			if (annotation.ID() < 1000) {
+				packageDesc = "System";
+			}
+		
 			if (ChannelDataMapping.getHandler(annotation.ID()) != null) {
 				req.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|").append(packageDesc).append("|\n");
 			}else {

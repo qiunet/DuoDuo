@@ -12,6 +12,7 @@ import org.qiunet.function.gm.GmParamType;
 import org.qiunet.function.gm.proto.rsp.GmCommandInfo;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -112,6 +113,7 @@ enum GmCommandManager implements IApplicationContextAware {
 				throw new CustomException("Gm Command method {}#{} the first parameter must be PlayerActor", method.getDeclaringClass().getName(), method.getName());
 			}
 			this.annotation = method.getAnnotation(GmCommand.class);
+			ReflectUtil.makeAccessible(method);
 			this.method = method;
 			this.type = type;
 			this.obj = obj;
