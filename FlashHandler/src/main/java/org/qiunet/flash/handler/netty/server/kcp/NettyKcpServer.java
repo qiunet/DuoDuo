@@ -61,11 +61,11 @@ public class NettyKcpServer implements INettyServer {
 			UkcpServerBootstrap b = new UkcpServerBootstrap();
 			b.group(worker)
 					.channel(UkcpServerChannel.class)
+					.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType())
 					.childHandler(new ChannelInitializer<UkcpChannel>() {
 						@Override
 						public void initChannel(UkcpChannel ch) throws Exception {
 							ChannelPipeline p = ch.pipeline();
-							ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
 							p.addLast("KcpSocketEncoder", new KcpSocketEncoder())
 							.addLast("KcpSocketDecoder", new KcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 							.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0))

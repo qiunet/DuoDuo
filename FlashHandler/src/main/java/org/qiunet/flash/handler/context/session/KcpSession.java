@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.context.session;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
+import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpDisconnectPush;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -13,6 +14,9 @@ import org.qiunet.utils.exceptions.CustomException;
 public class KcpSession extends BaseSession {
 
 	public KcpSession(Channel channel) {
+		this.addCloseListener((session, cause) -> {
+			session.sendMessage(KcpDisconnectPush.getInstance());
+		});
 		this.setChannel(channel);
 	}
 

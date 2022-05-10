@@ -363,17 +363,28 @@ public class ProtoIDLGenerator {
 			return;
 		}
 
-		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|\n|----|----|-----|\n");
-		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|\n|----|----|-----|\n");
+		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|所属模块|\n|----|----|-----|-----|\n");
+		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|所属模块|\n|----|----|-----|-----|\n");
 		for (Class<?> pbClass : param.getAllPbClass()) {
 			ChannelData annotation = pbClass.getAnnotation(ChannelData.class);
 			if (annotation == null) {
 				continue;
 			}
+			String packageDesc = "-";
+			if (param.getModel() == ProtoGeneratorModel.GROUP_BY_MODULE) {
+				ProtoModule pm = pbClass.getPackage().getAnnotation(ProtoModule.class);
+				if (pm != null) {
+					packageDesc = pm.value();
+				}
+				if (annotation.ID() < 1000) {
+					packageDesc = "System";
+				}
+			}
+
 			if (ChannelDataMapping.getHandler(annotation.ID()) != null) {
-				req.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|\n");
+				req.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|").append(packageDesc).append("|\n");
 			}else {
-				rsp.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|\n");
+				rsp.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|").append(packageDesc).append("|\n");
 			}
 		}
 		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + req + "\n" + rsp+ "\n");

@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
@@ -20,9 +21,9 @@ import java.net.InetSocketAddress;
  * 17/11/11
  */
 public class NettyHttpServer implements INettyServer {
-	private Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelFuture closeFuture;
-	private HttpBootstrapParams params;
+	private final HttpBootstrapParams params;
 	/***
 	 * 启动
 	 * @param params  启动使用的端口等
@@ -41,6 +42,7 @@ public class NettyHttpServer implements INettyServer {
 			bootstrap.group(boss, worker);
 
 			bootstrap.channel(NioServerSocketChannel.class);
+			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
 			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);

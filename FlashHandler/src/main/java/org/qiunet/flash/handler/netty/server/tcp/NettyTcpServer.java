@@ -7,6 +7,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
@@ -42,6 +43,7 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.group(boss, worker);
 
 			bootstrap.channel(NioServerSocketChannel.class);
+			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
 			bootstrap.childHandler(new NettyTcpServerInitializer(params));
 
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);

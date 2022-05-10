@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.kcp;
 
 import io.jpower.kcp.netty.UkcpChannel;
+import io.jpower.kcp.netty.UkcpServerChildChannel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
@@ -15,6 +16,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthReq;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthRsp;
+import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpConnectRsp;
 import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -63,6 +65,12 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		if (ChannelUtil.handlerPing(ctx.channel(), content)) {
+			return;
+		}
+
+		if (content.getProtocolId() == IProtocolId.System.KCP_CONNECT_REQ) {
+			ChannelUtil.getSession(ctx.channel()).sendMessage(KcpConnectRsp.valueOd(((UkcpServerChildChannel) ctx.channel()).conv()));
+			content.release();
 			return;
 		}
 

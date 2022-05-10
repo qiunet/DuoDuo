@@ -23,6 +23,10 @@ public class GeneratorProtoParam {
 	 */
 	private final Set<Class<?>> subClasses = new HashSet<>();
 	/**
+	 * 模式
+	 */
+	private final ProtoGeneratorModel model;
+	/**
 	 * 所有需要generator proto的 IChannelData类
 	 */
 	private final List<Class<?>> allPbClass;
@@ -35,9 +39,10 @@ public class GeneratorProtoParam {
 	 */
 	private final File directory;
 
-	public GeneratorProtoParam(List<Class<?>> allClass, ProtobufVersion version, File directory) {
+	public GeneratorProtoParam(ProtoGeneratorModel model, List<Class<?>> allClass, ProtobufVersion version, File directory) {
 		this.directory = directory;
 		this.version = version;
+		this.model = model;
 
 		for (Class<?> aClass : allClass) {
 			if (ProtoIDLGenerator.recursiveObjClass(aClass, subClasses)) {
@@ -50,6 +55,9 @@ public class GeneratorProtoParam {
 				.collect(Collectors.toList());
 	}
 
+	public ProtoGeneratorModel getModel() {
+		return model;
+	}
 
 	public List<Class<?>> getAllPbClass() {
 		return allPbClass;

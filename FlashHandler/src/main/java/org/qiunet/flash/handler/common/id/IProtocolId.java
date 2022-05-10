@@ -93,5 +93,12 @@ public interface IProtocolId {
 		/** ping pong 信息 */
 		int CLIENT_PING = 700;
 		int SERVER_PONG = 701;
+
+		/** kcp 连接 */
+		int KCP_CONNECT_REQ = 702;
+		int KCP_CONNECT_RSP = 703;
+
+		/**kcp 连接断开推送 */
+		int KCP_DISCONNECT_PUSH = 704;
 	}
 }
