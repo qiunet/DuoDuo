@@ -19,8 +19,9 @@ import java.util.Map;
 	 SimpleMapCfgWrapper(ISimpleMapCfgManager<ID, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;
 	}
+	
 	@Override
-	protected Class<Cfg> getCfgClass() {
+	public Class<Cfg> getCfgClass() {
 		return cfgManager.getCfgClass();
 	}
 

@@ -21,7 +21,7 @@ public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>> extends
 	 */
 	default Cfg getCfgById(ID id){
 		if (! contains(id)) {
-			LoggerType.DUODUO_CFG_READER.info("ID [{}] is missing!", id);
+			LoggerType.DUODUO_CFG_READER.info("Cfg [{}] ID [{}] is missing!", getCfgClass().getName(), id);
 			return null;
 		}
 		return allCfgs().get(id);

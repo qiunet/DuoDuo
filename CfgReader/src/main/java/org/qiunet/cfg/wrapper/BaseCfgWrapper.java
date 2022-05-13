@@ -11,7 +11,6 @@ import org.qiunet.cfg.base.ICfgCheck;
  * 2020-04-24 11:19
  ***/
 public abstract class BaseCfgWrapper<ID, Cfg extends ICfg<ID>> implements ICfgWrapper<ID, Cfg> , IAfterLoad , ICfgCheck {
-	protected abstract Class<Cfg> getCfgClass();
 
 	@Override
 	public void check() {

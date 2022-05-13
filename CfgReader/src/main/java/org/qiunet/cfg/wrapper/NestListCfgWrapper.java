@@ -21,7 +21,7 @@ import java.util.Map;
 	}
 
 	@Override
-	protected Class<Cfg> getCfgClass() {
+	public Class<Cfg> getCfgClass() {
 		return cfgManager.getCfgClass();
 	}
 

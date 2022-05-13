@@ -27,7 +27,7 @@ public interface INestMapCfgWrapper<ID, SubID, Cfg extends INestMapCfg<ID, SubID
 	 */
 	default Cfg getCfgById(ID id, SubID subID){
 		if (! contains(id, subID)) {
-			LoggerType.DUODUO_CFG_READER.info("ID [{}] subId [{}] is missing!", id, subID);
+			LoggerType.DUODUO_CFG_READER.info("Cfg [{}] ID [{}] subId [{}] is missing!", getCfgClass().getName(), id, subID);
 			return null;
 		}
 		Map<SubID, Cfg> subIDCfgMap = allCfgs().get(id);
@@ -41,7 +41,7 @@ public interface INestMapCfgWrapper<ID, SubID, Cfg extends INestMapCfg<ID, SubID
 	 */
 	default Map<SubID, Cfg> getCfgsById(ID id){
 		if (! contains(id)) {
-			LoggerType.DUODUO_CFG_READER.info("ID [{}] is missing!", id);
+			LoggerType.DUODUO_CFG_READER.info("Cfg [{}] ID [{}] is missing!",getCfgClass().getName(), id);
 			return null;
 		}
 		return allCfgs().get(id);

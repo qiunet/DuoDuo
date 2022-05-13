@@ -13,6 +13,11 @@ import java.util.List;
  ***/
 public interface ICfgWrapper<ID, Cfg extends ICfg<ID>> {
 	/**
+	 * 得到该类加载的cfg 类class
+	 * @return
+	 */
+	Class<Cfg> getCfgClass();
+	/**
 	 * 配置数量
 	 * @return
 	 */

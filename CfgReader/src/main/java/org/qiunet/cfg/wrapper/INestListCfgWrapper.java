@@ -29,7 +29,7 @@ public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
 	 */
 	default List<Cfg> getCfgsById(ID id){
 		if (! contains(id)) {
-			LoggerType.DUODUO_CFG_READER.info("ID [{}] is missing!", id);
+			LoggerType.DUODUO_CFG_READER.info("Cfg [{}] ID [{}] is missing!", getCfgClass().getName(), id);
 			return Collections.emptyList();
 		}
 		return allCfgs().get(id);
@@ -43,7 +43,7 @@ public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
 	 */
 	default Cfg getCfgsById(ID id, int index){
 		if (! contains(id, index)) {
-			LoggerType.DUODUO_CFG_READER.info("ID [{}] index [{}] is missing!", id, index);
+			LoggerType.DUODUO_CFG_READER.info("Cfg [{}] ID [{}] index [{}] is missing!", getCfgClass().getName(), id, index);
 			return null;
 		}
 		return allCfgs().get(id).get(index);
