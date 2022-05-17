@@ -254,7 +254,13 @@ public class ProtoIDLGenerator {
 		if (IChannelData.class.isAssignableFrom(clz)) {
 			int protocolId = getProtocolId(clz);
 			sb.append("[ProtocolId = ").append(protocolId).append(" ] ");
+
+			ChannelData channelData = clz.getAnnotation(ChannelData.class);
+			if (channelData.kcp()) {
+				sb.append(" KCP协议 ");
+			}
 		}
+
 		sb.append(annotation.description()).append("\n");
 		return sb.toString();
 	}
@@ -363,8 +369,8 @@ public class ProtoIDLGenerator {
 			return;
 		}
 
-		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|所属模块|\n|----|----|-----|-----|\n");
-		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|所属模块|\n|----|----|-----|-----|\n");
+		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|KCP|所属模块|\n|----|----|-----|-----|-----|\n");
+		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|KCP|所属模块|\n|----|----|-----|-----|-----|\n");
 		for (Class<?> pbClass : param.getAllPbClass()) {
 			ChannelData annotation = pbClass.getAnnotation(ChannelData.class);
 			if (annotation == null) {
@@ -378,13 +384,21 @@ public class ProtoIDLGenerator {
 			if (annotation.ID() < 1000) {
 				packageDesc = "System";
 			}
-		
+
 			if (ChannelDataMapping.getHandler(annotation.ID()) != null) {
-				req.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|").append(packageDesc).append("|\n");
+				req.append("|").append(annotation.ID())
+					.append("|").append(pbClass.getSimpleName())
+					.append("|").append(annotation.desc())
+					.append("|").append(annotation.kcp() ? "Yes" : "")
+					.append("|").append(packageDesc).append("|\n");
 			}else {
-				rsp.append("|").append(annotation.ID()).append("|").append(pbClass.getSimpleName()).append("|").append(annotation.desc()).append("|").append(packageDesc).append("|\n");
+				rsp.append("|").append(annotation.ID())
+					.append("|").append(pbClass.getSimpleName())
+					.append("|").append(annotation.desc())
+						.append("|").append(annotation.kcp() ? "Yes" : "")
+					.append("|").append(packageDesc).append("|\n");
 			}
 		}
-		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + req + "\n" + rsp+ "\n");
+		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + req + "\n\n" + rsp+ "\n");
 	}
 }

@@ -25,4 +25,12 @@ public @interface ChannelData {
 	 * @return
 	 */
 	String desc();
+	/**
+	 * 表示是udp协议. 使用kcp发送解析.
+	 * 使用什么发送解析业务自己处理.
+	 *
+	 * 这里仅仅是给客户端生成文档使用, 不会帮业务自动使用kcp发送.
+	 * @return
+	 */
+	boolean kcp() default false;
 }

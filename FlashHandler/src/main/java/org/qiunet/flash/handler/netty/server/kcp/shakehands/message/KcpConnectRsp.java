@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * @author qiunet
  * 2022/5/10 14:39
  */
-@ChannelData(ID = IProtocolId.System.KCP_CONNECT_RSP, desc = "kcp连接响应")
+@ChannelData(ID = IProtocolId.System.KCP_CONNECT_RSP, desc = "kcp连接响应", kcp = true)
 public class KcpConnectRsp implements IChannelData {
 	/**
 	 * 回话ID可以从session获取.

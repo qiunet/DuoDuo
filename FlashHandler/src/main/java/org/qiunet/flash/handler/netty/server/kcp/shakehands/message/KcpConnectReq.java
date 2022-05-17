@@ -9,6 +9,6 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * @author qiunet
  * 2022/5/10 14:39
  */
-@ChannelData(ID = IProtocolId.System.KCP_CONNECT_REQ, desc = "客户端KCP连接请求")
+@ChannelData(ID = IProtocolId.System.KCP_CONNECT_REQ, desc = "客户端KCP连接请求", kcp = true)
 public class KcpConnectReq implements IChannelData {
 }
