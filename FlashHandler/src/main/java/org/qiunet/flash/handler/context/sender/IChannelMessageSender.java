@@ -14,6 +14,13 @@ public interface IChannelMessageSender {
 	 * 得到session
 	 */
 	IChannelMessageSender getSender();
+	/**
+	 * 是否有kcp session
+	 * @return
+	 */
+	default boolean isKcpSessionPrepare() {
+		return getSender().isKcpSessionPrepare();
+	}
 
 	/**
 	 * 如果有绑定udp session.

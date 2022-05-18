@@ -21,6 +21,11 @@ public class KcpSession extends BaseSession {
 	}
 
 	@Override
+	public boolean isKcpSessionPrepare() {
+		return true;
+	}
+
+	@Override
 	protected void flush() {
 		// do nothing
 	}

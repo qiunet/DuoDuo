@@ -198,6 +198,11 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	@Override
+	public boolean isKcpSessionPrepare() {
+		return this.kcpSession != null;
+	}
+
+	@Override
 	public void bindKcpSession(KcpSession kcpSession) {
 		Attribute<ServerConnType> attr = this.channel.attr(ServerConstants.HANDLER_TYPE_KEY);
 		if (attr.get() != ServerConnType.TCP && attr.get() != ServerConnType.WS) {
