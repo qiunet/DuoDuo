@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.util.proto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /***
@@ -25,13 +26,13 @@ public enum GeneratorProtoFeature {
 	 */
 	OUTPUT_PROTOCOL_MAPPING_MD,
 	;
-	public static Set<GeneratorProtoFeature> features;
+	public static final Set<GeneratorProtoFeature> features = new HashSet<>();
 
 	/**
 	 * 是否包含该 特性
 	 * @return
 	 */
 	public boolean prepare() {
-		return features != null && features.contains(this);
+		return features.contains(this);
 	}
 }

@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -22,9 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 /***
@@ -32,7 +31,7 @@ import java.util.stream.Stream;
  * @author qiunet
  * 2022/2/9 09:45
  */
-public class ProtoIDLGenerator {
+public final class ProtoIDLGenerator {
 	static {
 		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("$");
 		ProtobufProxyUtils.FIELD_FILTER_STARTS.add("_");
@@ -107,6 +106,11 @@ public class ProtoIDLGenerator {
 	 * @param cls
 	 */
 	private void generateIDL(StringBuilder code, Class<?> cls) {
+		if (cls.isEnum()) {
+			this.generateEnumIDL(code, (Class<Enum>) cls);
+			return;
+		}
+
 		code.append(generatorComment(cls)).append("message ").append(cls.getSimpleName()).append(" {  \n");
 
 		List<FieldInfo> fieldInfos = ProtobufProxyUtils.fetchFieldInfos(cls, false);
@@ -156,7 +160,7 @@ public class ProtoIDLGenerator {
 	 * @param code
 	 * @param cls
 	 */
-	protected void generateEnumIDL(StringBuilder code, Class<Enum> cls) {
+	private void generateEnumIDL(StringBuilder code, Class<Enum> cls) {
 		if (GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
 			return;
 		}
@@ -220,30 +224,55 @@ public class ProtoIDLGenerator {
 				.forEach(en -> code.append(enumName).append("_").append(en.getKey()).append("=").append(en.getValue()).append(";\n"));
 		code.append("}\n\n");
 	}
-
+	private final Map<Class<?>, Set<String>> outputNames = Maps.newHashMapWithExpectedSize(256);
 	/**
-	 * 生成其它共用的class proto信息
+	 * 生成指定class的IDL
+	 * @param cache
 	 * @param code
-	 * @param subClassSet
+	 * @param classes
 	 */
-	public void generateCommonClassIDL(StringBuilder code, Set<Class<?>> subClassSet) {
-		subClassSet.stream()
-		.sorted(((o1, o2) -> ComparisonChain.start().compare(o1.getSimpleName(), o2.getSimpleName()).result()))
-		.forEach(cls -> {
-			if (cls.isEnum()) {
-				generateEnumIDL(code, (Class<Enum>) cls);
-			}else {
-				generateIDL(code, cls);
-			}
+	public boolean generatorIDLs(GeneratorProtoCache cache, String outputName, StringBuilder code, boolean commonProto, Class<?>... classes) {
+		return this.generatorIDLs(cache, outputName, code, commonProto, Arrays.asList(classes));
+	}
+	/**
+	 * 生成指定class的IDL
+	 * @param cache
+	 * @param code
+	 * @param classes
+	 */
+	public boolean generatorIDLs(GeneratorProtoCache cache, String outputName, StringBuilder code, boolean commonProto, Collection<Class<?>> classes) {
+		Set<GeneratorProtoCache.ClassProtoInfo> set = new HashSet<>();
+		classes.forEach(clz -> cache.getClassProtoInfo(clz).allChildFieldClazz(set));
+		set.stream()
+		.filter(info -> commonProto || !cache.getCommonProtoTypes().contains(info.getClz()))
+		.sorted(((o1, o2) -> ComparisonChain.start().compare(o1.getClz().getSimpleName(), o2.getClz().getSimpleName()).result()))
+		.forEach(info -> {
+			outputNames.computeIfAbsent(info.getClz(), key -> new HashSet<>(4)).add(outputName);
+			code.append(info.getIdl()).append("\n");
 		});
+		return set.stream().anyMatch(info -> cache.getCommonProtoTypes().contains(info.getClz()));
 	}
 
+	/**
+	 * 分析依赖
+	 */
+	public void analyseDepends() {
+		StringBuilder sb = new StringBuilder();
+		outputNames.forEach((clz, set) -> {
+			if (set.size() > 1) {
+				sb.append(StringUtil.slf4jFormat("\nClass [{}] proto data define repeated in [{}]!", clz.getName(), Arrays.toString(set.toArray())));
+			}
+		});
+		if (sb.length() > 0) {
+			throw new CustomException(sb.append("\n").toString());
+		}
+	}
 	/**
 	 *
 	 * @param clz
 	 * @return
 	 */
-	protected String generatorComment(Class<?> clz) {
+	private String generatorComment(Class<?> clz) {
 		ProtobufClass annotation = clz.getAnnotation(ProtobufClass.class);
 		if (annotation == null) {
 			return "";
@@ -270,33 +299,40 @@ public class ProtoIDLGenerator {
 	 * @param cls
 	 * @return 是否包含 common message
 	 */
-	public static boolean recursiveObjClass(Class<?> cls, Set<Class<?>> classCache) {
+	public static boolean recursiveObjClass( Class<?> cls, GeneratorProtoCache cache) {
+		return recursiveObjClass(cls, cache, false);
+	}
+
+	private static boolean recursiveObjClass( Class<?> cls, GeneratorProtoCache cache, boolean parentCommon) {
+		boolean haveCommonProtoMessage = false, currCommonProtoMessage = parentCommon;
 		if (cls.isAnnotationPresent(SkipProtoGenerator.class)) {
 			return false;
 		}
 
-		if (cls.isAnnotationPresent(NeedProtoGenerator.class)) {
-			classCache.add(cls);
-		}
-
-		if (cls.isEnum()) {
-			if (! GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
-				classCache.add(cls);
-			}
+		if (cls.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
 			return false;
 		}
 
+		GeneratorProtoCache.ClassProtoInfo protoInfo = cache.getClassProtoInfo(cls);
+		if ( parentCommon
+		 || cls.isAnnotationPresent(NeedProtoGenerator.class)
+		 || cls.isAnnotationPresent(CommonModuleProto.class)
+		) {
+			currCommonProtoMessage = true;
+			cache.addCommonType(cls);
+		}
+
+		if (cls.isEnum()) {
+			return currCommonProtoMessage;
+		}
+
 		List<FieldInfo> fieldInfos = ProtobufProxyUtils.fetchFieldInfos(cls, false);
-		boolean haveCommonProtoMessage = false;
 		for (FieldInfo fieldInfo : fieldInfos) {
 			if (fieldInfo.isList()) {
 				Class<?> type = ReflectUtil.getListGenericParameterizedType(fieldInfo.getField());
-				if (! ProtobufProxyUtils.isScalarType(type) && classCache.add(type)) {
-					recursiveObjClass(type, classCache);
-				}
-
-				if (!ProtobufProxyUtils.isScalarType(type)) {
-					haveCommonProtoMessage = ! (type.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare());
+				if (! ProtobufProxyUtils.isScalarType(type)) {
+					haveCommonProtoMessage |= recursiveObjClass(type, cache, currCommonProtoMessage);
+					protoInfo.addFieldInfo(type);
 				}
 				continue;
 			}
@@ -304,30 +340,24 @@ public class ProtoIDLGenerator {
 			if (fieldInfo.isMap()) {
 				Class keyClass = fieldInfo.getGenericKeyType();
 				Class valueClass = fieldInfo.getGenericeValueType();
-				if (ProtobufProxyUtils.isObjectType(keyClass) && classCache.add(keyClass)) {
-					recursiveObjClass(keyClass, classCache);
+				if (ProtobufProxyUtils.isObjectType(keyClass)) {
+					haveCommonProtoMessage |= recursiveObjClass(keyClass, cache, currCommonProtoMessage);
+					protoInfo.addFieldInfo(keyClass);
 				}
 
-				if (ProtobufProxyUtils.isObjectType(valueClass) && classCache.add(valueClass)) {
-					recursiveObjClass(valueClass, classCache);
-				}
-
-				if (ProtobufProxyUtils.isObjectType(keyClass)
-						|| ProtobufProxyUtils.isObjectType(valueClass)) {
-					// 支持map了. 肯定支持enum .不需要判断enum
-					haveCommonProtoMessage = true;
+				if (ProtobufProxyUtils.isObjectType(valueClass)) {
+					haveCommonProtoMessage |= recursiveObjClass(valueClass, cache, currCommonProtoMessage);
+					protoInfo.addFieldInfo(valueClass);
 				}
 				continue;
 			}
 
 			if (fieldInfo.isObjectType() || fieldInfo.getFieldType() == FieldType.ENUM) {
-				if (classCache.add(fieldInfo.getField().getType())) {
-					recursiveObjClass(fieldInfo.getField().getType(), classCache);
-				}
-				haveCommonProtoMessage = ! (fieldInfo.getField().getType().isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare());
+				haveCommonProtoMessage |= recursiveObjClass(fieldInfo.getField().getType(), cache, currCommonProtoMessage);
+				protoInfo.addFieldInfo(fieldInfo.getField().getType());
 			}
 		}
-		return haveCommonProtoMessage;
+		return haveCommonProtoMessage | currCommonProtoMessage;
 	}
 
 	/**

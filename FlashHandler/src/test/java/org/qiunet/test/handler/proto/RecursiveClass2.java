@@ -1,8 +1,6 @@
 package org.qiunet.test.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.context.request.data.ChannelData;
-import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 import java.util.List;
 
@@ -12,8 +10,7 @@ import java.util.List;
  * 2022/2/9 11:14
  */
 
-@ChannelData(ID = -1, desc = "")
-public class RecursiveClass2 implements IChannelData {
+public class RecursiveClass2 {
 	@Protobuf(description = "")
 	private int intVal;
 

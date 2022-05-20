@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.netty.server.constants;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import org.qiunet.flash.handler.util.proto.CommonModuleProto;
 
 /***
  * 关闭session的原因
@@ -8,6 +10,8 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
  * @author qiunet
  * 2020-03-02 14:58
  ***/
+@CommonModuleProto
+@ProtobufClass(description = "连接关闭的原因")
 public enum CloseCause {
 	@Protobuf(description = "通道关闭")
 	CHANNEL_CLOSE("通道关闭", true),

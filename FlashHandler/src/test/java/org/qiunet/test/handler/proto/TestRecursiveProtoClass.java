@@ -1,13 +1,11 @@
 package org.qiunet.test.handler.proto;
 
-import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.qiunet.flash.handler.util.proto.GeneratorProtoCache;
 import org.qiunet.flash.handler.util.proto.GeneratorProtoFeature;
 import org.qiunet.flash.handler.util.proto.ProtoIDLGenerator;
 import org.qiunet.flash.handler.util.proto.ProtobufVersion;
-
-import java.util.Set;
 
 /***
  *
@@ -18,37 +16,37 @@ public class TestRecursiveProtoClass {
 
 	@Test
 	public void testEnum() {
-		Set<Class<?>> classSet = Sets.newHashSet();
-		ProtoIDLGenerator.recursiveObjClass(TcpPbLoginRequest.class, classSet);
+		GeneratorProtoCache cache = new GeneratorProtoCache(ProtobufVersion.V3);
+		ProtoIDLGenerator.recursiveObjClass(TcpPbLoginRequest.class, cache);
 
-		Assertions.assertEquals(1, classSet.size());
+		Assertions.assertEquals(1, cache.getCommonProtoTypes().size());
 
-		Assertions.assertTrue(classSet.contains(GenderType.class));
+		Assertions.assertTrue(cache.getCommonProtoTypes().contains(GenderType.class));
 	}
 
 	@Test
 	public void testObjAndList() {
-		Set<Class<?>> classSet = Sets.newHashSet();
-		ProtoIDLGenerator.recursiveObjClass(RecursiveClass1.class, classSet);
+		GeneratorProtoCache cache = new GeneratorProtoCache(ProtobufVersion.V3);
+		ProtoIDLGenerator.recursiveObjClass(RecursiveClass1.class, cache);
 
-		Assertions.assertEquals(2, classSet.size());
+		Assertions.assertEquals(2, cache.getCommonProtoTypes().size());
 
-		Assertions.assertTrue(classSet.contains(RecursiveObj2.class));
-		Assertions.assertTrue(classSet.contains(RecursiveObj1.class));
+		Assertions.assertTrue(cache.getCommonProtoTypes().contains(RecursiveObj2.class));
+		Assertions.assertTrue(cache.getCommonProtoTypes().contains(RecursiveObj1.class));
 	}
 
 	@Test
 	public void testMap() {
-		Set<Class<?>> classSet = Sets.newHashSet();
-		ProtoIDLGenerator.recursiveObjClass(RecursiveObj3.class, classSet);
+		GeneratorProtoCache cache = new GeneratorProtoCache(ProtobufVersion.V3);
+		ProtoIDLGenerator.recursiveObjClass(RecursiveObj3.class, cache);
 
-		Assertions.assertEquals(1, classSet.size());
-		Assertions.assertTrue(classSet.contains(RecursiveObj2.class));
+		Assertions.assertEquals(0, cache.getCommonProtoTypes().size());
+		Assertions.assertFalse(cache.getCommonProtoTypes().contains(RecursiveObj2.class));
 	}
 
 	@Test
 	public void testCreateProto(){
-		GeneratorProtoFeature.features = Sets.newHashSet(GeneratorProtoFeature.ENUM_TO_INT);
+		GeneratorProtoFeature.features.add(GeneratorProtoFeature.ENUM_TO_INT);
 
 		String idl = new ProtoIDLGenerator(ProtobufVersion.V2).getIDL(RecursiveClass2.class);
 

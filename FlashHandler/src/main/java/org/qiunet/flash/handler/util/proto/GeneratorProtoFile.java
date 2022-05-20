@@ -48,8 +48,9 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version, GeneratorProtoFeature... features) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
+		GeneratorProtoFeature.features.addAll(Lists.newArrayList(features));
+
 		GeneratorProtoParam protoParam = new GeneratorProtoParam(model, classes, version, directory);
-		GeneratorProtoFeature.features = Sets.newHashSet(features);
 		model.generatorProto(protoParam);
 	}
 

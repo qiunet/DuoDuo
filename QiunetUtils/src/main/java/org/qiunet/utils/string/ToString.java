@@ -1,9 +1,8 @@
 package org.qiunet.utils.string;
 
-import org.apache.commons.lang3.ArraySorter;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.reflect.ReflectUtil;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
@@ -69,12 +68,11 @@ public final class ToString {
 	 * @param joiner
 	 */
 	private static void appendFields(Object obj, StringJoiner joiner) {
-		final Field[] fields = ArraySorter.sort(obj.getClass().getDeclaredFields(), Comparator.comparing(Field::getName));
-		for (Field field : fields) {
+		ReflectUtil.doWithFields(obj.getClass(), field -> {
 			if (Modifier.isStatic(field.getModifiers())
-			 || Modifier.isTransient(field.getModifiers())
+					|| Modifier.isTransient(field.getModifiers())
 			) {
-				continue;
+				return;
 			}
 
 			try {
@@ -84,7 +82,7 @@ public final class ToString {
 			} catch (IllegalAccessException e) {
 				LoggerType.DUODUO.error("Object {} field {} get value error! {}", obj.getClass(), field.getName(), e);
 			}
-		}
+		});
 	}
 
 	/**
