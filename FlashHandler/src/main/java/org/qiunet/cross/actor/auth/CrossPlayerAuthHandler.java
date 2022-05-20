@@ -22,6 +22,7 @@ public class CrossPlayerAuthHandler extends PersistConnPbHandler<CrossPlayerActo
 			// 发送过期服务器推送 让客户端退出
 			playerActor.sendMessage(CrossPlayerLogoutPush.instance);
 		}
+		playerActor.setKcpPrepare(context.getRequestData().isKcpPrepare());
 		playerActor.fireEvent(CrossPlayerAuthSuccessEventData.valueOf());
 	}
 

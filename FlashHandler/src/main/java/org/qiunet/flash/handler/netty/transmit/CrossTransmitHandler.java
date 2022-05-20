@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
+import org.qiunet.utils.string.ToString;
 
 import java.nio.ByteBuffer;
 
@@ -26,6 +27,8 @@ public class CrossTransmitHandler extends PersistConnPbHandler<AbstractUserActor
 		Preconditions.checkState(handler0 instanceof ITransmitHandler,
 			"protocolId [%s] handler[%s] not a transmit handler", requestData.getPid(), handler0 == null ? "": handler0.getClass().getName());
 		Object data = handler0.parseRequestData(ByteBuffer.wrap(requestData.getBytes()));
+
+		logger.info("[{}] <<< {}", playerActor.getIdentity(), ToString.toString(data));
 		((ITransmitHandler) handler0).crossHandler(playerActor, data);
 	}
 }

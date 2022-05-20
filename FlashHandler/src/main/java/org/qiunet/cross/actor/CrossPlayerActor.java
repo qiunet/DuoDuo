@@ -31,6 +31,10 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	 */
 	private final Map<CrossData, CrossDataGetter> crossDataHolder = Maps.newConcurrentMap();
 	/**
+	 * kcp 可用
+	 */
+	private boolean kcpPrepare;
+	/**
 	 * 玩家id
 	 */
 	private long playerId;
@@ -51,6 +55,15 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 		session.addCloseListener((s, cause) -> {
 			this.fireEvent(new CrossActorLogoutEvent(cause));
 		});
+	}
+
+	@Override
+	public boolean isKcpSessionPrepare() {
+		return kcpPrepare;
+	}
+
+	public void setKcpPrepare(boolean kcpPrepare) {
+		this.kcpPrepare = kcpPrepare;
 	}
 
 	@Override

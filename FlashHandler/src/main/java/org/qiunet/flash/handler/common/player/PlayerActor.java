@@ -14,6 +14,8 @@ import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.kcp.event.KcpUsabilityEvent;
+import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -60,6 +62,9 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		super(session);
 
 		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
+
+		// kcp 变动通知推送
+		this.attachObserver(IKcpUsabilityChange.class, (prepare -> this.allCrossEvent(KcpUsabilityEvent.valueOf(prepare))));
 	}
 
 	@Override
@@ -83,6 +88,15 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	private void crossHeartBeat(){
 		crossConnectors.values().forEach(PlayerCrossConnector::heartBeat);
+	}
+	/**
+	 * 给所有的跨服连接发送事件
+	 * @param eventData
+	 */
+	private void allCrossEvent(UserEventData eventData) {
+		crossConnectors.values().forEach(crossConnector -> {
+			crossConnector.fireCrossEvent(eventData);
+		});
 	}
 
 	/**

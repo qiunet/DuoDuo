@@ -43,7 +43,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 		FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("[{}] <<< {}", messageActor.getIdentity(), ToString.toString(getRequestData()));
+			logger.info("[{}] {} <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(getRequestData()));
 		}
 
 

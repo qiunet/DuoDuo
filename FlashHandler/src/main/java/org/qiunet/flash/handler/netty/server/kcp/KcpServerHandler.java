@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthReq;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthRsp;
@@ -49,6 +50,11 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		if (! params.isDependOnTcpWs()) {
 			// 从tcp那取到PlayerActor
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
+			PlayerActor playerActor = (PlayerActor) ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+			session.addCloseListener((session0, cause) -> {
+				playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
+			});
+			playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));
 		}
 		ctx.fireChannelActive();
 	}
@@ -93,7 +99,11 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 			// 从mapping那取到PlayerActor
 			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(true).buildChannelMessage());
+			ChannelUtil.getSession(ctx.channel()).addCloseListener((session, cause) -> {
+				playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
+			});
 			playerActor.getSession().bindKcpSession(((KcpSession) ChannelUtil.getSession(ctx.channel())));
+			playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(playerActor);
 			return;
 		}

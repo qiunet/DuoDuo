@@ -19,12 +19,22 @@ public class CrossPlayerAuthRequest implements IChannelData {
 	private long playerId;
 	@Protobuf(description = "玩家的serverId")
 	private int serverId;
-
-	public static CrossPlayerAuthRequest valueOf(long playerId, int serverId) {
+	@Protobuf(description = "kcp可用")
+	private boolean kcpPrepare;
+	public static CrossPlayerAuthRequest valueOf(long playerId, int serverId, boolean kcpPrepare) {
 		CrossPlayerAuthRequest request = new CrossPlayerAuthRequest();
+		request.kcpPrepare = kcpPrepare;
 		request.playerId = playerId;
 		request.serverId = serverId;
 		return request;
+	}
+
+	public boolean isKcpPrepare() {
+		return kcpPrepare;
+	}
+
+	public void setKcpPrepare(boolean kcpPrepare) {
+		this.kcpPrepare = kcpPrepare;
 	}
 
 	public int getServerId() {
