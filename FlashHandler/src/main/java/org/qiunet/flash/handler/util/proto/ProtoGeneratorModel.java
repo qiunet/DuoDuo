@@ -2,14 +2,12 @@ package org.qiunet.flash.handler.util.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.context.request.data.ChannelData;
-import org.qiunet.utils.common.CommonUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /***
@@ -25,27 +23,7 @@ public enum ProtoGeneratorModel {
 	GROUP_BY_MODULE {
 		@Override
 		protected void consumePbClasses(GeneratorProtoParam param, BiConsumer<String, List<Class<?>>> consumer) {
-			Map<String, List<Class<?>>> classes = Maps.newHashMapWithExpectedSize(param.getAllPbClass().size());
-			param.getAllPbClass().forEach(cls -> {
-				String moduleName;
-				if (cls.getAnnotation(ChannelData.class).ID() < 1000) {
-					moduleName = "System";
-				}else {
-					ProtoModule annotation = cls.getPackage().getAnnotation(ProtoModule.class);
-					if (annotation == null) {
-						throw new CustomException("Class {} not have @ProtoModule describe!", cls.getName());
-					}
-
-					if (CommonUtil.existInList(annotation.value(), "System", "__common__")) {
-						throw new CustomException("@ProtoModule value can not be 'System' or '__common__' !");
-					}
-
-					moduleName = annotation.value();
-				}
-
-				classes.computeIfAbsent(moduleName, key -> new ArrayList<>()).add(cls);
-			});
-			classes.forEach(consumer);
+			param.getGroupByModule().forEach(consumer);
 		}
 
 		@Override

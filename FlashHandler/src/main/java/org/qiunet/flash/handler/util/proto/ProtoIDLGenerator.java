@@ -399,36 +399,24 @@ public final class ProtoIDLGenerator {
 			return;
 		}
 
-		StringBuilder req = new StringBuilder("## 请求协议\n|协议ID|协议名|协议描述|KCP|所属模块|\n|----|----|-----|-----|-----|\n");
-		StringBuilder rsp = new StringBuilder("## 响应协议\n|协议ID|协议名|协议描述|KCP|所属模块|\n|----|----|-----|-----|-----|\n");
-		for (Class<?> pbClass : param.getAllPbClass()) {
-			ChannelData annotation = pbClass.getAnnotation(ChannelData.class);
-			if (annotation == null) {
-				continue;
-			}
-			String packageDesc = "-";
-			ProtoModule pm = pbClass.getPackage().getAnnotation(ProtoModule.class);
-			if (pm != null) {
-				packageDesc = pm.value();
-			}
-			if (annotation.ID() < 1000) {
-				packageDesc = "System";
-			}
+		StringBuilder code = new StringBuilder();
+		param.getGroupByModule().forEach((moduleName, list) -> {
+			StringBuilder content = new StringBuilder("|协议ID|协议名|协议描述|KCP|\n|----|----|-----|----|\n");
+			list.forEach(pbClass -> {
+				ChannelData annotation = pbClass.getAnnotation(ChannelData.class);
+				if (annotation == null) {
+					return;
+				}
 
-			if (ChannelDataMapping.getHandler(annotation.ID()) != null) {
-				req.append("|").append(annotation.ID())
-					.append("|").append(pbClass.getSimpleName())
-					.append("|").append(annotation.desc())
-					.append("|").append(annotation.kcp() ? "Yes" : "")
-					.append("|").append(packageDesc).append("|\n");
-			}else {
-				rsp.append("|").append(annotation.ID())
-					.append("|").append(pbClass.getSimpleName())
-					.append("|").append(annotation.desc())
+				content.append("|").append(annotation.ID())
+						.append("|").append(pbClass.getSimpleName())
+						.append("|").append(annotation.desc())
 						.append("|").append(annotation.kcp() ? "Yes" : "")
-					.append("|").append(packageDesc).append("|\n");
-			}
-		}
-		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + req + "\n\n" + rsp+ "\n");
+						.append("|\n");
+
+			});
+			code.append("\n## `").append(moduleName).append("`协议\n\n").append(content);
+		});
+		FileUtil.createFileWithContent(new File(param.getDirectory(), "ProtocolMapping.md"), "# 协议映射关系\n------\n" + code + "\n");
 	}
 }
