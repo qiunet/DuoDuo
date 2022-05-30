@@ -218,7 +218,8 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	@Override
 	public IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
 		if (this.kcpSession == null) {
-			throw new CustomException("Not bind kcp session");
+			logger.warn("Not bind kcp session!");
+			this.sendMessage(message, true);
 		}
 		return this.kcpSession.sendKcpMessage(message);
 	}

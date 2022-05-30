@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
@@ -19,6 +20,7 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -33,6 +35,7 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
@@ -207,7 +210,15 @@ public final class ChannelUtil {
 		if (handler instanceof ITransmitHandler
 				&& messageActor instanceof ICrossStatusActor
 				&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.bytes()));
+			byte[] bytes = content.bytes();
+			if (logger.isInfoEnabled()) {
+				Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(content.getProtocolId());
+				if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+					IChannelData channelData = ProtobufDataManager.decode(aClass, bytes);
+					logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
+				}
+			}
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), bytes));
 			return;
 		}
 		if (channel.isActive()) {
@@ -219,7 +230,6 @@ public final class ChannelUtil {
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {
-		logger.error("Http message response status ["+status+"]");
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
 		channel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
 		channel.close();
@@ -238,7 +248,10 @@ public final class ChannelUtil {
 	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
 		ISession session = ChannelUtil.getSession(channel);
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		logger.error(errMeg, cause);
+		if (! "Connection reset by peer".equals(cause.getMessage())) {
+			// 这个类型是远端强制关闭. 不需要打印
+			logger.error(errMeg, cause);
+		}
 
 		if (channel.isOpen() || channel.isActive()) {
 			startupContext.exception(channel, cause)

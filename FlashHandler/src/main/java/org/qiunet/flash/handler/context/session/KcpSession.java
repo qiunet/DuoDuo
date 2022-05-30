@@ -15,7 +15,9 @@ public class KcpSession extends BaseSession {
 
 	public KcpSession(Channel channel) {
 		this.addCloseListener((session, cause) -> {
-			session.sendMessage(KcpDisconnectPush.getInstance());
+			if (session.isActive()) {
+				session.sendMessage(KcpDisconnectPush.getInstance());
+			}
 		});
 		this.setChannel(channel);
 	}

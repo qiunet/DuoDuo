@@ -108,7 +108,7 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 	}
 
 	public static class KcpParam {
-		public static final KcpParam DEFAULT_KCP_PARAM = new KcpParam(256, 256, 20, true, 512, 2, true);
+		public static final KcpParam DEFAULT_KCP_PARAM = new KcpParam(512, 512, 20, true, 512, 2, true);
 		/**
 		 * 发送窗口大小.
 		 * 响应客户端的接收窗大小也要高于该值.

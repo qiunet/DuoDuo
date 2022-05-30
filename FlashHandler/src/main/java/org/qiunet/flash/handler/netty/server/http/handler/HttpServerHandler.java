@@ -78,9 +78,15 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
+		URI uri;
 		try {
-			URI uri = URI.create(request.uri());
+			uri = URI.create(request.uri());
+		}catch (Exception e){
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+			return;
+		}
 
+		try {
 			if (params.getGameURIPath().equals(uri.getRawPath())) {
 				// 游戏的请求
 				handlerGameUriPathRequest(ctx, request);
@@ -93,7 +99,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			}
 		}catch (Exception e) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
-
 			logger.error("HttpServerHandler Parse request error: ", e);
 		}
 	}

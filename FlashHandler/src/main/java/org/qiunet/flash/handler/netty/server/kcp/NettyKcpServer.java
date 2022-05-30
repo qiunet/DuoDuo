@@ -5,10 +5,7 @@ import io.jpower.kcp.netty.UkcpChannel;
 import io.jpower.kcp.netty.UkcpChannelOption;
 import io.jpower.kcp.netty.UkcpServerChannel;
 import io.netty.bootstrap.UkcpServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.netty.coder.KcpSocketDecoder;
@@ -59,8 +56,11 @@ public class NettyKcpServer implements INettyServer {
 	public void run() {
 		try {
 			UkcpServerBootstrap b = new UkcpServerBootstrap();
+
 			b.group(worker)
 					.channel(UkcpServerChannel.class)
+					.option(ChannelOption.SO_RCVBUF, 1024*1024*2)
+					.option(ChannelOption.SO_SNDBUF, 1024*1024*2)
 					.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType())
 					.childHandler(new ChannelInitializer<UkcpChannel>() {
 						@Override
@@ -73,6 +73,7 @@ public class NettyKcpServer implements INettyServer {
 							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 						}
 					});
+
 			ChannelOptionHelper.nodelay(b, params.getKcpParam().isNoDelay(), params.getKcpParam().getInterval(), params.getKcpParam().getFastResend(), params.getKcpParam().isNoCwnd())
 					.childOption(UkcpChannelOption.UKCP_MTU, params.getKcpParam().getMtu())
 					.childOption(UkcpChannelOption.UKCP_SND_WND, params.getKcpParam().getSnd_wnd())

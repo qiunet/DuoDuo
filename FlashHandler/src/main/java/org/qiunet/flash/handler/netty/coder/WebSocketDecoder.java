@@ -28,6 +28,11 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
+		if (! in.isReadable(adapter.getReqHeaderLength())) {
+			// 有的探测包没有这么长. 导致报错.
+			return;
+		}
+
 		IProtocolHeader header = adapter.inHeader(in, ctx.channel());
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message, magic is error! "+ header);

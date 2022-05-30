@@ -166,7 +166,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		if (crossServerType == null) {
 			throw new CustomException("Current not cross to any server");
 		}
-		crossConnectors.get(crossServerType).sendMessage(channelData);
+		crossConnectors.get(crossServerType).sendMessage(channelData, true);
 	}
 
 	@Override
