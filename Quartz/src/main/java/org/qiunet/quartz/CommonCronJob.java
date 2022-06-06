@@ -1,5 +1,6 @@
 package org.qiunet.quartz;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /****
@@ -7,9 +8,9 @@ import java.lang.reflect.Method;
  */
  class CommonCronJob extends BaseJob {
 
-	private String cronExpression;
-	private Method workMethod;
-	private Object caller;
+	private final String cronExpression;
+	private final Method workMethod;
+	private final Object caller;
 
 	 CommonCronJob(String cronExpression, int warnExecMillis,
 						 Method workMethod, Object caller) {
@@ -26,7 +27,8 @@ import java.lang.reflect.Method;
 		try {
 			workMethod.invoke(caller);
 		}catch (Exception e) {
-			logger.error("Call method ["+jobName+"] with Object ["+caller.getClass().getName()+"] error: ", e);
+			Throwable throwable = e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
+			logger.error("Call method ["+jobName+"] with Object ["+caller.getClass().getName()+"] error: ", throwable);
 			return false;
 		}
 		return true;

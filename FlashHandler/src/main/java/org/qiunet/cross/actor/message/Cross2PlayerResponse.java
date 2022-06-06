@@ -2,6 +2,7 @@ package org.qiunet.cross.actor.message;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -38,6 +39,8 @@ public class Cross2PlayerResponse implements IChannelData, IDataToString {
 	private boolean flush;
 	@Ignore
 	private IChannelData data;
+	@Ignore
+	private boolean skipMessage;
 
 	public static Cross2PlayerResponse valueOf(IChannelData responseData, boolean flush) {
 		return valueOf(responseData, flush, false);
@@ -45,12 +48,17 @@ public class Cross2PlayerResponse implements IChannelData, IDataToString {
 
 	public static Cross2PlayerResponse valueOf(IChannelData responseData, boolean flush, boolean kcpChannel) {
 		Cross2PlayerResponse response = new Cross2PlayerResponse();
-		response.pid = responseData.protocolId();
+		response.skipMessage = responseData.getClass().isAnnotationPresent(SkipDebugOut.class);
 		response.bytes = responseData.toByteArray();
+		response.pid = responseData.protocolId();
 		response.kcpChannel = kcpChannel;
 		response.data = responseData;
 		response.flush = flush;
 		return response;
+	}
+
+	public boolean isSkipMessage() {
+		return skipMessage;
 	}
 
 	public boolean isFlush() {

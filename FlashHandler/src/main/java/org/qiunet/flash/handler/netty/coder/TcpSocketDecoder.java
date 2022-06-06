@@ -27,10 +27,15 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+		if (! ctx.channel().isActive()) {
+			return;
+		}
+
 		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
 		if (! in.isReadable(adapter.getReqHeaderLength())) return;
 		in.markReaderIndex();
 
+		// header里面的问题 不打印错误信息了. 仅仅本地调试时候打印
 		IProtocolHeader header = adapter.inHeader(in, ctx.channel());
 		if (! header.isMagicValid()) {
 			logger.error("Invalid message, magic is error! {}", header);

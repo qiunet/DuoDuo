@@ -12,6 +12,7 @@ import org.qiunet.function.gm.GmParamType;
 import org.qiunet.function.gm.proto.rsp.GmCommandInfo;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -141,7 +142,7 @@ enum GmCommandManager implements IApplicationContextAware {
 		 * @param param
 		 * @return
 		 */
-		public IGameStatus handler(PlayerActor player, List<String> param) throws InvocationTargetException, IllegalAccessException {
+		public IGameStatus handler(PlayerActor player, List<String> param) {
 			List<Object> params = Lists.newArrayListWithCapacity(param.size() + 1);
 			params.add(player);
 			for (int i = 0; i < paramList.size(); i++) {
@@ -150,7 +151,14 @@ enum GmCommandManager implements IApplicationContextAware {
 
 				params.add(gmParam.getType().parse(reqParam));
 			}
-			return (IGameStatus) method.invoke(obj, params.toArray());
+			try {
+				return (IGameStatus) method.invoke(obj, params.toArray());
+			} catch (IllegalAccessException e) {
+				LoggerType.DUODUO_FLASH_HANDLER.error("GM command handler error:", e);
+			} catch (InvocationTargetException e) {
+				LoggerType.DUODUO_FLASH_HANDLER.error("GM command handler error:", e.getTargetException());
+			}
+			return IGameStatus.FAIL;
 		}
 	}
 

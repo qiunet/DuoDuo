@@ -27,21 +27,25 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 	}
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+		if (! ctx.channel().isActive()) {
+			return;
+		}
+
 		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
 		if (! in.isReadable(adapter.getReqHeaderLength())) {
 			// 有的探测包没有这么长. 导致报错.
 			return;
 		}
-
+		// header里面的问题 不打印错误信息了. 仅仅本地调试时候打印
 		IProtocolHeader header = adapter.inHeader(in, ctx.channel());
 		if (! header.isMagicValid()) {
-			logger.error("Invalid message, magic is error! "+ header);
+			logger.debug("Invalid message, magic is error! "+ header);
 			ctx.channel().close();
 			return;
 		}
 
 		if (header.getLength() < 0 || header.getLength() > maxReceivedLength) {
-			logger.error("Invalid message, length is error! length is : "+ header.getLength());
+			logger.debug("Invalid message, length is error! length is : "+ header.getLength());
 			ctx.channel().close();
 			return;
 		}

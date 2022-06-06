@@ -61,7 +61,7 @@ public class ShutdownHookUtil {
 	 * @param closeHook
 	 */
 	public void addShutdownHook(IShutdownCloseHook closeHook) {
-		this.addFirst(closeHook);
+		this.addLast(closeHook);
 	}
 
 	/***

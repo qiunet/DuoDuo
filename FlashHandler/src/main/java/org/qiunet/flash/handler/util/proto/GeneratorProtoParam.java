@@ -69,12 +69,14 @@ public class GeneratorProtoParam extends GeneratorProtoCache {
 	private Map<String, List<Class<?>>> groupByModule() {
 		Map<String, List<Class<?>>> groupByModule = Maps.newHashMapWithExpectedSize(allPbClass.size());
 		allPbClass.forEach(cls -> {
-			String moduleName = "ALL";
-			if (model == ProtoGeneratorModel.GROUP_BY_MODULE) {
-				if (cls.getAnnotation(ChannelData.class).ID() < 1000) {
-					moduleName = "System";
-				} else {
-					ProtoModule annotation = cls.getPackage().getAnnotation(ProtoModule.class);
+			String moduleName;
+			if (cls.getAnnotation(ChannelData.class).ID() < 1000) {
+				moduleName = "System";
+			} else {
+				ProtoModule annotation = cls.getPackage().getAnnotation(ProtoModule.class);
+				if (annotation == null && model != ProtoGeneratorModel.GROUP_BY_MODULE) {
+					moduleName = "ALL";
+				}else {
 					if (annotation == null) {
 						throw new CustomException("Class {} not have @ProtoModule describe!", cls.getName());
 					}

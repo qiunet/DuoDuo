@@ -248,10 +248,7 @@ public final class ChannelUtil {
 	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
 		ISession session = ChannelUtil.getSession(channel);
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		if (! "Connection reset by peer".equals(cause.getMessage())) {
-			// 这个类型是远端强制关闭. 不需要打印
-			logger.error(errMeg, cause);
-		}
+		logger.error(errMeg, cause);
 
 		if (channel.isOpen() || channel.isActive()) {
 			startupContext.exception(channel, cause)

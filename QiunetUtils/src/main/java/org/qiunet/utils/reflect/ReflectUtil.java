@@ -513,10 +513,10 @@ public final class ReflectUtil {
 	 */
 	public static void modifyAnnotationValue(Annotation annotation, String key, Object value) {
 		InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
-		Field memberValues = null;
 		try {
-			memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
-			memberValues.setAccessible(true);
+			Field memberValues = invocationHandler.getClass().getDeclaredField("memberValues");
+			makeAccessible(memberValues);
+
 			Map<String, Object> obj = (Map<String, Object>) memberValues.get(invocationHandler);
 			obj.put(key, value);
 		} catch (Exception e) {

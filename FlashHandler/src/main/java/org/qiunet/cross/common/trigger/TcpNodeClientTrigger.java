@@ -26,6 +26,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(ISession session, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
+			data.release();
 			// pong 信息不需要处理
 			return;
 		}
@@ -46,6 +47,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		}
 
 		if (data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION) {
+			data.release();
 			return;
 		}
 

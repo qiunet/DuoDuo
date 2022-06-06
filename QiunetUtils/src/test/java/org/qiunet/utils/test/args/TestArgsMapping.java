@@ -14,6 +14,8 @@ public class TestArgsMapping {
 		String [] args = {"--qiunet=qiuyang", "qiu=yang", "--qiunet1=qiuyang1"};
 
 		ArgsMapping mapping = new ArgsMapping(args);
+		mapping.addArgsDesc("q", "qiunet", "命令说明1")
+						.addArgsDesc("y", "yang", "命令说明2");
 
 		Assertions.assertEquals(mapping.getValue("qiunet"), "qiuyang");
 		Assertions.assertEquals(mapping.getValue("qiunet1"), "qiuyang1");

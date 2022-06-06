@@ -15,6 +15,10 @@ public class TcpSocketEncoder extends MessageToMessageEncoder<IChannelMessage<?>
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
+		if (! ctx.channel().isActive()) {
+			return;
+		}
+
 		out.add(ChannelUtil.messageContentToByteBuf(msg, ctx.channel()));
 	}
 }

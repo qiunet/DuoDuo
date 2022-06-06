@@ -32,6 +32,11 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 	}
 
 	@Override
+	public String toStr() {
+		return "ProtocolID: "+protocolId;
+	}
+
+	@Override
 	public byte[] bytes() {
 		return message;
 	}

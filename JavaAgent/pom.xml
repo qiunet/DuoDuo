@@ -12,6 +12,7 @@
 	<artifactId>JavaAgent</artifactId>
 
 	<build>
+		<finalName>JavaAgent</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

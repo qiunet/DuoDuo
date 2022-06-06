@@ -105,15 +105,12 @@ abstract class BaseSession implements ISession {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! this.channel.isOpen()) {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-			logger.error("[{}] discard message: {}", identityDesc, message.toStr());
+			logger.error("[{}] discard {} message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), message.toStr());
 			return new DMessageContentFuture(channel, message);
 		}
 
-		if ( logger.isInfoEnabled()
-				&& message.needLogger()) {
-			if (messageActor != null) {
-				logger.info("[{}] {} >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), message.toStr());
-			}
+		if ( logger.isInfoEnabled() && message.needLogger()  && messageActor != null) {
+			logger.info("[{}] {} >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), message.toStr());
 		}
 
 		if (flush) {
