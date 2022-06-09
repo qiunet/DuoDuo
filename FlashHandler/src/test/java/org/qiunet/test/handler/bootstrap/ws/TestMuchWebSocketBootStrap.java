@@ -49,7 +49,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		@Override
 		public void response(ISession session, MessageContent data) {
 			// test 的地方.直接使用bytes 解析. 免得release
-			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
 			System.out.println(response.getTestString());
 			latch.countDown();
 		}

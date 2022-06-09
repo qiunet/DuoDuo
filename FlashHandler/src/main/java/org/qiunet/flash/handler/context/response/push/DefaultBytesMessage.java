@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import java.nio.ByteBuffer;
+
 /***
  *
  * @Author qiunet
@@ -37,7 +39,7 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 	}
 
 	@Override
-	public byte[] bytes() {
-		return message;
+	public ByteBuffer byteBuffer() {
+		return ByteBuffer.wrap(this.message);
 	}
 }

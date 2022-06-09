@@ -13,19 +13,28 @@ import java.nio.ByteBuffer;
  *         Created on 17/3/13 19:50.
  */
 public class MessageContent {
-	private final ByteBuf buffer;
-	private byte [] bytes;
-	private int protocolId;
-	private String uriPath;
+	private final ByteBuffer buffer;
+	private final int protocolId;
+	private final String uriPath;
 
 	public MessageContent(int protocolId, ByteBuf buffer) {
-		this.buffer = buffer;
+		this.buffer = buffer.nioBuffer();
 		this.protocolId = protocolId;
+		this.uriPath = null;
+		buffer.release();
 	}
 
 	public MessageContent(String uriPath, ByteBuf buffer) {
+		this.buffer = buffer.nioBuffer();
 		this.uriPath = uriPath;
+		this.protocolId = 0;
+		buffer.release();
+	}
+
+	public MessageContent(int protocolID, ByteBuffer buffer) {
+		this.protocolId = protocolID;
 		this.buffer = buffer;
+		this.uriPath = null;
 	}
 
 	public boolean isUriPathMsg(){
@@ -41,58 +50,7 @@ public class MessageContent {
 	}
 
 	public ByteBuffer byteBuffer(){
-		if (bytes != null) {
-			return ByteBuffer.wrap(bytes);
-		}
-
-		return this.buffer.nioBuffer();
-	}
-
-	/***
-	 * 如果自己处理ByteBuf 需要release.
-	 * @return
-	 */
-	public ByteBuf byteBuf() {
-		return buffer;
-	}
-
-	public void release(){
-		buffer.release();
-	}
-
-	public boolean hasArray(){
-		return bytes != null;
-	}
-
-	/**
-	 * 获得数据,
-	 * 读取后, 会释放掉 bytebuf
-	 * @return
-	 */
-	public byte[] bytes(){
-		if (this.hasArray()) {
-			return bytes;
-		}
-
-		return getBufferBytes();
-	}
-
-	/**
-	 * 从buffer中获取bytes
-	 * @return
-	 */
-	private synchronized byte[] getBufferBytes(){
-		if (hasArray()) {
-			return bytes;
-		}
-
-		try {
-			this.bytes = new byte[buffer.readableBytes()];
-			buffer.readBytes(bytes);
-			return bytes;
-		}finally {
-			buffer.release();
-		}
+		return this.buffer;
 	}
 
 	@Override

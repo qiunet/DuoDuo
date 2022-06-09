@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.response.push;
 import org.qiunet.cross.actor.message.Cross2PlayerResponse;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
+import java.nio.ByteBuffer;
+
 /**
  * 默认的protobuf 的message
  * Created by qiunet.
@@ -20,7 +22,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 	/**
 	 * 消息体内容
 	 */
-	private final byte [] bytes;
+	private final ByteBuffer byteBuffer;
 	/**
 	 * 某种情况. 指定跳过debug信息
 	 */
@@ -28,7 +30,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 
 	public DefaultProtobufMessage(int protocolId, IChannelData message) {
 		skipDebug = message instanceof Cross2PlayerResponse && ((Cross2PlayerResponse) message).isSkipMessage();
-		this.bytes = message.toByteArray();
+		this.byteBuffer = message.toByteBuffer();
 		this.protocolId = protocolId;
 		this.message = message;
 	}
@@ -47,8 +49,8 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 	}
 
 	@Override
-	public byte[] bytes() {
-		return bytes;
+	public ByteBuffer byteBuffer() {
+		return this.byteBuffer;
 	}
 
 	@Override

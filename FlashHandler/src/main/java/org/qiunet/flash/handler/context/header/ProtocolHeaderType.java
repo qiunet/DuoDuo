@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 
+import java.nio.ByteBuffer;
+
 /***
  * 协议头类型
  *
@@ -15,7 +17,7 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	server {
 		@Override
-		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
 			return new ServerProtocolHeader(protocolId, bytes);
 		}
 
@@ -39,7 +41,7 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	node{
 		@Override
-		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
 			return new NodeProtocolHeader(protocolId, bytes);
 		}
 
@@ -63,7 +65,7 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	client{
 		@Override
-		public IProtocolHeader outHeader(int protocolId, byte [] bytes) {
+		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
 			return new ClientProtocolHeader(protocolId, bytes);
 		}
 

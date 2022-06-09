@@ -48,7 +48,7 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 	public class Trigger implements IPersistConnResponseTrigger {
 		@Override
 		public void response(ISession session, MessageContent data) {
-			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
 			System.out.println(response.getTestString());
 			latch.countDown();
 		}

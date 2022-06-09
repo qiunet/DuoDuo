@@ -21,7 +21,7 @@ public interface IProtocolHeader {
 	/***
 	 * 将header对象的内容输出到ByteBuf
 	 */
-	byte [] dataBytes();
+	ByteBuffer dataBytes();
 	/**
 	 * 魔数是否是有效的.
 	 * @return

@@ -148,7 +148,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			Class<?> declaringClass = method.getDeclaringClass();
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
 			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(data.getProtocolId());
-			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.bytes());
+			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.byteBuffer());
 
 			try {
 				method.invoke(action, realData);
@@ -158,7 +158,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 		}
 
 		private void handlerStatus(MessageContent data) {
-			StatusTipsRsp response = ProtobufDataManager.decode(StatusTipsRsp.class, data.bytes());
+			StatusTipsRsp response = ProtobufDataManager.decode(StatusTipsRsp.class, data.byteBuffer());
 			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(response));
 			Method method = ResponseMapping.getStatusMethodByID(response.getStatus());
 			if (method == null) {

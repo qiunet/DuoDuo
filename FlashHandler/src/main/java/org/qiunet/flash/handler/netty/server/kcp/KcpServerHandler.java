@@ -75,14 +75,12 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 		if (content.getProtocolId() == IProtocolId.System.KCP_CONNECT_REQ) {
 			ChannelUtil.getSession(ctx.channel()).sendMessage(KcpConnectRsp.valueOf(((UkcpServerChildChannel) ctx.channel()).conv()));
-			content.release();
 			return;
 		}
 
 		// 鉴权协议. 用来绑定PlayerActor
 		if (content.getProtocolId() == IProtocolId.System.KCP_BIND_AUTH_REQ) {
 			KcpBindAuthReq req = ProtobufDataManager.decode(KcpBindAuthReq.class, content.byteBuffer());
-			content.release();
 
 			KcpPlayerTokenMapping.PlayerKcpParamInfo kcpParamInfo = KcpPlayerTokenMapping.getPlayer(req.getPlayerId());
 			PlayerActor playerActor;
@@ -111,7 +109,6 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		// 没有鉴权
 		if (ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get() == null) {
 			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false).buildChannelMessage());
-			content.release();
 			return;
 		}
 

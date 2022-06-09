@@ -39,6 +39,7 @@ import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -62,15 +63,14 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static ByteBuf messageContentToByteBuf(IChannelMessage<?> message, Channel channel) {
-		byte[] bytes = message.bytes();
-
 		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), bytes);
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.dataBytes(), bytes);
+		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), message.byteBuffer());
+
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().clear()), ((ByteBuffer) message.byteBuffer().clear()));
 
 		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes()));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(bytes));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes().array()));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(message.byteBuffer().array()));
 		}
 		return byteBuf;
 	}
@@ -81,10 +81,9 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static ByteBuf messageContentToByteBufWithoutHeader(IChannelMessage<?> message) {
-		byte[] bytes = message.bytes();
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(message.byteBuffer());
 		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(bytes));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(message.byteBuffer().array()));
 		}
 		return byteBuf;
 	}
@@ -170,7 +169,6 @@ public final class ChannelUtil {
 
 		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
 		ChannelUtil.getSession(channel).sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
-		content.release();
 		return true;
 	}
 
@@ -185,14 +183,12 @@ public final class ChannelUtil {
 		Preconditions.checkNotNull(session);
 
 		if (! params.getStartupContext().userServerValidate(session)) {
-			content.release();
 			return;
 		}
 
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound());
-			content.release();
 			return;
 		}
 		processHandler(channel, handler, content);
@@ -210,22 +206,19 @@ public final class ChannelUtil {
 		if (handler instanceof ITransmitHandler
 				&& messageActor instanceof ICrossStatusActor
 				&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			byte[] bytes = content.bytes();
 			if (logger.isInfoEnabled()) {
 				Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(content.getProtocolId());
 				if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
-					IChannelData channelData = ProtobufDataManager.decode(aClass, bytes);
+					IChannelData channelData = ProtobufDataManager.decode(aClass, content.byteBuffer());
 					logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 				}
 			}
-			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), bytes));
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.byteBuffer().array()));
 			return;
 		}
 		if (channel.isActive()) {
 			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
 			messageActor.addMessage(context);
-		}else{
-			content.release();
 		}
 	}
 

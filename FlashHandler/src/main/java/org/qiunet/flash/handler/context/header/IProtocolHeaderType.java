@@ -12,10 +12,10 @@ import java.nio.ByteBuffer;
 public interface IProtocolHeaderType {
 	/***
 	 * 使用bytes 和 protocolId 构造一个 ProtocolHeader
-	 * @param content
+	 * @param bytes
 	 * @return
 	 */
-	IProtocolHeader outHeader(int protocolId, byte [] bytes);
+	IProtocolHeader outHeader(int protocolId, ByteBuffer bytes);
 	/***
 	 * 使用ByteBuf
 	 * @param in
@@ -49,9 +49,9 @@ public interface IProtocolHeaderType {
 	 * 获得所有bytes数据
 	 * @return
 	 */
-	default byte[] getAllBytes(int protocolId, byte [] bytes){
+	default byte[] getAllBytes(int protocolId, ByteBuffer bytes){
 		IProtocolHeader header = outHeader(protocolId, bytes);
-		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + bytes.length);
+		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + bytes.limit());
 		allocate.put(header.dataBytes());
 		allocate.put(bytes);
 		return allocate.array();

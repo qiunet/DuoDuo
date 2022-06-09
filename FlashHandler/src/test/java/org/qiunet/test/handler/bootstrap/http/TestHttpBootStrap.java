@@ -37,7 +37,7 @@ public class TestHttpBootStrap extends HttpBootStrap {
 		HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
-			.withBytes(ADAPTER.getAllBytes(ProtocolId.Test.HTTP_PB_LOGIN_REQ, request.toByteArray()))
+			.withBytes(ADAPTER.getAllBytes(ProtocolId.Test.HTTP_PB_LOGIN_REQ, request.toByteBuffer()))
 			.asyncExecutor((call, resp) -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				// 跳过头

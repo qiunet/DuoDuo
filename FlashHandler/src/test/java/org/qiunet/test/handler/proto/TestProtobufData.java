@@ -28,9 +28,8 @@ public class TestProtobufData {
 	@Test
 	public void test(){
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
-		byte[] bytes = request.toByteArray();
 
-		WsPbLoginRequest loginRequest = ProtobufDataManager.decode(WsPbLoginRequest.class, bytes);
+		WsPbLoginRequest loginRequest = ProtobufDataManager.decode(WsPbLoginRequest.class, request.toByteBuffer());
 		Assertions.assertEquals("qiunet", loginRequest.getAccount());
 	}
 

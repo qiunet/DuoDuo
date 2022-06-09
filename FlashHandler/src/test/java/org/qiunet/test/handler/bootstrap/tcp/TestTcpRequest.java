@@ -48,7 +48,7 @@ public class TestTcpRequest extends BasicTcpBootStrap implements IPersistConnRes
 	@Override
 	public void response(ISession session, MessageContent data) {
 		// test 的地方.直接使用bytes 解析. 免得release
-		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.bytes());
+		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
 		LoggerType.DUODUO_FLASH_HANDLER.info("=TCP Response Text:[{}]" , response.getTestString());
 		Assertions.assertEquals(text, response.getTestString());
 		LockSupport.unpark(currThread);

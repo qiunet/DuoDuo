@@ -36,7 +36,7 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					final String test = "[测试testHttpProtobuf]"+i;
 					HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 					HttpRequest.post(params.getURI())
-						.withBytes(ADAPTER.getAllBytes(HTTP_PB_LOGIN_REQ, request.toByteArray()))
+						.withBytes(ADAPTER.getAllBytes(HTTP_PB_LOGIN_REQ, request.toByteBuffer()))
 						.asyncExecutor((call, response) -> {
 							Assertions.assertEquals(response.code() , HttpResponseStatus.OK.code());
 							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());

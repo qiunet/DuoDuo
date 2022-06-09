@@ -41,9 +41,9 @@ public class ClientProtocolHeader implements IProtocolHeader {
 	 * 由外面读取后 调构造函数传入
 	 * @param bytes 后面byte数组
 	 */
-	public ClientProtocolHeader(int protocolId, byte [] bytes) {
+	public ClientProtocolHeader(int protocolId, ByteBuffer bytes) {
 		this.magic = MAGIC_CONTENTS;
-		this.length = bytes.length;
+		this.length = bytes.limit();
 		this.protocolId = protocolId;
 		this.crc = (int) CrcUtil.getCrc32Value(bytes);
 	}
@@ -76,13 +76,13 @@ public class ClientProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public  byte[] dataBytes() {
-		ByteBuffer out = ByteBuffer.allocate(RESPONSE_HEADER_LENGTH);
+	public  ByteBuffer dataBytes() {
+		ByteBuffer out = ByteBuffer.allocateDirect(RESPONSE_HEADER_LENGTH);
 		out.put(MAGIC_CONTENTS);
 		out.putInt(length);
 		out.putInt(protocolId);
 		out.putInt(crc);
-		return out.array();
+		return out;
 	}
 
 	@Override

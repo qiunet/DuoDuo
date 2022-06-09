@@ -4,6 +4,8 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
+import java.nio.ByteBuffer;
+
 /**
  * 对外响应的编码消息
  * @author qiunet.
@@ -20,7 +22,7 @@ public interface IChannelMessage<T> {
 	 * 转换bytes
 	 * @return
 	 */
-	byte[] bytes();
+	ByteBuffer byteBuffer();
 	/**
 	 * 得到消息id
 	 * @return

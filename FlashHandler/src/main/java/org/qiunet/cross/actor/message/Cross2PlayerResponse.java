@@ -49,7 +49,7 @@ public class Cross2PlayerResponse implements IChannelData, IDataToString {
 	public static Cross2PlayerResponse valueOf(IChannelData responseData, boolean flush, boolean kcpChannel) {
 		Cross2PlayerResponse response = new Cross2PlayerResponse();
 		response.skipMessage = responseData.getClass().isAnnotationPresent(SkipDebugOut.class);
-		response.bytes = responseData.toByteArray();
+		response.bytes = responseData.toByteBuffer().array();
 		response.pid = responseData.protocolId();
 		response.kcpChannel = kcpChannel;
 		response.data = responseData;

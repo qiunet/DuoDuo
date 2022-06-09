@@ -26,7 +26,6 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(ISession session, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
-			data.release();
 			// pong 信息不需要处理
 			return;
 		}
@@ -35,7 +34,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		if (data.getProtocolId() == IProtocolId.System.CROSS_2_PLAYER_MSG
 			&& iMessageActor instanceof PlayerActor) {
 			// 直接往客户端转发
-			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.bytes());
+			Cross2PlayerResponse response = ProtobufDataManager.decode(Cross2PlayerResponse.class, data.byteBuffer());
 			IChannelMessage<byte []> message = new DefaultBytesMessage(response.getPid(), response.getBytes());
 			LoggerType.DUODUO_FLASH_HANDLER.debug("tcp node trigger Data.protocolId: {}", response.getPid());
 			if (response.isKcpChannel()) {
@@ -47,7 +46,6 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		}
 
 		if (data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION) {
-			data.release();
 			return;
 		}
 
