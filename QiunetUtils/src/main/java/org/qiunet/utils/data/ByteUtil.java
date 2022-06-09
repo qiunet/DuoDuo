@@ -60,4 +60,26 @@ public class ByteUtil {
 	public static byte [] long2Bytes(long value) {
 		return ByteBuffer.allocate(8).putLong(value).array();
 	}
+
+	/**
+	 * 读取ByteBuffer的内容. 返回array
+	 * @param buffer
+	 * @return
+	 */
+	public static byte [] readBytebuffer(ByteBuffer buffer) {
+		if (buffer.hasArray()) {
+			return buffer.array();
+		}
+		return readBytebuffer(buffer, 0, buffer.limit());
+	}
+	/**
+	 * 读取ByteBuffer的内容. 返回array
+	 * @param buffer
+	 * @return
+	 */
+	public static byte [] readBytebuffer(ByteBuffer buffer, int index, int length) {
+		byte [] bytes = new byte[length];
+		buffer.get(bytes, index, length);
+		return bytes;
+	}
 }

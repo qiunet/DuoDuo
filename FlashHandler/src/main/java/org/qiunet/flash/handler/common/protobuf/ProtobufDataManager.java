@@ -31,6 +31,20 @@ public class ProtobufDataManager {
 	 * @param obj
 	 * @return
 	 */
+	public static byte[] encode(Object obj) {
+		Preconditions.checkNotNull(obj);
+		Class objClass = obj.getClass();
+		try {
+			return getCodec(objClass).encode(obj);
+		} catch (Exception e) {
+			throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
+		}
+	}
+	/**
+	 * 序列化对象成byte数组
+	 * @param obj
+	 * @return
+	 */
 	public static ByteBuffer encode(Object obj, boolean direct) {
 		Preconditions.checkNotNull(obj);
 		Class objClass = obj.getClass();

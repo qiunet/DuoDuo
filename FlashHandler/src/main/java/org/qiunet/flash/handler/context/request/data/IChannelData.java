@@ -20,6 +20,13 @@ public interface IChannelData {
 		return ProtobufDataManager.encode(this, true);
 	}
 	/**
+	 * 转换为byte[]
+	 * @return
+	 */
+	default byte[] toByteArray(){
+		return ProtobufDataManager.encode(this);
+	}
+	/**
 	 * 构造一个IResponseMessage
 	 * @return
 	 */

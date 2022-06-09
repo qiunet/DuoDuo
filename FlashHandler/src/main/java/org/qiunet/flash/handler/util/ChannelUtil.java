@@ -33,6 +33,7 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingReq
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
+import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
@@ -66,11 +67,11 @@ public final class ChannelUtil {
 		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), message.byteBuffer());
 
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().clear()), ((ByteBuffer) message.byteBuffer().clear()));
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) message.byteBuffer().rewind()));
 
 		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(header.dataBytes().array()));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(message.byteBuffer().array()));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer(header.dataBytes())));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(message.byteBuffer())));
 		}
 		return byteBuf;
 	}
