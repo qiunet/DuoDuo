@@ -25,13 +25,12 @@ public class ProtobufDataManager {
 	public static <T> Codec<T> getCodec(Class<T> clazz) {
 		return ProtobufDataContext0.getInstance().codec(clazz);
 	}
-
 	/**
 	 * 序列化对象成byte数组
 	 * @param obj
 	 * @return
 	 */
-	public static byte[] encode(Object obj) {
+	public static byte[] encodeToByteArray(Object obj) {
 		Preconditions.checkNotNull(obj);
 		Class objClass = obj.getClass();
 		try {
@@ -45,18 +44,13 @@ public class ProtobufDataManager {
 	 * @param obj
 	 * @return
 	 */
-	public static ByteBuffer encode(Object obj, boolean direct) {
+	public static ByteBuffer encode(Object obj) {
 		Preconditions.checkNotNull(obj);
 		Class objClass = obj.getClass();
 		try {
 			Codec codec = getCodec(objClass);
 			int size = codec.size(obj);
-			ByteBuffer buffer;
-			if (direct) {
-				buffer = ByteBuffer.allocateDirect(size);
-			}else {
-				buffer = ByteBuffer.allocate(size);
-			}
+			ByteBuffer buffer = ByteBuffer.allocateDirect(size);
 			codec.writeTo(obj, CodedOutputStream.newInstance(buffer));
 			return buffer;
 		} catch (Exception e) {

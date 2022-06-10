@@ -17,14 +17,14 @@ public interface IChannelData {
 	 * @return
 	 */
 	default ByteBuffer toByteBuffer(){
-		return ProtobufDataManager.encode(this, true);
+		return ProtobufDataManager.encode(this);
 	}
 	/**
 	 * 转换为byte[]
 	 * @return
 	 */
 	default byte[] toByteArray(){
-		return ProtobufDataManager.encode(this);
+		return ProtobufDataManager.encodeToByteArray(this);
 	}
 	/**
 	 * 构造一个IResponseMessage

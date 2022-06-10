@@ -32,14 +32,17 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  *         Created on 17/3/17 14:28.
  */
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
-	private final HttpRequest request;
-	protected HttpBootstrapParams params;
 	private Map<String ,List<String>> parameters;
+	protected HttpBootstrapParams params;
+	private final HttpRequest request;
+	private final String uriPath;
 
 	public AbstractHttpRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
 		super(content, channel);
 		this.request = request;
 		this.params = params;
+
+		this.uriPath = content.getUriPath();
 	}
 
 	@Override
@@ -91,15 +94,15 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getUriPath() {
-		if (messageContent.isUriPathMsg()) {
-			return messageContent.getUriPath();
+		if (uriPath != null) {
+			return uriPath;
 		}
 		return params.getGameURIPath();
 	}
 
 	@Override
 	public boolean otherRequest() {
-		return messageContent.isUriPathMsg();
+		return uriPath != null;
 	}
 
 	@Override

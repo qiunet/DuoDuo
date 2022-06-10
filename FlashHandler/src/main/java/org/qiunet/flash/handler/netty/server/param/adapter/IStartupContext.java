@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.param.adapter;
 
+import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.Channel;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNode;
@@ -19,6 +20,8 @@ import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
+
+import java.io.IOException;
 
 /***
  *
@@ -82,7 +85,11 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 		if (cause instanceof StatusResultException) {
 			message = StatusTipsRsp.valueOf(((StatusResultException) cause));
 		} else {
-			LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
+			if (cause instanceof KcpException || cause instanceof IOException) {
+				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause.getMessage());
+			}else {
+				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
+			}
 			message = SERVER_EXCEPTION_MESSAGE.get();
 		}
 

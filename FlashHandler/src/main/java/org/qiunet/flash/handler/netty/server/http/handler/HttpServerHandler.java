@@ -28,6 +28,7 @@ import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.net.URI;
+import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 
 /**
@@ -69,18 +70,19 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	}
 
 	protected void channelRead1(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-		FullHttpRequest request = (msg);
-		if (! request.decoderResult().isSuccess()) {
+		if (! msg.decoderResult().isSuccess()) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;
 		}
-		if (request.uri().equals("/favicon.ico")) {
+
+		if (msg.uri().equals("/") || msg.uri().equals("/favicon.ico")) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
+
 		URI uri;
 		try {
-			uri = URI.create(request.uri());
+			uri = URI.create(msg.uri());
 		}catch (Exception e){
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 			return;
@@ -89,13 +91,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		try {
 			if (params.getGameURIPath().equals(uri.getRawPath())) {
 				// 游戏的请求
-				handlerGameUriPathRequest(ctx, request);
+				handlerGameUriPathRequest(ctx, msg);
 			} else if (params.getWebsocketPath() != null && params.getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
-				handlerWebSocketHandShark(ctx, request);
+				handlerWebSocketHandShark(ctx, msg);
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
-				handlerOtherUriPathRequest(ctx, request, uri.getRawPath());
+				handlerOtherUriPathRequest(ctx, msg, uri.getRawPath());
 			}
 		}catch (Exception e) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
@@ -139,8 +141,10 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		ByteBuf byteBuf = request.content().readRetainedSlice(header.getLength());
-		MessageContent content = new MessageContent(header.getProtocolId(), byteBuf);
+		ByteBuf byteBuf = request.content();
+		ByteBuffer byteBuffer = byteBuf.nioBuffer(byteBuf.readerIndex(), header.getLength());
+		byteBuf.skipBytes(header.getLength());
+		MessageContent content = new MessageContent(header.getProtocolId(), byteBuffer);
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
@@ -182,7 +186,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
 		ByteBuf byteBuf = request.content();
-		MessageContent content = new MessageContent(uriPath, byteBuf.readRetainedSlice(byteBuf.readableBytes()));
+		ByteBuffer byteBuffer = byteBuf.nioBuffer(byteBuf.readerIndex(), byteBuf.readableBytes());
+		byteBuf.skipBytes(byteBuf.readableBytes());
+		MessageContent content = new MessageContent(uriPath, byteBuffer);
 		this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
 	}
 }

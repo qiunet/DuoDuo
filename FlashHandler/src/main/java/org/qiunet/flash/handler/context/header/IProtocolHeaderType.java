@@ -52,8 +52,8 @@ public interface IProtocolHeaderType {
 	default byte[] getAllBytes(int protocolId, ByteBuffer bytes){
 		IProtocolHeader header = outHeader(protocolId, bytes);
 		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + bytes.limit());
-		allocate.put(header.dataBytes());
-		allocate.put(bytes);
+		allocate.put((ByteBuffer) header.dataBytes().rewind());
+		allocate.put((ByteBuffer) bytes.rewind());
 		return allocate.array();
 	}
 }

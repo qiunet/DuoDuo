@@ -214,7 +214,7 @@ public final class ChannelUtil {
 					logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 				}
 			}
-			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), content.byteBuffer().array()));
+			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), ByteUtil.readBytebuffer(content.byteBuffer())));
 			return;
 		}
 		if (channel.isActive()) {
