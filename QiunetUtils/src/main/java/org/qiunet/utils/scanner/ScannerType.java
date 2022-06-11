@@ -59,7 +59,8 @@ public enum  ScannerType {
 	ATTR(1 << 24),
 	/**假枚举*/
 	FAKE_ENUM(1 << 25),
-
+	/**埋点日志*/
+	LOG_RECORD(1 << 26, FILE_CONFIG),
 	/**配置读取*/
 	CFG (
 			EVENT,

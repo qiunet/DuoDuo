@@ -22,7 +22,7 @@
 		<module>Quartz</module>
 		<module>Entity2Table</module>
 		<module>all</module>
-		<module>EventLog</module>
+		<module>LogRecord</module>
 		<module>Profile</module>
 	</modules>
 
