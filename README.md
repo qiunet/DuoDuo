@@ -34,7 +34,7 @@
 | [Function](Function/README.md)         | 部分业务中通用代码, 抽象出来做成的模块                   |
 | [GameTest](GameTest/README.md)         | 模拟机器人测试的模块                                     |
 | [JavaAgent](JavaAgent/README.md)       | 可以通过javaAgent 最后热加载指定的class                  |
-| [EventLog](EventLog/README.md)         | 日志记录模块                                             |
+| [LogRecord](LogRecord/README.md)         | 日志记录模块                                             |
 | [all](all/README.md)                   | 打包成一个duoduo-all 方便调用的模块.                     |
 
 
