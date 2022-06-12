@@ -22,6 +22,7 @@ import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
+import org.qiunet.flash.handler.context.response.push.DefaultByteBufferMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -32,7 +33,6 @@ import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.flash.handler.netty.transmit.TransmitRequest;
 import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -214,7 +214,7 @@ public final class ChannelUtil {
 					logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 				}
 			}
-			((ICrossStatusActor) messageActor).sendCrossMessage(TransmitRequest.valueOf(content.getProtocolId(), ByteUtil.readBytebuffer(content.byteBuffer())));
+			((ICrossStatusActor) messageActor).sendCrossMessage(new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer()));
 			return;
 		}
 		if (channel.isActive()) {

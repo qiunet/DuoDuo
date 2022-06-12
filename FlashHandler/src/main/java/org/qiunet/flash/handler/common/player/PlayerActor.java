@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.kcp.event.KcpUsabilityEvent;
@@ -162,11 +163,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
-	public void sendCrossMessage(IChannelData channelData) {
+	public void sendCrossMessage(IChannelMessage<?> channelMessage) {
 		if (crossServerType == null) {
 			throw new CustomException("Current not cross to any server");
 		}
-		crossConnectors.get(crossServerType).sendMessage(channelData, true);
+		crossConnectors.get(crossServerType).sendMessage(channelMessage, true);
 	}
 
 	@Override

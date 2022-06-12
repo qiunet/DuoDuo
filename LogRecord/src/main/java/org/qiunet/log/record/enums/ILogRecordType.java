@@ -5,7 +5,7 @@ package org.qiunet.log.record.enums;
  * @author qiunet
  * 2020-03-25 09:52
  ***/
-public interface ILogRecordType {
+public interface ILogRecordType<T extends Enum<T> & ILogRecordType<T>> {
 	/**
 	 * 日志的文件名前缀.
 	 * 后面会自动跟日期.
@@ -13,11 +13,6 @@ public interface ILogRecordType {
 	 * @return
 	 */
 	default String getLogRecordName() {
-		return name().toLowerCase();
+		return ((T) this).name().toLowerCase();
 	}
-	/**
-	 * 如果是枚举. 不用实现该方法
-	 * @return
-	 */
-	String name();
 }

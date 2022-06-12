@@ -1,8 +1,11 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
+import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -10,6 +13,7 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.ToString;
 
@@ -45,12 +49,15 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			return;
 		}
 
-		FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("[{}] {} <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(getRequestData()));
 		}
 
-
-		((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
+		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {
+			((ITransmitHandler) getHandler()).crossHandler(((CrossPlayerActor) messageActor), getRequestData());
+		}else {
+			FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
+			((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
+		}
 	}
 }

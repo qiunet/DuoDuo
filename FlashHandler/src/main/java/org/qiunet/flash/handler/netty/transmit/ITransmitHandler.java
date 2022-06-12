@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
  * @author qiunet
  * 2020-10-26 17:20
  */
-public interface ITransmitHandler<P extends AbstractUserActor, RequestData> {
+public interface ITransmitHandler<P extends AbstractUserActor<P>, RequestData> {
 	/**
 	 * 处理跨服的方法.
 	 * @param actor

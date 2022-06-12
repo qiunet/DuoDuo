@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /***
@@ -64,5 +65,9 @@ public interface ICrossStatusActor {
 	 * 给当前跨服的服务发送消息
 	 * @return
 	 */
-	void sendCrossMessage(IChannelData channelData);
+	default void sendCrossMessage(IChannelData channelData) {
+		this.sendCrossMessage(channelData.buildChannelMessage());
+	}
+
+	void sendCrossMessage(IChannelMessage<?> channelData);
 }
