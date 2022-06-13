@@ -26,6 +26,12 @@ public class TestDateUtil extends BaseTest {
 		Assertions.assertFalse(DateUtil.isBetweenDays(dt2, date1, date2));
 	}
 
+	@Test
+	public void testGetDayOfMonth() {
+		LocalDateTime date1 = DateUtil.stringToDate("2016-05-16 00:00:00");
+		Assertions.assertEquals(16, date1.getDayOfMonth());
+	}
+
 	/***
 	 * SimpleDateFormat 线程安全测试
 	 * @throws ParseException
@@ -62,9 +68,9 @@ public class TestDateUtil extends BaseTest {
 	@Test
 	public void testAddHour() {
 		int hours = 5;
-		LocalDateTime now = DateUtil.currentLocalDateTime();
-		Assertions.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, -hours)));
-		Assertions.assertTrue((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(DateUtil.addHours(now, hours)));
+		LocalDateTime now = DateUtil.nowLocalDateTime();
+		Assertions.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(now.plusHours(-hours)));
+		Assertions.assertTrue((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(now.plusHours(hours)));
 	}
 
 	@Test
@@ -99,7 +105,7 @@ public class TestDateUtil extends BaseTest {
 
 	@Test
 	public void testMilliToDateTime() {
-		long nowMilliByTime = DateUtil.getNowMilliByTime();
+		long nowMilliByTime = DateUtil.currentTimeMillis();
 //		System.out.println("当前时间戳:\t" + nowMilliByTime);
 
 		LocalDateTime localDateTime = DateUtil.getLocalDateTime(nowMilliByTime);
@@ -107,7 +113,7 @@ public class TestDateUtil extends BaseTest {
 
 		String dateStr1 = DateUtil.dateToString(localDateTime);
 		String dateStr2 = DateUtil.dateToString(localDateTimeUTC);
-		String dateStr3 = DateUtil.dateToString(DateUtil.addHours(localDateTimeUTC, 8));
+		String dateStr3 = DateUtil.dateToString(localDateTimeUTC.plusHours(8));
 
 		Assertions.assertNotEquals(dateStr1, dateStr2);
 		//+8 hour

@@ -4,14 +4,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.common.IRunnable;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
+import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -23,64 +21,16 @@ import java.util.concurrent.TimeUnit;
  */
 public final class DateUtil {
 	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
-	private static long offsetMillis = 0;
-
-	/***
-	 * 当前的秒
-	 * @return
-	 */
-	public static long currSeconds() {
-		return DateUtil.currentTimeMillis() / 1000;
-	}
-
-	/**
-	 * 得到当前的 Instant
-	 *
-	 * @return
-	 */
-	public static Instant currentInstant() {
-		return Instant.ofEpochMilli(currentTimeMillis());
-	}
-
-	public static Date currentDate() {
-		return new Date();
-	}
-
-	public static LocalDateTime currentLocalDateTime() {
-		return LocalDateTime.ofInstant(currentInstant(), defaultZoneId);
-	}
-
-	public static ZoneId getDefaultZoneId() {
-		return defaultZoneId;
-	}
-
-	public static long currentTimeMillis() {
-		return System.currentTimeMillis() + offsetMillis;
-	}
-
-	/***
-	 * 对全局时间偏移做调整
-	 * @param offsetValue
-	 */
-	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
-		DateUtil.offsetMillis = unit.toMillis(offsetValue);
-	}
-
-	private DateUtil() {
-	}
 
 	/**
 	 * 默认的时间格式(日期 时间)
 	 */
 	public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	/**
-	 * 默认的时间格式(日期)
-	 */
-	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
-	/**
-	 * 时分秒的
-	 */
-	public static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+	 * 外面直接使用 LocalDateTime.format() 可以搞定
+	 **/
+	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT).withLocale(Locale.getDefault());
+
 	/**
 	 * 一天的秒
 	 */
@@ -96,13 +46,65 @@ public final class DateUtil {
 	/**
 	 * 一周的毫秒数
 	 */
-	public static final long WEEK_MS = 7L * DAY_MS;
+	public static final long WEEK_MS = WEEK_SECONDS * 1000;
 
 	/**
-	 * 外面直接使用 LocalDateTime.format() 可以搞定
-	 **/
-	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT);
+	 * 服务器时间偏移量
+	 */
+	private static long offsetMillis; //86400000
 
+	/***
+	 * 当前的秒
+	 * @return
+	 */
+	public static long currSeconds() {
+		return currentTimeMillis() / 1000;
+	}
+
+	/**
+	 * 得到当前的 Instant
+	 *
+	 * @return
+	 */
+	public static Instant currentInstant() {
+		return Instant.ofEpochMilli(currentTimeMillis());
+	}
+	/**
+	 * 当前时间
+	 *
+	 * @return
+	 */
+	public static LocalDateTime nowLocalDateTime() {
+		return nowLocalDateTime(getDefaultZoneId());
+	}
+
+	/**
+	 * 当前时间
+	 *
+	 * @param zoneId
+	 * @return
+	 */
+	public static LocalDateTime nowLocalDateTime(ZoneId zoneId) {
+		return LocalDateTime.ofInstant(currentInstant(), zoneId);
+	}
+	/**
+	 * 获得默认区 ID
+	 * @return
+	 */
+	public static ZoneId getDefaultZoneId() {
+		return defaultZoneId;
+	}
+
+	/***
+	 * 对全局时间偏移做调整
+	 * @param offsetValue
+	 */
+	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
+		DateUtil.offsetMillis = unit.toMillis(offsetValue);
+	}
+
+	private DateUtil() {
+	}
 	/**
 	 * 计算Runnable 消耗毫秒
 	 * @param runnable 执行代码
@@ -132,66 +134,31 @@ public final class DateUtil {
 		return DEFAULT_DATE_TIME_FORMATTER.format(date);
 	}
 
-	//获取指定日期的毫秒
+	/**
+	 * 获取指定日期的毫秒
+	 * @param time
+	 * @return
+	 */
 	public static long getMilliByTime(LocalDateTime time) {
 		return time.atZone(getDefaultZoneId()).toInstant().toEpochMilli();
 	}
 
-	//获取指定日期的秒
-	public static long getSecondsByTime(LocalDateTime time) {
-		return time.atZone(getDefaultZoneId()).toInstant().getEpochSecond();
-	}
-
-
 	/**
 	 * 获取指定日期的毫秒
-	 *
 	 * @param time
-	 * @param zoneOffset
 	 * @return
 	 */
-	public static long getMilliByTime(LocalDateTime time, ZoneOffset zoneOffset) {
-		return time.toInstant(zoneOffset).toEpochMilli();
+	public static long getMilliByTime(LocalDateTime time, ZoneOffset offset) {
+		return time.toInstant(offset).toEpochMilli();
 	}
 
 	/**
 	 * 获取指定日期的秒
-	 *
 	 * @param time
-	 * @param zoneOffset
 	 * @return
 	 */
-	public static long getSecondsByTime(LocalDateTime time, ZoneOffset zoneOffset) {
-		return time.toInstant(zoneOffset).getEpochSecond();
-	}
-
-	/**
-	 * 取当前时间戳
-	 *
-	 * @return
-	 */
-	public static long getNowMilliByTime() {
-		return nowLocalDateTime().atZone(getDefaultZoneId()).toInstant().toEpochMilli();
-	}
-
-
-	/**
-	 * 当前时间
-	 *
-	 * @return
-	 */
-	public static LocalDateTime nowLocalDateTime() {
-		return LocalDateTime.now(getDefaultZoneId());
-	}
-
-	/**
-	 * 当前时间
-	 *
-	 * @param zoneOffset
-	 * @return
-	 */
-	public static LocalDateTime nowLocalDateTime(ZoneOffset zoneOffset) {
-		return LocalDateTime.now(zoneOffset);
+	public static long getSecondsByTime(LocalDateTime time) {
+		return time.atZone(getDefaultZoneId()).toInstant().getEpochSecond();
 	}
 
 	/**
@@ -213,8 +180,16 @@ public final class DateUtil {
 	public static LocalDateTime getLocalDateTime(long milliseconds, ZoneOffset zoneOffset) {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), zoneOffset);
 	}
-
-
+	/**
+	 * 日期转字符串 指定格式
+	 *
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public static String dateToString(Date date, String format) {
+		return dateToString(date.getTime(), format);
+	}
 	/**
 	 * 日期转字符串 指定格式
 	 *
@@ -223,7 +198,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static String dateToString(long millis, String format) {
-		return returnFormatter(format).format(LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), defaultZoneId));
+		return dateToString(getLocalDateTime(millis), format);
 	}
 
 	/**
@@ -256,31 +231,6 @@ public final class DateUtil {
 	public static LocalDateTime stringToDate(String stringValue) {
 		return stringToDate(stringValue, DEFAULT_DATE_TIME_FORMAT);
 	}
-
-	/**
-	 * 获取当前日期是本周的周几
-	 *
-	 * @param date
-	 * @return
-	 */
-	public static int getDayOfWeek(Date date) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		return calendar.get(Calendar.DAY_OF_WEEK);
-	}
-
-	/**
-	 * 获取当前日期是今年的第几周
-	 *
-	 * @param date
-	 * @return
-	 */
-	public static int getWeekOfYear(Date date) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
-		return cal.get(Calendar.WEEK_OF_YEAR);
-	}
-
 	/**
 	 * 是否介于两个日期之间
 	 *
@@ -300,91 +250,139 @@ public final class DateUtil {
 	}
 
 	/**
-	 * 指定时间 加减 天数
+	 * @return 获取当前纪元毫秒 1970-01-01T00:00:00Z.
+	 */
+	public static long currentTimeMillis() {
+		return Clock.systemDefaultZone().instant().toEpochMilli() + offsetMillis;
+	}
+
+	/**@
+	 * 判断两个时间是否在同一天
 	 *
-	 * @param dt   时间
-	 * @param days 天数
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addDays(LocalDateTime dt, int days) {
-		return dt.plusDays(days);
+	public static boolean isSameDay(LocalDateTime time1, LocalDateTime time2) {
+		return time1.getYear() == time2.getYear() &&
+				time1.getDayOfYear() == time2.getDayOfYear();
 	}
-
-	/***
-	 * 指定时间  加减 小时数
-	 * @param dt
-	 * @param hours
+	/**@
+	 * 判断两个时间是否在同一天
+	 *
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addHours(LocalDateTime dt, int hours) {
-		return dt.plusHours(hours);
+	public static boolean isSameDay(long time1, long time2) {
+		return Duration.ofMillis(time1).toDays() - Duration.ofMillis(time2).toDays() == 0;
 	}
 
-	/***
-	 * 指定时间  加减 分钟数
-	 * @param dt
-	 * @param minutes
+	/**
+	 * 判断两个时间是否在同一周(注意这里周日和周一判断是在一周里的)
+	 *
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addMinutes(LocalDateTime dt, int minutes) {
-		return dt.plusMinutes(minutes);
+	public static boolean isSameWeek(long time1, long time2) {
+		LocalDateTime ldt1 = getLocalDateTime(time1);
+		LocalDateTime ldt2 = getLocalDateTime(time2);
+		TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
+		return ldt1.getYear() == ldt2.getYear() && ldt1.get(woy) == ldt2.get(woy);
 	}
 
-	/***
-	 * 指定时间  加减 月
-	 * @param dt
-	 * @param months
+	/**@
+	 * 判断两个时间是否在同一月
+	 *
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addMonths(LocalDateTime dt, int months) {
-		return dt.plusMonths(months);
+	public static boolean isSameMonth(long time1, long time2) {
+		LocalDateTime ldt1 = getLocalDateTime(time1);
+		LocalDateTime ldt2 = getLocalDateTime(time2);
+		return ldt1.getYear() == ldt2.getYear() && ldt1.getMonthValue() == ldt2.getMonthValue();
 	}
 
-	/***
-	 * 指定时间  加减 秒
-	 * @param dt
-	 * @param seconds
+	/**@
+	 * 判断两个时间是否在同一季度
+	 *
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addSeconds(LocalDateTime dt, int seconds) {
-		return dt.plusSeconds(seconds);
+	public static boolean isSameQuarter(long time1, long time2) {
+		LocalDateTime ldt1 = getLocalDateTime(time1);
+		LocalDateTime ldt2 = getLocalDateTime(time2);
+		return ldt1.getYear() == ldt2.getYear() && ldt1.getMonthValue() / 4 == ldt2.getMonthValue() / 4;
 	}
 
-	/***
-	 * 指定时间  加减 毫秒
-	 * @param dt
-	 * @param milliSeconds
+	/**@
+	 * 判断两个时间是否在同一年
+	 *
+	 * @param time1
+	 * @param time2
 	 * @return
 	 */
-	public static LocalDateTime addMilliseconds(LocalDateTime dt, int milliSeconds) {
-		return dt.plus(milliSeconds, ChronoUnit.MILLIS);
+	public static boolean isSameYear(long time1, long time2) {
+		return getLocalDateTime(time1).getYear() == getLocalDateTime(time2).getYear();
 	}
-
-	/***
-	 * 判断是否是同一天
-	 * @param ld1
-	 * @param ld2
+	/**@
+	 * 获取传入毫秒的月份中的日 1-12
+	 *
+	 * @param time
 	 * @return
 	 */
-	public static boolean isSameDay(LocalDateTime ld1, LocalDateTime ld2) {
-		return ld1.getYear() == ld2.getYear() &&
-				ld1.getDayOfYear() == ld2.getDayOfYear();
+	public static int getDayOfMonth(long time) {
+		return getLocalDateTime(time).getDayOfMonth();
 	}
 
-	/***
-	 * 判断是否是同一天
-	 * @param d1
-	 * @param d2
+	/**@
+	 * 获取系统当前月份中的日 1-12
+	 *
 	 * @return
 	 */
-	public static boolean isSameDay(long d1, long d2) {
-		LocalDateTime ld1 = LocalDateTime.ofInstant(Instant.ofEpochMilli(d1), defaultZoneId);
-		LocalDateTime ld2 = LocalDateTime.ofInstant(Instant.ofEpochMilli(d2), defaultZoneId);
-
-		return isSameDay(ld1, ld2);
+	public static int getDayOfMonth() {
+		return getDayOfMonth(currentTimeMillis());
 	}
 
-	private static final Map<String, DateTimeFormatter> dtfs = Maps.newHashMap(ImmutableMap.of(DEFAULT_DATE_TIME_FORMAT, DEFAULT_DATE_TIME_FORMATTER));
+	/**
+	 * 获取传入毫秒的天 1 to 365, or 366
+	 *
+	 * @param time
+	 * @return
+	 */
+	public static int getDayOfYear(long time) {
+		return getLocalDateTime(time).getDayOfYear();
+	}
+
+	/**
+	 * 获取系统当前的天 1 to 365, or 366
+	 *
+	 * @return
+	 */
+	public static int getDayOfYear() {
+		return getDayOfYear(currentTimeMillis());
+	}
+	/**
+	 * 获取系统当前的星期 1-7
+	 *
+	 * @return
+	 */
+	public static int getDayOfWeek(long time) {
+		return getLocalDateTime(time).getDayOfWeek().getValue();
+	}
+	/**
+	 * 获取系统当前的星期 1-7
+	 *
+	 * @return
+	 */
+	public static int getDayOfWeek() {
+		return getDayOfWeek(currentTimeMillis());
+	}
+
+	private static final Map<String, DateTimeFormatter> DATE_FORMATS = Maps.newHashMap(ImmutableMap.of(DEFAULT_DATE_TIME_FORMAT, DEFAULT_DATE_TIME_FORMATTER));
 	/**
 	 * 使用LocalDateTime格式化时间. 取到对应的 DateTimeFormatter
 	 *
@@ -392,12 +390,10 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static DateTimeFormatter returnFormatter(String pattern) {
-		DateTimeFormatter formatter = dtfs.get(pattern);
+		DateTimeFormatter formatter = DATE_FORMATS.get(pattern);
 		if (formatter == null) {
 			synchronized (DateUtil.class) {
-				if (!dtfs.containsKey(pattern)) {
-					dtfs.put(pattern, formatter = DateTimeFormatter.ofPattern(pattern));
-				}
+				formatter = DATE_FORMATS.computeIfAbsent(pattern, DateTimeFormatter::ofPattern);
 			}
 		}
 		return formatter;
@@ -408,35 +404,16 @@ public final class DateUtil {
 	 * @param year
 	 * @return
 	 */
-	public static boolean isLeapYear(int year) {
-		return ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0));
+	public static boolean isLeap(int year) {
+		return Year.isLeap(year);
 	}
-
 	/**
 	 * 获得最后天数
-	 * @param monthNum
+	 * @param month
 	 * @param year
 	 * @return
 	 */
-	public static int getLastDayOfMonth(int monthNum, int year) {
-		switch (monthNum) {
-			case 2:
-				return (isLeapYear(year)) ? 29 : 28;
-			case 1:
-			case 3:
-			case 5:
-			case 7:
-			case 8:
-			case 10:
-			case 12:
-				return 31;
-			case 4:
-			case 6:
-			case 9:
-			case 11:
-				return 30;
-			default:
-				throw new IllegalArgumentException("Illegal month number: " + monthNum);
-		}
+	public static int getLastDayOfMonth(int year, int month) {
+		return YearMonth.of(year, month).lengthOfMonth();
 	}
 }
