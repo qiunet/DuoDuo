@@ -6,6 +6,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.IGameStatus;
@@ -47,6 +48,11 @@ public class GmDToolsCommandHandler extends PersistConnPbHandler<ServerNode, GmD
 					@Override
 					public Channel channel() {
 						return context.channel();
+					}
+
+					@Override
+					public IProtocolHeader protocolHeader() {
+						return context.protocolHeader();
 					}
 
 					@Override

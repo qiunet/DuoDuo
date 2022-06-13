@@ -144,7 +144,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		ByteBuf byteBuf = request.content();
 		ByteBuffer byteBuffer = byteBuf.nioBuffer(byteBuf.readerIndex(), header.getLength());
 		byteBuf.skipBytes(header.getLength());
-		MessageContent content = new MessageContent(header.getProtocolId(), byteBuffer);
+		MessageContent content = new MessageContent(header, byteBuffer);
 		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 			// encryption 不对, 不被认证的请求
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);

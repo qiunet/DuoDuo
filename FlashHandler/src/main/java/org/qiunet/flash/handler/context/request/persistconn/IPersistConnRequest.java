@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.IRequest;
 
 
@@ -15,4 +16,10 @@ public interface IPersistConnRequest<RequestData> extends IRequest<RequestData> 
 	 * @return
 	 */
 	Channel channel();
+	/**
+	 * 协议头信息
+	 * http有可能为空
+	 * @return
+	 */
+	IProtocolHeader protocolHeader();
 }

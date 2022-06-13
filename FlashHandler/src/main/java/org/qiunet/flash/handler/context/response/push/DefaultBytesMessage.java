@@ -11,11 +11,11 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 
 	private final int protocolId;
 
-	private final byte [] message;
+	private final ByteBuffer buffer;
 
 	public DefaultBytesMessage(int protocolId, byte[] message) {
+		this.buffer = ByteBuffer.wrap(message);
 		this.protocolId = protocolId;
-		this.message = message;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 
 	@Override
 	public byte[] getContent() {
-		return message;
+		return buffer.array();
 	}
 
 	@Override
@@ -40,6 +40,6 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 
 	@Override
 	public ByteBuffer byteBuffer() {
-		return ByteBuffer.wrap(this.message);
+		return buffer;
 	}
 }

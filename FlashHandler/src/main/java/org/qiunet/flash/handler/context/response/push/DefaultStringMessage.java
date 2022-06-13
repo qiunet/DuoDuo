@@ -14,14 +14,17 @@ public class DefaultStringMessage implements IChannelMessage<String> {
 
 	private final String message;
 
+	private final ByteBuffer buffer;
+
 	public DefaultStringMessage(int protocolId, String message) {
-		this.message = message;
+		this.buffer = StandardCharsets.UTF_8.encode(message);
 		this.protocolId = protocolId;
+		this.message = message;
 	}
 
 	@Override
 	public ByteBuffer byteBuffer() {
-		return StandardCharsets.UTF_8.encode(this.message);
+		return buffer;
 	}
 
 	@Override

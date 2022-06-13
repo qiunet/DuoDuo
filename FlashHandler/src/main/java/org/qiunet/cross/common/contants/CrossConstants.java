@@ -18,7 +18,7 @@ public final class CrossConstants {
 	 */
 	public static final TcpBootstrapParams CROSS_SERVER_TCP_BOOTSTRAP_PARAMS = TcpBootstrapParams.custom()
 		.setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT)
-		.setProtocolHeaderType(ProtocolHeaderType.node)
+		.setProtocolHeaderType(ProtocolHeaderType.cross)
 		.setPort(ServerConfig.getServerPort())
 		.setReadIdleCheckSeconds(60 * 10)
 		.setServerName("跨服玩法服")

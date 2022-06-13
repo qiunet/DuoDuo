@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player.connect;
 
 import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
-import org.qiunet.cross.common.trigger.TcpNodeClientTrigger;
+import org.qiunet.cross.common.trigger.PlayerConnectorClientTrigger;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
@@ -26,7 +26,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * client
 	 */
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeaderType(ProtocolHeaderType.node).build(), new TcpNodeClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeaderType(ProtocolHeaderType.cross).build(), new PlayerConnectorClientTrigger());
 	/**
 	 * session
 	 */
@@ -51,7 +51,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
 		this.session = tcpClient.connect(serverInfo.getPublicHost(), serverInfo.getCrossPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor));
 		this.session.addCloseListener(((session1, cause) -> actor.quitCross(serverInfo.getServerType(), cause)));
-		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.isKcpSessionPrepare()));
+		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.isKcpSessionPrepare()), true);
 		this.playerId = actor.getPlayerId();
 		this.serverId = serverId;
 	}

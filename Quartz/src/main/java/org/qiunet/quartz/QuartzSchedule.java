@@ -1,7 +1,6 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
@@ -52,7 +51,7 @@ public class QuartzSchedule {
 
 		 JobFacade(IJob job) {
 			this.job = job;
-			this.fireTime = DateUtil.currentDate();
+			this.fireTime = new Date();
 			try {
 				this.expression = new CronExpression(job.cronExpression());
 			} catch (ParseException e) {
@@ -75,7 +74,7 @@ public class QuartzSchedule {
 
 		@Override
 		public Boolean call() throws Exception {
-			this.fireTime = DateUtil.currentDate();
+			this.fireTime = new Date();
 			return this.job.doJob();
 		}
 	}

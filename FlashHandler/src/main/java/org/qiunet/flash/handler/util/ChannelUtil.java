@@ -65,7 +65,7 @@ public final class ChannelUtil {
 	 */
 	public static ByteBuf messageContentToByteBuf(IChannelMessage<?> message, Channel channel) {
 		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), message.byteBuffer());
+		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), message);
 
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) message.byteBuffer().rewind()));
 

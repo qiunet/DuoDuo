@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
@@ -37,13 +38,13 @@ public class ServerProtocolHeader implements IProtocolHeader {
 	 * 构造函数
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
-	 * @param bytes 后面byte数组
+	 * @param message 后面byte数组
 	 */
-	public ServerProtocolHeader(int protocolId, ByteBuffer bytes) {
+	public ServerProtocolHeader(int protocolId, IChannelMessage<?> message) {
 		this.magic = MAGIC_CONTENTS;
-		this.length = bytes.limit();
+		this.length = message.byteBuffer().limit();
 		this.protocolId = protocolId;
-		this.crc = 0;
+		this.crc = (int) CrcUtil.getCrc32Value((ByteBuffer) message.byteBuffer().rewind());
 	}
 
 	public ServerProtocolHeader(ByteBuf in, Channel channel) {

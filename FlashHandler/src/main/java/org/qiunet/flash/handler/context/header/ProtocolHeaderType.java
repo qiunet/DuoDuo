@@ -2,8 +2,7 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-
-import java.nio.ByteBuffer;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 /***
  * 协议头类型
@@ -17,8 +16,8 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	server {
 		@Override
-		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
-			return new ServerProtocolHeader(protocolId, bytes);
+		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
+			return new ServerProtocolHeader(protocolId, message);
 		}
 
 		@Override
@@ -41,8 +40,8 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	 */
 	node{
 		@Override
-		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
-			return new NodeProtocolHeader(protocolId, bytes);
+		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
+			return new NodeProtocolHeader(protocolId, message);
 		}
 
 		@Override
@@ -61,12 +60,39 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 		}
 	},
 	/**
+	 * Cross服务, 正常请求, 响应需要告知:
+	 * 1. 是否发送给玩家.
+	 * 2. 是否flush
+	 * 3. 是否使用kcp发送客户端
+	 */
+	cross{
+		@Override
+		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
+			return new CrossProtocolHeader(protocolId, message);
+		}
+
+		@Override
+		public IProtocolHeader inHeader(ByteBuf in, Channel channel) {
+			return new CrossProtocolHeader(in, channel);
+		}
+
+		@Override
+		public int getReqHeaderLength() {
+			return CrossProtocolHeader.REQUEST_HEADER_LENGTH;
+		}
+
+		@Override
+		public int getRspHeaderLength() {
+			return CrossProtocolHeader.RESPONSE_HEADER_LENGTH;
+		}
+	},
+	/**
 	 * 测试的客户端
 	 */
 	client{
 		@Override
-		public IProtocolHeader outHeader(int protocolId, ByteBuffer bytes) {
-			return new ClientProtocolHeader(protocolId, bytes);
+		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
+			return new ClientProtocolHeader(protocolId, message);
 		}
 
 		@Override

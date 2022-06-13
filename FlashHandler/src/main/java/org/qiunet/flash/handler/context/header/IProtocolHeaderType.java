@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 import java.nio.ByteBuffer;
 
@@ -12,10 +13,10 @@ import java.nio.ByteBuffer;
 public interface IProtocolHeaderType {
 	/***
 	 * 使用bytes 和 protocolId 构造一个 ProtocolHeader
-	 * @param bytes
+	 * @param message
 	 * @return
 	 */
-	IProtocolHeader outHeader(int protocolId, ByteBuffer bytes);
+	IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message);
 	/***
 	 * 使用ByteBuf
 	 * @param in
@@ -49,11 +50,11 @@ public interface IProtocolHeaderType {
 	 * 获得所有bytes数据
 	 * @return
 	 */
-	default byte[] getAllBytes(int protocolId, ByteBuffer bytes){
-		IProtocolHeader header = outHeader(protocolId, bytes);
-		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + bytes.limit());
+	default byte[] getAllBytes(int protocolId, IChannelMessage<?> message){
+		IProtocolHeader header = outHeader(protocolId, message);
+		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + message.byteBuffer().limit());
 		allocate.put((ByteBuffer) header.dataBytes().rewind());
-		allocate.put((ByteBuffer) bytes.rewind());
+		allocate.put((ByteBuffer) message.byteBuffer().rewind());
 		return allocate.array();
 	}
 }

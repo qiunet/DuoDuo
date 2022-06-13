@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
 import org.qiunet.cross.actor.data.IUserTransferData;
-import org.qiunet.cross.actor.message.Cross2PlayerResponse;
+import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
@@ -140,12 +140,12 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 
 	@Override
 	public IDSessionFuture sendMessage(IChannelData channelData, boolean flush) {
-		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData, flush), flush);
+		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, flush), flush);
 	}
 
 	@Override
 	public IDSessionFuture sendKcpMessage(IChannelData channelData) {
 		// kcp 要求实时. 直接发送出去
-		return super.sendMessage(Cross2PlayerResponse.valueOf(channelData, true, true), true);
+		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, true, true), true);
 	}
 }

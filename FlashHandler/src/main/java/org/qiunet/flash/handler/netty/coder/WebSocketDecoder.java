@@ -52,7 +52,7 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 		}
 		ByteBuffer byteBuffer = in.nioBuffer(in.readerIndex(), header.getLength());
 		in.skipBytes(header.getLength());
-		MessageContent context = new MessageContent(header.getProtocolId(), byteBuffer);
+		MessageContent context = new MessageContent(header, byteBuffer);
 		if (encryption && !header.validEncryption(context.byteBuffer())) {
 			ctx.channel().close();
 			return;

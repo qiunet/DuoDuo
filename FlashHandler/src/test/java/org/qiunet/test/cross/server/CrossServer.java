@@ -28,7 +28,7 @@ public class CrossServer {
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(Constants.CROSS_SERVER_PORT).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.cross).setPort(Constants.CROSS_SERVER_PORT).build())
 				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(Constants.CROSS_NODE_PORT).build())
 				.await();
 	}
