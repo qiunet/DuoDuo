@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
@@ -15,6 +16,7 @@ import org.qiunet.utils.string.ToString;
  * 2020-09-24 09:34
  */
 @SkipProtoGenerator
+@ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.TRANSACTION_REQ, desc = "处理事务请求")
 public class RouteTransactionReq implements IChannelData, IDataToString {
 	/**

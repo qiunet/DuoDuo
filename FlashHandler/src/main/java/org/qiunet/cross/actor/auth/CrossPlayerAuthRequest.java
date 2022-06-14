@@ -4,6 +4,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 
 /***
@@ -13,6 +14,7 @@ import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
  * 2020-10-23 16:50
  */
 @SkipProtoGenerator
+@ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.CROSS_PLAYER_AUTH, desc = "跨服鉴权")
 public class CrossPlayerAuthRequest implements IChannelData {
 	@Protobuf(description = "玩家id")

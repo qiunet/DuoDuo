@@ -24,8 +24,6 @@ public interface IProtocolId {
 	 * 模块id: 0
 	 */
 	interface System {
-		/**跨服服务 直接发给玩家的数据. netty直接转发即可 **/
-		int CROSS_2_PLAYER_MSG = 1;
 
 		/**服务没有开启*/
 		int SERVER_NOT_OPEN_RSP = 3;
@@ -42,6 +40,7 @@ public interface IProtocolId {
 		/**申请kcp的token. 仅tcp WebSocket使用. */
 		int KCP_TOKEN_REQ = 8;
 		int KCP_TOKEN_RSP = 9;
+
 		/**申请kcp 绑定*/
 		int KCP_BIND_AUTH_REQ = 10;
 		int KCP_BIND_AUTH_RSP = 11;
@@ -53,7 +52,7 @@ public interface IProtocolId {
 
 
 		/**跨服事件**/
-		int CROSS_EVENT = 600;
+		int CROSS_EVENT_REQ = 600;
 
 		/** 事务请求 **/
 		int TRANSACTION_REQ = 601;

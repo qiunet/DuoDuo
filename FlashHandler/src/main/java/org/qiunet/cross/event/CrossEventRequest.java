@@ -6,6 +6,7 @@ import org.qiunet.cross.transaction.TransferJsonData;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.string.IDataToString;
@@ -18,7 +19,8 @@ import org.qiunet.utils.string.ToString;
  * 2020-10-15 17:00
  */
 @SkipProtoGenerator
-@ChannelData(ID = IProtocolId.System.CROSS_EVENT, desc = "跨服事件处理")
+@ServerCommunicationData
+@ChannelData(ID = IProtocolId.System.CROSS_EVENT_REQ, desc = "跨服事件处理")
 public class CrossEventRequest implements IChannelData, IDataToString {
 	/**
 	 * 系统发给玩家的事件. 需要有playerID. 会在玩家的线程执行

@@ -5,6 +5,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.secret.MD5Util;
@@ -17,6 +18,7 @@ import org.qiunet.utils.secret.MD5Util;
  * 2020-10-22 15:57
  */
 @SkipProtoGenerator
+@ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH, desc = "serverNode 鉴权请求")
 public class ServerNodeAuthRequest implements IChannelData {
 	@Protobuf(description = "请求serverId 鉴权")
