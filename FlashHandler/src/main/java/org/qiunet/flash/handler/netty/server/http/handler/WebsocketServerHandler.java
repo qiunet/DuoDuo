@@ -47,17 +47,12 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		try {
-			this.channelRead1(ctx, content);
+			ChannelUtil.channelRead(ctx.channel(), params, content);
 		}finally {
-			ctx.fireChannelRead(content);
+			ctx.fireChannelRead(content.retain());
 		}
 	}
 
-
-	protected void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		// WebSocket ping pong 可以交给webSocket 自己的实现搞定
-		ChannelUtil.channelRead(ctx.channel(), params, content);
-	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

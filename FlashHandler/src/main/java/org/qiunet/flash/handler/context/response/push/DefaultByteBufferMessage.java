@@ -14,8 +14,8 @@ public class DefaultByteBufferMessage implements IChannelMessage<ByteBuffer> {
 	private final ByteBuffer buffer;
 
 	public DefaultByteBufferMessage(int protocolId, ByteBuffer buffer) {
+		this.buffer = (ByteBuffer) buffer.rewind();
 		this.protocolId = protocolId;
-		this.buffer = buffer;
 	}
 
 	@Override

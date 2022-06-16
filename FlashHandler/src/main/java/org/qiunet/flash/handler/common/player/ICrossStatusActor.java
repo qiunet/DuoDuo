@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /***
@@ -70,4 +71,9 @@ public interface ICrossStatusActor {
 	}
 
 	void sendCrossMessage(IChannelMessage<?> channelData);
+	/**
+	 * 当前的跨服session
+	 * @return
+	 */
+	ISession crossSession();
 }

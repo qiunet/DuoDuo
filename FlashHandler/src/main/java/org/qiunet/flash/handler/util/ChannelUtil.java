@@ -204,23 +204,31 @@ public final class ChannelUtil {
 	public static void processHandler(Channel channel, IHandler handler, MessageContent content) {
 		ISession session = ChannelUtil.getSession(channel);
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (handler instanceof ITransmitHandler
-				&& messageActor instanceof ICrossStatusActor
-				&& ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			if (logger.isInfoEnabled()) {
-				Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(content.getProtocolId());
-				if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
-					IChannelData channelData = ProtobufDataManager.decode(aClass, content.byteBuffer());
-					logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
-				}
-			}
-			((ICrossStatusActor) messageActor).sendCrossMessage(new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer()));
+		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
+			content.retain();
+			messageActor.addMessage(m -> transmitMessage(messageActor, content, channel));
 			return;
 		}
 		if (channel.isActive()) {
-			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
+			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content.retain(), channel, handler, messageActor);
 			messageActor.addMessage(context);
 		}
+	}
+
+
+	private static void transmitMessage(IMessageActor messageActor, MessageContent content, Channel channel) {
+		if (logger.isInfoEnabled()) {
+			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(content.getProtocolId());
+			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+				IChannelData channelData = ProtobufDataManager.decode(aClass, content.byteBuffer());
+				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
+			}
+		}
+
+		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
+
+		ByteBuf byteBuf = messageContentToByteBuf(new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer()), crossSession.channel());
+		crossSession.channel().writeAndFlush(byteBuf);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

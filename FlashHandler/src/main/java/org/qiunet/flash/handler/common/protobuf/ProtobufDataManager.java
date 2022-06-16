@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.common.protobuf;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.CodedInputStream;
-import com.google.protobuf.CodedOutputStream;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.IOException;
@@ -45,17 +44,21 @@ public class ProtobufDataManager {
 	 * @return
 	 */
 	public static ByteBuffer encode(Object obj) {
-		Preconditions.checkNotNull(obj);
-		Class objClass = obj.getClass();
-		try {
-			Codec codec = getCodec(objClass);
-			int size = codec.size(obj);
-			ByteBuffer buffer = ByteBuffer.allocateDirect(size);
-			codec.writeTo(obj, CodedOutputStream.newInstance(buffer));
-			return buffer;
-		} catch (Exception e) {
-			throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
-		}
+		return ByteBuffer.wrap(encodeToByteArray(obj));
+
+		// jprotobuf 有bug
+
+		//Preconditions.checkNotNull(obj);
+		//Class objClass = obj.getClass();
+		//try {
+		//	Codec codec = getCodec(objClass);
+		//	int size = codec.size(obj);
+		//	ByteBuffer buffer = ByteBuffer.allocateDirect(size);
+		//	codec.writeTo(obj, CodedOutputStream.newInstance(buffer));
+		//	return buffer;
+		//} catch (Exception e) {
+		//	throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
+		//}
 	}
 	/**
 	 * 反序列对象出来.

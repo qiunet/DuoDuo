@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -28,7 +27,6 @@ import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.net.URI;
-import java.nio.ByteBuffer;
 import java.util.function.Supplier;
 
 /**
@@ -141,16 +139,17 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		ByteBuf byteBuf = request.content();
-		ByteBuffer byteBuffer = byteBuf.nioBuffer(byteBuf.readerIndex(), header.getLength());
-		byteBuf.skipBytes(header.getLength());
-		MessageContent content = new MessageContent(header, byteBuffer);
-		if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
-			// encryption 不对, 不被认证的请求
-			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
-			return;
+		MessageContent content = new MessageContent(header, request.content().readRetainedSlice(header.getLength()));
+		try {
+			if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
+				// encryption 不对, 不被认证的请求
+				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
+				return;
+			}
+			this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
+		}finally {
+			content.release();
 		}
-		this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
 	}
 
 	/**
@@ -168,7 +167,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content.retain(), ctx.channel(), handler, params, request);
 		ThreadPoolManager.MESSAGE_HANDLER.submit(() -> {
 			try {
 				context.handlerRequest();
@@ -185,10 +184,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
-		ByteBuf byteBuf = request.content();
-		ByteBuffer byteBuffer = byteBuf.nioBuffer(byteBuf.readerIndex(), byteBuf.readableBytes());
-		byteBuf.skipBytes(byteBuf.readableBytes());
-		MessageContent content = new MessageContent(uriPath, byteBuffer);
-		this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
+		MessageContent content = new MessageContent(uriPath, request.content().retain());
+		try {
+			this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
+		}finally {
+			content.release();
+		}
 	}
 }

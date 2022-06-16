@@ -79,7 +79,9 @@ public class ByteUtil {
 	 */
 	public static byte [] readBytebuffer(ByteBuffer buffer, int index, int length) {
 		byte [] bytes = new byte[length];
+		buffer.mark();
 		buffer.get(bytes, index, length);
+		buffer.reset();
 		return bytes;
 	}
 }

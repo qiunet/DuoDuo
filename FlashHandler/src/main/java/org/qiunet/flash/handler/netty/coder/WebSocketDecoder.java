@@ -10,7 +10,6 @@ import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -50,9 +49,7 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 			ctx.channel().close();
 			return;
 		}
-		ByteBuffer byteBuffer = in.nioBuffer(in.readerIndex(), header.getLength());
-		in.skipBytes(header.getLength());
-		MessageContent context = new MessageContent(header, byteBuffer);
+		MessageContent context = new MessageContent(header, in.readRetainedSlice(header.getLength()));
 		if (encryption && !header.validEncryption(context.byteBuffer())) {
 			ctx.channel().close();
 			return;

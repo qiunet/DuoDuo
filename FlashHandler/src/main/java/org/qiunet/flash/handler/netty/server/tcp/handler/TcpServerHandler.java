@@ -40,7 +40,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		try {
 			channelRead1(ctx, content);
 		}finally {
-			ctx.fireChannelRead(content);
+			ctx.fireChannelRead(content.retain());
 		}
 	}
 

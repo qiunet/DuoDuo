@@ -124,6 +124,7 @@ abstract class BaseSession implements ISession {
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		if (channel != null) {
+			sj.add("Type = "+channel.attr(ServerConstants.HANDLER_TYPE_KEY).get());
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			if (messageActor != null) {
 				sj.add(messageActor.getIdentity());

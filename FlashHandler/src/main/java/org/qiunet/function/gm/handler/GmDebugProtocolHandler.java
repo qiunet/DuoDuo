@@ -1,5 +1,6 @@
 package org.qiunet.function.gm.handler;
 
+import io.netty.buffer.Unpooled;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -75,7 +76,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 			public boolean validEncryption(ByteBuffer buffer) {
 				return true;
 			}
-		}, channelData.toByteBuffer()));
+		}, Unpooled.wrappedBuffer(channelData.toByteBuffer())));
 		// 上面throw exception 不会执行下面.
 		playerActor.sendMessage(GmDebugProtocolRsp.valueOf());
 	}

@@ -170,6 +170,14 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
+	public ISession crossSession() {
+		if (crossServerType == null) {
+			throw new CustomException("Current not cross to any server");
+		}
+		return crossConnectors.get(crossServerType).getSession();
+	}
+
+	@Override
 	public void auth(long id) {
 		if (isAuth()) {
 			return;
