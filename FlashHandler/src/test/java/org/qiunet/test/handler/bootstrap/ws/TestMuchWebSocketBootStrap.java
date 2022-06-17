@@ -14,8 +14,10 @@ import org.qiunet.function.badword.LoadBadWordEventData;
 import org.qiunet.test.handler.bootstrap.http.HttpBootStrap;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.WsPbLoginRequest;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by qiunet.
@@ -24,6 +26,7 @@ import java.util.concurrent.CountDownLatch;
 public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 	private final int clientCount = 100;
 	private final int requestCount = 1000;
+	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
 	@Test
 	public void testMuchWebSocket() throws InterruptedException {
@@ -50,7 +53,7 @@ public class TestMuchWebSocketBootStrap extends HttpBootStrap {
 		public void response(ISession session, MessageContent data) {
 			// test 的地方.直接使用bytes 解析. 免得release
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
-			System.out.println(response.getTestString());
+			LoggerType.DUODUO_FLASH_HANDLER.info("count: {} , content: {}", counter.incrementAndGet(), response.getTestString());
 			latch.countDown();
 		}
 	}

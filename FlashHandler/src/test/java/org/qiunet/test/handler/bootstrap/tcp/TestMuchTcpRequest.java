@@ -10,8 +10,10 @@ import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.TcpPbLoginRequest;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 大量请求的泄漏测试
@@ -20,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestMuchTcpRequest extends BasicTcpBootStrap {
 	private final int requestCount = 100000;
+	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 
 	@Test
@@ -49,7 +52,7 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 		@Override
 		public void response(ISession session, MessageContent data) {
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
-			System.out.println(response.getTestString());
+			LoggerType.DUODUO_FLASH_HANDLER.info("count: {}, content: {}", counter.incrementAndGet(), response.getTestString());
 			latch.countDown();
 		}
 	}

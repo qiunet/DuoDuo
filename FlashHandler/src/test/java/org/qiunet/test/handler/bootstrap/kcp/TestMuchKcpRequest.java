@@ -9,8 +9,10 @@ import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.TcpPbLoginRequest;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 大量请求的泄漏测试
@@ -19,8 +21,8 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestMuchKcpRequest extends BasicKcpBootStrap {
 	private final int requestCount = 100000;
+	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
-
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyKcpClient client = NettyKcpClient.create(KcpClientParams.DEFAULT_PARAMS, new Trigger());
@@ -48,7 +50,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 		@Override
 		public void response(ISession session, MessageContent data) {
 			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
-			System.out.println(response.getTestString());
+			LoggerType.DUODUO_FLASH_HANDLER.info("count: {}, content: {}", counter.incrementAndGet(), response.getTestString());
 			latch.countDown();
 		}
 	}

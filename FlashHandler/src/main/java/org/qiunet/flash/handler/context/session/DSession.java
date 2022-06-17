@@ -5,7 +5,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.Attribute;
 import io.netty.util.concurrent.GenericFutureListener;
-import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -137,13 +136,10 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		return this;
 	}
 
-	private ScheduledFuture<?> flushSchedule;
 	/**
 	 * flush
 	 */
-	private void flush0(){
-		flushScheduling.set(false);
-		this.flushSchedule = null;
+	private synchronized void flush0(){
 		counter.set(0);
 		channel.flush();
 	}
@@ -181,18 +177,20 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			return this.realSendMessage(message, true);
 		}
 
-		IDSessionFuture future = this.realSendMessage(message, false);
+		IDSessionFuture future;
+		synchronized (this) {
+			future = this.realSendMessage(message, false);
+		}
+
 		if (counter.incrementAndGet() >= 10) {
-			// 次数够也flush
-			if (this.flushSchedule != null && ! this.flushSchedule.isDone()) {
-				this.flushSchedule.cancel(false);
-			}
 			this.flush0();
 			return future;
 		}
 
 		if (flushScheduling.compareAndSet(false, true)) {
-			this.flushSchedule = channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
+			// 不取消future 也没有损失.
+			channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
+			this.flushScheduling.set(false);
 		}
 		return future;
 	}

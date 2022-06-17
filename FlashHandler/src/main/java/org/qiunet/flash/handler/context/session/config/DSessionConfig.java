@@ -58,7 +58,7 @@ public final class DSessionConfig {
 		}
 
 		public DSessionConfigBuilder setFlush_delay_ms(int flush_delay_ms) {
-			Preconditions.checkState(flush_delay_ms > 10, "flush delay must grant than 10 ms!");
+			Preconditions.checkState(flush_delay_ms > 10 && flush_delay_ms < 1000, "flush delay must grant than 10 ms and less than 1000 ms!");
 			this.flush_delay_ms = flush_delay_ms;
 			return this;
 		}
