@@ -187,17 +187,19 @@ public class BootstrapServer {
 			if (! shutdown.compareAndSet(false, true)) {
 				return;
 			}
-
-			for (INettyServer server : nettyServers) {
-				server.shutdown();
-			}
-
+			// 停止玩家进入 请求
+			ServerClosedEvent.fireClosed();
+			// 触发停服事件
 			ServerShutdownEventData.fireShutdownEventHandler();
-
+			// 触发业务自定义事情
 			if (hook != null) {
 				hook.shutdown();
 			}
-
+			// 停止所有服务
+			for (INettyServer server : nettyServers) {
+				server.shutdown();
+			}
+			// 放开主线程
 			LockSupport.unpark(awaitThread);
 		}
 
@@ -223,7 +225,7 @@ public class BootstrapServer {
 
 			UserOnlineManager.instance.foreach(actor -> {
 				logger.info("Push message to online user {}", actor.getId());
-				if (! actor.isCrossPlayer()) {
+				if (! actor.isPlayerActor()) {
 					actor.sendMessage(PlayerReLoginPush.valueOf());
 				}else if (actor.isCrossPlayer()) {
 					actor.sendMessage(CrossPlayerLogoutPush.instance);

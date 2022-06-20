@@ -74,10 +74,11 @@ abstract class BaseSession implements ISession {
 			return;
 		}
 
-
-		logger.info("Session [{}] closed by cause [{}]", this, cause.getDesc());
 		closeListeners.forEach(l -> l.close(this, cause));
+
+		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
 		if (channel != null && (channel.isActive() || channel.isOpen())) {
+			logger.info("Session [{}] closed", this);
 			this.flush();
 			channel.close();
 		}

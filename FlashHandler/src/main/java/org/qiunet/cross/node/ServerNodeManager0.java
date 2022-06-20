@@ -229,7 +229,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return ScannerType.SERVER_NODE;
 	}
 
-	@EventListener(EventHandlerWeightType.HIGHEST)
+	@EventListener(EventHandlerWeightType.MIDDLE)
 	private void onShutdown(ServerShutdownEventData data) {
 		if (redisUtil == null) {
 			return;

@@ -13,7 +13,7 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.hook.ShutdownHookUtil;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 
 import java.util.List;
 import java.util.Map;
@@ -42,19 +42,6 @@ public enum UserOnlineManager {
 	 * 等待重连
 	 */
 	private static final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
-
-
-	UserOnlineManager() {
-		this.shutdownHook();
-	}
-
-	private void shutdownHook() {
-		ShutdownHookUtil.getInstance().addFirst(() -> {
-			for (AbstractUserActor actor : onlinePlayers.values()) {
-				actor.session.close(CloseCause.SERVER_SHUTDOWN);
-			}
-		});
-	}
 
 	@EventListener
 	private void addPlayerActor(AuthEventData eventData) {
@@ -242,6 +229,12 @@ public enum UserOnlineManager {
 		public WaitActor(PlayerActor actor, DFuture<Void> future) {
 			this.actor = actor;
 			this.future = future;
+		}
+	}
+	@EventListener(EventHandlerWeightType.HIGHEST)
+	private void serverShutdown(ServerShutdownEventData event) {
+		for (AbstractUserActor actor : onlinePlayers.values()) {
+			actor.session.close(CloseCause.SERVER_SHUTDOWN);
 		}
 	}
 
