@@ -57,6 +57,7 @@ public class TcpSocketDecoder extends ByteToMessageDecoder {
 		MessageContent content = new MessageContent(header, in.readRetainedSlice(header.getLength()));
 		if (encryption && ! header.validEncryption(content.byteBuffer())) {
 			ctx.channel().close();
+			content.release();
 			return;
 		}
 

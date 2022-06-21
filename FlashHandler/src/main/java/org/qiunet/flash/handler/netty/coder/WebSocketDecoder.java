@@ -49,12 +49,13 @@ public class WebSocketDecoder extends ByteToMessageDecoder {
 			ctx.channel().close();
 			return;
 		}
-		MessageContent context = new MessageContent(header, in.readRetainedSlice(header.getLength()));
-		if (encryption && !header.validEncryption(context.byteBuffer())) {
+		MessageContent content = new MessageContent(header, in.readRetainedSlice(header.getLength()));
+		if (encryption && !header.validEncryption(content.byteBuffer())) {
 			ctx.channel().close();
+			content.release();
 			return;
 		}
 
-		out.add(context);
+		out.add(content);
 	}
 }
