@@ -2,12 +2,12 @@ package org.qiunet.function.reward;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.qiunet.cfg.base.IAfterLoad;
 import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 
+import java.util.Collections;
 import java.util.List;
 
 /***
@@ -16,19 +16,19 @@ import java.util.List;
  * @author qiunet
  * 2020-12-28 20:35
  */
-public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewards<Obj> implements IAfterLoad {
+public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewards<Obj> {
 	private List<RewardConfig> rewardConfigs;
 
 	public UnmodifiableRewards(List<RewardConfig> rewardConfigs) {
-		super();
+		super(Collections.emptyList());
 		this.rewardConfigs = rewardConfigs;
 	}
 
 
 	@Override
-	public void afterLoad() {
+	protected List<BaseReward<Obj>> getRewardList() {
 		if (rewardConfigs == null) {
-			return;
+			return super.getRewardList();
 		}
 
 		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(rewardConfigs.size());
@@ -41,5 +41,6 @@ public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewa
 		}
 		super.baseRewardList = ImmutableList.copyOf(baseRewardList);
 		rewardConfigs = null;
+		return super.getRewardList();
 	}
 }

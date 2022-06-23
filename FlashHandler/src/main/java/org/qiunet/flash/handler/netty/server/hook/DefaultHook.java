@@ -19,7 +19,7 @@ public class DefaultHook implements Hook {
 	@Override
 	public void custom(String msg) {
 		switch (msg) {
-			case "hotSwap":
+			case "hotswap":
 				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
 				break;
 		}

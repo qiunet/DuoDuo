@@ -39,17 +39,17 @@ public enum ServerType {
 	 */
 	LOGIN(3),
 	/**
-	 * 匹配服务器
+	 * 后台
 	 */
-	MATCH(4),
+	BACKSTAGE(4),
 	/**
 	 * 中心服
 	 */
 	CENTER(5),
 	/**
-	 * 后台
+	 * 匹配服务器
 	 */
-	BACK(6),
+	MATCH(6),
 
 	;
 	private final int type;

@@ -50,7 +50,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		}
 
 		RewardContext<Obj> context = RewardContext.valueOf(player, this, type);
-		for (BaseReward<Obj> objBaseReward : baseRewardList) {
+		for (BaseReward<Obj> objBaseReward : this.getRewardList()) {
 			StatusResult result = objBaseReward.verify(context);
 			if (result.isFail()) {
 				context.result = result;
@@ -89,7 +89,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @param rewards
 	 */
 	public void addRewards(Rewards<Obj> rewards) {
-		rewards.baseRewardList.forEach(this::addRewardItem);
+		rewards.getRewardList().forEach(this::addRewardItem);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 */
 	public void addRewardItem(BaseReward<Obj> reward) {
 		boolean merged = false;
-		for (BaseReward<Obj> baseReward : this.baseRewardList) {
+		for (BaseReward<Obj> baseReward : this.getRewardList()) {
 			if (baseReward.canMerge(reward)) {
 				baseReward.doMerge(reward);
 				merged = true;
@@ -106,7 +106,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 			}
 		}
 		if (! merged) {
-			this.baseRewardList.add(reward);
+			this.getRewardList().add(reward);
 		}
 	}
 	/**
@@ -114,7 +114,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @param consumer consumer
 	 */
 	public void forEach(Consumer<BaseReward<Obj>> consumer) {
-		baseRewardList.forEach(consumer);
+		getRewardList().forEach(consumer);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		for (BaseReward<Obj> objBaseReward : baseRewardList) {
+		for (BaseReward<Obj> objBaseReward : getRewardList()) {
 			objBaseReward.grant(context);
 			if (objBaseReward instanceof IRealReward) {
 				context.getRealRewards().add((IRealReward) objBaseReward);
@@ -137,12 +137,16 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		GainRewardEventData.valueOf(this, player, context.getOperationType()).fireEventHandler();
 	}
 
+	protected List<BaseReward<Obj>> getRewardList() {
+		return baseRewardList;
+	}
+
 	/**
 	 * 转成json
 	 * @return
 	 */
 	public String toDbJsonString(){
-		List<RewardConfig> collect = baseRewardList.stream().map(BaseReward::toRewardConfig).collect(Collectors.toList());
+		List<RewardConfig> collect = getRewardList().stream().map(BaseReward::toRewardConfig).collect(Collectors.toList());
 		return JsonUtil.toJsonString(collect);
 	}
 

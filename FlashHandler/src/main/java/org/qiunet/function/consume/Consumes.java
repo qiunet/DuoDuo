@@ -30,6 +30,10 @@ public class Consumes<Obj extends IThreadSafe> {
 		this.consumeList = consumeList;
 	}
 
+	protected List<BaseConsume<Obj>> getConsumeList() {
+		return consumeList;
+	}
+
 	/**
 	 * 1倍 消耗校验
 	 * @param obj 消耗的主体对象
@@ -42,7 +46,7 @@ public class Consumes<Obj extends IThreadSafe> {
 		}
 
 		ConsumeContext<Obj> context = ConsumeContext.valueOf(obj, this, consumeType);
-		for (BaseConsume<Obj> consume : consumeList) {
+		for (BaseConsume<Obj> consume : this.getConsumeList()) {
 			StatusResult result = consume.verify(context);
 			if (result.isFail()) {
 				context.result = result;
@@ -61,7 +65,7 @@ public class Consumes<Obj extends IThreadSafe> {
 			throw new CustomException("Need verify in safe thread!");
 		}
 
-		for (BaseConsume<Obj> consume : consumeList) {
+		for (BaseConsume<Obj> consume : this.getConsumeList()) {
 			consume.consume(context);
 		}
 
@@ -104,7 +108,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 */
 	public void addConsume(BaseConsume<Obj> consume) {
 		boolean merged = false;
-		for (BaseConsume<Obj> baseConsume : this.consumeList) {
+		for (BaseConsume<Obj> baseConsume : this.getConsumeList()) {
 			if (baseConsume.canMerge(consume)) {
 				baseConsume.doMerge(consume);
 				merged = true;
@@ -112,7 +116,7 @@ public class Consumes<Obj extends IThreadSafe> {
 			}
 		}
 		if (! merged) {
-			this.consumeList.add(consume);
+			this.getConsumeList().add(consume);
 		}
 	}
 
@@ -121,14 +125,14 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param consumes
 	 */
 	public void addConsumes(Consumes<Obj> consumes) {
-		consumes.consumeList.forEach(this::addConsume);
+		consumes.getConsumeList().forEach(this::addConsume);
 	}
 	/**
 	 * 循环遍历.
 	 * @param consumer 消耗的consumer
 	 */
 	public void forEach(Consumer<BaseConsume<Obj>> consumer, Predicate<BaseConsume<Obj>> filter) {
-		for (BaseConsume<Obj> objBaseConsume : consumeList) {
+		for (BaseConsume<Obj> objBaseConsume : this.getConsumeList()) {
 			if (! filter.test(objBaseConsume)) {
 				continue;
 			}
@@ -140,7 +144,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param consumer 消耗的consumer
 	 */
 	public void forEach(Consumer<BaseConsume<Obj>> consumer) {
-		consumeList.forEach(consumer);
+		this.getConsumeList().forEach(consumer);
 	}
 
 	/**
@@ -148,7 +152,7 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @return
 	 */
 	public boolean isEmpty(){
-		return consumeList.isEmpty();
+		return this.getConsumeList().isEmpty();
 	}
 
 	/**

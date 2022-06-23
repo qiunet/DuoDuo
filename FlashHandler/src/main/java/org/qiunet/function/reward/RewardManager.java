@@ -1,14 +1,10 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.cfg.base.IAfterLoad;
-import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.function.base.basic.IBasicFunction;
-import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /***
  * 奖励的管理类
@@ -35,22 +31,6 @@ public enum RewardManager {
 			return EMPTY_REWARDS;
 		}
 
-		UnmodifiableRewards unmodifiableRewards = new UnmodifiableRewards(configList);
-		rewardList.add(unmodifiableRewards);
-		return unmodifiableRewards;
-	}
-
-	private static final List<Rewards> rewardList = new CopyOnWriteArrayList<>();
-
-	/**
-	 * 清理数据
-	 * @param data
-	 */
-	@EventListener
-	public void cfgLoadOver(CfgLoadCompleteEvent data) {
-		for (Rewards rewards : rewardList) {
-			((IAfterLoad)rewards).afterLoad();
-		}
-		rewardList.clear();
+		return new UnmodifiableRewards(configList);
 	}
 }

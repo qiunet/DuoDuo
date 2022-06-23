@@ -1,10 +1,6 @@
 package org.qiunet.function.consume;
 
-import com.google.common.collect.Lists;
-import org.qiunet.cfg.base.IAfterLoad;
-import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.function.base.basic.IBasicFunction;
-import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.Collections;
@@ -36,21 +32,6 @@ public enum ConsumesManager {
 		}
 
 
-		UnmodifiableConsumes unmodifiableConsumes = new UnmodifiableConsumes(configList);
-		consumeList.add(unmodifiableConsumes);
-		return unmodifiableConsumes;
-	}
-
-	private static final List<Consumes> consumeList = Lists.newCopyOnWriteArrayList();
-	/**
-	 * 清理数据
-	 * @param data
-	 */
-	@EventListener
-	public void cfgLoadOver(CfgLoadCompleteEvent data) {
-		for (Consumes consumes : consumeList) {
-			((IAfterLoad) consumes).afterLoad();
-		}
-		consumeList.clear();
+		return new UnmodifiableConsumes(configList);
 	}
 }

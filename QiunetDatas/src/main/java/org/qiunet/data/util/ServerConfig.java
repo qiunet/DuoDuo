@@ -1,5 +1,6 @@
 package org.qiunet.data.util;
 
+import org.qiunet.data.core.enums.ServerEnvMode;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.collection.generics.StringList;
 import org.qiunet.utils.config.anno.DConfig;
@@ -65,11 +66,11 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	@DConfigValue(value = ENTITY_TO_TABLE_RANGE, defaultVal = "")
 	private static StringList entity2TableSourceRange;
 	/**
-	 * 是否是正式服.
-	 * 是正式服. 需要屏蔽很多测试功能.
+	 * 环境的mode
+	 * 需要屏蔽很多测试功能.
 	 */
-	@DConfigValue(value = "server.official", defaultVal = "true")
-	private static boolean official;
+	@DConfigValue(value = "server.env_mode", defaultVal = "OFFICIAL")
+	private static ServerEnvMode serverEnvMode;
 	/**
 	 * 服务器通讯使用的key
 	 */
@@ -80,7 +81,11 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 * 是正式服. 需要屏蔽很多测试功能.
 	 */
 	public static boolean isOfficial() {
-		return official;
+		return serverEnvMode == ServerEnvMode.OFFICIAL;
+	}
+
+	public static ServerEnvMode getServerEnvMode() {
+		return serverEnvMode;
 	}
 
 	public static int getServerId() {
