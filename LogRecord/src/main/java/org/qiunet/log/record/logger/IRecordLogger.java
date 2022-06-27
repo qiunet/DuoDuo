@@ -15,11 +15,11 @@ public interface IRecordLogger {
 	 * logger 的名称
 	 * @return
 	 */
-	 String loggerName();
+	 String recordLoggerName();
 
 	/**
 	 * 记录日志
 	 * @param logRecordMsg
 	 */
-	 <T extends Enum<T> & ILogRecordType, L extends LogRecordMsg<T>> void send(L logRecordMsg);
+	 <T extends Enum<T> & ILogRecordType<T>, L extends LogRecordMsg<T>> void send(L logRecordMsg);
 }

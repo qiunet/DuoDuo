@@ -12,7 +12,7 @@ public interface ILogRecordType<T extends Enum<T> & ILogRecordType<T>> {
 	 *
 	 * @return
 	 */
-	default String getLogRecordName() {
+	default String getName() {
 		return ((T) this).name().toLowerCase();
 	}
 }

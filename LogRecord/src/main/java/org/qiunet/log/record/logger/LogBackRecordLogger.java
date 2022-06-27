@@ -1,4 +1,4 @@
-package org.qiunet.log.record.msg;
+package org.qiunet.log.record.logger;
 
 
 import ch.qos.logback.classic.AsyncAppender;
@@ -12,7 +12,7 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.google.common.collect.Maps;
 import org.qiunet.log.record.enums.ILogRecordType;
-import org.qiunet.log.record.logger.IRecordLogger;
+import org.qiunet.log.record.msg.LogRecordMsg;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-04-02 11:06
  ***/
-enum LogBackRecordLogger implements IRecordLogger {
+public enum LogBackRecordLogger implements IRecordLogger {
 	instance;
 
 	private final Map<String, Logger> loggers = Maps.newConcurrentMap();
@@ -72,13 +72,13 @@ enum LogBackRecordLogger implements IRecordLogger {
 	}
 
 	@Override
-	public String loggerName() {
+	public String recordLoggerName() {
 		return "logbackRecord";
 	}
 
 	@Override
-	public <T extends Enum<T> & ILogRecordType, L extends LogRecordMsg<T>>  void send(L logRecordMsg) {
-		Logger logger = loggers.computeIfAbsent(logRecordMsg.logType().getLogRecordName(), this::createLogger);
+	public <T extends Enum<T> & ILogRecordType<T>, L extends LogRecordMsg<T>>  void send(L logRecordMsg) {
+		Logger logger = loggers.computeIfAbsent(logRecordMsg.logType().getName(), this::createLogger);
 		LoggingEvent le = new LoggingEvent(Logger.FQCN, logger, Level.INFO, logRecordMsg.logMessage(), null, null);
 		le.setTimeStamp(logRecordMsg.createTime());
 		logger.callAppenders(le);
