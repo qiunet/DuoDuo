@@ -24,8 +24,8 @@ public class NettyTcpServerInitializer extends ChannelInitializer<SocketChannel>
 		ChannelPipeline pipeline = ch.pipeline();
 		pipeline.addLast("TcpSocketEncoder", new TcpSocketEncoder());
 		pipeline.addLast("TcpSocketDecoder", new TcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
-		pipeline.addLast("handler", new TcpServerHandler(params));
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
-		pipeline.addLast(new NettyIdleCheckHandler());
+		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
+		pipeline.addLast("TcpServerHandler", new TcpServerHandler(params));
 	}
 }

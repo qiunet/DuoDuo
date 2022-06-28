@@ -1,7 +1,6 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -10,24 +9,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class QuartzSchedule {
+public enum QuartzSchedule {
+	instance;
 
-	private volatile static QuartzSchedule instance;
-	private List<JobFacade> jobs = new ArrayList<>(4);
-	private QuartzSchedule() {
-		if (instance != null) throw new CustomException("Instance Duplication!");
-		instance = this;
-	}
+	private final List<JobFacade> jobs = new ArrayList<>(4);
 
 	public static QuartzSchedule getInstance() {
-		if (instance == null) {
-			synchronized (QuartzSchedule.class) {
-				if (instance == null)
-				{
-					new QuartzSchedule();
-				}
-			}
-		}
 		return instance;
 	}
 	/***
@@ -41,7 +28,7 @@ public class QuartzSchedule {
 	}
 
 	private static  class JobFacade implements IDelayTask<Boolean> {
-		private IJob job;
+		private final IJob job;
 
 		private Date fireTime;
 

@@ -11,6 +11,7 @@ import org.qiunet.test.cross.common.proto.req.LoginRequest;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
 /***
@@ -21,12 +22,13 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class Client {
 	private static IChannelMessageSender websocketClient;
+	private static final AtomicInteger counter = new AtomicInteger();
 	@BeforeAll
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.CLIENT).scanner();
 		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(),
 		(session, data) -> {
-			System.out.println("--------------------------"+data.getProtocolId());
+			System.out.println(counter.incrementAndGet() + "--------------------------"+data.getProtocolId());
 		});
 	}
 
@@ -36,7 +38,9 @@ public class Client {
 		websocketClient.sendMessage(new EquipIndexRequest());
 		Thread.sleep(2000);
 		//// 第二次将转发到Cross服务
-		websocketClient.sendMessage(new EquipIndexRequest());
+		for (int i = 0; i < 10; i++) {
+			websocketClient.sendMessage(new EquipIndexRequest());
+		}
 		LockSupport.park();
 	}
 }

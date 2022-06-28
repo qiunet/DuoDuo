@@ -1,4 +1,6 @@
 package org.qiunet.utils.math;
+import org.qiunet.utils.exceptions.CustomException;
+
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -151,5 +153,18 @@ public class MathUtil {
 	 */
 	public static boolean isHit(int rate) {
 		return random(10000) <= rate;
+	}
+
+	/**
+	 * 安全的强转 long to  int
+	 * @param val
+	 * @return
+	 */
+	public static int toInt(long val) {
+		int i = (int) val;
+		if (i != val) {
+			throw new CustomException("value {} out of int range!", val);
+		}
+		return i;
 	}
 }

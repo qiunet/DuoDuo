@@ -222,4 +222,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		return this.kcpSession.sendKcpMessage(message);
 	}
 
+	public KcpSession getKcpSession() {
+		return kcpSession;
+	}
 }

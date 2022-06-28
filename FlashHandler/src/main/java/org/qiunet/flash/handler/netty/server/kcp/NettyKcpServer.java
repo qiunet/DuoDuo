@@ -69,8 +69,8 @@ public class NettyKcpServer implements INettyServer {
 							p.addLast("KcpSocketEncoder", new KcpSocketEncoder())
 							.addLast("KcpSocketDecoder", new KcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 							.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0))
-							.addLast("KcpServerHandler", new KcpServerHandler(params))
-							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
+							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler())
+							.addLast("KcpServerHandler", new KcpServerHandler(params));
 						}
 					});
 

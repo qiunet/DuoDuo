@@ -1,5 +1,7 @@
 package org.qiunet.cross.common.trigger;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -7,17 +9,23 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufferMessage;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
+
+import java.nio.ByteBuffer;
 
 /***
  * player Tcp客户端响应处理
@@ -63,15 +71,22 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
 				IChannelData channelData = ProtobufDataManager.decode(aClass, data.byteBuffer());
 				ServerConnType serverConnType = iMessageActor.getSender().channel().attr(ServerConstants.HANDLER_TYPE_KEY).get();
-				logger.info("C2P {} message: {}", header.isKcp()  ? "KCP": serverConnType, ToString.toString(channelData));
+				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), header.isKcp()  ? "KCP": serverConnType, ToString.toString(channelData));
 			}
 		}
+		DefaultByteBufferMessage bufferMessage = new DefaultByteBufferMessage(data.getProtocolId(), data.byteBuffer());
 
-		DefaultByteBufferMessage message = new DefaultByteBufferMessage(data.getProtocolId(), data.byteBuffer());
-		if (header.isKcp()) {
-			iMessageActor.getSender().sendKcpMessage(message);
+		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(iMessageActor.getSender().channel());
+		IProtocolHeader protocolHeader = headerAdapter.outHeader(data.getProtocolId(), bufferMessage);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), data.byteBuf());
+
+		if (header.isKcp() && iMessageActor.isKcpSessionPrepare()) {
+			((DSession) iMessageActor.getSender()).getKcpSession().channel().writeAndFlush(byteBuf);
 		}else {
-			iMessageActor.getSender().sendMessage(message, header.isFlush());
+			iMessageActor.getSender().channel().write(byteBuf);
+			if (header.isKcp() || header.isFlush()) {
+				iMessageActor.getSender().channel().flush();
+			}
 		}
 	}
 }

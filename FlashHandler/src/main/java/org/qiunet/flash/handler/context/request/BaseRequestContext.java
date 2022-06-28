@@ -31,11 +31,7 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 		}else {
 			this.handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
 		}
-		try {
-			this.requestData = getHandler().parseRequestData(content.byteBuffer());
-		}finally {
-			content.release();
-		}
+		this.requestData = getHandler().parseRequestData(content.byteBuffer());
 	}
 
 	@Override

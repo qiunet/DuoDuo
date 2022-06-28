@@ -210,7 +210,7 @@ public final class ChannelUtil {
 			return;
 		}
 		if (channel.isActive()) {
-			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content.retain(), channel, handler, messageActor);
+			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
 			messageActor.addMessage(context);
 		}
 	}
@@ -224,10 +224,12 @@ public final class ChannelUtil {
 				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 			}
 		}
-
+		DefaultByteBufferMessage bufferMessage = new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer());
 		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
+		IProtocolHeaderType headerAdapter = getProtocolHeaderAdapter(crossSession.channel());
+		IProtocolHeader protocolHeader = headerAdapter.outHeader(content.getProtocolId(), bufferMessage);
 
-		ByteBuf byteBuf = messageContentToByteBuf(new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer()), crossSession.channel());
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), content.byteBuf());
 		crossSession.channel().writeAndFlush(byteBuf);
 	}
 

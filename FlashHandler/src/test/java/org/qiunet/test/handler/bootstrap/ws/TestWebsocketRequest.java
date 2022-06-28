@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
  * Created by qiunet.
  * 17/12/1
  */
-public class TestWebsocketBootstrap extends HttpBootStrap {
+public class TestWebsocketRequest extends HttpBootStrap {
 	private CountDownLatch latch;
 	private String text;
 

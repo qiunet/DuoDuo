@@ -9,7 +9,9 @@ import org.qiunet.utils.scanner.ScannerType;
 /***
  * 扫描annotation
  */
-public class CronAnnotationScannerHandler implements IApplicationContextAware {
+enum CronAnnotationScannerHandler implements IApplicationContextAware {
+	instance;
+
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
 		context.getMethodsAnnotatedWith(CronSchedule.class).stream()

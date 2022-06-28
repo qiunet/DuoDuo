@@ -1,5 +1,6 @@
 package org.qiunet.test.cross.server;
 
+import io.netty.util.ResourceLeakDetector;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
@@ -22,6 +23,8 @@ public class CrossServer {
 	private static final Hook hook = new MyHook(Constants.CROSS_SERVER_PORT);
 
 	public static void main(String[] args) {
+		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+
 		ClassScanner.getInstance(ScannerType.SERVER)
 			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
 			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, Constants.CROSS_SERVER_PORT, Constants.CROSS_NODE_PORT))

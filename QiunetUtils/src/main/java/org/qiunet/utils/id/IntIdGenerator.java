@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public class IntIdGenerator {
 
-	private AtomicInteger generator;
+	private final AtomicInteger generator;
 
 	public IntIdGenerator() {
 		this(0);

@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
  * 2020-04-20 17:39
  ***/
 public abstract class HttpRequest<B extends HttpRequest> {
-	private static final IResultSupplier<String> DEFAULT_SUPPLIER = response -> response.body().string();
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
 	protected static final OkHttpClient client = new OkHttpClient.Builder()
 		.connectTimeout(3000, TimeUnit.MILLISECONDS)
@@ -101,7 +100,7 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * @return
 	 */
 	public String executor() {
-		return executor(DEFAULT_SUPPLIER);
+		return executor(IResultSupplier.STRING_SUPPLIER);
 	}
 
 	protected abstract Request buildRequest();

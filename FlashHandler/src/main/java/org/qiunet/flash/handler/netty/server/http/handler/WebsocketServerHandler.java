@@ -46,11 +46,7 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		try {
-			ChannelUtil.channelRead(ctx.channel(), params, content);
-		}finally {
-			ctx.fireChannelRead(content.retain());
-		}
+		ChannelUtil.channelRead(ctx.channel(), params, content);
 	}
 
 

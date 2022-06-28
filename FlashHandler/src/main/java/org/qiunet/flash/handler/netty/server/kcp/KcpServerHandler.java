@@ -61,14 +61,6 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		try {
-			channelRead1(ctx, content);
-		}finally {
-			ctx.fireChannelRead(content.retain());
-		}
-	}
-
-	public void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		if (ChannelUtil.handlerPing(ctx.channel(), content)) {
 			return;
 		}

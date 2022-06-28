@@ -80,6 +80,7 @@ public enum  ScannerType {
 			FILE_CONFIG,
 			CHANNEL_DATA,
 			SERVER_NODE,
+			LOG_RECORD,
 			TRANSACTION,
 			URL_REQUEST,
 			CREATE_TABLE,

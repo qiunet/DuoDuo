@@ -212,6 +212,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	private void deprecatedEvent(ServerDeprecatedEvent event) {
+		if (redisUtil == null) {
+			return;
+		}
+
 		if (this.deprecated.compareAndSet(false, true)) {
 			redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 			redisUtil.returnJedis().del(REDIS_SERVER_NODE_INFO_KEY);
@@ -220,6 +224,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	@EventListener
 	private void serverClosed(ServerClosedEvent event) {
+		if (redisUtil == null) {
+			return;
+		}
+
 		redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		this.serverClosed.set(true);
 	}

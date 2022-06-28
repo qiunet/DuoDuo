@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by qiunet.
  * 17/12/2
  */
-public class TestMuchWebSocketBootStrap extends HttpBootStrap {
+public class TestMuchWebSocketRequest extends HttpBootStrap {
 	private final int clientCount = 100;
 	private final int requestCount = 1000;
 	private final AtomicInteger counter = new AtomicInteger();
