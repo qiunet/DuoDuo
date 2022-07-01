@@ -139,9 +139,9 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		ByteBuf content;
 		if (getUriPath().equals(params.getGameURIPath())) {
 			// 不是游戏业务. 不写业务头.
-			content = ChannelUtil.messageContentToByteBuf(responseDataMessage, channel);
+			content = responseDataMessage.withHeaderByteBuf(channel);
 		}else {
-			content = ChannelUtil.messageContentToByteBufWithoutHeader(responseDataMessage);
+			content = responseDataMessage.withoutHeaderByteBuf();
 		}
 
 		FullHttpResponse response = new DefaultFullHttpResponse(

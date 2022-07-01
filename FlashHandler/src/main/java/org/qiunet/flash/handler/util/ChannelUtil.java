@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,13 +15,11 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
-import org.qiunet.flash.handler.context.response.push.DefaultByteBufferMessage;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -33,15 +29,12 @@ import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -56,39 +49,6 @@ public final class ChannelUtil {
 	public static IProtocolHeaderType getProtocolHeaderAdapter(Channel channel) {
 		return channel.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).get();
 	}
-
-	/***
-	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
-	 * @param message
-	 * @param channel
-	 * @return
-	 */
-	public static ByteBuf messageContentToByteBuf(IChannelMessage<?> message, Channel channel) {
-		IProtocolHeaderType adapter = getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(message.getProtocolID(), message);
-
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) message.byteBuffer().rewind()));
-
-		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer(header.dataBytes())));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(message.byteBuffer())));
-		}
-		return byteBuf;
-	}
-
-	/***
-	 * 将一个MessageContent 转为 有 Header 的 ByteBuf
-	 * @param message
-	 * @return
-	 */
-	public static ByteBuf messageContentToByteBufWithoutHeader(IChannelMessage<?> message) {
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(message.byteBuffer());
-		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(message.byteBuffer().array()));
-		}
-		return byteBuf;
-	}
-
 	/***
 	 * 关联Session 和 channel
 	 * @param val
@@ -224,13 +184,10 @@ public final class ChannelUtil {
 				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 			}
 		}
-		DefaultByteBufferMessage bufferMessage = new DefaultByteBufferMessage(content.getProtocolId(), content.byteBuffer());
-		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
-		IProtocolHeaderType headerAdapter = getProtocolHeaderAdapter(crossSession.channel());
-		IProtocolHeader protocolHeader = headerAdapter.outHeader(content.getProtocolId(), bufferMessage);
 
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), content.byteBuf());
-		crossSession.channel().writeAndFlush(byteBuf);
+		DefaultByteBufMessage bufferMessage = new DefaultByteBufMessage(content.getProtocolId(), content.byteBuf());
+		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
+		crossSession.sendMessage(bufferMessage);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

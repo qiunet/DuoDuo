@@ -1,10 +1,19 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.data.ByteUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * 对外响应的编码消息
@@ -46,5 +55,34 @@ public interface IChannelMessage<T> {
 			return ((IDataToString) content)._toString();
 		}
 		return ToString.toString(content);
+	}
+
+	/**
+	 * 获得 添加 protocol header 的 ByteBuf
+	 * @param channel
+	 * @return
+	 */
+	default ByteBuf withHeaderByteBuf(Channel channel) {
+		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(channel);
+		IProtocolHeader header = adapter.outHeader(this.getProtocolID(), this);
+
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) this.byteBuffer().rewind()));
+
+		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer(header.dataBytes())));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(this.byteBuffer())));
+		}
+		return byteBuf;
+	}
+
+	/**
+	 * 获得不添加 protocol header 的ByteBuf
+	 * @return
+	 */
+	default ByteBuf withoutHeaderByteBuf() {
+		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(this.byteBuffer())));
+		}
+		return Unpooled.wrappedBuffer(byteBuffer());
 	}
 }

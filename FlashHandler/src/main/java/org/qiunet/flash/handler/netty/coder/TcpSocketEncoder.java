@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.netty.coder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.util.ChannelUtil;
 
 import java.util.List;
 
@@ -19,6 +18,6 @@ public class TcpSocketEncoder extends MessageToMessageEncoder<IChannelMessage<?>
 			return;
 		}
 
-		out.add(ChannelUtil.messageContentToByteBuf(msg, ctx.channel()));
+		out.add(msg.withHeaderByteBuf(ctx.channel()));
 	}
 }

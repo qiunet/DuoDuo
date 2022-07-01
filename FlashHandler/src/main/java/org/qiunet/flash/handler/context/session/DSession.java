@@ -197,7 +197,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 
 	@Override
 	public boolean isKcpSessionPrepare() {
-		return this.kcpSession != null;
+		return this.kcpSession != null && this.kcpSession.isActive();
 	}
 
 	@Override

@@ -1,7 +1,11 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.util.ReferenceCounted;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.util.ChannelUtil;
 
 import java.nio.ByteBuffer;
 
@@ -10,7 +14,7 @@ import java.nio.ByteBuffer;
  * @Author qiunet
  * @Date Create in 2022/6/13 09:24
  **/
-public class DefaultByteBufMessage implements IChannelMessage<ByteBuf>, ReferenceCounted {
+public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
 
 	private final int protocolId;
 
@@ -47,37 +51,14 @@ public class DefaultByteBufMessage implements IChannelMessage<ByteBuf>, Referenc
 	}
 
 	@Override
-	public int refCnt() {
-		return this.buffer.refCnt();
+	public ByteBuf withHeaderByteBuf(Channel channel) {
+		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(channel);
+		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
+		return Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), this.buffer);
 	}
 
 	@Override
-	public ReferenceCounted retain() {
-		return this.buffer.retain();
-	}
-
-	@Override
-	public ReferenceCounted retain(int increment) {
-		return this.buffer.retain(increment);
-	}
-
-	@Override
-	public ReferenceCounted touch() {
-		return this.buffer.touch();
-	}
-
-	@Override
-	public ReferenceCounted touch(Object hint) {
-		return this.buffer.touch(hint);
-	}
-
-	@Override
-	public boolean release() {
-		return this.buffer.release();
-	}
-
-	@Override
-	public boolean release(int decrement) {
-		return this.buffer.release(decrement);
+	public ByteBuf withoutHeaderByteBuf() {
+		return this.buffer;
 	}
 }
