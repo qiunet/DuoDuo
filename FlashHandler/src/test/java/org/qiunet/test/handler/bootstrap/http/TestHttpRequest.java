@@ -25,7 +25,7 @@ import java.util.concurrent.locks.LockSupport;
  * Created by qiunet.
  * 17/11/22
  */
-public class TestHttpBootStrap extends HttpBootStrap {
+public class TestHttpRequest extends HttpBootStrap {
 	private final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
 		.setProtocolHeaderType(ADAPTER)

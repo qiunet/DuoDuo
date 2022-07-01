@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.StrCodecUtil;
 
@@ -83,15 +82,15 @@ public final class ServerConstants {
 		"04255472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e";
 
 
-	@EventListener
+	@EventListener(EventHandlerWeightType.LESS)
 	private void onStartupComplete(ServerStartupCompleteEvent event) {
 		if (startDt.get() > 0) {
 			LoggerType.DUODUO_FLASH_HANDLER.info("Server startup successful in {} ms", (System.currentTimeMillis() - startDt.get()));
 		}
 	}
 
-	@EventListener(EventHandlerWeightType.LESS)
-	private void onServerStart(ServerStartupEventData eventData){
+	@EventListener
+	private void onServerStart(ServerStartupCompleteEvent eventData){
 		if (LoggerType.DUODUO_FLASH_HANDLER.getLogger().isInfoEnabled()) {
 			LoggerType.DUODUO_FLASH_HANDLER.info(StrCodecUtil.decrypt(ICON));
 		}

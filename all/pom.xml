@@ -88,7 +88,7 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>EventLog</artifactId>
+			<artifactId>LogRecord</artifactId>
 			<optional>true</optional>
 		</dependency>
 
