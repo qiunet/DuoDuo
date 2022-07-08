@@ -1,6 +1,7 @@
 package org.qiunet.utils.convert;
 
 import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
@@ -52,12 +53,11 @@ public class EnumConvert extends BaseObjConvert<Enum> {
 
 	private int getEnumValue(Enum enumConstant) {
 		try {
-			Method method = enumConstant.getClass().getDeclaredMethod("value");
+			Method method = enumConstant.getDeclaringClass().getDeclaredMethod("value");
 			return (int) method.invoke(enumConstant);
 		} catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-			e.printStackTrace();
+			throw new CustomException(e, "convert enum {} error!", enumConstant.getDeclaringClass().getName());
 		}
-		return 0;
 	}
 
 	@Override

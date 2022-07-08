@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
+import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -34,6 +35,7 @@ import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -209,7 +211,11 @@ public final class ChannelUtil {
 	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
 		ISession session = ChannelUtil.getSession(channel);
 		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		logger.error(errMeg, cause);
+		if (cause instanceof KcpException || cause instanceof IOException) {
+			logger.error(errMeg + " errMsg: " + cause.getMessage());
+		}else {
+			logger.error(errMeg, cause);
+		}
 
 		if (channel.isOpen() || channel.isActive()) {
 			startupContext.exception(channel, cause)

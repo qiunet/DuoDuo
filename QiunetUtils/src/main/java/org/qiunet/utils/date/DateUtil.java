@@ -27,6 +27,10 @@ public final class DateUtil {
 	 */
 	public static final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	/**
+	 * 默认日期格式
+	 */
+	public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+	/**
 	 * 外面直接使用 LocalDateTime.format() 可以搞定
 	 **/
 	public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT).withLocale(Locale.getDefault());
