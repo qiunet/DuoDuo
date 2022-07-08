@@ -1,10 +1,8 @@
 package org.qiunet.cfg.wrapper;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.utils.logger.LoggerType;
 
-import java.util.List;
 import java.util.Map;
 
 /***
@@ -25,11 +23,6 @@ public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>> extends
 			return null;
 		}
 		return allCfgs().get(id);
-	}
-
-	@Override
-	default List<Cfg> list() {
-		return Lists.newArrayList(allCfgs().values());
 	}
 
 	/**

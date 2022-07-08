@@ -86,7 +86,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 			message = StatusTipsRsp.valueOf(((StatusResultException) cause));
 		} else {
 			if (cause instanceof KcpException || cause instanceof IOException) {
-				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause.getMessage());
+				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常: {}", cause.getMessage());
 			}else {
 				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
 			}

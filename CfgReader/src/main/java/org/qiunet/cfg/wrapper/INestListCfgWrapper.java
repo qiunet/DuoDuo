@@ -1,6 +1,5 @@
 package org.qiunet.cfg.wrapper;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -72,16 +71,6 @@ public interface INestListCfgWrapper<ID, Cfg extends INestListCfg<ID>>
 		return index >= 0 && index < cfgsById.size();
 	}
 
-	@Override
-	default List<Cfg> list(){
-		Map<ID, List<Cfg>> allCfgs = allCfgs();
-		List<Cfg> cfgList = Lists.newArrayList();
-
-		for (List<Cfg> list : allCfgs.values()) {
-			cfgList.addAll(list);
-		}
-		return cfgList;
-	}
 
 	@Override
 	default int size(){

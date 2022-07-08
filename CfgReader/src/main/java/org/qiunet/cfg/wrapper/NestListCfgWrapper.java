@@ -29,4 +29,10 @@ import java.util.Map;
 	public Map<ID, List<Cfg>> allCfgs() {
 		return cfgManager.allCfgs();
 	}
+
+
+	@Override
+	public List<Cfg> list() {
+		return cfgManager.list();
+	}
 }

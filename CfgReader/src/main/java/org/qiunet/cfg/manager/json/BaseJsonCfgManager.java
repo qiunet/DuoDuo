@@ -28,13 +28,20 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 		super(cfgClass);
 	}
 
+	protected List<Cfg> cfgList;
 	@Override
 	public void loadCfg() throws Exception {
+		this.cfgList = getSimpleListCfg();
+
 		this.init();
 		this.afterLoad();
 	}
 
 	abstract void init() throws Exception;
+
+	public List<Cfg> list() {
+		return cfgList;
+	}
 
 	/**
 	 * 获取配置文件真实路径
@@ -59,7 +66,7 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 	 *
 	 * @return
 	 */
-	protected List<Cfg> getSimpleListCfg() {
+	private List<Cfg> getSimpleListCfg() {
 		logger.debug("读取配置文件 [ " + fileName + " ]");
 		String json;
 		List<JSONObject> jsonObjects = Lists.newLinkedList();

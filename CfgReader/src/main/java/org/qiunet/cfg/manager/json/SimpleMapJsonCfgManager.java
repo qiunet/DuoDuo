@@ -5,7 +5,6 @@ import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,8 +44,7 @@ public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
 
 	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{
 		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
-		List<Cfg> cfgs = getSimpleListCfg();
-		for (Cfg cfg : cfgs) {
+		for (Cfg cfg : this.cfgList) {
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
@@ -58,4 +56,5 @@ public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
 	public Map<ID, Cfg> allCfgs() {
 		return cfgMap;
 	}
+
 }

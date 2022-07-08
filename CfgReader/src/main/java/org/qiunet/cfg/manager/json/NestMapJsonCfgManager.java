@@ -5,7 +5,6 @@ import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.manager.base.INestMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,8 +62,7 @@ public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>
 	 */
 	protected Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
 		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
-		List<Cfg> cfgs = getSimpleListCfg();
-		for (Cfg cfg : cfgs) {
+		for (Cfg cfg : this.cfgList) {
 			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeMap<>());
 			subMap.put(cfg.getSubId(), cfg);
 		}

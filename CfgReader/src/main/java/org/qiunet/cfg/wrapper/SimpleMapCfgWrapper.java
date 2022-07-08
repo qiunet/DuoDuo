@@ -3,6 +3,7 @@ package org.qiunet.cfg.wrapper;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -19,7 +20,7 @@ import java.util.Map;
 	 SimpleMapCfgWrapper(ISimpleMapCfgManager<ID, Cfg> cfgManager) {
 		this.cfgManager = cfgManager;
 	}
-	
+
 	@Override
 	public Class<Cfg> getCfgClass() {
 		return cfgManager.getCfgClass();
@@ -28,5 +29,10 @@ import java.util.Map;
 	@Override
 	public Map<ID, Cfg> allCfgs() {
 		return cfgManager.allCfgs();
+	}
+
+	@Override
+	public List<Cfg> list() {
+		return this.cfgManager.list();
 	}
 }

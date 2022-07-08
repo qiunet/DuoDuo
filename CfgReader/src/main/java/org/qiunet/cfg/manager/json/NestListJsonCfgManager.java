@@ -54,8 +54,7 @@ public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
 	 */
 	protected Map<ID, List<Cfg>> getNestListCfg() throws Exception {
 		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
-		List<Cfg> cfgs = getSimpleListCfg();
-		for (Cfg cfg : cfgs) {
+		for (Cfg cfg : this.cfgList) {
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}

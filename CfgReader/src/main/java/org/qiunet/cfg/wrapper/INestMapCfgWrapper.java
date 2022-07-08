@@ -1,10 +1,8 @@
 package org.qiunet.cfg.wrapper;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.utils.logger.LoggerType;
 
-import java.util.List;
 import java.util.Map;
 
 /***
@@ -67,17 +65,6 @@ public interface INestMapCfgWrapper<ID, SubID, Cfg extends INestMapCfg<ID, SubID
 			return false;
 		}
 		return allCfgs.get(id).containsKey(subID);
-	}
-
-	@Override
-	default List<Cfg> list(){
-		Map<ID, Map<SubID, Cfg>> allCfgs = allCfgs();
-		List<Cfg> cfgList = Lists.newArrayList();
-
-		for (Map<SubID, Cfg> subIDCfgMap : allCfgs.values()) {
-			cfgList.addAll(subIDCfgMap.values());
-		}
-		return cfgList;
 	}
 
 	@Override

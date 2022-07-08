@@ -4,6 +4,7 @@ package org.qiunet.cfg.wrapper;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.manager.base.INestMapCfgManager;
 
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -28,5 +29,10 @@ import java.util.Map;
 	@Override
 	public Map<ID, Map<SubId, Cfg>> allCfgs() {
 		return cfgManager.allCfgs();
+	}
+
+	@Override
+	public List<Cfg> list() {
+		return cfgManager.list();
 	}
 }
