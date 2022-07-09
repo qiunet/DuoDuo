@@ -1,19 +1,23 @@
 package org.qiunet.flash.handler.netty.server.constants;
 
+import com.google.common.collect.Lists;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.StrCodecUtil;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -22,6 +26,11 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class ServerConstants {
 	private ServerConstants(){}
+
+	/**
+	 * 感兴趣的消息列表
+	 */
+	public static final ArgumentKey<List<DefaultBytesMessage>> INTEREST_MESSAGE_LIST = new ArgumentKey<>(Lists::newLinkedList);
 	/**
 	 * netty 保存的handShaker
 	 */

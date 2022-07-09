@@ -146,7 +146,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 
 
 	@Override
-	protected void flush() {
+	public void flush() {
 		this.flush0();
 	}
 

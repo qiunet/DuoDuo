@@ -15,6 +15,8 @@ import org.qiunet.flash.handler.util.proto.CommonModuleProto;
 public enum CloseCause {
 	@Protobuf(description = "通道关闭")
 	CHANNEL_CLOSE("通道关闭", true),
+	@Protobuf(description = "无效断线重连")
+	RECONNECT_INVALID("无效断线重连", false),
 	@Protobuf(description = "老session还处于激活状态 关闭老session")
 	LOGIN_REPEATED("老session还处于激活状态 关闭老session", false),
 	@Protobuf(description = "通道空闲太久")

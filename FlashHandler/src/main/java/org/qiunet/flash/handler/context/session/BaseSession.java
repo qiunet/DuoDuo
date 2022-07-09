@@ -84,8 +84,6 @@ abstract class BaseSession implements ISession {
 		}
 	}
 
-	protected abstract void flush();
-
 	@Override
 	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, true);

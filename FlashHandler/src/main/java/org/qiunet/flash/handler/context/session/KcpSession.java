@@ -28,9 +28,7 @@ public class KcpSession extends BaseSession {
 	}
 
 	@Override
-	protected void flush() {
-		// do nothing
-	}
+	public void flush() {}
 
 	@Override
 	public void bindKcpSession(KcpSession kcpSession) {

@@ -22,6 +22,7 @@ import org.qiunet.utils.logger.LoggerType;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  * 玩家playerActor 的父类
@@ -34,6 +35,12 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * 跨服的连接管理
 	 */
 	private final Map<ServerType, PlayerCrossConnector> crossConnectors = Maps.newEnumMap(ServerType.class);
+	/**
+	 * 等待重连状态
+	 * 该状态下, 跨服的包不往下发.
+	 * 监听兴趣包. 保存 . 重连后, 一起下发.
+	 */
+	private final AtomicBoolean waitReconnect = new AtomicBoolean();
 	/**
 	 * 玩家的数据加载器
 	 */
@@ -264,5 +271,13 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	@Override
 	public PlayerDataLoader dataLoader() {
 		return dataLoader;
+	}
+
+	public boolean waitReconnect(){
+		return waitReconnect.get();
+	}
+
+	public boolean casWaitReconnect(boolean expect, boolean val) {
+		return this.waitReconnect.compareAndSet(expect, val);
 	}
 }

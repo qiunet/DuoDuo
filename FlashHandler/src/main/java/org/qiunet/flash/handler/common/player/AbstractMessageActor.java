@@ -39,6 +39,12 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	@Override
+	public void destroy() {
+		super.destroy();
+		this.container.clear();
+	}
+
+	@Override
 	public <T> Argument<T> getArgument(ArgumentKey<T> key, boolean computeIfAbsent) {
 		return container.getArgument(key, computeIfAbsent);
 	}

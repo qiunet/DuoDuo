@@ -5,16 +5,20 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.request.data.InterestedChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
+import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
@@ -26,9 +30,7 @@ import org.slf4j.Logger;
  * 2020-10-23 17:44
  */
 public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger {
-
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-
 
 	@Override
 	public void response(ISession session, MessageContent data) {
@@ -37,7 +39,7 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 			return;
 		}
 
-		IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		PlayerActor playerActor = (PlayerActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (data.getProtocolId() < 1000
 		&& ChannelDataMapping.protocolClass(data.getProtocolId()).isAnnotationPresent(ServerCommunicationData.class)) {
 			IHandler handler = ChannelDataMapping.getHandler(data.getProtocolId());
@@ -46,13 +48,26 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 				return;
 			}
 
-			iMessageActor.addMessage(handler.getHandlerType().createRequestContext(data.retain(), session.channel(), handler, iMessageActor));
+			playerActor.addMessage(handler.getHandlerType().createRequestContext(data.retain(), session.channel(), handler, playerActor));
+			return;
+		}
+
+		if (playerActor.waitReconnect()) {
+			// 不感兴趣的不管
+			if (! ChannelDataMapping.protocolClass(data.getProtocolId()).isAnnotationPresent(InterestedChannelData.class)) {
+				return;
+			}
+
+			synchronized (playerActor) {
+				DefaultBytesMessage message = new DefaultBytesMessage(data.getProtocolId(), ByteUtil.readBytebuffer(data.byteBuffer()));
+				playerActor.getVal(ServerConstants.INTEREST_MESSAGE_LIST).add(message);
+			}
 			return;
 		}
 
 		data.retain();
-		iMessageActor.addMessage(m -> {
-			c2pMessage(iMessageActor, data);
+		playerActor.addMessage(m -> {
+			c2pMessage(playerActor, data);
 		});
 	}
 

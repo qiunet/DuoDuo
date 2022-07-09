@@ -45,6 +45,9 @@ public interface IProtocolId {
 		int KCP_BIND_AUTH_REQ = 10;
 		int KCP_BIND_AUTH_RSP = 11;
 
+		/**断线重连无效*/
+		int RECONNECT_INVALID_PUSH = 12;
+
 		/** 404 */
 		int HANDLER_NOT_FIND = 404;
 		/** 500 **/

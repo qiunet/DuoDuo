@@ -29,4 +29,8 @@ public class ArgsContainer implements IArgsContainer {
 		return argumentMap.computeIfAbsent(key);
 	}
 
+
+	public void clear() {
+		this.argumentMap.clear();
+	}
 }

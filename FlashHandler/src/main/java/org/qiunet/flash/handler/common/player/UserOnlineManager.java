@@ -7,6 +7,8 @@ import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
+import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
+import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.future.DFuture;
@@ -71,18 +73,23 @@ public enum UserOnlineManager {
 		if (actor == null) {
 			return;
 		}
+
 		triggerChangeListeners(false);
 		// 清理 observers 避免重连重复监听.
 		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
 
 		actor.dataLoader().syncToDb();
 
-		if (eventData.getCause().needWaitConnect() && actor.isAuth()) {
-			// 给3分钟重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 90, TimeUnit.SECONDS);
-			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
+		if (! eventData.getCause().needWaitConnect() || !actor.isAuth()) {
+			this.destroyPlayer(actor);
+			return;
 		}
 
+		if (actor.casWaitReconnect(false, true)) {
+			// 给3分钟重连时间
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 180, TimeUnit.SECONDS);
+			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
+		}
 	}
 	/**
 	 * 登出事件
@@ -109,19 +116,37 @@ public enum UserOnlineManager {
 	 */
 	public PlayerActor reconnect(long playerId, PlayerActor currActor) {
 		WaitActor waitActor = waitReconnects.remove(playerId);
-		if (waitActor == null) {
+		if (waitActor == null || waitActor.actor.casWaitReconnect(true, false)) {
+			currActor.sendMessage(ReconnectInvalidPush.getInstance());
+			currActor.getSession().close(CloseCause.RECONNECT_INVALID);
 			return null;
 		}
+
 		waitActor.actor.clearObservers();
 		waitActor.actor.merge(currActor);
 		waitActor.future.cancel(true);
 		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
+
+		if (waitActor.actor.isNotNull(ServerConstants.INTEREST_MESSAGE_LIST)) {
+			waitActor.actor.addMessage(this::resentInterestMsg);
+		}
 
 		onlinePlayers.put(playerId, waitActor.actor);
 		triggerChangeListeners(true);
 		currActor.destroy();
 
 		return waitActor.actor;
+	}
+
+	private void resentInterestMsg(PlayerActor playerActor) {
+		if (playerActor.waitReconnect()) {
+			return;
+		}
+
+		List<DefaultBytesMessage> list = playerActor.getVal(ServerConstants.INTEREST_MESSAGE_LIST);
+		list.forEach(msg -> playerActor.sendMessage(msg, false));
+		playerActor.clear(ServerConstants.INTEREST_MESSAGE_LIST);
+		playerActor.flush();
 	}
 
 	/**

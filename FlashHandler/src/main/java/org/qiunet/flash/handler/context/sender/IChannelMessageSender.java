@@ -73,4 +73,8 @@ public interface IChannelMessageSender {
 	default IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush){
 		return getSender().sendMessage(message, flush);
 	}
+
+	default void flush(){
+		getSender().flush();
+	}
 }
