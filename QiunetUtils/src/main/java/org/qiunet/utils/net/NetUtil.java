@@ -3,17 +3,24 @@ package org.qiunet.utils.net;
 import com.google.common.net.InetAddresses;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.thread.ThreadPoolManager;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Enumeration;
-import java.util.LinkedHashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /***
  *
@@ -73,6 +80,7 @@ public class NetUtil {
 		// 有效端口是0～65535
 		return port >= 0 && port <= PORT_RANGE_MAX;
 	}
+	private static final Pattern IPV4_PATTERN = Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
 	/**
 	 * 得到外网IP
 	 * @return
@@ -82,7 +90,33 @@ public class NetUtil {
 				! isInnerIp(address)
 				&& address instanceof Inet4Address);
 		Optional<InetAddress> first = inetAddresses.stream().findFirst();
-		return first.map(InetAddress::getHostAddress).orElse(null);
+		String ip = first.map(InetAddress::getHostAddress).orElse(null);
+		if (!StringUtil.isEmpty(ip)) {
+			// 先读取本地网络配置的
+			return ip;
+		}
+
+		String[] IPV4_SERVICES = {
+				"http://checkip.amazonaws.com",
+				"https://ipv4.icanhazip.com",
+				"https://ip.tool.lu"
+		};
+
+		List<Callable<String>> callables = Stream.of(IPV4_SERVICES).map(str -> (Callable<String>) () -> {
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(new URL(str).openStream()))) {
+				Matcher matcher = IPV4_PATTERN.matcher(in.readLine());
+				if (matcher.find()) {
+					return matcher.group();
+				}
+				throw new RuntimeException("no ip found from "+str);
+			}
+		}).collect(Collectors.toList());
+
+		try {
+			return ThreadPoolManager.NORMAL.invokeAny(callables);
+		} catch (InterruptedException | ExecutionException e) {
+			throw new CustomException("No public ip get!");
+		}
 	}
 
 	/**

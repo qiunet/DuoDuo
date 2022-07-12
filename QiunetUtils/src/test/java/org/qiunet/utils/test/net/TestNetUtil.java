@@ -56,4 +56,9 @@ public class TestNetUtil  extends BaseTest {
 			logger.info("Ip: "+ip);
 		}
 	}
+
+	@Test
+	public void testGetPublicIp() {
+		System.out.println(NetUtil.getPublicIp());
+	}
 }
