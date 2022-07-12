@@ -3,14 +3,11 @@ package org.qiunet.flash.handler.netty.server.tcp;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -36,11 +33,9 @@ public final class NettyTcpServer implements INettyServer {
 
 	@Override
 	public void run() {
-		EventLoopGroup boss = new NioEventLoopGroup(1, new DefaultThreadFactory("tcp-boss-event-loop-"));
-		EventLoopGroup worker = new NioEventLoopGroup(0 , new DefaultThreadFactory("tcp-worker-event-loop-"));
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap();
-			bootstrap.group(boss, worker);
+			bootstrap.group(ServerConstants.BOSS, ServerConstants.WORKER);
 
 			bootstrap.channel(NioServerSocketChannel.class);
 			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
@@ -58,8 +53,6 @@ public final class NettyTcpServer implements INettyServer {
 			System.exit(1);
 		}finally {
 			logger.error("[NettyTcpServer] {} is shutdown! ", serverName());
-			boss.shutdownGracefully();
-			worker.shutdownGracefully();
 		}
 	}
 

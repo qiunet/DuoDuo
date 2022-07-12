@@ -199,6 +199,11 @@ public class BootstrapServer {
 			for (INettyServer server : nettyServers) {
 				server.shutdown();
 			}
+
+			// 停止共用的线程池
+			ServerConstants.WORKER.shutdownGracefully();
+			ServerConstants.BOSS.shutdownGracefully();
+
 			// 放开主线程
 			LockSupport.unpark(awaitThread);
 		}
