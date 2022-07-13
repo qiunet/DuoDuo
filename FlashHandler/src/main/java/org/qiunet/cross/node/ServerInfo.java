@@ -53,7 +53,8 @@ public final class ServerInfo extends HashMap<String, Object> {
 		if (ServerConfig.getConfig() != null) {
 			publicHost = ServerConfig.getInstance().getValue(publicHostKey);
 		}
-		if (StringUtil.isEmpty(publicHost)) {
+		// 外网才去自动获取. 本地 测试如果需要外网IP 请配置在server.conf
+		if (StringUtil.isEmpty(publicHost) && ServerConfig.isOfficial()) {
 			publicHost = NetUtil.getPublicIp();
 		}
 

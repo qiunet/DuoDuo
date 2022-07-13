@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ClockTickPush;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -50,6 +51,10 @@ public enum UserOnlineManager {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
 		onlinePlayers.put(userActor.getId(), userActor);
+
+		if (userActor.isPlayerActor()) {
+			userActor.addMessage(p -> this.clockTick((PlayerActor) p));
+		}
 	}
 	/**
 	 * 玩家自主退出，会完整走登出流程
@@ -135,7 +140,16 @@ public enum UserOnlineManager {
 		triggerChangeListeners(true);
 		currActor.destroy();
 
+		this.clockTick(waitActor.actor);
 		return waitActor.actor;
+	}
+
+	private void clockTick(PlayerActor actor) {
+		if (! actor.getSession().isActive()) {
+			return;
+		}
+		actor.sendMessage(ClockTickPush.valueOf());
+		actor.scheduleMessage(this::clockTick, 1, TimeUnit.MINUTES);
 	}
 
 	private void resentInterestMsg(PlayerActor playerActor) {
