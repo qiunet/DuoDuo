@@ -121,7 +121,7 @@ public enum UserOnlineManager {
 	 */
 	public PlayerActor reconnect(long playerId, PlayerActor currActor) {
 		WaitActor waitActor = waitReconnects.remove(playerId);
-		if (waitActor == null || waitActor.actor.casWaitReconnect(true, false)) {
+		if (waitActor == null || ! waitActor.actor.casWaitReconnect(true, false)) {
 			currActor.sendMessage(ReconnectInvalidPush.getInstance());
 			currActor.getSession().close(CloseCause.RECONNECT_INVALID);
 			return null;
