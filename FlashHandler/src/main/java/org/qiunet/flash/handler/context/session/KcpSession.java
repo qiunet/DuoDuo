@@ -14,7 +14,7 @@ import org.qiunet.utils.exceptions.CustomException;
 public class KcpSession extends BaseSession {
 
 	public KcpSession(Channel channel) {
-		this.addCloseListener((session, cause) -> {
+		this.addCloseListener("KcpDisconnectPush", (session, cause) -> {
 			if (session.isActive()) {
 				session.sendMessage(KcpDisconnectPush.getInstance());
 			}
@@ -33,6 +33,11 @@ public class KcpSession extends BaseSession {
 	@Override
 	public void bindKcpSession(KcpSession kcpSession) {
 		throw new CustomException("Not Support!");
+	}
+
+	@Override
+	public KcpSession getKcpSession() {
+		return this;
 	}
 
 	@Override

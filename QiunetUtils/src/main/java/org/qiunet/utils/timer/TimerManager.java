@@ -5,7 +5,8 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.listener.hook.ShutdownHookUtil;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
@@ -33,23 +34,28 @@ public enum TimerManager {
 	private final ScheduledExecutorService schedule;
 	TimerManager(ScheduledExecutorService executorService) {
 		this.schedule = executorService;
-		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdown);
 	}
 
-	/***
-	 * 停闭
-	 */
-	public static void shutdown(){
-		for (TimerManager timerManager : values()) {
-			timerManager.schedule.shutdown();
+	@EventListener
+	private void shutdown(ServerShutdownEventData eventData) {
+		for (TimerManager value : values()) {
+			value.schedule.shutdown();
 		}
 	}
+
 	/**
 	 * 立刻执行
 	 * @param callable
 	 * @param <V>
 	 * @return
 	 */
+	public static  <V> DFuture<V> executorNow(Runnable callable) {
+		return executorNow(() -> {
+			callable.run();
+			return null;
+		});
+	}
+
 	public static  <V> DFuture<V> executorNow(Callable<V> callable) {
 		DCompletePromise<V> future = new DCompletePromise<>();
 		Future<V> submit = ThreadPoolManager.NORMAL.submit(() -> {
@@ -82,6 +88,13 @@ public enum TimerManager {
 	 * @param unit 时间格式
 	 * @param <T>
 	 */
+	public <T> DFuture<T> scheduleWithDelay(Runnable delayTask, long delay, TimeUnit unit) {
+		return scheduleWithDelay(() -> {
+			delayTask.run();
+			return null;
+		}, delay, unit);
+	}
+
 	public <T> DFuture<T> scheduleWithDelay(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
 		DCompletePromise<T> promise = new DCompletePromise<>();
 		Callable<T> caller = () -> {
@@ -101,6 +114,12 @@ public enum TimerManager {
 		return promise;
 	}
 
+	public <T> DFuture<T> scheduleWithTimeMillis(Runnable delayTask, long timeMillis) {
+		return scheduleWithTimeMillis(() -> {
+			delayTask.run();
+			return null;
+		}, timeMillis);
+	}
 	/***
 	 * 在一个指定的时间点执行任务
 	 * @param delayTask
@@ -108,6 +127,7 @@ public enum TimerManager {
 	 * @param <T>
 	 * @return
 	 */
+
 	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
 		if (timeMillis < now) {

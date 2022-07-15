@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
+import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.cross.common.Constants;
 import org.qiunet.test.cross.common.proto.req.EquipIndexRequest;
 import org.qiunet.test.cross.common.proto.req.LoginRequest;
@@ -34,6 +35,7 @@ public class Client {
 
 	@Test
 	public void request() throws InterruptedException {
+		websocketClient.sendMessage(ConnectionReq.valueOf("qiunet"));
 		websocketClient.sendMessage(LoginRequest.valueOf(100000));
 		websocketClient.sendMessage(new EquipIndexRequest());
 		Thread.sleep(2000);

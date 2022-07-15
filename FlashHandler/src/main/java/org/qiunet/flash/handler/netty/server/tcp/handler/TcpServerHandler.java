@@ -30,6 +30,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		DSession session = new DSession(ctx.channel());
 
 		ChannelUtil.bindSession(session);
+		logger.debug("Tcp session {} active!", session);
 		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
 		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
 		ctx.fireChannelActive();

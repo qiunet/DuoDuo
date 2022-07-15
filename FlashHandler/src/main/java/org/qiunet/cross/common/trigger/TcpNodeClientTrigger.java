@@ -20,14 +20,14 @@ import org.qiunet.utils.logger.LoggerType;
 public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(ISession session, MessageContent data) {
-		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
+		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
+		|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
+		|| data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION
+		) {
 			// pong 信息不需要处理
 			return;
 		}
 
-		if (data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION) {
-			return;
-		}
 
 		IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		IHandler handler = ChannelDataMapping.getHandler(data.getProtocolId());

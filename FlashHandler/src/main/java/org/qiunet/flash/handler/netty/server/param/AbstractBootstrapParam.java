@@ -25,9 +25,10 @@ public abstract class AbstractBootstrapParam {
 	 */
 	protected String serverName;
 	/***
-	 * 读超时处理.默认300秒 (单位秒)
+	 * 客户端每5秒一次心跳 6次没有超时
+	 * 读超时处理.默认33秒 (单位秒)
 	 */
-	protected int readIdleCheckSeconds = 300;
+	protected int readIdleCheckSeconds = 33;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用

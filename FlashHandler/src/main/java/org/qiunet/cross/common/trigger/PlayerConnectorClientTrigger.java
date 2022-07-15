@@ -34,7 +34,9 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 
 	@Override
 	public void response(ISession session, MessageContent data) {
-		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG) {
+		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
+		|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
+		) {
 			// pong 信息不需要处理
 			return;
 		}

@@ -9,12 +9,14 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
+import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.function.badword.DefaultBadWord;
 import org.qiunet.function.badword.LoadBadWordEventData;
 import org.qiunet.test.handler.bootstrap.http.HttpBootStrap;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.WsPbLoginRequest;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/12/2
  */
 public class TestMuchWebSocketRequest extends HttpBootStrap {
-	private final int clientCount = 100;
+	private final int clientCount = 10;
 	private final int requestCount = 1000;
 	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
@@ -36,6 +38,8 @@ public class TestMuchWebSocketRequest extends HttpBootStrap {
 			new Thread(() -> {
 				IChannelMessageSender client = NettyWebSocketClient.create(WebSocketClientParams.custom()
 					.setAddress("localhost", port).build(), new Trigger());
+				client.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)), true);
+
 				for (int j = 0; j < requestCount; j++) {
 					String text = "testMuchWebSocket: "+j;
 					WsPbLoginRequest wsPbLoginRequest = WsPbLoginRequest.valueOf(text, text, 99);

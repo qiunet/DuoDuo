@@ -31,6 +31,7 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 			rankMap.put(rankData.getId(), rankData);
 		}
 		rankData.addAll(loadData);
+		this.resort();
 	}
 
 	@Override

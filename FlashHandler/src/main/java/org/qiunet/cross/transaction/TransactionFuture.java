@@ -12,6 +12,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 /***
+ * transaction 能少用就少用. 因为同步, 可能导致线程池线程消耗光.
+ *
  * 发起事务后, 返回的事务句柄.
  * 因为不能cancel. 所以封装一层
  *
@@ -47,8 +49,15 @@ public class TransactionFuture<T extends ITransactionRsp> {
 		return id;
 	}
 
-	public T get() throws ExecutionException, InterruptedException {
-		return future.get();
+	/***
+	 * 默认3秒get  get不到.会抛出 TimeoutException 异常.
+	 * @return
+	 * @throws ExecutionException
+	 * @throws InterruptedException
+	 * @throws TimeoutException
+	 */
+	public T get() throws ExecutionException, InterruptedException, TimeoutException {
+		return future.get(3, TimeUnit.SECONDS);
 	}
 
 	public T get(long milliseconds) throws InterruptedException, ExecutionException, TimeoutException {

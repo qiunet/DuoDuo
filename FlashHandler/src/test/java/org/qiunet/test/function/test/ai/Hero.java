@@ -64,7 +64,7 @@ public class Hero extends MessageHandler<Hero> {
 	}
 
 	@Override
-	public long getId() {
-		return 1000;
+	public String msgExecuteIndex() {
+		return "hero";
 	}
 }

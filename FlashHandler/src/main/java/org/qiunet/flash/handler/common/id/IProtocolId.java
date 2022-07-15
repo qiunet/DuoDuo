@@ -104,5 +104,10 @@ public interface IProtocolId {
 
 		/**kcp 连接断开推送 */
 		int KCP_DISCONNECT_PUSH = 704;
-	}
+
+		/** 请求问题*/
+		int CONNECTION_REQ = 705;
+		int CONNECTION_RSP = 706;
+
+    }
 }

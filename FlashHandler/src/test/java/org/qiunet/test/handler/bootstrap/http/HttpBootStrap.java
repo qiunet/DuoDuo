@@ -39,8 +39,9 @@ public class HttpBootStrap {
 					.setPort(port)
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
-			LockSupport.unpark(currThread);
-			server.await();
+			server.await( () -> {
+				LockSupport.unpark(currThread);
+			});
 		});
 		thread.start();
 		LockSupport.park();

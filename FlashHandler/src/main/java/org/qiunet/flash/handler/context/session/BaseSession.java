@@ -1,8 +1,9 @@
 package org.qiunet.flash.handler.context.session;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -12,10 +13,11 @@ import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -73,14 +75,40 @@ abstract class BaseSession implements ISession {
 			// 避免多次调用close. 多次调用监听.
 			return;
 		}
-
-		closeListeners.forEach(l -> l.close(this, cause));
-
-		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
-		if (channel != null && (channel.isActive() || channel.isOpen())) {
-			logger.info("Session [{}] closed", this);
-			this.flush();
+		Runnable runnable = () -> {
+			if (channel == null) {
+				return;
+			}
+			logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
+			if ((channel.isActive() || channel.isOpen())) {
+				logger.info("Session [{}] closed", this);
+				this.flush();
+			}
 			channel.close();
+		};
+
+		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		Runnable closeListener = () -> {
+			closeListeners.values().forEach(l -> l.close(this, cause));
+			if (closeListeners.isEmpty()) {
+				attachObj.destroy();
+			}
+			runnable.run();
+		};
+
+		if (attachObj != null && attachObj.msgExecuteIndex() != null) {
+			if (((MessageHandler) attachObj).isDestroyed() || ((MessageHandler<?>) attachObj).inSelfThread()) {
+				closeListener.run();
+			}else {
+				attachObj.addMessage(p -> {
+					closeListener.run();
+				});
+			}
+		}else {
+			if (attachObj != null) {
+				attachObj.destroy();
+			}
+			runnable.run();
 		}
 	}
 
@@ -135,8 +163,11 @@ abstract class BaseSession implements ISession {
 	}
 
 	@Override
-	public void addCloseListener(SessionCloseListener listener) {
-		this.closeListeners.add(listener);
+	public void addCloseListener(String name, SessionCloseListener listener) {
+		if (this.closeListeners.containsKey(name)) {
+			throw new CustomException("close listener {} repeated!", name);
+		}
+		this.closeListeners.put(name, listener);
 	}
 
 	@Override
@@ -144,7 +175,7 @@ abstract class BaseSession implements ISession {
 		this.closeListeners.clear();
 	}
 
-	private final List<SessionCloseListener> closeListeners = Lists.newCopyOnWriteArrayList();
+	private final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
 
 	@Override
 	public IChannelMessageSender getSender() {

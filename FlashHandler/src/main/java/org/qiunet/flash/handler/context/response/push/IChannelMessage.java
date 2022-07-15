@@ -69,8 +69,8 @@ public interface IChannelMessage<T> {
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) this.byteBuffer().rewind()));
 
 		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer(header.dataBytes())));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(this.byteBuffer())));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) header.dataBytes().rewind())));
+			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) this.byteBuffer().rewind())));
 		}
 		return byteBuf;
 	}

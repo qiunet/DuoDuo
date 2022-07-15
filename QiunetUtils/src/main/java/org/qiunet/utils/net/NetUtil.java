@@ -3,6 +3,7 @@ package org.qiunet.utils.net;
 import com.google.common.net.InetAddresses;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadPoolManager;
 
@@ -17,8 +18,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -80,7 +79,6 @@ public class NetUtil {
 		// 有效端口是0～65535
 		return port >= 0 && port <= PORT_RANGE_MAX;
 	}
-	private static final Pattern IPV4_PATTERN = Pattern.compile("(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])");
 	/**
 	 * 得到外网IP
 	 * @return
@@ -96,27 +94,60 @@ public class NetUtil {
 			return ip;
 		}
 
+		// 下面的ip都可以获得ip地址.
+		// whatismyip.akamai.com
+		// ipecho.net/plain
+		// v4.ident.me
+		// ident.me
+		// ip.sb
 		String[] IPV4_SERVICES = {
 				"http://checkip.amazonaws.com",
 				"https://ipv4.icanhazip.com",
-				"https://ip.tool.lu"
+				"https://icanhazip.com",
+				"https://ipinfo.io/ip"
 		};
 
 		List<Callable<String>> callables = Stream.of(IPV4_SERVICES).map(str -> (Callable<String>) () -> {
 			try (BufferedReader in = new BufferedReader(new InputStreamReader(new URL(str).openStream()))) {
-				Matcher matcher = IPV4_PATTERN.matcher(in.readLine());
-				if (matcher.find()) {
-					return matcher.group();
+				String result = in.readLine();
+
+				LoggerType.DUODUO.error("Get public ip {} from {}!", result, str);
+				if (!NetUtil.isValidIp4(result))  {
+					throw new CustomException("ip invalid!");
 				}
-				throw new RuntimeException("no ip found from "+str);
+				return result;
 			}
 		}).collect(Collectors.toList());
 
 		try {
-			return ThreadPoolManager.NORMAL.invokeAny(callables);
+			String publicIp = ThreadPoolManager.NORMAL.invokeAny(callables);
+			LoggerType.DUODUO.error("current public ip: {}", publicIp);
+			return publicIp;
 		} catch (InterruptedException | ExecutionException e) {
 			throw new CustomException("No public ip get!");
 		}
+	}
+
+	/**
+	 * 是否是合格的ip4
+	 * @param host
+	 * @return
+	 */
+	public static boolean isValidIp4(String host) {
+		String[] strings = StringUtil.split(host, ".");
+		if (strings.length != 4) {
+			return false;
+		}
+		for (int i = 0; i < strings.length; i++) {
+			if (! StringUtil.isNum(strings[i])) {
+				return false;
+			}
+			int i1 = Integer.parseInt(strings[i]);
+			if (i1 < 0 || i1 > 255) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**

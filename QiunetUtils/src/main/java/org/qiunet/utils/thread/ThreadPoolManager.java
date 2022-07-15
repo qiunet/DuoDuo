@@ -15,8 +15,7 @@ import java.util.concurrent.*;
  * 2020-11-03 18:15
  */
 public enum ThreadPoolManager implements ExecutorService {
-	MESSAGE_HANDLER("MESSAGE_HANDLER", OSUtil.availableProcessors()*2, 10000),
-	NORMAL("THREAD_POOL_MANAGER_NORMAL", OSUtil.availableProcessors(), 10000);
+	NORMAL("THREAD_POOL_MANAGER_NORMAL", OSUtil.availableProcessors() * 2, 10000);
 	/**
 	 * threadPool Name -> executors
 	 */

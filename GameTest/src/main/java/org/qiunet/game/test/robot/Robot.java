@@ -40,4 +40,9 @@ public class Robot extends RobotFunc{
 	public boolean isAuth(){
 		return this.id > 0;
 	}
+
+	@Override
+	public String msgExecuteIndex() {
+		return this.account;
+	}
 }

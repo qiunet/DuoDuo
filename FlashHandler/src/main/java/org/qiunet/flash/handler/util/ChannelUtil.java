@@ -13,8 +13,10 @@ import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
@@ -25,7 +27,11 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
+import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
+import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
@@ -149,11 +155,47 @@ public final class ChannelUtil {
 			return;
 		}
 
+		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
+			boolean isKcp = params instanceof KcpBootstrapParams;
+			if (isKcp && ((KcpBootstrapParams) params).isDependOnTcpWs()) {
+				// 不需要
+				return;
+			}
+
+			AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
+			if (logger.isInfoEnabled()) {
+				logger.info("[{}] {} <<< {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(connectionReq));
+			}
+
+			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
+				logger.info("ConnectionReq idKey is null!");
+				channel.close();
+				return;
+			}
+
+			messageActor.setMsgExecuteIndex(connectionReq.getIdKey());
+			messageActor.sendMessage(ConnectionRsp.getInstance());
+
+			if (isKcp) {
+				((PlayerActor) messageActor).asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));
+			}
+			return;
+		}
+
+
+		if (session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY).msgExecuteIndex() == null) {
+			logger.info("MessageActor msgExecuteIndex is null! Need call ConnectionReq first");
+			channel.close();
+			return;
+		}
+
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
 			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound());
 			return;
 		}
+
 		processHandler(channel, handler, content);
 	}
 

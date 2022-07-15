@@ -1,6 +1,8 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -25,6 +27,13 @@ public enum QuartzSchedule {
 		JobFacade jobFacade = new JobFacade(job);
 		this.jobs.add(jobFacade);
 		return jobFacade.getFuture();
+	}
+
+	@EventListener
+	private void shutdown(ServerShutdownEventData eventData) {
+		this.jobs.forEach(job -> {
+			job.future.cancel(false);
+		});
 	}
 
 	private static  class JobFacade implements IDelayTask<Boolean> {

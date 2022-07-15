@@ -7,6 +7,7 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.args.IArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  * Player 的一个总的处理对象.
@@ -19,10 +20,24 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	extends MessageHandler<P> implements IMessageActor<P>, IChannelMessageSender, IArgsContainer {
 	private final ArgsContainer container = new ArgsContainer();
 
+	private String msgExecuteIndex;
+
 	protected ISession session;
 
 	protected AbstractMessageActor() {
 
+	}
+
+	public void setMsgExecuteIndex(String msgExecuteIndex) {
+		if (this.msgExecuteIndex != null) {
+			throw new CustomException("msgExecuteIndex setting repeated");
+		}
+		this.msgExecuteIndex = msgExecuteIndex;
+	}
+
+	@Override
+	public String msgExecuteIndex() {
+		return msgExecuteIndex;
 	}
 
 	public AbstractMessageActor(ISession session) {

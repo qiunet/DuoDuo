@@ -6,8 +6,8 @@ import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
-import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.kcp.event.KcpUsabilityEvent;
 import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ClockTickPush;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -60,15 +61,13 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 跨服心跳feature
 	 */
-	private final Future<?> beatFuture;
+	private Future<?> beatFuture;
 	/**
 	 * 玩家的构造
 	 * @param session
 	 */
 	public PlayerActor(ISession session) {
 		super(session);
-
-		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 10, 60, TimeUnit.SECONDS);
 
 		// kcp 变动通知推送
 		this.attachObserver(IKcpUsabilityChange.class, (prepare -> this.allCrossEvent(KcpUsabilityEvent.valueOf(prepare))));
@@ -77,17 +76,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	@Override
 	protected void setSession(ISession session) {
 		super.setSession(session);
-
-		session.addCloseListener((s, cause) -> {
-			this.fireEvent(new PlayerActorLogoutEvent(cause));
-		});
-
-		session.addCloseListener((s, cause) -> {
-			if (s.isActive()) {
-				s.sendMessage(PlayerLogoutPush.valueOf(cause), true);
-			}
-			this.quitAllCross(cause);
-		});
 	}
 
 	/**
@@ -189,10 +177,45 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		if (isAuth()) {
 			return;
 		}
-		this.playerId = id;
+
+		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 5, 10, TimeUnit.SECONDS);
 		dataLoader = new PlayerDataLoader(id);
-		new AuthEventData(this).fireEventHandler();
+		this.playerId = id;
+		this.clockTick();
 	}
+
+	private void clockTick() {
+		this.scheduleMessage(p -> {
+			if (p.getSession().isActive()) {
+				p.sendMessage(ClockTickPush.valueOf());
+			}
+			this.clockTick();
+		}, 2, TimeUnit.MINUTES);
+	}
+
+	/**
+	 * 真的登录成功调用.
+	 * 没有PlayerBo 都不算.
+	 */
+	public void loginSuccess() {
+		new LoginSuccessEvent(this).fireEventHandler();
+		this.sessionCloseListener();
+	}
+
+	private void sessionCloseListener() {
+		session.addCloseListener("PlayerActorLogoutEvent", (s, cause) -> {
+			this.fireEvent(new PlayerActorLogoutEvent(cause));
+			if (s.isActive() && cause.needLogoutPush()) {
+				s.sendMessage(PlayerLogoutPush.valueOf(cause), true);
+			}
+		});
+
+		session.addCloseListener("QuitAllCrossSession", (s, cause) -> {
+			this.quitAllCross(cause);
+		});
+	}
+
+
 
 	@Override
 	public void destroy() {
@@ -203,10 +226,14 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		super.destroy();
 
 		crossConnectors.values().forEach(c -> c.getSession().close(CloseCause.DESTROY));
+
 		if (dataLoader != null) {
 			dataLoader.unregister();
 		}
-		this.beatFuture.cancel(false);
+
+		if (this.beatFuture != null) {
+			this.beatFuture.cancel(false);
+		}
 	}
 
 	/**
@@ -221,7 +248,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		handler.session.clearCloseListener();
 		this.setSession(handler.session);
 		super.merge(handler);
-
 		handler.dataLoader.unregister();
 		handler.dataLoader = null;
 		dataLoader.register();

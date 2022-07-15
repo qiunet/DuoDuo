@@ -21,10 +21,18 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	 * 玩家的数据加载器
 	 */
 	private final PlayerDataLoader dataLoader;
+	private final String msgExecuteIndex;
 
 	OfflinePlayerActor(long playerId) {
+		this.msgExecuteIndex = String.valueOf(playerId);
 		this.dataLoader = new PlayerDataLoader(playerId);
 		this.fireEvent(OfflineUserCreateEvent.valueOf());
+
+	}
+
+	@Override
+	public String msgExecuteIndex() {
+		return msgExecuteIndex;
 	}
 
 	public long getPlayerId() {

@@ -134,6 +134,9 @@ public class BootstrapServer {
 	 * 阻塞线程 最后调用阻塞当前线程
 	 */
 	public void await(){
+		this.await(null);
+	}
+	public void await(Runnable completeRunnable){
 		Thread hookThread = new Thread(hookListener, "HookListener");
 		hookThread.setDaemon(true);
 		hookThread.start();
@@ -152,8 +155,18 @@ public class BootstrapServer {
 			thread.setDaemon(true);
 			thread.start();
 		}
+		try {
+			// 等nettyServer的启动.
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+
 		ServerStartupCompleteEvent.fireStartupCompleteEvent();
 		awaitThread = Thread.currentThread();
+		if (completeRunnable != null) {
+			completeRunnable.run();
+		}
 		LockSupport.park();
 	}
 	/***

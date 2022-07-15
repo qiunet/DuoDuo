@@ -1,20 +1,29 @@
 package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
+import io.netty.channel.DefaultEventLoop;
+import io.netty.channel.SingleThreadEventLoop;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /***
  * 销毁时候, 需要一定调用 {@link MessageHandler#destroy()} !!!!!!!!!!!!!
@@ -24,23 +33,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  **/
 public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements Runnable, IMessageHandler<H>, IThreadSafe {
+	private static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
 
+	private final LazyLoader<SingleThreadEventLoop> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
+
+	private final UseTimer useTimer = new UseTimer(this::getIdentity, 500);
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private static final ExecutorService executorService = ThreadPoolManager.MESSAGE_HANDLER;
-
-	private final AtomicInteger size = new AtomicInteger();
-
 	private final Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
-
 	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
-
-	private volatile Thread currentThread;
 
 	private final AtomicBoolean destroyed = new AtomicBoolean();
 
-	private final UseTimer useTimer = new UseTimer(this::getIdentity, 500);
-
+	private final AtomicInteger size = new AtomicInteger();
 	@Override
 	public void run() {
 		try {
@@ -51,9 +56,6 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 
 	private void run0() {
-		this.currentThread = Thread.currentThread();
-		long startTime = System.currentTimeMillis();
-		boolean taskUseTimeToMuch = false;
 		while (true) {
 			IMessage<H> message = messages.poll();
 			if (message == null) {
@@ -70,19 +72,8 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			if (this.size.decrementAndGet()  <= 0) {
 				break;
 			}
-
-			if (System.currentTimeMillis() - startTime > 10000) {
-				taskUseTimeToMuch = true;
-				break;
-			}
-		}
-		this.currentThread = null;
-		if (taskUseTimeToMuch) {
-			// 重新进入排队队列， 如果线程池空闲, 会接着继续执行该Handler
-			executorService.execute(this);
 		}
 	}
-
 	/**
 	 * 添加一条可以执行消息
 	 * @param msg
@@ -90,31 +81,30 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	@Override
 	public void addMessage(IMessage<H> msg) {
 		if (this.isDestroyed()) {
-			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
+			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
 			return;
 		}
-
 		messages.add(msg);
 		int size = this.size.incrementAndGet();
 		if (size == 1) {
-			executorService.execute(this);
+			executor.get().execute(this);
 		}
 	}
 
 	@Override
 	public void runMessage(IMessage<H> message) {
 		if (this.isDestroyed()) {
-			logger.error("MessageHandler [{}] 已经关闭销毁", getIdentity());
+			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
 			return;
 		}
 
-		executorService.submit(() -> message.execute((H) this));
+		ThreadPoolManager.NORMAL.execute(() -> message.execute((H) this));
 	}
 
 
 	@Override
 	public boolean inSelfThread() {
-		return Thread.currentThread() == currentThread;
+		return executor.get().inEventLoop();
 	}
 
 	/**
@@ -123,14 +113,9 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @return
 	 */
 	public String getIdentity(){
-		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
+		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), this.msgExecuteIndex());
 	}
 
-	/**
-	 * 获得id
-	 * @return
-	 */
-	public abstract long getId();
 	/**
 	 * 销毁时候调用
 	 */
@@ -158,7 +143,6 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	public void merge(MessageHandler<H> handler){
 		this.messages.addAll(handler.messages);
 	}
-
 	/**
 	 * 结束所有的调度
 	 */
@@ -174,7 +158,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @return
 	 */
 	public Future<?> scheduleAtFixedRate(String scheduleName, IMessage<H> msg, long delay, long period, TimeUnit unit) {
-		ScheduledFuture<?> future = TimerManager.instance.scheduleAtFixedRate(() -> addMessage(msg), delay, period, unit);
+		ScheduledFuture<?> future = TimerManager.instance.scheduleAtFixedRate(() -> this.addMessage(msg), delay, period, unit);
 		return new ScheduleFuture(scheduleName, future);
 	}
 
@@ -194,6 +178,21 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		future.whenComplete((res, e) -> this.scheduleFutures.remove(future));
 		this.scheduleFutures.add(future);
 		return future;
+	}
+
+	private static class MessageHandlerEventLoop {
+		private final List<DefaultEventLoop> eventLoops;
+
+		public MessageHandlerEventLoop(int count) {
+			this.eventLoops = IntStream.range(0, count).mapToObj(i -> new DefaultEventLoop(r -> {
+				return new Thread(r, "message-handler-"+ i);
+			})).collect(Collectors.toList());
+		}
+
+		public SingleThreadEventLoop getEventLoop(Object key) {
+			int i = Math.abs(Objects.requireNonNull(key).hashCode()) % eventLoops.size();
+			return eventLoops.get(i);
+		}
 	}
 
 	private class ScheduleFuture implements Future<Object> {

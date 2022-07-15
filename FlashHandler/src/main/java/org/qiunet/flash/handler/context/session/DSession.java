@@ -207,9 +207,9 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			throw new CustomException("Not support!");
 		}
 		this.kcpSession = kcpSession;
-		this.addCloseListener((session, cause) -> {
+		this.addCloseListener("CloseKcpSession", (session, cause) -> {
 			logger.debug("Close kcp session!");
-			this.kcpSession.channel().close();
+			this.kcpSession.close(cause);
 		});
 	}
 

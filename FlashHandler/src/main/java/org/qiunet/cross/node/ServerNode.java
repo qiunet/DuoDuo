@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.Timeout;
@@ -39,6 +40,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		super.setSession(tcpClient.connect(host, port, f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
 		}));
+		this.sendMessage(ConnectionReq.valueOf(String.valueOf(serverId)), true);
 		// 发送鉴权请求
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
 		ServerNodeManager0.instance.addNode(this);

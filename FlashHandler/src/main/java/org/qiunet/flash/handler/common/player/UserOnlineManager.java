@@ -11,12 +11,12 @@ import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ClockTickPush;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.List;
 import java.util.Map;
@@ -47,14 +47,10 @@ public enum UserOnlineManager {
 	private static final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
 
 	@EventListener
-	private void addPlayerActor(AuthEventData eventData) {
+	private void addPlayerActor(LoginSuccessEvent eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
 		onlinePlayers.put(userActor.getId(), userActor);
-
-		if (userActor.isPlayerActor()) {
-			userActor.addMessage(p -> this.clockTick((PlayerActor) p));
-		}
 	}
 	/**
 	 * 玩家自主退出，会完整走登出流程
@@ -140,17 +136,9 @@ public enum UserOnlineManager {
 		triggerChangeListeners(true);
 		currActor.destroy();
 
-		this.clockTick(waitActor.actor);
 		return waitActor.actor;
 	}
 
-	private void clockTick(PlayerActor actor) {
-		if (! actor.getSession().isActive()) {
-			return;
-		}
-		actor.sendMessage(ClockTickPush.valueOf());
-		actor.scheduleMessage(this::clockTick, 1, TimeUnit.MINUTES);
-	}
 
 	private void resentInterestMsg(PlayerActor playerActor) {
 		if (playerActor.waitReconnect()) {
@@ -233,7 +221,7 @@ public enum UserOnlineManager {
 	 */
 	public void foreach(Function<AbstractUserActor, ForEachResult> consume, Predicate<AbstractUserActor> filter) {
 		for (AbstractUserActor actor : onlinePlayers.values()) {
-			if (filter != null && filter.test(actor)) {
+			if (filter != null && ! filter.test(actor)) {
 				continue;
 			}
 			ForEachResult result = consume.apply(actor);
@@ -272,9 +260,11 @@ public enum UserOnlineManager {
 	}
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void serverShutdown(ServerShutdownEventData event) {
+		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session close start==");
 		for (AbstractUserActor actor : onlinePlayers.values()) {
 			actor.session.close(CloseCause.SERVER_SHUTDOWN);
 		}
+		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session all closed==");
 	}
 
 	/**

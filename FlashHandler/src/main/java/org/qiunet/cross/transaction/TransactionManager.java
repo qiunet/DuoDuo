@@ -4,6 +4,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 /***
  *
@@ -32,6 +37,21 @@ public enum TransactionManager {
 	 * 保存映射关系
 	 */
 	private final Map<Long, DPromise> cacheRequests = Maps.newConcurrentMap();
+
+	/**
+	 * 异步transaction
+	 * 注意. consumer 线程不在一个线程了.
+	 * 需要注意线程安全
+	 * @param serverId
+	 * @param req
+	 * @param consumer
+	 * @param <Req>
+	 * @param <Resp>
+	 */
+	public <Req extends ITransactionReq, Resp extends ITransactionRsp> void beginTransaction(int serverId, Req req, BiConsumer<Resp, ? super Throwable> consumer) {
+		TransactionFuture<Resp> future = this.beginTransaction(serverId, req);
+		future.whenComplete(consumer);
+	}
 	/**
 	 * 发起事务请求
 	 * @param serverId 目标的serverId
@@ -40,6 +60,7 @@ public enum TransactionManager {
 	 * @param <Resp>
 	 * @return
 	 */
+
 	public <Req extends ITransactionReq, Resp extends ITransactionRsp> TransactionFuture<Resp> beginTransaction(int serverId, Req req) {
 		return beginTransaction(serverId, req, 3, TimeUnit.SECONDS);
 	}
@@ -64,7 +85,7 @@ public enum TransactionManager {
 		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			DTransaction<Req, Resp> dTransaction = new DTransaction<>(reqId, req);
-			TransactionManager0.handler(req.getClass(), dTransaction);
+			this.handler(req, dTransaction);
 			return respTransactionFuture;
 		}
 
@@ -79,7 +100,25 @@ public enum TransactionManager {
 		});
 		return respTransactionFuture;
 	}
-
+	/**
+	 * 根据是否是玩家请求. 分发到各自的线程.
+	 * @param req
+	 * @param dTransaction
+	 */
+	void handler(ITransactionReq req, DTransaction dTransaction) {
+		if (req instanceof IPlayer) {
+			AbstractUserActor actor = UserOnlineManager.getPlayerActor(((IPlayer) req).getId());
+			if (actor != null) {
+				actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
+			}else {
+				OfflineUserExecuteEvent.valueOf(() -> {
+					TransactionManager0.handler(req.getClass(), dTransaction);
+				}, ((IPlayer) req).getId()).fireEventHandler();
+			}
+		}else {
+			TransactionManager0.handler(req.getClass(), dTransaction);
+		}
+	}
 	/**
 	 * 超时移除映射. 但是不保证对面是否真超时.
 	 * 可能网络延迟了点. 实际处理完成了, 这个业务自己根据需求判断.

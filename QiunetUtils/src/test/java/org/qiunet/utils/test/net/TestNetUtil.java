@@ -34,6 +34,24 @@ public class TestNetUtil  extends BaseTest {
 		Assertions.assertTrue(NetUtil.isLocalIp(ip));
 	}
 
+	@Test
+	public void testIsValidIp() {
+		String ip = "192.168.1.255";
+		Assertions.assertTrue(NetUtil.isValidIp4(ip));
+
+		ip = "172.21.0.9";
+		Assertions.assertTrue(NetUtil.isValidIp4(ip));
+
+		ip = "123.196.125.13";
+		Assertions.assertTrue(NetUtil.isValidIp4(ip));
+
+		ip = "123.196.125.344";
+		Assertions.assertFalse(NetUtil.isValidIp4(ip));
+
+		ip = "https://baidu.com";
+		Assertions.assertFalse(NetUtil.isValidIp4(ip));
+	}
+
 	/**
 	 * 得到内网ip
 	 */

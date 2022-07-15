@@ -9,8 +9,8 @@ import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.cross.event.BaseCrossPlayerEventData;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
-import org.qiunet.flash.handler.common.player.event.AuthEventData;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
+import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -52,7 +52,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	protected void setSession(ISession session) {
 		super.setSession(session);
 
-		session.addCloseListener((s, cause) -> {
+		session.addCloseListener("CrossActorLogoutEvent", (s, cause) -> {
 			this.fireEvent(new CrossActorLogoutEvent(cause));
 		});
 	}
@@ -74,7 +74,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	@Override
 	public void auth(long playerId) {
 		this.playerId = playerId;
-		EventManager.fireEventHandler(new AuthEventData(this));
+		EventManager.fireEventHandler(new LoginSuccessEvent(this));
 	}
 
 	/**

@@ -4,6 +4,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
 
@@ -56,6 +57,7 @@ public final class ServerInfo extends HashMap<String, Object> {
 		// 外网才去自动获取. 本地 测试如果需要外网IP 请配置在server.conf
 		if (StringUtil.isEmpty(publicHost) && ServerConfig.isOfficial()) {
 			publicHost = NetUtil.getPublicIp();
+			LoggerType.DUODUO_FLASH_HANDLER.error("Use public ip {}", publicHost);
 		}
 
 		if (! StringUtil.isEmpty(publicHost)) {

@@ -34,7 +34,7 @@ public class GmOnlineUserHandler extends PersistConnPbHandler<AbstractMessageAct
 			PlayerActor playerActor = (PlayerActor) actor;
 			list.add(OnlineUserInfo.valueOf(playerActor.getOpenId(), actor.getId()));
 			return ForEachResult.CONTINUE;
-		}, AbstractUserActor::isCrossPlayer);
+		}, AbstractUserActor::isPlayerActor);
 		messageActor.sendMessage(GmOnlineUserRsp.valueOf(list));
 	}
 

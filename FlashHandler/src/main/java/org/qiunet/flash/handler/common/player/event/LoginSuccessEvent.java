@@ -10,14 +10,14 @@ import org.qiunet.flash.handler.common.player.IPlayer;
  * @author qiunet
  * 2020-10-15 12:51
  */
-public class AuthEventData extends UserEventData {
+public class LoginSuccessEvent extends UserEventData {
 
-	public AuthEventData(AbstractUserActor player) {
+	public LoginSuccessEvent(AbstractUserActor player) {
 		this.setPlayer(player);
 	}
 
 	@Override
-	public AuthEventData setPlayer(IPlayer player) {
+	public LoginSuccessEvent setPlayer(IPlayer player) {
 		Preconditions.checkState(((AbstractUserActor) player).isAuth(), "actor need auth!");
 		super.setPlayer(player);
 		return this;

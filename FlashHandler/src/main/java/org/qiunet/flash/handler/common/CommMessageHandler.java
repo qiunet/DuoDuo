@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.common;
 
+import org.qiunet.utils.string.StringUtil;
+
 /***
  *
  *
@@ -7,8 +9,16 @@ package org.qiunet.flash.handler.common;
  * 2020-09-28 15:57
  */
 public class CommMessageHandler extends MessageHandler<CommMessageHandler> {
+
+	private final String msgExecuteIndex;
+
+	public CommMessageHandler() {
+		this.msgExecuteIndex = StringUtil.randomString(10);
+	}
+
 	@Override
-	public long getId() {
-		return 0;
+	public String msgExecuteIndex() {
+		return msgExecuteIndex;
 	}
 }
+

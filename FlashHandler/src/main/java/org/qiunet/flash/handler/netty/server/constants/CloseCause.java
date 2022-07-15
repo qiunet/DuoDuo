@@ -15,10 +15,13 @@ import org.qiunet.flash.handler.util.proto.CommonModuleProto;
 public enum CloseCause {
 	@Protobuf(description = "通道关闭")
 	CHANNEL_CLOSE("通道关闭", true),
+
+	@Protobuf(description = "通道关闭")
+	CONNECTION_ID_KEY_ERROR("Connection的id key错误", false),
 	@Protobuf(description = "无效断线重连")
 	RECONNECT_INVALID("无效断线重连", false),
 	@Protobuf(description = "老session还处于激活状态 关闭老session")
-	LOGIN_REPEATED("老session还处于激活状态 关闭老session", false),
+	LOGIN_REPEATED("老session还处于激活状态 关闭老session", true, false),
 	@Protobuf(description = "通道空闲太久")
 	CHANNEL_IDLE("通道空闲太久", true),
 	@Protobuf(description = "请求过快")
@@ -45,11 +48,20 @@ public enum CloseCause {
 	DESTROY("销毁", false),
 	;
 	private final boolean waitConnect;
+	private final boolean logoutPush;
 	private final String desc;
 
 	CloseCause(String desc, boolean waitConnect) {
+		this(desc, waitConnect, true);
+	}
+	CloseCause(String desc, boolean waitConnect, boolean logoutPush) {
 		this.desc = "[" + name() + "]" + "(" + desc + ")";
 		this.waitConnect = waitConnect;
+		this.logoutPush = logoutPush;
+	}
+
+	public boolean needLogoutPush() {
+		return logoutPush;
 	}
 
 	public boolean needWaitConnect() {

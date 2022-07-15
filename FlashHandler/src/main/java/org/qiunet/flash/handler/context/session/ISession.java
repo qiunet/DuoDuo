@@ -17,6 +17,12 @@ public interface ISession extends IChannelMessageSender {
 	 * @param kcpSession
 	 */
 	void bindKcpSession(KcpSession kcpSession);
+
+	/**
+	 * 获得kcp session
+	 * @return
+	 */
+	 KcpSession getKcpSession();
 	/**
 	 * 是否活跃
 	 * @return
@@ -33,7 +39,7 @@ public interface ISession extends IChannelMessageSender {
 	 * 添加一个close 监听
 	 * @param listener
 	 */
-	void addCloseListener(BaseSession.SessionCloseListener listener);
+	void addCloseListener(String name, BaseSession.SessionCloseListener listener);
 
 	/**
 	 * 清理Close listener

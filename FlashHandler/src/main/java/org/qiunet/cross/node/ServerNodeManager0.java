@@ -77,7 +77,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			serverNode.getSender().close(CloseCause.INACTIVE);
 		}
 
-		node.getSender().addCloseListener((session, cause) -> nodes.remove(node.getServerId()));
+		node.getSender().addCloseListener("removeServerNode", (session, cause) -> nodes.remove(node.getServerId()));
 		nodes.put(node.getServerId(), node);
 	}
 
@@ -114,7 +114,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		if (serverInfo == null) {
 			throw new CustomException("ID:{} ServerInfo absent!!", serverId);
 		}
-		return lockAndCreateServerNode(serverId, serverInfo.getPublicHost(), serverInfo.getNodePort());
+		// 目前服务器和服务器肯定是内网. 如果以后有多区域需要互通. 有两个解决方案:
+		// 1. 让云服务器 跨区域搭内网
+		// 2. 下面的getHost 修改为 getPublicHost
+		return lockAndCreateServerNode(serverId, serverInfo.getHost(), serverInfo.getNodePort());
 	}
 
 	/**

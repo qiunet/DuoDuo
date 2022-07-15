@@ -73,8 +73,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
+		// 探测程序返回200
 		if (msg.uri().equals("/") || msg.uri().equals("/favicon.ico")) {
-			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
+			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.OK);
 			return;
 		}
 
@@ -168,7 +169,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
-		ThreadPoolManager.MESSAGE_HANDLER.submit(() -> {
+		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();
 			} catch (Exception e) {

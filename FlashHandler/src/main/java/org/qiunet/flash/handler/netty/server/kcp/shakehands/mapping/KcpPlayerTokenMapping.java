@@ -1,11 +1,10 @@
 package org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping;
 
-import com.google.common.collect.Maps;
+import io.netty.util.AttributeKey;
+import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.timer.TimerManager;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /***
@@ -14,62 +13,40 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 2022/4/27 11:42
  */
 public final class KcpPlayerTokenMapping {
-	/**
-	 * token 对应的 playerID,convId
-	 */
-	private static final Map<Long, PlayerKcpParamInfo> mapping = Maps.newConcurrentMap();
+	private static final AttributeKey<KcpPlayerTokenMapping> KCP_TOKEN_KEY = AttributeKey.newInstance("kcp_token_key");
+	private static final AtomicInteger id = new AtomicInteger();
+	private final long playerId;
+	private final String token;
+	// convId 暂时没有用. 用的address 判断客户端.
+	// 但是可以用来判断鉴权,之后如果需要. 也可以用convId 来管理session
+	private final int convId;
 
-	/**
-	 * 关联一个token 和 playerId
-	 *
-	 * @param playerId
-	 * @return 返回token
-	 */
-	public static PlayerKcpParamInfo mapping(long playerId) {
-		for (Map.Entry<Long, PlayerKcpParamInfo> en : mapping.entrySet()) {
-			if (en.getValue().getPlayerId() == playerId) {
-				return en.getValue();
-			}
-		}
-		PlayerKcpParamInfo playerKcpParamInfo = new PlayerKcpParamInfo(playerId);
-		TimerManager.instance.scheduleWithDelay(() -> mapping.remove(playerId), 60, TimeUnit.SECONDS);
-		mapping.put(playerId, playerKcpParamInfo);
-		return playerKcpParamInfo;
+	public KcpPlayerTokenMapping(PlayerActor playerActor) {
+		this.token = System.currentTimeMillis() +"_"+ StringUtil.randomString(24);
+		this.playerId = playerActor.getId();
+		this.convId = id.incrementAndGet();
+
+		playerActor.getSession().attachObj(KCP_TOKEN_KEY, this);
 	}
 
-	/**
-	 * 根据token 获得PlayerActor
-	 * @param playerId
-	 * @return
-	 */
-	public static PlayerKcpParamInfo getPlayer(long playerId) {
-		return mapping.get(playerId);
+	public static KcpPlayerTokenMapping getPlayer(long playerId) {
+		PlayerActor playerActor = UserOnlineManager.getPlayerActor(playerId);
+		if (playerActor == null) {
+			return null;
+		}
+		return playerActor.getSession().getAttachObj(KCP_TOKEN_KEY);
 	}
 
-	public static class PlayerKcpParamInfo {
-		private static final AtomicInteger id = new AtomicInteger();
-		private final long playerId;
-		private final String token;
-		// convId 暂时没有用. 用的address 判断客户端.
-		// 但是可以用来判断鉴权,之后如果需要. 也可以用convId 来管理session
-		private final int convId;
-
-		public PlayerKcpParamInfo(long playerId) {
-			this.token = System.currentTimeMillis() +"_"+ StringUtil.randomString(24);
-			this.convId = id.incrementAndGet();
-			this.playerId = playerId;
-		}
-
-		public long getPlayerId() {
-			return playerId;
-		}
-
-		public String getToken() {
-			return token;
-		}
-
-		public int getConvId() {
-			return convId;
-		}
+	public long getPlayerId() {
+		return playerId;
 	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public int getConvId() {
+		return convId;
+	}
+
 }

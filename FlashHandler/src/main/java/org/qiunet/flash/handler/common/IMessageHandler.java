@@ -16,6 +16,12 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 */
 	void destroy();
 	/**
+	 * 获得executor 的 index
+	 * 第一次获取后. 不会变动了
+	 * @return
+	 */
+	String msgExecuteIndex();
+	/**
 	 * 队列运行一个message
 	 * 保证线程安全.
 	 * @param message
