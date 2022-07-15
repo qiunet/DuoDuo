@@ -122,10 +122,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param serverId
 	 */
 	private synchronized ServerNode lockAndCreateServerNode(int serverId, String host, int port) {
+		if (nodes.containsKey(serverId)) {
+			return nodes.get(serverId);
+		}
 		RedisLock redisLock = redisUtil.redisLock(createRedisKey(currServerInfo.getServerId(), serverId));
 		try {
 			if (redisLock.lock()) {
 				if (nodes.containsKey(serverId)) {
+					redisLock.unlock();
 					return nodes.get(serverId);
 				}
 				return new ServerNode(redisLock, serverId, host, port);
