@@ -35,8 +35,18 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		this.params = params;
 		this.headers = headers;
 	}
+
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
+		try {
+			this.channelRead1(ctx, content);
+		}finally {
+			ctx.fireChannelRead(content);
+		}
+	}
+
+	protected void channelRead1(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {
 			ctx.writeAndFlush(params.getErrorMessage().getHandlerNotFound().encode()).addListener(ChannelFutureListener.CLOSE);

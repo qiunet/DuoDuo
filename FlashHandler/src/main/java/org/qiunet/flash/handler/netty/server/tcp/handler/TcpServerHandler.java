@@ -30,10 +30,20 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(HandlerType.TCP);
+
+		ctx.fireChannelActive();
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+		try {
+			channelRead1(ctx, msg);
+		}finally {
+			ctx.fireChannelRead(msg);
+		}
+	}
+
+	public void channelRead1(ChannelHandlerContext ctx, Object msg) throws Exception {
 		MessageContent content = ((MessageContent) msg);
 		IHandler handler = RequestHandlerMapping.getInstance().getHandler(content);
 		if (handler == null) {

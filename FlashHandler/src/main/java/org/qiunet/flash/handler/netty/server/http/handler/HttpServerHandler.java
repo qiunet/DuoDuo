@@ -51,10 +51,19 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	public void channelReadComplete(ChannelHandlerContext ctx) {
 		ctx.flush();
+		ctx.fireChannelReadComplete();
 	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+		try {
+			this.channelRead1(ctx, msg);
+		}finally {
+			ctx.fireChannelRead(msg.retain());
+		}
+	}
+
+	protected void channelRead1(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		FullHttpRequest request = (msg);
 		if (! request.decoderResult().isSuccess()) {
 			sendHttpResonseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
