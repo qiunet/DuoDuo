@@ -23,6 +23,7 @@ import org.qiunet.utils.listener.event.data.ServerStartupEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -32,6 +33,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 
@@ -242,8 +244,8 @@ public class BootstrapServer {
 			ServerDeprecatedEvent.fireDeprecated();
 
 			UserOnlineManager.instance.foreach(actor -> {
-				logger.info("Push message to online user {}", actor.getId());
-				if (! actor.isPlayerActor()) {
+				logger.debug("Push message to online user {}", actor.getId());
+				if (actor.isPlayerActor()) {
 					actor.sendMessage(PlayerReLoginPush.valueOf());
 				}else if (actor.isCrossPlayer()) {
 					actor.sendMessage(CrossPlayerLogoutPush.instance);
@@ -255,13 +257,22 @@ public class BootstrapServer {
 				this.shutdown();
 				return;
 			}
-			logger.info("Add change listener to OnlineUserManager");
-			UserOnlineManager.instance.addChangeListener(ret -> {
-				if (UserOnlineManager.instance.onlineSize() <= 0) {
-					this.shutdown();
-				}
-			});
+			this.waitForPlayerClean();
 		}
+
+		/**
+		 * 等待服务器玩家清零
+		 */
+		private void waitForPlayerClean() {
+			TimerManager.instance.scheduleWithDelay(() -> {
+				if (UserOnlineManager.instance.onlineSize() > 0) {
+					this.waitForPlayerClean();
+					return;
+				}
+				this.shutdown();
+			}, 2, TimeUnit.SECONDS);
+		}
+
 		/***
 		 * 处理现有的消息. 可以用户自定义
 		 * @param channel channel

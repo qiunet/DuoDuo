@@ -19,6 +19,7 @@ import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -46,7 +47,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	// server node 创建同步锁redis key
 	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
 	// 所有当前的节点
-	private static final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
+	private final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
 	final AtomicBoolean deprecated = new AtomicBoolean();
 	/**服务器对外停止服务*/
@@ -77,8 +78,19 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			serverNode.getSender().close(CloseCause.INACTIVE);
 		}
 
-		node.getSender().addCloseListener("removeServerNode", (session, cause) -> nodes.remove(node.getServerId()));
+		node.getSender().addCloseListener("removeServerNode", (session, cause) -> {
+			this.removeNode(node);
+		});
+
 		nodes.put(node.getServerId(), node);
+	}
+
+	synchronized void removeNode(ServerNode serverNode) {
+		if (nodes.remove(serverNode.getServerId()) != null) {
+			LoggerType.DUODUO_FLASH_HANDLER.info("====ServerId {} was removed!", serverNode.getServerId());
+			serverNode.getSender().close(CloseCause.CHANNEL_CLOSE);
+		}
+
 	}
 
 	/**
@@ -256,7 +268,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return null;
 		});
 
-		nodes.values().forEach(node -> node.getSender().close(CloseCause.SERVER_SHUTDOWN));
+		nodes.values().forEach(node -> this.removeNode(node));
 		NettyTcpClient.shutdown();
 	}
 

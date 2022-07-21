@@ -6,6 +6,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadPoolManager;
+import sun.net.util.IPAddressUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -80,10 +81,30 @@ public class NetUtil {
 		return port >= 0 && port <= PORT_RANGE_MAX;
 	}
 	/**
+	 * 得到外网IP6
+	 * @return
+	 */
+	public static String getPublicIp6(){
+		LinkedHashSet<String> strings = localIpv6s();
+		for (String string : strings) {
+			if (string.startsWith("0:0:0:0:0:0:0:1")
+			|| string.startsWith("fe80") || string.startsWith("fE80")
+			|| string.startsWith("Fc00") || string.startsWith("FC00")
+			|| string.startsWith("Fec0") || string.startsWith("FEC0")
+			) {
+				continue;
+			}
+			String ip = StringUtil.split(string, "%")[0];
+			LoggerType.DUODUO_FLASH_HANDLER.error("Use ipv6 address: {}", ip);
+			return ip;
+		}
+		throw new CustomException("Not support ipv6!");
+	}
+	/**
 	 * 得到外网IP
 	 * @return
 	 */
-	public static String getPublicIp(){
+	public static String getPublicIp4(){
 		LinkedHashSet<InetAddress> inetAddresses = localAddressList(address ->
 				! isInnerIp(address)
 				&& address instanceof Inet4Address);
@@ -134,20 +155,15 @@ public class NetUtil {
 	 * @return
 	 */
 	public static boolean isValidIp4(String host) {
-		String[] strings = StringUtil.split(host, ".");
-		if (strings.length != 4) {
-			return false;
-		}
-		for (int i = 0; i < strings.length; i++) {
-			if (! StringUtil.isNum(strings[i])) {
-				return false;
-			}
-			int i1 = Integer.parseInt(strings[i]);
-			if (i1 < 0 || i1 > 255) {
-				return false;
-			}
-		}
-		return true;
+		return IPAddressUtil.isIPv4LiteralAddress(host);
+	}
+	/**
+	 * 是否是合格的ip6
+	 * @param host
+	 * @return
+	 */
+	public static boolean isValidIp6(String host) {
+		return IPAddressUtil.isIPv6LiteralAddress(host);
 	}
 
 	/**

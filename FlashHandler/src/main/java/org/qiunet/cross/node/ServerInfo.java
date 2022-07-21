@@ -19,6 +19,12 @@ import java.util.concurrent.TimeUnit;
  */
 public final class ServerInfo extends HashMap<String, Object> {
 	static final String publicHostKey = "server.public_host";
+	/**
+	 * 使用ipv6 需要云服务器配置
+	 * 需要重启应用.
+	 * 需要打开ip6安全组的对应的端口
+	 */
+	static final String useIpv6Key = "server.use_ipv6";
 	static final String lastUpdateDt = "lastUpdateDt";
 
 	private transient final LazyLoader<ServerType> serverType = new LazyLoader<>(() -> ServerType.getServerType(getServerId()));
@@ -56,12 +62,16 @@ public final class ServerInfo extends HashMap<String, Object> {
 		}
 		// 外网才去自动获取. 本地 测试如果需要外网IP 请配置在server.conf
 		if (StringUtil.isEmpty(publicHost) && ServerConfig.isOfficial()) {
-			publicHost = NetUtil.getPublicIp();
+			publicHost = NetUtil.getPublicIp4();
 			LoggerType.DUODUO_FLASH_HANDLER.error("Use public ip {}", publicHost);
 		}
 
 		if (! StringUtil.isEmpty(publicHost)) {
 			node.put("publicHost", publicHost);
+		}
+
+		if (ServerConfig.getConfig() != null && ServerConfig.getConfig().containKey(useIpv6Key)) {
+			node.put("publicIp6", NetUtil.getPublicIp6());
 		}
 
 		return node;
@@ -105,12 +115,22 @@ public final class ServerInfo extends HashMap<String, Object> {
 	 * 优先判断有没有对外的地址. 然后再使用内网地址.
 	 * @return
 	 */
+	public String getPublicHost6() {
+		return (String) get("publicIp6");
+	}
+	/**
+	 * 得到对外提供的ip6地址
+	 * 优先判断有没有对外的地址. 然后再使用内网地址.
+	 * @return
+	 */
 	public String getPublicHost(){
 		if (containsKey("publicHost")) {
 			return (String) get("publicHost");
 		}
 		return getHost();
 	}
+
+
 	@Override
 	public String toString() {
 		return JsonUtil.toJsonString(this);

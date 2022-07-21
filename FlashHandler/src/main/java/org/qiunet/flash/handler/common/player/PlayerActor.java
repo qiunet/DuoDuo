@@ -51,6 +51,10 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	private ServerType crossServerType;
 	/**
+	 * 登录成功的actor
+	 */
+	private boolean loginSuccess;
+	/**
 	 * 玩家ID
 	 */
 	private long playerId;
@@ -185,10 +189,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	private void clockTick() {
+		if (this.getSession().isActive()) {
+			this.sendMessage(ClockTickPush.valueOf());
+		}
+
 		this.scheduleMessage(p -> {
-			if (p.getSession().isActive()) {
-				p.sendMessage(ClockTickPush.valueOf());
-			}
 			this.clockTick();
 		}, 2, TimeUnit.MINUTES);
 	}
@@ -200,6 +205,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	public void loginSuccess() {
 		new LoginSuccessEvent(this).fireEventHandler();
 		this.sessionCloseListener();
+		this.loginSuccess = true;
 	}
 
 	private void sessionCloseListener() {
@@ -226,13 +232,13 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		super.destroy();
 
 		crossConnectors.values().forEach(c -> c.getSession().close(CloseCause.DESTROY));
-
-		if (dataLoader != null) {
+		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
+		if (loginSuccess && dataLoader != null) {
 			dataLoader.unregister();
 		}
 
 		if (this.beatFuture != null) {
-			this.beatFuture.cancel(false);
+			this.beatFuture.cancel(true);
 		}
 	}
 

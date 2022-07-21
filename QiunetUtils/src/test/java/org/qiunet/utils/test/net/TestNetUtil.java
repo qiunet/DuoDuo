@@ -50,6 +50,15 @@ public class TestNetUtil  extends BaseTest {
 
 		ip = "https://baidu.com";
 		Assertions.assertFalse(NetUtil.isValidIp4(ip));
+
+		ip = "::1";
+		Assertions.assertTrue(NetUtil.isValidIp6(ip));
+
+		ip = "2408:4005:3e2:6d00:ca74:160b:7749:c6b8";
+		Assertions.assertTrue(NetUtil.isValidIp6(ip));
+
+		ip = "2408:4005:3g2:6d00:ca74:160b:7749:c6b8";
+		Assertions.assertFalse(NetUtil.isValidIp6(ip));
 	}
 
 	/**
@@ -76,7 +85,7 @@ public class TestNetUtil  extends BaseTest {
 	}
 
 	@Test
-	public void testGetPublicIp() {
-		System.out.println(NetUtil.getPublicIp());
+	public void testGetPublicIp4() {
+		System.out.println(NetUtil.getPublicIp4());
 	}
 }

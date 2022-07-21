@@ -12,9 +12,12 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.Timeout;
+
+import java.util.concurrent.TimeUnit;
 
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
@@ -31,11 +34,13 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	public ServerNode(ISession session) {
 		super(session);
+		this.heartBeat();
 	}
 
 	ServerNode(RedisLock redisLock, int serverId, String host, int port) {
 		this.serverId = serverId;
 
+		this.setMsgExecuteIndex(String.valueOf(serverId));
 		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30 );
 		super.setSession(tcpClient.connect(host, port, f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
@@ -45,6 +50,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
 		ServerNodeManager0.instance.addNode(this);
 		this.redisLock = redisLock;
+		this.heartBeat();
 	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
@@ -101,7 +107,15 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		this.timeOutFuture = null;
 		this.redisLock.unlock();
 		this.redisLock = null;
+	}
 
+	private void heartBeat() {
+		this.scheduleMessage(s -> {
+			if (this.session.isActive()) {
+				this.sendMessage(ClientPingRequest.valueOf());
+			}
+			this.heartBeat();
+		}, 15, TimeUnit.SECONDS);
 	}
 
 	@Override

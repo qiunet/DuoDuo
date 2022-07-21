@@ -17,10 +17,11 @@ import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -35,8 +36,6 @@ import java.util.function.Predicate;
  */
 public enum UserOnlineManager {
 	instance;
-	/*监听*/
-	private List<IOnlineUserSizeChangeListener> changeListeners;
 	/**
 	 * 在线
 	 */
@@ -75,7 +74,6 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		triggerChangeListeners(false);
 		// 清理 observers 避免重连重复监听.
 		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
 
@@ -102,7 +100,6 @@ public enum UserOnlineManager {
 		if (actor == null) {
 			return;
 		}
-		triggerChangeListeners(false);
 		// 清理 observers 避免重连重复监听.
 		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
 		// 退出
@@ -133,7 +130,6 @@ public enum UserOnlineManager {
 		}
 
 		onlinePlayers.put(playerId, waitActor.actor);
-		triggerChangeListeners(true);
 		currActor.destroy();
 
 		return waitActor.actor;
@@ -180,10 +176,7 @@ public enum UserOnlineManager {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
 		waitReconnects.remove(userActor.getId());
-		AbstractUserActor remove = onlinePlayers.remove(userActor.getId());
-		if (remove != null) {
-			triggerChangeListeners(false);
-		}
+		onlinePlayers.remove(userActor.getId());
 		userActor.destroy();
 	}
 	/**
@@ -261,33 +254,24 @@ public enum UserOnlineManager {
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void serverShutdown(ServerShutdownEventData event) {
 		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session close start==");
+		List<Callable<Boolean>> callables = Lists.newArrayListWithExpectedSize(onlineSize());
 		for (AbstractUserActor actor : onlinePlayers.values()) {
-			actor.session.close(CloseCause.SERVER_SHUTDOWN);
+			callables.add(() -> {
+				actor.session.close(CloseCause.SERVER_SHUTDOWN);
+				return true;
+			});
+		}
+		try {
+			List<Future<Boolean>> futures = ThreadPoolManager.NORMAL.invokeAll(callables, 6, TimeUnit.SECONDS);
+			for (Future<Boolean> future : futures) {
+				future.get(3, TimeUnit.SECONDS);
+			}
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			LoggerType.DUODUO_FLASH_HANDLER.error("shutdown exception: ", e);
 		}
 		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session all closed==");
 	}
 
-	/**
-	 * 添加变动监听
-	 * @param listener
-	 */
-	public synchronized void addChangeListener(IOnlineUserSizeChangeListener listener) {
-		if (this.changeListeners == null) {
-			this.changeListeners = Lists.newCopyOnWriteArrayList();
-		}
-		this.changeListeners.add(listener);
-	}
-
-	/**
-	 * 触发监听
-	 * @return
-	 */
-	private void triggerChangeListeners(boolean add){
-		if (changeListeners == null) {
-			return;
-		}
-		changeListeners.forEach(listener -> listener.change(add));
-	}
 	/**
 	 * 现在玩家变动监听
 	 */

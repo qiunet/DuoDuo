@@ -89,7 +89,9 @@ abstract class BaseSession implements ISession {
 
 		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		Runnable closeListener = () -> {
-			closeListeners.values().forEach(l -> l.close(this, cause));
+			closeListeners.forEach((name, cl) -> {
+				cl.close(this, cause);
+			});
 			if (closeListeners.isEmpty()) {
 				attachObj.destroy();
 			}
@@ -97,7 +99,9 @@ abstract class BaseSession implements ISession {
 		};
 
 		if (attachObj != null && attachObj.msgExecuteIndex() != null) {
-			if (((MessageHandler) attachObj).isDestroyed() || ((MessageHandler<?>) attachObj).inSelfThread()) {
+			if (cause == CloseCause.SERVER_SHUTDOWN
+			|| ((MessageHandler) attachObj).isDestroyed()
+			|| ((MessageHandler<?>) attachObj).inSelfThread()) {
 				closeListener.run();
 			}else {
 				attachObj.addMessage(p -> {

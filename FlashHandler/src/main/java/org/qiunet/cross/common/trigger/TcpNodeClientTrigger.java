@@ -21,6 +21,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
 	public void response(ISession session, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
+		|| data.getProtocolId() == IProtocolId.System.CLIENT_PING
 		|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
 		|| data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION
 		) {
