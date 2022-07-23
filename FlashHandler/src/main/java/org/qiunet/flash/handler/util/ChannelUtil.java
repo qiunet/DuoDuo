@@ -165,7 +165,7 @@ public final class ChannelUtil {
 			AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
-				logger.info("[{}] {} <<< {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(connectionReq));
+				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(connectionReq));
 			}
 
 			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
@@ -259,14 +259,24 @@ public final class ChannelUtil {
 			logger.error(errMeg, cause);
 		}
 
+		Runnable closeChannel = () -> {
+			if (session != null) {
+				session.close(CloseCause.EXCEPTION);
+			}else {
+				channel.close();
+			}
+		};
+
+		if ("Connection reset by peer".equals(cause.getMessage())) {
+			// 这种异常 就不发消息给客户端了.
+			closeChannel.run();
+			return;
+		}
+
 		if (channel.isOpen() || channel.isActive()) {
 			startupContext.exception(channel, cause)
 					.addListener(f -> {
-						if (session != null) {
-							session.close(CloseCause.EXCEPTION);
-						}else {
-							channel.close();
-						}
+						closeChannel.run();
 					});
 		}
 	}

@@ -42,13 +42,13 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	@Override
 	public void handlerRequest() throws Exception{
 		if (handler.needAuth() && ! messageActor.isAuth()) {
-			logger.error("handler [{}] need auth. but not auth!", handler.getClass().getSimpleName());
+			logger.error("Handler [{}] need auth. but session {} not auth!", handler.getClass().getSimpleName(), messageActor.getSender());
 			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
 
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("[{}] {} <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(getRequestData()));
+			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(getRequestData()));
 		}
 
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {

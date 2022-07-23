@@ -29,7 +29,10 @@ public class KcpTokenHandler extends PersistConnPbHandler<PlayerActor, KcpTokenR
 			throw StatusResultException.valueOf(StatusResult.FAIL);
 		}
 
-		KcpPlayerTokenMapping info = new KcpPlayerTokenMapping(playerActor);
+		KcpPlayerTokenMapping info = KcpPlayerTokenMapping.get(playerActor);
+		if (info == null) {
+			info = new KcpPlayerTokenMapping(playerActor);
+		}
 		KcpTokenRsp kcpTokenRsp = KcpTokenRsp.valueOf(info.getConvId(), info.getToken(), ServerConfig.getServerPort());
 		playerActor.sendMessage(kcpTokenRsp);
 	}

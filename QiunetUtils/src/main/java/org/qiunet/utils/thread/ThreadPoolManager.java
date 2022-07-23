@@ -15,7 +15,7 @@ import java.util.concurrent.*;
  * 2020-11-03 18:15
  */
 public enum ThreadPoolManager implements ExecutorService {
-	NORMAL("THREAD_POOL_MANAGER_NORMAL", OSUtil.availableProcessors() * 2, 10000);
+	NORMAL("THREAD_POOL_MANAGER_NORMAL", OSUtil.availableProcessors(), 10000);
 	/**
 	 * threadPool Name -> executors
 	 */
@@ -26,7 +26,7 @@ public enum ThreadPoolManager implements ExecutorService {
 	 * @return
 	 */
 	ThreadPoolManager(String poolName, int threadNum, int maxCap) {
-		this.executorService = new ThreadPoolExecutor(threadNum, threadNum*4,
+		this.executorService = new ThreadPoolExecutor(Math.max(8, threadNum), threadNum*4,
 			60, TimeUnit.SECONDS,
 			new LinkedBlockingDeque<>(maxCap), new DefaultThreadFactory(poolName),
 			new ThreadPoolExecutor.CallerRunsPolicy());

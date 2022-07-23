@@ -4,6 +4,7 @@ import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.listener.event.EventManager;
 
 /***
@@ -78,7 +79,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * 玩家主动退出
 	 */
 	public void logout() {
-		UserOnlineManager.instance.playerQuit((T)this);
+		this.getSession().close(CloseCause.LOGOUT);
 	}
 
 	@Override

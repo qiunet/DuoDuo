@@ -52,18 +52,6 @@ public enum UserOnlineManager {
 		onlinePlayers.put(userActor.getId(), userActor);
 	}
 	/**
-	 * 玩家自主退出，会完整走登出流程
-	 * @param actor 玩家
-	 */
-	public <T extends AbstractUserActor<T>> void playerQuit(T actor) {
-		if (actor.isCrossPlayer()) {
-			((CrossPlayerActor) actor).fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
-		}
-
-		actor.session.close(CloseCause.LOGOUT);
-		this.destroyPlayer(actor);
-	}
-	/**
 	 * 登出事件
 	 * @param eventData
 	 */
@@ -96,14 +84,8 @@ public enum UserOnlineManager {
 	 */
 	@EventListener(EventHandlerWeightType.LESS)
 	private void onLogout(CrossActorLogoutEvent eventData) {
-		CrossPlayerActor actor = (CrossPlayerActor) onlinePlayers.remove(eventData.getPlayer().getId());
-		if (actor == null) {
-			return;
-		}
-		// 清理 observers 避免重连重复监听.
-		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
-		// 退出
-		this.playerQuit(actor);
+		eventData.getPlayer().fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
+		this.destroyPlayer(eventData.getPlayer());
 	}
 	/**
 	 * 重连
@@ -119,6 +101,8 @@ public enum UserOnlineManager {
 			currActor.getSession().close(CloseCause.RECONNECT_INVALID);
 			return null;
 		}
+
+		LoggerType.DUODUO_FLASH_HANDLER.info("[{}] reconnected. Old Session: {}", currActor.getSession(), waitActor.actor.getSession());
 
 		waitActor.actor.clearObservers();
 		waitActor.actor.merge(currActor);
@@ -158,7 +142,7 @@ public enum UserOnlineManager {
 			return;
 		}
 		waitActor.future.cancel(true);
-		waitActor.actor.clearObservers();
+		this.destroyPlayer(waitActor.actor);
 		waitActor.actor.destroy();
 	}
 
@@ -171,13 +155,13 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
 		if (userActor.isCrossPlayer() && userActor.getSender().isActive()) {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
+		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
+		LoggerType.DUODUO_FLASH_HANDLER.info("{} was destroy", userActor.getSession());
 		waitReconnects.remove(userActor.getId());
 		onlinePlayers.remove(userActor.getId());
-		userActor.destroy();
 	}
 	/**
 	 * 在线本服玩家数量
@@ -270,16 +254,5 @@ public enum UserOnlineManager {
 			LoggerType.DUODUO_FLASH_HANDLER.error("shutdown exception: ", e);
 		}
 		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session all closed==");
-	}
-
-	/**
-	 * 现在玩家变动监听
-	 */
-	@FunctionalInterface
-	public interface IOnlineUserSizeChangeListener {
-		/**
-		 * @param add true 加 false 减
-		 */
-		void change(boolean add);
 	}
 }

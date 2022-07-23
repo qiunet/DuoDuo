@@ -15,11 +15,22 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 public class PlayerLogoutPush implements IChannelData {
 	@Protobuf(description = "关闭的原因")
 	private CloseCause cause;
+	@Protobuf(description = "是否可以重连")
+	private boolean canReconnect;
 
 	public static PlayerLogoutPush valueOf(CloseCause cause){
 		PlayerLogoutPush data = new PlayerLogoutPush();
+		data.canReconnect = cause.needWaitConnect();
 		data.cause = cause;
 		return data;
+	}
+
+	public boolean isCanReconnect() {
+		return canReconnect;
+	}
+
+	public void setCanReconnect(boolean canReconnect) {
+		this.canReconnect = canReconnect;
 	}
 
 	public void setCause(CloseCause cause) {

@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 
 public enum QuartzSchedule {
 	instance;
@@ -32,11 +33,16 @@ public enum QuartzSchedule {
 	@EventListener
 	private void shutdown(ServerShutdownEventData eventData) {
 		this.jobs.forEach(job -> {
+			job.canceled = true;
 			job.future.cancel(false);
 		});
 	}
 
 	private static  class JobFacade implements IDelayTask<Boolean> {
+		/**
+		 * 已经停止job
+		 */
+		private boolean canceled;
 		private final IJob job;
 
 		private Date fireTime;
@@ -57,10 +63,18 @@ public enum QuartzSchedule {
 		}
 
 		void doNextJob() {
+			if (canceled) {
+				return;
+			}
+
 			Date nextDt = expression.getTimeAfter(this.fireTime);
 			if (nextDt != null) {
 				this.future = TimerManager.instance.scheduleWithTimeMillis(this, nextDt.getTime());
-				this.future.whenComplete((res, e) -> this.doNextJob());
+				this.future.whenComplete((res, e) ->{
+					if (! (e instanceof CancellationException)) {
+						this.doNextJob();
+					}
+				});
 			}
 		}
 
@@ -70,6 +84,9 @@ public enum QuartzSchedule {
 
 		@Override
 		public Boolean call() throws Exception {
+			 if (canceled) {
+				 return false;
+			 }
 			this.fireTime = new Date();
 			return this.job.doJob();
 		}

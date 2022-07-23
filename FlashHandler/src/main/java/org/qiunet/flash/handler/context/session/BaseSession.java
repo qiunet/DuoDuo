@@ -75,45 +75,58 @@ abstract class BaseSession implements ISession {
 			// 避免多次调用close. 多次调用监听.
 			return;
 		}
-		Runnable runnable = () -> {
-			if (channel == null) {
-				return;
-			}
-			logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
-			if ((channel.isActive() || channel.isOpen())) {
-				logger.info("Session [{}] closed", this);
-				this.flush();
-			}
-			channel.close();
-		};
 
 		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		Runnable closeListener = () -> {
-			closeListeners.forEach((name, cl) -> {
-				cl.close(this, cause);
-			});
-			if (closeListeners.isEmpty()) {
-				attachObj.destroy();
-			}
-			runnable.run();
-		};
-
-		if (attachObj != null && attachObj.msgExecuteIndex() != null) {
-			if (cause == CloseCause.SERVER_SHUTDOWN
-			|| ((MessageHandler) attachObj).isDestroyed()
-			|| ((MessageHandler<?>) attachObj).inSelfThread()) {
-				closeListener.run();
-			}else {
-				attachObj.addMessage(p -> {
-					closeListener.run();
-				});
-			}
-		}else {
+		if (attachObj == null || attachObj.msgExecuteIndex() == null) {
 			if (attachObj != null) {
 				attachObj.destroy();
 			}
-			runnable.run();
+			this.closeChannel(cause);
+			return;
 		}
+
+		if (cause == CloseCause.SERVER_SHUTDOWN
+		|| ((MessageHandler) attachObj).isDestroyed()
+		|| ((MessageHandler<?>) attachObj).inSelfThread()) {
+			// 直接执行.
+			this.closeSession(cause);
+		}else {
+			attachObj.addMessage(p -> {
+				this.closeSession(cause);
+			});
+		}
+	}
+
+	/**
+	 * 关闭session
+	 * @param cause
+	 */
+	private void closeSession(CloseCause cause) {
+		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		closeListeners.forEach((name, cl) -> {
+			cl.close(this, cause);
+		});
+
+		// 没有loginSuccess的那种
+		if (closeListeners.isEmpty()) {
+			attachObj.destroy();
+		}
+		this.closeChannel(cause);
+	}
+	/**
+	 * 关闭channel
+	 * @param cause
+	 */
+	private void closeChannel(CloseCause cause) {
+		if (channel == null) {
+			return;
+		}
+		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
+		if ((channel.isActive() || channel.isOpen())) {
+			logger.info("Session [{}] closed", this);
+			this.flush();
+		}
+		channel.close();
 	}
 
 	@Override
@@ -136,12 +149,12 @@ abstract class BaseSession implements ISession {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! this.channel.isOpen()) {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-			logger.error("[{}] discard {} message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), message.toStr());
+			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 			return new DMessageContentFuture(channel, message);
 		}
 
 		if ( logger.isInfoEnabled() && message.needLogger()  && messageActor != null) {
-			logger.info("[{}] {} >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), message.toStr());
+			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 		}
 
 		if (flush) {

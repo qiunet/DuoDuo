@@ -21,7 +21,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -63,10 +62,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	private String openId;
 	/**
-	 * 跨服心跳feature
-	 */
-	private Future<?> beatFuture;
-	/**
 	 * 玩家的构造
 	 * @param session
 	 */
@@ -86,7 +81,18 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * 跨服session的心跳
 	 */
 	private void crossHeartBeat(){
-		crossConnectors.values().forEach(PlayerCrossConnector::heartBeat);
+		if (isDestroyed()){
+			return;
+		}
+
+		this.scheduleMessage(p -> {
+			if (isDestroyed()){
+				return;
+			}
+			crossConnectors.values().forEach(PlayerCrossConnector::heartBeat);
+			this.crossHeartBeat();
+		}, 20, TimeUnit.SECONDS);
+
 	}
 	/**
 	 * 给所有的跨服连接发送事件
@@ -182,8 +188,8 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			return;
 		}
 
-		this.beatFuture = this.scheduleAtFixedRate("跨服Session心跳", p -> crossHeartBeat(), 5, 10, TimeUnit.SECONDS);
 		dataLoader = new PlayerDataLoader(id);
+		this.crossHeartBeat();
 		this.playerId = id;
 		this.clockTick();
 	}
@@ -235,10 +241,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
 		if (loginSuccess && dataLoader != null) {
 			dataLoader.unregister();
-		}
-
-		if (this.beatFuture != null) {
-			this.beatFuture.cancel(true);
 		}
 	}
 

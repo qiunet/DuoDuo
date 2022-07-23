@@ -45,7 +45,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		super.setSession(tcpClient.connect(host, port, f -> {
 			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
 		}));
-		this.sendMessage(ConnectionReq.valueOf(String.valueOf(serverId)), true);
+		this.sendMessage(ConnectionReq.valueOf(String.valueOf(ServerNodeManager.getCurrServerId())), true);
 		// 发送鉴权请求
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
 		ServerNodeManager0.instance.addNode(this);

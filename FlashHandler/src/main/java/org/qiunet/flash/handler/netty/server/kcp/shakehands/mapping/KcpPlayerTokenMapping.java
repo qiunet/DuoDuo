@@ -29,12 +29,16 @@ public final class KcpPlayerTokenMapping {
 		playerActor.getSession().attachObj(KCP_TOKEN_KEY, this);
 	}
 
+	public static KcpPlayerTokenMapping get(PlayerActor playerActor) {
+		return playerActor.getSession().getAttachObj(KCP_TOKEN_KEY);
+	}
+
 	public static KcpPlayerTokenMapping getPlayer(long playerId) {
 		PlayerActor playerActor = UserOnlineManager.getPlayerActor(playerId);
 		if (playerActor == null) {
 			return null;
 		}
-		return playerActor.getSession().getAttachObj(KCP_TOKEN_KEY);
+		return get(playerActor);
 	}
 
 	public long getPlayerId() {

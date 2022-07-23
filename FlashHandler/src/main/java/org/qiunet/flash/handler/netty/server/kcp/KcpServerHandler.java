@@ -70,7 +70,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		//
 		if (content.getProtocolId() == IProtocolId.System.KCP_CONNECT_REQ) {
 			if (logger.isInfoEnabled()) {
-				logger.debug("{} <<< Kcp connect req", "KCP");
+				logger.debug("ChannelID:{} <<< Kcp connect req", ctx.channel().id().asShortText());
 			}
 			ChannelUtil.getSession(ctx.channel()).sendMessage(KcpConnectRsp.valueOf(((UkcpServerChildChannel) ctx.channel()).conv()));
 			return;
@@ -80,7 +80,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		if (content.getProtocolId() == IProtocolId.System.KCP_BIND_AUTH_REQ) {
 			KcpBindAuthReq req = ProtobufDataManager.decode(KcpBindAuthReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
-				logger.info("{} <<< {}", "KCP", ToString.toString(req));
+				logger.info("[{}({})] <<< {}", "KCP", ctx.channel().id().asShortText(), ToString.toString(req));
 			}
 
 			KcpPlayerTokenMapping kcpParamInfo = KcpPlayerTokenMapping.getPlayer(req.getPlayerId());
