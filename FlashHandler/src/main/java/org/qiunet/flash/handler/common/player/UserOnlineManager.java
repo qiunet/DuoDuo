@@ -59,6 +59,7 @@ public enum UserOnlineManager {
 	private void onLogout(PlayerActorLogoutEvent eventData) {
 		PlayerActor actor = (PlayerActor) onlinePlayers.remove(eventData.getPlayer().getId());
 		if (actor == null) {
+			this.destroyPlayer(eventData.getPlayer());
 			return;
 		}
 
@@ -162,6 +163,8 @@ public enum UserOnlineManager {
 		LoggerType.DUODUO_FLASH_HANDLER.info("{} was destroy", userActor.getSession());
 		waitReconnects.remove(userActor.getId());
 		onlinePlayers.remove(userActor.getId());
+
+		userActor.destroy();
 	}
 	/**
 	 * 在线本服玩家数量

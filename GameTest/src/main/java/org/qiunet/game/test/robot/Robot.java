@@ -42,6 +42,11 @@ public class Robot extends RobotFunc{
 	}
 
 	@Override
+	public void auth(long id) {
+		// do nothing
+	}
+
+	@Override
 	public String msgExecuteIndex() {
 		return this.account;
 	}

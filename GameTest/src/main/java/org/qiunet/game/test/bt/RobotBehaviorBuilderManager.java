@@ -59,7 +59,9 @@ public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 		}
 
 		public IBehaviorNode<Owner> build(Owner param){
-			return obj.buildExecutor(param);
+			IBehaviorNode<Owner> node = obj.buildExecutor(param);
+			node.setName(method.getDeclaringClass().getSimpleName());
+			return node;
 		}
 	}
 }

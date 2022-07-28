@@ -35,7 +35,8 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	}
 
 	protected Headers.Builder headerBuilder = new Headers.Builder()
-		.add("Accept-Charset", "UTF-8");
+		.add("Accept-Charset", "UTF-8")
+		.add("Accept-Encoding", "gzip");
 
 	public static PostHttpRequest post(String url) {
 		return new PostHttpRequest(url);

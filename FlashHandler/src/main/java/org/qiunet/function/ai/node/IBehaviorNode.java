@@ -50,6 +50,8 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	 * @return
 	 */
 	String getName();
+
+	void setName(String name);
 	/**
 	 *
 	 * @return

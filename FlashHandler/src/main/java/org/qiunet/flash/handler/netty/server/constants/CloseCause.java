@@ -13,15 +13,15 @@ import org.qiunet.flash.handler.util.proto.CommonModuleProto;
 @CommonModuleProto
 @ProtobufClass(description = "连接关闭的原因")
 public enum CloseCause {
-	@Protobuf(description = "通道关闭")
-	CHANNEL_CLOSE("通道关闭", true),
+	@Protobuf(description = "监听到客户端的通道关闭")
+	CHANNEL_CLOSE("监听到客户端的通道关闭", true),
 
-	@Protobuf(description = "通道关闭")
-	CONNECTION_ID_KEY_ERROR("Connection的id key错误", false),
+	@Protobuf(description = "Connection的idKey错误")
+	CONNECTION_ID_KEY_ERROR("Connection的idKey错误", false),
 	@Protobuf(description = "无效断线重连")
 	RECONNECT_INVALID("无效断线重连", false),
-	@Protobuf(description = "老session还处于激活状态 关闭老session")
-	LOGIN_REPEATED("老session还处于激活状态 关闭老session", false),
+	@Protobuf(description = "被顶号")
+	LOGIN_REPEATED("被顶号", false),
 	@Protobuf(description = "通道空闲太久")
 	CHANNEL_IDLE("通道空闲太久", true),
 	@Protobuf(description = "请求过快")
@@ -46,6 +46,9 @@ public enum CloseCause {
 	INACTIVE("不活跃了", true),
 	@Protobuf(description = "销毁")
 	DESTROY("销毁", false),
+
+	@Protobuf(description = "旧Session活跃时候重连,关闭旧Session")
+	LOGIN_RECONNECTION("旧Session活跃时候重连,关闭旧Session", true),
 	;
 	private final boolean waitConnect;
 	private final boolean logoutPush;
@@ -65,6 +68,13 @@ public enum CloseCause {
 	}
 
 	public boolean needWaitConnect() {
+		return waitConnect;
+	}
+
+	public boolean clientNeedReconnect() {
+		if (this == LOGIN_RECONNECTION) {
+			return false;
+		}
 		return waitConnect;
 	}
 

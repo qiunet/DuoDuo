@@ -69,6 +69,7 @@ public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 		return id.get();
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

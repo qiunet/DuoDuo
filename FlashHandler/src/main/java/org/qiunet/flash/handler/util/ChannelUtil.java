@@ -268,7 +268,6 @@ public final class ChannelUtil {
 		};
 
 		if ("Connection reset by peer".equals(cause.getMessage())) {
-			// 这种异常 就不发消息给客户端了.
 			closeChannel.run();
 			return;
 		}

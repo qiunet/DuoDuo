@@ -4,7 +4,7 @@ import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseDecorator;
-import org.qiunet.function.ai.node.executor.SelectorExecutor;
+import org.qiunet.function.ai.node.executor.WheelExecutor;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,7 +34,7 @@ public final class BehaviorRootTree<Owner> extends BaseDecorator<Owner> {
 	 * 默认使用 selector 节点作为root节点
 	 */
 	public BehaviorRootTree(Owner owner){
-		super(new SelectorExecutor<>(null, "Root"), "Root");
+		super(new WheelExecutor<>(null, "Root"), "Root");
 		this.owner = owner;
 	}
 

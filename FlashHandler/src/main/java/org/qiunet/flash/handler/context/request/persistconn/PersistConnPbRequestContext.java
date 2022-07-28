@@ -9,10 +9,8 @@ import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
-import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.ToString;
 
 /**
@@ -43,7 +41,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	public void handlerRequest() throws Exception{
 		if (handler.needAuth() && ! messageActor.isAuth()) {
 			logger.error("Handler [{}] need auth. but session {} not auth!", handler.getClass().getSimpleName(), messageActor.getSender());
-			ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
+			// 先不管. 客户端重连可能有问题. 不能掐掉
+			//ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
 

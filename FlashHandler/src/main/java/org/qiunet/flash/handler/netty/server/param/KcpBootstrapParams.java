@@ -85,7 +85,10 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	public class Builder extends SuperBuilder<KcpBootstrapParams, Builder> {
 
-		private Builder(){}
+		private Builder(){
+			// UDP 如果60秒没有消息. 路由信息也会丢失. 不需要10分钟.
+			KcpBootstrapParams.this.readIdleCheckSeconds = 60;
+		}
 
 		public Builder setDependOnTcpWs() {
 			KcpBootstrapParams.this.dependOnTcpWs = true;

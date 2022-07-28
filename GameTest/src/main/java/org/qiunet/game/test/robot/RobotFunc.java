@@ -2,14 +2,16 @@ package org.qiunet.game.test.robot;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IMessageHandler;
-import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
+import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -43,7 +45,7 @@ import java.util.concurrent.TimeUnit;
  * Created by qiunet.
  * 17/12/9
  */
-abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandler<Robot> , IArgsContainer {
+abstract class RobotFunc extends AbstractMessageActor<Robot> implements IMessageHandler<Robot> , IArgsContainer {
 	protected static final Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
 	/**
 	 * 存储各种数据的一个容器.
@@ -115,10 +117,13 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			switch (config.getConnType()) {
 				case WS:
 					return NettyWebSocketClient.create(((WebSocketClientParams) config), trigger);
+				case KCP:
+					return NettyKcpClient.create((KcpClientParams) config, trigger)
+				.connect(config.getAddress().getHostString(), config.getAddress().getPort());
 				case TCP:
-					return NettyTcpClient.create((TcpClientParams) config, trigger)
-							.connect(config.getAddress().getHostString(), config.getAddress().getPort())
-							.getSender();
+				return NettyTcpClient.create((TcpClientParams) config, trigger)
+						.connect(config.getAddress().getHostString(), config.getAddress().getPort())
+						.getSender();
 				default:
 					throw new CustomException("Type [{}] is not support", config.getConnType());
 			}
@@ -129,7 +134,14 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 		@Override
 		public void response(ISession session, MessageContent data) {
-			RobotFunc.this.addMessage(h -> response0(session, data));
+			data.retain();
+			RobotFunc.this.addMessage(h -> {
+				try {
+					response0(session, data);
+				}finally {
+					data.release();
+				}
+			});
 		}
 
 		private void response0(ISession session, MessageContent data) {
@@ -140,8 +152,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 
 			Method method = ResponseMapping.getResponseMethodByID(data.getProtocolId());
 			if (method == null) {
-				session.close(CloseCause.LOGOUT);
-				brokeRobot("Response ID ["+data.getProtocolId()+"] not define!");
+				logger.error("=====Response ID ["+data.getProtocolId()+"] not define,skip message!======");
 				return;
 			}
 
@@ -150,6 +161,7 @@ abstract class RobotFunc extends MessageHandler<Robot> implements IMessageHandle
 			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(data.getProtocolId());
 			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.byteBuffer());
 
+			logger.info("[{}] <<< {}", RobotFunc.this.getIdentity(), ToString.toString(realData));
 			try {
 				method.invoke(action, realData);
 			} catch (Exception e) {

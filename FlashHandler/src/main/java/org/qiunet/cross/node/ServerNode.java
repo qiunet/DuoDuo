@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.Timeout;
@@ -108,14 +109,22 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		this.redisLock.unlock();
 		this.redisLock = null;
 	}
-
+	private DFuture<Void> future;
 	private void heartBeat() {
-		this.scheduleMessage(s -> {
+		this.future = this.scheduleMessage(s -> {
 			if (this.session.isActive()) {
 				this.sendMessage(ClientPingRequest.valueOf());
 			}
 			this.heartBeat();
 		}, 15, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public void destroy() {
+		super.destroy();
+		if (this.future != null) {
+			this.future.cancel(false);
+		}
 	}
 
 	@Override
