@@ -7,6 +7,7 @@ import io.jpower.kcp.netty.UkcpClientChannel;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
@@ -71,7 +72,7 @@ public class NettyKcpClient {
 		// Start the client.
 		try {
 			ChannelFuture f = this.bootstrap.connect(host, port).sync();
-			return new KcpSession(f.channel());
+			return new KcpSession(((UkcpClientChannel) f.channel()).conv(params.getConvId()));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -79,6 +80,13 @@ public class NettyKcpClient {
 	}
 
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
+
+		@Override
+		public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.KCP);
+			super.channelActive(ctx);
+		}
+
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
 			trigger.response(ctx.channel().attr(ServerConstants.SESSION_KEY).get(), msg);

@@ -1,6 +1,8 @@
 package org.qiunet.function.ai.node;
 
 
+import org.qiunet.flash.handler.common.MessageHandler;
+
 /***
  * 具体的测试动作.
  * 执行一个测试动作.
@@ -10,5 +12,5 @@ package org.qiunet.function.ai.node;
  * @author qiunet
  * 2021-07-05 09:57
  */
-public interface IBehaviorAction<Owner> extends IBehaviorNode<Owner> {
+public interface IBehaviorAction<Owner extends MessageHandler<Owner>> extends IBehaviorNode<Owner> {
 }

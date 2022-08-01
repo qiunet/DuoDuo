@@ -1,9 +1,11 @@
 package org.qiunet.data.util;
 
+import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,10 @@ public class RedisMapUtil {
 			if (val instanceof Date) {
 				map.put(field.getName(), String.valueOf(((Date) val).getTime()));
 			}
+
+			if (Collection.class.isAssignableFrom(field.getType())) {
+				map.put(field.getName(), JsonUtil.toJsonString(val));
+			}
 		}
 		return map;
 	}
@@ -64,6 +70,8 @@ public class RedisMapUtil {
 				ReflectUtil.setField(t, field, Integer.parseInt(val));
 			}else if(field.getType() == Long.class || field.getType() == long.class){
 				ReflectUtil.setField(t, field, Long.parseLong(val));
+			}else if(Collection.class.isAssignableFrom(field.getType())){
+				ReflectUtil.setField(t, field, JsonUtil.getGeneralObject(val, field.getGenericType()));
 			}
 		});
 		return t;

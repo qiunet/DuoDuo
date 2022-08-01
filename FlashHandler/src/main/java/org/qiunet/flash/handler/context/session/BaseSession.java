@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.IRobot;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
@@ -153,7 +154,7 @@ abstract class BaseSession implements ISession {
 			return new DMessageContentFuture(channel, message);
 		}
 
-		if ( logger.isInfoEnabled() && message.needLogger()  && messageActor != null) {
+		if ( logger.isInfoEnabled() && messageActor != null && ( message.needLogger() || messageActor instanceof IRobot)) {
 			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 		}
 
@@ -197,11 +198,5 @@ abstract class BaseSession implements ISession {
 	@Override
 	public IChannelMessageSender getSender() {
 		return this;
-	}
-
-
-	@FunctionalInterface
-	public interface SessionCloseListener {
-		void close(ISession session, CloseCause cause);
 	}
 }

@@ -1,11 +1,16 @@
 package org.qiunet.function.ai.node.executor;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
 import org.qiunet.function.condition.IConditions;
+import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.collection.enums.ForEachResult;
+import org.qiunet.utils.collection.wheel.WheelList;
+import org.qiunet.utils.common.functional.IndexForeach;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /***
  * 或行为逻辑
@@ -22,7 +27,7 @@ import java.util.List;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SelectorExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
+public class SelectorExecutor<Owner extends MessageHandler<Owner>> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 按照优先级执行
 	 * 每次从左 -> 右
@@ -55,40 +60,32 @@ public class SelectorExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	public void initialize() {
 		super.initialize();
 		if (prioritySelector) {
+			// 优先级节点.每次都从 0 开始
 			this.currIndex = 0;
 		}
 	}
-
+	private final LazyLoader<WheelList<IBehaviorNode<Owner>>> wheelList = new LazyLoader<>(() -> new WheelList<>(this.getChildNodes()));
 	@Override
 	public ActionStatus execute() {
-		List<IBehaviorNode<Owner>> childNodes = this.getChildNodes();
-		int start = this.currIndex(), limit = childSize(), loopCount = 0;
-		for (currIndex = start; currIndex < limit; currIndex++) {
-			IBehaviorNode<Owner> currentNode = childNodes.get(currIndex);
-			if (! prioritySelector) {
-				// 全部遍历完。 没有结果。
-				if (loopCount++ >= childSize()) {
-					break;
-				}
-
-				if (start > 0 && currIndex == childSize() - 1) {
-					// 再从头循环到起始位置.
-					currIndex = 0;
-					limit = start;
-				}
-			}
-
+		AtomicReference<ActionStatus> statusRef = new AtomicReference<>(ActionStatus.FAILURE);
+		IndexForeach<IBehaviorNode<Owner>> consumer = (index, currentNode) -> {
 			boolean preCondition = currentNode.isRunning() || currentNode.preCondition();
 			if (! preCondition) {
-				continue;
+				return ForEachResult.CONTINUE;
 			}
 
-			ActionStatus status = currentNode.run();
-			if (status != ActionStatus.FAILURE) {
-				return status;
+			statusRef.set(currentNode.run());
+			if (statusRef.get() != ActionStatus.FAILURE) {
+				return ForEachResult.BREAK;
 			}
+			return ForEachResult.CONTINUE;
+		};
+		if (isRunning()) {
+			currIndex = wheelList.get().foreach(currIndex, consumer);
+		}else {
+			currIndex = wheelList.get().nextForeach(currIndex, consumer);
 		}
-		return ActionStatus.FAILURE;
+		return statusRef.get();
 	}
 
 	/**

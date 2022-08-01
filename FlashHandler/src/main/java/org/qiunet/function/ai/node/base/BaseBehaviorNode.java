@@ -1,6 +1,8 @@
 package org.qiunet.function.ai.node.base;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.log.BHTStatusLogger;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
@@ -13,18 +15,17 @@ import org.qiunet.utils.async.LazyLoader;
  * @author qiunet
  * 2021-07-05 11:49
  */
-public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
-	private final LazyLoader<BehaviorRootTree<Owner>> rootNode = new LazyLoader<>(() -> this.parent().rootNode());
+public abstract class BaseBehaviorNode<Owner extends MessageHandler<Owner>> implements IBehaviorNode<Owner> {
+	protected final LazyLoader<BehaviorRootTree<Owner>> rootNode = new LazyLoader<>(() -> this.parent().rootNode());
 	private final LazyLoader<Integer> id = new LazyLoader<>(() -> rootNode().generatorId());
 	/**
 	 * 父节点
 	 */
 	protected IBehaviorExecutor<Owner> parent;
-
 	/**
-	 * 状态
+	 * 状态记录
 	 */
-	protected boolean running;
+	protected BHTStatusLogger<Owner> statusLogger;
 	/**
 	 * 节点名称
 	 * 读取Ai.xml设置.
@@ -38,13 +39,19 @@ public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 	private final IConditions<Owner> conditions;
 
 	public BaseBehaviorNode(IConditions<Owner> conditions, String name) {
+		this.statusLogger = new BHTStatusLogger<>(this);
 		this.conditions = conditions;
 		this.name = name;
 	}
 
 	@Override
 	public boolean isRunning() {
-		return running;
+		return statusLogger.getStatus() != null && statusLogger.getStatus().isRunning();
+	}
+
+	@Override
+	public BHTStatusLogger<Owner> statusLogger() {
+		return statusLogger;
 	}
 
 	@Override
@@ -54,13 +61,17 @@ public abstract class BaseBehaviorNode<Owner> implements IBehaviorNode<Owner> {
 
 	@Override
 	public BehaviorRootTree<Owner> rootNode() {
+		if (parent == null) {
+			return null;
+		}
 		return rootNode.get();
 	}
 
 	@Override
 	public ActionStatus run() {
 		ActionStatus status = execute();
-		this.running = status == ActionStatus.RUNNING;
+		this.statusLogger.setExecuted(true);
+		this.statusLogger.setStatus(status);
 		return status;
 	}
 

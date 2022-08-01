@@ -281,6 +281,10 @@ public class StringUtil {
 	 * @return
 	 */
 	public static String repeated(String string, int count) {
+		if (count == 0) {
+			return StringUtil.EMPTY_STRING;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < count; i++) {
 			sb.append(string);

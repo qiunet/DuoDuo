@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.executor;
 
 import com.google.common.collect.Lists;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
@@ -15,7 +16,7 @@ import java.util.List;
  * qiunet
  * 2021/8/16 16:40
  **/
-public class ParallelExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
+public class ParallelExecutor<Owner extends MessageHandler<Owner>> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 所有运行中的节点
 	 */

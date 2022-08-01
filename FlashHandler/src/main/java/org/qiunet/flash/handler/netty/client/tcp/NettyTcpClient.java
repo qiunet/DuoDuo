@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -16,6 +17,7 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.logger.LoggerType;
 
 /**
  * Created by qiunet.
@@ -85,9 +87,21 @@ public class NettyTcpClient {
 	}
 
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
+
+		@Override
+		public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
+			super.channelActive(ctx);
+		}
+
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
 			trigger.response(ctx.channel().attr(ServerConstants.SESSION_KEY).get(), msg);
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+			LoggerType.DUODUO_FLASH_HANDLER.error("Netty tcp client exception: ", cause);
 		}
 	}
 }

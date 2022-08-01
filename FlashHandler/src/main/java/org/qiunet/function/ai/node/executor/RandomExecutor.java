@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.executor;
 
 import com.google.common.collect.Sets;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
@@ -19,7 +20,7 @@ import java.util.Set;
  * qiunet
  * 2021/8/9 12:10
  **/
-public class RandomExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
+public class RandomExecutor<Owner extends MessageHandler<Owner>> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 已经执行过的node
 	 * 如果 excludeExecuted == true
@@ -69,9 +70,12 @@ public class RandomExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
 	@Override
 	public void initialize() {
 		super.initialize();
+
 		if (getChildNodes().isEmpty()) {
 			throw new CustomException("Class [{}] child nodes is empty!", getClass().getName());
 		}
+
+
 		if (childSize() == executedNodes.size()) {
 			executedNodes.clear();
 		}

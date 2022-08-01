@@ -1,18 +1,15 @@
 package org.qiunet.game.tests.client.action.login;
 
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.action.BehaviorAction;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
-import org.qiunet.game.tests.client.anno.StatusTipsHandler;
 import org.qiunet.game.tests.client.data.BlackBoard;
 import org.qiunet.game.tests.protocol.enums.GenderType;
 import org.qiunet.game.tests.protocol.proto.login.RegisterRequest;
 import org.qiunet.game.tests.protocol.proto.login.RegisterResponse;
-import org.qiunet.game.tests.server.enums.GameStatus;
 
 /***
  * 注册新角色
@@ -54,12 +51,6 @@ public class RegisterAction extends TestAction {
 			return ActionStatus.FAILURE;
 		}
 		return registered ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
-	}
-
-	@Override
-	@StatusTipsHandler({GameStatus.RANDOM_NAME_ALREADY_USED, GameStatus.REGISTER_COUNT_MAX})
-	public void statusHandler(StatusTipsRsp response) {
-		this.errorMsg = response.getStatus();
 	}
 
 	@TestResponse

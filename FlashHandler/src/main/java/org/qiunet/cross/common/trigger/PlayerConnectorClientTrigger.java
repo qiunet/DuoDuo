@@ -1,5 +1,6 @@
 package org.qiunet.cross.common.trigger;
 
+import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -49,8 +50,8 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 				LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());
 				return;
 			}
-
-			playerActor.addMessage(handler.getHandlerType().createRequestContext(data.retain(), session.channel(), handler, playerActor));
+			IMessage message = handler.getHandlerType().createRequestContext(data, session.channel(), handler, playerActor);
+			playerActor.addMessage(message);
 			return;
 		}
 

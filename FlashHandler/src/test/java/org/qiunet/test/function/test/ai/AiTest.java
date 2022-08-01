@@ -34,8 +34,7 @@ public class AiTest {
 		Idle idle = new Idle(null);
 		GetExp getExp = new GetExp(null);
 
-		BehaviorRootTree<Hero> tree = new BehaviorRootTree<>(hero)
-				;
+		BehaviorRootTree<Hero> tree = new BehaviorRootTree<>(hero, false);
 		RandomExecutor<Hero> randomExecutor = new RandomExecutor<>(new SeeGoblinCondition().not().and(new SeeOmaCondition().not()));
 		randomExecutor.addChild(idle, getExp);
 

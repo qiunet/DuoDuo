@@ -64,7 +64,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			try {
 				useTimer.start();
 				message.execute((H) this);
-				useTimer.printUseTime();
+				useTimer.printUseTime(() -> message.getClass().getName());
 			}catch (Exception e) {
 				logger.error("{}", getClass().getName(), e);
 			}

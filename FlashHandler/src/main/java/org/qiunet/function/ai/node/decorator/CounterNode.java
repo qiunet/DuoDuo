@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.decorator;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseDecorator;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * qiunet
  * 2021/8/16 21:40
  **/
-public class CounterNode<Owner> extends BaseDecorator<Owner> {
+public class CounterNode<Owner extends MessageHandler<Owner>> extends BaseDecorator<Owner> {
 	private final AtomicInteger currCount = new AtomicInteger();
 	private final int count;
 

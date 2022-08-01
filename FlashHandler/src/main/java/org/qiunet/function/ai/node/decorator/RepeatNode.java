@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.decorator;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseDecorator;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author qiunet
  * 2022/2/21 21:24
  */
-public class RepeatNode<Owner> extends BaseDecorator<Owner> {
+public class RepeatNode<Owner extends MessageHandler<Owner>> extends BaseDecorator<Owner> {
 	/**
 	 * 当前执行次数
 	 */

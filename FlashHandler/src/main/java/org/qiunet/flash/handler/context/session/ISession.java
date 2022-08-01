@@ -73,4 +73,10 @@ public interface ISession extends IChannelMessageSender {
 	 * @param <T>
 	 */
 	<T> void attachObj(AttributeKey<T> key, T obj);
+
+
+	@FunctionalInterface
+	interface SessionCloseListener {
+		void close(ISession session, CloseCause cause);
+	}
 }

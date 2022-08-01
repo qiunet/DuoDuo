@@ -1,6 +1,7 @@
 package org.qiunet.game.test.bt;
 
 import com.google.common.collect.Lists;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.utils.args.ArgsContainer;
@@ -8,7 +9,6 @@ import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
@@ -27,8 +27,7 @@ public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 		Set<Class<? extends IBehaviorBuilder>> types = context.getSubTypesOf(IBehaviorBuilder.class);
 		for (Class<? extends IBehaviorBuilder> type : types) {
 			IBehaviorBuilder builder = (IBehaviorBuilder) context.getInstanceOfClass(type);
-			Method method = type.getMethod("buildExecutor", Object.class);
-			datas.add(new BehaviorBuilderData(builder, method));
+			datas.add(new BehaviorBuilderData(builder));
 		}
 	}
 
@@ -37,8 +36,8 @@ public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 	 * @param obj 传入的参数
 	 * @return
 	 */
-	public <Owner> BehaviorRootTree<Owner> buildRootExecutor(Owner obj) {
-		BehaviorRootTree<Owner> root = new BehaviorRootTree<>(obj);
+	public <Owner extends MessageHandler<Owner>> BehaviorRootTree<Owner> buildRootExecutor(Owner obj, boolean printLog) {
+		BehaviorRootTree<Owner> root = new BehaviorRootTree<>(obj, printLog);
 		datas.forEach(data -> root.addChild(data.build(obj)));
 		root.initialize();
 		return root;
@@ -49,18 +48,16 @@ public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 		return ScannerType.ROBOT_BEHAVIOR_BUILDER;
 	}
 
-	private static class BehaviorBuilderData<Owner> {
+	private static class BehaviorBuilderData<Owner extends MessageHandler<Owner>> {
 		private final IBehaviorBuilder<Owner> obj;
-		private final Method method;
 
-		public BehaviorBuilderData(IBehaviorBuilder<Owner> obj, Method method) {
+		public BehaviorBuilderData(IBehaviorBuilder<Owner> obj) {
 			this.obj = obj;
-			this.method = method;
 		}
 
 		public IBehaviorNode<Owner> build(Owner param){
 			IBehaviorNode<Owner> node = obj.buildExecutor(param);
-			node.setName(method.getDeclaringClass().getSimpleName());
+			node.setName(obj.getClass().getSimpleName());
 			return node;
 		}
 	}

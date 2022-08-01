@@ -1,5 +1,6 @@
 package org.qiunet.function.ai.node.executor;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorNode;
 import org.qiunet.function.ai.node.base.BaseBehaviorExecutor;
@@ -16,7 +17,7 @@ import java.util.List;
  * @author qiunet
  * 2021-07-07 10:39
  */
-public class SequenceExecutor<Owner> extends BaseBehaviorExecutor<Owner> {
+public class SequenceExecutor<Owner extends MessageHandler<Owner>> extends BaseBehaviorExecutor<Owner> {
 	/**
 	 * 当前执行
 	 */

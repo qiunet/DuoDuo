@@ -1,8 +1,10 @@
 package org.qiunet.data.util;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 /***
@@ -20,12 +22,19 @@ public class TestRedisMapUtil {
 
 		private long score;
 
+		private List<String> pic;
+
 		public User() {}
 
 		public User(int id, String name, long score) {
 			this.id = id;
 			this.name = name;
 			this.score = score;
+			this.pic = Lists.newArrayList("11111");
+		}
+
+		public List<String> getPic() {
+			return pic;
 		}
 
 		public int getId() {
@@ -64,7 +73,7 @@ public class TestRedisMapUtil {
 		Assertions.assertEquals(score+"", map.get("score"));
 		Assertions.assertEquals(id+"", map.get("id"));
 		Assertions.assertEquals(name, map.get("name"));
-		Assertions.assertEquals(3, map.size());
+		Assertions.assertEquals(4, map.size());
 
 		User user1 = RedisMapUtil.toObj(map, User.class);
 		Assertions.assertEquals(score, user1.score);

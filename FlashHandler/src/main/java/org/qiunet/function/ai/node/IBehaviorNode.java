@@ -1,6 +1,8 @@
 package org.qiunet.function.ai.node;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
+import org.qiunet.function.ai.log.BHTStatusLogger;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.utils.math.IWeightObj;
 
@@ -12,12 +14,18 @@ import org.qiunet.utils.math.IWeightObj;
  * @author qiunet
  * 2021-07-05 09:57
  */
-public interface IBehaviorNode<Owner> extends IWeightObj {
+public interface IBehaviorNode<Owner extends MessageHandler<Owner>> extends IWeightObj {
 	/**
 	 * 自动分配的id
 	 * @return
 	 */
 	int getId();
+
+	/**
+	 * 当前节点的 status logger
+	 * @return
+	 */
+	BHTStatusLogger<Owner> statusLogger();
 	/**
 	 * 重置
 	 */
@@ -35,7 +43,9 @@ public interface IBehaviorNode<Owner> extends IWeightObj {
 	/**
 	 * 每次重新执行前 都会初始化
 	 */
-	default void initialize(){}
+	default void initialize(){
+		this.statusLogger().recycle();
+	}
 	/**
 	 * 结束
 	 */

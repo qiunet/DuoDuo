@@ -1,5 +1,6 @@
 package org.qiunet.function.ai.node;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author qiunet
  * 2021-07-08 11:09
  */
-public interface IBehaviorExecutor<Owner> extends IBehaviorNode<Owner> {
+public interface IBehaviorExecutor<Owner extends MessageHandler<Owner>> extends IBehaviorNode<Owner> {
 	/**
 	 * 添加节点
 	 * @param actions
@@ -34,6 +35,7 @@ public interface IBehaviorExecutor<Owner> extends IBehaviorNode<Owner> {
 	List<IBehaviorNode<Owner>> getChildNodes();
 	@Override
 	default void initialize() {
+		IBehaviorNode.super.initialize();
 		getChildNodes().forEach(IBehaviorNode::initialize);
 	}
 

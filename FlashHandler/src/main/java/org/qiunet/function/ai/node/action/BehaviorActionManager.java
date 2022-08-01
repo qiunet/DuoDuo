@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.action;
 
 import com.google.common.collect.Maps;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.utils.args.ArgsContainer;
@@ -30,7 +31,7 @@ public enum BehaviorActionManager {
 	 * @param <Owner>
 	 * @return
 	 */
-	public <Owner> IBehaviorAction<Owner> createAction(String className, IConditions<Owner> conditions) {
+	public <Owner extends MessageHandler<Owner>> IBehaviorAction<Owner> createAction(String className, IConditions<Owner> conditions) {
 		try {
 			return actions.get(className).newInstance(conditions);
 		} catch (Exception e) {

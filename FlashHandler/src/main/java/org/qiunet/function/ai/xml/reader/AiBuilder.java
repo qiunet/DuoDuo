@@ -1,5 +1,6 @@
 package org.qiunet.function.ai.xml.reader;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
@@ -38,7 +39,7 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
  * @author qiunet
  * 2021/12/17 17:13
  */
-public class AiBuilder<Owner> {
+public class AiBuilder<Owner extends MessageHandler<Owner>> {
 	private static final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 	private static final String CONDITION_ATTRIBUTE_NAME = "condition";

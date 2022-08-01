@@ -13,6 +13,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
@@ -109,8 +110,10 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 		}
 
 		@Override
-		public void channelActive(ChannelHandlerContext ctx) {
+		public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.WS);
 			handshaker.handshake(ctx.channel());
+			super.channelActive(ctx);
 		}
 
 		@Override
@@ -137,6 +140,11 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 
 				ctx.fireChannelRead(msg.retain());
 			}
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+			LoggerType.DUODUO_FLASH_HANDLER.error("Netty ws client exception: ", cause);
 		}
 	}
 

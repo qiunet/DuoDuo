@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.function.ai.node.base.BaseBehaviorAction;
 import org.qiunet.function.condition.IConditions;
-import org.qiunet.game.test.response.IStatusTipsHandler;
 import org.qiunet.game.test.robot.Robot;
 
 /***
@@ -16,7 +15,7 @@ import org.qiunet.game.test.robot.Robot;
  * 2021/8/8 11:46
  **/
 public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
-		implements IChannelMessageSender, IStatusTipsHandler {
+		implements IChannelMessageSender {
 	/**
 	 * 使用的连接名
 	 */
@@ -25,12 +24,6 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	public BaseRobotAction(IConditions<Robot> preConditions, String connectorName) {
 		super(preConditions);
 		this.connectorName = connectorName;
-	}
-
-	@Override
-	public void prepare() {
-		super.prepare();
-		getOwner().registerAction(this);
 	}
 
 	@Override

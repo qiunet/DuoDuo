@@ -16,9 +16,17 @@ public class Robot extends RobotFunc{
 	 */
 	private final String account;
 
-	public Robot(String account, int tickMillis) {
-		super(tickMillis);
+	public Robot(String account, int tickMillis, boolean printLog) {
+		super(tickMillis, printLog);
 		this.account = account;
+	}
+
+	public Robot(String account, int tickMillis) {
+		this(account, tickMillis, false);
+	}
+
+	public Robot(String account, boolean printLog) {
+		this(account, 500, printLog);
 	}
 
 	public Robot(String account) {

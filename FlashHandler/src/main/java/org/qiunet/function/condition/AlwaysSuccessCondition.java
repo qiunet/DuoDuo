@@ -13,8 +13,8 @@ public final class AlwaysSuccessCondition<Obj> implements IConditions<Obj> {
 
 	private AlwaysSuccessCondition(){}
 
-	public static AlwaysSuccessCondition<?> getInstance() {
-		return instance;
+	public static <Obj> AlwaysSuccessCondition<Obj> getInstance() {
+		return (AlwaysSuccessCondition<Obj>) instance;
 	}
 
 	@Override

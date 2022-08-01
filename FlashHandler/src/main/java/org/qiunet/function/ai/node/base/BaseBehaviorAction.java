@@ -1,5 +1,6 @@
 package org.qiunet.function.ai.node.base;
 
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.action.BehaviorAction;
@@ -13,7 +14,7 @@ import org.qiunet.utils.string.StringUtil;
  * @author qiunet
  * 2021-07-07 10:37
  */
-public abstract class BaseBehaviorAction<Owner> extends BaseBehaviorNode<Owner> implements IBehaviorAction<Owner> {
+public abstract class BaseBehaviorAction<Owner extends MessageHandler<Owner>> extends BaseBehaviorNode<Owner> implements IBehaviorAction<Owner> {
 
 	public BaseBehaviorAction(IConditions<Owner> conditions) {
 		super(conditions, StringUtil.EMPTY_STRING);
@@ -24,8 +25,10 @@ public abstract class BaseBehaviorAction<Owner> extends BaseBehaviorNode<Owner> 
 		if (! isRunning()) {
 			return super.run();
 		}
+
 		ActionStatus status = runningStatusUpdate();
-		this.running = status.isRunning();
+		this.statusLogger.setExecuted(true);
+		this.statusLogger.setStatus(status);
 		return status;
 	}
 
@@ -36,6 +39,9 @@ public abstract class BaseBehaviorAction<Owner> extends BaseBehaviorNode<Owner> 
 
 	@Override
 	public String getName() {
+		if (! getClass().isAnnotationPresent(BehaviorAction.class)) {
+			return getClass().getSimpleName();
+		}
 		return getClass().getAnnotation(BehaviorAction.class).name();
 	}
 }

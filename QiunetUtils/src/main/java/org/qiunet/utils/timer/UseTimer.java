@@ -54,9 +54,21 @@ public class UseTimer {
 	}
 
 	public long printUseTime(){
+		return this.printUseTime(null);
+	}
+	/**
+	 *
+	 * @param supplement 补充打印的信息
+	 * @return
+	 */
+	public long printUseTime(Supplier<String> supplement){
 		long useTime = countUseTime();
 		if (useTime > warnUseTime) {
-			logger.error("{} use {} ms", nameGetter.get(), useTime);
+			if (supplement != null) {
+				logger.error("{} use {} ms! detail: {}", nameGetter.get(), useTime, supplement.get());
+			}else {
+				logger.error("{} use {} ms", nameGetter.get(), useTime);
+			}
 		}
 		return useTime;
 	}

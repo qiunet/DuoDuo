@@ -1,6 +1,7 @@
 package org.qiunet.function.ai.node.base;
 
 import com.google.common.collect.ImmutableList;
+import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.function.ai.node.IBehaviorDecorator;
 import org.qiunet.function.ai.node.IBehaviorExecutor;
 import org.qiunet.function.ai.node.IBehaviorNode;
@@ -15,7 +16,7 @@ import java.util.List;
  * qiunet
  * 2021/8/16 21:38
  **/
-public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> implements IBehaviorDecorator<Owner> {
+public abstract class BaseDecorator<Owner extends MessageHandler<Owner>> extends BaseBehaviorNode<Owner> implements IBehaviorDecorator<Owner> {
 	/**
 	 * 需要翻转的节点
 	 */
@@ -65,26 +66,31 @@ public abstract class BaseDecorator<Owner> extends BaseBehaviorNode<Owner> imple
 
 	@Override
 	public void prepare() {
+		super.prepare();
 		node.prepare();
 	}
 
 	@Override
 	public void initialize() {
+		super.initialize();
 		node.initialize();
 	}
 
 	@Override
 	public void reset() {
+		super.reset();
 		node.reset();
 	}
 
 	@Override
 	public void check() {
+		super.check();
 		node.check();
 	}
 
 	@Override
 	public void release() {
+		super.release();
 		node.release();
 	}
 
