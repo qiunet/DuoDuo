@@ -34,7 +34,7 @@ public final class KcpPlayerTokenMapping {
 	}
 
 	public static KcpPlayerTokenMapping getPlayer(long playerId) {
-		PlayerActor playerActor = UserOnlineManager.getPlayerActor(playerId);
+		PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(playerId);
 		if (playerActor == null) {
 			return null;
 		}

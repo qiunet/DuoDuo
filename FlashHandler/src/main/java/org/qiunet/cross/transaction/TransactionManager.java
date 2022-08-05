@@ -107,7 +107,7 @@ public enum TransactionManager {
 	 */
 	void handler(ITransactionReq req, DTransaction dTransaction) {
 		if (req instanceof IPlayer) {
-			AbstractUserActor actor = UserOnlineManager.getPlayerActor(((IPlayer) req).getId());
+			AbstractUserActor actor = UserOnlineManager.instance.getActor(((IPlayer) req).getId());
 			if (actor != null) {
 				actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
 			}else {

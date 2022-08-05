@@ -89,7 +89,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			 	//|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
 			) {
 				if (kcpParamInfo == null) {
-					logger.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.getPlayerActor(req.getPlayerId()) == null);
+					logger.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.instance.getPlayerActor(req.getPlayerId()) == null);
 				}else if (! Objects.equals(req.getToken(), kcpParamInfo.getToken())) {
 					logger.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
 				}
@@ -99,7 +99,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			}
 
 
-			PlayerActor playerActor = UserOnlineManager.getPlayerActor(kcpParamInfo.getPlayerId());
+			PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(kcpParamInfo.getPlayerId());
 			ChannelUtil.getSession(ctx.channel()).addCloseListener("IKcpUsabilityLose", (session, cause) -> {
 				playerActor.syncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
 			});

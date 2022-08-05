@@ -34,7 +34,7 @@ public class GmDToolsCommandHandler extends PersistConnPbHandler<ServerNode, GmD
 		if (ServerConfig.isOfficial()) {
 			throw StatusResultException.valueOf(IGameStatus.FAIL);
 		}
-		PlayerActor playerActor = UserOnlineManager.getPlayerActor(context.getRequestData().getPlayerId());
+		PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(context.getRequestData().getPlayerId());
 		if (playerActor == null) {
 			throw StatusResultException.valueOf(IGameStatus.FAIL);
 		}

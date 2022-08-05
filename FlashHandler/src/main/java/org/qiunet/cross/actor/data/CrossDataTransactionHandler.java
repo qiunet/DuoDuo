@@ -16,7 +16,7 @@ public class CrossDataTransactionHandler implements ITransactionHandler<CrossDat
 	@Override
 	public void handler(DTransaction<CrossDataTransactionReq, CrossDataTransactionRsp> transaction) {
 		CrossDataTransactionReq request = transaction.getReqData();
-		PlayerActor playerActor = UserOnlineManager.getPlayerActor(request.getPlayerId());
+		PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(request.getPlayerId());
 		playerActor.addMessage(p -> transaction.handler(req -> {
 			CrossData<?> crossData = (CrossData<?>) CrossData.valueOf(CrossData.class, req.getKey());
 			IUserTransferData data = crossData.create(p);
