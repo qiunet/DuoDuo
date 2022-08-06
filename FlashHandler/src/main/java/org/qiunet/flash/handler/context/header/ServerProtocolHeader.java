@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.CrcUtil;
@@ -19,20 +20,25 @@ import java.util.Arrays;
  */
 public class ServerProtocolHeader implements IProtocolHeader {
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-
+	private static final ObjectPool<ServerProtocolHeader> RECYCLER = ObjectPool.newPool(ServerProtocolHeader::new);
+	private final ObjectPool.Handle<ServerProtocolHeader> recyclerHandle;
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 16;
 	/**响应头固定长度*/
 	public static final int RESPONSE_HEADER_LENGTH = 8;
 
 	/**辨别 请求使用*/
-	private final byte [] magic;
+	private final byte [] magic = new byte[MAGIC_CONTENTS.length];
 	// 长度
-	private final int length;
+	private int length;
 	// 请求的 响应的协议 id
-	private final int protocolId;
+	private int protocolId;
 	// encryption code
-	private final int crc;
+	private int crc;
+
+	public ServerProtocolHeader(ObjectPool.Handle<ServerProtocolHeader> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
+	}
 
 	/***
 	 * 构造函数
@@ -40,19 +46,20 @@ public class ServerProtocolHeader implements IProtocolHeader {
 	 * 由外面读取后 调构造函数传入
 	 * @param message 后面byte数组
 	 */
-	public ServerProtocolHeader(int protocolId, IChannelMessage<?> message) {
-		this.magic = MAGIC_CONTENTS;
-		this.length = message.byteBuffer().limit();
-		this.protocolId = protocolId;
-		this.crc = (int) CrcUtil.getCrc32Value((ByteBuffer) message.byteBuffer().rewind());
+	public static ServerProtocolHeader valueOf(int protocolId, IChannelMessage<?> message) {
+		ServerProtocolHeader header = RECYCLER.get();
+		header.length = message.byteBuffer().limit();
+		header.protocolId = protocolId;
+		return header;
 	}
 
-	public ServerProtocolHeader(ByteBuf in, Channel channel) {
-		this.magic = new byte[MAGIC_CONTENTS.length];
-		in.readBytes(magic);
-		this.length = in.readInt();
-		this.protocolId = in.readInt();
-		this.crc = in.readInt();
+	public static ServerProtocolHeader valueOf(ByteBuf in, Channel channel) {
+		ServerProtocolHeader header = RECYCLER.get();
+		in.readBytes(header.magic);
+		header.length = in.readInt();
+		header.protocolId = in.readInt();
+		header.crc = in.readInt();
+		return header;
 	}
 
 	@Override

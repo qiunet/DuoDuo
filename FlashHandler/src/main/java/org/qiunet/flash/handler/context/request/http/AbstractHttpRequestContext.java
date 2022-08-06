@@ -34,11 +34,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
 	private Map<String ,List<String>> parameters;
 	protected HttpBootstrapParams params;
-	private final HttpRequest request;
-	private final String uriPath;
+	private HttpRequest request;
+	private String uriPath;
 
-	public AbstractHttpRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
-		super(content, channel);
+	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
+		super.init(content, channel);
 		this.request = request;
 		this.params = params;
 

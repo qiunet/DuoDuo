@@ -51,8 +51,14 @@ public abstract class BaseBehaviorExecutor<Owner extends MessageHandler<Owner>> 
 			}
 			this.nodes.add(node);
 		}
+		this.addChildNodeHandler(nodes);
 		return this;
 	}
+
+	/**
+	 * 添加了子节点 . 子类处理
+	 */
+	protected void addChildNodeHandler(IBehaviorNode<Owner>... nodes){}
 
 	@Override
 	public List<IBehaviorNode<Owner>> getChildNodes() {

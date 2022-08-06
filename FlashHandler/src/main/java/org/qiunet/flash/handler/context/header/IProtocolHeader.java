@@ -38,4 +38,6 @@ public interface IProtocolHeader {
 	 * @return 如果校验成功, 返回解密的bytes 否则null
 	 */
 	boolean validEncryption(ByteBuffer buffer);
+
+	default void recycle(){}
 }

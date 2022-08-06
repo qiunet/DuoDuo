@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
@@ -20,48 +21,67 @@ import java.util.Arrays;
  */
 public class CrossProtocolHeader implements IProtocolHeader {
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-
+	private static final ObjectPool<CrossProtocolHeader> RECYCLER = ObjectPool.newPool(CrossProtocolHeader::new);
+	private final ObjectPool.Handle<CrossProtocolHeader> recyclerHandle;
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 18;
 	/**响应头固定长度*/
 	public static final int RESPONSE_HEADER_LENGTH = 18;
 
 	/**辨别 请求使用*/
-	private final byte [] magic;
+	private final byte [] magic = new byte[MAGIC_CONTENTS.length];
 	// 长度
-	private final int length;
+	private int length;
 	// 请求的 响应的协议 id
-	private final int protocolId;
+	private int protocolId;
 	// encryption code
-	private final int crc;
+	private int crc;
 
-	private final boolean flush;
-	private final boolean kcp;
+	private boolean flush;
+	private boolean kcp;
+
+	public CrossProtocolHeader(ObjectPool.Handle<CrossProtocolHeader> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
+	}
+
 	/***
 	 * 构造函数
 	 * 不使用datainputstream了.  不确定外面使用的是什么.
 	 * 由外面读取后 调构造函数传入
 	 * @param message 后面byte数组
 	 */
-	public CrossProtocolHeader(int protocolId, IChannelMessage<?> message) {
-		kcp = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isKcpChannel();
-		flush = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isFlush();
-		this.crc = (int) CrcUtil.getCrc32Value((ByteBuffer) message.byteBuffer().rewind());
-		this.length = message.byteBuffer().limit();
-		this.magic = MAGIC_CONTENTS;
-		this.protocolId = protocolId;
-
+	public static CrossProtocolHeader valueOf(int protocolId, IChannelMessage<?> message) {
+		CrossProtocolHeader header = RECYCLER.get();
+		header.kcp = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isKcpChannel();
+		header.flush = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isFlush();
+		header.crc = (int) CrcUtil.getCrc32Value((ByteBuffer) message.byteBuffer().rewind());
+		// 不需要. 直接写入MAGIC_CONTENTS
+		//System.arraycopy(MAGIC_CONTENTS, 0, header.magic, 0, MAGIC_CONTENTS.length);
+		header.length = message.byteBuffer().limit();
+		header.protocolId = protocolId;
+		return header;
 	}
 
-	public CrossProtocolHeader(ByteBuf in, Channel channel) {
-		this.magic = new byte[MAGIC_CONTENTS.length];
-		in.readBytes(magic);
-		this.length = in.readInt();
-		this.protocolId = in.readInt();
-		this.crc = in.readInt();
+	public static CrossProtocolHeader valueOf(ByteBuf in, Channel channel) {
+		CrossProtocolHeader header = RECYCLER.get();
+		in.readBytes(header.magic);
+		header.length = in.readInt();
+		header.protocolId = in.readInt();
+		header.crc = in.readInt();
 
-		this.flush = in.readBoolean();
-		this.kcp = in.readBoolean();
+		header.flush = in.readBoolean();
+		header.kcp = in.readBoolean();
+		return header;
+	}
+
+	@Override
+	public void recycle() {
+		this.protocolId = 0;
+		this.flush = false;
+		this.kcp = false;
+		this.length = 0;
+		this.crc = 0;
+		recyclerHandle.recycle(this);
 	}
 
 	@Override

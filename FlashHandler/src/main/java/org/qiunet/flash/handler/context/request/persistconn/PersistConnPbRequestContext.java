@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -14,14 +15,40 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.utils.string.ToString;
 
 /**
+ * 该对象会回收. 所以只能在本线程用. addMessage 后. 就会回收掉
+ *
  * Created by qiunet.
  * 17/12/2
  */
 public class PersistConnPbRequestContext<RequestData extends IChannelData, P extends IMessageActor<P>>
 		extends AbstractPersistConnRequestContext<RequestData, P> {
 
-	public PersistConnPbRequestContext(MessageContent content, Channel channel, P messageActor) {
-		super(content, channel, messageActor);
+	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = ObjectPool.newPool(PersistConnPbRequestContext::new);
+	private final ObjectPool.Handle<PersistConnPbRequestContext> recyclerHandle;
+
+	public PersistConnPbRequestContext(ObjectPool.Handle<PersistConnPbRequestContext> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
+	}
+
+	public static PersistConnPbRequestContext valueOf(MessageContent content, Channel channel, IMessageActor messageActor) {
+		PersistConnPbRequestContext context = RECYCLER.get();
+		context.init(content, channel, messageActor);
+		return context;
+	}
+
+	public void init(MessageContent content, Channel channel, P messageActor) {
+		super.init(content, channel, messageActor);
+	}
+
+	private void recycle() {
+		this.protocolHeader = null;
+		this.messageActor = null;
+		this.requestData = null;
+		this.attributes = null;
+		this.handler = null;
+		this.channel = null;
+
+		this.recyclerHandle.recycle(this);
 	}
 
 	@Override
@@ -34,6 +61,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 				logger.error("Execute exception: " , e);
 			}
 			channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(channel, e);
+		} finally {
+			this.recycle();
 		}
 	}
 

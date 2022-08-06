@@ -140,7 +140,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		MessageContent content = new MessageContent(header, request.content().readRetainedSlice(header.getLength()));
+		MessageContent content = MessageContent.valueOf(header, request.content().readRetainedSlice(header.getLength()));
 		try {
 			if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 				// encryption 不对, 不被认证的请求
@@ -185,7 +185,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
-		MessageContent content = new MessageContent(uriPath, request.content().retain());
+		MessageContent content = MessageContent.valueOf(uriPath, request.content().retain());
 		try {
 			this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
 		}finally {

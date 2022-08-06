@@ -19,12 +19,13 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	protected Channel channel;
-	protected IHandler<RequestData> handler;
-	private Map<String , Object> attributes;
-	// 请求数据. 必须在这里获取. 然后release MessageContent
-	private final RequestData requestData;
 
-	protected BaseRequestContext(MessageContent content, Channel channel) {
+	protected IHandler<RequestData> handler;
+	protected Map<String , Object> attributes;
+	// 请求数据. 必须在这里获取. 然后release MessageContent
+	protected RequestData requestData;
+
+	protected void init(MessageContent content, Channel channel) {
 		this.channel = channel;
 		if (content.getProtocolId() > 0) {
 			this.handler = ChannelDataMapping.getHandler(content.getProtocolId());

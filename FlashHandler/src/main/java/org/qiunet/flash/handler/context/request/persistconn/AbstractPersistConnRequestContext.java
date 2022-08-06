@@ -16,22 +16,17 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 		extends BaseRequestContext<RequestData>
 		implements IPersistConnRequestContext<RequestData, P> {
 
-	protected final P messageActor;
+	protected P messageActor;
 	/**
 	 * 协议头
 	 */
-	private final IProtocolHeader protocolHeader;
+	protected IProtocolHeader protocolHeader;
 
-	protected AbstractPersistConnRequestContext(MessageContent content, Channel channel, P messageActor) {
-		super(content, channel);
-		this.protocolHeader = content.getHeader();
+	protected void init(MessageContent content, Channel channel, P messageActor) {
+		super.init(content, channel);
 		this.messageActor = messageActor;
 	}
 
-	@Override
-	public IProtocolHeader protocolHeader() {
-		return protocolHeader;
-	}
 
 	@Override
 	public Channel channel() {

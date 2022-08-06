@@ -23,14 +23,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/27
  */
 public class TestMuchKcpRequest extends BasicKcpBootStrap {
-	private final int requestCount = 100000;
+	private final int requestCount = 50000;
 	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyKcpClient client = NettyKcpClient.create(KcpClientParams.DEFAULT_PARAMS, new Trigger());
 		long start = System.currentTimeMillis();
-		final int threadCount = 100;
+		final int threadCount = 50;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
 				ISession connector = client.connect(host, port);

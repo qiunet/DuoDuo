@@ -17,12 +17,12 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	server {
 		@Override
 		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
-			return new ServerProtocolHeader(protocolId, message);
+			return ServerProtocolHeader.valueOf(protocolId, message);
 		}
 
 		@Override
 		public IProtocolHeader inHeader(ByteBuf in, Channel channel) {
-			return new ServerProtocolHeader(in, channel);
+			return ServerProtocolHeader.valueOf(in, channel);
 		}
 
 		@Override
@@ -68,12 +68,12 @@ public enum ProtocolHeaderType implements IProtocolHeaderType {
 	cross{
 		@Override
 		public IProtocolHeader outHeader(int protocolId, IChannelMessage<?> message) {
-			return new CrossProtocolHeader(protocolId, message);
+			return CrossProtocolHeader.valueOf(protocolId, message);
 		}
 
 		@Override
 		public IProtocolHeader inHeader(ByteBuf in, Channel channel) {
-			return new CrossProtocolHeader(in, channel);
+			return CrossProtocolHeader.valueOf(in, channel);
 		}
 
 		@Override

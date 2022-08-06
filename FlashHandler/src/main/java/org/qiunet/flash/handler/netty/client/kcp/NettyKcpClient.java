@@ -44,11 +44,13 @@ public class NettyKcpClient {
 						.addLast("KcpSocketDecoder", new KcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler());
 					}
-				});
+				}).option(ChannelOption.SO_RCVBUF, 1024*1024*2)
+				.option(ChannelOption.SO_SNDBUF, 1024*1024*2);
+
 		ChannelOptionHelper.nodelay(bootstrap, true, 20, 2, true)
 				.option(UkcpChannelOption.UKCP_MTU, 512)
-				.option(UkcpChannelOption.UKCP_SND_WND, 128)
-				.option(UkcpChannelOption.UKCP_RCV_WND, 128)
+				.option(UkcpChannelOption.UKCP_SND_WND, 512)
+				.option(UkcpChannelOption.UKCP_RCV_WND, 512)
 		;
 	}
 

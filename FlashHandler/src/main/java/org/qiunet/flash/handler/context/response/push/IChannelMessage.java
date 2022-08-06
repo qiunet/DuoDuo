@@ -37,6 +37,11 @@ public interface IChannelMessage<T> {
 	 * @return
 	 */
 	int getProtocolID();
+
+	/**
+	 * 回收
+	 */
+	default void recycle(){}
 	/**
 	 * 是否需要打印输出
 	 * @return
@@ -72,6 +77,8 @@ public interface IChannelMessage<T> {
 			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) header.dataBytes().rewind())));
 			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) this.byteBuffer().rewind())));
 		}
+		header.recycle();
+		this.recycle();
 		return byteBuf;
 	}
 
@@ -83,6 +90,7 @@ public interface IChannelMessage<T> {
 		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
 			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(this.byteBuffer())));
 		}
+		this.recycle();
 		return Unpooled.wrappedBuffer(byteBuffer());
 	}
 }

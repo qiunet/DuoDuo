@@ -85,11 +85,12 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 			}
 		}
 
-		DefaultByteBufMessage message = new DefaultByteBufMessage(data.getProtocolId(), data.byteBuf());
+		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
 		if (header.isKcp() && iMessageActor.isKcpSessionPrepare()) {
 			iMessageActor.getSender().sendKcpMessage(message);
 		}else {
 			iMessageActor.getSender().sendMessage(message, header.isKcp() || header.isFlush());
 		}
+		data.recycle();
 	}
 }

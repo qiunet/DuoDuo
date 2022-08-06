@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 import java.nio.ByteBuffer;
@@ -10,23 +11,39 @@ import java.nio.ByteBuffer;
  * 17/12/11
  */
 public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
+	private static final ObjectPool<DefaultProtobufMessage> RECYCLER = ObjectPool.newPool(DefaultProtobufMessage::new);
+	private final ObjectPool.Handle<DefaultProtobufMessage> recyclerHandle;
 	/**
 	 * 消息id
 	 */
-	private final int protocolId;
+	private int protocolId;
 	/**
 	 * 消息体
 	 */
-	private final IChannelData message;
+	private IChannelData message;
 	/**
 	 * 消息体内容
 	 */
-	private final ByteBuffer byteBuffer;
+	private ByteBuffer byteBuffer;
 
-	public DefaultProtobufMessage(int protocolId, IChannelData message) {
-		this.byteBuffer = message.toByteBuffer();
-		this.protocolId = protocolId;
-		this.message = message;
+	public DefaultProtobufMessage(ObjectPool.Handle<DefaultProtobufMessage> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
+	}
+
+	public static DefaultProtobufMessage valueOf(int protocolId, IChannelData message) {
+		DefaultProtobufMessage data = RECYCLER.get();
+		data.byteBuffer = message.toByteBuffer();
+		data.protocolId = protocolId;
+		data.message = message;
+		return data;
+	}
+
+	@Override
+	public void recycle() {
+		this.byteBuffer = null;
+		this.protocolId = 0;
+		this.message = null;
+		recyclerHandle.recycle(this);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.message;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.ReferenceCounted;
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 
 import java.nio.ByteBuffer;
@@ -15,35 +16,56 @@ import java.nio.ByteBuffer;
  *         Created on 17/3/13 19:50.
  */
 public class MessageContent implements ReferenceCounted {
+	private static final ObjectPool<MessageContent> RECYCLER = ObjectPool.newPool(MessageContent::new);
+	private final ObjectPool.Handle<MessageContent> recyclerHandle;
 	/**
 	 * 数据内容
 	 */
-	private final ByteBuf buffer;
+	private ByteBuf buffer;
 	/**
 	 * 协议ID
 	 */
-	private final int protocolId;
+	private int protocolId;
 	/**
 	 * 请求的URI
 	 */
-	private final String uriPath;
+	private String uriPath;
 	/**
 	 * 头信息
 	 */
-	private final IProtocolHeader header;
+	private IProtocolHeader header;
 
-	public MessageContent(String uriPath, ByteBuf buffer) {
-		this.uriPath = uriPath;
-		this.buffer = buffer;
-		this.header = null;
-		this.protocolId = 0;
+	public MessageContent(ObjectPool.Handle<MessageContent> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
 	}
 
-	public MessageContent(IProtocolHeader header, ByteBuf buffer) {
-		this.protocolId = header.getProtocolId();
-		this.buffer = buffer;
+	public static MessageContent valueOf(String uriPath, ByteBuf buffer) {
+		MessageContent content = RECYCLER.get();
+		content.uriPath = uriPath;
+		content.buffer = buffer;
+		content.header = null;
+		content.protocolId = 0;
+		return content;
+	}
+
+	public static MessageContent valueOf(IProtocolHeader header, ByteBuf buffer) {
+		MessageContent content = RECYCLER.get();
+		content.protocolId = header.getProtocolId();
+		content.buffer = buffer;
+		content.uriPath = null;
+		content.header = header;
+		return content;
+	}
+
+	public void recycle() {
+		this.protocolId = 0;
+		this.buffer = null;
 		this.uriPath = null;
-		this.header = header;
+		if (this.header != null) {
+			this.header.recycle();
+		}
+		this.header = null;
+		this.recyclerHandle.recycle(this);
 	}
 
 	public String getUriPath() {
@@ -109,11 +131,15 @@ public class MessageContent implements ReferenceCounted {
 
 	@Override
 	public boolean release() {
-		return ReferenceCountUtil.release(content());
+		return this.release(1);
 	}
 
 	@Override
 	public boolean release(int decrement) {
-		return ReferenceCountUtil.release(content(), decrement);
+		if (ReferenceCountUtil.release(content(), decrement)) {
+			this.recycle();
+			return true;
+		}
+		return false;
 	}
 }

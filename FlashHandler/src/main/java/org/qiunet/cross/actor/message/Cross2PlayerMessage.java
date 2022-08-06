@@ -1,5 +1,6 @@
 package org.qiunet.cross.actor.message;
 
+import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
@@ -16,6 +17,9 @@ import java.nio.ByteBuffer;
  * 2020-10-26 12:15
  */
 public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IDataToString {
+	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = ObjectPool.newPool(Cross2PlayerMessage::new);
+	private final ObjectPool.Handle<Cross2PlayerMessage> recyclerHandle;
+
 	/**
 	 * 消息的协议id
 	 */
@@ -35,13 +39,16 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 
 	private IChannelData data;
 
+	private Cross2PlayerMessage(ObjectPool.Handle<Cross2PlayerMessage> recyclerHandle) {
+		this.recyclerHandle = recyclerHandle;
+	}
 
 	public static Cross2PlayerMessage valueOf(IChannelData responseData, boolean flush) {
 		return valueOf(responseData, flush, false);
 	}
 
 	public static Cross2PlayerMessage valueOf(IChannelData responseData, boolean flush, boolean kcpChannel) {
-		Cross2PlayerMessage response = new Cross2PlayerMessage();
+		Cross2PlayerMessage response = RECYCLER.get();
 		response.skipMessage = responseData.getClass().isAnnotationPresent(SkipDebugOut.class);
 		response.buffer = responseData.toByteBuffer();
 		response.pid = responseData.protocolId();
@@ -49,6 +56,17 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 		response.data = responseData;
 		response.flush = flush;
 		return response;
+	}
+
+	@Override
+	public void recycle() {
+		this.skipMessage = false;
+		this.kcpChannel = false;
+		this.buffer = null;
+		this.flush = false;
+		this.data = null;
+		this.pid = 0;
+		recyclerHandle.recycle(this);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public interface IChannelData {
 	 * @return
 	 */
 	default DefaultProtobufMessage buildChannelMessage(){
-		return new DefaultProtobufMessage(protocolId(), this);
+		return DefaultProtobufMessage.valueOf(protocolId(), this);
 	}
 
 	/**

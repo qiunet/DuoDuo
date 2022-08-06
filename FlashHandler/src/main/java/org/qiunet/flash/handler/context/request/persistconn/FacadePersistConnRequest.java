@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
 
 /**
  * Created by qiunet.
@@ -40,8 +39,4 @@ class FacadePersistConnRequest<RequestData, P extends IMessageActor<P>> implemen
 		return context.channel();
 	}
 
-	@Override
-	public IProtocolHeader protocolHeader() {
-		return context.protocolHeader();
-	}
 }

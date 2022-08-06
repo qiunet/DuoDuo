@@ -17,7 +17,11 @@ import org.qiunet.utils.json.JsonUtil;
 public class HttpJsonRequestContext<RequestData, ResponseData extends IResultResponse> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 
 	public HttpJsonRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
-		super(content, channel, params, request);
+		this.init(content, channel, params, request);
+	}
+
+	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+		super.init(content, channel, params, request);
 	}
 
 	@Override

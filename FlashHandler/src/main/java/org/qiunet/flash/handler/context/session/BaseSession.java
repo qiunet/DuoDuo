@@ -159,9 +159,9 @@ abstract class BaseSession implements ISession {
 		}
 
 		if (flush) {
-			return new DChannelFutureWrapper(this.channel.writeAndFlush(message));
+			return DChannelFutureWrapper.valueOf(this.channel.writeAndFlush(message));
 		}else {
-			return new DChannelFutureWrapper(this.channel.write(message));
+			return DChannelFutureWrapper.valueOf(this.channel.write(message));
 		}
 	}
 
@@ -193,7 +193,7 @@ abstract class BaseSession implements ISession {
 		this.closeListeners.clear();
 	}
 
-	private final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
+	protected final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
 
 	@Override
 	public IChannelMessageSender getSender() {

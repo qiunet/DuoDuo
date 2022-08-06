@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -89,32 +90,21 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			}
 			try {
 				sessionLock.lock();
-				DMessageContentFuture msg = queue.poll();
-				if (msg != null) {
-					// 第一个协议一般是鉴权协议. 先发送. 等发送成功再发送后面的协议.
-					IDSessionFuture future = this.doSendMessage(msg.getMessage(), true);
-					future.addListener(f0 -> {
-						if (f0.isSuccess()) {
-							msg.complete(f0);
+				DMessageContentFuture msg;
+				while ((msg = queue.poll()) != null) {
+					if (msg.isCanceled()) {
+						continue;
+					}
 
-							DMessageContentFuture msg0;
-							while ((msg0 = queue.poll()) != null) {
-								if (msg0.isCanceled()) {
-									continue;
-								}
-
-								IDSessionFuture future1 = this.doSendMessage(msg0.getMessage(), false);
-								DMessageContentFuture finalMsg = msg0;
-								future1.addListener(f1 -> {
-									if (f1.isSuccess()) {
-										finalMsg.complete(f1);
-									}
-								});
-							}
+					IDSessionFuture future1 = this.doSendMessage(msg.getMessage(), false);
+					DMessageContentFuture finalMsg = msg;
+					future1.addListener(f1 -> {
+						if (f1.isSuccess()) {
+							finalMsg.complete(f1);
 						}
-						this.flush0();
 					});
 				}
+				this.flush0();
 				connecting.set(false);
 			}finally {
 				sessionLock.unlock();
@@ -205,6 +195,10 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		Attribute<ServerConnType> attr = this.channel.attr(ServerConstants.HANDLER_TYPE_KEY);
 		if (attr.get() != ServerConnType.TCP && attr.get() != ServerConnType.WS) {
 			throw new CustomException("Not support!");
+		}
+		if (this.kcpSession != null) {
+			this.closeListeners.remove("CloseKcpSession");
+			this.kcpSession.close(CloseCause.LOGIN_REPEATED);
 		}
 		this.kcpSession = kcpSession;
 		this.addCloseListener("CloseKcpSession", (session, cause) -> {

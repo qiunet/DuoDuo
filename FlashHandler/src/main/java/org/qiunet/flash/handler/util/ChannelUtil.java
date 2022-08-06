@@ -229,9 +229,10 @@ public final class ChannelUtil {
 			}
 		}
 
-		DefaultByteBufMessage bufferMessage = new DefaultByteBufMessage(content.getProtocolId(), content.byteBuf());
+		DefaultByteBufMessage bufferMessage = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
 		crossSession.sendMessage(bufferMessage);
+		content.recycle();
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

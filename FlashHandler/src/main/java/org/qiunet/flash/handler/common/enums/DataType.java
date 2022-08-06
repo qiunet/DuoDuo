@@ -40,7 +40,7 @@ public enum DataType {
 
 		@Override
 		public IPersistConnRequestContext createPersistConnRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			return new PersistConnPbRequestContext(content, channel, messageActor);
+			return PersistConnPbRequestContext.valueOf(content, channel, messageActor);
 		}
 	},
 	/**

@@ -15,7 +15,10 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
 
 	public HttpStringRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
-		super(content, channel, params, request);
+		this.init(content, channel, params, request);
+	}
+	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+		super.init(content, channel, params, request);
 	}
 
 	@Override

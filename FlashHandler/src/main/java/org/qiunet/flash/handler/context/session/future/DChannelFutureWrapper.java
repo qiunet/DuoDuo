@@ -11,10 +11,12 @@ import io.netty.util.concurrent.GenericFutureListener;
  * 2021/6/27 08:20
  **/
 public class DChannelFutureWrapper implements IDSessionFuture {
+
+
 	/**
 	 * 如果已经有session 了. 发出的消息就有该channelFuture
 	 */
-	private final ChannelFuture channelFuture;
+	private ChannelFuture channelFuture;
 
 	private static final GenericFutureListener<? extends Future<? super Void>>  listener = f -> {
 		if (! f.isSuccess()) {
@@ -22,9 +24,11 @@ public class DChannelFutureWrapper implements IDSessionFuture {
 		}
 	};
 
-	public DChannelFutureWrapper(ChannelFuture channelFuture) {
-		this.channelFuture = channelFuture;
-		this.channelFuture.addListener(listener);
+	public static DChannelFutureWrapper valueOf(ChannelFuture channelFuture) {
+		DChannelFutureWrapper data =  new DChannelFutureWrapper();
+		channelFuture.addListener(listener);
+		data.channelFuture = channelFuture;
+		return data;
 	}
 
 	@Override

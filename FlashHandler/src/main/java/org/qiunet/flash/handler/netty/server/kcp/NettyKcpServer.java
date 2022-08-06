@@ -61,6 +61,7 @@ public class NettyKcpServer implements INettyServer {
 					.channel(UkcpServerChannel.class)
 					.option(ChannelOption.SO_RCVBUF, 1024*1024*2)
 					.option(ChannelOption.SO_SNDBUF, 1024*1024*2)
+					.option(ChannelOption.SO_REUSEADDR, true)
 					.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType())
 					.childHandler(new ChannelInitializer<UkcpChannel>() {
 						@Override

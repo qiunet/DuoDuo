@@ -88,16 +88,9 @@ public class SelectorExecutor<Owner extends MessageHandler<Owner>> extends BaseB
 		return statusRef.get();
 	}
 
-	/**
-	 * 获得起始 索引
-	 * @return
-	 */
-	private int currIndex(){
-		// 说明已经在运行中 再次进入
-		if (currIndex >= childSize()) {
-			return 0;
-		}
-
-		return currIndex;
+	@Override
+	protected void addChildNodeHandler(IBehaviorNode<Owner>... nodes) {
+		super.addChildNodeHandler(nodes);
+		this.wheelList.reset(false);
 	}
 }
