@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.kcp.shakehands.handler;
 
 import io.netty.util.Attribute;
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
@@ -33,7 +32,7 @@ public class KcpTokenHandler extends PersistConnPbHandler<PlayerActor, KcpTokenR
 		if (info == null) {
 			info = new KcpPlayerTokenMapping(playerActor);
 		}
-		KcpTokenRsp kcpTokenRsp = KcpTokenRsp.valueOf(info.getConvId(), info.getToken(), ServerConfig.getServerPort());
+		KcpTokenRsp kcpTokenRsp = KcpTokenRsp.valueOf(info.getConvId(), info.getToken(), info.getPort());
 		playerActor.sendMessage(kcpTokenRsp);
 	}
 

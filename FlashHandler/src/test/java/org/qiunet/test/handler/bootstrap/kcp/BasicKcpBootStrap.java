@@ -1,6 +1,7 @@
 package org.qiunet.test.handler.bootstrap.kcp;
 
 
+import com.google.common.collect.Sets;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,11 +35,11 @@ public abstract class BasicKcpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			KcpBootstrapParams params = KcpBootstrapParams.custom()
-				.setProtocolHeaderType(ProtocolHeaderType.server)
-				.setStartupContext(new StartupContext())
-				.setServerName("游戏服")
-				.setEncryption(true)
-				.setPort(port)
+					.setProtocolHeaderType(ProtocolHeaderType.server)
+					.setStartupContext(new StartupContext())
+					.setPorts(Sets.newHashSet(port))
+					.setServerName("游戏服")
+					.setEncryption(true)
 				.build();
 
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).kcpListener(params);

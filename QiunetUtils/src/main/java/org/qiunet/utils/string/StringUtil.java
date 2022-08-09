@@ -134,6 +134,18 @@ public class StringUtil {
 	}
 
 	/**
+	 * 数组拼串
+	 * @param arrays
+	 * @param separator
+	 * @return
+	 */
+	public static <T> String arraysToString(Collection<T> arrays, String start ,String end, String separator){
+		StringJoiner joiner = new StringJoiner(separator, start, end);
+		arrays.forEach(t -> joiner.add(t.toString()));
+		return joiner.toString();
+	}
+
+	/**
 	 * map 拼串
 	 * @param keyValSeparator key val 中间分隔符号
 	 * @param separator 两组key val 分割符号

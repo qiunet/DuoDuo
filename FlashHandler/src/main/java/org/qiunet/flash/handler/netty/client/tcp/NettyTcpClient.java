@@ -24,7 +24,7 @@ import org.qiunet.utils.logger.LoggerType;
  * 17/11/25
  */
 public class NettyTcpClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(8, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
 	private final IPersistConnResponseTrigger trigger;
 	private final TcpClientParams params;
 	private final Bootstrap bootstrap;

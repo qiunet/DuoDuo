@@ -68,29 +68,30 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 			return;
 		}
 
-		data.retain();
+		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
+		CrossProtocolHeader header = (CrossProtocolHeader) data.getHeader();
+		boolean flush = header.isFlush();
+		boolean kcp = header.isKcp();
 		playerActor.addMessage(m -> {
-			c2pMessage(playerActor, data);
+			c2pMessage(playerActor, message, kcp, flush);
 		});
+		data.recycle();
 	}
 
-	private void c2pMessage(IMessageActor iMessageActor, MessageContent data) {
-		CrossProtocolHeader header = (CrossProtocolHeader) data.getHeader();
+	private void c2pMessage(IMessageActor iMessageActor, DefaultByteBufMessage message, boolean kcp, boolean flush) {
 		if (logger.isInfoEnabled()) {
-			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(data.getProtocolId());
+			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
-				IChannelData channelData = ProtobufDataManager.decode(aClass, data.byteBuffer());
+				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 				ServerConnType serverConnType = iMessageActor.getSender().channel().attr(ServerConstants.HANDLER_TYPE_KEY).get();
-				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), header.isKcp()  ? "KCP": serverConnType, ToString.toString(channelData));
+				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, ToString.toString(channelData));
 			}
 		}
 
-		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
-		if (header.isKcp() && iMessageActor.isKcpSessionPrepare()) {
+		if (kcp && iMessageActor.isKcpSessionPrepare()) {
 			iMessageActor.getSender().sendKcpMessage(message);
 		}else {
-			iMessageActor.getSender().sendMessage(message, header.isKcp() || header.isFlush());
+			iMessageActor.getSender().sendMessage(message, kcp || flush);
 		}
-		data.recycle();
 	}
 }

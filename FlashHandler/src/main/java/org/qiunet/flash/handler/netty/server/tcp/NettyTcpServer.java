@@ -11,8 +11,6 @@ import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
-
 /**
  * Created by qiunet.
  * 17/8/13
@@ -45,8 +43,8 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
 
-			this.channelFuture = bootstrap.bind(params.getAddress());
-			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), ((InetSocketAddress) params.getAddress()).getPort());
+			this.channelFuture = bootstrap.bind(params.getPort());
+			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), params.getPort());
 			channelFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyTcpServer] Exception: ", e);
@@ -68,6 +66,6 @@ public final class NettyTcpServer implements INettyServer {
 
 	@Override
 	public String threadName() {
-		return "BootstrapServer-Tcp Address ["+params.getAddress().toString()+"]";
+		return "BootstrapServer-Tcp Address ["+params.getPort()+"]";
 	}
 }

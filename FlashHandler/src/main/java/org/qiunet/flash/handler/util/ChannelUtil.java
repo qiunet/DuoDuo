@@ -209,8 +209,9 @@ public final class ChannelUtil {
 		ISession session = ChannelUtil.getSession(channel);
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			content.retain();
-			messageActor.addMessage(m -> transmitMessage(messageActor, content, channel));
+			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
+			messageActor.addMessage(m -> transmitMessage(messageActor, message, channel));
+			content.recycle();
 			return;
 		}
 		if (channel.isActive()) {
@@ -220,19 +221,17 @@ public final class ChannelUtil {
 	}
 
 
-	private static void transmitMessage(IMessageActor messageActor, MessageContent content, Channel channel) {
+	private static void transmitMessage(IMessageActor messageActor, DefaultByteBufMessage message, Channel channel) {
 		if (logger.isInfoEnabled()) {
-			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(content.getProtocolId());
+			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
-				IChannelData channelData = ProtobufDataManager.decode(aClass, content.byteBuffer());
+				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), ToString.toString(channelData));
 			}
 		}
 
-		DefaultByteBufMessage bufferMessage = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
-		crossSession.sendMessage(bufferMessage);
-		content.recycle();
+		crossSession.sendMessage(message);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

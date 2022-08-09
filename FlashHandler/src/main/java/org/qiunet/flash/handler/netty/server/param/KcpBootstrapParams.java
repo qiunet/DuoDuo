@@ -1,5 +1,10 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import com.google.common.collect.ImmutableSet;
+import org.qiunet.utils.exceptions.CustomException;
+
+import java.util.Set;
+
 /**
  * 使用引导类 设置参数 建造者模式
  * KCP参数
@@ -52,6 +57,10 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 	 */
 	private boolean dependOnTcpWs;
 	/**
+	 * 监听的多端口
+	 */
+	private Set<Integer> ports;
+	/**
 	 * 放开udp
 	 */
 	private KcpParam kcpParam = KcpParam.DEFAULT_KCP_PARAM;
@@ -80,6 +89,15 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 		return super.isEncryption();
 	}
 
+	@Override
+	public int getPort() {
+		throw new CustomException("not support!");
+	}
+
+	public Set<Integer> getPorts() {
+		return ports;
+	}
+
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 */
@@ -95,9 +113,24 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 			return this;
 		}
 
+		@Override
+		public Builder setPort(int port) {
+			throw new CustomException("Not Support! Use setPorts()");
+		}
+
+		public Builder setPorts(Set<Integer> ports) {
+			KcpBootstrapParams.this.ports = ImmutableSet.copyOf(ports);
+			return this;
+		}
+
 		public Builder setKcpParam(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
 			KcpBootstrapParams.this.kcpParam = new KcpParam(snd_wnd, rcv_wnd, interval, noDelay, mtu, fastResend, noCwnd);
 			return this;
+		}
+
+		@Override
+		public KcpBootstrapParams build() {
+			return this.newParams();
 		}
 
 		@Override

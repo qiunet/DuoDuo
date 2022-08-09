@@ -11,8 +11,6 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
-
 /**
  * Created by qiunet.
  * 17/11/11
@@ -41,8 +39,8 @@ public class NettyHttpServer implements INettyServer {
 			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
-			this.closeFuture = bootstrap.bind(params.getAddress()).sync();
-			logger.error("[NettyHttpServer]  Http server {} is started on port [{}]", serverName(), ((InetSocketAddress) params.getAddress()).getPort());
+			this.closeFuture = bootstrap.bind(params.getPort()).sync();
+			logger.error("[NettyHttpServer]  Http server {} is started on port [{}]", serverName(), params.getPort());
 			this.closeFuture.channel().closeFuture().sync();
 		}catch (Exception e) {
 			logger.error("[NettyHttpServer] Exception: ", e);
@@ -67,6 +65,6 @@ public class NettyHttpServer implements INettyServer {
 
 	@Override
 	public String threadName() {
-		return "BootstrapServer-Http Address ["+params.getAddress().toString()+"]";
+		return "BootstrapServer-Http Address ["+params.getPort()+"]";
 	}
 }

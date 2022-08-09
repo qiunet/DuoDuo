@@ -4,9 +4,6 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-
 /**
  * Created by qiunet.
  * 17/11/22
@@ -19,7 +16,7 @@ public abstract class AbstractBootstrapParam {
 	/***
 	 * 接收端口
 	 */
-	protected SocketAddress address;
+	protected int port;
 	/**
 	 * 服务名
 	 */
@@ -49,8 +46,8 @@ public abstract class AbstractBootstrapParam {
 		return maxReceivedLength;
 	}
 
-	public SocketAddress getAddress() {
-		return address;
+	public int getPort() {
+		return port;
 	}
 
 	public String getServerName() {
@@ -98,7 +95,7 @@ public abstract class AbstractBootstrapParam {
 			return (B) this;
 		}
 		public B setPort(int port) {
-			AbstractBootstrapParam.this.address = new InetSocketAddress(port);
+			AbstractBootstrapParam.this.port = port;
 			return (B)this;
 		}
 
@@ -117,7 +114,7 @@ public abstract class AbstractBootstrapParam {
 		 * @return
 		 */
 		public P build(){
-			if (address == null) throw new NullPointerException("Must set port for Listener! ");
+			if (port == 0) throw new NullPointerException("Must set port for Listener! ");
 			return newParams();
 		}
 		/**

@@ -6,6 +6,7 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.IRobot;
+import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.future.DChannelFutureWrapper;
@@ -151,6 +152,10 @@ abstract class BaseSession implements ISession {
 		if (! this.channel.isOpen()) {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
 			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
+			if (message instanceof DefaultByteBufMessage) {
+				((DefaultByteBufMessage) message).getContent().release();
+				message.recycle();
+			}
 			return new DMessageContentFuture(channel, message);
 		}
 

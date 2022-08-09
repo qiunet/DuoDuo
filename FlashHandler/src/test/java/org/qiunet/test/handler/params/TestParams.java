@@ -6,7 +6,6 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.test.handler.startup.context.StartupContext;
 
-import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -19,13 +18,13 @@ public class TestParams {
 		HttpBootstrapParams params = HttpBootstrapParams.custom()
 				.setPort(1314)
 				.build();
-		Assertions.assertEquals(1314, ((InetSocketAddress) params.getAddress()).getPort());
+		Assertions.assertEquals(1314, params.getPort());
 
 		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
 				.setStartupContext(new StartupContext())
 				.setMaxReceivedLength(1024*1024)
 				.setPort(1315)
 				.build();
-		Assertions.assertEquals(1315, ((InetSocketAddress) tcpBootstrapParams.getAddress()).getPort());
+		Assertions.assertEquals(1315,  tcpBootstrapParams.getPort());
 	}
 }

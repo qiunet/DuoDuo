@@ -1,14 +1,13 @@
 package org.qiunet.flash.handler.netty.server.kcp;
 
+import com.google.common.collect.Lists;
 import io.jpower.kcp.netty.ChannelOptionHelper;
 import io.jpower.kcp.netty.UkcpChannel;
 import io.jpower.kcp.netty.UkcpChannelOption;
 import io.jpower.kcp.netty.UkcpServerChannel;
 import io.netty.bootstrap.UkcpServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.netty.coder.KcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketEncoder;
@@ -16,10 +15,13 @@ import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.system.OSUtil;
 import org.slf4j.Logger;
 
-import java.net.InetSocketAddress;
+import java.util.List;
 
 /***
  * KCP 服务
@@ -27,11 +29,12 @@ import java.net.InetSocketAddress;
  * 2022/4/24 15:53
  */
 public class NettyKcpServer implements INettyServer {
+	private static final EventLoopGroup GROUP = new NioEventLoopGroup(OSUtil.availableProcessors(), new DefaultThreadFactory("netty-kcp-server-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private final KcpBootstrapParams params;
 
-	private ChannelFuture channelFuture;
+	private List<ChannelFuture> channelFutures;
 
 	public NettyKcpServer(KcpBootstrapParams params) {
 		this.params = params;
@@ -44,7 +47,7 @@ public class NettyKcpServer implements INettyServer {
 
 	@Override
 	public void shutdown() {
-		this.channelFuture.channel().close();
+		this.channelFutures.forEach(f -> f.channel().close());
 	}
 
 	@Override
@@ -57,7 +60,7 @@ public class NettyKcpServer implements INettyServer {
 		try {
 			UkcpServerBootstrap b = new UkcpServerBootstrap();
 
-			b.group(ServerConstants.WORKER)
+			b.group(GROUP)
 					.channel(UkcpServerChannel.class)
 					.option(ChannelOption.SO_RCVBUF, 1024*1024*2)
 					.option(ChannelOption.SO_SNDBUF, 1024*1024*2)
@@ -81,17 +84,21 @@ public class NettyKcpServer implements INettyServer {
 					.childOption(UkcpChannelOption.UKCP_RCV_WND, params.getKcpParam().getRcv_wnd())
 					.childOption(UkcpChannelOption.UKCP_AUTO_SET_CONV, true);
 
+			this.channelFutures = Lists.newArrayListWithCapacity(this.params.getPorts().size());
 			// Start the server.
-			this.channelFuture = b.bind(this.params.getAddress()).sync();
-			logger.error("[NettyKcpServer]  Kcp server {} is Listener on port [{}]", serverName(), ((InetSocketAddress) params.getAddress()).getPort());
-			// Wait until the server socket is closed.
-			this.channelFuture.channel().closeFuture().sync();
+			for (int port : this.params.getPorts()) {
+				ChannelFuture channelFuture = b.bind(port).sync();
+				this.channelFutures.add(channelFuture);
+			}
+			logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(params.getPorts(), "", "" ,","));
+			this.channelFutures.get(0).channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			logger.error("[NettyKcpServer] Exception: ", e);
 			System.exit(1);
 		} finally {
 			// Shut down all event loops to terminate all threads.
 			logger.error("[NettyKcpServer] {} is shutdown! ", serverName());
+			GROUP.shutdownGracefully();
 		}
 	}
 }
