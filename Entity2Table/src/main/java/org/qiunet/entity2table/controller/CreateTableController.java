@@ -35,6 +35,7 @@ class CreateTableController implements IApplicationContextAware {
 	private static CreateTableController instance;
 	private IApplicationContext context;
 
+	private Set<Class<?>> tableClasses;
 	private CreateTableController() {
 		if (instance != null) {
 			throw new CustomException("Instance Duplication!");
@@ -228,6 +229,7 @@ class CreateTableController implements IApplicationContextAware {
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) {
+		tableClasses = context.getTypesAnnotatedWith(Table.class);
 		this.context = context;
 	}
 
@@ -238,9 +240,11 @@ class CreateTableController implements IApplicationContextAware {
 			return;
 		}
 		try {
-			context.getTypesAnnotatedWith(Table.class).forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
+			tableClasses.forEach(clazz -> this.handlerTable((Class<? extends IEntity>) clazz));
 		}catch (Exception e) {
 			throw new CustomException(e, "Create Table Error!");
+		}finally {
+			tableClasses.clear();
 		}
 	}
 

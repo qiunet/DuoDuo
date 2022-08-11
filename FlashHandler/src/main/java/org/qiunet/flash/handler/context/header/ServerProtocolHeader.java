@@ -62,6 +62,15 @@ public class ServerProtocolHeader implements IProtocolHeader {
 		return header;
 	}
 
+
+	@Override
+	public void recycle() {
+		this.protocolId = 0;
+		this.length = 0;
+		this.crc = 0;
+		recyclerHandle.recycle(this);
+	}
+
 	@Override
 	public int getLength() {
 		return length;

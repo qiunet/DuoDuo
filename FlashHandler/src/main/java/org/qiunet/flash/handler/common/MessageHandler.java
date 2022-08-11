@@ -1,10 +1,11 @@
 package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
-import io.netty.channel.DefaultEventLoop;
-import io.netty.channel.SingleThreadEventLoop;
 import org.qiunet.utils.async.LazyLoader;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -35,7 +36,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements Runnable, IMessageHandler<H>, IThreadSafe {
 	private static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
 
-	private final LazyLoader<SingleThreadEventLoop> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
+	private final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
 	private final UseTimer useTimer = new UseTimer(this::getIdentity, 500);
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
@@ -87,7 +88,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		messages.add(msg);
 		int size = this.size.incrementAndGet();
 		if (size == 1) {
-			executor.get().execute(this);
+			executor.get().executorService.execute(this);
 		}
 	}
 
@@ -104,7 +105,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	@Override
 	public boolean inSelfThread() {
-		return executor.get().inEventLoop();
+		return executor.get().thread == Thread.currentThread();
 	}
 
 	/**
@@ -179,19 +180,40 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		this.scheduleFutures.add(future);
 		return future;
 	}
+	@EventListener
+	private static void shutdown(ServerShutdownEventData event) {
+		for (DExecutorService service : executorService.eventLoops) {
+			service.executorService.shutdown();
+		}
+	}
 
 	private static class MessageHandlerEventLoop {
-		private final List<DefaultEventLoop> eventLoops;
+		private final List<DExecutorService> eventLoops;
 
 		public MessageHandlerEventLoop(int count) {
-			this.eventLoops = IntStream.range(0, count).mapToObj(i -> new DefaultEventLoop(r -> {
-				return new Thread(r, "message-handler-"+ i);
-			})).collect(Collectors.toList());
+			this.eventLoops = IntStream.range(0, count)
+				.mapToObj(DExecutorService::new)
+			.collect(Collectors.toList());
 		}
 
-		public SingleThreadEventLoop getEventLoop(Object key) {
+		public DExecutorService getEventLoop(Object key) {
 			int i = Math.abs(Objects.requireNonNull(key).hashCode()) % eventLoops.size();
 			return eventLoops.get(i);
+		}
+	}
+
+	private static class DExecutorService implements Runnable{
+		ExecutorService executorService;
+		Thread thread;
+
+		public DExecutorService(int id) {
+			this.executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("message-handler-"+ id));
+			this.executorService.execute(this);
+		}
+
+		@Override
+		public void run() {
+			thread = Thread.currentThread();
 		}
 	}
 

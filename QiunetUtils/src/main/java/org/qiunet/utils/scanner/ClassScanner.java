@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -46,7 +45,6 @@ public final class ClassScanner implements IApplicationContext {
 	 * 存储一些参数
 	 */
 	private final ArgsContainer argsContainer = new ArgsContainer();
-
 	private static ClassScanner instance;
 	/**
 	 * 扫描工具类
@@ -56,6 +54,10 @@ public final class ClassScanner implements IApplicationContext {
 	 * 可以扫描的类型
 	 */
 	private final int scannerTypes;
+	/**
+	 * 已经回收. 不能再取数据.
+	 */
+	private boolean recycled;
 
 	private ClassScanner(ScannerType... scannerTypes) {
 		if (instance != null) {
@@ -67,7 +69,6 @@ public final class ClassScanner implements IApplicationContext {
 			scannerType |= type.getStatus();
 		}
 		this.scannerTypes = scannerType;
-		this.recordStartDt();
 		instance = this;
 	}
 
@@ -90,6 +91,10 @@ public final class ClassScanner implements IApplicationContext {
 		} catch (Exception e) {
 			logger.error("Scanner Exception:", e);
 			System.exit(1);
+		}finally {
+			// 后面不需要了. 也不允许业务来读取. 释放内存
+			reflections.getStore().clear();
+			recycled = true;
 		}
 	}
 	private Set<String> scannerClassNames;
@@ -106,7 +111,7 @@ public final class ClassScanner implements IApplicationContext {
 		Set<Class<? extends IApplicationContextAware>> subTypesOf = this.reflections.getSubTypesOf(IApplicationContextAware.class);
 		List<IApplicationContextAware> collect = subTypesOf.stream()
 			.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
-			.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result())
+			.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).compare(o1.scannerType().ordinal(), o2.scannerType().ordinal()).result())
 			.collect(Collectors.toList());
 
 		AtomicReference<Exception> reference = new AtomicReference<>();
@@ -196,16 +201,25 @@ public final class ClassScanner implements IApplicationContext {
 
 	@Override
 	public Set<Class<?>> getTypesAnnotatedWith(Class<? extends Annotation> annotation) {
+		if (recycled) {
+			throw new RuntimeException("Already recycled!");
+		}
 		return reflections.getTypesAnnotatedWith(annotation);
 	}
 
 	@Override
 	public Set<Field> getFieldsAnnotatedWith(Class<? extends Annotation> annotation) {
+		if (recycled) {
+			throw new RuntimeException("Already recycled!");
+		}
 		return reflections.getFieldsAnnotatedWith(annotation);
 	}
 
 	@Override
 	public Set<Method> getMethodsAnnotatedWith(Class<? extends Annotation> annotation) {
+		if (recycled) {
+			throw new RuntimeException("Already recycled!");
+		}
 		return reflections.getMethodsAnnotatedWith(annotation);
 	}
 
@@ -235,17 +249,5 @@ public final class ClassScanner implements IApplicationContext {
 
 			throw new NullPointerException("can not get instance for class ["+key.getName()+"]");
 		});
-	}
-
-	/**
-	 * 记录启服时间
-	 */
-	private void recordStartDt() {
-		try {
-			Class<?> aClass = Class.forName("org.qiunet.flash.handler.netty.server.constants.ServerConstants");
-			Field field = aClass.getField("startDt");
-			AtomicLong startDt = (AtomicLong) field.get(null);
-			startDt.compareAndSet(0, System.currentTimeMillis());
-		} catch (Exception e) {}
 	}
 }

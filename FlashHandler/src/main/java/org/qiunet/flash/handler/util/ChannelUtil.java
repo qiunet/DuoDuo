@@ -210,7 +210,15 @@ public final class ChannelUtil {
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
-			messageActor.addMessage(m -> transmitMessage(messageActor, message, channel));
+			messageActor.addMessage(m -> {
+				try {
+					transmitMessage(messageActor, message, channel);
+				}catch (Exception e) {
+					if (message.getContent() != null && message.getContent().refCnt() > 0) {
+						message.getContent().release();
+					}
+				}
+			});
 			content.recycle();
 			return;
 		}
@@ -231,7 +239,7 @@ public final class ChannelUtil {
 		}
 
 		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
-		crossSession.sendMessage(message);
+		crossSession.sendMessage(message, true);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

@@ -73,7 +73,13 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 		boolean flush = header.isFlush();
 		boolean kcp = header.isKcp();
 		playerActor.addMessage(m -> {
-			c2pMessage(playerActor, message, kcp, flush);
+			try {
+				c2pMessage(playerActor, message, kcp, flush);
+			}catch (Exception e) {
+				if (message.getContent() != null && message.getContent().refCnt() > 0) {
+					message.getContent().release();
+				}
+			}
 		});
 		data.recycle();
 	}

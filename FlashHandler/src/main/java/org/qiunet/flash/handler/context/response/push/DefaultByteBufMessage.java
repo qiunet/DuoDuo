@@ -71,6 +71,7 @@ public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
 		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), this.buffer);
 		protocolHeader.recycle();
+		this.recycle();
 		return byteBuf;
 	}
 

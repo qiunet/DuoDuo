@@ -8,7 +8,7 @@ package org.qiunet.utils.scanner;
  * 2020-04-25 20:11
  **/
 public enum  ScannerType {
-	NONE(1),
+	NONE(0),
 	/**str -> 对象转换*/
 	OBJ_CONVERT(1 << 1),
 	/**事件*/
