@@ -16,6 +16,8 @@ import org.qiunet.utils.string.StringUtil;
  */
 public abstract class BaseBehaviorAction<Owner extends MessageHandler<Owner>> extends BaseBehaviorNode<Owner> implements IBehaviorAction<Owner> {
 
+	protected int runningCount;
+
 	public BaseBehaviorAction(IConditions<Owner> conditions) {
 		super(conditions, StringUtil.EMPTY_STRING);
 	}
@@ -29,13 +31,17 @@ public abstract class BaseBehaviorAction<Owner extends MessageHandler<Owner>> ex
 		ActionStatus status = runningStatusUpdate();
 		this.statusLogger.setExecuted(true);
 		this.statusLogger.setStatus(status);
+		if (isRunning()) {
+			this.runningCount ++;
+		}else {
+			this.runningCount = 0;
+		}
 		return status;
 	}
 
 	protected ActionStatus runningStatusUpdate(){
 		throw new CustomException("Class [{}] need implements runningStatusUpdate!", getClass().getName());
 	}
-
 
 	@Override
 	public String getName() {
