@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.param.adapter;
 
 import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
@@ -10,7 +11,6 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
@@ -80,7 +80,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @param cause
 	 * @return
 	 */
-	default IDSessionFuture exception(Channel channel, Throwable cause){
+	default ChannelFuture exception(Channel channel, Throwable cause){
 		IChannelData message;
 		if (cause instanceof StatusResultException) {
 			message = StatusTipsRsp.valueOf(((StatusResultException) cause));

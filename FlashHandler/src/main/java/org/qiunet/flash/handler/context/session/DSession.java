@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
@@ -92,15 +91,17 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 				sessionLock.lock();
 				DMessageContentFuture msg;
 				while ((msg = queue.poll()) != null) {
-					if (msg.isCanceled()) {
+					if (msg.isCancelled()) {
 						continue;
 					}
 
-					IDSessionFuture future1 = this.doSendMessage(msg.getMessage(), false);
+					ChannelFuture future1 = this.doSendMessage(msg.getMessage(), false);
 					DMessageContentFuture finalMsg = msg;
 					future1.addListener(f1 -> {
 						if (f1.isSuccess()) {
-							finalMsg.complete(f1);
+							finalMsg.setSuccess();
+						}else {
+							finalMsg.setFailure(future1.cause());
 						}
 					});
 				}
@@ -141,12 +142,12 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	@Override
-	public IDSessionFuture sendMessage(IChannelMessage<?> message) {
+	public ChannelFuture sendMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, sessionConfig.isDefault_flush());
 	}
 
 	@Override
-	public IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
 		if (connecting.get()) {
 			try {
 				sessionLock.lock();
@@ -162,12 +163,12 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		return this.doSendMessage(message, flush);
 	}
 
-	public IDSessionFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
+	public ChannelFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
 		if (flush) {
 			return this.realSendMessage(message, true);
 		}
 
-		IDSessionFuture future;
+		ChannelFuture future;
 		synchronized (this) {
 			future = this.realSendMessage(message, false);
 		}
@@ -208,7 +209,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	@Override
-	public IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
+	public ChannelFuture sendKcpMessage(IChannelMessage<?> message) {
 		if (this.kcpSession == null || ! this.kcpSession.isActive()) {
 			logger.warn("Not bind kcp session or session inactive!");
 			return this.sendMessage(message, true);

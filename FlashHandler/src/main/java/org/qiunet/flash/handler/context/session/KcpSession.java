@@ -1,8 +1,8 @@
 package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpDisconnectPush;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -41,7 +41,7 @@ public class KcpSession extends BaseSession {
 	}
 
 	@Override
-	public IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
+	public ChannelFuture sendKcpMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, true);
 	}
 }

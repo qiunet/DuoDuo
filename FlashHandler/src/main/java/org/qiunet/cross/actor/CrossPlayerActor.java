@@ -2,6 +2,7 @@ package org.qiunet.cross.actor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.cross.actor.data.CrossDataGetter;
 import org.qiunet.cross.actor.data.IUserTransferData;
@@ -14,7 +15,6 @@ import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.listener.event.EventManager;
 
 import java.util.Map;
@@ -134,17 +134,17 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	 * @param channelData
 	 */
 	@Override
-	public IDSessionFuture sendMessage(IChannelData channelData) {
+	public ChannelFuture sendMessage(IChannelData channelData) {
 		return this.sendMessage(channelData, false);
 	}
 
 	@Override
-	public IDSessionFuture sendMessage(IChannelData channelData, boolean flush) {
+	public ChannelFuture sendMessage(IChannelData channelData, boolean flush) {
 		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, flush), flush);
 	}
 
 	@Override
-	public IDSessionFuture sendKcpMessage(IChannelData channelData) {
+	public ChannelFuture sendKcpMessage(IChannelData channelData) {
 		// kcp 要求实时. 直接发送出去
 		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, true, true), true);
 	}

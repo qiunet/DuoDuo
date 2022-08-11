@@ -1,8 +1,8 @@
 package org.qiunet.flash.handler.context.sender;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 
 /***
  * 所有发送响应的都实现该接口
@@ -29,7 +29,7 @@ public interface IChannelMessageSender {
 	 * @param message
 	 * @return
 	 */
-	default IDSessionFuture sendKcpMessage(IChannelMessage<?> message) {
+	default ChannelFuture sendKcpMessage(IChannelMessage<?> message) {
 		return getSender().sendKcpMessage(message);
 	}
 
@@ -40,7 +40,7 @@ public interface IChannelMessageSender {
 	 * @param message
 	 * @return
 	 */
-	default IDSessionFuture sendKcpMessage(IChannelData message) {
+	default ChannelFuture sendKcpMessage(IChannelData message) {
 		return this.sendKcpMessage(message.buildChannelMessage());
 	}
 	/**
@@ -48,7 +48,7 @@ public interface IChannelMessageSender {
 	 * @param message
 	 * @return
 	 */
-	default IDSessionFuture sendMessage(IChannelMessage<?> message) {
+	default ChannelFuture sendMessage(IChannelMessage<?> message) {
 		return getSender().sendMessage(message);
 	}
 
@@ -56,21 +56,21 @@ public interface IChannelMessageSender {
 	 * 发送消息
 	 * @param message
 	 */
-	default IDSessionFuture sendMessage(IChannelData message) {
+	default ChannelFuture sendMessage(IChannelData message) {
 		return this.sendMessage(message.buildChannelMessage());
 	}
 	/**
 	 * 发送消息
 	 * @param message
 	 */
-	default IDSessionFuture sendMessage(IChannelData message, boolean flush) {
+	default ChannelFuture sendMessage(IChannelData message, boolean flush) {
 		return this.sendMessage(message.buildChannelMessage(), flush);
 	}
 	/**
 	 * 发送消息
 	 * @param message
 	 */
-	default IDSessionFuture sendMessage(IChannelMessage<?> message, boolean flush){
+	default ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush){
 		return getSender().sendMessage(message, flush);
 	}
 

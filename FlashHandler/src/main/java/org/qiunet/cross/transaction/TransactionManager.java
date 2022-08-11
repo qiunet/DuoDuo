@@ -2,13 +2,13 @@ package org.qiunet.cross.transaction;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
-import org.qiunet.flash.handler.context.session.future.IDSessionFuture;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
@@ -90,7 +90,7 @@ public enum TransactionManager {
 		}
 
 		ServerNode node = ServerNodeManager.getNode(serverId);
-		IDSessionFuture channelFuture = node.sendMessage(routeTransactionReq);
+		ChannelFuture channelFuture = node.sendMessage(routeTransactionReq);
 		channelFuture.addListener(f -> {
 			if (f.isSuccess()) {
 				respTransactionFuture.beginCalTimeOut(timeout, unit);
