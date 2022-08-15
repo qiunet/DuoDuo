@@ -3,8 +3,8 @@ package org.qiunet.flash.handler.common.message;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.ReferenceCounted;
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.utils.pool.ObjectPool;
 
 import java.nio.ByteBuffer;
 
@@ -16,7 +16,13 @@ import java.nio.ByteBuffer;
  *         Created on 17/3/13 19:50.
  */
 public class MessageContent implements ReferenceCounted {
-	private static final ObjectPool<MessageContent> RECYCLER = ObjectPool.newPool(MessageContent::new);
+	private static final org.qiunet.utils.pool.ObjectPool<MessageContent> RECYCLER = new ObjectPool<MessageContent>() {
+		@Override
+		public MessageContent newObject(Handle<MessageContent> handler) {
+			return new MessageContent(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<MessageContent> recyclerHandle;
 	/**
 	 * 数据内容
@@ -65,7 +71,7 @@ public class MessageContent implements ReferenceCounted {
 			this.header.recycle();
 		}
 		this.header = null;
-		this.recyclerHandle.recycle(this);
+		this.recyclerHandle.recycle();
 	}
 
 	public String getUriPath() {

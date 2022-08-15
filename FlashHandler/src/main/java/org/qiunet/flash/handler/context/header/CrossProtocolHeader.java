@@ -2,10 +2,10 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
@@ -21,7 +21,13 @@ import java.util.Arrays;
  */
 public class CrossProtocolHeader implements IProtocolHeader {
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private static final ObjectPool<CrossProtocolHeader> RECYCLER = ObjectPool.newPool(CrossProtocolHeader::new);
+	private static final ObjectPool<CrossProtocolHeader> RECYCLER = new ObjectPool<CrossProtocolHeader>() {
+		@Override
+		public CrossProtocolHeader newObject(Handle<CrossProtocolHeader> handler) {
+			return new CrossProtocolHeader(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<CrossProtocolHeader> recyclerHandle;
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 18;
@@ -81,7 +87,7 @@ public class CrossProtocolHeader implements IProtocolHeader {
 		this.kcp = false;
 		this.length = 0;
 		this.crc = 0;
-		recyclerHandle.recycle(this);
+		recyclerHandle.recycle();
 	}
 
 	@Override

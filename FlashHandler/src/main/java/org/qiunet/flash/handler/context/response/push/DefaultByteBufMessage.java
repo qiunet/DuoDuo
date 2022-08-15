@@ -3,10 +3,10 @@ package org.qiunet.flash.handler.context.response.push;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.pool.ObjectPool;
 
 import java.nio.ByteBuffer;
 
@@ -16,7 +16,13 @@ import java.nio.ByteBuffer;
  * @Date Create in 2022/6/13 09:24
  **/
 public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
-	private static final ObjectPool<DefaultByteBufMessage> RECYCLER = ObjectPool.newPool(DefaultByteBufMessage::new);
+	private static final ObjectPool<DefaultByteBufMessage> RECYCLER = new ObjectPool<DefaultByteBufMessage>(1024, 32) {
+		@Override
+		public DefaultByteBufMessage newObject(Handle<DefaultByteBufMessage> handler) {
+			return new DefaultByteBufMessage(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<DefaultByteBufMessage> recyclerHandle;
 	private int protocolId;
 
@@ -37,7 +43,7 @@ public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
 	public void recycle() {
 		this.protocolId = 0;
 		this.buffer = null;
-		this.recyclerHandle.recycle(this);
+		this.recyclerHandle.recycle();
 	}
 
 	@Override

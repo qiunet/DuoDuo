@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -12,6 +11,7 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.string.ToString;
 
 /**
@@ -23,7 +23,13 @@ import org.qiunet.utils.string.ToString;
 public class PersistConnPbRequestContext<RequestData extends IChannelData, P extends IMessageActor<P>>
 		extends AbstractPersistConnRequestContext<RequestData, P> {
 
-	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = ObjectPool.newPool(PersistConnPbRequestContext::new);
+	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = new ObjectPool<PersistConnPbRequestContext>() {
+		@Override
+		public PersistConnPbRequestContext newObject(Handle<PersistConnPbRequestContext> handler) {
+			return new PersistConnPbRequestContext(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<PersistConnPbRequestContext> recyclerHandle;
 
 	public PersistConnPbRequestContext(ObjectPool.Handle<PersistConnPbRequestContext> recyclerHandle) {
@@ -48,7 +54,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		this.handler = null;
 		this.channel = null;
 
-		this.recyclerHandle.recycle(this);
+		this.recyclerHandle.recycle();
 	}
 
 	@Override
@@ -82,8 +88,12 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {
 			((ITransmitHandler) getHandler()).crossHandler(((CrossPlayerActor) messageActor), getRequestData());
 		}else {
-			FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = new FacadePersistConnRequest<>(this);
-			((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
+			FacadePersistConnRequest<RequestData, P> facadeWebSocketRequest = FacadePersistConnRequest.valueOf(this);
+			try {
+				((IPersistConnHandler) getHandler()).handler(messageActor, facadeWebSocketRequest);
+			}finally {
+				facadeWebSocketRequest.recycle();
+			}
 		}
 	}
 }

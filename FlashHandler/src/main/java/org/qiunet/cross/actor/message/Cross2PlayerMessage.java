@@ -1,9 +1,9 @@
 package org.qiunet.cross.actor.message;
 
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
@@ -17,7 +17,13 @@ import java.nio.ByteBuffer;
  * 2020-10-26 12:15
  */
 public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IDataToString {
-	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = ObjectPool.newPool(Cross2PlayerMessage::new);
+	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = new ObjectPool<Cross2PlayerMessage>(1024, 32) {
+		@Override
+		public Cross2PlayerMessage newObject(Handle<Cross2PlayerMessage> handler) {
+			return new Cross2PlayerMessage(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<Cross2PlayerMessage> recyclerHandle;
 
 	/**
@@ -66,7 +72,7 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 		this.flush = false;
 		this.data = null;
 		this.pid = 0;
-		recyclerHandle.recycle(this);
+		recyclerHandle.recycle();
 	}
 
 	@Override

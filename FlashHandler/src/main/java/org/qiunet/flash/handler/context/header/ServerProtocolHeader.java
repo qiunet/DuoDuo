@@ -2,9 +2,9 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.util.internal.ObjectPool;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
@@ -20,7 +20,13 @@ import java.util.Arrays;
  */
 public class ServerProtocolHeader implements IProtocolHeader {
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private static final ObjectPool<ServerProtocolHeader> RECYCLER = ObjectPool.newPool(ServerProtocolHeader::new);
+	private static final ObjectPool<ServerProtocolHeader> RECYCLER = new ObjectPool<ServerProtocolHeader>() {
+		@Override
+		public ServerProtocolHeader newObject(Handle<ServerProtocolHeader> handler) {
+			return new ServerProtocolHeader(handler);
+		}
+	};
+
 	private final ObjectPool.Handle<ServerProtocolHeader> recyclerHandle;
 	/**请求头固定长度*/
 	public static final int REQUEST_HEADER_LENGTH = 16;
@@ -68,7 +74,7 @@ public class ServerProtocolHeader implements IProtocolHeader {
 		this.protocolId = 0;
 		this.length = 0;
 		this.crc = 0;
-		recyclerHandle.recycle(this);
+		recyclerHandle.recycle();
 	}
 
 	@Override
