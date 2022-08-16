@@ -1,10 +1,10 @@
 package org.qiunet.function.rank;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.CommMessageHandler;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -60,7 +60,8 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 			if (rankFull) {
 				RankData last = this.rankData.pollLast();
 				if (last != null) {
-					rankMap.remove(last.getId());
+					RankData remove = rankMap.remove(last.getId());
+					this.rankData.remove(remove);
 				}
 			}
 			rankMap.put(rankData.getId(), rankData);
@@ -70,7 +71,7 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 		this.rankData.add(rankData);
 		this.resort();
 		messageHandler.addMessage(h -> {
-			this.save(Lists.newArrayList(this.rankData));
+			this.save(this.rankData);
 		});
 	}
 
@@ -128,7 +129,7 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 	/**
 	 * 保存数据
 	 */
-	protected abstract void save(List<RankData> rankDataList);
+	protected abstract void save(Collection<RankData> rankDataList);
 
 	/**
 	 * 加载数据

@@ -209,12 +209,12 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	}
 
 	@Override
-	public ChannelFuture sendKcpMessage(IChannelMessage<?> message) {
+	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
 		if (this.kcpSession == null || ! this.kcpSession.isActive()) {
 			logger.warn("Not bind kcp session or session inactive!");
-			return this.sendMessage(message, true);
+			return this.sendMessage(message, flush);
 		}
-		return this.kcpSession.sendKcpMessage(message);
+		return this.kcpSession.sendKcpMessage(message, flush);
 	}
 
 	public KcpSession getKcpSession() {

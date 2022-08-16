@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LogUtils;
@@ -180,7 +181,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		this.scheduleFutures.add(future);
 		return future;
 	}
-	@EventListener
+	@EventListener(EventHandlerWeightType.LESS)
 	private static void shutdown(ServerShutdownEventData event) {
 		for (DExecutorService service : executorService.eventLoops) {
 			service.executorService.shutdown();

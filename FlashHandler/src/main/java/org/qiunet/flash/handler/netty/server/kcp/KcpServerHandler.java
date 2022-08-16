@@ -93,7 +93,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 				}else if (! Objects.equals(req.getToken(), kcpParamInfo.getToken())) {
 					logger.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
 				}
-				ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false));
+				ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false), true);
 				ctx.channel().close();
 				return;
 			}
@@ -110,7 +110,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 			ChannelUtil.getSession(ctx.channel()).attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
 			playerActor.getSession().bindKcpSession(((KcpSession) ChannelUtil.getSession(ctx.channel())));
-			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(true));
+			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(true), true);
 			playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(playerActor);
 			return;
@@ -119,7 +119,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		// 没有鉴权
 		if (content.getProtocolId() != IProtocolId.System.CONNECTION_REQ
 		&& ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get() == null) {
-			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false).buildChannelMessage());
+			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(false), true);
 			return;
 		}
 

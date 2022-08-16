@@ -95,9 +95,8 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 		}
 
 		if (kcp && iMessageActor.isKcpSessionPrepare()) {
-			iMessageActor.getSender().sendKcpMessage(message);
+			iMessageActor.getSender().sendKcpMessage(message, flush);
 		}else {
-			iMessageActor.getSender().sendMessage(message, kcp || flush);
-		}
-	}
+			iMessageActor.getSender().sendMessage(message, flush);
+		}	}
 }

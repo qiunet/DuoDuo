@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.handler.proto.LoginResponse;
+import org.qiunet.test.handler.proto.ProtocolId;
 import org.qiunet.test.handler.proto.TcpPbLoginRequest;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -23,14 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/27
  */
 public class TestMuchKcpRequest extends BasicKcpBootStrap {
-	private final int requestCount = 50000;
 	private final AtomicInteger counter = new AtomicInteger();
+	private final int requestCount = 50000;
+	private final int threadCount = 50;
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyKcpClient client = NettyKcpClient.create(KcpClientParams.DEFAULT_PARAMS, new Trigger());
 		long start = System.currentTimeMillis();
-		final int threadCount = 50;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
 				ISession connector = client.connect(host, port);
@@ -40,7 +41,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 				for (int i = 0 ; i < count; i ++) {
 					String text = "test [testKcpProtobuf]: "+i;
 					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, null);
-					connector.sendMessage(request, true);
+					connector.sendMessage(request);
 				}
 			}).start();
 		}
@@ -54,6 +55,10 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 		@Override
 		public void response(ISession session, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
+				return;
+			}
+
+			if (data.getProtocolId() != ProtocolId.Test.LOGIN_RESP) {
 				return;
 			}
 

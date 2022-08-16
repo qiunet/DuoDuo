@@ -30,7 +30,17 @@ public interface IChannelMessageSender {
 	 * @return
 	 */
 	default ChannelFuture sendKcpMessage(IChannelMessage<?> message) {
-		return getSender().sendKcpMessage(message);
+		return this.sendKcpMessage(message, false);
+	}
+	/**
+	 * 如果有绑定udp session.
+	 * 发送udp消息
+	 *
+	 * @param message
+	 * @return
+	 */
+	default ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
+		return getSender().sendKcpMessage(message, flush);
 	}
 
 	/**
@@ -41,7 +51,17 @@ public interface IChannelMessageSender {
 	 * @return
 	 */
 	default ChannelFuture sendKcpMessage(IChannelData message) {
-		return this.sendKcpMessage(message.buildChannelMessage());
+		return this.sendKcpMessage(message, false);
+	}
+	/**
+	 * 如果有绑定udp session.
+	 * 发送udp消息
+	 *
+	 * @param message
+	 * @return
+	 */
+	default ChannelFuture sendKcpMessage(IChannelData message, boolean flush) {
+		return this.sendKcpMessage(message.buildChannelMessage(), flush);
 	}
 	/**
 	 * 发送消息

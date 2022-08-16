@@ -102,7 +102,8 @@ public class RankData extends HashMap<String, Object> implements IKeyValueData<S
 		 * @return 实例本身
 		 */
 		public RankDataBuilder addName(String name) {
-			return addData(NAME, name);
+			this.rankData.put(NAME, name);
+			return this;
 		}
 		/**
 		 * 添加一些字段.

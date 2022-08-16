@@ -1,5 +1,9 @@
 package org.qiunet.utils.system;
 
+import org.qiunet.utils.exceptions.CustomException;
+import sun.misc.VM;
+
+import java.lang.management.BufferPoolMXBean;
 import java.lang.management.ManagementFactory;
 
 public class OSUtil {
@@ -71,6 +75,26 @@ public class OSUtil {
 		return Runtime.getRuntime().freeMemory();
 	}
 
+	/**
+	 * 获得设定的最大堆外内存
+	 * @return
+	 */
+	public static long getMaxDirectMemory() {
+		return VM.maxDirectMemory();
+	}
+
+	/**
+	 * 获得使用的堆外内存
+	 * @return
+	 */
+	public static long getUsedDirectMemory() {
+		BufferPoolMXBean bufferPoolMXBean = ManagementFactory.getPlatformMXBeans(BufferPoolMXBean.class)
+				.stream()
+				.filter(e -> e.getName().equals("direct"))
+				.findFirst()
+				.orElseThrow(() -> new CustomException("getUsedDirectMemory throw exception"));
+		return bufferPoolMXBean.getMemoryUsed();
+	}
 	/**
 	 * 获得JVM最大可用内存
 	 *

@@ -11,7 +11,7 @@ import org.qiunet.utils.math.MathUtil;
  */
 public final class KcpClientParams extends AbstractClientParam {
 	// 使用默认的连接参数， 端口和地址后面connect时候给出。
-	public static final KcpClientParams DEFAULT_PARAMS = KcpClientParams.custom().setConvId(MathUtil.random(10000000)).build();
+	public static final KcpClientParams DEFAULT_PARAMS = KcpClientParams.custom().build();
 	private KcpClientParams(){}
 
 	/**
@@ -25,6 +25,9 @@ public final class KcpClientParams extends AbstractClientParam {
 	}
 
 	public int getConvId() {
+		if (convId == 0) {
+			return MathUtil.random(Integer.MAX_VALUE);
+		}
 		return convId;
 	}
 

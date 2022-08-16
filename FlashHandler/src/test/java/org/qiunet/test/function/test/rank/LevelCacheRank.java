@@ -9,6 +9,7 @@ import org.qiunet.test.function.test.targets.event.LevelUpEventData;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.listener.event.EventListener;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public enum LevelCacheRank implements IRankHandlerWrapper<RankType> {
 
 	private static class RankHandler extends BaseCacheRankHandler<RankType> {
 		@Override
-		protected void save(List<RankData> rankDataList) {
+		protected void save(Collection<RankData> rankDataList) {
 		}
 
 		@Override

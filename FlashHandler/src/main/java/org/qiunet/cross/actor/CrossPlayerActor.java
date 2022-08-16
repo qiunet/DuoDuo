@@ -144,8 +144,8 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	}
 
 	@Override
-	public ChannelFuture sendKcpMessage(IChannelData channelData) {
+	public ChannelFuture sendKcpMessage(IChannelData channelData, boolean flush) {
 		// kcp 要求实时. 直接发送出去
-		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, true, true), true);
+		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, flush, true), flush);
 	}
 }

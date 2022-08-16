@@ -74,7 +74,9 @@ public class NettyKcpClient {
 		// Start the client.
 		try {
 			ChannelFuture f = this.bootstrap.connect(host, port).sync();
-			return new KcpSession(((UkcpClientChannel) f.channel()).conv(params.getConvId()));
+			KcpSession kcpSession = new KcpSession(((UkcpClientChannel) f.channel()).conv(params.getConvId()));
+			f.channel().attr(ServerConstants.SESSION_KEY).set(kcpSession);
+			return kcpSession;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
