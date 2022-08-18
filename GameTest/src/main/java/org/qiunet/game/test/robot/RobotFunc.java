@@ -38,8 +38,10 @@ import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -253,8 +255,21 @@ abstract class RobotFunc extends AbstractMessageActor<Robot> implements IMessage
 
 		private void handlerStatus(MessageContent data) {
 			StatusTipsRsp response = ProtobufDataManager.decode(StatusTipsRsp.class, data.byteBuffer());
-			// 出现这个. 一般是行为树参数或者逻辑问题,导致服务器校验不通过. 需要调整参数.
-			logger.error("[{}] StatusTipsRsp [({}): {}]", RobotFunc.this.getIdentity(), response.getStatus(),response.getDesc());
+			Set<Method> methods = ResponseMapping.getResponseStatusHandler(response.getStatus());
+			if (methods.isEmpty()) {
+				// 出现这个. 一般是行为树参数或者逻辑问题,导致服务器校验不通过. 需要调整参数.
+				logger.error("[{}] StatusTipsRsp [({}): {}]", RobotFunc.this.getIdentity(), response.getStatus(),response.getDesc());
+				return;
+			}
+
+			methods.forEach(mtd -> {
+				IBehaviorAction<?> action = actionClzMapping.get(mtd.getDeclaringClass());
+				try {
+					mtd.invoke(action, response);
+				} catch (IllegalAccessException | InvocationTargetException e) {
+					throw new RuntimeException(e);
+				}
+			});
 		}
 	}
 	@Override

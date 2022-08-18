@@ -1,9 +1,13 @@
 package org.qiunet.game.test.response;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
+import org.qiunet.game.test.robot.action.BaseRobotAction;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -13,6 +17,7 @@ import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 
 /***
  * 测试用例里面response 扫描
@@ -24,10 +29,31 @@ public class ResponseMapping implements IApplicationContextAware {
 
 	private static final Map<Integer, Method> methodMapping = Maps.newHashMap();
 
-
+	private static final SetMultimap<Integer, Method> statusMapping = HashMultimap.create();
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.handlerResponse(context);
+		this.handlerStatus(context);
+	}
+
+	private void handlerStatus(IApplicationContext context) {
+		context.getMethodsAnnotatedWith(ResponseStatus.class).forEach(mtd -> {
+			if (mtd.getParameterCount() != 1 || mtd.getParameterTypes()[0] != StatusTipsRsp.class) {
+				throw new CustomException("ResponseStatus [{}#{}] need a StatusTipsRsp parameter.", mtd.getDeclaringClass().getName(), mtd.getName());
+			}
+
+
+			Class<?> declaringClass = mtd.getDeclaringClass();
+			if (!BaseRobotAction.class.isAssignableFrom(declaringClass)) {
+				throw new CustomException("ResponseStatus [{}#{}] need define in Robot Action!", mtd.getDeclaringClass().getName(), mtd.getName());
+			}
+
+			ResponseStatus annotation = mtd.getAnnotation(ResponseStatus.class);
+			ReflectUtil.makeAccessible(mtd);
+			for (int status : annotation.value()) {
+				statusMapping.put(status, mtd);
+			}
+		});
 	}
 
 
@@ -61,6 +87,15 @@ public class ResponseMapping implements IApplicationContextAware {
 	 */
 	public static Method getResponseMethodByID(int responseId) {
 		return methodMapping.get(responseId);
+	}
+
+	/**
+	 * 获得处理status的方法set
+	 * @param status
+	 * @return
+	 */
+	public static Set<Method> getResponseStatusHandler(int status) {
+		return statusMapping.get(status);
 	}
 
 	@Override

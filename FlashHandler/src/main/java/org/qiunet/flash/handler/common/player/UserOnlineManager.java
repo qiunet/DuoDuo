@@ -87,8 +87,8 @@ public enum UserOnlineManager {
 		}
 
 		if (actor.casWaitReconnect(false, true)) {
-			// 给3分钟重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 180, TimeUnit.SECONDS);
+			// 给10分钟重连时间
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 10 * 60, TimeUnit.SECONDS);
 			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
 		}
 	}
@@ -308,6 +308,9 @@ public enum UserOnlineManager {
 				return true;
 			});
 		}
+
+		waitReconnects.values().forEach(w -> destroyPlayer(w.actor));
+
 		try {
 			List<Future<Boolean>> futures = ThreadPoolManager.NORMAL.invokeAll(callables, 6, TimeUnit.SECONDS);
 			for (Future<Boolean> future : futures) {

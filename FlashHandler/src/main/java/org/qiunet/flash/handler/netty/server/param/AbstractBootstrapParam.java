@@ -25,7 +25,7 @@ public abstract class AbstractBootstrapParam {
 	 * 客户端每5秒一次心跳
 	 * 读超时处理.
 	 */
-	protected int readIdleCheckSeconds = 60 * 10;
+	protected int readIdleCheckSeconds = 60 * 5;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
