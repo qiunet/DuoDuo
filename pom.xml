@@ -8,7 +8,7 @@
 	<artifactId>DuoDuo</artifactId>
 
 	<!-- 每次版本升级, 先全局搜索版本, 然后替换 -->
-	<version>6.1-SNAPSHOT</version>
+	<version>6.1</version>
 
 	<modules>
 		<module>QiunetUtils</module>
