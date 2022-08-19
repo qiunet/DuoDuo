@@ -3,8 +3,10 @@ package org.qiunet.test.handler.bootstrap.http;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
+import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
@@ -13,6 +15,7 @@ import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.locks.LockSupport;
 
 /**
@@ -45,6 +48,19 @@ public class HttpBootStrap {
 		});
 		thread.start();
 		LockSupport.park();
+	}
+
+	/**
+	 * 获得所有bytes数据
+	 * @return
+	 */
+	public byte[] getAllBytes(DefaultProtobufMessage message){
+		IProtocolHeader header = ADAPTER.outHeader(message.getProtocolID(), message);
+		ByteBuffer allocate = ByteBuffer.allocate(ADAPTER.getRspHeaderLength() + message.byteBuffer().limit());
+		allocate.put((ByteBuffer) header.dataBytes().rewind());
+		allocate.put((ByteBuffer) message.byteBuffer().rewind());
+		message.getByteBuf().release();
+		return allocate.array();
 	}
 
 	@AfterAll

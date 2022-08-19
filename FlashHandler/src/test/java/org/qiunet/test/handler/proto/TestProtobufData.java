@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.proto;
 
+import io.netty.buffer.ByteBuf;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -26,11 +27,26 @@ public class TestProtobufData {
 		LoadBadWordEventData.valueOf(new DefaultBadWord(new String[] {"毛泽东"})).fireEventHandler();
 	}
 	@Test
-	public void test(){
+	public void testByteArray(){
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
 
-		WsPbLoginRequest loginRequest = ProtobufDataManager.decode(WsPbLoginRequest.class, request.toByteBuffer());
-		Assertions.assertEquals("qiunet", loginRequest.getAccount());
+		WsPbLoginRequest loginRequest1 = ProtobufDataManager.decode(WsPbLoginRequest.class, request.toByteArray());
+		Assertions.assertEquals("qiunet", loginRequest1.getAccount());
+	}
+
+	@Test
+	public void testByteBuf (){
+		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
+
+		for (int i = 0; i < 5; i++) {
+			ByteBuf byteBuf = request.toByteBuf();
+			try {
+				WsPbLoginRequest loginRequest2 = ProtobufDataManager.decode(WsPbLoginRequest.class, byteBuf.nioBuffer());
+				Assertions.assertEquals("qiunet", loginRequest2.getAccount());
+			}finally {
+				byteBuf.release();
+			}
+		}
 	}
 
 	@Test

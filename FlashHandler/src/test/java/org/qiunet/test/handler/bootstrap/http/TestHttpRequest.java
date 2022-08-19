@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
 import org.qiunet.test.handler.handler.http.JTestResponseData;
 import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
-import org.qiunet.test.handler.proto.ProtocolId;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.json.JsonUtil;
 
@@ -37,7 +36,7 @@ public class TestHttpRequest extends HttpBootStrap {
 		HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
-			.withBytes(ADAPTER.getAllBytes(ProtocolId.Test.HTTP_PB_LOGIN_REQ, request.buildChannelMessage()))
+			.withBytes(this.getAllBytes(request.buildChannelMessage()))
 			.asyncExecutor((call, resp) -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				// 跳过头

@@ -2,7 +2,7 @@ package org.qiunet.cross.actor.message;
 
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
@@ -16,7 +16,7 @@ import java.nio.ByteBuffer;
  * @author qiunet
  * 2020-10-26 12:15
  */
-public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IDataToString {
+public class Cross2PlayerMessage extends BaseByteBufMessage<IChannelData> implements IDataToString {
 	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = new ObjectPool<Cross2PlayerMessage>(1024, 32) {
 		@Override
 		public Cross2PlayerMessage newObject(Handle<Cross2PlayerMessage> handler) {
@@ -32,10 +32,6 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 	private int pid;
 
 	private boolean flush;
-	/**
-	 * 消息的内容.
-	 */
-	private ByteBuffer buffer;
 	/**
 	 * 是否走kcp通道
 	 */
@@ -56,7 +52,7 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 	public static Cross2PlayerMessage valueOf(IChannelData responseData, boolean flush, boolean kcpChannel) {
 		Cross2PlayerMessage response = RECYCLER.get();
 		response.skipMessage = responseData.getClass().isAnnotationPresent(SkipDebugOut.class);
-		response.buffer = responseData.toByteBuffer();
+		response.buffer = responseData.toByteBuf();
 		response.pid = responseData.protocolId();
 		response.kcpChannel = kcpChannel;
 		response.data = responseData;
@@ -80,7 +76,7 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 		if (this.skipMessage) {
 			return false;
 		}
-		return IChannelMessage.super.needLogger();
+		return super.needLogger();
 	}
 
 	public boolean isFlush() {
@@ -107,7 +103,7 @@ public class Cross2PlayerMessage implements IChannelMessage<IChannelData>, IData
 
 	@Override
 	public ByteBuffer byteBuffer() {
-		return buffer;
+		return buffer.nioBuffer();
 	}
 
 	@Override

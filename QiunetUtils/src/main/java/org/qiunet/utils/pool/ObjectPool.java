@@ -50,6 +50,23 @@ public abstract class ObjectPool<T> {
 		return tdStack.stack.size + sum;
 	}
 	/**
+	 * 线程域的 stack size
+	 * @return
+	 */
+	public int threadScopeStackSize() {
+		DStack<T> tdStack = stackThreadLocal.get();
+		return tdStack.stack.size;
+	}
+	/**
+	 * 其它线程回收数
+	 * @return
+	 */
+	public int asyncThreadRecycleSize() {
+		DStack<T> tdStack = stackThreadLocal.get();
+		return tdStack.asyncRecycleMap.values().stream().mapToInt(LinkedBlockingDeque::size).sum();
+	}
+
+	/**
 	 * 获得对象
 	 * @return
 	 */
@@ -65,6 +82,10 @@ public abstract class ObjectPool<T> {
 	}
 
 	private static final class Node<T> implements Handle<T> {
+		/**
+		 * 是否已经回收
+		 */
+		private boolean recycled;
 		DStack<T> stack;
 		T value;
 		/** 链表结构*/
@@ -76,6 +97,11 @@ public abstract class ObjectPool<T> {
 
 		@Override
 		public void recycle() {
+			if (this.recycled) {
+				throw new IllegalStateException("Already recycled!");
+			}
+			this.recycled = true;
+
 			stack.push(this);
 		}
 	}
@@ -175,21 +201,21 @@ public abstract class ObjectPool<T> {
 		final int queueCapacityForPerThread;
 		final DLinkedList<T> stack;
 		final int maxCapacity;
-		public DStack(Thread thread, int maxCapacity, int queueCapacityForPerThread) {
+		DStack(Thread thread, int maxCapacity, int queueCapacityForPerThread) {
 			this.queueCapacityForPerThread = queueCapacityForPerThread;
 			this.threadRef = new WeakReference<>(thread);
 			this.stack = new DLinkedList<>(maxCapacity);
 			this.maxCapacity = maxCapacity;
 		}
 
-		public Node<T> newHandler() {
+		Node<T> newHandler() {
 			return new Node<>(this);
 		}
 		/**
 		 * 弹出一个对象
 		 * @return
 		 */
-		public Node<T> pop() {
+		Node<T> pop() {
 			if (needRecycleThread.get()) {
 				this.scannerSpecifyThread();
 			}
@@ -198,7 +224,16 @@ public abstract class ObjectPool<T> {
 					return null;
 				}
 			}
-			return stack.poll();
+
+			if (stack.isEmpty()) {
+				return null;
+			}
+
+			Node<T> node = stack.poll();
+			if (node != null) {
+				node.recycled = false;
+			}
+			return node;
 		}
 
 		/**
@@ -242,7 +277,7 @@ public abstract class ObjectPool<T> {
 		 * 压入一个对象
 		 * @param obj
 		 */
-		public void push(Node<T> obj) {
+		void push(Node<T> obj) {
 			if (threadRef.get() == Thread.currentThread()) {
 				this.stack.add(obj);
 			}else {

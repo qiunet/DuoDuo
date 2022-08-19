@@ -4,8 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
-import java.nio.ByteBuffer;
-
 /***
  * 创建启动上下文
  * @author qiunet
@@ -45,16 +43,4 @@ public interface IProtocolHeaderType {
 	 * @return
 	 */
 	int getRspHeaderLength();
-
-	/**
-	 * 获得所有bytes数据
-	 * @return
-	 */
-	default byte[] getAllBytes(int protocolId, IChannelMessage<?> message){
-		IProtocolHeader header = outHeader(protocolId, message);
-		ByteBuffer allocate = ByteBuffer.allocate(getRspHeaderLength() + message.byteBuffer().limit());
-		allocate.put((ByteBuffer) header.dataBytes().rewind());
-		allocate.put((ByteBuffer) message.byteBuffer().rewind());
-		return allocate.array();
-	}
 }

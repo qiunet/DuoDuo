@@ -1,6 +1,6 @@
 package org.qiunet.function.gm.handler;
 
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.ByteBuf;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -50,8 +50,8 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 
 		IChannelData channelData = JsonUtil.getGeneralObjWithField(data, aClass);
+		final LazyLoader<ByteBuf> bufferLazyLoader = new LazyLoader<>(channelData::toByteBuf);
 		ChannelUtil.processHandler(context.channel(), handler, MessageContent.valueOf(new IProtocolHeader() {
-			private final LazyLoader<ByteBuffer> bufferLazyLoader = new LazyLoader<>(channelData::toByteBuffer);
 			@Override
 			public int getProtocolId() {
 				return protocolID;
@@ -59,7 +59,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 			@Override
 			public ByteBuffer dataBytes() {
-				return bufferLazyLoader.get();
+				return bufferLazyLoader.get().nioBuffer();
 			}
 
 			@Override
@@ -76,7 +76,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 			public boolean validEncryption(ByteBuffer buffer) {
 				return true;
 			}
-		}, Unpooled.wrappedBuffer(channelData.toByteBuffer())));
+		}, bufferLazyLoader.get()));
 		// 上面throw exception 不会执行下面.
 		playerActor.sendMessage(GmDebugProtocolRsp.valueOf());
 	}

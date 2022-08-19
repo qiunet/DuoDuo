@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.context.request.data;
 
+import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
-
-import java.nio.ByteBuffer;
 
 /***
  * requestData and responseData 的父类接口.
@@ -13,11 +12,11 @@ import java.nio.ByteBuffer;
  */
 public interface IChannelData {
 	/**
-	 * 转换为byte[]
+	 * 转换为ByteBuf 最终记得要release
 	 * @return
 	 */
-	default ByteBuffer toByteBuffer(){
-		return ProtobufDataManager.encode(this);
+	default ByteBuf toByteBuf() {
+		return ProtobufDataManager.encodeToByteBuf(this);
 	}
 	/**
 	 * 转换为byte[]

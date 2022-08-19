@@ -1,11 +1,6 @@
 package org.qiunet.flash.handler.context.response.push;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.pool.ObjectPool;
 
 import java.nio.ByteBuffer;
@@ -15,7 +10,7 @@ import java.nio.ByteBuffer;
  * @Author qiunet
  * @Date Create in 2022/6/13 09:24
  **/
-public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
+public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 	private static final ObjectPool<DefaultByteBufMessage> RECYCLER = new ObjectPool<DefaultByteBufMessage>(1024, 32) {
 		@Override
 		public DefaultByteBufMessage newObject(Handle<DefaultByteBufMessage> handler) {
@@ -25,8 +20,6 @@ public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
 
 	private final ObjectPool.Handle<DefaultByteBufMessage> recyclerHandle;
 	private int protocolId;
-
-	private ByteBuf buffer;
 
 	public DefaultByteBufMessage(ObjectPool.Handle<DefaultByteBufMessage> recyclerHandle) {
 		this.recyclerHandle = recyclerHandle;
@@ -69,20 +62,5 @@ public class DefaultByteBufMessage implements IChannelMessage<ByteBuf> {
 	@Override
 	public ByteBuffer byteBuffer() {
 		return buffer.nioBuffer();
-	}
-
-	@Override
-	public ByteBuf withHeaderByteBuf(Channel channel) {
-		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(channel);
-		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), this.buffer);
-		protocolHeader.recycle();
-		this.recycle();
-		return byteBuf;
-	}
-
-	@Override
-	public ByteBuf withoutHeaderByteBuf() {
-		return this.buffer;
 	}
 }

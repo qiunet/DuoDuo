@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.protobuf;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.CodedInputStream;
+import io.netty.buffer.ByteBuf;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.IOException;
@@ -38,28 +39,25 @@ public class ProtobufDataManager {
 			throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
 		}
 	}
+
 	/**
-	 * 序列化对象成byte数组
+	 * 序列化为 ByteBuf
 	 * @param obj
 	 * @return
 	 */
-	public static ByteBuffer encode(Object obj) {
-		return ByteBuffer.wrap(encodeToByteArray(obj));
-
-		// jprotobuf 有bug
-
-		//Preconditions.checkNotNull(obj);
-		//Class objClass = obj.getClass();
-		//try {
-		//	Codec codec = getCodec(objClass);
-		//	int size = codec.size(obj);
-		//	ByteBuffer buffer = ByteBuffer.allocateDirect(size);
-		//	codec.writeTo(obj, CodedOutputStream.newInstance(buffer));
-		//	return buffer;
-		//} catch (Exception e) {
-		//	throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
-		//}
+	public static ByteBuf encodeToByteBuf(Object obj) {
+		Preconditions.checkNotNull(obj);
+		Class objClass = obj.getClass();
+		Codec codec = getCodec(objClass);
+		CodedOutputStreamThreadCache codedOutputStreamThreadCache = CodedOutputStreamThreadCache.get();
+		try {
+			codec.writeTo(obj, codedOutputStreamThreadCache.getCodedOutputStream());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return codedOutputStreamThreadCache.recycle();
 	}
+
 	/**
 	 * 反序列对象出来.
 	 * @param clazz

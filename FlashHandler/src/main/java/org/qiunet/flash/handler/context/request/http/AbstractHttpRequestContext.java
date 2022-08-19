@@ -138,14 +138,13 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
 		if (getUriPath().equals(params.getGameURIPath())) {
-			// 不是游戏业务. 不写业务头.
 			content = responseDataMessage.withHeaderByteBuf(channel);
 		}else {
+			// 不是游戏业务. 不写业务头.
 			content = responseDataMessage.withoutHeaderByteBuf();
 		}
 
-		FullHttpResponse response = new DefaultFullHttpResponse(
-				HTTP_1_1, OK,  content);
+		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, OK,  content);
 		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_ORIGIN,"*");
 		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_HEADERS,"*");			//允许headers自定义
 		response.headers().set(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS,"GET, POST");

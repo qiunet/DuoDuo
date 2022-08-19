@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
+public class DefaultProtobufMessage extends BaseByteBufMessage<IChannelData> {
 	private static final ObjectPool<DefaultProtobufMessage> RECYCLER = new ObjectPool<DefaultProtobufMessage>() {
 		@Override
 		public DefaultProtobufMessage newObject(Handle<DefaultProtobufMessage> handler) {
@@ -27,10 +27,6 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 	 * 消息体
 	 */
 	private IChannelData message;
-	/**
-	 * 消息体内容
-	 */
-	private ByteBuffer byteBuffer;
 
 	public DefaultProtobufMessage(ObjectPool.Handle<DefaultProtobufMessage> recyclerHandle) {
 		this.recyclerHandle = recyclerHandle;
@@ -38,7 +34,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 
 	public static DefaultProtobufMessage valueOf(int protocolId, IChannelData message) {
 		DefaultProtobufMessage data = RECYCLER.get();
-		data.byteBuffer = message.toByteBuffer();
+		data.buffer = message.toByteBuf();
 		data.protocolId = protocolId;
 		data.message = message;
 		return data;
@@ -46,7 +42,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 
 	@Override
 	public void recycle() {
-		this.byteBuffer = null;
+		this.buffer = null;
 		this.protocolId = 0;
 		this.message = null;
 		recyclerHandle.recycle();
@@ -59,7 +55,7 @@ public class DefaultProtobufMessage implements IChannelMessage<IChannelData> {
 
 	@Override
 	public ByteBuffer byteBuffer() {
-		return this.byteBuffer;
+		return this.buffer.nioBuffer();
 	}
 
 	@Override
