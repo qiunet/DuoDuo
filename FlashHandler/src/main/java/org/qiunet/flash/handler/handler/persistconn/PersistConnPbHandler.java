@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.handler.persistconn;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.google.common.base.Preconditions;
 import com.google.protobuf.CodedInputStream;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
@@ -32,7 +33,8 @@ public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData 
 	@Override
 	public RequestData parseRequestData(ByteBuffer buffer) {
 		try {
-			return codec.get().readFrom(CodedInputStream.newInstance(buffer));
+			Codec<RequestData> dataCodec = codec.get();
+			return Preconditions.checkNotNull(dataCodec.readFrom(CodedInputStream.newInstance(buffer)));
 		} catch (IOException e) {
 			logger.error("Request data ["+this.getRequestClass().getName()+"] Protobuf decode exception", e);
 		}

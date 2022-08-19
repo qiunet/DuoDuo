@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -26,13 +27,13 @@ public abstract class BaseRequestContext<RequestData> implements IRequestContext
 	protected RequestData requestData;
 
 	protected void init(MessageContent content, Channel channel) {
-		this.channel = channel;
+		this.channel = Preconditions.checkNotNull(channel);
 		if (content.getProtocolId() > 0) {
-			this.handler = ChannelDataMapping.getHandler(content.getProtocolId());
+			this.handler = Preconditions.checkNotNull(ChannelDataMapping.getHandler(content.getProtocolId()));
 		}else {
-			this.handler = UrlRequestHandlerMapping.getHandler(content.getUriPath());
+			this.handler = Preconditions.checkNotNull(UrlRequestHandlerMapping.getHandler(content.getUriPath()));
 		}
-		this.requestData = getHandler().parseRequestData(content.byteBuffer());
+		this.requestData = Preconditions.checkNotNull(getHandler().parseRequestData(content.byteBuffer()));
 	}
 
 	@Override

@@ -47,7 +47,6 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	}
 
 	private void recycle() {
-		this.protocolHeader = null;
 		this.messageActor = null;
 		this.requestData = null;
 		this.attributes = null;

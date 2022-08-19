@@ -4,7 +4,6 @@ package org.qiunet.utils.pool;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.system.OSUtil;
 
 import java.lang.ref.WeakReference;
@@ -39,19 +38,30 @@ public abstract class ObjectPool<T> {
 	 * @param handler
 	 * @return
 	 */
-	public abstract T newObject(Handle<T> handler);
+	protected abstract T newObject(Handle<T> handler);
+
+	/**
+	 * 线程域的size
+	 * @return
+	 */
+	public int threadScopeSize() {
+		DStack<T> tdStack = stackThreadLocal.get();
+		int sum = tdStack.asyncRecycleMap.values().stream().mapToInt(LinkedBlockingDeque::size).sum();
+		return tdStack.stack.size + sum;
+	}
 	/**
 	 * 获得对象
 	 * @return
 	 */
 	public T get() {
 		DStack<T> tdStack = stackThreadLocal.get();
-		Node<T> handle = tdStack.pop();
-		if (handle == null) {
-			handle = tdStack.newHandler();
-			handle.value = newObject(handle);
+		Node<T> node = tdStack.pop();
+		if (node == null) {
+			node = tdStack.newHandler();
+			node.value = newObject(node);
+			Preconditions.checkNotNull(node.value);
 		}
-		return handle.value;
+		return node.value;
 	}
 
 	private static final class Node<T> implements Handle<T> {
@@ -70,7 +80,7 @@ public abstract class ObjectPool<T> {
 		}
 	}
 
-	private static final class DLinkedList<T> implements Collection<Node<T>> {
+	private static final class DLinkedList<T> extends AbstractCollection<Node<T>> {
 		private final int maxCapacity;
 		private Node<T> head, tail;
 		private int size;
@@ -80,6 +90,11 @@ public abstract class ObjectPool<T> {
 			this.maxCapacity = maxCapacity;
 		}
 
+		@Override
+		public Iterator<Node<T>> iterator() {
+			return new DIterator<>(this.head);
+		}
+		@Override
 		public int size() {
 			return size;
 		}
@@ -87,11 +102,7 @@ public abstract class ObjectPool<T> {
 		public int lastCapacity() {
 			return maxCapacity - size;
 		}
-
-		public boolean isEmpty() {
-			return size == 0;
-		}
-
+		@Override
 		public boolean add(Node<T> t) {
 			if (lastCapacity() <= 0) {
 				return false;
@@ -125,61 +136,27 @@ public abstract class ObjectPool<T> {
 			size --;
 			return temp;
 		}
-		@Override
-		public boolean contains(Object o) {
-			throw new CustomException("Not support!");
+	}
+
+	private static final class DIterator<T> implements Iterator<Node<T>> {
+		private Node<T> node;
+
+		public DIterator(Node<T> node) {
+			this.node = node;
 		}
 
 		@Override
-		public Iterator<Node<T>> iterator() {
-			throw new CustomException("Not support!");
+		public boolean hasNext() {
+			return node != null;
 		}
 
 		@Override
-		public Object[] toArray() {
-			Object[] result = new Object[size];
-			int i = 0;
-			Node<T> t = head;
-			while (t != null) {
-				result[i++] = t;
-				t = t.next;
-			}
-			return result;
-		}
-
-		@Override
-		public <T> T[] toArray(T[] a) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public boolean remove(Object o) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public boolean containsAll(Collection<?> c) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public boolean addAll(Collection<? extends Node<T>> c) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public boolean removeAll(Collection<?> c) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public boolean retainAll(Collection<?> c) {
-			throw new CustomException("Not support!");
-		}
-
-		@Override
-		public void clear() {
-			throw new CustomException("Not support!");
+		public Node<T> next() {
+			if (! this.hasNext())
+				throw new NoSuchElementException();
+			Node<T> temp = this.node;
+			this.node = node.next;
+			return temp;
 		}
 	}
 
@@ -214,10 +191,10 @@ public abstract class ObjectPool<T> {
 		 */
 		public Node<T> pop() {
 			if (needRecycleThread.get()) {
-				this.scannerThreadsObject();
+				this.scannerSpecifyThread();
 			}
-			if (stack.size() == 0) {
-				if (! this.scannerObject()) {
+			if (stack.isEmpty()) {
+				if (! this.scannerAllThread()) {
 					return null;
 				}
 			}
@@ -228,7 +205,7 @@ public abstract class ObjectPool<T> {
 		 * 对某些指定的线程回收
 		 * @return
 		 */
-		private void scannerThreadsObject() {
+		private void scannerSpecifyThread() {
 			for(Iterator<Thread> it = this.needRecycleThreads.iterator(); it.hasNext(); ) {
 				LinkedBlockingDeque<Node<?>> deque = asyncRecycleMap.get(it.next());
 				if (deque != null) {
@@ -243,7 +220,7 @@ public abstract class ObjectPool<T> {
 		/**
 		 * 从其它线程的回收栈回收对象.
 		 */
-		private boolean scannerObject() {
+		private boolean scannerAllThread() {
 			for (LinkedBlockingDeque<Node<?>> deque : asyncRecycleMap.values()) {
 				this.recycleDequeNode(deque);
 			}
