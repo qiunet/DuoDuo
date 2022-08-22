@@ -32,7 +32,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	public ActionStatus run() {
 		ActionStatus status = super.run();
 		if (runningCount >= 10) {
-			LoggerType.DUODUO_FLASH_HANDLER.error("Robot action {} running count is grant than 10. reset status to FAILURE!");
+			LoggerType.DUODUO_FLASH_HANDLER.error("Robot action {} running count is grant than 10. reset status to FAILURE!", getClass().getSimpleName());
 			// 机器人的10次running 就返回failure. 否则一直空转. 导致空闲被踢
 			statusLogger.setStatus(ActionStatus.FAILURE);
 			runningCount = 0;

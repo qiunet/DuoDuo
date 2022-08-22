@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.context.response.push;
 
+import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.pool.ObjectPool;
-
-import java.nio.ByteBuffer;
 
 /**
  * 默认的protobuf 的message
@@ -34,15 +33,19 @@ public class DefaultProtobufMessage extends BaseByteBufMessage<IChannelData> {
 
 	public static DefaultProtobufMessage valueOf(int protocolId, IChannelData message) {
 		DefaultProtobufMessage data = RECYCLER.get();
-		data.buffer = message.toByteBuf();
 		data.protocolId = protocolId;
 		data.message = message;
 		return data;
 	}
 
 	@Override
+	protected ByteBuf get() {
+		return message.toByteBuf();
+	}
+
+	@Override
 	public void recycle() {
-		this.buffer = null;
+		this.buffer.reset(true);
 		this.protocolId = 0;
 		this.message = null;
 		recyclerHandle.recycle();
@@ -53,10 +56,6 @@ public class DefaultProtobufMessage extends BaseByteBufMessage<IChannelData> {
 		return message;
 	}
 
-	@Override
-	public ByteBuffer byteBuffer() {
-		return this.buffer.nioBuffer();
-	}
 
 	@Override
 	public int getProtocolID() {

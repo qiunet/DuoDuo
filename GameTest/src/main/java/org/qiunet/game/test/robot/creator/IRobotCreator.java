@@ -3,6 +3,7 @@ package org.qiunet.game.test.robot.creator;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.game.test.robot.Robot;
+import org.qiunet.utils.timer.IScheduledTask;
 import org.qiunet.utils.timer.TimerManager;
 
 import java.util.List;
@@ -37,11 +38,15 @@ public interface IRobotCreator {
 		}
 		List<Robot> list = Lists.newArrayListWithCapacity(count);
 		CountDownLatch latch = new CountDownLatch(count);
-		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(() -> {
+		IScheduledTask create = () -> {
 			list.add(create());
 			latch.countDown();
-			// 要错开登录. 不要一起
-		}, 0, 300, TimeUnit.MILLISECONDS);
+
+		};
+		// 先登录一个 . 服务器的各种延迟加载的数据加载好.
+		create.run();
+		// 要错开登录. 不要一起
+		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, 300, TimeUnit.MILLISECONDS);
 		try {
 			latch.await();
 		} catch (InterruptedException e) {

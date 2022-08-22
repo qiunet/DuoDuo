@@ -5,7 +5,7 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>org.qiunet</groupId>
-        <version>6.1.1</version>
+        <version>6</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,6 +13,7 @@
     <inceptionYear>2016</inceptionYear>
 
 	<artifactId>QiunetUtils</artifactId>
+	<version>${duoduo.version}</version>
 	<build>
 		<plugins>
 			<plugin>

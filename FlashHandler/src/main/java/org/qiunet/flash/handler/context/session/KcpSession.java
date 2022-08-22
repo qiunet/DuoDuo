@@ -42,6 +42,6 @@ public class KcpSession extends BaseSession {
 
 	@Override
 	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
-		return this.sendMessage(message, flush);
+		return this.doSendMessage(message, flush);
 	}
 }

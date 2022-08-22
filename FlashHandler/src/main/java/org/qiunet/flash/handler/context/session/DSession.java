@@ -8,7 +8,6 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -16,9 +15,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -39,18 +36,8 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 	 * 连接中标志
 	 */
 	private final AtomicBoolean connecting = new AtomicBoolean();
-	/**
-	 * 配置
-	 */
-	private DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
-	/**
-	 * 写次数计数
-	 */
-	private final AtomicInteger counter = new AtomicInteger();
-	/**
-	 * 判断是否已经在计时flush
-	 */
-	private final AtomicBoolean flushScheduling = new AtomicBoolean();
+
+
 	/**
 	 * 如果是作为客户端的DSession, 这里是连接参数
 	 */
@@ -105,7 +92,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 						}
 					});
 				}
-				this.flush0();
+				this.flush();
 				connecting.set(false);
 			}finally {
 				sessionLock.unlock();
@@ -118,28 +105,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		connectFuture.addListener(listener);
 	}
 
-	/**
-	 * 设置 session 的参数
-	 */
-	public DSession sessionConfig(DSessionConfig config) {
-		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 10000));
-		this.sessionConfig = config;
-		return this;
-	}
 
-	/**
-	 * flush
-	 */
-	private synchronized void flush0(){
-		counter.set(0);
-		channel.flush();
-	}
-
-
-	@Override
-	public void flush() {
-		this.flush0();
-	}
 
 	@Override
 	public ChannelFuture sendMessage(IChannelMessage<?> message) {
@@ -163,28 +129,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 		return this.doSendMessage(message, flush);
 	}
 
-	public ChannelFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
-		if (flush) {
-			return this.realSendMessage(message, true);
-		}
 
-		ChannelFuture future;
-		synchronized (this) {
-			future = this.realSendMessage(message, false);
-		}
-
-		if (counter.incrementAndGet() >= 10) {
-			this.flush0();
-			return future;
-		}
-
-		if (flushScheduling.compareAndSet(false, true)) {
-			// 不取消future 也没有损失.
-			channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
-			this.flushScheduling.set(false);
-		}
-		return future;
-	}
 
 	@Override
 	public boolean isKcpSessionPrepare() {
@@ -214,7 +159,7 @@ public class DSession extends BaseSession implements IChannelMessageSender {
 			logger.warn("Not bind kcp session or session inactive!");
 			return this.sendMessage(message, flush);
 		}
-		return this.kcpSession.sendKcpMessage(message, flush);
+		return this.kcpSession.sendMessage(message, flush);
 	}
 
 	public KcpSession getKcpSession() {

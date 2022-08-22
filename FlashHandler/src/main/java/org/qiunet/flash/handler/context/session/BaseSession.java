@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -7,9 +8,10 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.IRobot;
-import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
+import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -20,7 +22,9 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *
@@ -30,6 +34,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 abstract class BaseSession implements ISession {
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	/**
+	 * 配置
+	 */
+	protected DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
+	/**
+	 * 判断是否已经在计时flush
+	 */
+	private final AtomicBoolean flushScheduling = new AtomicBoolean();
+	/**
+	 * 写次数计数
+	 */
+	private final AtomicInteger counter = new AtomicInteger();
 
 	protected Channel channel;
 
@@ -40,7 +56,14 @@ abstract class BaseSession implements ISession {
 		}
 		this.channel = channel;
 	}
-
+	/**
+	 * 设置 session 的参数
+	 */
+	public ISession sessionConfig(DSessionConfig config) {
+		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 3000));
+		this.sessionConfig = config;
+		return this;
+	}
 	/**
 	 * session是否是活跃的.
 	 * @return
@@ -50,6 +73,19 @@ abstract class BaseSession implements ISession {
 		return channel != null && channel.isActive();
 	}
 
+	/**
+	 * flush
+	 */
+	private synchronized void flush0(){
+		counter.set(0);
+		channel.flush();
+	}
+
+
+	@Override
+	public void flush() {
+		this.flush0();
+	}
 
 	@Override
 	public Channel channel() {
@@ -137,24 +173,52 @@ abstract class BaseSession implements ISession {
 
 	@Override
 	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
-		return this.realSendMessage(message, flush);
+		return this.doSendMessage(message, flush);
 	}
 
+	/**
+	 * 发送message
+	 * @param message
+	 * @param flush
+	 * @return
+	 */
+	protected ChannelFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
+		if (flush) {
+			return this.realSendMessage(message, true);
+		}
+
+		ChannelFuture future;
+		synchronized (this) {
+			future = this.realSendMessage(message, false);
+		}
+
+		if (counter.incrementAndGet() >= 10) {
+			this.flush0();
+			return future;
+		}
+
+		if (flushScheduling.compareAndSet(false, true)) {
+			// 不取消future 也没有损失.
+			channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
+			this.flushScheduling.set(false);
+		}
+		return future;
+	}
 	/**
 	 * 发送消息在这里
 	 * @param message
 	 * @param flush
 	 * @return
 	 */
-	protected ChannelFuture realSendMessage(IChannelMessage<?> message, boolean flush) {
+	private ChannelFuture realSendMessage(IChannelMessage<?> message, boolean flush) {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! this.channel.isOpen()) {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
 			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
-			if (message instanceof DefaultByteBufMessage) {
-				((DefaultByteBufMessage) message).getContent().release();
-				message.recycle();
+			if (message instanceof BaseByteBufMessage) {
+				((BaseByteBufMessage<?>) message).getByteBuf().release();
 			}
+			message.recycle();
 			return new DMessageContentFuture(channel, message);
 		}
 

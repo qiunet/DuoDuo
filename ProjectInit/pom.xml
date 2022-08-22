@@ -5,11 +5,12 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.1.1</version>
+		<version>6</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ProjectInit</artifactId>
+	<version>${duoduo.version}</version>
 	<description>模板生成 po info等</description>
 	<inceptionYear>2017</inceptionYear>
 	<build>

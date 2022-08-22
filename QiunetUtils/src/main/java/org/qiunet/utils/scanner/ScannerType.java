@@ -34,11 +34,10 @@ public enum  ScannerType {
 	/**玩家的数据加载*/
 	PLAYER_DATA_LOADER(1 << 12, FILE_CONFIG),
 	/**protobuf 数据compile*/
-	PROTOBUF_DATA(1 << 13),
 	/**公式**/
 	FORMULA(1 << 14, AUTO_WIRE, EVENT),
 	/**通道数据. 请求*/
-	CHANNEL_DATA(1 << 15, PROTOBUF_DATA),
+	CHANNEL_DATA(1 << 15),
 	/**gm命令**/
 	GM_COMMAND(1 << 16),
 	/***key val 配置*/
@@ -84,7 +83,6 @@ public enum  ScannerType {
 			TRANSACTION,
 			URL_REQUEST,
 			CREATE_TABLE,
-			PROTOBUF_DATA,
 			TARGET_HANDLER,
 			BEHAVIOR_ACTION,
 			PLAYER_DATA_LOADER
@@ -94,8 +92,7 @@ public enum  ScannerType {
 			CFG,
 			FORMULA,
 			CONDITION,
-			CHANNEL_DATA,
-			PROTOBUF_DATA
+			CHANNEL_DATA
 			),
 
 	/**压测*/

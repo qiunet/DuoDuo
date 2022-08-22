@@ -77,7 +77,7 @@ public final class BehaviorRootTree<Owner extends MessageHandler<Owner>> extends
 			String log = this.log();
 
 			logger.info("--------------------tick start--------------------");
-			logger.info("行为树状态:\n" + log.substring(0, log.length() - 1));
+			logger.info("{}行为树状态:\n{}" , owner.getIdentity(), log.substring(0, log.length() - 1));
 			logger.info("-------------------- tick end --------------------");
 		}
 		// 不管SUCCESS 还是 FAILURE 都执行清理操作.

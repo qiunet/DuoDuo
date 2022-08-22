@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
+import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.google.common.base.Preconditions;
 import com.google.protobuf.CodedInputStream;
 import io.netty.buffer.ByteBuf;
@@ -23,7 +24,7 @@ public class ProtobufDataManager {
 	 * @return
 	 */
 	public static <T> Codec<T> getCodec(Class<T> clazz) {
-		return ProtobufDataContext0.getInstance().codec(clazz);
+		return ProtobufProxy.create(clazz);
 	}
 	/**
 	 * 序列化对象成byte数组
@@ -49,13 +50,19 @@ public class ProtobufDataManager {
 		Preconditions.checkNotNull(obj);
 		Class objClass = obj.getClass();
 		Codec codec = getCodec(objClass);
-		CodedOutputStreamThreadCache codedOutputStreamThreadCache = CodedOutputStreamThreadCache.get();
+		CodedOutputStreamThreadCache cache = null;
+		ByteBuf byteBuf = null;
 		try {
-			codec.writeTo(obj, codedOutputStreamThreadCache.getCodedOutputStream());
+			cache = CodedOutputStreamThreadCache.get();
+			codec.writeTo(obj, cache.getCodedOutputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}finally {
+			if (cache != null) {
+				byteBuf = cache.recycle();
+			}
 		}
-		return codedOutputStreamThreadCache.recycle();
+		return byteBuf;
 	}
 
 	/**

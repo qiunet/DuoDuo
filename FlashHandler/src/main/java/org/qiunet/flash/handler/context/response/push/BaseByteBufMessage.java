@@ -6,6 +6,9 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.async.LazyLoader;
+
+import java.nio.ByteBuffer;
 
 /***
  *
@@ -14,24 +17,31 @@ import org.qiunet.flash.handler.util.ChannelUtil;
  */
 public abstract class BaseByteBufMessage<T> implements IChannelMessage<T> {
 
-	protected ByteBuf buffer;
+	protected LazyLoader<ByteBuf> buffer = new LazyLoader<>(this::get);
 
 	@Override
 	public ByteBuf withHeaderByteBuf(Channel channel) {
 		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(channel);
 		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(protocolHeader.headerByteBuf(), this.buffer);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(protocolHeader.headerByteBuf(), this.getByteBuf());
 		protocolHeader.recycle();
 		this.recycle();
 		return byteBuf;
 	}
 
-	public ByteBuf getByteBuf() {
-		return buffer;
+	@Override
+	public ByteBuffer byteBuffer() {
+		return this.getByteBuf().nioBuffer();
 	}
 
+
+	public ByteBuf getByteBuf() {
+		return buffer.get();
+	}
+
+	protected abstract ByteBuf get();
 	@Override
 	public ByteBuf withoutHeaderByteBuf() {
-		return this.buffer;
+		return this.getByteBuf();
 	}
 }

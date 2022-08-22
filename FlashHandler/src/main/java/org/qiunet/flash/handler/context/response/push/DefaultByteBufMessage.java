@@ -3,8 +3,6 @@ package org.qiunet.flash.handler.context.response.push;
 import io.netty.buffer.ByteBuf;
 import org.qiunet.utils.pool.ObjectPool;
 
-import java.nio.ByteBuffer;
-
 /***
  *
  * @Author qiunet
@@ -19,6 +17,9 @@ public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 	};
 
 	private final ObjectPool.Handle<DefaultByteBufMessage> recyclerHandle;
+
+	private ByteBuf byteBuf;
+
 	private int protocolId;
 
 	public DefaultByteBufMessage(ObjectPool.Handle<DefaultByteBufMessage> recyclerHandle) {
@@ -28,14 +29,20 @@ public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 	public static DefaultByteBufMessage valueOf(int protocolId, ByteBuf buffer) {
 		DefaultByteBufMessage data = RECYCLER.get();
 		data.protocolId = protocolId;
-		data.buffer = buffer;
+		data.byteBuf = buffer;
 		return data;
 	}
 
 	@Override
+	protected ByteBuf get() {
+		return this.byteBuf;
+	}
+
+	@Override
 	public void recycle() {
+		this.buffer.reset(true);
 		this.protocolId = 0;
-		this.buffer = null;
+		this.byteBuf = null;
 		this.recyclerHandle.recycle();
 	}
 
@@ -51,16 +58,11 @@ public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 
 	@Override
 	public ByteBuf getContent() {
-		return buffer;
+		return byteBuf;
 	}
 
 	@Override
 	public String toStr() {
 		return "ProtocolID: "+protocolId;
-	}
-
-	@Override
-	public ByteBuffer byteBuffer() {
-		return buffer.nioBuffer();
 	}
 }

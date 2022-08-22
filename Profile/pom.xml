@@ -5,9 +5,11 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>org.qiunet</groupId>
-		<version>6.1.1</version>
+		<version>6</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
+	<version>${duoduo.version}</version>
+	<artifactId>Profile</artifactId>
 	<build>
 		<plugins>
 			<plugin>
@@ -19,7 +21,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<artifactId>Profile</artifactId>
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

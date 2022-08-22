@@ -26,7 +26,7 @@ public enum ThreadPoolManager implements ExecutorService {
 	 * @return
 	 */
 	ThreadPoolManager(String poolName, int threadNum, int maxCap) {
-		this.executorService = new ThreadPoolExecutor(Math.max(8, threadNum), threadNum*4,
+		this.executorService = new ThreadPoolExecutor(threadNum * 2, threadNum * 6,
 			60, TimeUnit.SECONDS,
 			new LinkedBlockingDeque<>(maxCap), new DefaultThreadFactory(poolName),
 			new ThreadPoolExecutor.CallerRunsPolicy());
