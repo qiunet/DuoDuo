@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
@@ -124,14 +125,14 @@ public class CrossProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public  ByteBuffer dataBytes() {
-		ByteBuffer out = ByteBuffer.allocateDirect(RESPONSE_HEADER_LENGTH);
-		out.put(MAGIC_CONTENTS);
-		out.putInt(length);
-		out.putInt(protocolId);
-		out.putInt(crc);
-		out.put((byte) (flush ? 1 : 0));
-		out.put((byte) (kcp ? 1 : 0));
+	public  ByteBuf headerByteBuf() {
+		ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(RESPONSE_HEADER_LENGTH);
+		out.writeBytes(MAGIC_CONTENTS);
+		out.writeInt(length);
+		out.writeInt(protocolId);
+		out.writeInt(crc);
+		out.writeByte((flush ? 1 : 0));
+		out.writeByte((kcp ? 1 : 0));
 		return out;
 	}
 

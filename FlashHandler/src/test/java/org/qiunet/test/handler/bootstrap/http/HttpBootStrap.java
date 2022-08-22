@@ -57,8 +57,9 @@ public class HttpBootStrap {
 	public byte[] getAllBytes(DefaultProtobufMessage message){
 		IProtocolHeader header = ADAPTER.outHeader(message.getProtocolID(), message);
 		ByteBuffer allocate = ByteBuffer.allocate(ADAPTER.getRspHeaderLength() + message.byteBuffer().limit());
-		allocate.put((ByteBuffer) header.dataBytes().rewind());
+		allocate.put((ByteBuffer) header.headerByteBuf().nioBuffer().rewind());
 		allocate.put((ByteBuffer) message.byteBuffer().rewind());
+		header.headerByteBuf().release();
 		message.getByteBuf().release();
 		return allocate.array();
 	}

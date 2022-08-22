@@ -58,8 +58,9 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 			}
 
 			@Override
-			public ByteBuffer dataBytes() {
-				return bufferLazyLoader.get().nioBuffer();
+			public ByteBuf headerByteBuf() {
+				// 不会调用到
+				return null;
 			}
 
 			@Override
@@ -69,7 +70,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 			@Override
 			public int getLength() {
-				return dataBytes().limit();
+				return bufferLazyLoader.get().readableBytes();
 			}
 
 			@Override

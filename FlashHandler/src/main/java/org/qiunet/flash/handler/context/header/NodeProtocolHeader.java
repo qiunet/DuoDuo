@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
@@ -80,12 +81,12 @@ public class NodeProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
-	public  ByteBuffer dataBytes() {
-		ByteBuffer out = ByteBuffer.allocateDirect(RESPONSE_HEADER_LENGTH);
-		out.put(MAGIC_CONTENTS);
-		out.putInt(length);
-		out.putInt(protocolId);
-		out.putInt(crc);
+	public  ByteBuf headerByteBuf() {
+		ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(RESPONSE_HEADER_LENGTH);
+		out.writeBytes(MAGIC_CONTENTS);
+		out.writeInt(length);
+		out.writeInt(protocolId);
+		out.writeInt(crc);
 		return out;
 	}
 

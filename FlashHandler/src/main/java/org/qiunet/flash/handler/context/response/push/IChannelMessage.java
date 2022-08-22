@@ -7,13 +7,10 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.data.ByteUtil;
-import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * 对外响应的编码消息
@@ -71,12 +68,8 @@ public interface IChannelMessage<T> {
 		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(channel);
 		IProtocolHeader header = adapter.outHeader(this.getProtocolID(), this);
 
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(((ByteBuffer) header.dataBytes().rewind()), ((ByteBuffer) this.byteBuffer().rewind()));
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.headerByteBuf(), Unpooled.wrappedBuffer((ByteBuffer) this.byteBuffer().rewind()));
 
-		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("header: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) header.dataBytes().rewind())));
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer((ByteBuffer) this.byteBuffer().rewind())));
-		}
 		header.recycle();
 		this.recycle();
 		return byteBuf;
@@ -87,9 +80,6 @@ public interface IChannelMessage<T> {
 	 * @return
 	 */
 	default ByteBuf withoutHeaderByteBuf() {
-		if (LoggerType.DUODUO_FLASH_HANDLER.isDebugEnabled()) {
-			LoggerType.DUODUO_FLASH_HANDLER.debug("body: {}", Arrays.toString(ByteUtil.readBytebuffer(this.byteBuffer())));
-		}
 		this.recycle();
 		return Unpooled.wrappedBuffer(byteBuffer());
 	}

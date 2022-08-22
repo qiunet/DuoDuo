@@ -1,5 +1,7 @@
 package org.qiunet.flash.handler.context.header;
 
+import io.netty.buffer.ByteBuf;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -21,7 +23,7 @@ public interface IProtocolHeader {
 	/***
 	 * 将header对象的内容输出到ByteBuf
 	 */
-	ByteBuffer dataBytes();
+	ByteBuf headerByteBuf();
 	/**
 	 * 魔数是否是有效的.
 	 * @return

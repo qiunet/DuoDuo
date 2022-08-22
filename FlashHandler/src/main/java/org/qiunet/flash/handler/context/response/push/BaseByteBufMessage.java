@@ -7,8 +7,6 @@ import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
 
-import java.nio.ByteBuffer;
-
 /***
  *
  * @author qiunet
@@ -22,7 +20,7 @@ public abstract class BaseByteBufMessage<T> implements IChannelMessage<T> {
 	public ByteBuf withHeaderByteBuf(Channel channel) {
 		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(channel);
 		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(Unpooled.wrappedBuffer(((ByteBuffer) protocolHeader.dataBytes().rewind())), this.buffer);
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(protocolHeader.headerByteBuf(), this.buffer);
 		protocolHeader.recycle();
 		this.recycle();
 		return byteBuf;
