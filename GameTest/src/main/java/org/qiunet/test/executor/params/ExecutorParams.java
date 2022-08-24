@@ -18,7 +18,8 @@ public class ExecutorParams {
 	private IRobotFactory robotFactory;
 	private IExecutorInitializer initializer;
 
-	private ExecutorParams (){}
+	private ExecutorParams() {
+	}
 
 	public IExecutorInitializer getInitializer() {
 		return initializer;
@@ -32,12 +33,14 @@ public class ExecutorParams {
 		return testCases;
 	}
 
-	public static Builder custom(){
+	public static Builder custom() {
 		return new Builder();
 	}
 
 	public static class Builder {
-		private Builder(){}
+		private Builder() {
+		}
+
 		private IRobotFactory robotFactory;
 		private IExecutorInitializer initializer;
 		private List<Class<? extends ITestCase>> testCases = new ArrayList<>(128);
@@ -52,14 +55,22 @@ public class ExecutorParams {
 			return this;
 		}
 
+		public Builder addTestCase(Class<? extends ITestCase> testCase, int times) {
+			for (int i = 0; i < times; i++) {
+				this.testCases.add(testCase);
+			}
+			return this;
+		}
+
 		public Builder setRobotFactory(IRobotFactory robotFactory) {
 			this.robotFactory = robotFactory;
 			return this;
 		}
 
-		public ExecutorParams build(){
+		public ExecutorParams build() {
 			if (robotFactory == null) throw new IllegalArgumentException("robotFactory can not be null! ");
-			if (testCases.isEmpty()) throw new IllegalArgumentException("testCases is empty! must set ITestCase more than one.");
+			if (testCases.isEmpty())
+				throw new IllegalArgumentException("testCases is empty! must set ITestCase more than one.");
 
 			ExecutorParams params = new ExecutorParams();
 			params.robotFactory = this.robotFactory;
