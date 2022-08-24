@@ -27,6 +27,13 @@ public interface IRobotCreator {
 	Robot create();
 
 	/**
+	 * 创建机器人的间隔时间
+	 * @return
+	 */
+	default int createInterval() {
+		return 150;
+	}
+	/**
 	 * 创建一定数量的机器人
 	 * @param count 数量
 	 * @return 机器人的列表
@@ -46,7 +53,7 @@ public interface IRobotCreator {
 		// 先登录一个 . 服务器的各种延迟加载的数据加载好.
 		create.run();
 		// 要错开登录. 不要一起
-		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, 300, TimeUnit.MILLISECONDS);
+		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, this.createInterval(), TimeUnit.MILLISECONDS);
 		try {
 			latch.await();
 		} catch (InterruptedException e) {

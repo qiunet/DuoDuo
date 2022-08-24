@@ -49,7 +49,7 @@ public final class ClassScanner implements IApplicationContext {
 	/**
 	 * 扫描工具类
 	 */
-	private final Reflections reflections;
+	private Reflections reflections;
 	/**
 	 * 可以扫描的类型
 	 */
@@ -93,7 +93,7 @@ public final class ClassScanner implements IApplicationContext {
 			System.exit(1);
 		}finally {
 			// 后面不需要了. 也不允许业务来读取. 释放内存
-			reflections.getStore().clear();
+			reflections = null;
 			recycled = true;
 		}
 	}
