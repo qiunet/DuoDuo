@@ -59,7 +59,6 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	@Override
 	public void execute(P p) {
 		try {
-			ChannelDataMapping.requestCheck(channel, getRequestData());
 			this.handlerRequest();
 		}catch (Exception e) {
 			if (! (e instanceof StatusResultException)) {
@@ -73,6 +72,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 	@Override
 	public void handlerRequest() throws Exception{
+		ChannelDataMapping.requestCheck(channel, getRequestData());
+
 		if (handler.needAuth() && ! messageActor.isAuth()) {
 			logger.error("Handler [{}] need auth. but session {} not auth!", handler.getClass().getSimpleName(), messageActor.getSender());
 			// 先不管. 客户端重连可能有问题. 不能掐掉

@@ -26,7 +26,7 @@ public class LoginBehaviorBuilder implements IBehaviorBuilder<Robot> {
 		IBehaviorExecutor<Robot> registerBehavior = new SequenceExecutor<>(new RegisterCountCondition(3))
 				.addChild(new RandomNameAction(null), new RegisterAction(new RandomNamePresent().and(new RegisterCountCondition(3))));
 
-		sequence.addChild(new LoginAction(new LoginCondition().not()), registerBehavior, new PlayerIndexAction(new RoleCountCondition(1)));
-		return new CounterNode(sequence, 1);
+		sequence.addChild(new ConnectionAction(new LoginCondition().not()), new LoginAction(new LoginCondition().not()), registerBehavior, new PlayerIndexAction(new RoleCountCondition(1)));
+		return new CounterNode<>(sequence, 1);
 	}
 }

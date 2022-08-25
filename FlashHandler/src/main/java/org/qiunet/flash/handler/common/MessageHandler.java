@@ -39,7 +39,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	private final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
-	private final UseTimer useTimer = new UseTimer(this::getIdentity, 500);
+	private final UseTimer useTimer = new UseTimer(this::getIdentity, 300);
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private final Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();

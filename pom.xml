@@ -37,7 +37,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<duoduo.version>6.1.2</duoduo.version>
+		<duoduo.version>6.1.3</duoduo.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

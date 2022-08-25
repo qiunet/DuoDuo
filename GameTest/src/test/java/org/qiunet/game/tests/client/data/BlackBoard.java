@@ -15,6 +15,10 @@ import java.util.List;
  **/
 public interface BlackBoard {
 	/**
+	 * 已经连接上tcp
+	 */
+	ArgumentKey<Boolean> connected = new ArgumentKey<>();
+	/**
 	 * 登录角色信息
 	 */
 	ArgumentKey<List<LoginInfo>> loginInfo = new ArgumentKey<>();

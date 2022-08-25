@@ -69,7 +69,10 @@ public class ResponseMapping implements IApplicationContextAware {
 
 			ChannelData channelData = mtd.getParameterTypes()[0].getAnnotation(ChannelData.class);
 			if (methodMapping.containsKey(channelData.ID())) {
-				throw new CustomException("game.test Response [id:{}] is repeated!", channelData.ID());
+				throw new CustomException("game.test Response [id:{}] is repeated! detail: {} {}", channelData.ID(),
+						methodMapping.get(channelData.ID()).getDeclaringClass().getSimpleName(),
+						mtd.getDeclaringClass().getSimpleName()
+				);
 			}
 
 			if (! IBehaviorAction.class.isAssignableFrom(mtd.getDeclaringClass())) {
