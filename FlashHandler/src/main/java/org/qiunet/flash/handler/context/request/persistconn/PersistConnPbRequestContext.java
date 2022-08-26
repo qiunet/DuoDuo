@@ -90,8 +90,9 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(getRequestData()));
 		}
-
-		useTimer.start();
+		if (requestReferenceData.isRecordEnable()) {
+			useTimer.start();
+		}
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {
 			((ITransmitHandler) getHandler()).crossHandler(((CrossPlayerActor) messageActor), getRequestData());
 		}else {
@@ -102,7 +103,9 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 				facadeWebSocketRequest.recycle();
 			}
 		}
-		long useTime = useTimer.printUseTime(() -> getHandler().getClass().getName());
-		requestReferenceData.record(getHandler().getClass().getSimpleName(), useTime);
+		if (requestReferenceData.isRecordEnable()) {
+			long useTime = useTimer.printUseTime(() -> getHandler().getClass().getName());
+			requestReferenceData.record(getHandler().getClass().getSimpleName(), useTime);
+		}
 	}
 }

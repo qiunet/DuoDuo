@@ -67,6 +67,22 @@ public class LazyLoader<T> {
 		this.objRef.set(null);
 	}
 
+	/**
+	 * 是否为null
+	 * @return
+	 */
+	public boolean isNull() {
+		return this.objRef.get() == null;
+	}
+
+	/**
+	 * 是否不为null
+	 * @return
+	 */
+	public boolean isNotNull() {
+		return ! this.isNull();
+	}
+
 	@FunctionalInterface
 	public interface Listener<T> {
 

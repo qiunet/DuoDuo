@@ -9,10 +9,10 @@ import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.IRobot;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
+import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
-import org.qiunet.flash.handler.context.session.future.DMessageContentFuture;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -216,10 +216,14 @@ abstract class BaseSession implements ISession {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
 			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 			if (message instanceof BaseByteBufMessage) {
-				((BaseByteBufMessage<?>) message).getByteBuf().release();
+				if (message instanceof DefaultByteBufMessage) {
+					((DefaultByteBufMessage) message).getContent().release();
+				}else if (((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
+					((BaseByteBufMessage<?>) message).getByteBuf().release();
+				}
 			}
 			message.recycle();
-			return new DMessageContentFuture(channel, message);
+			return channel.newPromise();
 		}
 
 		if ( logger.isInfoEnabled() && messageActor != null && ( message.needLogger() || messageActor instanceof IRobot)) {

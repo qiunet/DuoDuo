@@ -11,6 +11,7 @@ import org.qiunet.utils.async.LazyLoader;
 import java.nio.ByteBuffer;
 
 /***
+ * ByteBuf message的持有者父类
  *
  * @author qiunet
  * 2022/8/19 16:14
@@ -27,6 +28,14 @@ public abstract class BaseByteBufMessage<T> implements IChannelMessage<T> {
 		protocolHeader.recycle();
 		this.recycle();
 		return byteBuf;
+	}
+
+	/**
+	 * 是否已经有值
+	 * @return
+	 */
+	public boolean isByteBufPrepare() {
+		return buffer.isNotNull();
 	}
 
 	@Override

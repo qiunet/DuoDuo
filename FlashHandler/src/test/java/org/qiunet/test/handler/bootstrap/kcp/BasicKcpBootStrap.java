@@ -2,7 +2,6 @@ package org.qiunet.test.handler.bootstrap.kcp;
 
 
 import com.google.common.collect.Sets;
-import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
@@ -28,8 +27,6 @@ public abstract class BasicKcpBootStrap {
 
 	@BeforeAll
 	public static void init() throws Exception {
-		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		currThread = Thread.currentThread();
@@ -43,8 +40,7 @@ public abstract class BasicKcpBootStrap {
 				.build();
 
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).kcpListener(params);
-			LockSupport.unpark(currThread);
-			server.await();
+			server.await(() -> LockSupport.unpark(currThread));
 		});
 		thread.start();
 		LockSupport.park();
