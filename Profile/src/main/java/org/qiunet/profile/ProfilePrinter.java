@@ -13,7 +13,7 @@ import java.io.PrintStream;
  */
  class ProfilePrinter<Key, Column extends Enum<Column> & IProColumn> {
 
-	private Profile<Key, Column> profile;
+	private final Profile<Key, Column> profile;
 
 	private ProfilePrinter(Profile<Key, Column> profile) {
 		this.profile = profile;

@@ -8,9 +8,9 @@ package org.qiunet.profile.printer;
  */
 class TextTableColumnValue {
 
-	private String value;
+	private final String value;
 
-	private int length;
+	private final int length;
 
 	TextTableColumnValue(String value, int length) {
 		this.value = value;

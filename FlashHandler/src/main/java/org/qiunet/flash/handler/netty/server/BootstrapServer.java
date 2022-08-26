@@ -206,10 +206,7 @@ public class BootstrapServer {
 			ServerClosedEvent.fireClosed();
 			// 触发停服事件
 			ServerShutdownEventData.fireShutdownEventHandler();
-			// 触发业务自定义事情
-			if (hook != null) {
-				hook.shutdown();
-			}
+
 			// 停止所有服务
 			for (INettyServer server : nettyServers) {
 				server.shutdown();

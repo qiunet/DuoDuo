@@ -46,6 +46,10 @@
 			<artifactId>QiunetDatas</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>Profile</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.baidu</groupId>
 			<artifactId>jprotobuf</artifactId>
 		</dependency>

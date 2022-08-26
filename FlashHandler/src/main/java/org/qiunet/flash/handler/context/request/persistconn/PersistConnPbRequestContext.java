@@ -11,8 +11,10 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.profile.reference.ReferenceData;
 import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.string.ToString;
+import org.qiunet.utils.timer.UseTimer;
 
 /**
  * 该对象会回收. 所以只能在本线程用. addMessage 后. 就会回收掉
@@ -22,6 +24,10 @@ import org.qiunet.utils.string.ToString;
  */
 public class PersistConnPbRequestContext<RequestData extends IChannelData, P extends IMessageActor<P>>
 		extends AbstractPersistConnRequestContext<RequestData, P> {
+
+	private static final ReferenceData<String> requestReferenceData = ServerConstants.RequestReferenceData;
+
+	private final UseTimer useTimer = new UseTimer("PersistConnPbRequestContext", 300);
 
 	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = new ObjectPool<PersistConnPbRequestContext>() {
 		@Override
@@ -85,6 +91,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(getRequestData()));
 		}
 
+		useTimer.start();
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {
 			((ITransmitHandler) getHandler()).crossHandler(((CrossPlayerActor) messageActor), getRequestData());
 		}else {
@@ -95,5 +102,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 				facadeWebSocketRequest.recycle();
 			}
 		}
+		long useTime = useTimer.printUseTime(() -> getHandler().getClass().getName());
+		requestReferenceData.record(getHandler().getClass().getSimpleName(), useTime);
 	}
 }

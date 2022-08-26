@@ -18,11 +18,11 @@ public class TextTableColumnInfo<O> {
 	 */
 	private int maxLength;
 
-	private Function<O, String> getter;
+	private final Function<O, String> getter;
 	/**
 	 * 该列的数据
 	 */
-	private List<TextTableColumnValue> columnData = Lists.newArrayList();
+	private final List<TextTableColumnValue> columnData = Lists.newArrayList();
 
 	public TextTableColumnInfo(String name, Function<O, String> getter) {
 		this.getter = getter;

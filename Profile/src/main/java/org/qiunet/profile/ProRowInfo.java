@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicLongArray;
  * 2020-11-04 11:36
  */
 class ProRowInfo<Key, Column extends Enum<Column> & IProColumn> {
-	private Key key;
-	private Column [] columns;
-	private AtomicLongArray values;
-	private AtomicIntegerArray counts;
-	private AtomicLongArray totalValues;
+	private final Key key;
+	private final Column [] columns;
+	private final AtomicLongArray values;
+	private final AtomicIntegerArray counts;
+	private final AtomicLongArray totalValues;
 
 	ProRowInfo(Key key, Column[] columns) {
 		this.key = key;

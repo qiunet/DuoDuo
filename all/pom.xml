@@ -84,11 +84,6 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>GameTest</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
 			<artifactId>LogRecord</artifactId>
 			<optional>true</optional>
 		</dependency>

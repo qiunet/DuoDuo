@@ -1,7 +1,5 @@
 package org.qiunet.game.test.robot.creator;
 
-import org.qiunet.utils.scanner.anno.IgnoreEmptyWired;
-
 /***
  *
  * robot 账号提供
@@ -9,7 +7,6 @@ import org.qiunet.utils.scanner.anno.IgnoreEmptyWired;
  * @author qiunet
  * 2021-07-05 11:29
  */
-@IgnoreEmptyWired
 public interface IRobotAccountFactory {
 
 	/**

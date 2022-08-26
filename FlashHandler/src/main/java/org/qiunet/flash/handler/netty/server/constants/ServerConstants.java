@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.profile.reference.ReferenceData;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -31,6 +32,8 @@ public final class ServerConstants {
 	public static final EventLoopGroup BOSS = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-server-boss-event-loop-"));
 	public static final EventLoopGroup WORKER = new NioEventLoopGroup(new DefaultThreadFactory("netty-server-worker-event-loop-"));
 
+	public static final ReferenceData<String> RequestReferenceData = new ReferenceData<>(LoggerType.DUODUO_FLASH_HANDLER.isInfoEnabled());
+
 	private ServerConstants(){}
 
 	/**
@@ -40,8 +43,7 @@ public final class ServerConstants {
 	/**
 	 * netty 保存的handShaker
 	 */
-	public static final AttributeKey<WebSocketServerHandshaker> HANDSHAKER_ATTR_KEY =
-		AttributeKey.valueOf(WebSocketServerHandshaker.class, "HANDSHAKER");
+	public static final AttributeKey<WebSocketServerHandshaker> HANDSHAKER_ATTR_KEY = AttributeKey.valueOf(WebSocketServerHandshaker.class, "HANDSHAKER");
 	/***
 	 * channel 存储他是使用哪种方式连接的.
 	 */

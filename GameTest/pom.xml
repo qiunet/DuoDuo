@@ -24,13 +24,6 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
     <dependencies>
@@ -42,10 +35,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>FlashHandler</artifactId>
 		</dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>QiunetUtils</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>CfgReader</artifactId>

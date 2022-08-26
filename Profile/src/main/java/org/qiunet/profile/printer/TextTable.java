@@ -27,9 +27,9 @@ public class TextTable<O> {
 	/**
 	 * 列信息
 	 */
-	private List<TextTableColumnInfo<O>> columnInfos = Lists.newArrayList();
-	
-	
+	private final List<TextTableColumnInfo<O>> columnInfos = Lists.newArrayList();
+
+
 	public TextTable<O> setDataList(List<O> dataList) {
 		this.dataList = dataList;
 		return this;

@@ -1,7 +1,12 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.profile.printer.LoggerPrintStream;
+import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.logger.LoggerType;
+
+import java.nio.file.Paths;
 
 /**
  * 钩子. 先判断shutdown
@@ -37,6 +42,13 @@ public interface Hook {
 		return "CLOSE";
 	}
 	/**
+	 * 返回shutdown的msg
+	 * @return
+	 */
+	default String getShutdownMsg() {
+		return "SHUTDOWN0";
+	}
+	/**
 	 * 得到shutdown端口
 	 * @return
 	 */
@@ -50,21 +62,24 @@ public interface Hook {
 		LoggerType.DUODUO.error("!!Hook port absent, use default port {}!!", DEFAULT_HOOK_PORT);
 		return DEFAULT_HOOK_PORT;
 	}
-	/**
-	 * 返回shutdown的msg
-	 * @return
-	 */
-	default String getShutdownMsg() {
-		return "SHUTDOWN0";
-	}
-	/***
-	 * shutdown 时候做的事情.
-	 * 自己实现类.
-	 */
-	void shutdown();
 	/***
 	 * 用户自定义msg的用途
 	 * @param msg
 	 */
-	void custom(String msg);
+	default void custom(String msg) {
+		switch (msg) {
+			case "hotswap":
+				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
+				break;
+			case "RequestReferenceEnable":
+				ServerConstants.RequestReferenceData.setRecordEnable(true);
+				break;
+			case "RequestReferenceDisable":
+				ServerConstants.RequestReferenceData.setRecordEnable(false);
+				break;
+			case "RequestReferencePrint":
+				ServerConstants.RequestReferenceData.print(new LoggerPrintStream(LoggerType.DUODUO_FLASH_HANDLER.getLogger()));
+				break;
+		}
+	}
 }

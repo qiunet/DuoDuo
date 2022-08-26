@@ -15,14 +15,14 @@ import java.util.Map;
  * 2020-11-04 11:13
  */
 public class Profile<Key, Column extends Enum<Column> & IProColumn> {
-	private LazyLoader<ProfilePrinter<Key, Column>> lazyLoader = new LazyLoader<>(() -> ProfilePrinter.valueOf(this));
+	private final LazyLoader<ProfilePrinter<Key, Column>> lazyLoader = new LazyLoader<>(() -> ProfilePrinter.valueOf(this));
 
-	private Map<Key, ProRowInfo<Key, Column>> rowDatas = Maps.newConcurrentMap();
+	private final Map<Key, ProRowInfo<Key, Column>> rowDatas = Maps.newConcurrentMap();
 
 	private long startDt = System.currentTimeMillis();
 
 
-	private Column[] columns;
+	private final  Column[] columns;
 
 	public Profile(Class<Column> cls) {
 		this.columns = cls.getEnumConstants();

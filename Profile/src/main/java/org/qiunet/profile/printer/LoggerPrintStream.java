@@ -14,7 +14,7 @@ import java.io.PrintStream;
  */
 public class LoggerPrintStream extends PrintStream {
 	private static final OutputStream DO_NOTHING_OUTPUT_STREAM = new DoNoThingOutputStream();
-	private Logger logger;
+	private final Logger logger;
 
 	public LoggerPrintStream(Logger logger) {
 		super(DO_NOTHING_OUTPUT_STREAM);
