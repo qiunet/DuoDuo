@@ -27,9 +27,9 @@ import org.qiunet.utils.config.conf.DHocon;
  * 2022/8/25 11:44
  */
 @DConfig(ServerConfig.CONFIG_FILE_NAME)
-public class PressureConfig {
+public class StressTestingConfig {
 	/*文件名*/
-	public static final String PRESSURE_CONFIG_HOOK_PORT = "robot.hook";
+	public static final String STRESS_TESTING_CONFIG_HOOK_PORT = "robot.hook";
 	/**
 	 * 数量
 	 */
@@ -53,13 +53,13 @@ public class PressureConfig {
 	/**
 	 * 监听端口
 	 */
-	@DConfigValue(value = PRESSURE_CONFIG_HOOK_PORT, defaultVal = "15050")
+	@DConfigValue(value = STRESS_TESTING_CONFIG_HOOK_PORT, defaultVal = "15050")
 	private static int hookPort;
 
 	@DConfigInstance(ServerConfig.CONFIG_FILE_NAME)
 	private static DHocon config;
 
-	private PressureConfig() {}
+	private StressTestingConfig() {}
 	/**
 	 * 数量
 	 */

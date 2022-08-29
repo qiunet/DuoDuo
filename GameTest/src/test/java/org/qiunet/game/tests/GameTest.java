@@ -1,6 +1,6 @@
 package org.qiunet.game.tests;
 
-import org.qiunet.game.test.server.PressureServer;
+import org.qiunet.game.test.server.StressTestingServer;
 import org.qiunet.game.tests.server.ServerStartup;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -20,6 +20,6 @@ public class GameTest {
 		ServerStartup server = new ServerStartup();
 		server.startup();
 
-		PressureServer.scanner("org.qiunet.game").startup();
+		StressTestingServer.scanner("org.qiunet.game").startup();
 	}
 }

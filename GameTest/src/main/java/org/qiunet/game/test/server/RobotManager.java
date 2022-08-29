@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.test.robot.creator.IRobotAccountFactory;
-import org.qiunet.game.test.robot.creator.PressureConfig;
+import org.qiunet.game.test.robot.creator.StressTestingConfig;
 import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.timer.IScheduledTask;
 import org.qiunet.utils.timer.TimerManager;
@@ -41,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 	 * 创建一个机器人
 	 */
 	synchronized void create() {
-		Robot robot = new Robot(robotAccountFactory.newAccount(), PressureConfig.getTick(), PressureConfig.isLogPolicy());
+		Robot robot = new Robot(robotAccountFactory.newAccount(), StressTestingConfig.getTick(), StressTestingConfig.isLogPolicy());
 		this.robots.add(robot);
 	}
 	/**
@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 		// 先登录一个 . 服务器的各种延迟加载的数据加载好.
 		create.run();
 		// 要错开登录. 不要一起
-		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, PressureConfig.getInterval(), TimeUnit.MILLISECONDS);
+		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, StressTestingConfig.getInterval(), TimeUnit.MILLISECONDS);
 		try {
 			latch.await();
 		} catch (InterruptedException e) {

@@ -2,7 +2,7 @@ package org.qiunet.game.test.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.game.test.robot.creator.IRobotAccountFactory;
-import org.qiunet.game.test.robot.creator.PressureConfig;
+import org.qiunet.game.test.robot.creator.StressTestingConfig;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -25,9 +25,9 @@ import java.util.concurrent.locks.LockSupport;
  * @author qiunet
  * 2022/8/25 11:28
  */
-public final class PressureServer {
+public final class StressTestingServer {
 	private static final Logger logger = LoggerType.DUODUO_GAME_TEST.getLogger();
-	private static final PressureServer instance = new PressureServer();
+	private static final StressTestingServer instance = new StressTestingServer();
 
 	@AutoWired
 	private static IRobotAccountFactory param;
@@ -52,7 +52,7 @@ public final class PressureServer {
 			ScannerType.AUTO_WIRE
 	};
 
-	private PressureServer() {}
+	private StressTestingServer() {}
 
 	/** 给服务器的钩子发送消息, 需要另起Main线程.
 	 * 默认给本地的端口发送
@@ -61,23 +61,23 @@ public final class PressureServer {
 	 */
 	public static void sendHookMsg(int hookPort, String msg) {
 		if (hookPort <= 0) {
-			logger.error("PressureServer sendHookMsg but hookPort is less than 0!");
+			logger.error("StressTestingServer sendHookMsg but hookPort is less than 0!");
 			System.exit(1);
 		}
-		logger.error("PressureServer sendHookMsg [{}]!", msg);
+		logger.error("StressTestingServer sendHookMsg [{}]!", msg);
 		try {
 			NetUtil.udpSendData("localhost", hookPort, msg.getBytes(CharsetUtil.UTF_8));
 		} catch (IOException e) {
-			logger.error("PressureServer sendHookMsg: ", e);
+			logger.error("StressTestingServer sendHookMsg: ", e);
 			System.exit(1);
 		}
 	}
 
-	public static PressureServer scanner(String packages) {
+	public static StressTestingServer scanner(String packages) {
 		return scanner(packages, DEFAULT_SCANNER_TYPE);
 	}
 
-	public static PressureServer scanner(String packages, ScannerType ... scannerTypes) {
+	public static StressTestingServer scanner(String packages, ScannerType ... scannerTypes) {
 		ClassScanner.getInstance(scannerTypes).scanner(packages);
 		return instance;
 	}
@@ -88,8 +88,8 @@ public final class PressureServer {
 	 */
 	public void startup() {
 		// 初始的数量
-		RobotManager.instance.create(PressureConfig.getCount());
-		Thread thread = new Thread(new HookListener(), "PressureHook");
+		RobotManager.instance.create(StressTestingConfig.getCount());
+		Thread thread = new Thread(new HookListener(), "StressTestingHook");
 		parkThread= Thread.currentThread();
 		thread.setDaemon(true);
 		thread.start();
@@ -100,7 +100,7 @@ public final class PressureServer {
 	 */
 	private static class HookListener implements Runnable {
 		private final ByteBuffer buffer = ByteBuffer.allocate(256);
-		private final int hookPort = PressureConfig.getHookPort();
+		private final int hookPort = StressTestingConfig.getHookPort();
 
 		private final AtomicBoolean shutdown = new AtomicBoolean();
 		@Override
