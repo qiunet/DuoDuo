@@ -19,6 +19,7 @@ import org.qiunet.flash.handler.context.request.websocket.WebSocketStringRequest
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.utils.gzip.GzipUtil;
 
 import java.lang.reflect.Field;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,6 +37,12 @@ public enum DataType {
 		@Override
 		public <T> T parseBytes(byte[] bytes, Object... args) {
 			return (T) new String(bytes, CharsetUtil.UTF_8);
+		}
+
+		@Override
+		public <T> T parseBytesGz(byte[] bytes, Object... args) {
+			return (T) new String(GzipUtil.validAndDecryptBytes(bytes), CharsetUtil.UTF_8);
+//			return (T) new String(GzipUtil.unzip(bytes), CharsetUtil.UTF_8);
 		}
 
 		@Override
@@ -58,12 +65,13 @@ public enum DataType {
 	 */
 	PROTOBUF {
 		private ConcurrentHashMap<Class<?>, Parser> class2Parse = new ConcurrentHashMap<>(256);
+
 		@Override
 		public <T> T parseBytes(byte[] bytes, Object... args) {
 			Parser<T> parser = class2Parse.get(args[0]);
 			if (parser == null) {
 				try {
-					Field field = ((Class)args[0]).getDeclaredField("PARSER");
+					Field field = ((Class) args[0]).getDeclaredField("PARSER");
 					field.setAccessible(true);
 					parser = (Parser) field.get(null);
 					class2Parse.putIfAbsent((Class<?>) args[0], parser);
@@ -79,6 +87,11 @@ public enum DataType {
 				e.printStackTrace();
 			}
 			return null;
+		}
+
+		@Override
+		public <T> T parseBytesGz(byte[] bytes, Object... args) {
+			return parseBytes(bytes, args);
 		}
 
 		@Override
@@ -98,28 +111,34 @@ public enum DataType {
 	},
 	;
 
-	public abstract <T> T parseBytes(byte [] bytes, Object ... args);
+	public abstract <T> T parseBytes(byte[] bytes, Object... args);
+
+	public abstract <T> T parseBytesGz(byte[] bytes, Object... args);
 
 	/**
 	 * 得到一个http的context
+	 *
 	 * @param content
 	 * @param channelContext
 	 * @param request
 	 * @return
 	 */
 	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpRequest request);
+
 	/**
 	 * 得到一个webSocket使用的context
+	 *
 	 * @param content
 	 * @param channelContext
 	 * @return
 	 */
 	public abstract IWebSocketRequestContext createWebSocketRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, HttpBootstrapParams params, HttpHeaders headers);
+
 	/**
 	 * 得到一个tcp使用的context
+	 *
 	 * @param content
-	 * @param channelContext
-	de * @return
+	 * @param channelContext de * @return
 	 */
 	public abstract ITcpRequestContext createTcpRequestContext(MessageContent content, ChannelHandlerContext channelContext, IHandler handler, TcpBootstrapParams params);
 }
