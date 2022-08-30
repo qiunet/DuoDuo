@@ -129,7 +129,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	void unWatch(Target target) {
 		lock.lock();
 		try {
-			Type targetType = (Type) target.getTargetDef().getTargetType();
+			Type targetType = target.getTargetDef().getTargetType();
 			List<Target> targets = targetMap.get(targetType);
 			if (targets != null) {
 				targets.remove(target);

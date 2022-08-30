@@ -72,7 +72,7 @@
 
 ## 引用
 	<dependency>
-		<groupId>org.qiunet</groupId>
+		<groupId>io.github.qiunet</groupId>
 		<artifactId>duoduo-all</artifactId>
 		<version>${version}</version>
 	</dependency>

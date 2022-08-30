@@ -4,7 +4,7 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>DuoDuo</artifactId>
-		<groupId>org.qiunet</groupId>
+		<groupId>io.github.qiunet</groupId>
 		<version>6</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
