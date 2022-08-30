@@ -4,10 +4,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultThreadFactory implements ThreadFactory {
-	private AtomicInteger threadNum;
-	private AtomicInteger poolNum;
-	private ThreadGroup group;
-	private String prefixName;
+	private final AtomicInteger threadNum;
+	private final AtomicInteger poolNum;
+	private final ThreadGroup group;
+	private final String prefixName;
 	public DefaultThreadFactory(String poolName){
 		this.threadNum = new AtomicInteger();
 		this.poolNum = new AtomicInteger();

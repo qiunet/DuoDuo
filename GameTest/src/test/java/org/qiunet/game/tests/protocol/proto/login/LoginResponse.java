@@ -14,7 +14,7 @@ import java.util.List;
  * 2020-09-22 20:45
  */
 @ChannelData(ID = ProtocolId.Login.LOGIN_RSP, desc = "登录响应")
-public class LoginResponse implements IChannelData {
+public class LoginResponse extends IChannelData {
 	@Protobuf(description = "账号下的所有角色")
 	private List<LoginInfo> infos;
 

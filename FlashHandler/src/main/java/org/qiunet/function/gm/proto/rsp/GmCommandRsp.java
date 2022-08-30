@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.context.status.IGameStatus;
  * 2021-01-09 11:08
  */
 @ChannelData(ID = IProtocolId.System.GM_COMMAND_RSP, desc = "执行结果响应")
-public class GmCommandRsp implements IChannelData {
+public class GmCommandRsp extends IChannelData {
 	@Protobuf(description = "执行结果")
 	private int status;
 

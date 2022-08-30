@@ -6,7 +6,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadPoolManager;
-import sun.net.util.IPAddressUtil;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -22,20 +21,33 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+
 /***
  *
  * @Author qiunet
  * @Date Create in 2018/6/22 12:04
  **/
 public class NetUtil {
-	/**
-	 * 默认最小端口，1024
-	 */
-	public static final int PORT_RANGE_MIN = 1024;
+
+	// Max hex digits in each IPv6 group
+	private static final int IPV6_MAX_HEX_DIGITS_PER_GROUP = 4;
+	// Max number of hex groups (separated by :) in an IPV6 address
+	private static final int IPV6_MAX_HEX_GROUPS = 8;
+
+	private static final int MAX_UNSIGNED_SHORT = 0xffff;
 	/**
 	 * 默认最大端口，65535
 	 */
 	public static final int PORT_RANGE_MAX = 0xFFFF;
+
+	/**
+	 * 默认最小端口，1024
+	 */
+	public static final int PORT_RANGE_MIN = 1024;
+
+	private static final int MAX_BYTE = 128;
+
+	private static final int BASE_16 = 16;
 	/**
 	 * 是否是本机ip
 	 *
@@ -155,15 +167,113 @@ public class NetUtil {
 	 * @return
 	 */
 	public static boolean isValidIp4(String host) {
-		return IPAddressUtil.isIPv4LiteralAddress(host);
+		String[] strings = StringUtil.split(host, ".");
+		if (strings.length != 4) {
+			return false;
+		}
+		for (int i = 0; i < strings.length; i++) {
+			if (! StringUtil.isNum(strings[i])) {
+				return false;
+			}
+			int i1 = Integer.parseInt(strings[i]);
+			if (i1 < 0 || i1 > 255) {
+				return false;
+			}
+		}
+		return true;
 	}
 	/**
 	 * 是否是合格的ip6
-	 * @param host
+	 * @param inet6Address
 	 * @return
 	 */
-	public static boolean isValidIp6(String host) {
-		return IPAddressUtil.isIPv6LiteralAddress(host);
+	public static boolean isValidIp6(String inet6Address) {
+		String[] parts;
+		// remove prefix size. This will appear after the zone id (if any)
+		parts = inet6Address.split("/", -1);
+		if (parts.length > 2) {
+			return false; // can only have one prefix specifier
+		}
+		if (parts.length == 2) {
+			if (!parts[1].matches("\\d{1,3}")) {
+				return false; // not a valid number
+			}
+			final int bits = Integer.parseInt(parts[1]); // cannot fail because of RE check
+			if (bits < 0 || bits > MAX_BYTE) {
+				return false; // out of range
+			}
+		}
+		// remove zone-id
+		parts = parts[0].split("%", -1);
+		if (parts.length > 2) {
+			return false;
+		}
+		// The id syntax is implementation independent, but it presumably cannot allow:
+		// whitespace, '/' or '%'
+		if ((parts.length == 2) && !parts[1].matches("[^\\s/%]+")) {
+			return false; // invalid id
+		}
+		inet6Address = parts[0];
+		final boolean containsCompressedZeroes = inet6Address.contains("::");
+		if (containsCompressedZeroes && (inet6Address.indexOf("::") != inet6Address.lastIndexOf("::"))) {
+			return false;
+		}
+		if ((inet6Address.startsWith(":") && !inet6Address.startsWith("::"))
+				|| (inet6Address.endsWith(":") && !inet6Address.endsWith("::"))) {
+			return false;
+		}
+		String[] octets = inet6Address.split(":");
+		if (containsCompressedZeroes) {
+			final List<String> octetList = new ArrayList<>(Arrays.asList(octets));
+			if (inet6Address.endsWith("::")) {
+				// String.split() drops ending empty segments
+				octetList.add("");
+			} else if (inet6Address.startsWith("::") && !octetList.isEmpty()) {
+				octetList.remove(0);
+			}
+			octets = octetList.toArray(new String[octetList.size()]);
+		}
+		if (octets.length > IPV6_MAX_HEX_GROUPS) {
+			return false;
+		}
+		int validOctets = 0;
+		int emptyOctets = 0; // consecutive empty chunks
+		for (int index = 0; index < octets.length; index++) {
+			final String octet = octets[index];
+			if (octet.isEmpty()) {
+				emptyOctets++;
+				if (emptyOctets > 1) {
+					return false;
+				}
+			} else {
+				emptyOctets = 0;
+				// Is last chunk an IPv4 address?
+				if (index == octets.length - 1 && octet.contains(".")) {
+					if (!isValidIp4(octet)) {
+						return false;
+					}
+					validOctets += 2;
+					continue;
+				}
+				if (octet.length() > IPV6_MAX_HEX_DIGITS_PER_GROUP) {
+					return false;
+				}
+				int octetInt = 0;
+				try {
+					octetInt = Integer.parseInt(octet, BASE_16);
+				} catch (final NumberFormatException e) {
+					return false;
+				}
+				if (octetInt < 0 || octetInt > MAX_UNSIGNED_SHORT) {
+					return false;
+				}
+			}
+			validOctets++;
+		}
+		if (validOctets > IPV6_MAX_HEX_GROUPS || (validOctets < IPV6_MAX_HEX_GROUPS && !containsCompressedZeroes)) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

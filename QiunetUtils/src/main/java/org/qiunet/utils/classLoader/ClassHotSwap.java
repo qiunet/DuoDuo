@@ -25,7 +25,7 @@ public final class ClassHotSwap {
 	/***
 	 * 传入 class 所在的绝对地址路径
 	 * class 文件不需要有层级结构 直接在里面就ok
-	 * @param classesParentPath
+	 * @param classesParentPath class 文件的目录
 	 */
 	public static void hotSwap(Path classesParentPath) {
 

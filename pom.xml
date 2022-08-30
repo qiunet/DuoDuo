@@ -6,14 +6,13 @@
 
 	<groupId>io.github.qiunet</groupId>
 	<artifactId>DuoDuo</artifactId>
-	<version>6</version>
-
+	<version>${revision}</version>
+	<name>DuoDuo</name>
 	<modules>
 		<module>QiunetUtils</module>
 		<module>QiunetDatas</module>
 		<module>CfgReader</module>
 		<module>GameTest</module>
-		<module>Excel2Cfgs</module>
 		<module>ProjectInit</module>
 		<module>FlashHandler</module>
 		<module>JavaAgent</module>
@@ -26,37 +25,56 @@
 
 	<packaging>pom</packaging>
 
+	<description>
+		自己根据过往开发的经验. 自己抽出来的一套公用代码.
+		代码规避了很多可能在开发出现中的坑点. 然后尽量弱化了配置需求.
+		会在使用的过程慢慢完善成为一套可以做游戏和App开发的工具模块汇总.
+
+		Duoduo的原则是 理解后,融入自己的代码中. 所以有问题时候,
+		能够在第一时间反应过来问题出在哪.
+	</description>
+
 	<inceptionYear>2017</inceptionYear>
-	<description>自己的maven项目的父类. 可以指定一个依赖集合版本, 继承pom不必再次指定版本.</description>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
 	<developers>
 		<developer>
+			<id>qiunet</id>
 			<name>qiunet</name>
 			<email>qiunet@gmail.com</email>
 		</developer>
 	</developers>
 
 	<properties>
-		<java.version>1.8</java.version>
-		<duoduo.version>6.1.5</duoduo.version>
-		<maven.compiler.source>8</maven.compiler.source>
-		<maven.compiler.target>8</maven.compiler.target>
+		<revision>7.0.0</revision>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<url>https://github.com/qiunet/DuoDuo</url>
+
+	<scm>
+		<url>https://github.com/qiunet/DuoDuo</url>
+		<connection>https://github.com/qiunet/DuoDuo.git</connection>
+	</scm>
+
 	<distributionManagement>
-		<repository>
-			<id>releases</id>
-			<name>Proj Release Repository</name>
-			<url>http://mvn.aliyun.xf.io/content/repositories/releases/</url>
-		</repository>
-
 		<snapshotRepository>
-			<id>snapshots</id>
-			<name>Proj Snapshot Repository</name>
-			<url>http://mvn.aliyun.xf.io/content/repositories/snapshots/</url>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
 	</distributionManagement>
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -141,7 +159,25 @@
 					<execution>
 						<id>source</id>
 						<phase>package</phase>
-						<goals><goal>jar</goal></goals>
+						<goals><goal>jar-no-fork</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+						<configuration>
+							<keyname>52EB0E38B4C43D9C8E91E8AAB460E8B219FD3812</keyname>
+							<passphraseServerId>52EB0E38B4C43D9C8E91E8AAB460E8B219FD3812</passphraseServerId>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -152,57 +188,57 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>QiunetUtils</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>JavaAgent</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Quartz</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Entity2Table</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Profile</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>CfgReader</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>LogRecord</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>FlashHandler</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>QiunetDatas</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>GameTest</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>ProjectInit</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
@@ -275,11 +311,6 @@
 						<artifactId>netty-transport</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>com.squareup.okhttp3</groupId>
-				<artifactId>okhttp</artifactId>
-				<version>3.14.7</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.guava</groupId>

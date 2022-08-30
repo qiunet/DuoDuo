@@ -92,18 +92,6 @@ public class ChannelDataMapping implements IApplicationContextAware {
 				throw new IllegalArgumentException("Class ["+clazz.getName()+"] specify protocol value ["+ channelData.ID()+"] is repeated!");
 			}
 
-			RuntimeAnnotations.putAnnotation(clazz, ProtobufClass.class, new ProtobufClass(){
-
-				@Override
-				public Class<? extends Annotation> annotationType() {
-					return ProtobufClass.class;
-				}
-
-				@Override
-				public String description() {
-					return channelData.desc();
-				}
-			});
 			//new ByteBuddy().redefine(clazz).annotateType(
 			//		AnnotationDescription.Builder.ofType(ProtobufClass.class)
 			//				.define("description", channelData.desc())

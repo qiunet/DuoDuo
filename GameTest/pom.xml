@@ -5,11 +5,11 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>io.github.qiunet</groupId>
-        <version>6</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-	<version>${duoduo.version}</version>
+
 	<artifactId>GameTest</artifactId>
 	<packaging>jar</packaging>
 	<name>GameTest</name>

@@ -16,7 +16,7 @@ import java.util.List;
  */
 @SkipProtoGenerator
 @ChannelData(ID = IProtocolId.System.GM_dTOOLS_COMMAND_REQ, desc = "处理dTools gm请求")
-public class GmDToolsCommandReq implements IChannelData {
+public class GmDToolsCommandReq extends IChannelData {
 	@Protobuf(description="处理的id")
 	private long playerId;
 	@Protobuf(description = "类型")

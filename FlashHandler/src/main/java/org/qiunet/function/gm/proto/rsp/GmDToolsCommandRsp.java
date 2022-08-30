@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
  */
 @SkipProtoGenerator
 @ChannelData(ID = IProtocolId.System.GM_dTOOLS_COMMAND_RSP, desc = "dTools 响应")
-public class GmDToolsCommandRsp implements IChannelData {
+public class GmDToolsCommandRsp extends IChannelData {
 	@Protobuf(description="是否成功")
 	private boolean success;
 	@Protobuf(description="错误消息")

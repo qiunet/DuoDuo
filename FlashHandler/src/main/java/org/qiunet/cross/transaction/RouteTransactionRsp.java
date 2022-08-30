@@ -18,7 +18,7 @@ import org.qiunet.utils.string.ToString;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.TRANSACTION_RSP, desc = "处理事务请求")
-public class RouteTransactionRsp implements IChannelData, IDataToString {
+public class RouteTransactionRsp extends IChannelData implements IDataToString {
 	/**
 	 * 响应端维护自增的id, 需要带着返回给请求服务器.
 	 */

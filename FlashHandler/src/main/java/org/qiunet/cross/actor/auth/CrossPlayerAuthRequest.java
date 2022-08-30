@@ -16,7 +16,7 @@ import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.CROSS_PLAYER_AUTH, desc = "跨服鉴权")
-public class CrossPlayerAuthRequest implements IChannelData {
+public class CrossPlayerAuthRequest extends IChannelData {
 	@Protobuf(description = "玩家id")
 	private long playerId;
 	@Protobuf(description = "玩家的serverId")

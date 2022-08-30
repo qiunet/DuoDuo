@@ -15,7 +15,7 @@ import static org.qiunet.test.handler.proto.ProtocolId.Test.WS_PB_LOGIN_REQ;
  * 2020-09-22 12:30
  */
 @ChannelData(ID = WS_PB_LOGIN_REQ, desc = "protobuf 测试")
-public class WsPbLoginRequest implements IChannelData {
+public class WsPbLoginRequest extends IChannelData {
 
 	private String account;
 	@StringParam(checkBadWord = true)

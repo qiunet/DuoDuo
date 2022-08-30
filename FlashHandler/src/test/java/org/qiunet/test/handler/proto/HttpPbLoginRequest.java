@@ -13,7 +13,7 @@ import static org.qiunet.test.handler.proto.ProtocolId.Test.HTTP_PB_LOGIN_REQ;
  * 2020-09-22 12:30
  */
 @ChannelData(ID = HTTP_PB_LOGIN_REQ, desc = "login http protobuf type")
-public class HttpPbLoginRequest implements IChannelData {
+public class HttpPbLoginRequest extends IChannelData {
 
 	private String account;
 

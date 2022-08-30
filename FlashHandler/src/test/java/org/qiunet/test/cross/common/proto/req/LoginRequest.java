@@ -11,7 +11,7 @@ import org.qiunet.test.handler.proto.ProtocolId;
  * 2020-10-23 09:55
  */
 @ChannelData(ID = ProtocolId.Player.PLAYER_LOGIN, desc = "登录请求")
-public class LoginRequest implements IChannelData {
+public class LoginRequest extends IChannelData {
 
 	private long playerId;
 

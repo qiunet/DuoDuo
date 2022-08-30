@@ -11,6 +11,6 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2020-09-25 16:59
  */
 @ChannelData(ID = IProtocolId.System.SERVER_EXCEPTION, desc = "服务器异常")
-public class ServerExceptionResponse implements IChannelData {
+public class ServerExceptionResponse extends IChannelData {
 
 }

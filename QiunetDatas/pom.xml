@@ -5,11 +5,11 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>io.github.qiunet</groupId>
-        <version>6</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>QiunetDatas</artifactId>
-	<version>${duoduo.version}</version>
+
 
     <description>对Dao Redis层的封装. 使之满足 数据库->redis->本地的缓存关系</description>
     <inceptionYear>2017</inceptionYear>

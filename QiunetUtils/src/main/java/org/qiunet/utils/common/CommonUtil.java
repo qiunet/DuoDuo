@@ -16,11 +16,12 @@ public class CommonUtil {
 	private CommonUtil() { }
 	/**
 	 * 检查一个元素是否在数组中
-	 * @param <T>
-	 * @param arrays
+	 * @param <T> 元素T
+	 * @param arrays 是否在数组中
 	 * @return
 	 */
-	public static <T> boolean existInList(T element,T ... arrays)
+	@SafeVarargs
+	public static <T> boolean existInList(T element, T ... arrays)
 	{
 		if (arrays == null || element == null) {
 			return false;

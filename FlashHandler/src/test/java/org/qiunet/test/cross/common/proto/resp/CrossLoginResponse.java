@@ -11,7 +11,7 @@ import org.qiunet.test.handler.proto.ProtocolId;
  * 2020-10-26 12:39
  */
 @ChannelData(ID = ProtocolId.Player.CROSS_PLAYER_LOGIN_SUCCESS, desc = "跨服登录成功")
-public class CrossLoginResponse implements IChannelData {
+public class CrossLoginResponse extends IChannelData {
 	private String playerName;
 
 	public static CrossLoginResponse valueOf(String playerName) {

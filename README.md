@@ -6,6 +6,13 @@
     Duoduo的原则是 理解后,融入自己的代码中. 所以有问题时候,
     能够在第一时间反应过来问题出在哪.
 
+	
+## 协议支持
+| 是否支持     | Tcp | Kcp | WebSocket | Http |
+|----------|-----|-----|-----------|------|
+| Protobuf | √   | √   | √         | √    |
+| Json     | x   | x   | x         | √    |
+
 ## Git配置
  - 不对换行符做自动转换<br />
 `git config --global core.autocrlf input`

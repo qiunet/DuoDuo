@@ -21,7 +21,7 @@ import org.qiunet.utils.string.ToString;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.CROSS_EVENT_REQ, desc = "跨服事件处理")
-public class CrossEventRequest implements IChannelData, IDataToString {
+public class CrossEventRequest extends IChannelData implements IDataToString {
 	/**
 	 * 系统发给玩家的事件. 需要有playerID. 会在玩家的线程执行
 	 */

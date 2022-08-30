@@ -14,7 +14,7 @@ import java.util.List;
  * 2021-01-09 10:35
  */
 @ChannelData(ID = IProtocolId.System.GM_COMMAND_LIST_RSP, desc = "gm 首页响应")
-public class GmCommandIndexRsp implements IChannelData {
+public class GmCommandIndexRsp extends IChannelData {
 	@Protobuf(description = "所有gm命令列表")
 	private List<GmCommandInfo> list;
 

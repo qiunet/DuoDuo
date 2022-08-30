@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2020-09-22 12:31
  */
 @ChannelData(ID = ProtocolId.Test.LOGIN_RESP, desc = "登录下行")
-public class LoginResponse implements IChannelData {
+public class LoginResponse extends IChannelData {
 
 	private String testString;
 

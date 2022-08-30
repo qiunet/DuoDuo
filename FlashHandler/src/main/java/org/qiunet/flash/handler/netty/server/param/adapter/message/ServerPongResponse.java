@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  **/
 @SkipDebugOut
 @ChannelData(ID = IProtocolId.System.SERVER_PONG, desc = "服务器pong信息")
-public class ServerPongResponse implements IChannelData {
+public class ServerPongResponse extends IChannelData {
 	@Ignore
 	private static final ServerPongResponse instance = new ServerPongResponse();
 

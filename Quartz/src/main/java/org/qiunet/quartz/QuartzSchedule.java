@@ -22,7 +22,7 @@ public enum QuartzSchedule {
 	}
 	/***
 	 * 添加一个job到线程调度表
-	 * @param job
+	 * @param job 添加的job
 	 */
 	public DFuture<Boolean> addJob(IJob job) {
 		JobFacade jobFacade = new JobFacade(job);

@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/8/1 21:41
  **/
 @ChannelData(ID = ProtocolId.Login.REGISTER_RSP, desc = "注册协议响应")
-public class RegisterResponse implements IChannelData {
+public class RegisterResponse extends IChannelData {
 	@Protobuf(description = "注册后的角色数据")
 	private LoginInfo loginInfo;
 

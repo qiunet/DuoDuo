@@ -16,7 +16,7 @@ import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH_RSP, desc = "serverNode 鉴权请求响应")
-public class ServerNodeAuthRsp implements IChannelData {
+public class ServerNodeAuthRsp extends IChannelData {
 	@Protobuf(description = "鉴权结果")
 	private boolean result;
 

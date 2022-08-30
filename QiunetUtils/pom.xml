@@ -5,7 +5,7 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>io.github.qiunet</groupId>
-        <version>6</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
     <inceptionYear>2016</inceptionYear>
 
 	<artifactId>QiunetUtils</artifactId>
-	<version>${duoduo.version}</version>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -78,20 +78,9 @@
 			<artifactId>config</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>com.baidu</groupId>
 			<artifactId>jprotobuf</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>tools</artifactId>
-			<version>${java.version}</version>
-			<scope>system</scope>
-			<systemPath>${java.home}/../lib/tools.jar</systemPath>
 		</dependency>
 	</dependencies>
 </project>

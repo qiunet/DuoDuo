@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/9/2 10:09
  **/
 @ChannelData(ID = ProtocolId.Player.GET_EXP_RSP, desc = "获得经验响应")
-public class GetExpResponse implements IChannelData {
+public class GetExpResponse extends IChannelData {
 	@Protobuf(description = "获得的经验")
 	private int addExp;
 

@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2022/7/15 17:01
  */
 @ChannelData(ID = IProtocolId.System.CONNECTION_REQ, desc = "idKey设置请求")
-public class ConnectionReq implements IChannelData {
+public class ConnectionReq extends IChannelData {
 	@Protobuf(description = "openId或者其它")
 	private String idKey;
 

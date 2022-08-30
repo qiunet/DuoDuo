@@ -20,7 +20,7 @@ import org.qiunet.utils.secret.MD5Util;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.SERVER_NODE_AUTH, desc = "serverNode 鉴权请求")
-public class ServerNodeAuthRequest implements IChannelData {
+public class ServerNodeAuthRequest extends IChannelData {
 	@Protobuf(description = "请求serverId 鉴权")
 	private int serverId;
 	@Protobuf(description = "事件戳 秒")

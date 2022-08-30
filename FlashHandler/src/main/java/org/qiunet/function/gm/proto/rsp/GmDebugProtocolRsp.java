@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  */
 @SkipDebugOut
 @ChannelData(ID = IProtocolId.System.GM_DEBUG_PROTOCOL_RSP, desc = "协议调试完成响应")
-public class GmDebugProtocolRsp implements IChannelData {
+public class GmDebugProtocolRsp extends IChannelData {
 
 	public static GmDebugProtocolRsp valueOf() {
 		return new GmDebugProtocolRsp();

@@ -277,7 +277,7 @@ public final class ProtoIDLGenerator {
 		if (annotation == null) {
 			return "";
 		}
-
+		String comment = annotation.description();
 		StringBuilder sb = new StringBuilder();
 		sb.append("// ");
 		if (IChannelData.class.isAssignableFrom(clz)) {
@@ -285,12 +285,13 @@ public final class ProtoIDLGenerator {
 			sb.append("[ProtocolId = ").append(protocolId).append(" ] ");
 
 			ChannelData channelData = clz.getAnnotation(ChannelData.class);
+			comment = channelData.desc();
 			if (channelData.kcp()) {
 				sb.append(" KCP协议 ");
 			}
 		}
 
-		sb.append(annotation.description()).append("\n");
+		sb.append(comment).append("\n");
 		return sb.toString();
 	}
 

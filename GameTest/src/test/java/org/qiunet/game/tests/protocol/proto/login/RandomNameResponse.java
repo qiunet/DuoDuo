@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/8/4 11:07
  **/
 @ChannelData(ID = ProtocolId.Login.RANDOM_NAME_RSP, desc = "获取随机名称响应")
-public class RandomNameResponse implements IChannelData {
+public class RandomNameResponse extends IChannelData {
 	@Protobuf(description = "随机的昵称")
 	private String nick;
 

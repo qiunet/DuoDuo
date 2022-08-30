@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/9/2 10:09
  **/
 @ChannelData(ID = ProtocolId.Player.EXP_CHANGE_PUSH, desc = "获得经验推送")
-public class ExpChangePush implements IChannelData {
+public class ExpChangePush extends IChannelData {
 	@Protobuf(description = "当前等级")
 	private int level;
 	@Protobuf(description = "当前经验")

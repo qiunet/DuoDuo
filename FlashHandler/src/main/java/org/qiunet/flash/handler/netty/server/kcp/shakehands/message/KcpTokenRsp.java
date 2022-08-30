@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2022/4/27 11:06
  */
 @ChannelData(ID = IProtocolId.System.KCP_TOKEN_RSP, desc = "kcp的token申请响应")
-public class KcpTokenRsp implements IChannelData {
+public class KcpTokenRsp extends IChannelData {
 
 	@Protobuf(description = "用来做kcp关联,有效时间60秒!")
 	private String token;

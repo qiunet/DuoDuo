@@ -11,7 +11,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/9/2 10:09
  **/
 @ChannelData(ID = ProtocolId.Player.GET_EXP_REQ, desc = "获得经验请求")
-public class GetExpRequest implements IChannelData {
+public class GetExpRequest extends IChannelData {
 
 	public static GetExpRequest valueOf(){
 		return new GetExpRequest();

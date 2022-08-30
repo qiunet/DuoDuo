@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>io.github.qiunet</groupId>
-		<version>6</version>
+		<version>${revision}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
-	<version>${duoduo.version}</version>
+
 	<packaging>jar</packaging>
 	<name>DuoDuo/All-in-One</name>
 
@@ -29,9 +29,11 @@
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<!-- 创建源码jar -->
 							<createSourcesJar>true</createSourcesJar>
+
 							<artifactSet>
 								<excludes>
 									<exclude>${project.groupId}:JavaAgent:*</exclude>
+									<exclude>${project.groupId}:GameTest:*</exclude>
 								</excludes>
 								<includes>
 									<include>${project.groupId}:*:*</include>
@@ -153,10 +155,6 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>

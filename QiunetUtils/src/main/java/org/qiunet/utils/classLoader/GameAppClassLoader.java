@@ -17,7 +17,7 @@ import java.util.stream.Stream;
  */
 public class GameAppClassLoader extends URLClassLoader {
 
-	private String [] allowLoaderNames;
+	private final String [] allowLoaderNames;
 	/**
 	 *
 	 * @param paths

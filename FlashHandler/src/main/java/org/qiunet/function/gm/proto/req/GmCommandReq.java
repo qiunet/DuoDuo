@@ -14,7 +14,7 @@ import java.util.List;
  * 2021-01-08 12:58
  */
 @ChannelData(ID = IProtocolId.System.GM_COMMAND_REQ, desc = "处理gm请求")
-public class GmCommandReq implements IChannelData {
+public class GmCommandReq extends IChannelData {
 	@Protobuf(description = "类型")
 	private int type;
 	@Protobuf(description = "参数值")

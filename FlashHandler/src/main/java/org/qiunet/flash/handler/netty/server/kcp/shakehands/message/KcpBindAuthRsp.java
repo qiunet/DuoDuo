@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2022/4/27 11:27
  */
 @ChannelData(ID = IProtocolId.System.KCP_BIND_AUTH_RSP, desc = "KCP和其它长连接绑定鉴权响应", kcp = true)
-public class KcpBindAuthRsp implements IChannelData {
+public class KcpBindAuthRsp extends IChannelData {
 	@Protobuf(description = "是否成功")
 	private boolean success;
 

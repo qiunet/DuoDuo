@@ -29,14 +29,14 @@ public class TestHttpRequest extends BaseTest{
 
 	@Test
 	public void testAsyncHttpsRequest() throws Exception {
-		String url = "https://baidu.com";
+		String url = "https://www.qq.com";
 		Map<String,String> params = new HashMap<>();
 		params.put("wd", "qiunet");
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
 			HttpRequest.get(url).params(params).asyncExecutor(
-				(call, response) -> {
-					String result = response.body().string();
+				(response) -> {
+					String result = response.body();
 					System.out.println(result);
 					Assertions.assertNotNull(result);
 					latch.countDown();

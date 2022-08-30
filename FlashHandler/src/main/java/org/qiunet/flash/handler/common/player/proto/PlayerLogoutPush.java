@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
  * 2021/11/5 09:26
  */
 @ChannelData(ID = IProtocolId.System.PLAYER_LOGOUT_PUSH, desc = "玩家登出推送")
-public class PlayerLogoutPush implements IChannelData {
+public class PlayerLogoutPush extends IChannelData {
 	@Protobuf(description = "关闭的原因")
 	private CloseCause cause;
 	@Protobuf(description = "是否可以重连")

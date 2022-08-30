@@ -13,5 +13,5 @@ import static org.qiunet.flash.handler.common.id.IProtocolId.System.GM_ONLINE_US
  */
 @SkipProtoGenerator
 @ChannelData(ID = GM_ONLINE_USER_REQ, desc = "在线玩家请求")
-public class GmOnlineUserReq implements IChannelData {
+public class GmOnlineUserReq extends IChannelData {
 }

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request.data;
 
+import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
@@ -10,26 +11,27 @@ import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
  * @author qiunet
  * 2020-09-21 16:07
  */
-public interface IChannelData {
+@ProtobufClass
+public abstract class IChannelData {
 	/**
 	 * 转换为ByteBuf 最终记得要release
 	 * @return
 	 */
-	default ByteBuf toByteBuf() {
+	public ByteBuf toByteBuf() {
 		return ProtobufDataManager.encodeToByteBuf(this);
 	}
 	/**
 	 * 转换为byte[]
 	 * @return
 	 */
-	default byte[] toByteArray(){
+	public byte[] toByteArray(){
 		return ProtobufDataManager.encodeToByteArray(this);
 	}
 	/**
 	 * 构造一个IResponseMessage
 	 * @return
 	 */
-	default DefaultProtobufMessage buildChannelMessage(){
+	public DefaultProtobufMessage buildChannelMessage(){
 		return DefaultProtobufMessage.valueOf(protocolId(), this);
 	}
 
@@ -37,7 +39,7 @@ public interface IChannelData {
 	 * 得到protocolId
 	 * @return
 	 */
-	default int protocolId() {
+	public int protocolId() {
 		return ChannelDataMapping.protocolId(getClass());
 	}
 }

@@ -16,7 +16,7 @@ import static org.qiunet.flash.handler.common.id.IProtocolId.System.GM_ONLINE_US
  */
 @SkipProtoGenerator
 @ChannelData(ID = GM_ONLINE_USER_RSP, desc = "在线玩家响应")
-public class GmOnlineUserRsp implements IChannelData {
+public class GmOnlineUserRsp extends IChannelData {
 	@Protobuf(description = "用户列表")
 	private List<OnlineUserInfo> userList;
 

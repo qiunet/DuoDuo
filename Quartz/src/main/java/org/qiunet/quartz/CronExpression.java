@@ -1,5 +1,6 @@
 package org.qiunet.quartz;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
@@ -172,6 +173,7 @@ import java.util.*;
  */
 public class CronExpression implements Serializable, Cloneable {
 
+	@Serial
 	private static final long serialVersionUID = 12423409423L;
 
 	protected static final int SECOND = 0;

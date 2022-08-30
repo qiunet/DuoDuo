@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: .
-Build-Jdk-Spec: 11
-Main-Class: org.qiunet.excel2cfgs.AppMain
-

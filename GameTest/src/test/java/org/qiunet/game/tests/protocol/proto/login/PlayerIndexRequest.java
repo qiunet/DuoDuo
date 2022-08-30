@@ -14,7 +14,7 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.PLAYER_INDEX_REQ;
  * 2020-09-23 10:18
  */
 @ChannelData(ID = PLAYER_INDEX_REQ, desc = "长连接首页")
-public class PlayerIndexRequest implements IChannelData {
+public class PlayerIndexRequest extends IChannelData {
 	@Protobuf(description = "玩家id")
 	private long playerId;
 

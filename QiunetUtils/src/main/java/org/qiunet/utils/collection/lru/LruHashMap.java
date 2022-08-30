@@ -1,5 +1,6 @@
 package org.qiunet.utils.collection.lru;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -15,7 +16,8 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class LruHashMap<K, V> extends LinkedHashMap<K, V> {
 
-    private static final long serialVersionUID = -5167631809472116969L;
+    @Serial
+	private static final long serialVersionUID = -5167631809472116969L;
 
     private static final float DEFAULT_LOAD_FACTOR = 0.75f;
 

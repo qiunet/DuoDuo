@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  */
 @SkipDebugOut
 @ChannelData(ID = IProtocolId.System.GM_DEBUG_PROTOCOL_REQ, desc = "协议调试")
-public class GmDebugProtocolReq implements IChannelData {
+public class GmDebugProtocolReq extends IChannelData {
 	@Protobuf(description = "要调试的协议ID")
 	private int protocolId;
 	@Protobuf(description = "协议的json内容")

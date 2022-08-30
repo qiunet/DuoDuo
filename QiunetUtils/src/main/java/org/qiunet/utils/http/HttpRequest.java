@@ -1,15 +1,18 @@
 package org.qiunet.utils.http;
 
-import okhttp3.*;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
+import java.io.IOException;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CompletableFuture;
 
 /***
  *
@@ -17,14 +20,14 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  * 2020-04-20 17:39
  ***/
-public abstract class HttpRequest<B extends HttpRequest> {
+public abstract class HttpRequest<B extends HttpRequest<B>> {
+	private static final HttpResponse.BodyHandler<String> DEFAULT_SUPPLIER = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
-	protected static final OkHttpClient client = new OkHttpClient.Builder()
-		.connectTimeout(3000, TimeUnit.MILLISECONDS)
-		.dispatcher(new Dispatcher(ThreadPoolManager.NORMAL))
-		.readTimeout(3000, TimeUnit.MILLISECONDS)
-		.callTimeout(3000, TimeUnit.MILLISECONDS)
-		.build();
+
+	//Once built, an HttpClient can be used to send multiple requests.
+	protected static final HttpClient client = HttpClient.newBuilder()
+			.connectTimeout(Duration.ofMillis(3000))
+			.build();
 
 	protected String url;
 
@@ -34,9 +37,7 @@ public abstract class HttpRequest<B extends HttpRequest> {
 		this.url = url;
 	}
 
-	protected Headers.Builder headerBuilder = new Headers.Builder()
-		.add("Accept-Charset", "UTF-8")
-		.add("Accept-Encoding", "gzip");
+	protected Map<String, String> headerBuilder = new HashMap<>() {{put("Accept-Charset", "UTF-8");}};
 
 	public static PostHttpRequest post(String url) {
 		return new PostHttpRequest(url);
@@ -53,21 +54,12 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	}
 
 	public B header(String name, String val) {
-		this.headerBuilder.add(name, val);
-		return (B) this;
-	}
-
-	/**
-	 * 每次请求关闭 connect
-	 * @return
-	 */
-	public B closeConnectAlive() {
-		this.header("Connection", "close");
+		this.headerBuilder.put(name, val);
 		return (B) this;
 	}
 
 	public B header(Map<String, String> headerMap) {
-		headerMap.forEach((key, val) -> this.headerBuilder.add(key ,val));
+		this.headerBuilder.putAll(headerMap);
 		return (B) this;
 	}
 
@@ -75,22 +67,27 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * 异步执行请求
 	 * @param callBack
 	 */
-	public void asyncExecutor(IHttpCallBack callBack) {
-		Request request = buildRequest();
-		client.newCall(request).enqueue(callBack);
+	public  void asyncExecutor(IHttpCallBack<String> callBack) {
+		this.asyncExecutor(HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8), callBack);
+	}
+
+	public <T> void asyncExecutor(HttpResponse.BodyHandler<T> bodyHandler, IHttpCallBack<T> callBack) {
+		java.net.http.HttpRequest request = buildRequest();
+		CompletableFuture<HttpResponse<T>> future = client.sendAsync(request, bodyHandler);
+		future.thenAccept(callBack::response);
 	}
 	/**
 	 * 执行请求
 	 * @return
 	 */
-	public <T> T executor(IResultSupplier<T> supplier) {
-		Request request = buildRequest();
+	public <T> T executor(HttpResponse.BodyHandler<T> supplier) {
+		java.net.http.HttpRequest request = buildRequest();
 		try {
-			Response response = client.newCall(request).execute();
-			if (! response.isSuccessful()) {
-				throw new CustomException("Request: {} Fail, StatusCode {}", request, response.code());
+			HttpResponse<T> response = client.send(request, supplier);
+			if (response.statusCode() != 200) {
+				throw new CustomException("Request: {} Fail, StatusCode {}", request, response.statusCode());
 			}
-			return supplier.result(response);
+			return response.body();
 		} catch (Exception e) {
 			throw new CustomException(e, "http client send request error!");
 		}
@@ -99,9 +96,9 @@ public abstract class HttpRequest<B extends HttpRequest> {
 	 * 执行请求
 	 * @return
 	 */
-	public String executor() {
-		return executor(IResultSupplier.STRING_SUPPLIER);
+	public String executor() throws IOException, InterruptedException {
+		return client.send(buildRequest(), DEFAULT_SUPPLIER).body();
 	}
 
-	protected abstract Request buildRequest();
+	protected abstract java.net.http.HttpRequest buildRequest();
 }

@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.enums.GenderType;
  * 2021/8/1 21:41
  **/
 @ChannelData(ID = ProtocolId.Login.REGISTER_REQ, desc = "注册协议请求")
-public class RegisterRequest implements IChannelData {
+public class RegisterRequest extends IChannelData {
 	@Protobuf(description = "昵称")
 	private String nick;
 	@Protobuf(description = "性别")

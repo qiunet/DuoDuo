@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2022/4/27 11:27
  */
 @ChannelData(ID = IProtocolId.System.KCP_BIND_AUTH_REQ, desc = "KCP和其它长连接绑定鉴权请求", kcp = true)
-public class KcpBindAuthReq implements IChannelData {
+public class KcpBindAuthReq extends IChannelData {
 	@Protobuf(description = "玩家ID")
 	private long playerId;
 	@Protobuf(description = "KcpTokenRsp下发的TOKEN")

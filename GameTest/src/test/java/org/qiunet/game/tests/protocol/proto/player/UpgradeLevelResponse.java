@@ -12,7 +12,7 @@ import org.qiunet.game.tests.protocol.ProtocolId;
  * 2021/9/2 10:19
  **/
 @ChannelData(ID = ProtocolId.Player.UPGRADE_LV_RSP, desc = "升级响应")
-public class UpgradeLevelResponse implements IChannelData {
+public class UpgradeLevelResponse extends IChannelData {
 	@Protobuf(description = "当前等级")
 	private int currLv;
 

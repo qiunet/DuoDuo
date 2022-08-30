@@ -13,7 +13,7 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.LOGIN_REQ;
  * 2020-09-22 20:28
  */
 @ChannelData(ID = LOGIN_REQ, desc = "登录")
-public class LoginRequest implements IChannelData {
+public class LoginRequest extends IChannelData {
 
 	private String openId;
 

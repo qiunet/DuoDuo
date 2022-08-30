@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  */
 
 @ChannelData(ID = IProtocolId.System.CONNECTION_RSP, desc = "Connection 响应")
-public class ConnectionRsp implements IChannelData {
+public class ConnectionRsp extends IChannelData {
 	@Ignore
 	private static final ConnectionRsp instance = new ConnectionRsp();
 

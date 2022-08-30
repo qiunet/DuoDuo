@@ -15,7 +15,7 @@ import static org.qiunet.game.tests.protocol.ProtocolId.Login.PLAYER_INDEX_RSP;
  * 2020-09-23 10:22
  */
 @ChannelData(ID = PLAYER_INDEX_RSP, desc = "玩家首页响应")
-public class PlayerIndexResponse implements IChannelData {
+public class PlayerIndexResponse extends IChannelData {
 
 	private List<Item> items;
 

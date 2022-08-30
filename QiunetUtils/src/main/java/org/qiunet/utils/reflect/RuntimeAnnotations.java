@@ -11,6 +11,8 @@ import java.util.Map;
 /***
  * 运行时注解添加. 一般情况少用.
  *
+ * 需要添加: --add-opens java.base/java.lang=ALL-UNNAMED
+ *
  * @author qiunet
  * 2022/4/19 15:00
  */
@@ -20,7 +22,6 @@ public final class RuntimeAnnotations {
 	private static final Field Class_classRedefinedCount;
 	private static final Field AnnotationData_annotations;
 	private static final Field class_declaredAnotations;
-	private static final Field field_declaredAnotations;
 	private static final Method Atomic_casAnnotationData;
 	private static final Class<?> Atomic_class;
 
@@ -43,9 +44,6 @@ public final class RuntimeAnnotations {
 			class_declaredAnotations = class_AnnotationData.getDeclaredField("declaredAnnotations");
 			class_declaredAnotations.setAccessible(true);
 
-			field_declaredAnotations = Field.class.getDeclaredField("declaredAnnotations");
-			field_declaredAnotations.setAccessible(true);
-
 			Atomic_casAnnotationData = Atomic_class.getDeclaredMethod("casAnnotationData", Class.class, class_AnnotationData, class_AnnotationData);
 			Atomic_casAnnotationData.setAccessible(true);
 
@@ -54,26 +52,6 @@ public final class RuntimeAnnotations {
 		}
 	}
 
-	/**
-	 * 给field添加注解
-	 *
-	 * @param field
-	 * @param annotation
-	 * @param <T>
-	 */
-	public static <T extends Annotation> void putAnnotation(Field field, T annotation){
-		try {
-			Map<Class<? extends Annotation>, Annotation> map = (Map<Class<? extends Annotation>, Annotation>) field_declaredAnotations.get(field);
-			Map<Class<? extends Annotation>, Annotation> temp = new HashMap<>();
-			if (map != null) {
-				temp.putAll(map);
-			}
-			temp.put(annotation.annotationType(), annotation);
-			field_declaredAnotations.set(field, temp);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-	}
 
 	public static <T extends Annotation> void putAnnotation(Class<?> c, Class<T> annotationClass, T annotation){
 		try {

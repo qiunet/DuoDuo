@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  **/
 @SkipDebugOut
 @ChannelData(ID = IProtocolId.System.CLIENT_PING, desc = "ping信息")
-public class ClientPingRequest implements IChannelData {
+public class ClientPingRequest extends IChannelData {
 	@Ignore
 	private static final ClientPingRequest instance = new ClientPingRequest();
 

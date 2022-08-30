@@ -10,6 +10,6 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2022/4/27 11:06
  */
 @ChannelData(ID = IProtocolId.System.KCP_TOKEN_REQ, desc = "kcp的token申请请求")
-public class KcpTokenReq implements IChannelData {
+public class KcpTokenReq extends IChannelData {
 
 }

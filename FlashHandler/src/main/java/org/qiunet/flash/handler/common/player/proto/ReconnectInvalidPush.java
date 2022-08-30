@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * 2021/11/5 09:26
  */
 @ChannelData(ID = IProtocolId.System.RECONNECT_INVALID_PUSH, desc = "断线重连数据已经无效,重走登录流程")
-public class ReconnectInvalidPush implements IChannelData {
+public class ReconnectInvalidPush extends IChannelData {
 	@Ignore
 	private static final ReconnectInvalidPush instance = new ReconnectInvalidPush();
 

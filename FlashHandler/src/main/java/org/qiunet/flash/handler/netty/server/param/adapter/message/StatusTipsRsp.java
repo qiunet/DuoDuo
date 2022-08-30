@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * 2020-11-11 10:04
  */
 @ChannelData(ID = IProtocolId.System.ERROR_STATUS_TIPS_RSP, desc = "错误信息提示响应")
-public class StatusTipsRsp implements IChannelData {
+public class StatusTipsRsp extends IChannelData {
 	/**
 	 * 策划配置最好. 客户端读表. 配合参数生成提示
 	 */

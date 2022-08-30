@@ -14,7 +14,7 @@ import org.qiunet.utils.date.DateUtil;
  */
 @SkipDebugOut
 @ChannelData(ID = IProtocolId.System.CLOCK_TICK_PUSH, desc = "时钟同步")
-public class ClockTickPush implements IChannelData {
+public class ClockTickPush extends IChannelData {
 	@Protobuf(description = "时间戳(秒)")
 	private int ts;
 
