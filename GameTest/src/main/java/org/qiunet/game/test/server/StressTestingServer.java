@@ -1,8 +1,11 @@
 package org.qiunet.game.test.server;
 
 import io.netty.util.CharsetUtil;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.game.test.robot.creator.IRobotAccountFactory;
 import org.qiunet.game.test.robot.creator.StressTestingConfig;
+import org.qiunet.utils.config.ConfigFileUtil;
+import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -56,14 +59,12 @@ public final class StressTestingServer {
 
 	/** 给服务器的钩子发送消息, 需要另起Main线程.
 	 * 默认给本地的端口发送
-	 * @param hookPort 钩子端口
 	 * @param msg 发送消息内容
 	 */
-	public static void sendHookMsg(int hookPort, String msg) {
-		if (hookPort <= 0) {
-			logger.error("StressTestingServer sendHookMsg but hookPort is less than 0!");
-			System.exit(1);
-		}
+	public static void sendHookMsg(String msg) {
+		IKeyValueData<Object, Object> keyValueData = ConfigFileUtil.loadConfig(ServerConfig.CONFIG_FILE_NAME);
+		int hookPort = keyValueData.getInt(StressTestingConfig.STRESS_TESTING_CONFIG_HOOK_PORT);
+
 		logger.error("StressTestingServer sendHookMsg [{}]!", msg);
 		try {
 			NetUtil.udpSendData("localhost", hookPort, msg.getBytes(CharsetUtil.UTF_8));
