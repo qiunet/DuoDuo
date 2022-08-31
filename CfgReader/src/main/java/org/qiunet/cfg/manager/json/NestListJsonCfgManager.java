@@ -2,11 +2,13 @@ package org.qiunet.cfg.manager.json;
 
 import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.INestListCfg;
+import org.qiunet.cfg.base.ISortable;
 import org.qiunet.cfg.manager.base.INestListCfgManager;
 import org.qiunet.utils.collection.safe.SafeList;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +61,10 @@ public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
 			subList.add(cfg);
 		}
 		for (List<Cfg> cfgList : cfgMap.values()) {
+			if (ISortable.class.isAssignableFrom(getCfgClass())) {
+				Collections.sort(((List<? extends Comparable>) this.cfgList));
+			}
+
 			((SafeList) cfgList).convertToUnmodifiable();
 		}
 		cfgMap.loggerIfAbsent();

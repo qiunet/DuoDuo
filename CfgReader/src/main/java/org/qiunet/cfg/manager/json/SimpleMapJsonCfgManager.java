@@ -2,9 +2,12 @@ package org.qiunet.cfg.manager.json;
 
 import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.base.ISortable;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
 import org.qiunet.utils.collection.safe.SafeMap;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,6 +47,11 @@ public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
 
 	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{
 		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
+
+		if (ISortable.class.isAssignableFrom(getCfgClass())) {
+			Collections.sort(((List<? extends Comparable>) this.cfgList));
+		}
+
 		for (Cfg cfg : this.cfgList) {
 			cfgMap.put(cfg.getId(), cfg);
 		}
