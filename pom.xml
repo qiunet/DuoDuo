@@ -37,7 +37,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<duoduo.version>6.1.5</duoduo.version>
+		<duoduo.version>6.1.6</duoduo.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -45,13 +45,13 @@
 
 	<distributionManagement>
 		<repository>
-			<id>releases</id>
+			<id>XinYan</id>
 			<name>Proj Release Repository</name>
 			<url>http://mvn.aliyun.xf.io/content/repositories/releases/</url>
 		</repository>
 
 		<snapshotRepository>
-			<id>snapshots</id>
+			<id>XinYan</id>
 			<name>Proj Snapshot Repository</name>
 			<url>http://mvn.aliyun.xf.io/content/repositories/snapshots/</url>
 		</snapshotRepository>
