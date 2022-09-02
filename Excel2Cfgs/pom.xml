@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>Excel2Cfgs</artifactId>
-	<version>${duoduo.version}</version>
+	<version>${revision}</version>
 	<properties>
 		<tools.final.dir>${project.basedir}/target/tools</tools.final.dir>
 	</properties>

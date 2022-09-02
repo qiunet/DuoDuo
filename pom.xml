@@ -36,8 +36,8 @@
 	</developers>
 
 	<properties>
+		<revision>6.1.7</revision>
 		<java.version>1.8</java.version>
-		<duoduo.version>6.1.6</duoduo.version>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -152,57 +152,57 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>QiunetUtils</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>JavaAgent</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Quartz</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Entity2Table</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>Profile</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>CfgReader</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>LogRecord</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>FlashHandler</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>QiunetDatas</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>GameTest</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>ProjectInit</artifactId>
-				<version>${duoduo.version}</version>
+				<version>${revision}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap.http;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -57,9 +58,10 @@ public class HttpBootStrap {
 	public byte[] getAllBytes(DefaultProtobufMessage message){
 		IProtocolHeader header = ADAPTER.outHeader(message.getProtocolID(), message);
 		ByteBuffer allocate = ByteBuffer.allocate(ADAPTER.getRspHeaderLength() + message.byteBuffer().limit());
-		allocate.put((ByteBuffer) header.headerByteBuf().nioBuffer().rewind());
+		ByteBuf headerByteBuf = header.headerByteBuf();
+		allocate.put((ByteBuffer) headerByteBuf.nioBuffer().rewind());
 		allocate.put((ByteBuffer) message.byteBuffer().rewind());
-		header.headerByteBuf().release();
+		headerByteBuf.release();
 		message.getByteBuf().release();
 		return allocate.array();
 	}

@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
-	<version>${duoduo.version}</version>
+	<version>${revision}</version>
 	<artifactId>Quartz</artifactId>
 	<build>
 		<plugins>
