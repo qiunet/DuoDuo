@@ -58,6 +58,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 
 	private void run0() {
+		long start = System.nanoTime();
 		while (true) {
 			IMessage<H> message = messages.poll();
 			if (message == null) {
@@ -72,6 +73,11 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			}
 
 			if (this.size.decrementAndGet()  <= 0) {
+				break;
+			}
+			// 超过2秒执行时间. 需要让出. 给后面的队列任务执行
+			if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start) >= 2) {
+				executor.get().executorService.execute(this);
 				break;
 			}
 		}

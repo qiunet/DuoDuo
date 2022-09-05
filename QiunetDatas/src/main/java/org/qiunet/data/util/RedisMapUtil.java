@@ -71,7 +71,7 @@ public class RedisMapUtil {
 			}else if(field.getType() == Long.class || field.getType() == long.class){
 				ReflectUtil.setField(t, field, Long.parseLong(val));
 			}else if(Collection.class.isAssignableFrom(field.getType())){
-				ReflectUtil.setField(t, field, JsonUtil.getGeneralObject(val, field.getGenericType()));
+				ReflectUtil.setField(t, field, JsonUtil.getGeneralObj(val, field.getGenericType()));
 			}
 		});
 		return t;

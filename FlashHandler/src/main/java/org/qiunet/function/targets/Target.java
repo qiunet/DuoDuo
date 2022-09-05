@@ -2,6 +2,8 @@ package org.qiunet.function.targets;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.base.Preconditions;
+import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.utils.thread.ThreadPoolManager;
 
 /***
  * 单个目标的进度管理
@@ -16,22 +18,28 @@ public class Target {
 	@JSONField(serialize = false)
 	transient Targets targets;
 	/**
-	 * 目标的配置定义索引
+	 * 任务目标的配置定义ID
 	 */
-	private int index;
+	private int tid;
 	/**
 	 * 进度值
 	 */
 	private long value;
 
-	static Target valueOf(ITargetDefGetter targetDefGetter, Targets targets, int index) {
+	static Target valueOf(Targets targets, ITargetDef targetDef) {
 		Target target = new Target();
-		target.targetDef = targetDefGetter.getTargetDef(index);
+		target.tid = targetDef.getId();
+		target.targetDef = targetDef;
 		target.targets = targets;
-		target.index = index;
 		return target;
 	}
-
+	/**
+	 * 获得玩家对象
+	 * @return actor
+	 */
+	public PlayerActor getPlayer() {
+		return targets.getPlayer();
+	}
 	/**
 	 * 进度 + 1
 	 */
@@ -44,10 +52,13 @@ public class Target {
 	 * @param count 数量
 	 */
 	public synchronized void addCount(long count){
+		if (isFinished()) {
+			return;
+		}
 		Preconditions.checkState(count > 0);
 		this.value += count;
 		targets.updateCallback(this);
-		tryComplete();
+		this.tryFinish();
 	}
 
 	/**
@@ -56,19 +67,23 @@ public class Target {
 	 */
 	public synchronized void alterToCount(int count) {
 		Preconditions.checkState(count > 0);
+		if (isFinished()) {
+			return;
+		}
 		this.value = count;
 		targets.updateCallback(this);
-		tryComplete();
+		this.tryFinish();
 	}
 
-	/**
-	 * 尝试完成该目标
-	 */
-	void tryComplete() {
+	private void tryFinish() {
 		if (isFinished()) {
-			targets.getContainer().unWatch(this);
+			// 可能在forEach时候. unwatch了
+			getPlayer().addMessage((p0) -> {
+				TargetContainer.get(p0).unWatch(this);
+			});
 		}
 	}
+
 	@JSONField(serialize = false)
 	public boolean isFinished(){
 		return value >= targetDef.getValue();
@@ -79,12 +94,8 @@ public class Target {
 		return targetDef;
 	}
 
-	public int getIndex() {
-		return index;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
+	public int getTid() {
+		return tid;
 	}
 
 	public long getValue() {

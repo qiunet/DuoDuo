@@ -45,45 +45,39 @@ public final class JsonUtil {
 	public static String toJsonString(Object o){
 		return toJsonString(o, DEFAULT_SERIALIZE_CONFIG, SerializerFeature.DisableCircularReferenceDetect);
 	}
-
 	/**
-	 * 仅字段对象
-	 * @param
+	 * 使用默认字段和Class反序列化对象
 	 * @return
 	 */
-	public static <T> T getGeneralObjWithField(String jsonText, Class<T> clz, Feature... features) {
-		return getGeneralObjWithField(jsonText, clz, DEFAULT_PARSER_CONFIG, features);
+	public static <T> T getGeneralObj(String jsonText, Class<T> clz, Feature... features) {
+		return getGeneralObj(jsonText, clz, DEFAULT_PARSER_CONFIG, features);
 	}
 	/**
-	 * 仅字段对象
-	 * @param
-	 * @return
+	 * 使用Class反序列化
+	 * @return 对象
 	 */
-	public static <T> T getGeneralObjWithField(String jsonText, Class<T> clz, ParserConfig parserConfig, Feature... features) {
+	public static <T> T getGeneralObj(String jsonText, Class<T> clz, ParserConfig parserConfig, Feature... features) {
 		return JSON.parseObject(jsonText, clz, parserConfig, features);
 	}
 	/**
-	 * 使用字段
-	 * @param
-	 * @return
+	 * 使用TYPE反序列化
+	 * @return 对象
 	 */
-	public static <T> T getGeneralObjWithField(String jsonText, TypeReference<T> type, Feature... features) {
-		return getGeneralObjWithField(jsonText, type, DEFAULT_PARSER_CONFIG, features);
+	public static <T> T getGeneralObj(String jsonText, TypeReference<T> type,  Feature... features) {
+		return getGeneralObj(jsonText, type.getType(), features);
 	}
-	/**
-	 * 使用字段
-	 * @param
-	 * @return
-	 */
-	public static <T> T getGeneralObjWithField(String jsonText, TypeReference<T> type, ParserConfig parserConfig, Feature... features) {
-		return getGeneralObjWithField(jsonText, type.getType(), parserConfig, features);
+	public static <T> T getGeneralObj(String jsonText, Type type,  Feature... features) {
+		return getGeneralObj(jsonText, type, DEFAULT_PARSER_CONFIG, features);
 	}
+
 	/**
-	 * 使用字段
-	 * @param
-	 * @return
+	 * 使用自定义的parseConfig
 	 */
-	public static <T> T getGeneralObjWithField(String jsonText, Type type, ParserConfig parserConfig, Feature... features) {
+	public static <T> T getGeneralObj(String jsonText, TypeReference<T> type, ParserConfig parserConfig, Feature... features) {
+		return getGeneralObj(jsonText, type.getType(), parserConfig, features);
+	}
+
+	public static <T> T getGeneralObj(String jsonText, Type type, ParserConfig parserConfig, Feature... features) {
 		return JSON.parseObject(jsonText, type, parserConfig, features);
 	}
 	/**
@@ -93,57 +87,32 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static <T> List<T> getGeneralList(String json, Class<T> c){
-		return JSON.parseArray(json, c);
+		return getGeneralList(json, c, DEFAULT_PARSER_CONFIG);
 	}
 
 	/**
-	 * 反序列化根据get set判断字段的对象
-	 * 使用TypeReference 反序列. TypeReference最好定义为常量
-	 * @param json
-	 * @param typeReference
-	 * @param features
+	 * 使用parseConfig 进行反序列化
+	 * @return 对象List
 	 * @param <T>
-	 * @return
 	 */
-	public static <T> T getGeneralObject(String json , TypeReference<T> typeReference, Feature ... features){
-		return getGeneralObject(json, typeReference.getType(), features);
-	}
-	/**
-	 * 反序列化根据get set判断字段的对象
-	 * 使用TypeReference 反序列. TypeReference最好定义为常量
-	 * @param json
-	 * @param type
-	 * @param features
-	 * @param <T>
-	 * @return
-	 */
-	public static <T> T getGeneralObject(String json , Type type, Feature ... features){
-		return JSON.parseObject(json, type, features);
-	}
-	/**
-	 * 得到通用的对象
-	 * @param json
-	 * @param c
-	 * @return
-	 */
-	public static <T> T getGeneralObject(String json ,Class<T> c){
-		return JSON.parseObject(json, c);
+	public static <T> List<T> getGeneralList(String json, Class<T> c, ParserConfig config){
+		return JSON.parseArray(json, c, config);
 	}
 
-	/**
-	 * 转成JsonObject
-	 * @param obj
-	 * @return
-	 */
-	public static JSONObject toJsonObjectWithField(Object obj) {
-		return (JSONObject) JSON.toJSON(obj, DEFAULT_SERIALIZE_CONFIG);
-	}
 	/**
 	 * 转成JsonObject
 	 * @param obj
 	 * @return
 	 */
 	public static JSONObject toJsonObject(Object obj) {
-		return (JSONObject) JSON.toJSON(obj);
+		return toJsonObject(obj, DEFAULT_SERIALIZE_CONFIG);
+	}
+
+	/**
+	 * 使用config序列化对象
+	 * @return JsonObject
+	 */
+	public static JSONObject toJsonObject(Object obj, SerializeConfig config) {
+		return (JSONObject) JSON.toJSON(obj, config);
 	}
 }

@@ -2,6 +2,7 @@ package org.qiunet.function.targets;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Lists;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -31,22 +32,28 @@ public class Targets {
 	 */
 	private int id;
 	public Targets() {}
-
+	/**
+	 * 获得玩家对象
+	 * @return actor
+	 */
+	public PlayerActor getPlayer() {
+		return container.getPlayer();
+	}
 	/**
 	 * 创建一个Targets
-	 * @param targetDefGetter 配置列表getter
+	 * @param targetsDefGetter 配置列表getter
 	 * @param updateCallback 更新通知
 	 * @param id 任务的id
 	 * @return
 	 */
 	static Targets valueOf(TargetContainer container,
-						   ITargetDefGetter targetDefGetter,
+						   ITargetsDefGetter targetsDefGetter,
 						   BiConsumer<Targets, Target> updateCallback,
 						   int id) {
 		Targets targets0 = new Targets();
-		TargetDefList targetDefList = targetDefGetter.getTargetDefList();
-		targets0.targets = Lists.newArrayListWithCapacity(targetDefList.size());
-		targetDefList.forEach((index, def) -> targets0.targets.add(Target.valueOf(targetDefGetter, targets0, ((Integer) index))));
+		List<? extends ITargetDef> defList = targetsDefGetter.targets();
+		targets0.targets = Lists.newArrayListWithCapacity(defList.size());
+		defList.forEach(t -> targets0.targets.add(Target.valueOf(targets0, t)));
 		targets0.updateCallback = updateCallback;
 		targets0.container = container;
 		targets0.id = id;

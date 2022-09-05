@@ -54,7 +54,7 @@ public class CustomValueMap<DATA extends Enum<DATA> & ICustomValue> {
 			return;
 		}
 
-		Map<String, String> map = JsonUtil.getGeneralObject(val, TypeReferences.STRING_STRING_MAP);
+		Map<String, String> map = JsonUtil.getGeneralObj(val, TypeReferences.STRING_STRING_MAP);
 		map.forEach((key, data) -> {
 			DATA keyData = Enum.valueOf(aClass, key);
 			Object valData = keyData.parse(data);

@@ -68,7 +68,7 @@ public class ConditionManager {
 	 * @return
 	 */
 	private static IConditions convert(String str) {
-		List<ConditionConfig> configList = JsonUtil.getGeneralObjWithField(str.trim(), TYPE);
+		List<ConditionConfig> configList = JsonUtil.getGeneralObj(str.trim(), TYPE);
 		return ConditionManager.createCondition(configList);
 	}
 	/**

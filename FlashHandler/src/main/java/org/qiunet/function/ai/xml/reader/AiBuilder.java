@@ -130,7 +130,7 @@ public class AiBuilder<Owner extends MessageHandler<Owner>> {
 			case ACTION_TAG_NAME:
 				IBehaviorAction<Owner> action = BehaviorActionManager.instance.createAction(element.getAttribute("clazz"), conditions);
 				if (element.hasAttribute("params")) {
-					Map<String, String> params = JsonUtil.getGeneralObject(element.getAttribute("params"), TypeReferences.STRING_STRING_MAP);
+					Map<String, String> params = JsonUtil.getGeneralObj(element.getAttribute("params"), TypeReferences.STRING_STRING_MAP);
 					params.forEach((fieldName, val) -> {
 						Field field = ReflectUtil.findField(action.getClass(), fieldName);
 						if (field == null || ! field.isAnnotationPresent(BehaviorActionParam.class)) {

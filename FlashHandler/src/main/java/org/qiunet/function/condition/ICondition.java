@@ -45,7 +45,7 @@ public interface ICondition<Obj, Type extends Enum<Type> & IConditionType> exten
 	 * @return
 	 */
 	default ConditionConfig conditionConfig() {
-		ConditionConfig conditionConfig = new ConditionConfig(JsonUtil.toJsonObjectWithField(this));
+		ConditionConfig conditionConfig = new ConditionConfig(JsonUtil.toJsonObject(this));
 		conditionConfig.setType(getType().name());
 		return conditionConfig;
 	}

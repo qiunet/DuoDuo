@@ -3,6 +3,7 @@ package org.qiunet.function.targets;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.utils.args.ArgumentKey;
+import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /***
  * 任务的容器
@@ -21,7 +23,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	/**
 	 * 保存在player身上的key
 	 */
-	public static final ArgumentKey<TargetContainer> TARGET_CONTAINER_KEY = new ArgumentKey<>();
+	private static final ArgumentKey<TargetContainer<?>> TARGET_CONTAINER_KEY = new ArgumentKey<>();
 	/**
 	 * 所有需要监听的任务
 	 */
@@ -35,35 +37,29 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	 */
 	private final PlayerActor player;
 
+	public static <Type extends Enum<Type> & ITargetType> TargetContainer<Type> get(PlayerActor actor) {
+		return (TargetContainer<Type>) actor.computeIfAbsent(TARGET_CONTAINER_KEY, () -> new TargetContainer<>(actor));
+	}
+
 	/**
 	 * 构造一个Container
 	 * @param player
 	 */
-	public TargetContainer(PlayerActor player) {
-		player.setVal(TARGET_CONTAINER_KEY, this);
+	private TargetContainer(PlayerActor player) {
 		this.player = player;
 	}
 
 	/***
 	 * 创建任务的Targets. 并且开启监听
 	 *
-	 * @param targetSupply 任务目标提供接口
-	 * @param id 任务id
-	 */
-	public Targets createAndWatchTargets(ITargetSupply targetSupply, int id) {
-		return this.createAndWatchTargets(targetSupply.getTargetGetter(id), targetSupply.updateCallback(), id);
-	}
-	/***
-	 * 创建任务的Targets. 并且开启监听
-	 *
-	 * @param targetDefGetter 目标的配置列表getter
+	 * @param targetsDefGetter 目标的配置列表getter
 	 * @param updateCallback 更新回调
 	 * @param id
 	 */
-	public Targets createAndWatchTargets(ITargetDefGetter targetDefGetter, BiConsumer<Targets, Target> updateCallback, int id) {
+	public Targets createAndWatchTargets(ITargetsDefGetter targetsDefGetter, BiConsumer<Targets, Target> updateCallback, int id) {
 		lock.lock();
 		try {
-			Targets targets = Targets.valueOf(this, targetDefGetter, updateCallback, id);
+			Targets targets = Targets.valueOf(this, targetsDefGetter, updateCallback, id);
 			targets.forEachTarget(target -> this.watch(target, true));
 			return targets;
 		}finally {
@@ -74,17 +70,16 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	/**
 	 * 初始化时候, 从存储的数据库取出来的targets. 添加到容器里面.
 	 *
-	 * @param targetDefGetter 目标的配置列表getter
 	 * @param updateCallback 更新回调.
 	 * @param targets 任务集合
 	 */
-	public void addTargets(ITargetDefGetter targetDefGetter, BiConsumer<Targets, Target> updateCallback, Targets targets) {
+	public void addTargets(ITargetDefGetter getter, BiConsumer<Targets, Target> updateCallback, Targets targets) {
 		lock.lock();
 		try {
 			targets.updateCallback = updateCallback;
 			targets.container = this;
 			targets.forEachTarget(target -> {
-				target.targetDef = targetDefGetter.getTargetDef(target.getIndex());
+				target.targetDef = getter.getTargetDef(target.getTid());
 				target.targets = targets;
 			});
 
@@ -99,6 +94,14 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 		}finally {
 			lock.unlock();
 		}
+	}
+
+	/**
+	 * 获得玩家对象
+	 * @return actor
+	 */
+	public PlayerActor getPlayer() {
+		return player;
 	}
 
 	/**
@@ -154,5 +157,12 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 		}finally {
 			lock.unlock();
 		}
+	}
+
+	/**
+	 * 清理所有的任务
+	 */
+	public void clear() {
+		this.targetMap.clear();
 	}
 }

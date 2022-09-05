@@ -12,15 +12,18 @@ public class TargetDef implements ITargetDef {
 	private String targetParam;
 	private long value;
 
-	public static TargetDef valueOf(TargetType targetType, long value){
-		return valueOf(targetType, value, null);
+	private int id;
+
+	public static TargetDef valueOf(int id, TargetType targetType, long value){
+		return valueOf(id, targetType, value, null);
 	}
 
-	public static TargetDef valueOf(TargetType targetType, long value, String targetParam){
+	public static TargetDef valueOf(int id, TargetType targetType, long value, String targetParam){
 		TargetDef def = new TargetDef();
 		def.targetParam = targetParam;
 		def.targetType = targetType;
 		def.value = value;
+		def.id = id;
 		return def;
 	}
 
@@ -49,5 +52,10 @@ public class TargetDef implements ITargetDef {
 	@Override
 	public long getValue() {
 		return value;
+	}
+
+	@Override
+	public Integer getId() {
+		return id;
 	}
 }

@@ -58,7 +58,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 		return redisUtil.execCommands(jedis -> {
 			String json = jedis.hget(redisKey, subKey);
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
-			return JsonUtil.getGeneralObject(json, doClass);
+			return JsonUtil.getGeneralObj(json, doClass);
 		});
 	}
 	private List<Do> returnDoListFromRedis(String redisKey) {
@@ -68,7 +68,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 				return null;
 			}
 
-			return hvals.stream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
+			return hvals.stream().map(json -> JsonUtil.getGeneralObj(json, doClass)).collect(Collectors.toList());
 		});
 	}
 

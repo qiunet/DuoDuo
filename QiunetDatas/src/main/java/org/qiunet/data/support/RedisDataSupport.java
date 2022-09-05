@@ -45,7 +45,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 			}
 
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
-			return JsonUtil.getGeneralObject(ret, doClass);
+			return JsonUtil.getGeneralObj(ret, doClass);
 		});
 	}
 

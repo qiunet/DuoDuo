@@ -51,7 +51,7 @@ public class TransferJsonData implements IDataToString {
 		if (data == null) {
 			try {
 				Class<?> aClass = Class.forName(clazz);
-				data = JsonUtil.getGeneralObjWithField(jsonData, aClass);
+				data = JsonUtil.getGeneralObj(jsonData, aClass);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}

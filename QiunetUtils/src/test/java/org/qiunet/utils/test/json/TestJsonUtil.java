@@ -26,7 +26,7 @@ public class TestJsonUtil extends BaseTest{
 		String json = JsonUtil.toJsonString(map);
 		logger.info(json);
 
-		Map<String,Integer> ret = JsonUtil.getGeneralObject(json, new TypeReference<Map<String,Integer>>(){});
+		Map<String,Integer> ret = JsonUtil.getGeneralObj(json, new TypeReference<Map<String,Integer>>(){});
 		Assertions.assertEquals(111, ret.get("qiunet").intValue());
 	}
 	@Test
@@ -55,7 +55,7 @@ public class TestJsonUtil extends BaseTest{
 
 		String json = JsonUtil.toJsonString(map);
 		Assertions.assertEquals("{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
-		map = JsonUtil.getGeneralObject(json, new TypeReference<Map<Integer, Map<String, String>>>(){});
+		map = JsonUtil.getGeneralObj(json, new TypeReference<Map<Integer, Map<String, String>>>(){});
 		subMap = map.get(2);
 		Assertions.assertNotNull(subMap);
 		Assertions.assertEquals("bb", subMap.get("DEF"));
@@ -68,7 +68,7 @@ public class TestJsonUtil extends BaseTest{
 		map.put("name", "qiunet");
 		String jsonString = JsonUtil.toJsonString(map);
 
-		User user = JsonUtil.getGeneralObjWithField(jsonString, User.class);
+		User user = JsonUtil.getGeneralObj(jsonString, User.class);
 		Assertions.assertEquals(123456, user.getUserId());
 	}
 
@@ -76,7 +76,7 @@ public class TestJsonUtil extends BaseTest{
 	public void testField() throws NoSuchFieldException {
 		Field testField = TestJsonUtil.class.getDeclaredField("testField");
 		String value = "{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}";
-		Map<Integer, Map<String, String>>  map = (Map<Integer, Map<String, String>>) JsonUtil.getGeneralObject(value, testField.getType());
+		Map<Integer, Map<String, String>>  map = (Map<Integer, Map<String, String>>) JsonUtil.getGeneralObj(value, testField.getType());
 		Map<String, String> subMap = map.get(2);
 		Assertions.assertNotNull(subMap);
 		Assertions.assertEquals("bb", subMap.get("DEF"));

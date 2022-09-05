@@ -49,7 +49,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 		}
 
 
-		IChannelData channelData = JsonUtil.getGeneralObjWithField(data, aClass);
+		IChannelData channelData = JsonUtil.getGeneralObj(data, aClass);
 		final LazyLoader<ByteBuf> bufferLazyLoader = new LazyLoader<>(channelData::toByteBuf);
 		ChannelUtil.processHandler(context.channel(), handler, MessageContent.valueOf(new IProtocolHeader() {
 			@Override

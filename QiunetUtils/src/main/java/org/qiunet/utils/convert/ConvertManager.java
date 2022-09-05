@@ -14,6 +14,8 @@ import org.qiunet.utils.string.StringUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +40,7 @@ public enum ConvertManager implements IApplicationContextAware {
 		return instance;
 	}
 
-	private static final Map<Class<?>, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
+	private static final Map<Type, BaseObjConvert> convertMapping = Maps.newConcurrentMap();
 
 	@Override
 	public ScannerType scannerType() {
@@ -64,16 +66,15 @@ public enum ConvertManager implements IApplicationContextAware {
 		if (! inited.get()) {
 			throw new CustomException("ConvertManager not init");
 		}
-		Class clazz = field.getType();
-
-		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(clazz, clz -> {
-			for (BaseObjConvert<?> convert : converts) {
-				if (convert.canConvert(field)) {
-					return convert;
+		BaseObjConvert<?> objConvert = convertMapping.computeIfAbsent(field.getGenericType(), clz -> {
+				for (BaseObjConvert<?> convert : converts) {
+					if (convert.canConvert(field)) {
+						return convert;
+					}
 				}
-			}
-			return null;
-		});
+				return null;
+			});
+
 		if (objConvert != null) {
 			return objConvert.fromString(field, val);
 		}
@@ -84,9 +85,10 @@ public enum ConvertManager implements IApplicationContextAware {
 
 		// json 转换.
 		if ((val.startsWith("{") && val.endsWith("}")) || (val.startsWith("[") && val.endsWith("]"))) {
-			return JsonUtil.getGeneralObject(val, field.getGenericType());
+			return JsonUtil.getGeneralObj(val, field.getGenericType());
 		}
-		throw new CustomException("Can not convert class type for [{}] field[{}] value[{}]", clazz.getName(), field.getName(), val);
+
+		throw new CustomException("Can not convert class type for field[{}] value[{}]", field.getName(), val);
 	}
 
 	@Override
