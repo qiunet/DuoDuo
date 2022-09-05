@@ -25,7 +25,7 @@ public class TestServerInfo {
 		this.assert0(serverInfo0);
 
 		String json = serverInfo0.toString();
-		ServerInfo serverInfo1 = JsonUtil.getGeneralObject(json, ServerInfo.class);
+		ServerInfo serverInfo1 = JsonUtil.getGeneralObj(json, ServerInfo.class);
 		this.assert0(serverInfo1);
 	}
 

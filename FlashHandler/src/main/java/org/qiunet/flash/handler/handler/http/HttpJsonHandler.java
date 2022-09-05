@@ -33,6 +33,6 @@ public abstract class HttpJsonHandler<RequestData> extends BaseHandler<RequestDa
 	@Override
 	public RequestData parseRequestData(ByteBuffer buffer) {
 		String json = StandardCharsets.UTF_8.decode(buffer).toString();
-		return JsonUtil.getGeneralObjWithField(json, getRequestClass());
+		return JsonUtil.getGeneralObj(json, getRequestClass());
 	}
 }

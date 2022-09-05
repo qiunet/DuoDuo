@@ -104,7 +104,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			throw new CustomException("ServerId [{}] is not online!", serverId);
 		}
 
-		return JsonUtil.getGeneralObject(serverInfoStr, ServerInfo.class);
+		return JsonUtil.getGeneralObj(serverInfoStr, ServerInfo.class);
 	}
 
 	/**

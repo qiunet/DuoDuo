@@ -1,5 +1,6 @@
 package org.qiunet.cfg.annotation.support;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.annotation.CfgLoadOver;
@@ -19,6 +20,7 @@ import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +31,7 @@ import java.util.Set;
  */
 enum CfgScannerManager implements IApplicationContextAware {
 	instance;
-	private final Map<Class<? extends ICfg>, LoadOverMethod> loadOverMap = Maps.newHashMap();
+	private final List<LoadOverMethod> loadOverList = Lists.newArrayList();
 	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -59,8 +61,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 	private void scannerLoadOverMethod() {
 		Set<Method> methods = context.getMethodsAnnotatedWith(CfgLoadOver.class);
 		for (Method method : methods) {
-			CfgLoadOver annotation = method.getAnnotation(CfgLoadOver.class);
-			loadOverMap.put(annotation.value(), new LoadOverMethod(context.getInstanceOfClass(method.getDeclaringClass()), method));
+			loadOverList.add(new LoadOverMethod(context.getInstanceOfClass(method.getDeclaringClass()), method));
 		}
 	}
 
@@ -112,7 +113,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 
 	@EventListener(EventHandlerWeightType.LESS)
 	private void completeLoader(CfgLoadCompleteEvent data) {
-		loadOverMap.values().forEach(LoadOverMethod::call);
+		loadOverList.forEach(LoadOverMethod::call);
 	}
 
 	private static class LoadOverMethod {

@@ -160,7 +160,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @return
 	 */
 	public static <Obj extends IThreadSafe & IPlayer> Rewards<Obj> jsonToRewards(String json){
-		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObjWithField(json, REWARD_CONFIG_TYPE);
+		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObj(json, REWARD_CONFIG_TYPE);
 		List<BaseReward> collect = rewardConfigs.stream()
 				.map(config -> config.convertToRewardItem(BasicFunctionManager.instance::getResType))
 				.collect(Collectors.toList());

@@ -24,4 +24,10 @@ public interface ITargetDef {
 	 * @return
 	 */
 	long getValue();
+
+	/**
+	 * 获得任务的ID
+	 * @return
+	 */
+	Integer getId();
 }

@@ -15,10 +15,4 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CfgLoadOver {
-	/**
-	 * 需要重载的cfg class.
-	 * @return
-	 */
-	Class<? extends ICfg> value();
-}
+public @interface CfgLoadOver {}

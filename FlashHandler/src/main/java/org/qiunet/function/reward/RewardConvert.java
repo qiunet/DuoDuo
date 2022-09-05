@@ -21,7 +21,7 @@ public class RewardConvert extends BaseObjConvert<Rewards> {
 	public Rewards fromString(Field field, String str) {
 		List<RewardConfig> rewardConfigs = Collections.emptyList();
 		if (!StringUtil.isEmpty(str)) {
-			rewardConfigs = JsonUtil.getGeneralObjWithField(str, CONFIG_JSON_TYPE);
+			rewardConfigs = JsonUtil.getGeneralObj(str, CONFIG_JSON_TYPE);
 		}
 		return RewardManager.instance.createRewards(rewardConfigs);
 	}

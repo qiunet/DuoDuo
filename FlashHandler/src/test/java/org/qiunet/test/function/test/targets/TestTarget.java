@@ -3,10 +3,7 @@ package org.qiunet.test.function.test.targets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.function.targets.ITargetDefGetter;
-import org.qiunet.function.targets.TargetContainer;
-import org.qiunet.function.targets.TargetDefList;
-import org.qiunet.function.targets.Targets;
+import org.qiunet.function.targets.*;
 import org.qiunet.test.function.test.TestDSession;
 import org.qiunet.test.function.test.targets.event.KillBossEventData;
 import org.qiunet.test.function.test.targets.event.LevelUpEventData;
@@ -30,15 +27,15 @@ public class TestTarget {
 
 	@Test
 	public void test(){
-		ITargetDefGetter targetDefGetter = () ->
-			new TargetDefList(TargetDef.valueOf(TargetType.LEVEL, 10),
-				TargetDef.valueOf(TargetType.KILL_BOSS, 2, "111"));
+		TargetDefList targetDefGetter = new TargetDefList(TargetDef.valueOf(1, TargetType.LEVEL, 10),
+				TargetDef.valueOf(2, TargetType.KILL_BOSS, 2, "111"));
+
 		PlayerActor playerActor = new PlayerActor(new TestDSession());
 
-		TargetContainer<TargetType> targetContainer = new TargetContainer<>(playerActor);
+		TargetContainer<TargetType> targetContainer = TargetContainer.get(playerActor);
 		Targets targets = targetContainer.createAndWatchTargets(targetDefGetter,
 			(targets0, target) -> {
-				logger.info("任务ID:[{}],index:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getIndex(), target.getValue(), target.isFinished());
+				logger.info("任务组ID:[{}],tid:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getTid(), target.getValue(), target.isFinished());
 				if (targets0.isFinished()) {
 					logger.info("任务ID:[{}]已经完成", targets0.getId());
 				}
@@ -56,11 +53,11 @@ public class TestTarget {
 		String json = JsonUtil.toJsonString(targets);
 		logger.info("Targets Json: {}", json);
 
-		Targets targetsObj = JsonUtil.getGeneralObject(json, Targets.class);
+		Targets targetsObj = JsonUtil.getGeneralObj(json, Targets.class);
 		targetContainer.addTargets(targetDefGetter, (targets0, target) -> {
-			logger.info("反序列化后: 任务ID:[{}],index:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getIndex(), target.getValue(), target.isFinished());
+			logger.info("反序列化后: 任务组ID:[{}],tid:[{}] 有更新, 当前值:[{}], 目标是否完成:[{}]!", targets0.getId(),target.getTid(), target.getValue(), target.isFinished());
 			if (targets0.isFinished()) {
-				logger.info("反序列化后:  任务ID:[{}]已经完成", targets0.getId());
+				logger.info("反序列化后:  任务组ID:[{}]已经完成", targets0.getId());
 			}
 		}, targetsObj);
 	}

@@ -23,12 +23,24 @@ public abstract class BaseTargetHandler<Type extends Enum<Type> & ITargetType> {
 	 * @param consumer target
 	 */
 	protected void process(PlayerActor player, Consumer<Target> consumer) {
-		Argument<TargetContainer> argument = player.getArgument(TargetContainer.TARGET_CONTAINER_KEY);
-		TargetContainer<Type> targetContainer = argument.get();
+		this.process(player, consumer, null);
+	}
+
+	/**
+	 * 处理进度
+	 * @param player 玩家
+	 * @param consumer target
+	 * @param after 后执行
+	 */
+	protected void process(PlayerActor player, Consumer<Target> consumer, Runnable after) {
+		TargetContainer<Type> targetContainer = TargetContainer.get(player);
 		if (targetContainer == null) {
 			return;
 		}
 		targetContainer.forEachByType(getType(), consumer);
+		if (after != null) {
+			after.run();
+		}
 	}
 
 	/**

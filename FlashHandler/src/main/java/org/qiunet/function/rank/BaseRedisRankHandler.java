@@ -89,7 +89,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 				return null;
 			}
 			 String data = jedis.hget(redisDataKey, String.valueOf(id));
-			 RankData rankData = JsonUtil.getGeneralObjWithField(data, RankData.class);
+			 RankData rankData = JsonUtil.getGeneralObj(data, RankData.class);
 			 rankData.rank = rank.intValue() + 1;
 			 return rankData;
 		 });
@@ -105,7 +105,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 		List<String> strings = redisUtil().returnJedis().hmget(redisDataKey, range.toArray(new String[0]));
 		AtomicInteger rank = new AtomicInteger(startRank);
 		return strings.stream().map(str -> {
-			RankData rankData = JsonUtil.getGeneralObjWithField(str, RankData.class);
+			RankData rankData = JsonUtil.getGeneralObj(str, RankData.class);
 			rankData.rank = rank.incrementAndGet();
 			return rankData;
 		}).collect(Collectors.toList());

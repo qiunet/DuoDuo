@@ -24,7 +24,7 @@ public class ConsumesConvert extends BaseObjConvert<Consumes> {
 		if (StringUtil.isEmpty(str)) {
 			configList = Collections.emptyList();
 		}else {
-			configList = JsonUtil.getGeneralObjWithField(str, TYPE);
+			configList = JsonUtil.getGeneralObj(str, TYPE);
 		}
 		return ConsumesManager.instance.createConsumes(configList);
 	}
