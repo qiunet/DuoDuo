@@ -97,6 +97,23 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	}
 
 	/**
+	 * 中途添加一个任务到Targets
+	 *
+	 * @param targets 需要添加到的Targets
+	 * @param targetDef 添加的任务
+	 */
+	public void addTarget(Targets targets, ITargetDef targetDef) {
+		lock.lock();
+		try {
+			Target target = Target.valueOf(targets, targetDef);
+			targets.getTargets().add(target);
+			this.watch(target, true);
+		}finally {
+			lock.unlock();
+		}
+	}
+
+	/**
 	 * 获得玩家对象
 	 * @return actor
 	 */
