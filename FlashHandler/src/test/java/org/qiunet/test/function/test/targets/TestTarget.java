@@ -31,6 +31,7 @@ public class TestTarget {
 				TargetDef.valueOf(2, TargetType.KILL_BOSS, 2, "111"));
 
 		PlayerActor playerActor = new PlayerActor(new TestDSession());
+		playerActor.setMsgExecuteIndex("Test");
 
 		TargetContainer<TargetType> targetContainer = TargetContainer.get(playerActor);
 		Targets targets = targetContainer.createAndWatchTargets(targetDefGetter,
