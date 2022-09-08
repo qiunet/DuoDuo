@@ -7,13 +7,16 @@ import com.google.common.collect.Sets;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.data.ArgsData;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +39,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @param model 生成类型
 	 * @throws Exception -
 	 */
-	public static void generator(File directory, ProtoGeneratorModel model, GeneratorProtoFeature... features) throws Exception {
+	public static void generator(File directory, ProtoGeneratorModel model, ArgsData.Two<GeneratorProtoFeature, Object> ... features) throws Exception {
 		generator(directory, model, ProtobufVersion.V3, features);
 	}
 	/**
@@ -45,10 +48,12 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @param model 生成类型
 	 * @throws Exception -
 	 */
-	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version, GeneratorProtoFeature... features) throws Exception {
+	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version, ArgsData.Two<GeneratorProtoFeature, Object>... features) throws Exception {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
-		GeneratorProtoFeature.features.addAll(Lists.newArrayList(features));
+
+		Map<GeneratorProtoFeature, Object> collect = Arrays.stream(features).collect(Collectors.toMap(ArgsData.Two::a, ArgsData.Two::b));
+		GeneratorProtoFeature.features.putAll(collect);
 
 		GeneratorProtoParam protoParam = new GeneratorProtoParam(model, classes, version, directory);
 		model.generatorProto(protoParam);

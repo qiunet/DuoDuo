@@ -19,8 +19,8 @@ public enum ProtobufVersion {
 			if (needImportCommonProto) {
 				sb.append(IMPORT_COMMON_PROTO);
 			}
-			if (GeneratorProtoFeature.DEFAULT_PROTO_PACKAGE.prepare()) {
-				sb.append(PACKAGE_MESSAGE);
+			if (GeneratorProtoFeature.PROTO_PACKAGE.prepare()) {
+				sb.append(buildPackageMessage());
 			}
 			return sb;
 		}
@@ -67,8 +67,8 @@ public enum ProtobufVersion {
 			if (needImportCommonProto) {
 				sb.append(IMPORT_COMMON_PROTO);
 			}
-			if (GeneratorProtoFeature.DEFAULT_PROTO_PACKAGE.prepare()) {
-				sb.append(PACKAGE_MESSAGE);
+			if (GeneratorProtoFeature.PROTO_PACKAGE.prepare()) {
+				sb.append(buildPackageMessage());
 			}
 			return sb;
 		}
@@ -83,7 +83,10 @@ public enum ProtobufVersion {
 		}
 	},
 	;
-	public static final String PACKAGE_MESSAGE = "package proto;\n\n";
+	/**
+	 * 默认的package 名
+	 */
+	public static final String DEFAULT_PACKAGE_NAME = "proto";
 	/**
 	 * 共用class的proto文件名.
 	 */
@@ -106,6 +109,14 @@ public enum ProtobufVersion {
 		return new ProtoIDLGenerator(this);
 	}
 
+	/**
+	 * 构造package
+	 * @return
+	 */
+	protected String buildPackageMessage() {
+		String packageName = (String) GeneratorProtoFeature.features.getOrDefault(GeneratorProtoFeature.PROTO_PACKAGE, DEFAULT_PACKAGE_NAME);
+		return "package "+packageName+";\n\n";
+	}
 	/**
 	 * 字段修饰符.
 	 * @return

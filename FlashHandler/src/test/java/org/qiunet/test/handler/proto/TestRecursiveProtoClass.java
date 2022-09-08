@@ -46,7 +46,7 @@ public class TestRecursiveProtoClass {
 
 	@Test
 	public void testCreateProto(){
-		GeneratorProtoFeature.features.add(GeneratorProtoFeature.ENUM_TO_INT);
+		GeneratorProtoFeature.features.put(GeneratorProtoFeature.ENUM_TO_INT, null);
 
 		String idl = new ProtoIDLGenerator(ProtobufVersion.V2).getIDL(RecursiveClass2.class);
 

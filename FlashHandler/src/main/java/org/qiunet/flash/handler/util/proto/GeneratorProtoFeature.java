@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.util.proto;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  *
@@ -12,7 +12,7 @@ public enum GeneratorProtoFeature {
 	/**
 	 * 输出默认 package
 	 */
-	DEFAULT_PROTO_PACKAGE,
+	PROTO_PACKAGE,
 	/**
 	 * 输出协议枚举
 	 */
@@ -26,13 +26,13 @@ public enum GeneratorProtoFeature {
 	 */
 	OUTPUT_PROTOCOL_MAPPING_MD,
 	;
-	public static final Set<GeneratorProtoFeature> features = new HashSet<>();
+	public static final Map<GeneratorProtoFeature, Object> features = new HashMap<>();
 
 	/**
 	 * 是否包含该 特性
 	 * @return
 	 */
 	public boolean prepare() {
-		return features.contains(this);
+		return features.containsKey(this);
 	}
 }
