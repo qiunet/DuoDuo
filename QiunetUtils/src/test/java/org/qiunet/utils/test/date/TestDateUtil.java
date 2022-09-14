@@ -7,8 +7,11 @@ import org.qiunet.utils.test.base.BaseTest;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author qiunet
@@ -74,14 +77,27 @@ public class TestDateUtil extends BaseTest {
 	}
 
 	@Test
-	public void testSameDay() throws ParseException {
-		LocalDateTime date1 = DateUtil.stringToDate("2016-05-26 00:00:00");
-		LocalDateTime date2 = DateUtil.stringToDate("2016-05-26 07:00:00");
+	public void testSameDay() throws ParseException, InterruptedException {
+		LocalDateTime date1 = DateUtil.stringToDate("2016-05-25 23:59:00");
+		LocalDateTime date2 = DateUtil.stringToDate("2016-05-26 00:01:00");
 		LocalDateTime date3 = DateUtil.stringToDate("2016-05-26 17:00:00");
 
-		Assertions.assertTrue(DateUtil.isSameDay(date1, date2));
-		Assertions.assertTrue(DateUtil.isSameDay(date1, date3));
+		Assertions.assertFalse(DateUtil.isSameDay(date1, date2));
+		Assertions.assertTrue(DateUtil.isSameDay(date2, date3));
+
+		long milli1 = date1.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		long milli2 = date2.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+		Assertions.assertFalse(DateUtil.isSameDay(milli1, milli2));
 	}
+
+	@Test
+	public void testOffset() {
+		long millis1 = DateUtil.currentTimeMillis();
+		DateUtil.setTimeOffset(10, TimeUnit.MINUTES);
+		long millis2 = DateUtil.currentTimeMillis();
+		Assertions.assertTrue(millis2 - millis1 >= TimeUnit.MINUTES.toMillis(10));
+	}
+
 
 	@Test
 	public void testDateTime() {

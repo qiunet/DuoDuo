@@ -27,7 +27,7 @@ public class TestTarget {
 
 	@Test
 	public void test(){
-		TargetDefList targetDefGetter = new TargetDefList(TargetDef.valueOf(1, TargetType.LEVEL, 10),
+		var targetDefGetter = new TargetDefList<>(TargetDef.valueOf(1, TargetType.LEVEL, 10),
 				TargetDef.valueOf(2, TargetType.KILL_BOSS, 2, "111"));
 
 		PlayerActor playerActor = new PlayerActor(new TestDSession());
@@ -51,7 +51,7 @@ public class TestTarget {
 
 
 		// 测试从数据库加载json后. 任务的情况.
-		String json = JsonUtil.toJsonString(targets);
+		var json = JsonUtil.toJsonString(targets);
 		logger.info("Targets Json: {}", json);
 
 		Targets targetsObj = JsonUtil.getGeneralObj(json, Targets.class);

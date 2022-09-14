@@ -13,7 +13,7 @@ public interface ArgsData {
 	}
 
 	static <A, B> ArgsData.Two<A, B> of(A a, B b) {
-		return new Two<A, B>() {
+		return new Two<>() {
 			@Override
 			public A a() {
 				return a;
@@ -27,7 +27,7 @@ public interface ArgsData {
 	}
 
 	static <A, B, C> ArgsData.Three<A, B, C> of(A a, B b, C c) {
-		return new Three<A, B, C>() {
+		return new Three<>() {
 			@Override
 			public A a() {
 				return a;
@@ -46,7 +46,7 @@ public interface ArgsData {
 	}
 
 	static <A, B, C, D> ArgsData.Four<A, B, C, D> of(A a, B b, C c, D d) {
-		return new Four<A, B, C, D>() {
+		return new Four<>() {
 			@Override
 			public A a() {
 				return a;
@@ -70,7 +70,7 @@ public interface ArgsData {
 	}
 
 	static <A, B, C, D, E> ArgsData.Five<A, B, C, D, E> of(A a, B b, C c, D d, E e) {
-		return new Five<A, B, C, D, E>() {
+		return new Five<>() {
 			@Override
 			public A a() {
 				return a;
@@ -102,39 +102,19 @@ public interface ArgsData {
 		A a();
 	}
 
-	interface Two<A, B> extends ArgsData {
-		A a();
-
+	interface Two<A, B> extends One<A> {
 		B b();
 	}
 
-	interface Three<A, B, C> extends ArgsData {
-		A a();
-
-		B b();
-
+	interface Three<A, B, C> extends Two<A, B> {
 		C c();
 	}
 
-	interface Four<A, B, C, D> extends ArgsData {
-		A a();
-
-		B b();
-
-		C c();
-
+	interface Four<A, B, C, D> extends Three<A, B, C> {
 		D d();
 	}
 
-	interface Five<A, B, C, D, E> extends ArgsData {
-		A a();
-
-		B b();
-
-		C c();
-
-		D d();
-
+	interface Five<A, B, C, D, E> extends Four<A, B, C, D> {
 		E e();
 	}
 }

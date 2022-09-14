@@ -22,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 public final class DateUtil {
 	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
 
+	private static final Clock SYSTEM_CLOCK =  Clock.systemDefaultZone();
+	private static Clock CLOCK =  SYSTEM_CLOCK;
 	/**
 	 * 默认的时间格式(日期 时间)
 	 */
@@ -51,12 +53,6 @@ public final class DateUtil {
 	 * 一周的毫秒数
 	 */
 	public static final long WEEK_MS = WEEK_SECONDS * 1000;
-
-	/**
-	 * 服务器时间偏移量
-	 */
-	private static long offsetMillis; //86400000
-
 	/***
 	 * 当前的秒
 	 * @return
@@ -71,7 +67,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static Instant currentInstant() {
-		return Instant.ofEpochMilli(currentTimeMillis());
+		return CLOCK.instant();
 	}
 	/**
 	 * 当前时间
@@ -104,7 +100,7 @@ public final class DateUtil {
 	 * @param offsetValue
 	 */
 	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
-		DateUtil.offsetMillis = unit.toMillis(offsetValue);
+		CLOCK = Clock.offset(SYSTEM_CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
 	}
 
 	private DateUtil() {
@@ -188,6 +184,15 @@ public final class DateUtil {
 	 * 日期转字符串 指定格式
 	 *
 	 * @param date
+	 * @return
+	 */
+	public static String dateToString(Date date) {
+		return dateToString(date, DEFAULT_DATE_TIME_FORMAT);
+	}
+	/**
+	 * 日期转字符串 指定格式
+	 *
+	 * @param date
 	 * @param format
 	 * @return
 	 */
@@ -257,7 +262,7 @@ public final class DateUtil {
 	 * @return 获取当前纪元毫秒 1970-01-01T00:00:00Z.
 	 */
 	public static long currentTimeMillis() {
-		return Clock.systemDefaultZone().instant().toEpochMilli() + offsetMillis;
+		return CLOCK.millis();
 	}
 
 	/**@
@@ -268,8 +273,9 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static boolean isSameDay(LocalDateTime time1, LocalDateTime time2) {
-		return time1.getYear() == time2.getYear() &&
-				time1.getDayOfYear() == time2.getDayOfYear();
+		LocalDate localDate1 = time1.atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate localDate2 = time2.atZone(ZoneId.systemDefault()).toLocalDate();
+		return localDate1.isEqual(localDate2);
 	}
 	/**@
 	 * 判断两个时间是否在同一天
@@ -279,7 +285,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static boolean isSameDay(long time1, long time2) {
-		return Duration.ofMillis(time1).toDays() - Duration.ofMillis(time2).toDays() == 0;
+		return isSameDay(getLocalDateTime(time1), getLocalDateTime(time2));
 	}
 
 	/**
