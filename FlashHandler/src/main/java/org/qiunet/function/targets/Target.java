@@ -66,7 +66,8 @@ public class Target {
 	 * @param count 数量
 	 */
 	public synchronized void alterToCount(int count) {
-		Preconditions.checkState(count > 0);
+		// = 0 可能为gm重置任务
+		Preconditions.checkState(count >= 0);
 		if (isFinished()) {
 			return;
 		}
