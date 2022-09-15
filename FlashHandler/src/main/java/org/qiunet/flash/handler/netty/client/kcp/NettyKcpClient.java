@@ -78,7 +78,7 @@ public class NettyKcpClient {
 			f.channel().attr(ServerConstants.SESSION_KEY).set(kcpSession);
 			return kcpSession;
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO.error("", e);
 		}
 		return null;
 	}

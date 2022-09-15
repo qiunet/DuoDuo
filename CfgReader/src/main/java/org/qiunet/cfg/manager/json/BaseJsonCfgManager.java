@@ -9,6 +9,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.file.DPath;
 import org.qiunet.utils.file.FileUtil;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 
 import java.io.File;
@@ -102,7 +103,7 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 		try {
 			cfg = cfgClass.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO_CFG_READER.error("generalCfg", e);
 		}
 		final Cfg finalCfg = cfg;
 		Preconditions.checkNotNull(cfg);

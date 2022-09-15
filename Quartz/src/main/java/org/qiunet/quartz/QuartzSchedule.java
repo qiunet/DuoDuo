@@ -3,6 +3,7 @@ package org.qiunet.quartz;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -57,7 +58,7 @@ public enum QuartzSchedule {
 			try {
 				this.expression = new CronExpression(job.cronExpression());
 			} catch (ParseException e) {
-				e.printStackTrace();
+				LoggerType.DUODUO.error("", e);
 			}
 			this.doNextJob();
 		}

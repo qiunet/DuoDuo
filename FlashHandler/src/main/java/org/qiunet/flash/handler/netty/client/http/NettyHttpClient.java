@@ -125,7 +125,7 @@ public final class NettyHttpClient {
 		try {
 			return promise.get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO.error("", e);
 		}
 		return null;
 	}

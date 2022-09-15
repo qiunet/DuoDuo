@@ -103,12 +103,12 @@ class DbLoader {
 					try {
 						DriverManager.deregisterDriver(driver);
 					} catch (SQLException e) {
-						e.printStackTrace();
+						LoggerType.DUODUO_SQL.error("", e);
 					}
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			LoggerType.DUODUO_SQL.error("", e);
 		}
 		instance = this;
 	}
@@ -177,7 +177,7 @@ class DbLoader {
 			try {
 				dataSource.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				LoggerType.DUODUO_SQL.error("", e);
 			}
 		});
 

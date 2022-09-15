@@ -49,7 +49,7 @@ enum ConfigContext implements IApplicationContextAware {
 		try {
 			field_holder_field = ConfigContext.class.getDeclaredField("field_holder");
 		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO.error("", e);
 		}
 	}
 	@Override

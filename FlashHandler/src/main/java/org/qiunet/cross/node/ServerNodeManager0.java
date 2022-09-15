@@ -150,7 +150,8 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 				return new ServerNode(redisLock, serverId, host, port);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO_FLASH_HANDLER.error("ServerNode Connect Exception:", e);
+			redisLock.unlock();
 		}
 		throw new CustomException("Create server node [{}] fail", serverId);
 	}

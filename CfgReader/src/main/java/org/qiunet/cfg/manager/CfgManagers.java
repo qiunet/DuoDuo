@@ -137,7 +137,7 @@ public enum CfgManagers {
 		try {
 			latch.await();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			LoggerType.DUODUO_CFG_READER.error("", e);
 		}
 		if (reference.get() != null) {
 			throw reference.get();

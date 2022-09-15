@@ -9,6 +9,7 @@ import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -112,7 +113,7 @@ public class ConditionManager {
 						 	Preconditions.checkNotNull(conditionMap.get(cfg.getType()), "ConditionType %s is not define!", cfg.getType());
 							 iCondition = conditionMap.get(cfg.getType().toUpperCase()).newInstance();
 						 } catch (InstantiationException | IllegalAccessException e) {
-							 e.printStackTrace();
+							 LoggerType.DUODUO_FLASH_HANDLER.error("", e);
 						 }
 						 Field[] declaredFields = iCondition.getClass().getDeclaredFields();
 						 for (Field field : declaredFields) {
