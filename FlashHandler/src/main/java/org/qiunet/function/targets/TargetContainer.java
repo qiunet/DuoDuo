@@ -102,12 +102,13 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	 * @param targets 需要添加到的Targets
 	 * @param targetDef 添加的任务
 	 */
-	public void addTarget(Targets targets, ITargetDef targetDef) {
+	public Target addTarget(Targets targets, ITargetDef targetDef) {
 		lock.lock();
 		try {
 			Target target = Target.valueOf(targets, targetDef);
 			targets.getTargets().add(target);
 			this.watch(target, true);
+			return target;
 		}finally {
 			lock.unlock();
 		}

@@ -95,6 +95,10 @@ public class Target {
 		return targetDef;
 	}
 
+	public void setTid(int tid) {
+		this.tid = tid;
+	}
+
 	public int getTid() {
 		return tid;
 	}
