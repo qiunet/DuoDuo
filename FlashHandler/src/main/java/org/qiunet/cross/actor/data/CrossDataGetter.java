@@ -35,6 +35,13 @@ public final class CrossDataGetter<Data extends IUserTransferData> {
 	}
 
 	/**
+	 * 是否有数据
+	 * @return
+	 */
+	public boolean isPresent() {
+		return loader.isNotNull();
+	}
+	/**
 	 * 获得对应的对象.
 	 * @return
 	 */

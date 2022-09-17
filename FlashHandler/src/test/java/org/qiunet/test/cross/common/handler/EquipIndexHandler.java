@@ -31,6 +31,9 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 	@Override
 	public void crossHandler(CrossPlayerActor actor, EquipIndexRequest equipIndexRequest) {
 		TestCrossDataUser crossData = actor.getCrossData(PlayerCrossData.TEST_CROSS_DATA);
+		crossData.setPlayerName("qiunet-change");
+		actor.updateCrossData(PlayerCrossData.TEST_CROSS_DATA);
+
 		logger.info("Cross服: 第二次EquipIndexRequest: 取到CrossData: PlayerId: {} playerName: {}", crossData.getUid(), crossData.getPlayerName());
 		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"));
 	}

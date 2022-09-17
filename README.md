@@ -2,9 +2,10 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.qiunet/duoduo-all?logo=apache-maven&logoColor=white)](https://search.maven.org/artifact/io.github.qiunet/duoduo-all)
 [![Java support](https://img.shields.io/badge/Java-17+-green?logo=java&logoColor=white)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-apache--2.0-green)](https://www.apache.org/licenses/LICENSE-2.0.html)
+[![GitHub release](https://img.shields.io/github/release/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/releases)
+[![GitHub Contributors](https://img.shields.io/github/contributors/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/graphs/contributors)
 
-[//]: # ([![GitHub Contributors]&#40;https://img.shields.io/github/contributors/qiunet/DuoDuo&#41;]&#40;https://github.com/qiunet/DuoDuo/graphs/contributors&#41;)
-
+## 目的初衷
     自己根据过往开发的经验. 自己抽出来的一套公用代码.
     代码规避了很多可能在开发出现中的坑点. 然后尽量弱化了配置需求. 
     会在使用的过程慢慢完善成为一套可以做游戏和App开发的工具模块汇总.
