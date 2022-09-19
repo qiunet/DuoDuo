@@ -3,11 +3,15 @@ package org.qiunet.flash.handler.netty.server.http;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.util.NettyUtil;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
  * 17/11/11
  */
 public class NettyHttpServer implements INettyServer {
+	public static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-http-server-boss-event-loop-");
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelFuture closeFuture;
 	private final HttpBootstrapParams params;
@@ -32,9 +37,9 @@ public class NettyHttpServer implements INettyServer {
 		try {
 
 			ServerBootstrap bootstrap = new ServerBootstrap();
-			bootstrap.group(ServerConstants.BOSS, ServerConstants.WORKER);
+			bootstrap.group(BOSS, ServerConstants.WORKER);
 
-			bootstrap.channel(NioServerSocketChannel.class);
+			bootstrap.channel(NettyUtil.serverSocketChannelClass());
 			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
 			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
@@ -47,6 +52,7 @@ public class NettyHttpServer implements INettyServer {
 			System.exit(1);
 		}finally {
 			logger.error("[NettyHttpServer] {} is shutdown! ", serverName());
+			BOSS.shutdownGracefully();
 		}
 	}
 

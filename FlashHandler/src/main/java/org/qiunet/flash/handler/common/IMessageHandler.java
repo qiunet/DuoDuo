@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common;
 
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.concurrent.TimeUnit;
 
@@ -43,9 +44,9 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	default DFuture<Void> scheduleMessage(IMessage<H> msg, long executeMillis){
 		long now = DateUtil.currentTimeMillis();
 		if (executeMillis < now) {
-			throw new IllegalStateException("executeMillis ["+executeMillis+"] is less than current time ["+now+"]");
+			LoggerType.DUODUO_FLASH_HANDLER.warn("executeMillis ["+executeMillis+"] is less than current time ["+now+"]");
 		}
-		return this.scheduleMessage(msg, (executeMillis - now), TimeUnit.MILLISECONDS);
+		return this.scheduleMessage(msg, Math.max(1, executeMillis - now), TimeUnit.MILLISECONDS);
 	}
 	/**
 	 *指定一定的延迟时间后, 执行该消息

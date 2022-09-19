@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.constants;
 
 import com.google.common.collect.Lists;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
@@ -13,9 +12,9 @@ import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
+import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.profile.reference.ReferenceData;
 import org.qiunet.utils.args.ArgumentKey;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
@@ -29,13 +28,10 @@ import java.util.concurrent.atomic.AtomicLong;
  * 2019-03-23 21:33
  */
 public final class ServerConstants {
-	public static final EventLoopGroup BOSS = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-server-boss-event-loop-"));
-	public static final EventLoopGroup WORKER = new NioEventLoopGroup(new DefaultThreadFactory("netty-server-worker-event-loop-"));
-
 	public static final ReferenceData<String> RequestReferenceData = new ReferenceData<>(LoggerType.DUODUO_FLASH_HANDLER.isInfoEnabled());
+	public static final EventLoopGroup WORKER = NettyUtil.newEventLoopGroup(0, "netty-server-worker-event-loop-");
 
 	private ServerConstants(){}
-
 	/**
 	 * 感兴趣的消息列表
 	 */

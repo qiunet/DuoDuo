@@ -2,6 +2,8 @@ package org.qiunet.flash.handler.netty.client.tcp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -16,6 +18,7 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.coder.TcpSocketDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -24,7 +27,7 @@ import org.qiunet.utils.logger.LoggerType;
  * 17/11/25
  */
 public class NettyTcpClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(8, new DefaultThreadFactory("netty-tcp-client-event-loop-"));
+	private static final EventLoopGroup group = NettyUtil.newEventLoopGroup(8, "netty-tcp-client-event-loop-");
 	private final IPersistConnResponseTrigger trigger;
 	private final TcpClientParams params;
 	private final Bootstrap bootstrap;
@@ -34,10 +37,10 @@ public class NettyTcpClient {
 	 */
 	private NettyTcpClient(TcpClientParams params, IPersistConnResponseTrigger trigger) {
 		this.bootstrap = new Bootstrap();
-
+		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
 		this.bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		this.bootstrap.handler(new NettyClientInitializer());
-		this.bootstrap.channel(NioSocketChannel.class);
+		this.bootstrap.channel(socketChannelClz);
 		this.bootstrap.group(group);
 		this.trigger = trigger;
 		this.params = params;

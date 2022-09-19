@@ -3,11 +3,15 @@ package org.qiunet.flash.handler.netty.server.tcp;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
+import org.qiunet.flash.handler.util.NettyUtil;
+import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
  * 17/8/13
  */
 public final class NettyTcpServer implements INettyServer {
+	public static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-tcp-server-boss-event-loop-");
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private final TcpBootstrapParams params;
@@ -33,9 +38,9 @@ public final class NettyTcpServer implements INettyServer {
 	public void run() {
 		try {
 			ServerBootstrap bootstrap = new ServerBootstrap();
-			bootstrap.group(ServerConstants.BOSS, ServerConstants.WORKER);
+			bootstrap.group(BOSS, ServerConstants.WORKER);
 
-			bootstrap.channel(NioServerSocketChannel.class);
+			bootstrap.channel(NettyUtil.serverSocketChannelClass());
 			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
 			bootstrap.childHandler(new NettyTcpServerInitializer(params));
 
@@ -51,6 +56,7 @@ public final class NettyTcpServer implements INettyServer {
 			System.exit(1);
 		}finally {
 			logger.error("[NettyTcpServer] {} is shutdown! ", serverName());
+			BOSS.shutdownGracefully();
 		}
 	}
 
