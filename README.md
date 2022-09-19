@@ -78,11 +78,6 @@
 * Mysql(MariaDB) Redis 两个必须都有.
 * 推荐使用 IntelliJ IDEA(Eclipse 对module的使用感觉不是很好).
 
-## install
-> 根目录执行 `mvn install -DskipTests` <br />
-> 如果本地有测试环境. 可以不加: ` -DskipTests` <br />
-可以直接打包到本地. 然后在maven引用.
-
 ## 引用
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
