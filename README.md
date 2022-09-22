@@ -30,8 +30,12 @@
 * DataSupport 操作数据的类, 会自动搞定异步更新等问题
 * Service    处理业务的一些公用方法
 * Handler   处理请求的逻辑类. 一个请求一个handler
-* TestCase  对应handler的测试类 
-
+* BehaviorBuilder 一个模块的行为组织
+* Action  测试行为动作 
+* Cfg     配置文件
+* Req     Request 请求
+* Rsp     Rsponse 响应
+* Push    推送
 ## 模块简介
 
 | 模块名                                 | 简介                                                     |
