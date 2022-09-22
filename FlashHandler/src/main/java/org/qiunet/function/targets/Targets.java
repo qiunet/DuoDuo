@@ -77,6 +77,19 @@ public class Targets {
 	}
 
 	/**
+	 * 获得某个ID的target
+	 * @return
+	 */
+	public Target getTarget(int tid) {
+		for (Target target : targets) {
+			if (target.getTid() == tid) {
+				return target;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * 获得container
 	 * @return
 	 */
