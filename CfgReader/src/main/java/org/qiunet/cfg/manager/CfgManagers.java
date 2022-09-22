@@ -99,48 +99,13 @@ public enum CfgManagers {
 	 * @return 返回加载失败的文件名称
 	 */
 	private synchronized void loadDataSetting(List<ICfgManager<?, ?>> gameSettingList) {
-		int size = gameSettingList.size();
-		CountDownLatch latch = new CountDownLatch(size);
-		AtomicReference<CustomException> reference = new AtomicReference<>();
 		for (ICfgManager<?, ?> cfgManager : gameSettingList) {
-			if (cfgManager.order() > 0) {
-				try {
-					cfgManager.loadCfg();
-				}catch (Exception e) {
-					throw new CustomException(e, "读取配置文件 [{}]({}) 失败!", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
-				}
-				logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
-				latch.countDown();
-				continue;
+			try {
+				cfgManager.loadCfg();
+			}catch (Exception e) {
+				throw new CustomException(e, "读取配置文件 [{}]({}) 失败!", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
 			}
-
-			DFuture<Void> dFuture = TimerManager.executorNow(() -> {
-					cfgManager.loadCfg();
-					return null;
-			});
-
-			dFuture.whenComplete((res, ex) -> {
-				if (ex != null) {
-					reference.compareAndSet(null, new CustomException(ex, "读取配置文件[{}]失败!", cfgManager.getLoadFileName()));
-
-					for (long i = 0; i < latch.getCount(); i++) {
-						latch.countDown();
-					}
-					return;
-				}
-
-				logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
-				latch.countDown();
-			});
-		}
-
-		try {
-			latch.await();
-		} catch (InterruptedException e) {
-			LoggerType.DUODUO_CFG_READER.error("", e);
-		}
-		if (reference.get() != null) {
-			throw reference.get();
+			logger.info("Load Config [{}]({})", cfgManager.getCfgClass().getSimpleName(), cfgManager.getLoadFileName());
 		}
 	}
 }
