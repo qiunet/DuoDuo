@@ -23,6 +23,18 @@
 					<skip>true</skip>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>org.qiunet.utils.test.convert.TestConvert</exclude>
+						<exclude>org.qiunet.utils.test.scanner.TestClassScanner</exclude>
+						<exclude>org.qiunet.utils.test.listener.TestListener</exclude>
+						<exclude>org.qiunet.utils.test.fakeenum.TestFakeEnum</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
     <developers>

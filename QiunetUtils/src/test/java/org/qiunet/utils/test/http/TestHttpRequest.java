@@ -1,6 +1,7 @@
 package org.qiunet.utils.test.http;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.test.base.BaseTest;
@@ -16,6 +17,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class TestHttpRequest extends BaseTest{
 	@Test
+	@Disabled("Do it manual!")
 	public void testHttpsRequest() throws Exception {
 		String url = "https://baidu.com";
 		Map<String,String> params = new HashMap<>();
@@ -28,6 +30,7 @@ public class TestHttpRequest extends BaseTest{
 	}
 
 	@Test
+	@Disabled("Do it manual!")
 	public void testAsyncHttpsRequest() throws Exception {
 		String url = "https://www.qq.com";
 		Map<String,String> params = new HashMap<>();
@@ -47,6 +50,7 @@ public class TestHttpRequest extends BaseTest{
 	}
 
 	@Test
+	@Disabled("Do it manual!")
 	public void testHttpRequest() throws Exception {
 		String url = "http://www.gameley.com";
 		String ret = HttpRequest.get(url).executor();

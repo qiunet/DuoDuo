@@ -16,7 +16,16 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<skipTests>true</skipTests>
+					<excludes>
+						<exclude>org/qiunet/test/handler/**/*</exclude>
+						<exclude>org/qiunet/test/cross/**/*</exclude>
+						<exclude>org/qiunet/test/function/test/ai/**/*</exclude>
+						<exclude>org/qiunet/test/function/test/attr/*</exclude>
+						<exclude>org/qiunet/test/function/test/badword/*</exclude>
+						<exclude>org/qiunet/test/function/test/formula/*</exclude>
+						<exclude>org/qiunet/test/function/test/rank/*</exclude>
+						<exclude>org/qiunet/test/function/test/targets/*</exclude>
+					</excludes>
 				</configuration>
 			</plugin>
 			<plugin>

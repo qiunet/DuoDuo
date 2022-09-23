@@ -1,4 +1,4 @@
-package org.qiunet.test.cross.server;
+package org.qiunet.test.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

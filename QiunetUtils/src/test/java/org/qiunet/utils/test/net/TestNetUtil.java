@@ -1,6 +1,7 @@
 package org.qiunet.utils.test.net;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.test.base.BaseTest;
@@ -83,8 +84,8 @@ public class TestNetUtil  extends BaseTest {
 			logger.info("Ip: "+ip);
 		}
 	}
-
 	@Test
+	@Disabled("Do it manual!")
 	public void testGetPublicIp4() {
 		System.out.println(NetUtil.getPublicIp4());
 	}
