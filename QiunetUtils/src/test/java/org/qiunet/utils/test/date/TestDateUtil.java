@@ -124,7 +124,7 @@ public class TestDateUtil extends BaseTest {
 		long nowMilliByTime = DateUtil.currentTimeMillis();
 //		System.out.println("当前时间戳:\t" + nowMilliByTime);
 
-		LocalDateTime localDateTime = DateUtil.getLocalDateTime(nowMilliByTime);
+		LocalDateTime localDateTime = DateUtil.getLocalDateTime(nowMilliByTime, ZoneOffset.ofHours(8));
 		LocalDateTime localDateTimeUTC = DateUtil.getLocalDateTime(nowMilliByTime, ZoneOffset.UTC);
 
 		String dateStr1 = DateUtil.dateToString(localDateTime);
