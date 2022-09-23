@@ -24,4 +24,8 @@ public class DefaultRobotInfo implements IRobotInitInfo{
 	public String getSid() {
 		return sid;
 	}
+
+	public void setSid(String sid) {
+		this.sid = sid;
+	}
 }
