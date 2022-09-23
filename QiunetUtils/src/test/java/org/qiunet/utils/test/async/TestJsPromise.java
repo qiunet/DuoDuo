@@ -1,6 +1,7 @@
 package org.qiunet.utils.test.async;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.async.promise.JsPromise;
 
@@ -14,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TestJsPromise {
 
 	@Test
+	@Disabled(value = "Do it manual!")
 	public void thenAccept() {
 		AtomicReference<String> result = new AtomicReference<>();
 		new JsPromise<>(() -> "world")
@@ -24,6 +26,7 @@ public class TestJsPromise {
 
 
 	@Test
+	@Disabled(value = "Do it manual!")
 	public void thenException() {
 		AtomicReference<Throwable> result = new AtomicReference<>();
 		new JsPromise<>(() -> "123")
@@ -35,6 +38,7 @@ public class TestJsPromise {
 	}
 
 	@Test
+	@Disabled(value = "Do it manual!")
 	public void thenExceptionally() {
 		AtomicReference<Integer> result = new AtomicReference<>();
 		new JsPromise<>(() -> "123")
