@@ -16,8 +16,7 @@ public class TestCmdUtil extends BaseTest{
 	@Test
 	@EnabledOnOs({OS.LINUX, OS.MAC})
 	public void testExecShell(){
-		String ret = CmdUtil.exec("ls", "/Users");
-		logger.info(ret);
+		String ret = CmdUtil.exec("ls", "/");
 		Assertions.assertNotNull(ret);
 	}
 }
