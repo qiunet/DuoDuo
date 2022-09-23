@@ -1,4 +1,5 @@
 # DuoDuo
+[![Java CI with Maven](https://github.com/qiunet/DuoDuo/actions/workflows/maven.yml/badge.svg)](https://github.com/qiunet/DuoDuo/actions/workflows/maven.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.qiunet/duoduo-all?logo=apache-maven&logoColor=white)](https://search.maven.org/artifact/io.github.qiunet/duoduo-all)
 [![Java support](https://img.shields.io/badge/Java-17+-green?logo=java&logoColor=white)](https://openjdk.java.net/)
 [![License](https://img.shields.io/badge/license-apache--2.0-green)](https://www.apache.org/licenses/LICENSE-2.0.html)
