@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -36,11 +37,12 @@ public class ConfigFileUtil {
 	 * @return
 	 */
 	public static Properties loaderProperties(File propertiesFile) {
+		LoggerType.DUODUO.info("Load config file from {}", propertiesFile.getAbsolutePath());
 		Preconditions.checkNotNull(propertiesFile);
 		Preconditions.checkArgument(propertiesFile.getName().endsWith("properties"), "file must be a properties file");
 
 		Properties tempProperties = new Properties();
-		try (InputStream fis = new FileInputStream(propertiesFile);
+		try (InputStream fis = Files.newInputStream(propertiesFile.toPath());
 			 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8)){
 			tempProperties.load(isr);
 		} catch (Exception e) {
@@ -55,6 +57,9 @@ public class ConfigFileUtil {
 	 * @return
 	 */
 	public static Config loadConf(String fileName) {
+		URL resource = Thread.currentThread().getContextClassLoader().getResource(fileName);
+		assert resource != null;
+		LoggerType.DUODUO.info("Load config from {}", resource.getFile());
 		Config config = ConfigFactory.load(fileName);
 		config.resolve();
 		return config;
