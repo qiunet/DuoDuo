@@ -210,10 +210,26 @@ public enum UserOnlineManager {
 	public void foreach(Function<AbstractUserActor, ForEachResult> consume) {
 		this.foreach(consume, null);
 	}
+
+	/**
+	 * 遍历PlayerActor
+	 * @param consume
+	 */
+	public void foreachPlayerActor(Function<PlayerActor, ForEachResult> consume) {
+		this.foreach(actor -> consume.apply((PlayerActor) actor), AbstractUserActor::isPlayerActor);
+	}
+	/**
+	 * 遍历CrossPlayerActor
+	 * @param consume
+	 */
+	public void foreachCrossPlayer(Function<CrossPlayerActor, ForEachResult> consume) {
+		this.foreach(actor -> consume.apply((CrossPlayerActor) actor), AbstractUserActor::isCrossPlayer);
+	}
 	/**
 	 * 遍历在线玩家.
 	 * @param consume
 	 */
+
 	public void foreach(Function<AbstractUserActor, ForEachResult> consume, Predicate<AbstractUserActor> filter) {
 		for (AbstractUserActor actor : onlinePlayers.values()) {
 			if (filter != null && ! filter.test(actor)) {
