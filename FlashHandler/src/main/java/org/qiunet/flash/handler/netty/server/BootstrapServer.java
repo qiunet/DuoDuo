@@ -243,6 +243,7 @@ public class BootstrapServer {
 				if (actor.isPlayerActor()) {
 					actor.sendMessage(PlayerReLoginPush.valueOf());
 				}else if (actor.isCrossPlayer()) {
+					// 担心有的房间很长时间. 如果客户端有办法. 就退出. 没有. 该服务器也不再分配出去.
 					actor.sendMessage(CrossPlayerLogoutPush.instance);
 				}
 				return ForEachResult.CONTINUE;
