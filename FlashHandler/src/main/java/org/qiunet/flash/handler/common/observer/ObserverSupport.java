@@ -51,7 +51,7 @@ public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	 */
 	private <O extends IObserver> Observer<O> attach(Class<O> clazz, O o, boolean once) {
 		ObserverList<O> observers = this.computeIfAbsent(clazz);
-		Observer<O> observer = new Observer<>(this, o, versions.getAndIncrement(), once);
+		Observer<O> observer = new Observer<>(clazz, this, o, versions.getAndIncrement(), once);
 		observers.getObservers().add(observer);
 		return observer;
 	}
@@ -62,7 +62,7 @@ public final class ObserverSupport<Owner extends MessageHandler<Owner>> {
 	 * @return
 	 */
 	public boolean remove(Observer observer) {
-		return this.computeIfAbsent(observer.getObserver().getClass()).remove(observer);
+		return this.computeIfAbsent(observer.getObserverClz()).remove(observer);
 	}
 
 	/***
