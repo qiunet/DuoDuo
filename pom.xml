@@ -6,8 +6,9 @@
 
 	<groupId>io.github.qiunet</groupId>
 	<artifactId>DuoDuo</artifactId>
-	<version>${revision}</version>
+	<version>7.0.5</version>
 	<name>DuoDuo</name>
+
 	<modules>
 		<module>QiunetUtils</module>
 		<module>QiunetDatas</module>
@@ -52,7 +53,7 @@
 	</developers>
 
 	<properties>
-		<revision>7.0.4</revision>
+		<revision>7.0.5</revision>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
