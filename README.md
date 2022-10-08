@@ -90,10 +90,10 @@
 		<version>${version}</version>
 	</dependency>
 
-[//]: # ()
-[//]: # (## 示例)
+ 
+## 示例
 
-[//]: # (自己写了服务器端模板工程. 可以参考[模板项目]&#40;https://github.com/qiunet/DuoDuoTemplate&#41;)
+自己写了服务器端模板工程. 可以参考[模板项目](https://github.com/qiunet/DuoDuoExample)
 
 ## 交流
 QQ群: `669409114` , 入群请附带申请留言: "Github"
