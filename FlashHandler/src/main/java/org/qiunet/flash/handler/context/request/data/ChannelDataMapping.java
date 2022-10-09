@@ -22,6 +22,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /***
  * Protobuf data Id 和 类的映射关系.
@@ -155,5 +156,13 @@ public class ChannelDataMapping implements IApplicationContextAware {
 		if (requestCheckList != null) {
 			paramChecks.put(type, requestCheckList);
 		}
+	}
+
+	/**
+	 * 遍历现有的ChannelData class
+	 * @param consumer 消费者
+	 */
+	public void foreachChannelDataClass(Consumer<Class<? extends IChannelData>> consumer) {
+		mapping.keys().forEach(consumer);
 	}
 }

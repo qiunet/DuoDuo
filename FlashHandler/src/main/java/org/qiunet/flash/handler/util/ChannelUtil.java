@@ -155,6 +155,7 @@ public final class ChannelUtil {
 			return;
 		}
 
+		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
 			boolean isKcp = params instanceof KcpBootstrapParams;
 			if (isKcp && ((KcpBootstrapParams) params).isDependOnTcpWs()) {
@@ -162,7 +163,6 @@ public final class ChannelUtil {
 				return;
 			}
 
-			AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
 				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(connectionReq));
@@ -184,8 +184,8 @@ public final class ChannelUtil {
 		}
 
 
-		if (session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY).msgExecuteIndex() == null) {
-			logger.info("MessageActor msgExecuteIndex is null! Need call ConnectionReq first");
+		if (messageActor.msgExecuteIndex() == null) {
+			logger.info("{} msgExecuteIndex is null! Need call ConnectionReq first", messageActor.getIdentity());
 			channel.close();
 			return;
 		}

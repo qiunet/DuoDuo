@@ -39,19 +39,19 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	ServerNode(RedisLock redisLock, int serverId, String host, int port) {
+		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 10);
+		this.setMsgExecuteIndex(String.valueOf(serverId));
+		this.redisLock = redisLock;
 		this.serverId = serverId;
 
-		this.setMsgExecuteIndex(String.valueOf(serverId));
-		this.timeOutFuture = Timeout.newTimeOut(f -> redisLock.unlock(), 30 );
 		super.setSession(tcpClient.connect(host, port, f -> {
-			if (f.isSuccess()) {f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(this);}
+			this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		}));
+
 		this.sendMessage(ConnectionReq.valueOf(String.valueOf(ServerNodeManager.getCurrServerId())), true);
 		// 发送鉴权请求
 		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
-		ServerNodeManager0.instance.addNode(this);
-		this.redisLock = redisLock;
-		this.heartBeat();
+
 	}
 	@Override
 	public void addMessage(IMessage<ServerNode> msg) {
@@ -104,11 +104,18 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * 完成serverNode 建立
 	 */
 	void complete() {
+		ServerNodeManager0.instance.addNode(this);
+
 		this.timeOutFuture.cancel();
 		this.timeOutFuture = null;
 		this.redisLock.unlock();
 		this.redisLock = null;
+		this.heartBeat();
 	}
+
+	/**
+	 * 心跳
+	 */
 	private DFuture<Void> future;
 	private void heartBeat() {
 		this.future = this.scheduleMessage(s -> {

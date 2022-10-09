@@ -83,6 +83,7 @@ public class NettyTcpClient {
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
 			ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
+			ch.attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketEncoder());
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
 			pipeline.addLast(new NettyClientHandler());
