@@ -133,7 +133,9 @@ public final class ProjectInitCreator {
 	private void processMybatisConfig(){
 		File mybatisConfigFile = new File(xmlDirectory.getPath(), mybatisConfigFileName);
 		if (! mybatisConfigFile.exists() || ! mybatisConfigFile.isFile()) {
-			throw new IllegalArgumentException("mybatis config xml ["+mybatisConfigFileName+"] is not valid");
+			logger.warn("mybatis config xml ["+mybatisConfigFileName+"] is not exist! use default config!");
+			this.setMybatisConfig(new MybatisConfigDefine());
+			return;
 		}
 		this.mybatisConfigFileName = mybatisConfigFile.getName();
 

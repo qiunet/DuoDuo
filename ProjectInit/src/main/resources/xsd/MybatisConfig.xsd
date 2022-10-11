@@ -28,6 +28,7 @@
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
+			<xs:attribute name="autoMatchConfigFile" type="xs:boolean" default="true" />
 			<xs:attribute name="fileName" type="xmlNameRegex" default="mybatis-config.xml" />
 			<xs:attribute name="baseDir" type="base:PathPattern" default="src/main/resources" />
 			<xs:attribute name="configDir" type="xs:NCName" default="mybatis" />
