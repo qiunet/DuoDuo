@@ -26,7 +26,7 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 
 	//Once built, an HttpClient can be used to send multiple requests.
 	protected static final HttpClient client = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofMillis(3000))
+			.connectTimeout(Duration.ofMillis(6000))
 			.build();
 
 	protected String url;

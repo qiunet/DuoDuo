@@ -99,7 +99,6 @@ public enum UserOnlineManager {
 	@EventListener(EventHandlerWeightType.LESS)
 	private void onLogout(CrossActorLogoutEvent eventData) {
 		eventData.getPlayer().fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
-		onlinePlayers.remove(eventData.getPlayer().getPlayerId());
 		this.destroyPlayer(eventData.getPlayer());
 	}
 	/**
