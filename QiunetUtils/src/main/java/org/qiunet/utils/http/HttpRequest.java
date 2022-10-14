@@ -5,6 +5,7 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
@@ -15,13 +16,18 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /***
- *
+ * Http 请求工具类.
  *
  * @author qiunet
  * 2020-04-20 17:39
  ***/
 public abstract class HttpRequest<B extends HttpRequest<B>> {
-	private static final HttpResponse.BodyHandler<String> DEFAULT_SUPPLIER = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
+	public static final HttpResponse.BodyHandler<String> STRING_SUPPLIER = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
+
+	public static final HttpResponse.BodyHandler<InputStream> INPUT_STREAM_SUPPLIER = HttpResponse.BodyHandlers.ofInputStream();
+
+	public static final HttpResponse.BodyHandler<byte[]> BYTE_ARRAY_SUPPLIER = HttpResponse.BodyHandlers.ofByteArray();
+
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
 
 	//Once built, an HttpClient can be used to send multiple requests.
@@ -29,9 +35,9 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 			.connectTimeout(Duration.ofMillis(6000))
 			.build();
 
-	protected String url;
-
 	protected Charset charset = StandardCharsets.UTF_8;
+
+	protected String url;
 
 	protected HttpRequest(String url) {
 		this.url = url;
@@ -68,7 +74,7 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	 * @param callBack
 	 */
 	public  void asyncExecutor(IHttpCallBack<String> callBack) {
-		this.asyncExecutor(HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8), callBack);
+		this.asyncExecutor(STRING_SUPPLIER, callBack);
 	}
 
 	public <T> void asyncExecutor(HttpResponse.BodyHandler<T> bodyHandler, IHttpCallBack<T> callBack) {
@@ -96,8 +102,8 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	 * 执行请求
 	 * @return
 	 */
-	public String executor() throws IOException, InterruptedException {
-		return client.send(buildRequest(), DEFAULT_SUPPLIER).body();
+	public String executor() {
+		return executor(STRING_SUPPLIER);
 	}
 
 	protected abstract java.net.http.HttpRequest buildRequest();
