@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
 import org.qiunet.utils.async.LazyLoader;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -77,7 +76,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			}
 			// 超过2秒执行时间. 需要让出. 给后面的队列任务执行
 			if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start) >= 2) {
-				executor.get().executorService.execute(this);
+				executor.get().execute(this);
 				break;
 			}
 		}
@@ -95,7 +94,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		messages.add(msg);
 		int size = this.size.incrementAndGet();
 		if (size == 1) {
-			executor.get().executorService.execute(this);
+			executor.get().execute(this);
 		}
 	}
 
@@ -190,7 +189,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	@EventListener(EventHandlerWeightType.LESS)
 	private static void shutdown(ServerShutdownEventData event) {
 		for (DExecutorService service : executorService.eventLoops) {
-			service.executorService.shutdown();
+			service.shutdown();
 		}
 	}
 
@@ -209,18 +208,20 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 	}
 
-	private static class DExecutorService implements Runnable{
-		ExecutorService executorService;
-		Thread thread;
+	private static class DExecutorService extends ThreadPoolExecutor {
+		private final String threadName;
+		private Thread thread;
 
 		public DExecutorService(int id) {
-			this.executorService = Executors.newSingleThreadExecutor(new DefaultThreadFactory("message-handler-"+ id));
-			this.executorService.execute(this);
+			super(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+			this.threadName = "message-handler-"+id;
+			this.setThreadFactory(this::newThread);
 		}
 
-		@Override
-		public void run() {
-			thread = Thread.currentThread();
+		private Thread newThread(Runnable runnable) {
+			this.thread = new Thread(runnable, this.threadName);
+			this.thread.setDaemon(true);
+			return this.thread;
 		}
 	}
 
