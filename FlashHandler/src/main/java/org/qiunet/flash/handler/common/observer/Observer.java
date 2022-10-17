@@ -10,6 +10,8 @@ public class Observer<O extends IObserver> {
 
 	private final Class<? extends IObserver> clz;
 	private final ObserverSupport support;
+
+	private final String group;
 	/**
 	 * 保证一个执行顺序. fire时候. 只fire触发前添加的. 后面attach的. 就不再触发.
 	 */
@@ -17,12 +19,17 @@ public class Observer<O extends IObserver> {
 	private final O observer;
 	private final boolean once;
 
-	Observer(Class<? extends IObserver> clz, ObserverSupport support, O observer, int version, boolean once) {
+	Observer(String group, Class<? extends IObserver> clz, ObserverSupport support, O observer, int version, boolean once) {
 		this.observer = observer;
 		this.version = version;
 		this.support = support;
+		this.group = group;
 		this.once = once;
 		this.clz = clz;
+	}
+
+	String getGroup() {
+		return group;
 	}
 
 	/**

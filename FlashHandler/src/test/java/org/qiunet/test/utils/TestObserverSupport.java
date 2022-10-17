@@ -36,4 +36,19 @@ public class TestObserverSupport {
 		observerSupport.syncFire(ITest.class, ITest::fire);
 		Assertions.assertEquals(1, counter.get());
 	}
+
+
+	@Test
+	public void testGroup() {
+		AtomicInteger counter = new AtomicInteger();
+		Observer<ITest> observer = observerSupport.attach("Test", ITest.class, counter::incrementAndGet);
+
+		observerSupport.syncFire(ITest.class, ITest::fire);
+		Assertions.assertEquals(1, counter.get());
+
+		observerSupport.remove("Test");
+
+		observerSupport.syncFire(ITest.class, ITest::fire);
+		Assertions.assertEquals(1, counter.get());
+	}
 }
