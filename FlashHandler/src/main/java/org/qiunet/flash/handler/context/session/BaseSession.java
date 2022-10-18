@@ -139,16 +139,23 @@ abstract class BaseSession implements ISession {
 	 * @param cause
 	 */
 	private void closeSession(CloseCause cause) {
-		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		closeListeners.forEach((name, cl) -> {
-			cl.close(this, cause);
-		});
+		try {
+			IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			closeListeners.forEach((name, cl) -> {
+				try {
+					cl.close(this, cause);
+				}catch (Exception e) {
+					logger.error("close session exception: ", e);
+				}
+			});
 
-		// 没有loginSuccess的那种
-		if (closeListeners.isEmpty()) {
-			attachObj.destroy();
+			// 没有loginSuccess的那种
+			if (closeListeners.isEmpty()) {
+				attachObj.destroy();
+			}
+		}finally {
+			this.closeChannel(cause);
 		}
-		this.closeChannel(cause);
 	}
 	/**
 	 * 关闭channel
