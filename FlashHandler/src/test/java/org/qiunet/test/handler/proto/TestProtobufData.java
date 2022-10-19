@@ -27,14 +27,6 @@ public class TestProtobufData {
 		LoadBadWordEventData.valueOf(new DefaultBadWord(new String[] {"毛泽东"})).fireEventHandler();
 	}
 	@Test
-	public void testByteArray(){
-		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
-
-		WsPbLoginRequest loginRequest1 = ProtobufDataManager.decode(WsPbLoginRequest.class, request.toByteArray());
-		Assertions.assertEquals("qiunet", loginRequest1.getAccount());
-	}
-
-	@Test
 	public void testByteBuf (){
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
 

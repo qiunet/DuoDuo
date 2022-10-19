@@ -19,17 +19,17 @@ import java.nio.ByteBuffer;
 public class ProtobufDataManager {
 	/**
 	 * 获得某个class的codec
-	 * @param clazz
-	 * @param <T>
-	 * @return
+	 * @param clazz 获得Codec
+	 * @param <T> class泛型
+	 * @return Codec实例
 	 */
 	public static <T> Codec<T> getCodec(Class<T> clazz) {
 		return ProtobufProxy.create(clazz);
 	}
 	/**
 	 * 序列化对象成byte数组
-	 * @param obj
-	 * @return
+	 * @param obj 需要enode的对象
+	 * @return 数组
 	 */
 	public static byte[] encodeToByteArray(Object obj) {
 		Preconditions.checkNotNull(obj);
@@ -43,8 +43,8 @@ public class ProtobufDataManager {
 
 	/**
 	 * 序列化为 ByteBuf
-	 * @param obj
-	 * @return
+	 * @param obj 需要encode的对象
+	 * @return ByteBuf
 	 */
 	public static ByteBuf encodeToByteBuf(Object obj) {
 		Preconditions.checkNotNull(obj);
@@ -67,24 +67,19 @@ public class ProtobufDataManager {
 
 	/**
 	 * 反序列对象出来.
-	 * @param clazz
-	 * @param buffer
-	 * @param <T>
-	 * @return
+	 * @param clazz 需要反序列的目标对象
+	 * @param buffer 数据buffer
+	 * @param <T> 泛型
+	 * @return 对象实例
 	 */
 	public static <T> T decode(Class<T> clazz, ByteBuffer buffer) {
+		CodedInputStreamThreadCache in = CodedInputStreamThreadCache.get(buffer);
 		try {
-			return getCodec(clazz).readFrom(CodedInputStream.newInstance(buffer));
+			return getCodec(clazz).readFrom(in.getCodedInputStream());
 		} catch (IOException e) {
 			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
-		}
-	}
-
-	public static <T> T decode(Class<T> clazz, byte [] bytes) {
-		try {
-			return getCodec(clazz).decode(bytes);
-		} catch (IOException e) {
-			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
+		}finally {
+			in.recycle();
 		}
 	}
 }

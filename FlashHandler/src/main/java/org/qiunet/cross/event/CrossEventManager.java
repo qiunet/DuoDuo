@@ -39,7 +39,7 @@ public final class CrossEventManager {
 	public static <T extends UserEventData> void fireCrossUserEvent(int serverId, T eventData, long playerId) {
 		if (serverId == ServerConfig.getServerId()) {
 			AbstractUserActor playerActor = UserOnlineManager.instance.getActor(playerId);
-			playerActor.fireEvent(eventData);
+			playerActor.fireAsyncEvent(eventData);
 			return;
 		}
 		ServerNodeManager.getNode(serverId).fireUserCrossEvent(eventData, playerId);

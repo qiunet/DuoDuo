@@ -115,11 +115,12 @@ public final class ReflectUtil {
 	 * @see java.lang.reflect.Method#setAccessible
 	 */
 	@SuppressWarnings("deprecation")  // on JDK 9
-	public static void makeAccessible(Method method) {
+	public static Method makeAccessible(Method method) {
 		if ((!Modifier.isPublic(method.getModifiers()) ||
 			!Modifier.isPublic(method.getDeclaringClass().getModifiers())) && !method.isAccessible()) {
 			method.setAccessible(true);
 		}
+		return method;
 	}
 	/**
 	 * Make the given field accessible, explicitly setting it accessible if
@@ -130,12 +131,13 @@ public final class ReflectUtil {
 	 * @see java.lang.reflect.Field#setAccessible
 	 */
 	@SuppressWarnings("deprecation")  // on JDK 9
-	public static void makeAccessible(Field field) {
+	public static Field makeAccessible(Field field) {
 		if ((!Modifier.isPublic(field.getModifiers()) ||
 			!Modifier.isPublic(field.getDeclaringClass().getModifiers()) ||
 			Modifier.isFinal(field.getModifiers())) && !field.isAccessible()) {
 			field.setAccessible(true);
 		}
+		return field;
 	}
 	/**
 	 * Set the field represented by the supplied {@link Field field object} on
