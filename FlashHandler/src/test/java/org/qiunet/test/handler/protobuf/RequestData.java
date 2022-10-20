@@ -12,7 +12,7 @@ import java.util.List;
  * 2022/10/19 10:57
  */
 @ProtobufClass
-public class RequestData implements IChannelData {
+public class RequestData extends IChannelData {
 
 	@Protobuf(description = "xx")
 	private String name;
