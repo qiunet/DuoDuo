@@ -1,7 +1,8 @@
 package org.qiunet.flash.handler.netty.server.param;
 
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
 /**
@@ -12,7 +13,7 @@ public abstract class AbstractBootstrapParam {
 	/**
 	 * 可以自定义协议头
 	 */
-	protected IProtocolHeaderType protocolHeaderType;
+	protected IProtocolHeader protocolHeader = DefaultProtocolHeader.instance;
 	/***
 	 * 接收端口
 	 */
@@ -38,8 +39,8 @@ public abstract class AbstractBootstrapParam {
 
 	protected IStartupContext<? extends IMessageActor<?>> startupContext;
 
-	public IProtocolHeaderType getProtocolHeaderType() {
-		return protocolHeaderType;
+	public IProtocolHeader getProtocolHeader() {
+		return protocolHeader;
 	}
 
 	public int getMaxReceivedLength() {
@@ -72,11 +73,11 @@ public abstract class AbstractBootstrapParam {
 	public abstract class SuperBuilder<P extends AbstractBootstrapParam, B extends SuperBuilder<P, B>> {
 		/***
 		 * 启动需要的上下文对象
-		 * @param protocolHeaderType
+		 * @param protocolHeader
 		 * @return
 		 */
-		public B setProtocolHeaderType(IProtocolHeaderType protocolHeaderType) {
-			AbstractBootstrapParam.this.protocolHeaderType = protocolHeaderType;
+		public B setProtocolHeader(IProtocolHeader protocolHeader) {
+			AbstractBootstrapParam.this.protocolHeader = protocolHeader;
 			return (B) this;
 		}
 

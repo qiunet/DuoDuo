@@ -4,7 +4,6 @@ import io.netty.util.ResourceLeakDetector;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -39,8 +38,8 @@ public class LogicServer {
 					public PlayerActor buildMessageActor(ISession session) {
 						return new PlayerActor(session);
 					}
-				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).setProtocolHeaderType(ProtocolHeaderType.server).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(9002).build())
+				}).setWebsocketPath("/ws").setPort(Constants.LOGIC_SERVER_PORT).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(9002).build())
 				.await();
 	}
 

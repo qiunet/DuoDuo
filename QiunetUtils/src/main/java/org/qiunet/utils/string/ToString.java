@@ -82,7 +82,7 @@ public final class ToString {
 			} catch (IllegalAccessException e) {
 				LoggerType.DUODUO.error("Object {} field {} get value error! {}", obj.getClass(), field.getName(), e);
 			}
-		});
+		}, field -> !(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())));
 	}
 
 	/**

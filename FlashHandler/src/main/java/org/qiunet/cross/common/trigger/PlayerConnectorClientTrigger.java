@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.InterestedChannelData;
@@ -69,7 +69,7 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 		}
 
 		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
-		CrossProtocolHeader header = (CrossProtocolHeader) data.getHeader();
+		IProtocolHeader.IPlayerCrossRspHeader header = (IProtocolHeader.IPlayerCrossRspHeader) data.getHeader();
 		boolean flush = header.isFlush();
 		boolean kcp = header.isKcp();
 		playerActor.addMessage(m -> {

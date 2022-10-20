@@ -169,7 +169,7 @@ public final class NettyHttpClient {
 					@Override
 					protected void initChannel(SocketChannel ch) throws Exception {
 						ChannelPipeline p = ch.pipeline();
-						ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
+						ch.attr(ServerConstants.PROTOCOL_HEADER).set(params.getProtocolHeader());
 						if (sslCtx != null) {
 							p.addLast(sslCtx.newHandler(ch.alloc()));
 						}

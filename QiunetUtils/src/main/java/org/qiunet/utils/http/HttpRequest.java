@@ -2,9 +2,9 @@ package org.qiunet.utils.http;
 
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
@@ -29,10 +29,15 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	public static final HttpResponse.BodyHandler<byte[]> BYTE_ARRAY_SUPPLIER = HttpResponse.BodyHandlers.ofByteArray();
 
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
+	/**
+	 * 读取超时数
+	 */
+	protected static final int READ_TIMEOUT_MILLIS = 6000;
 
 	//Once built, an HttpClient can be used to send multiple requests.
 	protected static final HttpClient client = HttpClient.newBuilder()
 			.connectTimeout(Duration.ofMillis(6000))
+			.executor(ThreadPoolManager.NORMAL)
 			.build();
 
 	protected Charset charset = StandardCharsets.UTF_8;

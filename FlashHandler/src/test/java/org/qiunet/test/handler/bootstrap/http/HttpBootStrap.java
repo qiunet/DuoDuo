@@ -4,9 +4,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -24,7 +23,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public class HttpBootStrap {
-	protected static final IProtocolHeaderType ADAPTER = ProtocolHeaderType.client;
+	protected static final IProtocolHeader PROTOCOL_HEADER = DefaultProtocolHeader.instance;
 	protected static final int port = 8090;
 	private static final Hook hook = new MyHook();
 	private static Thread currThread;
@@ -37,15 +36,12 @@ public class HttpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			HttpBootstrapParams httpParams = HttpBootstrapParams.custom()
-					.setProtocolHeaderType(ProtocolHeaderType.server)
 					.setStartupContext(new StartupContext())
 					.setWebsocketPath("/ws")
 					.setPort(port)
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).httpListener(httpParams);
-			server.await( () -> {
-				LockSupport.unpark(currThread);
-			});
+			server.await( () -> LockSupport.unpark(currThread));
 		});
 		thread.start();
 		LockSupport.park();
@@ -56,8 +52,8 @@ public class HttpBootStrap {
 	 * @return
 	 */
 	public byte[] getAllBytes(DefaultProtobufMessage message){
-		IProtocolHeader header = ADAPTER.outHeader(message.getProtocolID(), message);
-		ByteBuffer allocate = ByteBuffer.allocate(ADAPTER.getRspHeaderLength() + message.byteBuffer().limit());
+		IProtocolHeader.IClientOutHeader header = PROTOCOL_HEADER.clientNormalOut(message, null);
+		ByteBuffer allocate = ByteBuffer.allocate(PROTOCOL_HEADER.getClientOutHeadLength() + message.byteBuffer().limit());
 		ByteBuf headerByteBuf = header.headerByteBuf();
 		allocate.put(headerByteBuf.nioBuffer().rewind());
 		allocate.put(message.byteBuffer().rewind());

@@ -3,7 +3,6 @@ package org.qiunet.test.cross.server;
 import io.netty.util.ResourceLeakDetector;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -31,8 +30,8 @@ public class CrossServer {
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.cross).setPort(Constants.CROSS_SERVER_PORT).build())
-				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).setProtocolHeaderType(ProtocolHeaderType.node).setPort(Constants.CROSS_NODE_PORT).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).setPort(Constants.CROSS_SERVER_PORT).build())
+				.tcpListener(TcpBootstrapParams.custom().setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).setPort(Constants.CROSS_NODE_PORT).build())
 				.await();
 	}
 

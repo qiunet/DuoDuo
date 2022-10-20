@@ -18,7 +18,7 @@ import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
@@ -54,8 +54,8 @@ public final class ChannelUtil {
 	 * @param channel
 	 * @return
 	 */
-	public static IProtocolHeaderType getProtocolHeaderAdapter(Channel channel) {
-		return channel.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).get();
+	public static IProtocolHeader getProtocolHeader(Channel channel) {
+		return channel.attr(ServerConstants.PROTOCOL_HEADER).get();
 	}
 	/***
 	 * 关联Session 和 channel
@@ -71,6 +71,19 @@ public final class ChannelUtil {
 			val.close(CloseCause.LOGIN_REPEATED);
 		}
 		return result;
+	}
+
+	/**
+	 * 是否是首次连接
+	 * @param channel channel
+	 * @return true 是. false 不是
+	 */
+	public static boolean isConnectReq(Channel channel) {
+		if (channel == null) {
+			return false;
+		}
+		Attribute<Boolean> attr = channel.attr(ServerConstants.ALREADY_CONNECT_KEY);
+		return attr.setIfAbsent(true) == null;
 	}
 
 	/***

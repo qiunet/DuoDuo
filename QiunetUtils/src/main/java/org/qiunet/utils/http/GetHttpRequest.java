@@ -3,6 +3,7 @@ package org.qiunet.utils.http;
 import com.google.common.collect.Maps;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 
 /***
@@ -46,6 +47,7 @@ public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 	@Override
 	protected java.net.http.HttpRequest buildRequest() {
 		java.net.http.HttpRequest.Builder builder = java.net.http.HttpRequest.newBuilder(URI.create(buildUrl()));
+		builder.timeout(Duration.ofMillis(READ_TIMEOUT_MILLIS));
 		headerBuilder.forEach(builder::header);
 		return builder.build();
 	}

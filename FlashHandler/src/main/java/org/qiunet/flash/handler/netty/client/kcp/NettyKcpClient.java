@@ -12,8 +12,8 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
-import org.qiunet.flash.handler.netty.coder.KcpSocketDecoder;
-import org.qiunet.flash.handler.netty.coder.KcpSocketEncoder;
+import org.qiunet.flash.handler.netty.coder.KcpSocketClientDecoder;
+import org.qiunet.flash.handler.netty.coder.KcpSocketClientEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
@@ -39,9 +39,9 @@ public class NettyKcpClient {
 					@Override
 					protected void initChannel(UkcpChannel ch) throws Exception {
 						ChannelPipeline p = ch.pipeline();
-						ch.attr(ServerConstants.PROTOCOL_HEADER_ADAPTER).set(params.getProtocolHeaderType());
-						p.addLast("KcpSocketEncoder", new KcpSocketEncoder())
-						.addLast("KcpSocketDecoder", new KcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()))
+						ch.attr(ServerConstants.PROTOCOL_HEADER).set(params.getProtocolHeader());
+						p.addLast("KcpSocketEncoder", new KcpSocketClientEncoder())
+						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler());
 					}
 				}).option(ChannelOption.SO_RCVBUF, 1024*1024*2)

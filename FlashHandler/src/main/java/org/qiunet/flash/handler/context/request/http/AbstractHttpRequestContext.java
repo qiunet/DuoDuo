@@ -138,7 +138,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
 		if (getUriPath().equals(params.getGameURIPath())) {
-			content = responseDataMessage.withHeaderByteBuf(channel);
+			content = responseDataMessage.withHeaderByteBuf(channel, true);
 		}else {
 			// 不是游戏业务. 不写业务头.
 			content = responseDataMessage.withoutHeaderByteBuf();

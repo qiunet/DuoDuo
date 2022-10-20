@@ -4,7 +4,6 @@ package org.qiunet.test.handler.bootstrap.kcp;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
@@ -32,7 +31,6 @@ public abstract class BasicKcpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			KcpBootstrapParams params = KcpBootstrapParams.custom()
-					.setProtocolHeaderType(ProtocolHeaderType.server)
 					.setStartupContext(new StartupContext())
 					.setPorts(Sets.newHashSet(port))
 					.setServerName("游戏服")

@@ -51,28 +51,26 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 		IChannelData channelData = JsonUtil.getGeneralObj(data, aClass);
 		final LazyLoader<ByteBuf> bufferLazyLoader = new LazyLoader<>(channelData::toByteBuf);
-		ChannelUtil.processHandler(context.channel(), handler, MessageContent.valueOf(new IProtocolHeader() {
+		ChannelUtil.processHandler(context.channel(), handler, MessageContent.valueOf(new IProtocolHeader.ProtocolHeader() {
+			@Override
+			public void recycle() {}
 			@Override
 			public int getProtocolId() {
 				return protocolID;
 			}
-
 			@Override
 			public ByteBuf headerByteBuf() {
 				// 不会调用到
 				return null;
 			}
-
 			@Override
-			public boolean isMagicValid() {
+			public boolean isValidMessage() {
 				return true;
 			}
-
 			@Override
 			public int getLength() {
 				return bufferLazyLoader.get().readableBytes();
 			}
-
 			@Override
 			public boolean validEncryption(ByteBuffer buffer) {
 				return true;

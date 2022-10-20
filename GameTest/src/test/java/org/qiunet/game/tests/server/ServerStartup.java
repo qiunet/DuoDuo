@@ -1,7 +1,6 @@
 package org.qiunet.game.tests.server;
 
 
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -29,7 +28,6 @@ public final class ServerStartup {
 			public void run() {
 				BootstrapServer server = BootstrapServer.createBootstrap(hook);
 				server.tcpListener(TcpBootstrapParams.custom()
-						.setProtocolHeaderType(ProtocolHeaderType.server)
 						.setStartupContext(new StartupContext())
 						.setPort(ServerType.LC_ROOM.port())
 						.setServerName("测试服")

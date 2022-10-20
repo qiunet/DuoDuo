@@ -28,7 +28,7 @@ import java.util.concurrent.locks.LockSupport;
 public class TestHttpRequest extends HttpBootStrap {
 	private final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
-		.setProtocolHeaderType(ADAPTER)
+		.setProtocolHeader(PROTOCOL_HEADER)
 		.build();
 
 	@Test
@@ -41,7 +41,7 @@ public class TestHttpRequest extends HttpBootStrap {
 			.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (resp) -> {
 				ByteBuffer buffer = ByteBuffer.wrap(resp.body());
 				// 跳过头
-				buffer.position(ADAPTER.getReqHeaderLength());
+				buffer.position(PROTOCOL_HEADER.getClientInHeadLength());
 
 				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, buffer);
 				Assertions.assertEquals(test, loginResponse.getTestString());

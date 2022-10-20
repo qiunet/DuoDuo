@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
+import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
@@ -60,10 +60,14 @@ public final class ServerConstants {
 	 * http ws 的header
 	 */
 	public static final AttributeKey<HttpHeaders> HTTP_WS_HEADER_KEY = AttributeKey.newInstance("HTTP_WS_HEADER_KEY");
+	/**
+	 * 是否是connect
+	 */
+	public static final AttributeKey<Boolean> ALREADY_CONNECT_KEY = AttributeKey.newInstance("ALREADY_CONNECT_KEY");
 	/***
 	 * 使用的header adapter
 	 */
-	public static final AttributeKey<IProtocolHeaderType> PROTOCOL_HEADER_ADAPTER = AttributeKey.newInstance("PROTOCOL_HEADER_ADAPTER");
+	public static final AttributeKey<IProtocolHeader> PROTOCOL_HEADER = AttributeKey.newInstance("PROTOCOL_HEADER");
 	/**
 	 * 启动时间
 	 */

@@ -4,7 +4,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 
@@ -21,9 +20,9 @@ public abstract class BaseByteBufMessage<T> implements IChannelMessage<T> {
 	protected LazyLoader<ByteBuf> buffer = new LazyLoader<>(this::get);
 
 	@Override
-	public ByteBuf withHeaderByteBuf(Channel channel) {
-		IProtocolHeaderType headerAdapter = ChannelUtil.getProtocolHeaderAdapter(channel);
-		IProtocolHeader protocolHeader = headerAdapter.outHeader(this.getProtocolID(), this);
+	public ByteBuf withHeaderByteBuf(Channel channel, boolean serverOrClient) {
+		IProtocolHeader header = ChannelUtil.getProtocolHeader(channel);
+		IProtocolHeader.ProtocolHeader protocolHeader = header.outHeader(this, channel, serverOrClient, ChannelUtil.isConnectReq(channel));
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(protocolHeader.headerByteBuf(), this.getByteBuf());
 		protocolHeader.recycle();
 		this.recycle();

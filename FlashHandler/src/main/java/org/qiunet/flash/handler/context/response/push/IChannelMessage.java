@@ -5,7 +5,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
@@ -62,13 +61,14 @@ public interface IChannelMessage<T> {
 	/**
 	 * 获得 添加 protocol header 的 ByteBuf
 	 * @param channel
+	 * @param serverOrClient true server false client
 	 * @return
 	 */
-	default ByteBuf withHeaderByteBuf(Channel channel) {
-		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(channel);
-		IProtocolHeader header = adapter.outHeader(this.getProtocolID(), this);
+	default ByteBuf withHeaderByteBuf(Channel channel, boolean serverOrClient) {
+		IProtocolHeader protocolHeader = ChannelUtil.getProtocolHeader(channel);
+		IProtocolHeader.ProtocolHeader header = protocolHeader.outHeader(this, channel, serverOrClient, ChannelUtil.isConnectReq(channel));
 
-		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.headerByteBuf(), Unpooled.wrappedBuffer((ByteBuffer) this.byteBuffer().rewind()));
+		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.headerByteBuf(), Unpooled.wrappedBuffer(this.byteBuffer().rewind()));
 
 		header.recycle();
 		this.recycle();

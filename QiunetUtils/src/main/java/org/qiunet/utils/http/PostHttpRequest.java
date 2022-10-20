@@ -4,6 +4,7 @@ import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
 
 import java.net.URI;
+import java.time.Duration;
 import java.util.Map;
 
 /***
@@ -76,6 +77,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	@Override
 	protected java.net.http.HttpRequest buildRequest() {
 		java.net.http.HttpRequest.Builder builder = java.net.http.HttpRequest.newBuilder(URI.create(url));
+		builder.timeout(Duration.ofMillis(READ_TIMEOUT_MILLIS));
 		headerBuilder.forEach(builder::setHeader);
 		if (requestBody != null) {
 			builder.POST(requestBody);

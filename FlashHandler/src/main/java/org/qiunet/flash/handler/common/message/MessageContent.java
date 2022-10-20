@@ -39,7 +39,7 @@ public class MessageContent implements ReferenceCounted {
 	/**
 	 * 头信息
 	 */
-	private IProtocolHeader header;
+	private IProtocolHeader.ProtocolHeader header;
 
 	public MessageContent(ObjectPool.Handle<MessageContent> recyclerHandle) {
 		this.recyclerHandle = recyclerHandle;
@@ -54,7 +54,7 @@ public class MessageContent implements ReferenceCounted {
 		return content;
 	}
 
-	public static MessageContent valueOf(IProtocolHeader header, ByteBuf buffer) {
+	public static MessageContent valueOf(IProtocolHeader.ProtocolHeader header, ByteBuf buffer) {
 		MessageContent content = RECYCLER.get();
 		content.protocolId = header.getProtocolId();
 		content.buffer = buffer;
@@ -82,7 +82,7 @@ public class MessageContent implements ReferenceCounted {
 		return protocolId;
 	}
 
-	public IProtocolHeader getHeader() {
+	public IProtocolHeader.ProtocolHeader getHeader() {
 		return header;
 	}
 

@@ -11,10 +11,10 @@ import java.util.List;
  * Created by qiunet.
  * 17/8/13
  */
-public class WebSocketEncoder extends MessageToMessageEncoder<IChannelMessage<?>> {
+public class WebSocketClientEncoder extends MessageToMessageEncoder<IChannelMessage<?>> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
-		out.add(new BinaryWebSocketFrame(msg.withHeaderByteBuf(ctx.channel())));
+		out.add(new BinaryWebSocketFrame(msg.withHeaderByteBuf(ctx.channel(), false)));
 	}
 }

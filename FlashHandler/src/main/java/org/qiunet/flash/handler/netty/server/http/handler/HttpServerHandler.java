@@ -11,13 +11,12 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.IProtocolHeaderType;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
-import org.qiunet.flash.handler.netty.coder.WebSocketDecoder;
-import org.qiunet.flash.handler.netty.coder.WebSocketEncoder;
+import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
+import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -119,9 +118,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			.build()));
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
-		pipeline.addLast("WebSocketDecoder", new WebSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()));
+		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(params.getMaxReceivedLength(), params.isEncryption()));
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
-		pipeline.addLast("WebSocketEncoder", new WebSocketEncoder());
+		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
 
 		pipeline.remove(this);
 	}
@@ -131,9 +130,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
-		IProtocolHeaderType adapter = ChannelUtil.getProtocolHeaderAdapter(ctx.channel());
-		IProtocolHeader header = adapter.inHeader(request.content());
-		if (! header.isMagicValid()) {
+		IProtocolHeader protocolHeader = ChannelUtil.getProtocolHeader(ctx.channel());
+		IProtocolHeader.ProtocolHeader header = protocolHeader.serverNormalIn(request.content(), null);
+		if (! header.isValidMessage()) {
 			logger.error("Invalid message magic! client is "+ header);
 			// encryption 不对, 不被认证的请求
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);

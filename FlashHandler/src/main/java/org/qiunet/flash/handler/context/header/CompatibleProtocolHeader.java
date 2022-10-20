@@ -3,10 +3,10 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
-import org.qiunet.cross.actor.message.Cross2PlayerMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ObjectPool;
+import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
@@ -18,7 +18,7 @@ import java.util.Arrays;
  * @author qiunet
  * 2022/10/20 08:55
  */
-public enum CrossProtocolHeader implements IProtocolHeader {
+public enum CompatibleProtocolHeader implements IProtocolHeader {
 	instance;
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
@@ -91,6 +91,7 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		private int protocolId;
 		private int length;
 
+		private int crc;
 
 		private ServerReqHeader(ObjectPool.Handle<ServerReqHeader> recyclerHandle) {
 			this.recyclerHandle = recyclerHandle;
@@ -99,13 +100,15 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		public static ServerReqHeader valueOf(ByteBuf in, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
 			in.readBytes(header.magic);
+			header.length = in.readInt();
 			header.protocolId = in.readInt();
-			header.length = in.readShort();
+			header.crc = in.readInt();
 			return header;
 		}
 
 		public static ServerReqHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
+			header.crc = (int) CrcUtil.getCrc32Value(message.byteBuffer().rewind());;
 			header.length = (short) message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
@@ -116,6 +119,7 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 			Arrays.fill(this.magic, (byte)0);
 			this.protocolId = 0;
 			this.length = 0;
+			this.crc = 0;
 			this.recyclerHandle.recycle();
 		}
 		@Override
@@ -132,8 +136,9 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeBytes(MAGIC);
+			out.writeInt(length);
 			out.writeInt(protocolId);
-			out.writeShort(length);
+			out.writeInt(crc);
 			return out;
 		}
 
@@ -148,35 +153,26 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		}
 	}
 
-	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader, IPlayerCrossRspHeader {
+	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader {
 		private final ObjectPool.Handle<ServerRspHeader> recyclerHandle;
 
-		private static final int HEADER_LENGTH = 8;
+		private static final int HEADER_LENGTH = 6;
 		private int protocolId;
 
 		private short length;
-
-		private boolean flush;
-
-		private boolean kcp;
 		private ServerRspHeader(ObjectPool.Handle<ServerRspHeader> recyclerHandle) {
 			this.recyclerHandle = recyclerHandle;
 		}
 
 		public static ServerRspHeader valueOf(ByteBuf in, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.protocolId = in.readInt();
 			header.length = in.readShort();
-			header.flush = in.readBoolean();
-			header.kcp = in.readBoolean();
+			header.protocolId = in.readInt();
 			return header;
 		}
 
 		public static ServerRspHeader valueOf(IChannelMessage<?> message, Channel channel) {
-
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.kcp = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isKcpChannel();
-			header.flush = message instanceof Cross2PlayerMessage && ((Cross2PlayerMessage) message).isFlush();
 			header.length = (short) message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
@@ -195,10 +191,8 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		@Override
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
-			out.writeInt(protocolId);
 			out.writeShort(length);
-			out.writeBoolean(flush);
-			out.writeBoolean(kcp);
+			out.writeInt(protocolId);
 			return out;
 		}
 
@@ -215,20 +209,8 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		@Override
 		public void recycle() {
 			this.protocolId = 0;
-			this.flush = false;
-			this.kcp = false;
 			this.length = 0;
 			this.recyclerHandle.recycle();
-		}
-
-		@Override
-		public boolean isFlush() {
-			return flush;
-		}
-
-		@Override
-		public boolean isKcp() {
-			return kcp;
 		}
 	}
 }

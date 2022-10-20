@@ -9,8 +9,8 @@ import io.netty.bootstrap.UkcpServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.timeout.IdleStateHandler;
-import org.qiunet.flash.handler.netty.coder.KcpSocketDecoder;
-import org.qiunet.flash.handler.netty.coder.KcpSocketEncoder;
+import org.qiunet.flash.handler.netty.coder.KcpSocketServerDecoder;
+import org.qiunet.flash.handler.netty.coder.KcpSocketServerEncoder;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
@@ -65,13 +65,13 @@ public class NettyKcpServer implements INettyServer {
 					.option(ChannelOption.SO_RCVBUF, 1024*1024*2)
 					.option(ChannelOption.SO_SNDBUF, 1024*1024*2)
 					.option(ChannelOption.SO_REUSEADDR, true)
-					.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType())
+					.childAttr(ServerConstants.PROTOCOL_HEADER, params.getProtocolHeader())
 					.childHandler(new ChannelInitializer<UkcpChannel>() {
 						@Override
 						public void initChannel(UkcpChannel ch) throws Exception {
 							ChannelPipeline p = ch.pipeline();
-							p.addLast("KcpSocketEncoder", new KcpSocketEncoder())
-							.addLast("KcpSocketDecoder", new KcpSocketDecoder(params.getMaxReceivedLength(), params.isEncryption()))
+							p.addLast("KcpSocketEncoder", new KcpSocketServerEncoder())
+							.addLast("KcpSocketDecoder", new KcpSocketServerDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 							.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0))
 							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler())
 							.addLast("KcpServerHandler", new KcpServerHandler(params));

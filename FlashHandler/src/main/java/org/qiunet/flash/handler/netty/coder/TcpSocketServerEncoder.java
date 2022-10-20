@@ -10,10 +10,10 @@ import java.util.List;
  * Created by qiunet.
  * 17/8/13
  */
-public class TcpSocketEncoder extends MessageToMessageEncoder<IChannelMessage<?>> {
+public class TcpSocketServerEncoder extends MessageToMessageEncoder<IChannelMessage<?>> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
-		out.add(msg.withHeaderByteBuf(ctx.channel()));
+		out.add(msg.withHeaderByteBuf(ctx.channel(), true));
 	}
 }

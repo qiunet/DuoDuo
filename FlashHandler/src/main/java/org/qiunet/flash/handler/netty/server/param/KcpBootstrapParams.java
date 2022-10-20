@@ -135,7 +135,7 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected KcpBootstrapParams newParams() {
-			if (protocolHeaderType == null) {
+			if (protocolHeader == null) {
 				throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
 			}
 

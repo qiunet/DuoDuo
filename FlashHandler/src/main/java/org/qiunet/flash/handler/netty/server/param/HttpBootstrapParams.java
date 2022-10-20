@@ -65,7 +65,7 @@ public final class HttpBootstrapParams extends AbstractBootstrapParam {
 					throw new NullPointerException("startupContext can not be Null");
 				}
 
-				if (protocolHeaderType == null) {
+				if (protocolHeader == null) {
 					throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
 				}
 			}

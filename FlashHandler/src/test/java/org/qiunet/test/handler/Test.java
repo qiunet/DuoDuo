@@ -1,6 +1,5 @@
 package org.qiunet.test.handler;
 
-import org.qiunet.flash.handler.context.header.ProtocolHeaderType;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
@@ -22,7 +21,6 @@ public class Test {
 		BootstrapServer.createBootstrap(hook).tcpListener(
 				TcpBootstrapParams.custom()
 						.setStartupContext(new StartupContext())
-						.setProtocolHeaderType(ProtocolHeaderType.server)
 						.setPort(8888)
 						.setEncryption(true)
 					.build()

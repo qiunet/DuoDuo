@@ -19,7 +19,7 @@ public class TestHttpRequest extends BaseTest{
 	@Test
 	@Disabled("Do it manual!")
 	public void testHttpsRequest() throws Exception {
-		String url = "https://baidu.com";
+		String url = "https://www.hao123.com/?src=from_pc_logon";
 		Map<String,String> params = new HashMap<>();
 		params.put("wd", "qiunet");
 		for (int i = 0 ; i < 2; i++){

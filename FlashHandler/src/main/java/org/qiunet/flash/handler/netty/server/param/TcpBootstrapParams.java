@@ -71,7 +71,6 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 		this.udpPortChooser = PollChooserFactory.DEFAULT.newChooser(Lists.newArrayList(udpPorts));
 		return KcpBootstrapParams.custom()
 				.setReadIdleCheckSeconds(this.readIdleCheckSeconds)
-				.setProtocolHeaderType(this.protocolHeaderType)
 				.setMaxReceivedLength(this.maxReceivedLength)
 				.setStartupContext(this.startupContext)
 				.setEncryption(this.encryption)
@@ -90,7 +89,7 @@ public final class TcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		protected TcpBootstrapParams newParams() {
-			if (protocolHeaderType == null) {
+			if (protocolHeader == null) {
 				throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
 			}
 

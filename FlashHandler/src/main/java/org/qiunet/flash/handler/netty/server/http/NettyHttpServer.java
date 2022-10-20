@@ -4,14 +4,11 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.init.NettyHttpServerInitializer;
 import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
 import org.qiunet.flash.handler.util.NettyUtil;
-import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -40,7 +37,7 @@ public class NettyHttpServer implements INettyServer {
 			bootstrap.group(BOSS, ServerConstants.WORKER);
 
 			bootstrap.channel(NettyUtil.serverSocketChannelClass());
-			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER_ADAPTER, params.getProtocolHeaderType());
+			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER, params.getProtocolHeader());
 			bootstrap.childHandler(new NettyHttpServerInitializer(params));
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
