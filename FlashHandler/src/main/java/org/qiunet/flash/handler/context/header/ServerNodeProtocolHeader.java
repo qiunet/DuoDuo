@@ -49,7 +49,10 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 	public int getConnectInHeadLength() {
 		return ServerReqHeader.HEADER_LENGTH;
 	}
-
+	@Override
+	public byte[] getConnectInMagic() {
+		return ServerReqHeader.MAGIC;
+	}
 	@Override
 	public IConnectInHeader serverConnectIn(ByteBuf in, Channel channel) {
 		return ServerReqHeader.valueOf(in, channel);

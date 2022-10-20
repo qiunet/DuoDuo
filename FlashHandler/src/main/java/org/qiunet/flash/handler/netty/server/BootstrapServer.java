@@ -8,11 +8,8 @@ import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.http.NettyHttpServer;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
@@ -98,39 +95,19 @@ public class BootstrapServer {
 	}
 
 	/**
-	 * 启动http监听
-	 * @param params 启动http的参数
-	 * @return server实例
+	 * 监听一个服务
+	 * 服务可以是kcp tcp  http  ws 会自动切换
+	 * @param param server的参数
+	 * @return  BootstrapServer 实例
 	 */
-	public BootstrapServer httpListener(HttpBootstrapParams params) {
-		NettyHttpServer httpServer = new NettyHttpServer(params);
-		this.nettyServers.add(httpServer);
-		return this;
-	}
-	/**
-	 * 启动tcp监听
-	 * @param params Tcp 启动参数
-	 * @return server实例
-	 */
-	public BootstrapServer tcpListener(TcpBootstrapParams params) {
-
-		this.nettyServers.add(new NettyTcpServer(params));
-		if (params.isUdpOpen()) {
-			// kcp 依赖tcp来鉴权
-			this.kcpListener(params.toKcpBootstrapParams());
+	public BootstrapServer listener(ServerBootStrapParam param) {
+		// 默认启动tcp  http监听
+		this.nettyServers.add(new NettyTcpServer(param));
+		if (param.getKcpParam() != null) {
+			this.nettyServers.add(new NettyKcpServer(param));
 		}
 		return this;
 	}
-	/**
-	 * 启动tcp监听
-	 * @param params Tcp 启动参数
-	 * @return server实例
-	 */
-	public BootstrapServer kcpListener(KcpBootstrapParams params) {
-		this.nettyServers.add(new NettyKcpServer(params));
-		return this;
-	}
-
 	private Thread awaitThread;
 	/***
 	 * 阻塞线程 最后调用阻塞当前线程

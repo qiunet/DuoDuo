@@ -6,7 +6,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -32,13 +32,12 @@ public abstract class BasicTcpBootStrap {
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			TcpBootstrapParams tcpParams = TcpBootstrapParams.custom()
+			ServerBootStrapParam tcpParams = ServerBootStrapParam.newBuild("Tcp测试", port)
 				.setStartupContext(new StartupContext())
 				.setEncryption(true)
-				.setPort(port)
 				.build();
 
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).tcpListener(tcpParams);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(tcpParams);
 			server.await(() -> LockSupport.unpark(currThread));
 		});
 		thread.start();

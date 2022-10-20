@@ -71,6 +71,12 @@ public interface IProtocolHeader {
 	int getConnectInHeadLength();
 
 	/**
+	 * 服务端连入 magic 长度
+	 * @return
+	 */
+	byte[] getConnectInMagic();
+
+	/**
 	 * 客户端读取到的服务器响应的消息头长度
 	 * @return
 	 */

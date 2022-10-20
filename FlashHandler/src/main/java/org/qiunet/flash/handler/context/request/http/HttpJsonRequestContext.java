@@ -6,7 +6,7 @@ import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.http.json.IResultResponse;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.utils.json.JsonUtil;
 
 /**
@@ -16,11 +16,11 @@ import org.qiunet.utils.json.JsonUtil;
  */
 public class HttpJsonRequestContext<RequestData, ResponseData extends IResultResponse> extends AbstractHttpRequestContext<RequestData, ResponseData> {
 
-	public HttpJsonRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+	public HttpJsonRequestContext(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request) {
 		this.init(content, channel, params, request);
 	}
 
-	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+	public void init(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request) {
 		super.init(content, channel, params, request);
 	}
 

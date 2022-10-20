@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -30,8 +31,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
-import org.qiunet.flash.handler.netty.server.param.AbstractBootstrapParam;
-import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
@@ -160,7 +160,7 @@ public final class ChannelUtil {
 	 * @param params
 	 * @param content
 	 */
-	public static void channelRead(Channel channel, AbstractBootstrapParam params, MessageContent content){
+	public static void channelRead(Channel channel, ServerBootStrapParam params, MessageContent content){
 		ISession session = ChannelUtil.getSession(channel);
 		Preconditions.checkNotNull(session);
 
@@ -170,8 +170,8 @@ public final class ChannelUtil {
 
 		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
-			boolean isKcp = params instanceof KcpBootstrapParams;
-			if (isKcp && ((KcpBootstrapParams) params).isDependOnTcpWs()) {
+			boolean isKcp = channel.attr(ServerConstants.HANDLER_TYPE_KEY).get() == ServerConnType.KCP;
+			if (isKcp && params.getKcpParam().isDependOnTcpWs()) {
 				// 不需要
 				return;
 			}

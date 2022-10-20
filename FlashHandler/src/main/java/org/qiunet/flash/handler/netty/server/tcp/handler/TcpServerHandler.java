@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -18,10 +18,10 @@ import org.slf4j.Logger;
  */
 public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private final TcpBootstrapParams params;
+	private final ServerBootStrapParam param;
 
-	public TcpServerHandler(TcpBootstrapParams params) {
-		this.params = params;
+	public TcpServerHandler(ServerBootStrapParam param) {
+		this.param = param;
 	}
 
 	@Override
@@ -31,8 +31,8 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 		ChannelUtil.bindSession(session);
 		logger.debug("Tcp session {} active!", session);
-		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
-		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
+		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(param);
+		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(param.getStartupContext().buildMessageActor(session));
 		ctx.fireChannelActive();
 	}
 
@@ -41,11 +41,11 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		if (ChannelUtil.handlerPing(ctx.channel(), content)) {
 			return;
 		}
-		ChannelUtil.channelRead(ctx.channel(), params, content);
+		ChannelUtil.channelRead(ctx.channel(), param, content);
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ChannelUtil.cause(params.getStartupContext(), ctx.channel(), cause);
+		ChannelUtil.cause(param.getStartupContext(), ctx.channel(), cause);
 	}
 }

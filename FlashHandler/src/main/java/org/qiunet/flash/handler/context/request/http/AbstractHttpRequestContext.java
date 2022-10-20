@@ -17,7 +17,7 @@ import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
@@ -33,11 +33,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
 	private Map<String ,List<String>> parameters;
-	protected HttpBootstrapParams params;
+	protected ServerBootStrapParam params;
 	private HttpRequest request;
 	private String uriPath;
 
-	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request)  {
+	public void init(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request)  {
 		super.init(content, channel);
 		this.request = request;
 		this.params = params;
@@ -97,7 +97,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		if (uriPath != null) {
 			return uriPath;
 		}
-		return params.getGameURIPath();
+		return params.getHttpParam().getGameURIPath();
 	}
 
 	@Override
@@ -137,7 +137,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		IChannelMessage<?> responseDataMessage = getResponseDataMessage(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
-		if (getUriPath().equals(params.getGameURIPath())) {
+		if (getUriPath().equals(params.getHttpParam().getGameURIPath())) {
 			content = responseDataMessage.withHeaderByteBuf(channel, true);
 		}else {
 			// 不是游戏业务. 不写业务头.

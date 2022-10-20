@@ -2,9 +2,8 @@ package org.qiunet.test.handler.params;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
-import org.qiunet.test.handler.startup.context.StartupContext;
+import org.qiunet.flash.handler.context.header.CompatibleProtocolHeader;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 
 import java.net.UnknownHostException;
 
@@ -15,16 +14,22 @@ import java.net.UnknownHostException;
 public class TestParams {
 	@Test
 	public void testBootstrapParam() throws UnknownHostException {
-		HttpBootstrapParams params = HttpBootstrapParams.custom()
-				.setPort(1314)
+		ServerBootStrapParam param = ServerBootStrapParam.newBuild("测试", 8888)
+				.setTcpBootStrapParam(ServerBootStrapParam.TcpBootstrapParam.newBuild().setUdpOpen(ServerBootStrapParam.KcpBootstrapParam.newBuild().setPortCount(10).build()).build())
+				.setHttpBootStrapParam(ServerBootStrapParam.HttpBootstrapParam.newBuild().setWebsocketPath("/aa").build())
+				.setProtocolHeader(CompatibleProtocolHeader.instance)
+				.setEncryption(true)
 				.build();
-		Assertions.assertEquals(1314, params.getPort());
 
-		TcpBootstrapParams tcpBootstrapParams = TcpBootstrapParams.custom()
-				.setStartupContext(new StartupContext())
-				.setMaxReceivedLength(1024*1024)
-				.setPort(1315)
-				.build();
-		Assertions.assertEquals(1315,  tcpBootstrapParams.getPort());
+		Assertions.assertEquals(param.getHttpParam().getWebsocketPath(), "/aa");
+		Assertions.assertEquals(param.getKcpParam().getPorts().size(), 10);
+		for (int i = 0; i < 10; i++) {
+			Assertions.assertTrue(param.getKcpParam().getPorts().contains(i + 100 + param.getPort()));
+		}
+
+		Assertions.assertEquals(param.getProtocolHeader(), CompatibleProtocolHeader.instance);
+		Assertions.assertEquals(param.getServerName(), "测试");
+		Assertions.assertEquals(param.getPort(), 8888);
+		Assertions.assertTrue(param.isEncryption());
 	}
 }

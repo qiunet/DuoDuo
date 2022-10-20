@@ -5,7 +5,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.CharsetUtil;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 
 /**
  * 把请求解析为string的对象
@@ -14,10 +14,10 @@ import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
  */
 public class HttpStringRequestContext extends AbstractHttpRequestContext<String, String> {
 
-	public HttpStringRequestContext(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+	public HttpStringRequestContext(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request) {
 		this.init(content, channel, params, request);
 	}
-	public void init(MessageContent content, Channel channel, HttpBootstrapParams params, HttpRequest request) {
+	public void init(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request) {
 		super.init(content, channel, params, request);
 	}
 

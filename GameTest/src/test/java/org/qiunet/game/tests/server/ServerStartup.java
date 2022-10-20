@@ -4,7 +4,7 @@ package org.qiunet.game.tests.server;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.game.tests.server.context.StartupContext;
 import org.qiunet.game.tests.server.enums.ServerType;
 
@@ -27,10 +27,8 @@ public final class ServerStartup {
 			@Override
 			public void run() {
 				BootstrapServer server = BootstrapServer.createBootstrap(hook);
-				server.tcpListener(TcpBootstrapParams.custom()
+				server.listener(ServerBootStrapParam.newBuild("压测服务测试", ServerType.LC_ROOM.port())
 						.setStartupContext(new StartupContext())
-						.setPort(ServerType.LC_ROOM.port())
-						.setServerName("测试服")
 						.build());
 				try {
 					Thread.sleep(1000);

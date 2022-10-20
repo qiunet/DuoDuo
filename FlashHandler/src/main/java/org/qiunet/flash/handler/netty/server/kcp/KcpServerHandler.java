@@ -17,7 +17,7 @@ import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthReq;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthRsp;
-import org.qiunet.flash.handler.netty.server.param.KcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
@@ -33,9 +33,9 @@ import java.util.Objects;
 public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private final KcpBootstrapParams params;
+	private final ServerBootStrapParam params;
 
-	public KcpServerHandler(KcpBootstrapParams params) {
+	public KcpServerHandler(ServerBootStrapParam params) {
 		this.params = params;
 	}
 
@@ -49,7 +49,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		ChannelUtil.bindSession(session);
 		logger.debug("Kcp session {} active!", session);
 		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
-		if (! params.isDependOnTcpWs()) {
+		if (! params.getKcpParam().isDependOnTcpWs()) {
 			// 从tcp那取到PlayerActor
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
 			PlayerActor playerActor = (PlayerActor) ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get();

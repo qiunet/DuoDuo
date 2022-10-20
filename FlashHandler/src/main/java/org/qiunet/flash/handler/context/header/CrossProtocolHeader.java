@@ -52,6 +52,11 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
+	public byte[] getConnectInMagic() {
+		return ServerReqHeader.MAGIC;
+	}
+
+	@Override
 	public IConnectInHeader serverConnectIn(ByteBuf in, Channel channel) {
 		return ServerReqHeader.valueOf(in, channel);
 	}

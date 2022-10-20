@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.server.param.HttpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 
 /**
  * 传输使用的数据类型
@@ -24,7 +24,7 @@ public enum DataType {
 	 */
 	STRING {
 		@Override
-		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, ServerBootStrapParam params, HttpRequest request) {
 			return new HttpStringRequestContext(content, channel, params, request);
 		}
 	},
@@ -34,7 +34,7 @@ public enum DataType {
 	PROTOBUF {
 
 		@Override
-		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, ServerBootStrapParam params, HttpRequest request) {
 			return new HttpPbRequestContext(content, channel, params, request);
 		}
 
@@ -48,7 +48,7 @@ public enum DataType {
 	 */
 	JSON {
 		@Override
-		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request) {
+		public IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, ServerBootStrapParam params, HttpRequest request) {
 			return new HttpJsonRequestContext(content, channel, params, request);
 		}
 	}
@@ -62,7 +62,7 @@ public enum DataType {
 	 * @param request
 	 * @return
 	 */
-	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, HttpBootstrapParams params, HttpRequest request);
+	public abstract IHttpRequestContext createHttpRequestContext(MessageContent content, Channel channel, IHandler handler, ServerBootStrapParam params, HttpRequest request);
 	/**
 	 * 得到一个webSocket使用的context
 	 * @param content

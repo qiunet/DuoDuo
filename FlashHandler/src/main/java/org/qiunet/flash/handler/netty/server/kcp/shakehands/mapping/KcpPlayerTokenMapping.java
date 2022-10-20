@@ -4,7 +4,7 @@ import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.TcpBootstrapParams;
+import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.utils.string.StringUtil;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,12 +26,12 @@ public final class KcpPlayerTokenMapping {
 	private final int port;
 
 	public KcpPlayerTokenMapping(PlayerActor playerActor) {
-		TcpBootstrapParams param = (TcpBootstrapParams) playerActor.getSession().getAttachObj(ServerConstants.HANDLER_PARAM_KEY);
+		ServerBootStrapParam param = playerActor.getSession().getAttachObj(ServerConstants.HANDLER_PARAM_KEY);
 		this.token = System.currentTimeMillis() +"_"+ StringUtil.randomString(24);
 		this.playerId = playerActor.getId();
 		this.convId = id.incrementAndGet();
 		// 以后有ws的. 再加ws的.
-		this.port = param.nextUdpPort();
+		this.port = param.getKcpParam().getUdpPortChooser().next();
 
 		playerActor.getSession().attachObj(KCP_TOKEN_KEY, this);
 	}

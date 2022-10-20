@@ -61,6 +61,11 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 	}
 
 	@Override
+	public byte[] getConnectInMagic() {
+		return ServerConnectHeader.MAGIC;
+	}
+
+	@Override
 	public IConnectInHeader serverConnectIn(ByteBuf in, Channel channel) {
 		return ServerConnectHeader.valueOf(in, channel);
 	}
