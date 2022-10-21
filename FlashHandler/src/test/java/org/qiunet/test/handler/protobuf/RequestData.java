@@ -13,7 +13,7 @@ import java.util.List;
  * 2022/10/19 10:57
  */
 @ProtobufClass
-@ChannelData(ID = -1, desc = "测试")
+@ChannelData(ID = -1, desc = "")
 public class RequestData extends IChannelData {
 
 	@Protobuf(description = "xx")

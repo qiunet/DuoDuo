@@ -1,10 +1,9 @@
 package org.qiunet.utils.http;
 
+import okhttp3.*;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.string.StringUtil;
 
-import java.net.URI;
-import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
 
 /***
@@ -15,22 +14,25 @@ import java.util.Map;
  ***/
 public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 
-	private java.net.http.HttpRequest.BodyPublisher requestBody;
+	protected RequestBody requestBody;
 
-	PostHttpRequest(String url) {
+	protected PostHttpRequest(String url) {
 		super(url);
 	}
 
 	/**
-	 * 使用form方式提交
+	 * 使用form的方式提交数据
+	 *
 	 * @param params
 	 * @return
 	 */
 	public PostHttpRequest withFormData(Map<String, String> params) {
-		String formData = StringUtil.mapToString(params, "=", "&");
-		this.withStringData(formData);
+		FormBody.Builder builder = new FormBody.Builder();
+		params.forEach(builder::add);
+		this.requestBody = builder.build();
 		return this;
 	}
+
 	/**
 	 * 使用json的方式提交数据
 	 *
@@ -39,17 +41,28 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 */
 	public PostHttpRequest withJsonData(Map<String, Object> params) {
 		String json = JsonUtil.toJsonString(params);
-		return withStringData(json);
+		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
+		return this;
 	}
 
 	/**
-	 * 使用string的方式提交数据
+	 * 使用json的方式提交数据
 	 *
-	 * @param string
+	 * @param params
 	 * @return
 	 */
-	public PostHttpRequest withStringData(String string) {
-		this.requestBody = java.net.http.HttpRequest.BodyPublishers.ofString(string);
+	public PostHttpRequest withJsonData(Object params) {
+		return this.withJsonData(JsonUtil.toJsonString(params));
+	}
+
+	/**
+	 * 使用json的方式提交数据
+	 *
+	 * @param json
+	 * @return
+	 */
+	public PostHttpRequest withJsonData(String json) {
+		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
 		return this;
 	}
 	/**
@@ -59,7 +72,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return
 	 */
 	public PostHttpRequest withBytes(byte [] bytes) {
-		this.requestBody = java.net.http.HttpRequest.BodyPublishers.ofByteArray(bytes);
+		this.requestBody = MultipartBody.create(MultipartBody.FORM, bytes);
 		return this;
 	}
 	/**
@@ -68,20 +81,21 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @param requestBody
 	 * @return
 	 */
-	public PostHttpRequest customBody(java.net.http.HttpRequest.BodyPublisher requestBody) {
+	public PostHttpRequest customBody(RequestBody requestBody) {
 		this.requestBody = requestBody;
 		return this;
 	}
 
 
 	@Override
-	protected java.net.http.HttpRequest buildRequest() {
-		java.net.http.HttpRequest.Builder builder = java.net.http.HttpRequest.newBuilder(URI.create(url));
-		builder.timeout(Duration.ofMillis(READ_TIMEOUT_MILLIS));
-		headerBuilder.forEach(builder::setHeader);
-		if (requestBody != null) {
-			builder.POST(requestBody);
+	protected Request buildRequest() {
+		if (requestBody == null) {
+			this.withFormData(Collections.emptyMap());
 		}
-		return builder.build();
+		return new Request.Builder()
+				.headers(headerBuilder.build())
+				.post(requestBody)
+				.url(url)
+				.build();
 	}
 }

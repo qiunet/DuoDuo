@@ -23,7 +23,6 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 	private final HttpClientParams params = HttpClientParams.custom()
 		.setAddress("localhost", port)
-		.setProtocolHeader(PROTOCOL_HEADER)
 		.build();
 	@Test
 	public void muchRequest() throws InterruptedException {
@@ -36,9 +35,9 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 					HttpRequest.post(params.getURI())
 						.withBytes(this.getAllBytes(request.buildChannelMessage()))
-						.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (response) -> {
-							Assertions.assertEquals(response.statusCode() , HttpResponseStatus.OK.code());
-							ByteBuffer buffer = ByteBuffer.wrap(response.body());
+						.asyncExecutor((call, response) -> {
+							Assertions.assertEquals(response.code() , HttpResponseStatus.OK.code());
+							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());
 							buffer.position(PROTOCOL_HEADER.getClientInHeadLength());
 
 							LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);

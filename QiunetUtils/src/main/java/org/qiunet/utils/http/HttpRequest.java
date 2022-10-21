@@ -1,54 +1,38 @@
 package org.qiunet.utils.http;
 
+import okhttp3.*;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
-import java.io.InputStream;
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /***
- * Http 请求工具类.
+ *
  *
  * @author qiunet
  * 2020-04-20 17:39
  ***/
-public abstract class HttpRequest<B extends HttpRequest<B>> {
-	public static final HttpResponse.BodyHandler<String> STRING_SUPPLIER = HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8);
-
-	public static final HttpResponse.BodyHandler<InputStream> INPUT_STREAM_SUPPLIER = HttpResponse.BodyHandlers.ofInputStream();
-
-	public static final HttpResponse.BodyHandler<byte[]> BYTE_ARRAY_SUPPLIER = HttpResponse.BodyHandlers.ofByteArray();
-
+public abstract class HttpRequest<B extends HttpRequest> {
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
-	/**
-	 * 读取超时数
-	 */
-	protected static final int READ_TIMEOUT_MILLIS = 6000;
-
-	//Once built, an HttpClient can be used to send multiple requests.
-	protected static final HttpClient client = HttpClient.newBuilder()
-			.connectTimeout(Duration.ofMillis(6000))
-			.executor(ThreadPoolManager.NORMAL)
-			.build();
-
-	protected Charset charset = StandardCharsets.UTF_8;
+	protected static final OkHttpClient client = new OkHttpClient.Builder()
+		.dispatcher(new Dispatcher(ThreadPoolManager.NORMAL))
+		.build();
 
 	protected String url;
+
+	protected Charset charset = StandardCharsets.UTF_8;
 
 	protected HttpRequest(String url) {
 		this.url = url;
 	}
 
-	protected Map<String, String> headerBuilder = new HashMap<>() {{put("Accept-Charset", "UTF-8");}};
+	protected Headers.Builder headerBuilder = new Headers.Builder()
+		.add("Accept-Charset", "UTF-8")
+		.add("Accept-Encoding", "gzip");
 
 	public static PostHttpRequest post(String url) {
 		return new PostHttpRequest(url);
@@ -65,12 +49,21 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	}
 
 	public B header(String name, String val) {
-		this.headerBuilder.put(name, val);
+		this.headerBuilder.add(name, val);
+		return (B) this;
+	}
+
+	/**
+	 * 每次请求关闭 connect
+	 * @return
+	 */
+	public B closeConnectAlive() {
+		this.header("Connection", "close");
 		return (B) this;
 	}
 
 	public B header(Map<String, String> headerMap) {
-		this.headerBuilder.putAll(headerMap);
+		headerMap.forEach((key, val) -> this.headerBuilder.add(key ,val));
 		return (B) this;
 	}
 
@@ -78,27 +71,22 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	 * 异步执行请求
 	 * @param callBack
 	 */
-	public  void asyncExecutor(IHttpCallBack<String> callBack) {
-		this.asyncExecutor(STRING_SUPPLIER, callBack);
-	}
-
-	public <T> void asyncExecutor(HttpResponse.BodyHandler<T> bodyHandler, IHttpCallBack<T> callBack) {
-		java.net.http.HttpRequest request = buildRequest();
-		CompletableFuture<HttpResponse<T>> future = client.sendAsync(request, bodyHandler);
-		future.thenAccept(callBack::response);
+	public void asyncExecutor(IHttpCallBack callBack) {
+		Request request = buildRequest();
+		client.newCall(request).enqueue(callBack);
 	}
 	/**
 	 * 执行请求
 	 * @return
 	 */
-	public <T> T executor(HttpResponse.BodyHandler<T> supplier) {
-		java.net.http.HttpRequest request = buildRequest();
+	public <T> T executor(IResultSupplier<T> supplier) {
+		Request request = buildRequest();
 		try {
-			HttpResponse<T> response = client.send(request, supplier);
-			if (response.statusCode() != 200) {
-				throw new CustomException("Request: {} Fail, StatusCode {}", request, response.statusCode());
+			Response response = client.newCall(request).execute();
+			if (! response.isSuccessful()) {
+				throw new CustomException("Request: {} Fail, StatusCode {}", request, response.code());
 			}
-			return response.body();
+			return supplier.result(response);
 		} catch (Exception e) {
 			throw new CustomException(e, "http client send request error!");
 		}
@@ -108,8 +96,8 @@ public abstract class HttpRequest<B extends HttpRequest<B>> {
 	 * @return
 	 */
 	public String executor() {
-		return executor(STRING_SUPPLIER);
+		return executor(IResultSupplier.STRING_SUPPLIER);
 	}
 
-	protected abstract java.net.http.HttpRequest buildRequest();
+	protected abstract Request buildRequest();
 }
