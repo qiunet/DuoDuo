@@ -42,8 +42,8 @@ public class TestCommonUtil extends BaseTest {
 		List<Integer> subList = CommonUtil.getSubListPage(list, 1 , 4);
 
 		Assertions.assertEquals(subList.size(), 4);
-		Assertions.assertTrue(subList.get(0) == 1);
-		Assertions.assertTrue(subList.get(subList.size() - 1) == 4);
+        Assertions.assertEquals(1, (int) subList.get(0));
+        Assertions.assertEquals(4, (int) subList.get(subList.size() - 1));
 	}
 	@Test
 	public void testReverse(){

@@ -4,7 +4,6 @@ import java.util.List;
 
 /***
  * 修改表结构使用
- *
  * qiunet
  * 2019-08-22 11:09
  ***/
@@ -12,13 +11,13 @@ public class TableParam {
 
 	private String tableName;
 
-	private List<FieldParam> fields;
+	private final List<FieldParam> fields;
 
 	private String dbName;
 
-	private boolean splitTable;
+	private final boolean splitTable;
 
-	private String dbSource;
+	private final String dbSource;
 
 	public TableParam(String tableName, List<FieldParam> fields, boolean splitTable, String dbSource) {
 		this.splitTable = splitTable;

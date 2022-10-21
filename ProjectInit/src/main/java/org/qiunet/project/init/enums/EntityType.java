@@ -89,8 +89,8 @@ public enum  EntityType {
 		}
 	},
 	;
-	private String xsdName;
-	private Class<? extends IDataSupport> dataSupportClass;
+	private final String xsdName;
+	private final Class<? extends IDataSupport> dataSupportClass;
 	EntityType(String xsdName, Class<? extends IDataSupport> dataSupportClass) {
 		this.dataSupportClass = dataSupportClass;
 		this.xsdName = xsdName;

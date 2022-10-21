@@ -3,7 +3,6 @@ package org.qiunet.function.targets;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.utils.thread.ThreadPoolManager;
 
 /***
  * 单个目标的进度管理

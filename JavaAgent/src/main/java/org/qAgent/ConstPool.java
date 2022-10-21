@@ -607,8 +607,7 @@ class NameAndTypeInfo extends ConstInfo
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof NameAndTypeInfo) {
-			NameAndTypeInfo nti = (NameAndTypeInfo)obj;
+		if (obj instanceof NameAndTypeInfo nti) {
 			return nti.memberName == memberName
 					&& nti.typeDescriptor == typeDescriptor;
 		}
@@ -647,8 +646,7 @@ abstract class MemberrefInfo extends ConstInfo
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof MemberrefInfo) {
-			MemberrefInfo mri = (MemberrefInfo)obj;
+		if (obj instanceof MemberrefInfo mri) {
 			return mri.classIndex == classIndex
 					&& mri.nameAndTypeIndex == nameAndTypeIndex
 					&& mri.getClass() == this.getClass();
@@ -960,8 +958,7 @@ class MethodHandleInfo extends ConstInfo {
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof MethodHandleInfo) {
-			MethodHandleInfo mh = (MethodHandleInfo)obj;
+		if (obj instanceof MethodHandleInfo mh) {
 			return mh.refKind == refKind && mh.refIndex == refIndex;
 		}
 		return false;
@@ -1039,8 +1036,7 @@ class InvokeDynamicInfo extends ConstInfo
 	@Override
 	public boolean equals(Object obj)
 	{
-		if (obj instanceof InvokeDynamicInfo) {
-			InvokeDynamicInfo iv = (InvokeDynamicInfo)obj;
+		if (obj instanceof InvokeDynamicInfo iv) {
 			return iv.bootstrap == bootstrap
 					&& iv.nameAndType == nameAndType;
 		}
@@ -1079,8 +1075,7 @@ class DynamicInfo extends ConstInfo {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof DynamicInfo) {
-			DynamicInfo iv = (DynamicInfo)obj;
+		if (obj instanceof DynamicInfo iv) {
 			return iv.bootstrap == bootstrap && iv.nameAndType == nameAndType;
 		}
 		return false;

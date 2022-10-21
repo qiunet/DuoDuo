@@ -17,10 +17,10 @@ public enum AttrType implements IAttrEnum<AttrType> {
 
 	;
 
-	private int type;
-	private String desc;
-	private AttrType [] additions;
-	private AttrValueType valueType;
+	private final int type;
+	private final String desc;
+	private final AttrType [] additions;
+	private final AttrValueType valueType;
 
 	AttrType(int type, String desc) {
 		this(type, desc, AttrValueType.base);

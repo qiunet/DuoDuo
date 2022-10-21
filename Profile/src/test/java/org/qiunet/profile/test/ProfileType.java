@@ -5,7 +5,6 @@ import org.qiunet.profile.ProStrategy;
 
 /***
  *
- *
  * @author qiunet
  * 2020-11-04 16:45
  */
@@ -22,5 +21,4 @@ public enum ProfileType implements IProColumn {
 			return ProStrategy.sum;
 		}
 	},
-	;
 }

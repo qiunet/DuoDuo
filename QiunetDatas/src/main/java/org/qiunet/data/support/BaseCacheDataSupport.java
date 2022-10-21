@@ -164,8 +164,8 @@ abstract class BaseCacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extend
 	 * 队列的对象
 	 */
 	protected class SyncEntityElement {
-		private Bo bo;
-		private EntityOperate operate;
+		private final Bo bo;
+		private final EntityOperate operate;
 
 		SyncEntityElement(Bo bo, EntityOperate operate) {
 			this.bo = bo;

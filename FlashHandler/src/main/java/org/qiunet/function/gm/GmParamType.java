@@ -36,13 +36,11 @@ public enum GmParamType {
 	},
 	;
 
-	private Class<?> [] classes;
+	private final Class<?> [] classes;
 
 	GmParamType(Class<?>... classes) {
 		this.classes = classes;
 	}
-
-	;
 
 	public abstract Object parse(String val);
 

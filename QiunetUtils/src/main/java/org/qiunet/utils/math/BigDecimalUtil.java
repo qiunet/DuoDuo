@@ -1,6 +1,7 @@
 package org.qiunet.utils.math;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * 处理超大数据的工具类(+ - * /)
@@ -114,7 +115,7 @@ public class BigDecimalUtil {
 
 	public static BigDecimal div(BigDecimal b1, BigDecimal b2) {
 		// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入
-		return b1.divide(b2, 2, BigDecimal.ROUND_HALF_UP);// 应对除不尽的情况
+		return b1.divide(b2, 2, RoundingMode.HALF_UP);// 应对除不尽的情况
 	}
 
 	public static BigDecimal add(String... arr) {

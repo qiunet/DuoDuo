@@ -78,10 +78,10 @@ public class NettyKcpServer implements INettyServer {
 						}
 					});
 
-			ChannelOptionHelper.nodelay(b, params.getKcpParam().isNoDelay(), params.getKcpParam().getInterval(), params.getKcpParam().getFastResend(), params.getKcpParam().isNoCwnd())
-					.childOption(UkcpChannelOption.UKCP_MTU, params.getKcpParam().getMtu())
-					.childOption(UkcpChannelOption.UKCP_SND_WND, params.getKcpParam().getSnd_wnd())
-					.childOption(UkcpChannelOption.UKCP_RCV_WND, params.getKcpParam().getRcv_wnd())
+			ChannelOptionHelper.nodelay(b, params.getKcpParam().noDelay(), params.getKcpParam().interval(), params.getKcpParam().fastResend(), params.getKcpParam().noCwnd())
+					.childOption(UkcpChannelOption.UKCP_MTU, params.getKcpParam().mtu())
+					.childOption(UkcpChannelOption.UKCP_SND_WND, params.getKcpParam().snd_wnd())
+					.childOption(UkcpChannelOption.UKCP_RCV_WND, params.getKcpParam().rcv_wnd())
 					.childOption(UkcpChannelOption.UKCP_AUTO_SET_CONV, true);
 
 			this.channelFutures = Lists.newArrayListWithCapacity(this.params.getPorts().size());

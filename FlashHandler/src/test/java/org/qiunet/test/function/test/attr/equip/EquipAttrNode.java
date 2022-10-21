@@ -16,8 +16,8 @@ public enum EquipAttrNode implements IAttrNodeType {
 	GEM_POSITION(EquipPostion.class, "装备部位镶嵌宝石属性"),
 	;
 
-	private Class<?> keyClass;
-	private String desc;
+	private final Class<?> keyClass;
+	private final String desc;
 
 	EquipAttrNode(Class<?> keyClass, String desc) {
 		this.keyClass = keyClass;

@@ -9,11 +9,11 @@ import java.util.Map;
  * 多个数据库源的方式
  */
 public final class DbSourceDatabaseSupport extends BaseDatabaseSupport {
-	private volatile static Map<String, IDatabaseSupport> instances = new HashMap<>(128);
+	private static final Map<String, IDatabaseSupport> instances = new HashMap<>(128);
 	private DbSourceDatabaseSupport(String dbSourceName) {
 		this.dbSourceName = dbSourceName;
 	}
-	private String dbSourceName;
+	private final String dbSourceName;
 
 	/**
 	 * 根据dbSourceKey 取到执行的DatabaseSupport

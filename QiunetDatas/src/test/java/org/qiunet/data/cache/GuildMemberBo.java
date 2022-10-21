@@ -4,7 +4,7 @@ import org.qiunet.data.support.IEntityBo;
 
 public class GuildMemberBo implements IEntityBo<GuildMemberDo> {
 
-	private GuildMemberDo guildMemberDo;
+	private final GuildMemberDo guildMemberDo;
 
 	GuildMemberBo(GuildMemberDo guildMemberDo) {
 		this.guildMemberDo = guildMemberDo;

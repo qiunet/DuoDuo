@@ -9,7 +9,7 @@ import org.qiunet.utils.exceptions.CustomException;
 
 public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEntityBo<Do>> extends BaseCacheDataSupport<Key, Do, Bo> {
 	/**防止缓存击穿的 NULL值*/
-	private Bo NULL;
+	private final Bo NULL;
 	/**保存的cache*/
 	private LocalCache<Key, Bo> cache;
 

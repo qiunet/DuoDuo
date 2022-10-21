@@ -33,7 +33,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
      * 玩家ID
 	 */
-	private long playerId;
+	private final long playerId;
 
 	public PlayerDataLoader(long playerId) {
 		this(playerId, false);
@@ -101,8 +101,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 
 		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
 		bo.playerDataLoader = this;
-		if (bo.getDo() instanceof DbEntityList) {
-			DbEntityList aDo = (DbEntityList) bo.getDo();
+		if (bo.getDo() instanceof DbEntityList aDo) {
 			Map mapData = this.getMapData(bo.getClass());
 			mapData.put(aDo.subKey(), bo);
 		}else {

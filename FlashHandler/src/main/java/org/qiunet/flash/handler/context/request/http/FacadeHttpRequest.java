@@ -11,7 +11,7 @@ import java.util.Set;
  * 17/11/21
  */
 class FacadeHttpRequest<RequestData, ResponseData> implements IHttpRequest<RequestData> {
-	private IHttpRequestContext<RequestData, ResponseData> context;
+	private final IHttpRequestContext<RequestData, ResponseData> context;
 	public FacadeHttpRequest(IHttpRequestContext context) {
 		this.context = context;
 	}

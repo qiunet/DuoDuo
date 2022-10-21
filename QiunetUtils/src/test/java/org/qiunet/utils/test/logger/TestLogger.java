@@ -25,10 +25,6 @@ public class TestLogger extends BaseTest{
 				logger.debug(msg);
 		}
 	}
-//	@Test
-//	public void loggerException() throws InterruptedException {
-//		logger.info("我们\n是中国人abc\ndccc", new NullPointerException("Test"));
-//	}
 	@Test
 	public void testInvoke() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		Class clazz = Class.forName("org.qiunet.utils.logger.LoggerType");

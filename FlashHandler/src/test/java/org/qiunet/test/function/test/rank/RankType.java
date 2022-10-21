@@ -4,7 +4,6 @@ import org.qiunet.function.rank.IRankType;
 
 /***
  *
- *
  * @author qiunet
  * 2020-11-25 11:28
  */
@@ -21,8 +20,8 @@ public enum RankType implements IRankType {
 		}
 	},
 	;
-	private int type;
-	private String desc;
+	private final int type;
+	private final String desc;
 
 	RankType(int type, String desc) {
 		this.type = type;

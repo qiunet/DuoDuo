@@ -4,7 +4,6 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 
 /***
  *
- *
  * qiunet
  * 2021/6/30 21:49
  **/
@@ -19,13 +18,13 @@ public interface ProtocolId extends IProtocolId {
 		int LOGIN_RESP = 1001001;
 	}
 
-	public interface Player {
+	interface Player {
 		int PLAYER_LOGIN = 1002;
 
 		int CROSS_PLAYER_LOGIN_SUCCESS = 1002001;
 	}
 
-	public interface Equip {
+	interface Equip {
 		int EQUIP_INDEX = 1100;
 	}
 }

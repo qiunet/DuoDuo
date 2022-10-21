@@ -15,7 +15,7 @@ public class ConstructorDefine {
 	/***
 	 * 构造需要的字段
 	 */
-	private List<String> fields = new ArrayList<>();
+	private final List<String> fields = new ArrayList<>();
 
 	private IEntityDefine entityDefine;
 

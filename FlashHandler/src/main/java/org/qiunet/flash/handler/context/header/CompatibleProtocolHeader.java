@@ -108,8 +108,8 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 
 		public static ServerReqHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
-			header.crc = (int) CrcUtil.getCrc32Value(message.byteBuffer().rewind());;
-			header.length = (short) message.byteBuffer().limit();
+			header.crc = (int) CrcUtil.getCrc32Value(message.byteBuffer().rewind());
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}
@@ -173,7 +173,7 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 
 		public static ServerRspHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.length = (short) message.byteBuffer().limit();
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}

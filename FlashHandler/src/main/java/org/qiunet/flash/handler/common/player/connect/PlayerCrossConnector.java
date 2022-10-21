@@ -90,6 +90,10 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		session.sendMessage(request.buildChannelMessage());
 	}
 
+	public long getPlayerId() {
+		return playerId;
+	}
+
 	@Override
 	public IChannelMessageSender getSender() {
 		return session;

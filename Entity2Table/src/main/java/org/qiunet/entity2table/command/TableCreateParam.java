@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 /***
  * 创建表结构使用
- *
  * qiunet
  * 2019-08-22 11:09
  ***/
@@ -21,7 +20,7 @@ public class TableCreateParam {
 	 */
 	private boolean splitTable;
 
-	private String dbSource;
+	private final String dbSource;
 
 	private List<FieldParam> fields;
 

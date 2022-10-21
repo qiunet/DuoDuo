@@ -31,10 +31,6 @@ public class TestAppClassLoader extends BaseTest{
 			Assertions.assertEquals("org.test.ObjectB", object2.getClass().getName());
 			Assertions.assertEquals(object2.toString() , "GameAppClassLoader");
 
-//			Class c2 = loader.loadClass("javaz.utils.date.DateUtil");
-//			Object object3 = c2.newInstance();
-//			Assertions.assertEquals(object3.getClass().getClassLoader().getClass().getSimpleName(), "GameAppClassLoader");
-//
 			Method method2 = object1.getClass().getMethod("createString");
 			String string = (String) method2.invoke(object1);
 			Assertions.assertEquals("TestA", string);

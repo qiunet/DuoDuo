@@ -82,9 +82,8 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 
 	private static class ServerReqHeader implements IServerInHeader, IClientOutHeader, IConnectInHeader, IConnectOutHeader {
 		private final ObjectPool.Handle<ServerReqHeader> recyclerHandle;
-
-			private static final byte [] MAGIC = {'F', 'a', 's', 't'};
-		private static final int HEADER_LENGTH = MAGIC.length + 12;
+		private static final byte [] MAGIC = {'F', 'a', 's', 't'};
+		private static final int HEADER_LENGTH = MAGIC.length + 6;
 		private final byte [] magic = new byte[MAGIC.length];
 
 		private int protocolId;
@@ -97,13 +96,13 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
 			in.readBytes(header.magic);
 			header.protocolId = in.readInt();
-			header.length = in.readInt();
+			header.length = in.readUnsignedShort();
 			return header;
 		}
 
 		public static ServerReqHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
-			header.length = (short) message.byteBuffer().limit();
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}
@@ -130,7 +129,7 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeBytes(MAGIC);
 			out.writeInt(protocolId);
-			out.writeInt(length);
+			out.writeShort(length);
 			return out;
 		}
 
@@ -159,13 +158,13 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 		public static ServerRspHeader valueOf(ByteBuf in, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
 			header.protocolId = in.readInt();
-			header.length = in.readInt();
+			header.length = in.readUnsignedShort();
 			return header;
 		}
 
 		public static ServerRspHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.length = (short) message.byteBuffer().limit();
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}
@@ -184,7 +183,7 @@ public enum ServerNodeProtocolHeader implements IProtocolHeader {
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeInt(protocolId);
-			out.writeInt(length);
+			out.writeShort(length);
 			return out;
 		}
 

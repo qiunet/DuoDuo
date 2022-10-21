@@ -103,7 +103,7 @@ public enum  BadWordFilter {
 	}
 	private static final String NOT_CHINESE_REGEX_STR = "[^\u4E00-\u9FA5]*?";
 	/**非汉字的正则表达式*/
-	private ThreadLocal<Pattern> NOT_CHINESE_REGEX = ThreadLocal.withInitial(() -> Pattern.compile("[^\u4E00-\u9FA5]*"));
+	private final ThreadLocal<Pattern> NOT_CHINESE_REGEX = ThreadLocal.withInitial(() -> Pattern.compile("[^\u4E00-\u9FA5]*"));
 	/**
 	 * 屏蔽干扰字符. 比如习~近~平 仍然会被给出
 	 * 如有敏感词返回相关的词，否则返回null
@@ -239,7 +239,7 @@ public enum  BadWordFilter {
 	}
 
 	private static  class RootNode implements INode {
-		private Map<Character, INode> nextNodes = new HashMap<>(512);
+		private final Map<Character, INode> nextNodes = new HashMap<>(512);
 
 		@Override
 		public Character getChar() {
@@ -263,9 +263,9 @@ public enum  BadWordFilter {
 	}
 
 	private static class CharNode implements INode {
-		private char c;
-		private boolean endFlag;
-		private List<INode> nextNodes = new LinkedList<>();
+		private final char c;
+		private final boolean endFlag;
+		private final List<INode> nextNodes = new LinkedList<>();
 
 		public CharNode(char c, boolean endFlag) {
 			this.c = c;

@@ -96,7 +96,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 
 		private static final int HEADER_LENGTH = MAGIC.length + 4 + 4 + 2;
 		private int protocolId;
-		private short length;
+		private int length;
 
 		private int sequence;
 
@@ -105,7 +105,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			ServerConnectHeader data = new ServerConnectHeader();
 			in.readBytes(data.magic);
 			data.protocolId = in.readInt();
-			data.length = in.readShort();
+			data.length = in.readUnsignedShort();
 			data.sequence = in.readInt();
 
 			if (channel != null && ! channel.attr(REQ_SEQUENCE_KEY).compareAndSet(null, data.sequence)) {
@@ -122,11 +122,11 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			if (channel != null) {
 				AtomicInteger atomicInteger = new AtomicInteger(MathUtil.random(1000000));
 				channel.attr(SEQUENCE_COUNTER_KEY).set(atomicInteger);
-				data.sequence = atomicInteger.incrementAndGet();;
+				data.sequence = atomicInteger.incrementAndGet();
 			}
 
 			System.arraycopy(MAGIC, 0, data.magic, 0, MAGIC.length);
-			data.length = (short) message.byteBuffer().limit();
+			data.length = message.byteBuffer().limit();
 			data.protocolId = message.getProtocolID();
 			return data;
 		}
@@ -172,7 +172,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		private static final int HEADER_LENGTH = 6;
 		private int protocolId;
 
-		private short length;
+		private int length;
 		private ServerRspHeader(ObjectPool.Handle<ServerRspHeader> recyclerHandle) {
 			this.recyclerHandle = recyclerHandle;
 		}
@@ -180,13 +180,13 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		public static ServerRspHeader valueOf(ByteBuf in, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
 			header.protocolId = in.readInt();
-			header.length = in.readShort();
+			header.length = in.readUnsignedShort();
 			return header;
 		}
 
 		public static ServerRspHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.length = (short) message.byteBuffer().limit();
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}
@@ -234,7 +234,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		private transient Channel channel;
 		private int protocolId;
 
-		private short length;
+		private int length;
 
 		private int sequence;
 
@@ -245,7 +245,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		public static ServerReqHeader valueOf(ByteBuf in, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
 			header.protocolId = in.readInt();
-			header.length = in.readShort();
+			header.length = in.readUnsignedShort();
 			header.sequence = in.readInt();
 			header.channel = channel;
 			return header;
@@ -257,7 +257,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 				AtomicInteger counter = channel.attr(SEQUENCE_COUNTER_KEY).get();
 				header.sequence = counter.incrementAndGet();
 			}
-			header.length = (short) message.byteBuffer().limit();
+			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
 		}

@@ -28,7 +28,7 @@ public class CrossDataTransactionHandler implements ITransactionHandler<CrossDat
 
 	@EventListener
 	private void crossDataUpdateEvent(_CrossDataNeedUpdateEvent event) {
-		CrossData crossData = (CrossData) CrossData.valueOf(CrossData.class, event.getKey());
+		CrossData crossData = CrossData.valueOf(CrossData.class, event.getKey());
 		Object data = JsonUtil.getGeneralObj(event.getJson(), crossData.getDataClz());
 		crossData.update(event.getPlayer(), (IUserTransferData) data);
 	}

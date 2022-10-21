@@ -11,8 +11,8 @@ import org.qiunet.function.formula.param.FighterAttrFormulaParam;
  * 2020-12-30 14:39
  */
 public class FormulaFighterAttr<Type extends Enum<Type> & IAttrEnum<Type>> implements IFormula<FighterAttrFormulaParam<Type>> {
-	private FighterParamSide side;
-	private Type type;
+	private final FighterParamSide side;
+	private final Type type;
 
 	public FormulaFighterAttr(FighterParamSide side, Type type) {
 		this.side = side;

@@ -3,7 +3,8 @@ package org.qiunet.test.function.test.targets;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.function.targets.*;
+import org.qiunet.function.targets.TargetContainer;
+import org.qiunet.function.targets.Targets;
 import org.qiunet.test.function.test.TestDSession;
 import org.qiunet.test.function.test.targets.event.KillBossEventData;
 import org.qiunet.test.function.test.targets.event.LevelUpEventData;
@@ -19,7 +20,7 @@ import org.slf4j.Logger;
  * 2020-11-23 21:51
  **/
 public class TestTarget {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private final Logger logger = LoggerType.DUODUO.getLogger();
 	@BeforeAll
 	public static void init(){
 		ClassScanner.getInstance(ScannerType.TARGET_HANDLER).scanner();

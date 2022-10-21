@@ -27,7 +27,7 @@ public class TestBadWord {
 
 		Assertions.assertEquals("毛泽东", BadWordFilter.instance.powerFind("sss毛2泽3东7--"));
 		Assertions.assertEquals("fuck", BadWordFilter.instance.powerFind("sss毛fuck东7--"));
-		Assertions.assertEquals(null, BadWordFilter.instance.powerFind("王小川"));
+        Assertions.assertNull(BadWordFilter.instance.powerFind("王小川"));
 
 		Assertions.assertEquals("柟", BadWordFilter.instance.find("sss王柟山7--"));
 		Assertions.assertEquals("王岐山", BadWordFilter.instance.find("s王ss王岐山7--"));

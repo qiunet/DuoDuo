@@ -6,8 +6,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /***
- *
- *
+ * 监控数据
  * @author qiunet
  * 2020-03-20 18:01
  ***/
@@ -16,8 +15,8 @@ import java.util.concurrent.atomic.AtomicLong;
 	AtomicLong num = new AtomicLong();
 	private long ignoreStartCheckTime;
 	private long startCheckTime;
-	private KEY key;
-	private VAL val;
+	private final KEY key;
+	private final VAL val;
 
 
 	public MonitorData(KEY key, VAL val) {

@@ -12,7 +12,6 @@ import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;

@@ -1,7 +1,6 @@
 package org.qiunet.function.targets;
 
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.utils.args.Argument;
 
 import java.util.function.Consumer;
 

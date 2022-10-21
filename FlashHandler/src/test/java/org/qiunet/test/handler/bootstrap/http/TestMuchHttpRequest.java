@@ -9,7 +9,6 @@ import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
 
-import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 

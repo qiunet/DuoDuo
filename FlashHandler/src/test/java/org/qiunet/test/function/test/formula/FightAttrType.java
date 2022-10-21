@@ -5,7 +5,6 @@ import org.qiunet.function.attr.enums.IAttrEnum;
 
 /***
  *
- *
  * @author qiunet
  * 2020-12-30 15:00
  */
@@ -13,8 +12,8 @@ public enum FightAttrType implements IAttrEnum<FightAttrType> {
 	ATT (1, "攻击力"),
 	DEF (2, "防御力"),
 	;
-	private int type;
-	private String desc;
+	private final int type;
+	private final String desc;
 
 	FightAttrType(int type, String desc) {
 		this.type = type;

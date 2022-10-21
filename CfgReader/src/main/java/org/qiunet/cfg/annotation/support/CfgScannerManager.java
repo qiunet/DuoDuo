@@ -1,7 +1,6 @@
 package org.qiunet.cfg.annotation.support;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.annotation.CfgLoadOver;
 import org.qiunet.cfg.base.ICfg;
@@ -21,7 +20,6 @@ import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.lang.reflect.*;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**

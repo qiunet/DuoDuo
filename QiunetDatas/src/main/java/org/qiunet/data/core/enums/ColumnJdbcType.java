@@ -46,8 +46,8 @@ public enum  ColumnJdbcType {
 	 */
 	LONGTEXT("LONGTEXT", 205),
 	;
-	private int factor;
-	private String jdbcType;
+	private final int factor;
+	private final String jdbcType;
 	ColumnJdbcType(String jdbcType, int factor) {
 		this.jdbcType = jdbcType;
 		this.factor = factor;

@@ -9,7 +9,7 @@ import java.util.List;
  * @Date Create in 2018/6/27 19:24
  **/
 public class DefaultBadWord implements IBadWord {
-	private List<String> badWords;
+	private final List<String> badWords;
 
 	public DefaultBadWord(List<String> badwords) {
 		this.badWords = badwords;

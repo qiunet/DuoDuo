@@ -12,7 +12,7 @@ import java.util.*;
  * Created on 17/3/1 16:35.
  */
 public class SafeMap<KEY, VAL> implements Map<KEY, VAL>, ISafeCollection {
-	private Logger logger = LoggerType.DUODUO.getLogger();
+	private final Logger logger = LoggerType.DUODUO.getLogger();
 	private Map<KEY, VAL> map;
 	/***
 	 * 缺失打印.

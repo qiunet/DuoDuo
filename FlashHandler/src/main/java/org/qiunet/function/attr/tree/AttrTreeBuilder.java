@@ -14,11 +14,11 @@ public class AttrTreeBuilder<NodeEnum extends IAttrNodeType, Buff extends IAttrB
 	/**
 	 * 树本身
 	 */
-	private AttrTree attrTree;
+	private final AttrTree attrTree;
 	/**
 	 * 节点本身
 	 */
-	private AttrNode parent;
+	private final AttrNode parent;
 
 	AttrTreeBuilder(AttrTree attrTree, AttrNode parent) {
 		this.attrTree = attrTree;

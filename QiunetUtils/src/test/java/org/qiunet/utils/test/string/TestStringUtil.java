@@ -78,10 +78,10 @@ public class TestStringUtil extends BaseTest{
 	}
 	@Test
 	public void testChineseWord(){
-		Assertions.assertEquals(true, StringUtil.regexChinese("我们"));
-		Assertions.assertEquals(false, StringUtil.regexChinese("ab"));
-		Assertions.assertEquals(false, StringUtil.regexChinese("126"));
-		Assertions.assertEquals(false, StringUtil.regexChinese("^%^%#$"));
+		Assertions.assertTrue(StringUtil.regexChinese("我们"));
+		Assertions.assertFalse(StringUtil.regexChinese("ab"));
+		Assertions.assertFalse(StringUtil.regexChinese("126"));
+		Assertions.assertFalse(StringUtil.regexChinese("^%^%#$"));
 	}
 
 	@Test

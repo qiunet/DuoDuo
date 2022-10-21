@@ -9,7 +9,6 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -72,8 +71,8 @@ public class TestDateUtil extends BaseTest {
 	public void testAddHour() {
 		int hours = 5;
 		LocalDateTime now = DateUtil.nowLocalDateTime();
-		Assertions.assertTrue((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(now.plusHours(-hours)));
-		Assertions.assertTrue((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)) == DateUtil.getMilliByTime(now.plusHours(hours)));
+		Assertions.assertEquals((DateUtil.getMilliByTime(now) - (hours * 60 * 60 * 1000)), DateUtil.getMilliByTime(now.plusHours(-hours)));
+		Assertions.assertEquals((DateUtil.getMilliByTime(now) + (hours * 60 * 60 * 1000)), DateUtil.getMilliByTime(now.plusHours(hours)));
 	}
 
 	@Test

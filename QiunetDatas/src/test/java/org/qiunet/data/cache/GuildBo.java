@@ -3,7 +3,7 @@ package org.qiunet.data.cache;
 import org.qiunet.data.support.IEntityBo;
 
 public class GuildBo implements IEntityBo<GuildDo> {
-	private GuildDo guildDo;
+	private final GuildDo guildDo;
 
 	GuildBo(GuildDo guildDo) {
 		this.guildDo = guildDo;

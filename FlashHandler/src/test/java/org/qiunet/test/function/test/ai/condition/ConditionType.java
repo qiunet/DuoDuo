@@ -13,7 +13,7 @@ public enum ConditionType implements IConditionType {
 
 	SEE_OMA("看见半兽人"),
 	;
-	private String desc;
+	private final String desc;
 
 	ConditionType(String desc) {
 		this.desc = desc;

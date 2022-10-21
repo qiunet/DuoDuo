@@ -35,7 +35,7 @@ public enum  LoggerType implements ILoggerType {
 	DUODUO_FLASH_HANDLER("DuoDuoFlashHandler"),
 	;
 
-	private String loggerName;
+	private final String loggerName;
 
 	LoggerType(String loggerName) {
 		this.loggerName = loggerName;

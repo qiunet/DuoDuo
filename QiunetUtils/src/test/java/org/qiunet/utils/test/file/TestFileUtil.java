@@ -84,6 +84,6 @@ public class TestFileUtil {
 
 		Assertions.assertTrue(file.exists());
 		FileUtil.deleteFile(file);
-		Assertions.assertTrue(! file.exists());
+        Assertions.assertFalse(file.exists());
 	}
 }

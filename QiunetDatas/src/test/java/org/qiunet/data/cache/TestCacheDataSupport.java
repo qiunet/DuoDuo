@@ -9,9 +9,9 @@ import org.qiunet.data.support.CacheDataSupport;
 import java.util.Map;
 
 public class TestCacheDataSupport extends BaseTest {
-	private static CacheDataSupport<Long, GuildDo, GuildBo> dataSupport = new CacheDataSupport<>(GuildDo.class, GuildBo::new);
+	private static final CacheDataSupport<Long, GuildDo, GuildBo> dataSupport = new CacheDataSupport<>(GuildDo.class, GuildBo::new);
 
-	private static CacheDataListSupport<Long, Long, GuildMemberDo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberDo.class, GuildMemberBo::new);
+	private static final CacheDataListSupport<Long, Long, GuildMemberDo, GuildMemberBo> dataListSupport = new CacheDataListSupport<>(GuildMemberDo.class, GuildMemberBo::new);
 	private final long guildId = 100000;
 
 	@Test

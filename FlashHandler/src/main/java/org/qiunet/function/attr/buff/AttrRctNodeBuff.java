@@ -14,7 +14,7 @@ public class AttrRctNodeBuff<Attr extends Enum<Attr> & IAttrEnum<Attr>> implemen
 	/**
 	 * 加成的万分比
 	 */
-	private int rct;
+	private final int rct;
 
 	public AttrRctNodeBuff(int rct) {
 		this.rct = rct;

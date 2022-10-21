@@ -14,7 +14,7 @@ import org.qiunet.utils.scanner.ScannerType;
  * 17/12/15
  */
 public class Test {
-	private static Hook hook = new MyHook();
+	private static final Hook hook = new MyHook();
 	public static void main(String[] args) throws Exception {
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 

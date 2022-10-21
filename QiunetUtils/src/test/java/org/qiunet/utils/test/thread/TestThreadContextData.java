@@ -17,6 +17,6 @@ public class TestThreadContextData extends BaseTest{
 
 		int ret =  ThreadContextData.get("qiunet");
 
-		Assertions.assertTrue(1111  == ret);
+        Assertions.assertEquals(1111, ret);
 	}
 }

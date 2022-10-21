@@ -498,11 +498,10 @@ public final class ReflectUtil {
 		}
 
 		Type genericType = field.getGenericType();
-		if (! (genericType instanceof ParameterizedType)) {
+		if (! (genericType instanceof ParameterizedType ptype)) {
 			throw new CustomException("Field {}.{} not have generic type field!", field.getDeclaringClass().getName(), field.getName());
 		}
 
-		ParameterizedType ptype = (ParameterizedType) genericType;
 		Type[] actualTypeArguments = ptype.getActualTypeArguments();
 		return (Class<?>) actualTypeArguments[0];
 	}

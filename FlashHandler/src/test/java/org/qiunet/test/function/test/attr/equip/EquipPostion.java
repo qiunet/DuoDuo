@@ -19,6 +19,5 @@ public enum EquipPostion {
 	 * 手
 	 */
 	HAND,
-	;
 
 }

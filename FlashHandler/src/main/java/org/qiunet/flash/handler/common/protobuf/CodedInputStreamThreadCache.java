@@ -4,7 +4,8 @@ import com.google.protobuf.CodedInputStream;
 import org.qiunet.utils.pool.ThreadScopeObjectPool;
 import org.qiunet.utils.reflect.ReflectUtil;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
@@ -98,7 +99,7 @@ class CodedInputStreamThreadCache extends InputStream {
 			int nInt = (int)n;
 			int skip = Math.min(this.buffer.remaining(), nInt);
 			this.buffer.position(this.buffer.position() + skip);
-			return (long)nInt;
+			return nInt;
 		}
 	}
 

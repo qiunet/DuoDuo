@@ -6,8 +6,6 @@ import org.qiunet.function.targets.ITargetDefGetter;
 import org.qiunet.function.targets.ITargetsDefGetter;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /***
  * 任务目标配置列表

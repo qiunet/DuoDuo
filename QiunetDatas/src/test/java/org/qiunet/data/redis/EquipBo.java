@@ -4,7 +4,7 @@ import org.qiunet.data.support.IEntityBo;
 
 public class EquipBo implements IEntityBo<EquipDo> {
 
-	private EquipDo equipDo;
+	private final EquipDo equipDo;
 
 	EquipBo(EquipDo equipDo) {
 		this.equipDo = equipDo;

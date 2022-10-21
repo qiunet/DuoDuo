@@ -19,7 +19,7 @@ import java.util.Map;
 public class ConditionConfig
 		extends HashMap<String, Object> implements IKeyValueData<String, Object> {
 
-	public ConditionConfig(Map<? extends String, ? extends Object> m) {
+	public ConditionConfig(Map<? extends String, ?> m) {
 		super(m);
 	}
 

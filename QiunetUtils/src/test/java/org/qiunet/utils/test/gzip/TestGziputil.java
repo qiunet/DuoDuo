@@ -26,6 +26,6 @@ public class TestGziputil {
 		ByteArrayInputStream bis = new ByteArrayInputStream(unzipBytes);
 		DataInputStream dis = new DataInputStream(bis);
 		Assertions.assertEquals(first, dis.readUTF());
-		Assertions.assertTrue(second == dis.readInt());
+        Assertions.assertEquals(second, dis.readInt());
 	}
 }

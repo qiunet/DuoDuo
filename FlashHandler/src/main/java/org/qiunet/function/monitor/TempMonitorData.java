@@ -2,15 +2,14 @@ package org.qiunet.function.monitor;
 
 /***
  *
- *
  * @author qiunet
  * 2020-03-20 18:01
  ***/
 class TempMonitorData<KEY, VAL> implements IMonitorData<KEY, VAL> {
-	private KEY key;
-	private VAL val;
-	private long num;
-	private int delayTimes;
+	private final KEY key;
+	private final VAL val;
+	private final long num;
+	private final int delayTimes;
 
 	TempMonitorData(KEY key, VAL val, long num, int delayTimes) {
 		this.key = key;

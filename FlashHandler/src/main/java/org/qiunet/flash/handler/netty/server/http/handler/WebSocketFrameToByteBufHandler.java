@@ -20,9 +20,8 @@ public class WebSocketFrameToByteBufHandler extends ChannelInboundHandlerAdapter
 			ctx.fireChannelRead(((WebSocketFrame) msg).content());
 		} else if(msg instanceof PingWebSocketFrame) {
 			ctx.writeAndFlush(new PongWebSocketFrame(((PingWebSocketFrame) msg).content().retain()));
-		} else if (msg instanceof CloseWebSocketFrame) {
+		} else if (msg instanceof CloseWebSocketFrame frame) {
 			WebSocketServerHandshaker handshaker = ctx.channel().attr(ServerConstants.HANDSHAKER_ATTR_KEY).get();
-			CloseWebSocketFrame frame = (CloseWebSocketFrame) msg;
 			if (handshaker != null) {
 				handshaker.close(ctx.channel(), frame.retain());
 			} else {

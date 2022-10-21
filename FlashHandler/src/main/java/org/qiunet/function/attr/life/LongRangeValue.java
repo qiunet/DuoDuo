@@ -209,7 +209,6 @@ public class LongRangeValue {
 			lock.unlock();
 		}
 
-		return;
 	}
 
 	/**

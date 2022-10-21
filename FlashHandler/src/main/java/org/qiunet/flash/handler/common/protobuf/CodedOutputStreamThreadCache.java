@@ -132,7 +132,7 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 
 		byte[]  bytearr = new byte[utflen+2];
 		bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
-		bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);
+		bytearr[count++] = (byte) ((utflen) & 0xFF);
 
 		int i=0;
 		for (i=0; i<strlen; i++) {
@@ -149,10 +149,10 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 			} else if (c > 0x07FF) {
 				bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
 				bytearr[count++] = (byte) (0x80 | ((c >>  6) & 0x3F));
-				bytearr[count++] = (byte) (0x80 | ((c >>  0) & 0x3F));
+				bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
 			} else {
 				bytearr[count++] = (byte) (0xC0 | ((c >>  6) & 0x1F));
-				bytearr[count++] = (byte) (0x80 | ((c >>  0) & 0x3F));
+				bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
 			}
 		}
 		this.write(bytearr, 0, utflen+2);

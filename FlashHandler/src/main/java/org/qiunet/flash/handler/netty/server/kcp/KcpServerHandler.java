@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.server.kcp;
 
 import io.jpower.kcp.netty.UkcpChannel;
-import io.jpower.kcp.netty.UkcpServerChildChannel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;

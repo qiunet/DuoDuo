@@ -27,7 +27,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class TestWebsocketRequest extends HttpBootStrap {
 	private final ISession client = NettyWebSocketClient.create(WebSocketClientParams.custom()
-			.setAddress("localhost", port).build(), new ResponseTrigger());;
+			.setAddress("localhost", port).build(), new ResponseTrigger());
 	private final CountDownLatch latch = new CountDownLatch(1);
 	private String text;
 

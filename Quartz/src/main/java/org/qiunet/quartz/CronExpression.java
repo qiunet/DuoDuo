@@ -171,7 +171,7 @@ import java.util.*;
  * @author Contributions from Mads Henderson
  * @author Refactoring from CronTrigger to CronExpression by Aaron Craven
  */
-public class CronExpression implements Serializable, Cloneable {
+public class CronExpression implements Serializable {
 
 	@Serial
 	private static final long serialVersionUID = 12423409423L;
@@ -492,7 +492,7 @@ public class CronExpression implements Serializable, Cloneable {
 			throw pe;
 		} catch (Exception e) {
 			throw new ParseException("Illegal cron expression format ("
-				+ e.toString() + ")", 0);
+				+ e + ")", 0);
 		}
 	}
 

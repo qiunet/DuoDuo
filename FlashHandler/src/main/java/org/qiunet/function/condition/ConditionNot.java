@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.status.StatusResult;
  */
 public final class ConditionNot<Obj, Type extends Enum<Type> & IConditionType> implements ICondition<Obj, Type> {
 
-	private ICondition<Obj, Type> condition;
+	private final ICondition<Obj, Type> condition;
 
 	public ConditionNot(ICondition<Obj, Type> condition) {
 		this.condition = condition;

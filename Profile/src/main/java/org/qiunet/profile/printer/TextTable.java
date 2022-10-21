@@ -71,7 +71,7 @@ public class TextTable<O> {
 				sb.append("|").append(columnValue.getValue()).append(StringUtil.repeated(" ", columnInfo.getMaxLength() - columnValue.getLength()));
 			}
 			sb.append("|");
-			printer.println(sb.toString());
+			printer.println(sb);
 		}
 		printer.println(separate);
 	}

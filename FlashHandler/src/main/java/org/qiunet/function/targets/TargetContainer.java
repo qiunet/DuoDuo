@@ -3,7 +3,6 @@ package org.qiunet.function.targets;
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.utils.args.ArgumentKey;
-import org.qiunet.utils.scanner.anno.AutoWired;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /***
  * 任务的容器

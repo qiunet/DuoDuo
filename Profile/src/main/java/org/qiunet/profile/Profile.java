@@ -54,8 +54,8 @@ public class Profile<Key, Column extends Enum<Column> & IProColumn> {
 	}
 
 	public class Row {
-		private Key key;
-		private long [] values;
+		private final Key key;
+		private final long [] values;
 		Row(Key key) {
 			this.values = new long[columns.length];
 			this.key = key;

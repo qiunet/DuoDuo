@@ -4,7 +4,7 @@ import org.qiunet.data.support.IEntityBo;
 
 public class VipBo implements IEntityBo<VipDo> {
 
-	private VipDo vipDo;
+	private final VipDo vipDo;
 
 	VipBo(VipDo vipDo) {
 		this.vipDo = vipDo;

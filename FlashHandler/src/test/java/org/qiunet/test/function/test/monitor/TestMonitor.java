@@ -12,11 +12,11 @@ import java.util.concurrent.TimeUnit;
  * 2020-03-21 18:05
  **/
 public class TestMonitor {
-	private long curr = System.currentTimeMillis();
+	private final long curr = System.currentTimeMillis();
 
 	private enum LogType {
 		SHOP_BUY(1), MISSION(5), TASK(10);
-		private int count;
+		private final int count;
 		LogType(int count) {
 			this.count = count;
 		}
@@ -26,7 +26,7 @@ public class TestMonitor {
 		}
 	}
 
-	private IMonitor<Long, LogType> monitor = new DefaultMonitor<>(
+	private final IMonitor<Long, LogType> monitor = new DefaultMonitor<>(
 											LogType::getCount,
 												(data) -> {
 													System.out.println((DateUtil.currentTimeMillis() - curr)+ "num ["+data.triggerNum()+"] delayTimes ["+data.delayTimes()+"]");

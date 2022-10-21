@@ -47,26 +47,18 @@ class DbEntityAsyncQueue {
 	/**
 	 * 队列的对象
 	 */
-	private static class SyncEntityElement<Entity extends DbEntityBo> {
-		private PlayerDataLoader.EntityOperate operate;
-		private Entity entity;
-
-		SyncEntityElement(PlayerDataLoader.EntityOperate operate, Entity entity) {
-			this.operate = operate;
-			this.entity = entity;
-		}
-	}
+	private record SyncEntityElement<Entity extends DbEntityBo>(PlayerDataLoader.EntityOperate operate, Entity entity) { }
 
     /**
      * db 同步需要的信息
 	 */
 	private static class SyncDoInfo<Entity extends DbEntityBo> {
-		private IDatabaseSupport databaseSupport;
+		private final IDatabaseSupport databaseSupport;
 
-		private String insertStatement;
-		private String deleteStatement;
-		private String updateStatement;
-		private Table table;
+		private final String insertStatement;
+		private final String deleteStatement;
+		private final String updateStatement;
+		private final Table table;
 
 		public SyncDoInfo(Class<Entity> clazz) {
 			Class<?> doClass = null;
@@ -107,7 +99,7 @@ class DbEntityAsyncQueue {
 					entity.updateEntityStatus(EntityStatus.DELETE);
 					DbParamMap map;
 					if (IDbEntityList.class.isAssignableFrom(entity.getDo().getClass())) {
-						IDbEntityList entityList = (IDbEntityList) entity.getDo();;
+						IDbEntityList entityList = (IDbEntityList) entity.getDo();
 						map = DbParamMap.create(table, entityList.keyFieldName(), entityList.key())
 								.put(entityList.subKeyFieldName(), entityList.subKey());
 					}else {

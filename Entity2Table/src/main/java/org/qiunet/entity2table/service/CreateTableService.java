@@ -66,7 +66,7 @@ public class CreateTableService {
 		return DbSourceDatabaseSupport.getInstance(dbSourceName).dbName();
 	}
 
-	private static Map<String, List<String>> dbSourceName2TableNames  = Maps.newHashMap();
+	private static final Map<String, List<String>> dbSourceName2TableNames  = Maps.newHashMap();
 	private List<String> findTableNamesByDbSourceName(String dbSourceName) {
 		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
 		// 从公共库取. 使用默认源就行.
@@ -90,7 +90,7 @@ public class CreateTableService {
 
 
 	/**dbName -> table -> columnList**/
-	private static Map<String, Map<String, List<Columns>>> dbSourceName2TableColumns  = Maps.newHashMap();
+	private static final Map<String, Map<String, List<Columns>>> dbSourceName2TableColumns  = Maps.newHashMap();
 	private Map<String, List<Columns>> findTableColumnsByDbSourceName(String dbSourceName) {
 		IDatabaseSupport databaseSupport = DbSourceDatabaseSupport.getInstance(dbSourceName);
 		// 从公共库取. 使用默认源就行.

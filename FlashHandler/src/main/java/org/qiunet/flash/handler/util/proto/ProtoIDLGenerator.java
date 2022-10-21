@@ -38,9 +38,9 @@ public final class ProtoIDLGenerator {
 	}
 
 	/** Logger for this class. */
-	protected static final Logger LOGGER = LoggerFactory.getLogger(ProtoIDLGenerator.class.getName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProtoIDLGenerator.class.getName());
 
-	protected final ProtobufVersion version;
+	final ProtobufVersion version;
 
 	public ProtoIDLGenerator(ProtobufVersion version) {
 		if (version == ProtobufVersion.V3) {

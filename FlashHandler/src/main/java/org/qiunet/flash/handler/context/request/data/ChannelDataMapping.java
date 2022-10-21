@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.request.data;
 
-import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.netty.channel.Channel;
@@ -12,13 +11,11 @@ import org.qiunet.utils.collection.DuMap;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
-import org.qiunet.utils.reflect.RuntimeAnnotations;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 import org.slf4j.Logger;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Set;

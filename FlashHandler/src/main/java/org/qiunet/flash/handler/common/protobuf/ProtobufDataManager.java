@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.common.protobuf;
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.google.common.base.Preconditions;
-import com.google.protobuf.CodedInputStream;
 import io.netty.buffer.ByteBuf;
 import org.qiunet.utils.exceptions.CustomException;
 

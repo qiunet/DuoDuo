@@ -3,7 +3,6 @@ package org.qiunet.function.cd;
 import java.util.concurrent.TimeUnit;
 
 /***
- *
  * 业务中, 需要用到cd的地方 , 都定义一个cdType
  * 业务使用一个枚举实现该接口.
  *
@@ -13,24 +12,25 @@ import java.util.concurrent.TimeUnit;
 public interface ICdType {
 	/**
 	 * N秒 能进行几次
-	 * @return
+	 * @return 次数
 	 */
 	default int limitCount() {
 		return 1;
-	};
-	/***
+	}
+
+    /***
 	 * 必须间隔多长时间.
-	 * @return
+	 * @return 时长
 	 */
 	long period();
 	/**
 	 * 间隔时间和初始时间的单位
-	 * @return
+	 * @return 单位
 	 */
 	TimeUnit unit();
 	/**
 	 * 描述.
-	 * @return
+	 * @return 描述
 	 */
 	String desc();
 }

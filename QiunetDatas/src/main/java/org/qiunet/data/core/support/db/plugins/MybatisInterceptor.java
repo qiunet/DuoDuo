@@ -21,7 +21,7 @@ import java.util.Properties;
 	@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class })
 })
 public class MybatisInterceptor implements Interceptor {
-	private Logger logger = LoggerType.DUODUO_SQL.getLogger();
+	private final Logger logger = LoggerType.DUODUO_SQL.getLogger();
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		if (! logger.isInfoEnabled()) return invocation.proceed();
@@ -37,7 +37,7 @@ public class MybatisInterceptor implements Interceptor {
 		}finally {
 			long diff = System.currentTimeMillis() - start;
 			try {
-				logger.info(new StringBuilder().append(formatSql(configuration, boundSql)).append("\t耗时:[").append(diff).append("ms]").toString());
+				logger.info(formatSql(configuration, boundSql) + "\t耗时:[" + diff + "ms]");
 			}catch (Exception e) {
 				logger.error("SQL["+boundSql.getSql()+"] PARAM ["+JsonUtil.toJsonString(boundSql.getParameterObject()) +"] 打印异常: ", e);
 			}
@@ -56,7 +56,7 @@ public class MybatisInterceptor implements Interceptor {
 	private static String getParameterValue(Object obj) {
 		String val = null;
 		if (obj instanceof String) {
-			val = "'" + obj.toString() + "'";
+			val = "'" + obj + "'";
 		} else {
 			val = obj == null ? "" : obj.toString();
 		}

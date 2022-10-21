@@ -13,7 +13,7 @@ public enum AttrBuffType implements IAttrBuff {
 	EquipGemLegRct("装备镶嵌加成"),
 
 	;
-	private String desc;
+	private final String desc;
 
 	AttrBuffType(String desc) {
 		this.desc = desc;

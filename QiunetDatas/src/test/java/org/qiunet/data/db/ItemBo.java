@@ -4,7 +4,7 @@ import org.qiunet.data.db.loader.DbEntityBo;
 
 public class ItemBo extends DbEntityBo<ItemDo> {
 
-	private ItemDo itemDo;
+	private final ItemDo itemDo;
 
 	ItemBo(ItemDo itemDo) {
 		this.itemDo = itemDo;

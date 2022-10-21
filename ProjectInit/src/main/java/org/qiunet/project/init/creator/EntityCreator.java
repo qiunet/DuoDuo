@@ -22,14 +22,14 @@ import java.nio.file.Paths;
  * 2019-08-16 11:56
  ***/
 public class EntityCreator {
-	private Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
-	private EntityType entityType;
+	private final Logger logger = LoggerType.DUODUO_CREATOR.getLogger();
+	private final EntityType entityType;
 
-	private File file;
+	private final File file;
 
 	private IEntityDefine entityDefine;
 
-	private String mybatisConfigPath;
+	private final String mybatisConfigPath;
 
 	EntityCreator(EntityType entityType, File file, String mybatisConfigPath) {
 		this.mybatisConfigPath = mybatisConfigPath;
@@ -60,14 +60,14 @@ public class EntityCreator {
 		// 输出 DoEntity
 		Path outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getDoName()+".java");
 		VelocityFactory.getInstance().parseOutFile("vm/entity_do_create.vm", outputFileName.toString(), this.entityDefine);
-		logger.info("Create Do [{}] Success!", outputFileName.toString());
+		logger.info("Create Do [{}] Success!", outputFileName);
 
 		// 输出 DoEntity
 		outputFileName = Paths.get(entityDefine.outputPath().toString(), "entity", entityDefine.getBoName()+".java");
 		File boFile = outputFileName.toFile();
 		if (!boFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_bo_create.vm", outputFileName.toString(), this.entityDefine);
-			logger.info("Create Bo [{}] Success!", boFile.toString());
+			logger.info("Create Bo [{}] Success!", boFile);
 		}
 
 		// 输出 Service
@@ -75,14 +75,14 @@ public class EntityCreator {
 		File serviceFile = outputFileName.toFile();
 		if (!serviceFile.exists()) {
 			VelocityFactory.getInstance().parseOutFile("vm/entity_service_create.vm", outputFileName.toString(), this.entityDefine);
-			logger.info("Create Service [{}] Success!", serviceFile.toString());
+			logger.info("Create Service [{}] Success!", serviceFile);
 		}
 
 
 		// 输出 mybatis 的mapping xml
 		outputFileName = Paths.get(InitProjectUtil.getRealUserDir().getAbsolutePath(), mybatisConfigPath, entityDefine.getNameSpace()+".xml");
 		VelocityFactory.getInstance().parseOutFile("vm/mybatis_mapping_create.vm", outputFileName.toString(), this.entityDefine);
-		logger.info("Create mapping xml [{}] Success!", outputFileName.toString());
+		logger.info("Create mapping xml [{}] Success!", outputFileName);
 	}
 
 	public IEntityDefine getEntityDefine() {

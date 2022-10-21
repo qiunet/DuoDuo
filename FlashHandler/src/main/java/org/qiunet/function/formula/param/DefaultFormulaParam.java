@@ -13,7 +13,7 @@ public class DefaultFormulaParam implements IFormulaParam {
 	/**
 	 * 参数.
 	 */
-	private double[] values;
+	private final double[] values;
 	protected DefaultFormulaParam(double ... values) {
 		this.values = values;
 	}

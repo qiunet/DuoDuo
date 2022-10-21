@@ -13,7 +13,7 @@ public enum TestType implements IEnumReadable {
 
 	TYPE1(2),
 	;
-	private int type;
+	private final int type;
 
 	TestType(int type) {
 		this.type = type;
