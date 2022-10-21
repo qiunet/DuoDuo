@@ -5,11 +5,11 @@
 	<parent>
 		<artifactId>DuoDuo</artifactId>
 		<groupId>io.github.qiunet</groupId>
-		<version>7.0.6</version>
+		<version>7.0.7</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>duoduo-all</artifactId>
-	<version>${revision}</version>
+	<version>7.0.7</version>
 
 	<packaging>jar</packaging>
 	<name>DuoDuo/All-in-One</name>
@@ -120,6 +120,10 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-pool2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.reflections</groupId>

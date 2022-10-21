@@ -84,7 +84,7 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 	private static class ServerReqHeader implements IServerInHeader, IClientOutHeader, IConnectInHeader, IConnectOutHeader {
 		private final ObjectPool.Handle<ServerReqHeader> recyclerHandle;
 
-			private static final byte [] MAGIC = {'F', 'a', 's', 't'};
+			private static final byte [] MAGIC = {'f', 'a', 's', 't'};
 		private static final int HEADER_LENGTH = MAGIC.length + 12;
 		private final byte [] magic = new byte[MAGIC.length];
 
@@ -156,7 +156,7 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader {
 		private final ObjectPool.Handle<ServerRspHeader> recyclerHandle;
 
-		private static final int HEADER_LENGTH = 6;
+		private static final int HEADER_LENGTH = 8;
 		private int protocolId;
 
 		private int length;
