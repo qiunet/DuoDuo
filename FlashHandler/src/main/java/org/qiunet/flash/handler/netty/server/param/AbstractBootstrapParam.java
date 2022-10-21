@@ -1,8 +1,12 @@
 package org.qiunet.flash.handler.netty.server.param;
 
+import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.ServerNodeProtocolHeader;
 import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 
 /**
@@ -13,7 +17,8 @@ public abstract class AbstractBootstrapParam {
 	/**
 	 * 可以自定义协议头
 	 */
-	protected IProtocolHeader protocolHeader = DefaultProtocolHeader.instance;
+	protected IProtocolHeader protocolHeader;
+
 	/***
 	 * 接收端口
 	 */
@@ -38,6 +43,35 @@ public abstract class AbstractBootstrapParam {
 	protected int maxReceivedLength = 1024 * 1024;
 
 	protected IStartupContext<? extends IMessageActor<?>> startupContext;
+
+	/**
+	 * 定制 IProtocolHeader
+	 * @return
+	 */
+	private IProtocolHeader customProtocolHeader() {
+		//protocol header 自定义主要是要来限制客户端到游戏服.
+		if (ServerNodeManager.getCurrServerType() == ServerType.CROSS && getPort() == ServerNodeManager.getCurrServerInfo().getServerPort()) {
+			// 玩法服的server port 必须使用 CrossProtocolHeader.
+			return CrossProtocolHeader.instance;
+		}
+
+		if (getPort() == ServerNodeManager.getCurrServerInfo().getCrossPort()) {
+			// cross port 必须使用 CrossProtocolHeader.
+			return CrossProtocolHeader.instance;
+		}
+
+		if (getPort() == ServerNodeManager.getCurrServerInfo().getNodePort()) {
+			// 服务器之间通讯 必须使用 ServerNodeProtocolHeader.
+			return ServerNodeProtocolHeader.instance;
+		}
+
+		// 之后有设定. 使用设定的. 否则默认的
+		if (protocolHeader != null) {
+			return protocolHeader;
+		}
+
+		return DefaultProtocolHeader.instance;
+	}
 
 	public IProtocolHeader getProtocolHeader() {
 		return protocolHeader;
@@ -116,6 +150,7 @@ public abstract class AbstractBootstrapParam {
 		 */
 		public P build(){
 			if (port == 0) throw new NullPointerException("Must set port for Listener! ");
+			protocolHeader = customProtocolHeader();
 			return newParams();
 		}
 		/**

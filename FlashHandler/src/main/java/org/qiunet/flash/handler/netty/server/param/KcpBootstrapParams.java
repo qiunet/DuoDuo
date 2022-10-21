@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.param;
 
 import com.google.common.collect.ImmutableSet;
+import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Set;
@@ -130,13 +131,17 @@ public final class KcpBootstrapParams extends AbstractBootstrapParam {
 
 		@Override
 		public KcpBootstrapParams build() {
+			if (protocolHeader == null) {
+				// kcp 只会用来在客户端和游戏服之间使用. 没有 ProtocolHeader 默认是  DefaultProtocolHeader
+				this.setProtocolHeader(DefaultProtocolHeader.instance);
+			}
 			return this.newParams();
 		}
 
 		@Override
 		protected KcpBootstrapParams newParams() {
 			if (protocolHeader == null) {
-				throw new NullPointerException("Must set IProtocolHeaderType for Listener!");
+				throw new NullPointerException("Must set ProtocolHeader for Listener!");
 			}
 
 			return KcpBootstrapParams.this;

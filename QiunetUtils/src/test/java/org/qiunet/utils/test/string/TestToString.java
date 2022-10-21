@@ -31,11 +31,27 @@ public class TestToString {
 	}
 
 	public static class User {
-		private final String account;
-		private final List<Integer> scores;
+		private String account;
+		private List<Integer> scores;
 
 		public User(String account, List<Integer> scores) {
 			this.account = account;
+			this.scores = scores;
+		}
+
+		public String getAccount() {
+			return account;
+		}
+
+		public void setAccount(String account) {
+			this.account = account;
+		}
+
+		public List<Integer> getScores() {
+			return scores;
+		}
+
+		public void setScores(List<Integer> scores) {
 			this.scores = scores;
 		}
 	}

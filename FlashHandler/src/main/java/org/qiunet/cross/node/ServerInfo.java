@@ -145,6 +145,10 @@ public final class ServerInfo extends HashMap<String, Object> {
 		if (getServerType() == ServerType.CROSS) {
 			return getServerPort();
 		}
-		return (Integer) get("crossPort");
+		Object crossPort = get("crossPort");
+		if (crossPort == null) {
+			return 0;
+		}
+		return Integer.parseInt(crossPort.toString());
 	}
 }

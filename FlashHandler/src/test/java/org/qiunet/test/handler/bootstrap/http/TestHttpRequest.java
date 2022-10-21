@@ -26,9 +26,7 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class TestHttpRequest extends HttpBootStrap {
 	private final HttpClientParams params = HttpClientParams.custom()
-		.setAddress("localhost", port)
-		.setProtocolHeader(PROTOCOL_HEADER)
-		.build();
+		.setAddress("localhost", port).build();
 
 	@Test
 	public void testHttpProtobuf() {

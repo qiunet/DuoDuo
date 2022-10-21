@@ -6,7 +6,6 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ObjectPool;
-import org.qiunet.utils.secret.CrcUtil;
 import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
@@ -18,7 +17,7 @@ import java.util.Arrays;
  * @author qiunet
  * 2022/10/20 08:55
  */
-public enum CompatibleProtocolHeader implements IProtocolHeader {
+public enum ServerNodeProtocolHeader implements IProtocolHeader {
 	instance;
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
@@ -90,9 +89,6 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 
 		private int protocolId;
 		private int length;
-
-		private int crc;
-
 		private ServerReqHeader(ObjectPool.Handle<ServerReqHeader> recyclerHandle) {
 			this.recyclerHandle = recyclerHandle;
 		}
@@ -100,15 +96,13 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 		public static ServerReqHeader valueOf(ByteBuf in, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
 			in.readBytes(header.magic);
-			header.length = in.readInt();
 			header.protocolId = in.readInt();
-			header.crc = in.readInt();
+			header.length = in.readInt();
 			return header;
 		}
 
 		public static ServerReqHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
-			header.crc = (int) CrcUtil.getCrc32Value(message.byteBuffer().rewind());;
 			header.length = (short) message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
@@ -119,7 +113,6 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 			Arrays.fill(this.magic, (byte)0);
 			this.protocolId = 0;
 			this.length = 0;
-			this.crc = 0;
 			this.recyclerHandle.recycle();
 		}
 		@Override
@@ -136,9 +129,8 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeBytes(MAGIC);
-			out.writeInt(length);
 			out.writeInt(protocolId);
-			out.writeInt(crc);
+			out.writeInt(length);
 			return out;
 		}
 
@@ -166,8 +158,8 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 
 		public static ServerRspHeader valueOf(ByteBuf in, Channel channel) {
 			ServerRspHeader header = SERVER_RSP_RECYCLER.get();
-			header.length = in.readInt();
 			header.protocolId = in.readInt();
+			header.length = in.readInt();
 			return header;
 		}
 
@@ -191,8 +183,8 @@ public enum CompatibleProtocolHeader implements IProtocolHeader {
 		@Override
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
-			out.writeInt(length);
 			out.writeInt(protocolId);
+			out.writeInt(length);
 			return out;
 		}
 

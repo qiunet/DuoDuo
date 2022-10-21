@@ -7,6 +7,7 @@ import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
@@ -26,7 +27,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * client
 	 */
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().build(), new PlayerConnectorClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeader(CrossProtocolHeader.instance).build(), new PlayerConnectorClientTrigger());
 	/**
 	 * session
 	 */
