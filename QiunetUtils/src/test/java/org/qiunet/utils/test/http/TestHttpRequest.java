@@ -38,8 +38,8 @@ public class TestHttpRequest extends BaseTest{
 		CountDownLatch latch = new CountDownLatch(2);
 		for (int i = 0 ; i < latch.getCount(); i++){
 			HttpRequest.get(url).params(params).asyncExecutor(
-				(response) -> {
-					String result = response.body();
+				(call, response) -> {
+					String result = response.body().string();
 					System.out.println(result);
 					Assertions.assertNotNull(result);
 					latch.countDown();
@@ -54,6 +54,7 @@ public class TestHttpRequest extends BaseTest{
 	public void testHttpRequest() throws Exception {
 		String url = "http://www.gameley.com";
 		String ret = HttpRequest.get(url).executor();
+		System.out.println(ret);
 		Assertions.assertNotNull(ret);
 	}
 }

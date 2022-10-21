@@ -2,6 +2,7 @@ package org.qiunet.test.handler.protobuf;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
+import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * 2022/10/19 10:57
  */
 @ProtobufClass
+@ChannelData(ID = -1, desc = "")
 public class RequestData extends IChannelData {
 
 	@Protobuf(description = "xx")

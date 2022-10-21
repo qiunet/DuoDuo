@@ -1,18 +1,22 @@
 package org.qiunet.utils.http;
 
 
-import java.net.http.HttpResponse;
+import okhttp3.Call;
+import okhttp3.Callback;
+import org.qiunet.utils.logger.LoggerType;
+
+import java.io.IOException;
 
 /***
- * 返回对象
+ *
  *
  * @author qiunet
  * 2020-04-22 19:48
  ***/
-public interface IHttpCallBack<T> {
-	/**
-	 *
-	 * @param response 响应
-	 */
-	void response(HttpResponse<T> response);
+public interface IHttpCallBack extends Callback {
+
+	@Override
+	default void onFailure(Call call, IOException e){
+		LoggerType.DUODUO_HTTP.error(call.request().toString() + "Exception: ", e);
+	}
 }

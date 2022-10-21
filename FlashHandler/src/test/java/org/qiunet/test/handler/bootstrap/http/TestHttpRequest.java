@@ -14,7 +14,6 @@ import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.json.JsonUtil;
 
-import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +37,8 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
 			.withBytes(this.getAllBytes(request.buildChannelMessage()))
-			.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (resp) -> {
-				ByteBuffer buffer = ByteBuffer.wrap(resp.body());
+			.asyncExecutor((call, resp) -> {
+				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
 				// 跳过头
 				buffer.position(ADAPTER.getReqHeaderLength());
 
@@ -60,9 +59,9 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI("/back?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
-			.asyncExecutor((response) -> {
-				Assertions.assertEquals(response.statusCode(), HttpResponseStatus.OK.code());
-				Assertions.assertEquals(response.body(), test);
+			.asyncExecutor((call, response) -> {
+				Assertions.assertEquals(response.code(), HttpResponseStatus.OK.code());
+				Assertions.assertEquals(response.body().string(), test);
 				LockSupport.unpark(currThread);
 
 		});
@@ -78,9 +77,9 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
-		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((httpResponse) -> {
-				Assertions.assertEquals(httpResponse.statusCode(), HttpResponseStatus.OK.code());
-				String responseString = httpResponse.body();
+		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
+				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
+				String responseString = httpResponse.body().string();
 
 				JTestResponseData data = JsonUtil.getGeneralObj(responseString, JTestResponseData.class);
 				Assertions.assertEquals(data.getStatus().getCode(), IGameStatus.SUCCESS.getStatus());

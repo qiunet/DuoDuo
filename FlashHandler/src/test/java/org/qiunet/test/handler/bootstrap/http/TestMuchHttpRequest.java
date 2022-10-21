@@ -9,7 +9,6 @@ import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
 
-import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CountDownLatch;
 
@@ -36,9 +35,9 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 					HttpPbLoginRequest request = HttpPbLoginRequest.valueOf(test, test, 11);
 					HttpRequest.post(params.getURI())
 						.withBytes(this.getAllBytes(request.buildChannelMessage()))
-						.asyncExecutor(HttpResponse.BodyHandlers.ofByteArray(), (response) -> {
-							Assertions.assertEquals(response.statusCode() , HttpResponseStatus.OK.code());
-							ByteBuffer buffer = ByteBuffer.wrap(response.body());
+						.asyncExecutor((call, response) -> {
+							Assertions.assertEquals(response.code(), HttpResponseStatus.OK.code());
+							ByteBuffer buffer = ByteBuffer.wrap(response.body().bytes());
 							buffer.position(ADAPTER.getReqHeaderLength());
 
 							LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);
