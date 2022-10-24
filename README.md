@@ -5,15 +5,6 @@
 [![License](https://img.shields.io/badge/license-apache--2.0-green)](https://www.apache.org/licenses/LICENSE-2.0.html)
 [![GitHub release](https://img.shields.io/github/release/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/releases)
 [![GitHub Contributors](https://img.shields.io/github/contributors/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/graphs/contributors)
-
-## 目的初衷
-    自己根据过往开发的经验. 自己抽出来的一套公用代码.
-    代码规避了很多可能在开发出现中的坑点. 然后尽量弱化了配置需求. 
-    会在使用的过程慢慢完善成为一套可以做游戏和App开发的工具模块汇总.
-    
-    Duoduo的原则是 理解后,融入自己的代码中. 所以有问题时候,
-    能够在第一时间反应过来问题出在哪.
-
 	
 ## 协议支持
 | 是否支持     | Tcp | Kcp | WebSocket | Http |
@@ -25,20 +16,7 @@
  - 不对换行符做自动转换<br />
 `git config --global core.autocrlf input`
 
-## 名词解释
-* Do Data Object 持久化对象(阿里规范) 负责跟数据库交互的对象
-* Bo Business Object 业务对象(阿里规范), 给业务提供支持的对象
-* DataSupport 操作数据的类, 会自动搞定异步更新等问题
-* Service    处理业务的一些公用方法
-* Handler   处理请求的逻辑类. 一个请求一个handler
-* BehaviorBuilder 一个模块的行为组织
-* Action  测试行为动作 
-* Cfg     配置文件
-* Req     Request 请求
-* Rsp     Rsponse 响应
-* Push    推送
-## 模块简介
-
+## 模块简介 [DuoDuo WIKI](https://github.com/qiunet/DuoDuo/wiki)
 | 模块名                                 | 简介                                                     |
 | -------------------------------------- | -------------------------------------------------------- |
 | [Quartz](Quartz/README.md)             | 定时调度相关的模块                                       |
@@ -56,25 +34,9 @@
 | [all](all/README.md)                   | 打包成一个duoduo-all 方便调用的模块.                     |
 
 
-
 ## 服务器结构
 
 ​	![服务器项目结构](all/img/ServerConstructor.png)
-
-	思路:
-	 1. 玩家会在Redis有一份简要数据
-     
-     2. 玩家登陆进去路由服, 路由服从GlobalDB判断是否有注册过. 
-    	有直接返回对应的ServerId.没有根据服务器的情况, 分配一个Server.
-     
-     3. 排行榜玩法服数据存Redis, 不落地DB!
-     
-     4. 玩家需要进入某个玩法, 由路由服根据类型进行分配
-     
-     5. PlayerId 由3部分组成. 自增ID+ServerId+ServerId(位数)
-    	例如: 12112 自增id为12  服务id = 11 serverId位数=2
-    
-     6. 每个服务启动时候, 注册状态到Redis. 并且定时更新(ServerId 最后更新时间 服务器在线人数等)
 
 ## 安装环境
 
