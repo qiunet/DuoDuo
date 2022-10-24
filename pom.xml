@@ -361,7 +361,11 @@
 				<artifactId>mybatis</artifactId>
 				<version>3.5.6</version>
 			</dependency>
-
+			<dependency>
+				<groupId>com.google.protobuf</groupId>
+				<artifactId>protobuf-java</artifactId>
+				<version>3.21.8</version>
+			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-params</artifactId>
@@ -373,6 +377,10 @@
 				<artifactId>jprotobuf</artifactId>
 				<version>2.4.17</version>
 				<exclusions>
+					<exclusion>
+						<groupId>com.google.protobuf</groupId>
+						<artifactId>protobuf-java</artifactId>
+					</exclusion>
 					<exclusion>
 						<groupId>com.google.auto.value</groupId>
 						<artifactId>auto-value</artifactId>
