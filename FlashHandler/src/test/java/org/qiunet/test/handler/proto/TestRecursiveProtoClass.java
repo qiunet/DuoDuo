@@ -1,11 +1,11 @@
 package org.qiunet.test.handler.proto;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.flash.handler.util.proto.GeneratorProtoCache;
-import org.qiunet.flash.handler.util.proto.GeneratorProtoFeature;
-import org.qiunet.flash.handler.util.proto.ProtoIDLGenerator;
-import org.qiunet.flash.handler.util.proto.ProtobufVersion;
+import org.qiunet.flash.handler.util.proto.*;
+
+import java.io.File;
 
 /***
  *
@@ -62,5 +62,15 @@ public class TestRecursiveProtoClass {
 				"\t// obj\n" +
 				"\toptional RecursiveObj2 obj2=4;\n" +
 				"}\n\n\n");
+	}
+
+
+	@Test
+	public void testGeneratorParam() {
+		Assertions.assertDoesNotThrow(() -> {
+			new GeneratorProtoParam(ProtoGeneratorModel.GROUP_BY_MODULE,
+					Lists.newArrayList(RecursiveTest.class, Recursive1.class, Recursive2.class),
+					ProtobufVersion.V3, new File(""));
+		});
 	}
 }

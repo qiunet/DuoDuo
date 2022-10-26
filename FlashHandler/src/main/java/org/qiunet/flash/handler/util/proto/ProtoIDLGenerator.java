@@ -301,10 +301,10 @@ public final class ProtoIDLGenerator {
 	 * @return 是否包含 common message
 	 */
 	public static boolean recursiveObjClass( Class<?> cls, GeneratorProtoCache cache) {
-		return recursiveObjClass(cls, cache, false);
+		return recursiveObjClass(cls, cache, false, new HashSet<>());
 	}
 
-	private static boolean recursiveObjClass( Class<?> cls, GeneratorProtoCache cache, boolean parentCommon) {
+	private static boolean recursiveObjClass( Class<?> cls, GeneratorProtoCache cache, boolean parentCommon, Set<Class<?>> handleCls) {
 		boolean haveCommonProtoMessage = false, currCommonProtoMessage = parentCommon;
 		if (cls.isAnnotationPresent(SkipProtoGenerator.class)) {
 			return false;
@@ -312,6 +312,10 @@ public final class ProtoIDLGenerator {
 
 		if (cls.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
 			return false;
+		}
+
+		if (cache.getCommonProtoTypes().contains(cls)) {
+			return true;
 		}
 
 		GeneratorProtoCache.ClassProtoInfo protoInfo = cache.getClassProtoInfo(cls);
@@ -327,12 +331,17 @@ public final class ProtoIDLGenerator {
 			return currCommonProtoMessage;
 		}
 
+
+		if (! handleCls.add(cls)) {
+			// 在处理的. 都算common中去
+			return true;
+		}
 		List<FieldInfo> fieldInfos = ProtobufProxyUtils.fetchFieldInfos(cls, false);
 		for (FieldInfo fieldInfo : fieldInfos) {
 			if (fieldInfo.isList()) {
 				Class<?> type = ReflectUtil.getListGenericParameterizedType(fieldInfo.getField());
-				if (! ProtobufProxyUtils.isScalarType(type)) {
-					haveCommonProtoMessage |= recursiveObjClass(type, cache, currCommonProtoMessage);
+				if (! ProtobufProxyUtils.isScalarType(type) && type != cls) {
+					haveCommonProtoMessage |= recursiveObjClass(type, cache, currCommonProtoMessage, handleCls);
 					protoInfo.addFieldInfo(type);
 				}
 				continue;
@@ -342,19 +351,19 @@ public final class ProtoIDLGenerator {
 				Class keyClass = fieldInfo.getGenericKeyType();
 				Class valueClass = fieldInfo.getGenericeValueType();
 				if (ProtobufProxyUtils.isObjectType(keyClass)) {
-					haveCommonProtoMessage |= recursiveObjClass(keyClass, cache, currCommonProtoMessage);
+					haveCommonProtoMessage |= recursiveObjClass(keyClass, cache, currCommonProtoMessage, handleCls);
 					protoInfo.addFieldInfo(keyClass);
 				}
 
-				if (ProtobufProxyUtils.isObjectType(valueClass)) {
-					haveCommonProtoMessage |= recursiveObjClass(valueClass, cache, currCommonProtoMessage);
+				if (ProtobufProxyUtils.isObjectType(valueClass) && valueClass != cls) {
+					haveCommonProtoMessage |= recursiveObjClass(valueClass, cache, currCommonProtoMessage, handleCls);
 					protoInfo.addFieldInfo(valueClass);
 				}
 				continue;
 			}
 
 			if (fieldInfo.isObjectType() || fieldInfo.getFieldType() == FieldType.ENUM) {
-				haveCommonProtoMessage |= recursiveObjClass(fieldInfo.getField().getType(), cache, currCommonProtoMessage);
+				haveCommonProtoMessage |= recursiveObjClass(fieldInfo.getField().getType(), cache, currCommonProtoMessage, handleCls);
 				protoInfo.addFieldInfo(fieldInfo.getField().getType());
 			}
 		}

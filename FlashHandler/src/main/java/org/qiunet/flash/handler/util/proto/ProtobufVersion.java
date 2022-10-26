@@ -75,10 +75,7 @@ public enum ProtobufVersion {
 
 		@Override
 		public String getRepeatedFieldDescribe(FieldInfo field) {
-			if (! field.isPacked()) {
-				// version3 默认true
-				return "[packed = false]";
-			}
+			// version3 默认true return "[packed = false]";
 			return super.getRepeatedFieldDescribe(field);
 		}
 	},
