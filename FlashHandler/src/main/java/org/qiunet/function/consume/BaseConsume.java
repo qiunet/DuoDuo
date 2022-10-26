@@ -1,9 +1,9 @@
 package org.qiunet.function.consume;
 
 import com.google.common.base.Preconditions;
-import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.thread.IThreadSafe;
 
 /**
  * 消耗父类

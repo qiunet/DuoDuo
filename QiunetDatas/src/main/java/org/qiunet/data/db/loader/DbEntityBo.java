@@ -41,6 +41,10 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 			return;
 		}
 
+		if (!playerDataLoader.threadSafe.inSelfThread()) {
+			throw new RuntimeException("Not in self thread!");
+		}
+
 		if (entityStatus() == EntityStatus.INIT) {
 			throw new CustomException("Need insert first!");
 		}

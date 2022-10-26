@@ -1,7 +1,6 @@
 package org.qiunet.function.consume;
 
 import com.google.common.collect.Maps;
-import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.base.IOperationType;
@@ -10,6 +9,7 @@ import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.Map;
 

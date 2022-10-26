@@ -2,13 +2,13 @@ package org.qiunet.function.consume;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.flash.handler.common.IThreadSafe;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
 import org.qiunet.function.base.IResourceType;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.anno.AutoWired;
+import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.List;
 import java.util.function.Consumer;

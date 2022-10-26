@@ -2,6 +2,10 @@ package org.qiunet.flash.handler.common.player;
 
 import com.google.common.collect.Maps;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.async.ISyncDbMessage;
+import org.qiunet.data.db.entity.DbEntityList;
+import org.qiunet.data.db.entity.IDbEntity;
+import org.qiunet.data.db.loader.DbEntityBo;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.data.util.ServerType;
@@ -30,7 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2020-10-21 10:08
  */
-public final class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor, IPlayer, IPlayerDataLoader {
+public final class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
+		IPlayer, IPlayerDataLoader, ISyncDbMessage {
 	/**
 	 * 跨服的连接管理
 	 */
@@ -188,7 +193,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			return;
 		}
 
-		dataLoader = new PlayerDataLoader(id);
+		dataLoader = new PlayerDataLoader(this, this, id);
 		this.crossHeartBeat();
 		this.playerId = id;
 		this.clockTick();
@@ -303,6 +308,30 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
+	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+		if (! inSelfThread()) {
+			throw new RuntimeException("Not in self thread!");
+		}
+		return IPlayerDataLoader.super.insertDo(entity);
+	}
+
+	@Override
+	public <Data extends DbEntityBo<?>> Data getData(Class<Data> clazz) {
+		if (! inSelfThread()) {
+			throw new RuntimeException("Not in self thread!");
+		}
+		return IPlayerDataLoader.super.getData(clazz);
+	}
+
+	@Override
+	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
+		if (! inSelfThread()) {
+			throw new RuntimeException("Not in self thread!");
+		}
+		return IPlayerDataLoader.super.getMapData(clazz);
+	}
+
+	@Override
 	public PlayerDataLoader dataLoader() {
 		return dataLoader;
 	}
@@ -313,5 +342,10 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	public boolean casWaitReconnect(boolean expect, boolean val) {
 		return this.waitReconnect.compareAndSet(expect, val);
+	}
+
+	@Override
+	public void syncBbMessage(Runnable runnable) {
+		this.addMessage(h -> runnable.run());
 	}
 }

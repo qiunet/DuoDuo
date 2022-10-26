@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.common;
+package org.qiunet.utils.thread;
 
 /***
  * 线程安全的校验接口.

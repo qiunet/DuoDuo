@@ -10,6 +10,7 @@ import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
+import org.qiunet.utils.thread.IThreadSafe;
 import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
@@ -111,7 +112,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	@Override
 	public boolean inSelfThread() {
-		return executor.get().thread == Thread.currentThread();
+		return executor.get().inSelfThread();
 	}
 
 	/**
@@ -208,7 +209,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 	}
 
-	private static class DExecutorService extends ThreadPoolExecutor {
+	private static class DExecutorService extends ThreadPoolExecutor implements IThreadSafe {
 		private final String threadName;
 		private Thread thread;
 
@@ -222,6 +223,10 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			this.thread = new Thread(runnable, this.threadName);
 			this.thread.setDaemon(true);
 			return this.thread;
+		}
+		@Override
+		public boolean inSelfThread() {
+			return this.thread == Thread.currentThread();
 		}
 	}
 

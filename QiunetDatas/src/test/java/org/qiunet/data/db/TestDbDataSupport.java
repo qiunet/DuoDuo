@@ -19,7 +19,7 @@ public class TestDbDataSupport {
 	@DataLoader(ItemBo.class)
 	private static final DbDataListSupport<Long, Integer, ItemDo, ItemBo> dataListSupport = new DbDataListSupport<>(ItemDo.class, ItemBo::new);
 
-	private static final PlayerDataLoader playerDataLoader = new PlayerDataLoader(10000);
+	private static final PlayerDataLoader playerDataLoader = new PlayerDataLoader(Runnable::run, () -> true, 10000);
 
 	@BeforeAll
 	public static void init(){

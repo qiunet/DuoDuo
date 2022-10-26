@@ -1,11 +1,13 @@
 package org.qiunet.data.db.loader;
 
 import com.google.common.collect.Maps;
+import org.qiunet.data.async.ISyncDbMessage;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.support.DataSupportMapping;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.Map;
 
@@ -27,21 +29,31 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	final DbEntityAsyncQueue cacheAsyncToDb = new DbEntityAsyncQueue();
 	/**
-	 * 只读
+	 * 同步到库
 	 */
-	final boolean readOnly;
+	private ISyncDbMessage sync;
+	/**
+	 * 是否线程安全
+	 */
+	final IThreadSafe threadSafe;
 	/**
      * 玩家ID
 	 */
 	private final long playerId;
+	/**
+	 * 只读
+	 */
+	final boolean readOnly;
 
-	public PlayerDataLoader(long playerId) {
-		this(playerId, false);
+	public PlayerDataLoader(ISyncDbMessage sync, IThreadSafe threadSafe, long playerId) {
+		this(sync, threadSafe, playerId, false);
 	}
 
-	public PlayerDataLoader(long playerId, boolean readOnly) {
+	public PlayerDataLoader(ISyncDbMessage sync, IThreadSafe threadSafe, long playerId, boolean readOnly) {
+		this.threadSafe = threadSafe;
 		this.playerId = playerId;
 		this.readOnly = readOnly;
+		this.sync = sync;
 		this.register();
 	}
 
@@ -71,7 +83,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * 同步数据到db
 	 */
 	public void syncToDb(){
-		cacheAsyncToDb.syncToDb();
+		this.sync.syncBbMessage(cacheAsyncToDb::syncToDb);
 	}
 	/**
 	 * 获得玩家ID
