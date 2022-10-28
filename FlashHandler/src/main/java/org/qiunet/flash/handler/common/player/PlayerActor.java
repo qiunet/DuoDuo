@@ -346,6 +346,10 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	@Override
 	public void syncBbMessage(Runnable runnable) {
+		if (inSelfThread()) {
+			runnable.run();
+			return;
+		}
 		this.addMessage(h -> runnable.run());
 	}
 }
