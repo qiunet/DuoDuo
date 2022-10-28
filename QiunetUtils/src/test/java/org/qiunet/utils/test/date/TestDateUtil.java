@@ -107,7 +107,7 @@ public class TestDateUtil extends BaseTest {
 		long milliByTimeUTC = DateUtil.getMilliByTime(nowLocalDateTimeUTC, ZoneOffset.UTC);
 
 		// 两次调用可能有个1毫秒时间的跨度.
-		Assertions.assertTrue(Math.abs(milliByTime - milliByTimeUTC) < 2);
+		Assertions.assertTrue(Math.abs(milliByTime - milliByTimeUTC) < 10);
 
 		LocalDateTime localDateTime = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTime));
 		LocalDateTime localDateTimeUTC = DateUtil.stringToDate(DateUtil.dateToString(nowLocalDateTimeUTC));
