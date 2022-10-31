@@ -99,7 +99,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	ServerInfo getServerInfo(int serverId) {
-		String serverInfoStr = redisUtil.returnJedis().get(serverInfoRedisKey(serverId));
+		String serverInfoStr = redisUtil.returnJedis().get(ServerInfo.serverInfoRedisKey(serverId));
 		if (StringUtil.isEmpty(serverInfoStr)) {
 			throw new CustomException("ServerId [{}] is not online!", serverId);
 		}
@@ -162,7 +162,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getNodePort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
-		this.REDIS_SERVER_NODE_INFO_KEY = serverInfoRedisKey(currServerInfo.getServerId());
+		this.REDIS_SERVER_NODE_INFO_KEY = ServerInfo.serverInfoRedisKey(currServerInfo.getServerId());
 
 		Argument<Supplier<IRedisUtil>> redisArg = argsContainer.getArgument(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER);
 		if (! redisArg.isNull()) {
@@ -221,14 +221,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		}
 	}
 
-	/**
-	 * server info的redis key
-	 * @param serverId
-	 * @return
-	 */
-	private static String serverInfoRedisKey(int serverId) {
-		return "SERVER_NODE_INFO_REDIS_KEY#"+serverId;
-	}
+
 
 	@EventListener
 	private void deprecatedEvent(ServerDeprecatedEvent event) {

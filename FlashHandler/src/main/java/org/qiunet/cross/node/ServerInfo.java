@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
  * 2020-10-09 11:07
  */
 public final class ServerInfo extends HashMap<String, Object> {
+	private static final String REDIS_KEY_PREFIX = "SERVER_NODE_INFO_REDIS_KEY#";
+
 	static final String publicHostKey = "server.public_host";
 	/**
 	 * 使用ipv6 需要云服务器配置
@@ -150,5 +152,14 @@ public final class ServerInfo extends HashMap<String, Object> {
 			return 0;
 		}
 		return Integer.parseInt(crossPort.toString());
+	}
+
+	/**
+	 * server info的redis key
+	 * @param serverId
+	 * @return
+	 */
+	public static String serverInfoRedisKey(int serverId) {
+		return REDIS_KEY_PREFIX+serverId;
 	}
 }

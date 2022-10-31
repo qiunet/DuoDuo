@@ -12,6 +12,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
+import org.qiunet.flash.handler.common.event.ClientPingEvent;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -151,6 +152,12 @@ public final class ChannelUtil {
 
 		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
 		ChannelUtil.getSession(channel).sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
+		IMessageActor actor = channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		if (channel.attr(ServerConstants.HANDLER_TYPE_KEY).get() == ServerConnType.TCP
+		&& actor instanceof PlayerActor){
+			PlayerActor playerActor = (PlayerActor) actor;
+			playerActor.fireEvent(ClientPingEvent.getInstance());
+		}
 		return true;
 	}
 
