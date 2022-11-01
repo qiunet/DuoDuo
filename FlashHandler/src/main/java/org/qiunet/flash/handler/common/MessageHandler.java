@@ -87,16 +87,17 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @param msg
 	 */
 	@Override
-	public void addMessage(IMessage<H> msg) {
+	public boolean addMessage(IMessage<H> msg) {
 		if (this.isDestroyed()) {
 			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
-			return;
+			return false;
 		}
 		messages.add(msg);
 		int size = this.size.incrementAndGet();
 		if (size == 1) {
 			executor.get().execute(this);
 		}
+		return true;
 	}
 
 	@Override

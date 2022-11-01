@@ -27,7 +27,7 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 * 保证线程安全.
 	 * @param message
 	 */
-	void addMessage(IMessage<H> message);
+	boolean addMessage(IMessage<H> message);
 
 	/**
 	 * 直接运行 message

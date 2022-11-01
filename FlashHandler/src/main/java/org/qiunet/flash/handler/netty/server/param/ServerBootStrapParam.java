@@ -253,7 +253,7 @@ public class ServerBootStrapParam {
 		 * kcp需要监听多个端口
 		 * 需要的端口数量
 		 */
-		private int portCount = OSUtil.availableProcessors();
+		private int portCount = OSUtil.isLinux() ? OSUtil.availableProcessors() : 1;
 		/**
 		 * 其它参数
 		 */

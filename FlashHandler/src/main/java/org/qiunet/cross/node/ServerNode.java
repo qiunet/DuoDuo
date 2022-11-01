@@ -54,14 +54,15 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 	}
 	@Override
-	public void addMessage(IMessage<ServerNode> msg) {
+	public boolean addMessage(IMessage<ServerNode> msg) {
 		if (isAuth()) {
 			// 是一个服务和另一个服务公用一个channel.
 			// 由业务自己实现线程的安全. 一般CommMessageHandler  roomHandler等 重新addMessage 一遍.
 			this.runMessage(msg);
+			return true;
 		}else {
 			// 没有鉴权. 需要按照队列. 先执行鉴权操作.
-			super.addMessage(msg);
+			return super.addMessage(msg);
 		}
 	}
 	/**

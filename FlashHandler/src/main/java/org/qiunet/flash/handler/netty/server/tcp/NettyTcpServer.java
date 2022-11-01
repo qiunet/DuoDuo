@@ -44,7 +44,7 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.option(ChannelOption.SO_RCVBUF, 1024*1024*2);
-			bootstrap.option(ChannelOption.SO_SNDBUF, 1024*1024*2);
+			// 不需要 bootstrap.option(ChannelOption.SO_SNDBUF, 1024*1024*2);
 			this.channelFuture = bootstrap.bind(param.getPort());
 			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), param.getPort());
 			channelFuture.channel().closeFuture().sync();
