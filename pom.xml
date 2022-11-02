@@ -53,6 +53,7 @@
 	</developers>
 
 	<properties>
+		<netty.version>4.1.84.Final</netty.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -299,8 +300,13 @@
 			</dependency>
 			<dependency>
 				<groupId>io.netty</groupId>
-				<artifactId>netty-all</artifactId>
-				<version>4.1.84.Final</version>
+				<artifactId>netty-transport-classes-epoll</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-codec-http</artifactId>
+				<version>${netty.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.jpower.kcp</groupId>
