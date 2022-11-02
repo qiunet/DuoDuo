@@ -1,6 +1,6 @@
 package org.qiunet.project.init.creator;
 
-import org.apache.commons.digester.Digester;
+import org.apache.commons.digester3.Digester;
 import org.qiunet.project.init.define.mybatis.MybatisConfigDefine;
 import org.qiunet.project.init.define.mybatis.MybatisExtraDefine;
 import org.qiunet.project.init.enums.EntityType;

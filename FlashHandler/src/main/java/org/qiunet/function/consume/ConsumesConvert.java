@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 import org.qiunet.utils.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;

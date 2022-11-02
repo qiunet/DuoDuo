@@ -1,6 +1,6 @@
 package org.qiunet.function.rank;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import org.qiunet.utils.common.CommonUtil;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;

@@ -1,6 +1,6 @@
 package org.qiunet.cfg.manager.json;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ICfg;

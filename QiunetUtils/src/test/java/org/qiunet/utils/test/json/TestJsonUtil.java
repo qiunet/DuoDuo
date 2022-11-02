@@ -1,6 +1,6 @@
 package org.qiunet.utils.test.json;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.json.JsonUtil;

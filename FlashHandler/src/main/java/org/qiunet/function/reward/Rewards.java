@@ -1,6 +1,6 @@
 package org.qiunet.function.reward;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.flash.handler.common.player.IPlayer;

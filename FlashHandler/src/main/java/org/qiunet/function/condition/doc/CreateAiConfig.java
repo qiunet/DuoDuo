@@ -1,6 +1,6 @@
 package org.qiunet.function.condition.doc;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson2.JSONWriter;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
@@ -62,7 +62,7 @@ public class CreateAiConfig {
 		}
 		Preconditions.checkState(directory.isDirectory(), "Directory must be a directory!");
 		AiConfigDoc aiConfigDoc = new AiConfigDoc(CreateAiConfig0.instance.buildConditionDocs(), CreateAiConfig0.instance.buildAiActionDocs());
-		FileUtil.createFileWithContent(new File(directory, "AiConfig.json"), JsonUtil.toJsonString(aiConfigDoc, SerializerFeature.PrettyFormat));
+		FileUtil.createFileWithContent(new File(directory, "AiConfig.json"), JsonUtil.toJsonString(aiConfigDoc, JSONWriter.Feature.PrettyFormat));
 	}
 
 	enum CreateAiConfig0 implements IApplicationContextAware {

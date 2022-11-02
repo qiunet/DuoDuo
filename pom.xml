@@ -239,7 +239,7 @@
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
-				<version>1.7.32</version>
+				<version>2.0.3</version>
 			</dependency>
 			<dependency>
 				<groupId>com.squareup.okhttp3</groupId>
@@ -259,7 +259,7 @@
 			<dependency>
 				<groupId>org.javassist</groupId>
 				<artifactId>javassist</artifactId>
-				<version>3.28.0-GA</version>
+				<version>3.29.2-GA</version>
 			</dependency>
 			<dependency>
 				<groupId>org.reflections</groupId>
@@ -289,7 +289,7 @@
 			<dependency>
 				<groupId>com.typesafe</groupId>
 				<artifactId>config</artifactId>
-				<version>1.4.1</version>
+				<version>1.4.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.openjdk.jmh</groupId>
@@ -319,9 +319,9 @@
 				<version>31.1-jre</version>
 			</dependency>
 			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>8.0.30</version>
+				<groupId>com.mysql</groupId>
+				<artifactId>mysql-connector-j</artifactId>
+				<version>8.0.31</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.protobuf</groupId>
@@ -347,7 +347,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.2.9</version>
+				<version>1.4.4</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>
@@ -359,7 +359,7 @@
 			<dependency>
 				<groupId>org.mybatis</groupId>
 				<artifactId>mybatis</artifactId>
-				<version>3.5.6</version>
+				<version>3.5.11</version>
 			</dependency>
 			<dependency>
 				<groupId>com.google.protobuf</groupId>
@@ -369,7 +369,7 @@
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
 				<artifactId>junit-jupiter-params</artifactId>
-				<version>5.8.2</version>
+				<version>5.9.1</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -396,9 +396,9 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>com.alibaba</groupId>
-				<artifactId>fastjson</artifactId>
-				<version>1.2.83</version>
+				<groupId>com.alibaba.fastjson2</groupId>
+				<artifactId>fastjson2</artifactId>
+				<version>2.0.17</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.velocity</groupId>
@@ -416,9 +416,9 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>commons-digester</groupId>
-				<artifactId>commons-digester</artifactId>
-				<version>2.1</version>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-digester3</artifactId>
+				<version>3.2</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>

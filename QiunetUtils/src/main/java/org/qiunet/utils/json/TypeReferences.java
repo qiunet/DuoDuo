@@ -1,6 +1,7 @@
 package org.qiunet.utils.json;
 
-import com.alibaba.fastjson.TypeReference;
+
+import com.alibaba.fastjson2.TypeReference;
 
 import java.util.List;
 import java.util.Map;

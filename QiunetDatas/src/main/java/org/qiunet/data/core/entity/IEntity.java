@@ -1,6 +1,6 @@
 package org.qiunet.data.core.entity;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson2.annotation.JSONField;
 import org.qiunet.data.redis.util.DbUtil;
 
 /***

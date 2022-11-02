@@ -1,6 +1,6 @@
 package org.qiunet.test.handler.bootstrap.http;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.CharsetUtil;
 import org.junit.jupiter.api.Assertions;

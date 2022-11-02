@@ -1,6 +1,6 @@
 package org.qiunet.utils.http;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import okhttp3.Response;
 
 import java.util.Objects;
