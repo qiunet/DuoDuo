@@ -32,7 +32,7 @@ public abstract class BasicKcpBootStrap {
 			ServerBootStrapParam param = ServerBootStrapParam.newBuild("游戏服", port)
 					.setKcpBootStrapParam(ServerBootStrapParam.KcpBootstrapParam.newBuild().setPortCount(0, 1).build())
 					.setStartupContext(new StartupContext())
-					.setEncryption(true)
+					.encryption()
 				.build();
 
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(param);

@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
 import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
+import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.ServerClosedEvent;
@@ -28,6 +29,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -261,15 +263,17 @@ public class BootstrapServer {
 			String msg = CharsetUtil.UTF_8.decode(buffer).toString();
 			msg = StringUtil.powerfulTrim(msg);
 			logger.error("[HookListener]服务端 Received Msg: [{}]", msg);
-			if (msg.equals(hook.getShutdownMsg())) {
+			if (msg.equalsIgnoreCase(hook.getShutdownMsg())) {
 				this.shutdown();
-			}else if (msg.equals(hook.getReloadCfgMsg())){
+			}else if (msg.equalsIgnoreCase(hook.getReloadCfgMsg())){
 				this.reloadCfg();
-			}else if (msg.equals(hook.getDeprecateMsg())) {
+			}else if (msg.equalsIgnoreCase(hook.getDeprecateMsg())) {
 				this.deprecated();
-			}else if (msg.equals(hook.getServerCloseMsg())) {
+			}else if (msg.equalsIgnoreCase(hook.getServerCloseMsg())) {
 				this.serverClose();
-			} else {
+			} else if (msg.equalsIgnoreCase(hook.hotswapMsg())) {
+				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
+			}else {
 				hook.custom(msg);
 			}
 		}

@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
 import io.jpower.kcp.netty.KcpException;
+import io.micrometer.core.instrument.Counter;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,6 +27,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -37,6 +39,7 @@ import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
@@ -271,7 +274,7 @@ public final class ChannelUtil {
 	public static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
 		sendHttpResponseStatusAndClose(ctx.channel(), status);
 	}
-
+	private static final Counter counter = RootRegistry.instance.counter("project.exception");
 	/**
 	 * 异常处理
 	 * @param startupContext
@@ -298,6 +301,10 @@ public final class ChannelUtil {
 		if ("Connection reset by peer".equals(cause.getMessage())) {
 			closeChannel.run();
 			return;
+		}
+
+		if (! (cause instanceof StatusResultException)) {
+			counter.increment();
 		}
 
 		if (channel.isOpen() || channel.isActive()) {

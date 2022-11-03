@@ -1,14 +1,17 @@
 package org.qiunet.utils.http;
 
+import io.micrometer.core.instrument.binder.okhttp3.OkHttpMetricsEventListener;
 import okhttp3.*;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.prometheus.PrometheusRegistry;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /***
  *
@@ -19,7 +22,12 @@ import java.util.Map;
 public abstract class HttpRequest<B extends HttpRequest> {
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
 	protected static final OkHttpClient client = new OkHttpClient.Builder()
-		.dispatcher(new Dispatcher(ThreadPoolManager.NORMAL))
+		.connectionPool(new ConnectionPool(5, 5, TimeUnit.MINUTES))
+		.eventListener(
+			OkHttpMetricsEventListener.builder(PrometheusRegistry.registry(), "okhttp.requests")
+					.uriMapper(request -> request.url().encodedPath())
+					.build()
+		).dispatcher(new Dispatcher(ThreadPoolManager.NORMAL))
 		.build();
 
 	protected String url;
@@ -32,6 +40,14 @@ public abstract class HttpRequest<B extends HttpRequest> {
 
 	protected Headers.Builder headerBuilder = new Headers.Builder()
 		.add("Accept-Charset", "UTF-8");
+
+	/**
+	 * 返回client
+	 * @return
+	 */
+	public static OkHttpClient _client() {
+		return client;
+	}
 
 	public static PostHttpRequest post(String url) {
 		return new PostHttpRequest(url);

@@ -11,10 +11,8 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.profile.reference.ReferenceData;
 import org.qiunet.utils.pool.ObjectPool;
 import org.qiunet.utils.string.ToString;
-import org.qiunet.utils.timer.UseTimer;
 
 /**
  * 该对象会回收. 所以只能在本线程用. addMessage 后. 就会回收掉
@@ -24,10 +22,6 @@ import org.qiunet.utils.timer.UseTimer;
  */
 public class PersistConnPbRequestContext<RequestData extends IChannelData, P extends IMessageActor<P>>
 		extends AbstractPersistConnRequestContext<RequestData, P> {
-
-	private static final ReferenceData<String> requestReferenceData = ServerConstants.RequestReferenceData;
-
-	private final UseTimer useTimer = new UseTimer("PersistConnPbRequestContext", 300);
 
 	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = new ObjectPool<PersistConnPbRequestContext>() {
 		@Override
@@ -78,6 +72,10 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 	@Override
 	public void handlerRequest() throws Exception{
+		if (getRequestData() == null) {
+			logger.error("RequestData is null for case playerId {} , protocol: {}", messageActor.getIdentity(), getHandler().getClass().getSimpleName());
+			return;
+		}
 		ChannelDataMapping.requestCheck(channel, getRequestData());
 
 		if (handler.needAuth() && ! messageActor.isAuth()) {
@@ -86,13 +84,11 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			//ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
-
+		long startTime = System.currentTimeMillis();
 		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
 			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(getRequestData()));
 		}
-		if (requestReferenceData.isRecordEnable()) {
-			useTimer.start();
-		}
+
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {
 			((ITransmitHandler) getHandler()).crossHandler(((CrossPlayerActor) messageActor), getRequestData());
 		}else {
@@ -103,9 +99,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 				facadeWebSocketRequest.recycle();
 			}
 		}
-		if (requestReferenceData.isRecordEnable()) {
-			long useTime = useTimer.printUseTime(() -> getHandler().getClass().getName());
-			requestReferenceData.record(getHandler().getClass().getSimpleName(), useTime);
-		}
+		long useTime = System.currentTimeMillis() - startTime;
+		this.getHandler().recordUseTime(useTime);
 	}
 }

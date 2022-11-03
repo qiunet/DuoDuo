@@ -13,7 +13,6 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.NettyUtil;
-import org.qiunet.profile.reference.ReferenceData;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -28,7 +27,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * 2019-03-23 21:33
  */
 public final class ServerConstants {
-	public static final ReferenceData<String> RequestReferenceData = new ReferenceData<>(LoggerType.DUODUO_FLASH_HANDLER.isInfoEnabled());
 	public static final EventLoopGroup WORKER = NettyUtil.newEventLoopGroup(0, "netty-server-worker-event-loop-");
 
 	private ServerConstants(){}

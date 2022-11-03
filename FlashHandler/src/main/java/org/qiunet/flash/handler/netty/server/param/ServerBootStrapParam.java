@@ -59,6 +59,11 @@ public class ServerBootStrapParam {
 	 */
 	private boolean encryption = true;
 	/**
+	 * 禁用Http Server
+	 * 实在用不到就禁掉, 免得通过不是自己定义的端口请求到不该请求的协议.
+	 */
+	private boolean banHttpServer;
+	/**
 	 * 当前启动的服务名
 	 */
 	private final String serverName;
@@ -99,6 +104,10 @@ public class ServerBootStrapParam {
 		return protocolHeader;
 	}
 
+	public boolean isBanHttpServer() {
+		return banHttpServer;
+	}
+
 	public IStartupContext<? extends IMessageActor<?>> getStartupContext() {
 		return startupContext;
 	}
@@ -126,6 +135,12 @@ public class ServerBootStrapParam {
 			ServerBootStrapParam.this.protocolHeader = protocolHeader;
 			return this;
 		}
+
+		public Builder banHttpServer() {
+			ServerBootStrapParam.this.banHttpServer = true;
+			return this;
+		}
+
 		public Builder setStartupContext(IStartupContext<? extends IMessageActor<?>> startupContext) {
 			ServerBootStrapParam.this.startupContext = startupContext;
 			return this;
@@ -156,8 +171,12 @@ public class ServerBootStrapParam {
 			return this;
 		}
 
-		public Builder setEncryption(boolean encryption) {
-			ServerBootStrapParam.this.encryption = encryption;
+		/**
+		 * 需要校验
+		 * @return builder
+		 */
+		public Builder encryption() {
+			ServerBootStrapParam.this.encryption = true;
 			return this;
 		}
 

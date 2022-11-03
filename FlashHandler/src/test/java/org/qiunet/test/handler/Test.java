@@ -21,7 +21,7 @@ public class Test {
 		BootstrapServer.createBootstrap(hook).listener(
 				ServerBootStrapParam.newBuild("测试", 8888)
 					.setStartupContext(new StartupContext())
-					.setEncryption(true)
+					.encryption()
 					.build()
 		).await();
 	}

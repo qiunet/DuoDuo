@@ -76,7 +76,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			return;
 		}
 
-		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
+		if (logger.isInfoEnabled()
+		&& ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)
+		&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
+		) {
 			logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
 		}
 
@@ -130,7 +133,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		if (responseData == null){
 			throw new NullPointerException("ResponseData can not be null");
 		}
-		if (logger.isInfoEnabled() && ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)) {
+		if (logger.isInfoEnabled()
+			&& ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)
+			&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
+		) {
 			logger.info("HTTP >>> {}", ToString.toString(responseData));
 		}
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
@@ -215,11 +221,14 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	 */
 	private void processSyncHttp(ISyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
 		FacadeHttpRequest<RequestData, ResponseData> request = new FacadeHttpRequest<>(this);
+		long startTime = System.currentTimeMillis();
 		ResponseData data = handler.handler(request);
 
 		if (data == null) {
 			throw new NullPointerException("Response data can not be null!");
 		}
+		long useTime = System.currentTimeMillis() - startTime;
+		this.getHandler().recordUseTime(useTime);
 		this.response(data);
 	}
 }

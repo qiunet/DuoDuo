@@ -45,6 +45,11 @@ public interface IHandler<RequestData> {
 	 */
 	Class<RequestData> getRequestClass();
 
+	/**
+	 * 记录耗时
+	 * @param useTime
+	 */
+	void recordUseTime(long useTime);
 	/***
 	 * 得到自己的RequestData
 	 * @param buffer

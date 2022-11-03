@@ -1,12 +1,7 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.profile.printer.LoggerPrintStream;
-import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.logger.LoggerType;
-
-import java.nio.file.Paths;
 
 /**
  * 钩子. 先判断shutdown
@@ -48,6 +43,11 @@ public interface Hook {
 	default String getShutdownMsg() {
 		return "SHUTDOWN0";
 	}
+
+
+	default String hotswapMsg() {
+		return "HOTSWAP";
+	}
 	/**
 	 * 得到shutdown端口
 	 * @return
@@ -66,20 +66,5 @@ public interface Hook {
 	 * 用户自定义msg的用途
 	 * @param msg
 	 */
-	default void custom(String msg) {
-		switch (msg) {
-			case "hotswap":
-				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
-				break;
-			case "RequestReferenceEnable":
-				ServerConstants.RequestReferenceData.setRecordEnable(true);
-				break;
-			case "RequestReferenceDisable":
-				ServerConstants.RequestReferenceData.setRecordEnable(false);
-				break;
-			case "RequestReferencePrint":
-				ServerConstants.RequestReferenceData.print(new LoggerPrintStream(LoggerType.DUODUO_FLASH_HANDLER.getLogger()));
-				break;
-		}
-	}
+	default void custom(String msg) {}
 }

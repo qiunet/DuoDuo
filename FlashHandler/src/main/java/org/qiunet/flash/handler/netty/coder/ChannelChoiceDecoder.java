@@ -44,7 +44,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			ChannelPipeline pipeline = ctx.channel().pipeline();
 			byte [] bytes = new byte[protocolHeader.getConnectInMagic().length];
 			in.readBytes(bytes);
-			if (Arrays.equals(protocolHeader.getConnectInMagic(), bytes)) {
+			if (param.isBanHttpServer() || Arrays.equals(protocolHeader.getConnectInMagic(), bytes)) {
 				pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
 				pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(param.getMaxReceivedLength(), param.isEncryption()));
 				pipeline.addLast("IdleStateHandler", new IdleStateHandler(param.getReadIdleCheckSeconds(), 0, 0));

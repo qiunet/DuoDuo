@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.common.enums.DataType;
-import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
 
@@ -14,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * 18/1/29
  */
 
-public abstract class HttpJsonHandler<RequestData> extends BaseHandler<RequestData> {
+public abstract class HttpJsonHandler<RequestData> extends BaseHttpHandler<RequestData> {
 
 	public HttpJsonHandler() {
 		super();

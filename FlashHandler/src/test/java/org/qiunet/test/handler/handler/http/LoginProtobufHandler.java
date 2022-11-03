@@ -11,7 +11,7 @@ import org.qiunet.test.handler.proto.LoginResponse;
  * Created by qiunet.
  * 17/11/21
  */
-public class LoginProtobufHandler extends HttpProtobufHandler<HttpPbLoginRequest, LoginResponse>
+public class LoginProtobufHandler extends HttpProtobufHandler<HttpPbLoginRequest>
 		implements IAsyncHttpHandler<HttpPbLoginRequest, LoginResponse> {
 
 	@Override

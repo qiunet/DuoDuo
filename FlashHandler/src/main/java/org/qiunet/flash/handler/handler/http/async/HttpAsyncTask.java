@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.handler.http.async;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.cookie.Cookie;
 import org.qiunet.flash.handler.context.request.http.IHttpRequest;
+import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.context.response.IHttpResponse;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -31,8 +32,13 @@ public class HttpAsyncTask<Req, Rsp> implements IHttpRequest<Req>, IHttpResponse
 	 */
 	private final AtomicBoolean completed = new AtomicBoolean(false);
 
+	/**
+	 * 开始时间
+	 */
+	private final long startTime;
 	public HttpAsyncTask(IHttpRequest<Req> context, Consumer<Rsp> completedConsumer) {
 		this.completedConsumer =  completedConsumer;
+		this.startTime = System.currentTimeMillis();
 		this.context = context;
 	}
 
@@ -54,6 +60,8 @@ public class HttpAsyncTask<Req, Rsp> implements IHttpRequest<Req>, IHttpResponse
 			throw new CustomException("Task already completed!");
 		}
 
+		long useTime = System.currentTimeMillis() - startTime;
+		((IHttpRequestContext) this.context).getHandler().recordUseTime(useTime);
 		this.completedConsumer.accept(response);
 	}
 
