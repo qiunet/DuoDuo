@@ -29,6 +29,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeader(ServerNodeProtocolHeader.instance).build(), new TcpNodeClientTrigger());
+	/** server node 创建同步锁redis key */
+	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
 	private TimeOutFuture timeOutFuture;
 	private RedisLock redisLock;
 	private int serverId;
@@ -138,5 +140,18 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	@Override
 	public long getId() {
 		return getServerId();
+	}
+
+	/**
+	 * 获得创建使用的key
+	 * @param destServerId
+	 * @return
+	 */
+	static String getServerNodeLockRedisKey(int srcServerId, int destServerId) {
+		if (destServerId < srcServerId) {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + destServerId +"_"+ srcServerId;
+		}else {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + srcServerId +"_"+  destServerId;
+		}
 	}
 }

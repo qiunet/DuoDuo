@@ -34,6 +34,11 @@ public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 	}
 
 	@Override
+	public boolean isByteBufPrepare() {
+		return true;
+	}
+
+	@Override
 	protected ByteBuf get() {
 		return this.byteBuf;
 	}

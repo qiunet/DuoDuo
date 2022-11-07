@@ -5,11 +5,12 @@ import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.IRobot;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
-import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
@@ -211,6 +212,13 @@ abstract class BaseSession implements ISession {
 		}
 		return future;
 	}
+
+	private static final GenericFutureListener<? extends Future<? super Void>> listener = f -> {
+		if (! f.isSuccess()) {
+			logger.error("channel send message error:", f.cause());
+		}
+	};
+
 	/**
 	 * 发送消息在这里
 	 * @param message
@@ -222,12 +230,8 @@ abstract class BaseSession implements ISession {
 		if (! this.channel.isOpen()) {
 			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
 			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
-			if (message instanceof BaseByteBufMessage) {
-				if (message instanceof DefaultByteBufMessage) {
-					((DefaultByteBufMessage) message).getContent().release();
-				}else if (((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
+			if (message instanceof BaseByteBufMessage && ((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
 					((BaseByteBufMessage<?>) message).getByteBuf().release();
-				}
 			}
 			message.recycle();
 			return channel.newPromise();
@@ -236,25 +240,31 @@ abstract class BaseSession implements ISession {
 		if ( logger.isInfoEnabled() && messageActor != null && ( message.needLogger() || messageActor instanceof IRobot)) {
 			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 		}
-
+		ChannelFuture future;
 		if (flush) {
-			return this.channel.writeAndFlush(message);
+			future = this.channel.writeAndFlush(message);
 		}else {
-			return this.channel.write(message);
+			future = this.channel.write(message);
 		}
+		future.addListener(listener);
+		return future;
 	}
 
 	@Override
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		if (channel != null) {
+			boolean isServer = channel.hasAttr(ServerConstants.HANDLER_PARAM_KEY);
+			sj.add(isServer ? "Server": "Client");
 			sj.add("Type = "+channel.attr(ServerConstants.HANDLER_TYPE_KEY).get());
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 			if (messageActor != null) {
 				sj.add(messageActor.getIdentity());
 			}
 			sj.add("ID = " + channel.id().asShortText());
-			sj.add("Ip = " + getIp());
+			if (isServer) {
+				sj.add("Ip = " + getIp());
+			}
 		}
 		return sj.toString();
 	}
