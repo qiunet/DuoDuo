@@ -174,7 +174,7 @@ public final class DbUtil {
 	 */
 	public static String buildRedisKey(String doName, Object... keys){
 		StringJoiner sj = new StringJoiner("#");
-		sj.add(doName).add(String.valueOf(ServerConfig.getServerGroupId()));
+		sj.add(doName);
 		for (Object key : keys) {
 			sj.add(String.valueOf(key));
 		}

@@ -79,10 +79,10 @@ public class NettyKcpServer implements INettyServer {
 						}
 					});
 			ServerBootStrapParam.KcpBootstrapParam.Param param = this.param.getKcpParam().getParam();
-			ChannelOptionHelper.nodelay(b, param.isNoDelay(), param.getInterval(), param.getFastResend(), param.isNoCwnd())
-					.childOption(UkcpChannelOption.UKCP_MTU, param.getMtu())
-					.childOption(UkcpChannelOption.UKCP_SND_WND, param.getSnd_wnd())
-					.childOption(UkcpChannelOption.UKCP_RCV_WND, param.getRcv_wnd())
+			ChannelOptionHelper.nodelay(b, param.noDelay(), param.interval(), param.fastResend(), param.noCwnd())
+					.childOption(UkcpChannelOption.UKCP_MTU, param.mtu())
+					.childOption(UkcpChannelOption.UKCP_SND_WND, param.snd_wnd())
+					.childOption(UkcpChannelOption.UKCP_RCV_WND, param.rcv_wnd())
 					.childOption(UkcpChannelOption.UKCP_AUTO_SET_CONV, true);
 
 			Set<Integer> udpPorts = this.param.getKcpParam().getPorts();

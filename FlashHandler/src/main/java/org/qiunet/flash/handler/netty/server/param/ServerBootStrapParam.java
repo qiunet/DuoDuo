@@ -57,7 +57,7 @@ public class ServerBootStrapParam {
 	 * 是否检验crc
 	 * 一般测试时候使用
 	 */
-	private boolean encryption = true;
+	private boolean encryption;
 	/**
 	 * 禁用Http Server
 	 * 实在用不到就禁掉, 免得通过不是自己定义的端口请求到不该请求的协议.
@@ -356,75 +356,18 @@ public class ServerBootStrapParam {
 
 		}
 
-		public static class Param {
+		/**
+		 * @param snd_wnd    发送窗口大小.
+		 *                   响应客户端的接收窗大小也要高于该值.
+		 * @param rcv_wnd    接收窗大小. 要大于客户端的发送窗大小
+		 * @param interval   间隔. 内部flush刷新间隔
+		 * @param noDelay    无延迟
+		 * @param mtu        传输单元大小.
+		 * @param fastResend 跳过几次后, 快速重传
+		 * @param noCwnd     取消拥塞控制
+		 */
+		public record Param(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
 			public static final Param DEFAULT_KCP_PARAM = new Param(512, 512, 20, true, 512, 2, true);
-			/**
-			 * 发送窗口大小.
-			 * 响应客户端的接收窗大小也要高于该值.
-			 */
-			private final int snd_wnd;
-			/**
-			 * 接收窗大小. 要大于客户端的发送窗大小
-			 */
-			private final int rcv_wnd;
-			/**
-			 * 间隔. 内部flush刷新间隔
-			 */
-			private final int interval;
-			/**
-			 * 无延迟
-			 */
-			private final boolean noDelay;
-			/**
-			 * 传输单元大小.
-			 */
-			private final int mtu;
-			/**
-			 * 跳过几次后, 快速重传
-			 */
-			private final int fastResend;
-			/**
-			 * 取消拥塞控制
-			 */
-			private final boolean noCwnd;
-
-			public Param(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
-				this.snd_wnd = snd_wnd;
-				this.rcv_wnd = rcv_wnd;
-				this.interval = interval;
-				this.noDelay = noDelay;
-				this.mtu = mtu;
-				this.fastResend = fastResend;
-				this.noCwnd = noCwnd;
-			}
-
-			public int getSnd_wnd() {
-				return snd_wnd;
-			}
-
-			public int getRcv_wnd() {
-				return rcv_wnd;
-			}
-
-			public int getInterval() {
-				return interval;
-			}
-
-			public boolean isNoDelay() {
-				return noDelay;
-			}
-
-			public int getMtu() {
-				return mtu;
-			}
-
-			public int getFastResend() {
-				return fastResend;
-			}
-
-			public boolean isNoCwnd() {
-				return noCwnd;
-			}
 		}
 	}
 
