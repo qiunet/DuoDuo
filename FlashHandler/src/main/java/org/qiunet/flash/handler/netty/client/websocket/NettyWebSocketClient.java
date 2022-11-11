@@ -85,7 +85,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast("HttpClientCodec", new HttpClientCodec());
-			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024*1024*2));
+			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024 * 128));
 			pipeline.addLast("NettyClientHandler", new NettyClientHandler());
 		}
 	}

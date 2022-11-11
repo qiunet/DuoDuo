@@ -1,14 +1,12 @@
 package org.qiunet.utils.file;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
@@ -285,5 +284,39 @@ public class FileUtil {
 	 */
 	public static void changeListener(File file, IFileChangeCallback changeCallback) {
 		FileChangeListener.listener(file, changeCallback);
+	}
+	/**
+	 * 一行行的读取文件
+	 * @param file 文件
+	 * @param lineConsumer 消费者
+	 */
+	public static void readFileLines(File file, Consumer<String> lineConsumer) {
+		String line;
+		try (FileReader fileReader = new FileReader(file);
+			 BufferedReader reader = new BufferedReader(fileReader)) {
+			while ((line = reader.readLine()) != null) {
+				lineConsumer.accept(line);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 一行行的读取文件
+	 * @param file 文件
+	 */
+	public static List<String> readFileLines(File file) {
+		String line;
+		List<String> list = Lists.newLinkedList();
+		try (FileReader fileReader = new FileReader(file);
+			 BufferedReader reader = new BufferedReader(fileReader)) {
+			while ((line = reader.readLine()) != null) {
+				list.add(line);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		return list;
 	}
 }

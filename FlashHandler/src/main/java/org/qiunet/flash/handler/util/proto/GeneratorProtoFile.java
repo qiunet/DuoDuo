@@ -16,7 +16,6 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,6 +43,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	}
 	/**
 	 * 生成协议文件
+	 * 兼容测试需要feature {@link GeneratorProtoFeature#COMPATIBLE_CHECK}
 	 * @param directory 生成的目录
 	 * @param model 生成类型
 	 * @throws Exception -
@@ -52,11 +52,17 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
 
-		Map<GeneratorProtoFeature, Object> collect = Arrays.stream(features).collect(Collectors.toMap(ArgsData.Two::a, ArgsData.Two::b));
-		GeneratorProtoFeature.features.putAll(collect);
-
+		GeneratorProtoFeature.features.putAll(Arrays.stream(features).collect(Collectors.toMap(ArgsData.Two::a, ArgsData.Two::b)));
+		boolean compatibleCheck = GeneratorProtoFeature.COMPATIBLE_CHECK.prepare();
+		ProtoCompatible protoCompatible = null;
+		if (compatibleCheck) {
+			protoCompatible = new ProtoCompatible(directory);
+		}
 		GeneratorProtoParam protoParam = new GeneratorProtoParam(model, classes, version, directory);
 		model.generatorProto(protoParam);
+		if (compatibleCheck && !protoCompatible.compatible(new ProtoCompatible(directory))) {
+			throw new ProtocolUnCompatibleException("======协议不兼容之前的版本. 详情请查看上面打印! 如果确认无误. 需要你手动提交版本管理! =========");
+		}
 	}
 
 	@Override

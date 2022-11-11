@@ -44,8 +44,9 @@ public class NettyKcpClient {
 						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(params.getMaxReceivedLength(), params.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler());
 					}
-				}).option(ChannelOption.SO_RCVBUF, 1024*1024*2)
-				.option(ChannelOption.SO_SNDBUF, 1024*1024*2);
+				})
+				.option(ChannelOption.SO_RCVBUF, 1024 * 128)
+				.option(ChannelOption.SO_SNDBUF, 1024 * 128);
 
 		ChannelOptionHelper.nodelay(bootstrap, true, 20, 2, true)
 				.option(UkcpChannelOption.UKCP_MTU, 512)

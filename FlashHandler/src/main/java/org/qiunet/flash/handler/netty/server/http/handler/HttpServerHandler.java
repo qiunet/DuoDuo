@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -122,6 +123,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
 
+		ctx.channel().config().setOption(ChannelOption.SO_SNDBUF, 1024 * 128);
+		ctx.channel().config().setOption(ChannelOption.SO_RCVBUF, 1024 * 128);
+		ctx.channel().config().setOption(ChannelOption.TCP_NODELAY, true);
 		pipeline.remove(this);
 	}
 

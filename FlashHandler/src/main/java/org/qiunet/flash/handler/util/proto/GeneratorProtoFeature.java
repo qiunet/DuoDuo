@@ -25,6 +25,10 @@ public enum GeneratorProtoFeature {
 	 * 输出protocol 映射 markdown
 	 */
 	OUTPUT_PROTOCOL_MAPPING_MD,
+	/**
+	 * 兼容检查
+	 */
+	COMPATIBLE_CHECK,
 	;
 	public static final Map<GeneratorProtoFeature, Object> features = new HashMap<>();
 

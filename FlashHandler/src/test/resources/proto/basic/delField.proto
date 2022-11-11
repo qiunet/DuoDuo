@@ -1,0 +1,39 @@
+// 测试
+// [ProtocolId = 7001 ] 任务进度统计提交请求
+message TargetProgressReq {
+	// 任务变动的类型
+	// 0=完善个人信息       1=更新装扮      2=更新捏脸信息  3=发送im消息    4=分享app       5=充值  6=好友广场想法  7=邀请到房间    8=创建房间工程  9=访问好友的信息        10=关注 11=下载 12=进入房间     13=创建私密房间 14=拍同款       15=双向关注
+	optional int32 type=1;
+	// 其它参数json形式
+	optional string jsonParams=2;
+}
+
+// [ProtocolId = 7000002 ] 任务移除的推送.
+message TargetRemovePush {
+	// 移除任务的ID
+	optional int32 id=1;
+}
+
+// [ProtocolId = 7002 ] 领取单个任务奖励请求
+message TargetRewardReq {
+	// 任务ID
+	optional int32 id=1;
+}
+
+// [ProtocolId = 7002001 ] 领取单个任务奖励响应
+message TargetRewardRsp {
+	// 任务ID
+	optional int32 targetId=1;
+}
+
+// 胜利点房间状态
+enum VictoryRoomStatus {
+	//等待阶段
+	VictoryRoomStatus_WAIT=0;
+	//准备阶段
+	VictoryRoomStatus_PREPARE=1;
+	//游戏阶段
+	VictoryRoomStatus_STARTED=2;
+	//结算阶段
+	VictoryRoomStatus_BALANCE=3;
+}
