@@ -1,7 +1,7 @@
 package org.qiunet.log.record.logger;
 
 import org.qiunet.log.record.enums.ILogRecordType;
-import org.qiunet.log.record.msg.LogRecordMsg;
+import org.qiunet.log.record.msg.ILogRecordMsg;
 
 /***
  *
@@ -21,5 +21,5 @@ public interface IRecordLogger {
 	 * 记录日志
 	 * @param logRecordMsg
 	 */
-	 <T extends Enum<T> & ILogRecordType<T>, L extends LogRecordMsg<T>> void send(L logRecordMsg);
+	 <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T>> void send(L logRecordMsg);
 }

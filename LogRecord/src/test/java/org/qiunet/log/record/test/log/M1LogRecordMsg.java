@@ -24,9 +24,9 @@ public class M1LogRecordMsg extends GameLogRecordMsg {
 
 	@Override
 	protected void fillLogRecordMsg() {
-		this.appendVal(String.valueOf(playerId));
-		this.appendVal(String.valueOf(currM1));
-		this.appendVal(String.valueOf(m1));
-		this.appendVal(operate);
+		this.append(String.valueOf(playerId));
+		this.append(String.valueOf(currM1));
+		this.append(String.valueOf(m1));
+		this.append(operate);
 	}
 }

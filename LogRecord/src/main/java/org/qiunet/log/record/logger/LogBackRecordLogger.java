@@ -12,7 +12,7 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.google.common.collect.Maps;
 import org.qiunet.log.record.enums.ILogRecordType;
-import org.qiunet.log.record.msg.LogRecordMsg;
+import org.qiunet.log.record.msg.ILogRecordMsg;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.LoggerFactory;
 
@@ -77,9 +77,9 @@ public enum LogBackRecordLogger implements IRecordLogger {
 	}
 
 	@Override
-	public <T extends Enum<T> & ILogRecordType<T>, L extends LogRecordMsg<T>>  void send(L logRecordMsg) {
+	public <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T>>  void send(L logRecordMsg) {
 		Logger logger = loggers.computeIfAbsent(logRecordMsg.logType().getName(), this::createLogger);
-		LoggingEvent le = new LoggingEvent(Logger.FQCN, logger, Level.INFO, logRecordMsg.logMessage(), null, null);
+		LoggingEvent le = new LoggingEvent(Logger.FQCN, logger, Level.INFO, logRecordMsg.getData().toString(), null, null);
 		le.setTimeStamp(logRecordMsg.createTime());
 		logger.callAppenders(le);
 	}

@@ -3,9 +3,10 @@ package org.qiunet.log.record.logger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.log.record.enums.ILogRecordType;
-import org.qiunet.log.record.msg.LogRecordMsg;
+import org.qiunet.log.record.msg.ILogRecordMsg;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.config.anno.DConfigValue;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -28,7 +29,7 @@ public enum LogRecordManager {
 	instance;
 
 
-	public <LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(LogRecordMsg<LogType> msg) {
+	public <LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(ILogRecordMsg<LogType> msg) {
 		LogRecordManager0.instance.sendLog(msg);
 	}
 
@@ -48,12 +49,12 @@ public enum LogRecordManager {
 		/**
 		 * 消息队列
 		 */
-		private final Queue<LogRecordMsg<?>> queue = new ConcurrentLinkedQueue<>();
+		private final Queue<ILogRecordMsg<?>> queue = new ConcurrentLinkedQueue<>();
 		/**
 		 * 发送日志
 		 * @param log
 		 */
-		<LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(LogRecordMsg<LogType> log) {
+		<LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(ILogRecordMsg<LogType> log) {
 			Preconditions.checkNotNull(log);
 			queue.add(log);
 
@@ -65,7 +66,7 @@ public enum LogRecordManager {
 		 * 记录消费
 		 */
 		private void consumeLog() {
-			LogRecordMsg msg;
+			ILogRecordMsg msg;
 			while ((msg = queue.poll()) != null) {
 				for (IRecordLogger logger : loggers) {
 					logger.send(msg);
@@ -87,10 +88,13 @@ public enum LogRecordManager {
 
 			if (RECORD_LOG_NAMES == null || RECORD_LOG_NAMES.isEmpty()) {
 				try {
+					// 先判断有没有jar.
+					Class.forName("ch.qos.logback.classic.Logger");
+
 					Class<?> aClass = Class.forName("org.qiunet.log.record.logger.LogBackRecordLogger");
 					loggers.add(((IRecordLogger) context.getInstanceOfClass(aClass)));
 				}catch (ClassNotFoundException e) {
-					LoggerType.DUODUO.error("logback jar not setting!");
+					LoggerType.DUODUO.error("LogRecordManager ERROR:", new CustomException("logback jar not setting!"));
 				}
 			}
 		}
