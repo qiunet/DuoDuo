@@ -12,6 +12,8 @@ import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.thread.IThreadSafe;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /***
@@ -41,7 +43,7 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> implements IArgsCo
 	/**
 	 * 真实奖励
 	 */
-	private final List<IRealReward> realRewards = Lists.newArrayListWithCapacity(5);
+	private List<IRealReward> realRewards;
 
 	private RewardContext(){}
 	static <Obj extends IThreadSafe & IPlayer> RewardContext<Obj> valueOf(Obj player, Rewards<Obj> rewards, IOperationType operationType) {
@@ -50,6 +52,10 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> implements IArgsCo
 		context.rewards = rewards;
 		context.player = player;
 		return context;
+	}
+
+	public Rewards<Obj> getRewards() {
+		return rewards;
 	}
 
 	/**
@@ -89,8 +95,34 @@ public class RewardContext<Obj extends IThreadSafe & IPlayer> implements IArgsCo
 		return result;
 	}
 
+	/**
+	 * 返回一个不可修改的list
+	 * @return list
+	 */
 	public List<IRealReward> getRealRewards() {
-		return realRewards;
+		if (realRewards == null) {
+			return Collections.emptyList();
+		}
+		return Collections.unmodifiableList(realRewards);
+	}
+
+	/**
+	 * 添加一个realReward list
+	 * @param rewards 需要添加
+	 */
+	public void addRealReward(List<IRealReward> rewards) {
+		if (this.realRewards == null) {
+			this.realRewards = Lists.newArrayListWithCapacity(8);
+		}
+		this.realRewards.addAll(rewards);
+	}
+
+	/**
+	 * 添加一个或者多个 real reward
+	 * @param rewards
+	 */
+	public void addRealReward(IRealReward ... rewards) {
+		this.addRealReward(Arrays.asList(rewards));
 	}
 
 	@Override

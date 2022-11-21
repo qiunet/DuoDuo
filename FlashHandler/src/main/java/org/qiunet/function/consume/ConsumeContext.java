@@ -57,6 +57,10 @@ public class ConsumeContext<Obj extends IThreadSafe> implements IArgsContainer {
 		return context;
 	}
 
+	public Consumes<Obj> getConsumes() {
+		return consumes;
+	}
+
 	/**
 	 * 执行消耗
 	 */

@@ -69,7 +69,7 @@ public class Consumes<Obj extends IThreadSafe> {
 			consume.consume(context);
 		}
 
-		ConsumeEventData.valueOf(context).fireEventHandler();
+		ConsumeEvent.valueOf(context).fireEventHandler();
 	}
 
 	/**

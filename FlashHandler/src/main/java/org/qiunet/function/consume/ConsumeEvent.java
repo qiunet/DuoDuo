@@ -8,12 +8,12 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021-01-05 20:52
  */
-public class ConsumeEventData implements IEventData {
+public class ConsumeEvent implements IEventData {
 
 	private ConsumeContext context;
 
-	public static ConsumeEventData valueOf(ConsumeContext context) {
-		ConsumeEventData data = new ConsumeEventData();
+	public static ConsumeEvent valueOf(ConsumeContext context) {
+		ConsumeEvent data = new ConsumeEvent();
 		data.context = context;
 		return data;
 	}

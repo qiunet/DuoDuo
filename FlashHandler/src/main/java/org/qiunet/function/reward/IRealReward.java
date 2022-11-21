@@ -17,7 +17,7 @@ public interface IRealReward {
 	 * 没有为 0
 	 * @return
 	 */
-	int getUid();
+	int getUniqueId();
 	/**
 	 * 配置id
 	 * @return
