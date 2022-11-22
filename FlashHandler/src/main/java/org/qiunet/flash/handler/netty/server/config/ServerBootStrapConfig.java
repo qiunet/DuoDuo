@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.param;
+package org.qiunet.flash.handler.netty.server.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.header.ServerNodeProtocolHeader;
-import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
+import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.utils.math.PollChooserFactory;
 import org.qiunet.utils.system.OSUtil;
 
@@ -23,7 +23,7 @@ import java.util.stream.IntStream;
  * @author qiunet
  * 2022/10/27 11:27
  */
-public class ServerBootStrapParam {
+public class ServerBootStrapConfig {
 	/**
 	 * 启动的上下文
 	 */
@@ -44,15 +44,15 @@ public class ServerBootStrapParam {
 	/**
 	 * http 启动参数
 	 */
-	private HttpBootstrapParam httpParam = HttpBootstrapParam.DEFAULT_PARAM;
+	private HttpBootstrapConfig httpConfig = HttpBootstrapConfig.DEFAULT_PARAM;
 	/**
 	 * tcp 启动参数
 	 */
-	private TcpBootstrapParam tcpParam = TcpBootstrapParam.DEFAULT_PARAM;
+	private TcpBootstrapConfig tcpConfig = TcpBootstrapConfig.DEFAULT_CONFIG;
 	/**
 	 * kcp 启动参数
 	 */
-	private KcpBootstrapParam kcpParam;
+	private KcpBootstrapConfig kcpConfig;
 	/**
 	 * 是否检验crc
 	 * 一般测试时候使用
@@ -72,7 +72,7 @@ public class ServerBootStrapParam {
 	 */
 	private final int port;
 
-	private ServerBootStrapParam(String serverName, int port) {
+	private ServerBootStrapConfig(String serverName, int port) {
 		Preconditions.checkState(port > 1000);
 		Preconditions.checkNotNull(serverName);
 		this.serverName = serverName;
@@ -80,24 +80,24 @@ public class ServerBootStrapParam {
 	}
 
 	public static Builder newBuild(String serverName, int port){
-		ServerBootStrapParam param = new ServerBootStrapParam(serverName, port);
-		return param.new Builder();
+		ServerBootStrapConfig config = new ServerBootStrapConfig(serverName, port);
+		return config.new Builder();
 	}
 
 	public String getServerName() {
 		return serverName;
 	}
 
-	public HttpBootstrapParam getHttpParam() {
-		return httpParam;
+	public HttpBootstrapConfig getHttpBootstrapConfig() {
+		return httpConfig;
 	}
 
-	public TcpBootstrapParam getTcpParam() {
-		return tcpParam;
+	public TcpBootstrapConfig getTcpBootstrapConfig() {
+		return tcpConfig;
 	}
 
-	public KcpBootstrapParam getKcpParam() {
-		return kcpParam;
+	public KcpBootstrapConfig getKcpBootstrapConfig() {
+		return kcpConfig;
 	}
 
 	public IProtocolHeader getProtocolHeader() {
@@ -132,41 +132,41 @@ public class ServerBootStrapParam {
 		private Builder() {}
 
 		public Builder setProtocolHeader(IProtocolHeader protocolHeader) {
-			ServerBootStrapParam.this.protocolHeader = protocolHeader;
+			ServerBootStrapConfig.this.protocolHeader = protocolHeader;
 			return this;
 		}
 
 		public Builder banHttpServer() {
-			ServerBootStrapParam.this.banHttpServer = true;
+			ServerBootStrapConfig.this.banHttpServer = true;
 			return this;
 		}
 
 		public Builder setStartupContext(IStartupContext<? extends IMessageActor<?>> startupContext) {
-			ServerBootStrapParam.this.startupContext = startupContext;
+			ServerBootStrapConfig.this.startupContext = startupContext;
 			return this;
 		}
 		public Builder setReadIdleCheckSeconds(int readIdleCheckSeconds) {
-			ServerBootStrapParam.this.readIdleCheckSeconds = readIdleCheckSeconds;
+			ServerBootStrapConfig.this.readIdleCheckSeconds = readIdleCheckSeconds;
 			return this;
 		}
 
-		public Builder setHttpBootStrapParam(HttpBootstrapParam param) {
-			ServerBootStrapParam.this.httpParam = param;
+		public Builder setHttpBootStrapConfig(HttpBootstrapConfig config) {
+			ServerBootStrapConfig.this.httpConfig = config;
 			return this;
 		}
 
-		public Builder setTcpBootStrapParam(TcpBootstrapParam param) {
-			ServerBootStrapParam.this.tcpParam = param;
-			if (param.isUdpOpen()) {
-				return this.setKcpBootStrapParam(param.kcpBootstrapParam);
+		public Builder setTcpBootStrapConfig(TcpBootstrapConfig config) {
+			ServerBootStrapConfig.this.tcpConfig = config;
+			if (config.isUdpOpen()) {
+				return this.setKcpBootStrapConfig(config.kcpBootstrapConfig);
 			}
 			return this;
 		}
 
-		public Builder setKcpBootStrapParam(KcpBootstrapParam param) {
-			ServerBootStrapParam.this.kcpParam = param;
-			if (param != null) {
-				param.cal(ServerBootStrapParam.this.port);
+		public Builder setKcpBootStrapConfig(KcpBootstrapConfig config) {
+			ServerBootStrapConfig.this.kcpConfig = config;
+			if (config != null) {
+				config.cal(ServerBootStrapConfig.this.port);
 			}
 			return this;
 		}
@@ -176,12 +176,12 @@ public class ServerBootStrapParam {
 		 * @return builder
 		 */
 		public Builder encryption() {
-			ServerBootStrapParam.this.encryption = true;
+			ServerBootStrapConfig.this.encryption = true;
 			return this;
 		}
 
 		public Builder setMaxReceivedLength(int maxReceivedLength) {
-			ServerBootStrapParam.this.maxReceivedLength = maxReceivedLength;
+			ServerBootStrapConfig.this.maxReceivedLength = maxReceivedLength;
 			return this;
 		}
 
@@ -214,11 +214,11 @@ public class ServerBootStrapParam {
 			return DefaultProtocolHeader.instance;
 		}
 
-		public ServerBootStrapParam build() {
-			if (ServerBootStrapParam.this.protocolHeader == null){
-				ServerBootStrapParam.this.protocolHeader = customProtocolHeader();
+		public ServerBootStrapConfig build() {
+			if (ServerBootStrapConfig.this.protocolHeader == null){
+				ServerBootStrapConfig.this.protocolHeader = customProtocolHeader();
 			}
-			return ServerBootStrapParam.this;
+			return ServerBootStrapConfig.this;
 		}
 	}
 
@@ -263,7 +263,7 @@ public class ServerBootStrapParam {
 	 *  * buffer 存储消息字节流的内存
 	 *  * output udp发送消息的回调函数
 	 */
-	public static class KcpBootstrapParam {
+	public static class KcpBootstrapConfig {
 		/**
 		 * 选择器
 		 */
@@ -276,7 +276,7 @@ public class ServerBootStrapParam {
 		/**
 		 * 其它参数
 		 */
-		private Param param = Param.DEFAULT_KCP_PARAM;
+		private KcpParam kcpParam = KcpParam.DEFAULT_KCP_PARAM;
 		/**
 		 * 端口的偏移
 		 */
@@ -290,7 +290,7 @@ public class ServerBootStrapParam {
 		 */
 		private Set<Integer> ports;
 
-		private KcpBootstrapParam() {}
+		private KcpBootstrapConfig() {}
 
 		/**
 		 * 计算现有的端口等数据
@@ -302,7 +302,7 @@ public class ServerBootStrapParam {
 		}
 
 		public static Builder newBuild() {
-			return new KcpBootstrapParam().new Builder();
+			return new KcpBootstrapConfig().new Builder();
 		}
 
 		public PollChooserFactory.PollChooser<Integer> getUdpPortChooser() {
@@ -313,8 +313,8 @@ public class ServerBootStrapParam {
 			return dependOnTcpWs;
 		}
 
-		public Param getParam() {
-			return param;
+		public KcpParam getKcpParam() {
+			return kcpParam;
 		}
 
 		public Set<Integer> getPorts() {
@@ -323,8 +323,8 @@ public class ServerBootStrapParam {
 
 		public class Builder {
 
-			public Builder setKcpParam(Param param) {
-				KcpBootstrapParam.this.param = param;
+			public Builder setKcpParam(KcpParam kcpParameter) {
+				KcpBootstrapConfig.this.kcpParam = kcpParameter;
 				return this;
 			}
 
@@ -345,13 +345,13 @@ public class ServerBootStrapParam {
 			public Builder setPortCount(int portOffset, int portCount) {
 				Preconditions.checkState(portOffset >= 0);
 				Preconditions.checkState(portCount > 0);
-				KcpBootstrapParam.this.portOffset = portOffset;
-				KcpBootstrapParam.this.portCount = portCount;
+				KcpBootstrapConfig.this.portOffset = portOffset;
+				KcpBootstrapConfig.this.portCount = portCount;
 				return this;
 			}
 
-			public KcpBootstrapParam build() {
-				return KcpBootstrapParam.this;
+			public KcpBootstrapConfig build() {
+				return KcpBootstrapConfig.this;
 			}
 
 		}
@@ -366,44 +366,44 @@ public class ServerBootStrapParam {
 		 * @param fastResend 跳过几次后, 快速重传
 		 * @param noCwnd     取消拥塞控制
 		 */
-		public record Param(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
-			public static final Param DEFAULT_KCP_PARAM = new Param(512, 512, 20, true, 512, 2, true);
+		public record KcpParam(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
+			public static final KcpParam DEFAULT_KCP_PARAM = new KcpParam(512, 512, 20, true, 512, 2, true);
 		}
 	}
 
 	/**
 	 * Tcp 的启动参数
 	 */
-	public static class TcpBootstrapParam {
-		public static final TcpBootstrapParam DEFAULT_PARAM = new TcpBootstrapParam();
+	public static class TcpBootstrapConfig {
+		public static final TcpBootstrapConfig DEFAULT_CONFIG = new TcpBootstrapConfig();
 		/**
 		 * 在端口上开放udp
 		 */
-		private KcpBootstrapParam kcpBootstrapParam;
-		private TcpBootstrapParam(){}
+		private KcpBootstrapConfig kcpBootstrapConfig;
+		private TcpBootstrapConfig(){}
 
 		public boolean isUdpOpen() {
-			return kcpBootstrapParam != null;
+			return kcpBootstrapConfig != null;
 		}
 
-		public KcpBootstrapParam getKcpBootstrapParam() {
-			return kcpBootstrapParam;
+		public KcpBootstrapConfig getKcpBootstrapConfig() {
+			return kcpBootstrapConfig;
 		}
 
 		public static Builder newBuild() {
-			return new TcpBootstrapParam().new Builder();
+			return new TcpBootstrapConfig().new Builder();
 		}
 
 		public class Builder {
 
-			public Builder setUdpOpen(KcpBootstrapParam param) {
-				TcpBootstrapParam.this.kcpBootstrapParam = param;
-				param.dependOnTcpWs = true;
+			public Builder setUdpOpen(KcpBootstrapConfig config) {
+				TcpBootstrapConfig.this.kcpBootstrapConfig = config;
+				config.dependOnTcpWs = true;
 				return this;
 			}
 
-			public TcpBootstrapParam build() {
-				return TcpBootstrapParam.this;
+			public TcpBootstrapConfig build() {
+				return TcpBootstrapConfig.this;
 			}
 		}
 
@@ -411,8 +411,8 @@ public class ServerBootStrapParam {
 	/**
 	 * Http 的参数
 	 */
-	public static class HttpBootstrapParam {
-		public static final HttpBootstrapParam DEFAULT_PARAM = new HttpBootstrapParam();
+	public static class HttpBootstrapConfig {
+		public static final HttpBootstrapConfig DEFAULT_PARAM = new HttpBootstrapConfig();
 		/***
 		 * 升级websocket的路径 一般 /ws 没有websocket 需求. 不需要设定.
 		 * 根据这个参数判断是不是
@@ -424,10 +424,10 @@ public class ServerBootStrapParam {
 		 */
 		private String gameURIPath = "/f";
 
-		private HttpBootstrapParam() {}
+		private HttpBootstrapConfig() {}
 
-		public static HttpBootstrapParam.Builder newBuild() {
-			return new HttpBootstrapParam().new Builder();
+		public static HttpBootstrapConfig.Builder newBuild() {
+			return new HttpBootstrapConfig().new Builder();
 		}
 
 		public String getWebsocketPath() {
@@ -442,17 +442,17 @@ public class ServerBootStrapParam {
 			private Builder() {}
 
 			public Builder setWebsocketPath(String websocketPath) {
-				HttpBootstrapParam.this.websocketPath = websocketPath;
+				HttpBootstrapConfig.this.websocketPath = websocketPath;
 				return this;
 			}
 
 			public Builder setGameURIPath(String gameURIPath) {
-				HttpBootstrapParam.this.gameURIPath = gameURIPath;
+				HttpBootstrapConfig.this.gameURIPath = gameURIPath;
 				return this;
 			}
 
-			public HttpBootstrapParam build() {
-				return HttpBootstrapParam.this;
+			public HttpBootstrapConfig build() {
+				return HttpBootstrapConfig.this;
 			}
 		}
 	}

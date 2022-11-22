@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.status.IGameStatus;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.HttpClientConfig;
 import org.qiunet.test.handler.handler.http.JTestResponseData;
 import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
@@ -25,7 +25,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/22
  */
 public class TestHttpRequest extends HttpBootStrap {
-	private final HttpClientParams params = HttpClientParams.custom()
+	private final HttpClientConfig params = HttpClientConfig.custom()
 		.setAddress("localhost", port).build();
 
 	@Test

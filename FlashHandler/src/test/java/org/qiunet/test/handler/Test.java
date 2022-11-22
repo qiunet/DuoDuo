@@ -1,8 +1,8 @@
 package org.qiunet.test.handler;
 
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -19,7 +19,7 @@ public class Test {
 		ClassScanner.getInstance(ScannerType.SERVER).scanner();
 
 		BootstrapServer.createBootstrap(hook).listener(
-				ServerBootStrapParam.newBuild("测试", 8888)
+				ServerBootStrapConfig.newBuild("测试", 8888)
 					.setStartupContext(new StartupContext())
 					.encryption()
 					.build()

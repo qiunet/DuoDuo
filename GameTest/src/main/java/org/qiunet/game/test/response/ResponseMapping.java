@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.game.test.robot.action.BaseRobotAction;
 import org.qiunet.utils.args.ArgsContainer;

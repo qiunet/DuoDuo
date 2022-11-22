@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.HttpClientConfig;
 import org.qiunet.test.handler.proto.HttpPbLoginRequest;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.utils.http.HttpRequest;
@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch;
 public class TestMuchHttpRequest extends HttpBootStrap {
 	private final int requestCount = 5000;
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
-	private final HttpClientParams params = HttpClientParams.custom()
+	private final HttpClientConfig params = HttpClientConfig.custom()
 		.setAddress("localhost", port)
 		.build();
 	@Test

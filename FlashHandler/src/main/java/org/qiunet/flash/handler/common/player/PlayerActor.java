@@ -17,10 +17,10 @@ import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.kcp.event.KcpUsabilityEvent;
 import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ClockTickPush;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 

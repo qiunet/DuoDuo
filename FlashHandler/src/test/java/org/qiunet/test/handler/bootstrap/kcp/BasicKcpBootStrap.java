@@ -4,8 +4,8 @@ package org.qiunet.test.handler.bootstrap.kcp;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -29,13 +29,13 @@ public abstract class BasicKcpBootStrap {
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			ServerBootStrapParam param = ServerBootStrapParam.newBuild("游戏服", port)
-					.setKcpBootStrapParam(ServerBootStrapParam.KcpBootstrapParam.newBuild().setPortCount(0, 1).build())
+			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("游戏服", port)
+					.setKcpBootStrapConfig(ServerBootStrapConfig.KcpBootstrapConfig.newBuild().setPortCount(0, 1).build())
 					.setStartupContext(new StartupContext())
 					.encryption()
 				.build();
 
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(param);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(config);
 			server.await(() -> LockSupport.unpark(currThread));
 		});
 		thread.start();

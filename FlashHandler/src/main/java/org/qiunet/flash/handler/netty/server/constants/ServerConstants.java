@@ -10,8 +10,8 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -49,7 +49,7 @@ public final class ServerConstants {
 	/***
 	 * 启动参数
 	 */
-	public static final AttributeKey<ServerBootStrapParam> HANDLER_PARAM_KEY = AttributeKey.newInstance("HANDLER_PARAM_KEY");
+	public static final AttributeKey<ServerBootStrapConfig> BOOTSTRAP_CONFIG_KEY = AttributeKey.newInstance("BOOTSTRAP_CONFIG");
 	/***
 	 * messageActor 存储在channel的key
 	 */

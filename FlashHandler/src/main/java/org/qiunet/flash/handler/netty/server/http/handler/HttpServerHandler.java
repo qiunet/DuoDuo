@@ -18,8 +18,8 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadContextData;
@@ -38,16 +38,16 @@ import java.util.function.Supplier;
 public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequest> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final ServerBootStrapParam params;
+	private final ServerBootStrapConfig config;
 
-	public HttpServerHandler (ServerBootStrapParam params) {
-		this.params = params;
+	public HttpServerHandler (ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("HttpServerHandler throw Exception : ", cause);
 		ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
+		logger.error("HttpServerHandler throw Exception : ", cause);
 		ctx.close();
 	}
 
@@ -88,10 +88,10 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		try {
-			if (params.getHttpParam().getGameURIPath().equals(uri.getRawPath())) {
+			if (config.getHttpBootstrapConfig().getGameURIPath().equals(uri.getRawPath())) {
 				// 游戏的请求
 				handlerGameUriPathRequest(ctx, msg);
-			} else if (params.getHttpParam().getWebsocketPath() != null && params.getHttpParam().getWebsocketPath().equals(uri.getRawPath())) {
+			} else if (config.getHttpBootstrapConfig().getWebsocketPath() != null && config.getHttpBootstrapConfig().getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
 				handlerWebSocketHandShark(ctx, msg);
 			}else {
@@ -110,17 +110,17 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerWebSocketHandShark(ChannelHandlerContext ctx, FullHttpRequest request){
 		ChannelPipeline pipeline = ctx.pipeline();
 
-		pipeline.addLast("IdleStateHandler", new IdleStateHandler(params.getReadIdleCheckSeconds(), 0, 0));
+		pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WebSocketServerProtocolConfig.newBuilder()
-			.maxFramePayloadLength(params.getMaxReceivedLength())
-			.websocketPath(params.getHttpParam().getWebsocketPath())
+			.maxFramePayloadLength(config.getMaxReceivedLength())
+			.websocketPath(config.getHttpBootstrapConfig().getWebsocketPath())
 			.handleCloseFrames(true)
 			.build()));
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
-		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(params.getMaxReceivedLength(), params.isEncryption()));
-		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(params));
+		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(config));
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
 
 		ctx.channel().config().setOption(ChannelOption.SO_SNDBUF, 1024 * 128);
@@ -145,7 +145,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 
 		MessageContent content = MessageContent.valueOf(header, request.content().readRetainedSlice(header.getLength()));
 		try {
-			if (params.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
+			if (config.isEncryption() && ! header.validEncryption(content.byteBuffer())) {
 				// encryption 不对, 不被认证的请求
 				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 				return;
@@ -171,7 +171,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			return;
 		}
 
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, params, request);
+		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, config, request);
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();

@@ -12,15 +12,15 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
-import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
+import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.function.ai.node.IBehaviorAction;
 import org.qiunet.function.ai.node.root.BehaviorRootTree;
 import org.qiunet.function.ai.observer.IBHTAddNodeObserver;
@@ -198,12 +198,12 @@ abstract class RobotFunc extends AbstractMessageActor<Robot> implements IMessage
 		private ISession connect0() {
 			switch (config.getConnType()) {
 				case WS:
-					return NettyWebSocketClient.create(((WebSocketClientParams) config), trigger);
+					return NettyWebSocketClient.create(((WebSocketClientConfig) config), trigger);
 				case KCP:
-					return NettyKcpClient.create((KcpClientParams) config, trigger)
+					return NettyKcpClient.create((KcpClientConfig) config, trigger)
 							.connect(config.getAddress().getHostString(), config.getAddress().getPort());
 				case TCP:
-					return NettyTcpClient.create((TcpClientParams) config, trigger)
+					return NettyTcpClient.create((TcpClientConfig) config, trigger)
 							.connect(config.getAddress().getHostString(), config.getAddress().getPort())
 							.getSender();
 				default:

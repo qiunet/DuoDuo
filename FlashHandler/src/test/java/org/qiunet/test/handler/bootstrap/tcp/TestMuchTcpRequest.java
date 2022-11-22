@@ -5,7 +5,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -30,7 +30,7 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 
 	@Test
 	public void muchRequest() throws InterruptedException {
-		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, new Trigger());
+		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientConfig.DEFAULT_PARAMS, new Trigger());
 		long start = System.currentTimeMillis();
 		final int threadCount = 100;
 		for (int j = 0; j < threadCount; j++) {

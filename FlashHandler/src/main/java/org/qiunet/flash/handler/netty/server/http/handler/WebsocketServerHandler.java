@@ -7,8 +7,8 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 public class WebsocketServerHandler  extends SimpleChannelInboundHandler<MessageContent> {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final ServerBootStrapParam param;
+	private final ServerBootStrapConfig config;
 
 
 	@Override
@@ -32,26 +32,26 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 			DSession iSession = new DSession(ctx.channel());
 
-			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(param.getStartupContext().buildMessageActor(iSession));
+			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(config.getStartupContext().buildMessageActor(iSession));
 			ctx.channel().attr(ServerConstants.HTTP_WS_HEADER_KEY).set(headers);
-			ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(param);
+			ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
 			ChannelUtil.bindSession(iSession);
 		}
 		super.userEventTriggered(ctx, evt);
 	}
 
-	public WebsocketServerHandler (ServerBootStrapParam param) {
-		this.param = param;
+	public WebsocketServerHandler (ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		ChannelUtil.channelRead(ctx.channel(), param, content);
+		ChannelUtil.channelRead(ctx.channel(), config, content);
 	}
 
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ChannelUtil.cause(param.getStartupContext(), ctx.channel(), cause);
+		ChannelUtil.cause(config.getStartupContext(), ctx.channel(), cause);
 	}
 }

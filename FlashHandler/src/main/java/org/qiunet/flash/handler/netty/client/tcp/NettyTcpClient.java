@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
@@ -27,13 +27,13 @@ import org.qiunet.utils.logger.LoggerType;
 public class NettyTcpClient {
 	private static final EventLoopGroup group = NettyUtil.newEventLoopGroup(8, "netty-tcp-client-event-loop-");
 	private final IPersistConnResponseTrigger trigger;
-	private final TcpClientParams params;
+	private final TcpClientConfig config;
 	private final Bootstrap bootstrap;
 	/**
 	 *
-	 * @param params
+	 * @param config
 	 */
-	private NettyTcpClient(TcpClientParams params, IPersistConnResponseTrigger trigger) {
+	private NettyTcpClient(TcpClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.bootstrap = new Bootstrap();
 		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
 		this.bootstrap.option(ChannelOption.TCP_NODELAY,true);
@@ -41,16 +41,16 @@ public class NettyTcpClient {
 		this.bootstrap.channel(socketChannelClz);
 		this.bootstrap.group(group);
 		this.trigger = trigger;
-		this.params = params;
+		this.config = config;
 	}
 
 	/**
 	 * 阻塞 直到连接成功后返回.
-	 * @param params
+	 * @param config
 	 * @return
 	 */
-	public static NettyTcpClient create(TcpClientParams params, IPersistConnResponseTrigger trigger) {
-		return new NettyTcpClient(params, trigger);
+	public static NettyTcpClient create(TcpClientConfig config, IPersistConnResponseTrigger trigger) {
+		return new NettyTcpClient(config, trigger);
 	}
 
 	/**
@@ -80,10 +80,10 @@ public class NettyTcpClient {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
-			ch.attr(ServerConstants.PROTOCOL_HEADER).set(params.getProtocolHeader());
+			ch.attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
 			ch.attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
-			pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(params.getMaxReceivedLength(), params.isEncryption()));
+			pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast(new NettyClientHandler());
 		}
 	}

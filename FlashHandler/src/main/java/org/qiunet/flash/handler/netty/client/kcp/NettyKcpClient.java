@@ -10,7 +10,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.KcpSession;
-import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientEncoder;
@@ -26,12 +26,12 @@ import org.qiunet.utils.logger.LoggerType;
 public class NettyKcpClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup( new DefaultThreadFactory("netty-kcp-client-event-loop-"));
 	private final IPersistConnResponseTrigger trigger;
-	private final KcpClientParams params;
+	private final KcpClientConfig config;
 	private final Bootstrap bootstrap;
 
-	private NettyKcpClient(KcpClientParams params, IPersistConnResponseTrigger trigger) {
+	private NettyKcpClient(KcpClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
-		this.params = params;
+		this.config = config;
 
 		this.bootstrap = new Bootstrap();
 		this.bootstrap.group(group).channel(UkcpClientChannel.class)
@@ -39,9 +39,9 @@ public class NettyKcpClient {
 					@Override
 					protected void initChannel(UkcpChannel ch) throws Exception {
 						ChannelPipeline p = ch.pipeline();
-						ch.attr(ServerConstants.PROTOCOL_HEADER).set(params.getProtocolHeader());
+						ch.attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
 						p.addLast("KcpSocketEncoder", new KcpSocketClientEncoder())
-						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(params.getMaxReceivedLength(), params.isEncryption()))
+						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler());
 					}
 				})
@@ -57,12 +57,12 @@ public class NettyKcpClient {
 
 	/**
 	 * client
-	 * @param params
+	 * @param config
 	 * @param trigger
 	 * @return
 	 */
-	public static NettyKcpClient create(KcpClientParams params, IPersistConnResponseTrigger trigger) {
-		return new NettyKcpClient(params, trigger);
+	public static NettyKcpClient create(KcpClientConfig config, IPersistConnResponseTrigger trigger) {
+		return new NettyKcpClient(config, trigger);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class NettyKcpClient {
 		// Start the client.
 		try {
 			ChannelFuture f = this.bootstrap.connect(host, port).sync();
-			KcpSession kcpSession = new KcpSession(((UkcpClientChannel) f.channel()).conv(params.getConvId()));
+			KcpSession kcpSession = new KcpSession(((UkcpClientChannel) f.channel()).conv(config.getConvId()));
 			f.channel().attr(ServerConstants.SESSION_KEY).set(kcpSession);
 			return kcpSession;
 		} catch (InterruptedException e) {

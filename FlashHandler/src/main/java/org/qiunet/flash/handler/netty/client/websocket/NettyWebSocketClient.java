@@ -19,7 +19,7 @@ import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientEncoder;
@@ -43,13 +43,13 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final IPersistConnResponseTrigger trigger;
-	private final WebSocketClientParams params;
+	private final WebSocketClientConfig config;
 	private final Bootstrap bootstrap;
 	private ISession session;
 
-	private NettyWebSocketClient(WebSocketClientParams params, IPersistConnResponseTrigger trigger) {
+	private NettyWebSocketClient(WebSocketClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
-		this.params = params;
+		this.config = config;
 
 		bootstrap = new Bootstrap();
 		bootstrap.group(group);
@@ -59,14 +59,14 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 		bootstrap.handler(new NettyWebSocketClient.NettyClientInitializer());
 	}
 
-	public static ISession create(WebSocketClientParams params, IPersistConnResponseTrigger trigger){
-		NettyWebSocketClient client = new NettyWebSocketClient(params, trigger);
+	public static ISession create(WebSocketClientConfig config, IPersistConnResponseTrigger trigger){
+		NettyWebSocketClient client = new NettyWebSocketClient(config, trigger);
 		return client.connect();
 	}
 
 	private ISession connect() {
 		DPromise<ChannelFuture> promise = DPromise.create();
-		ChannelFuture future = bootstrap.connect(params.getAddress());
+		ChannelFuture future = bootstrap.connect(config.getAddress());
 		future.addListener(f1 -> {
 			ChannelFuture handshakeFuture = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
 			promise.trySuccess(handshakeFuture);
@@ -75,7 +75,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 			try {
 				return promise.get();
 			} catch (InterruptedException | ExecutionException e) {
-				throw new CustomException(e, "Connect to server {} error!", params.getURI());
+				throw new CustomException(e, "Connect to server {} error!", config.getURI());
 			}
 		}).build()));
 	}
@@ -100,7 +100,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 
 		public NettyClientHandler(){
 			this.handshaker = WebSocketClientHandshakerFactory.newHandshaker(
-				params.getURI(), WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
+				config.getURI(), WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
 		}
 
 
@@ -127,11 +127,11 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 
 
 					pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
-					pipeline.addLast("WebSocketDecoder", new WebSocketClientDecoder(params.getMaxReceivedLength(), params.isEncryption()));
+					pipeline.addLast("WebSocketDecoder", new WebSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 					pipeline.addLast("WebSocketServerHandler", new NettyWSClientHandler());
 					pipeline.addLast("encode", new WebSocketClientEncoder());
 
-					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER).set(params.getProtocolHeader());
+					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {
 					handshakeFuture.setFailure(e);

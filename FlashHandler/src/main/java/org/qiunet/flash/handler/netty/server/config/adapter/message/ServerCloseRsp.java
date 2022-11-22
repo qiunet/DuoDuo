@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.param.adapter.message;
+package org.qiunet.flash.handler.netty.server.config.adapter.message;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;

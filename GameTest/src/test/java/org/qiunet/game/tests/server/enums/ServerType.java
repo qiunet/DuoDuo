@@ -1,10 +1,10 @@
 package org.qiunet.game.tests.server.enums;
 
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.HttpClientConfig;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 
 /**
  * Created by qiunet.
@@ -12,11 +12,11 @@ import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
  */
 public enum ServerType  {
 	/**http 逻辑服*/
-	HTTP_LOGIC(HttpClientParams.custom().setAddress("localhost", 8080).setUriPath("/f").build()),
+	HTTP_LOGIC(HttpClientConfig.custom().setAddress("localhost", 8080).setUriPath("/f").build()),
 	/**长链接 在线服*/
-	LC_ONLINE(WebSocketClientParams.custom().setAddress("localhost", 8080).setUriPath("/ws").build()),
+	LC_ONLINE(WebSocketClientConfig.custom().setAddress("localhost", 8080).setUriPath("/ws").build()),
 	/**长链接 房间服*/
-	LC_ROOM(TcpClientParams.custom().setAddress("localhost", 8080).build()),
+	LC_ROOM(TcpClientConfig.custom().setAddress("localhost", 8080).build()),
 	;
 	private final IClientConfig config;
 	ServerType(IClientConfig config) {

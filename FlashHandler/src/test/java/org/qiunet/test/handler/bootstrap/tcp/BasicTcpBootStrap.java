@@ -5,8 +5,8 @@ import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -32,12 +32,12 @@ public abstract class BasicTcpBootStrap {
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			ServerBootStrapParam tcpParams = ServerBootStrapParam.newBuild("Tcp测试", port)
+			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("Tcp测试", port)
 				.setStartupContext(new StartupContext())
 				.encryption()
 				.build();
 
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(tcpParams);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(config);
 			server.await(() -> LockSupport.unpark(currThread));
 		});
 		thread.start();

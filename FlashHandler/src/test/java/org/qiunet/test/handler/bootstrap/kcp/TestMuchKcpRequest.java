@@ -6,7 +6,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
-import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.handler.proto.LoginResponse;
@@ -30,7 +30,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 	@Test
 	public void muchRequest() throws InterruptedException {
-		NettyKcpClient client = NettyKcpClient.create(KcpClientParams.DEFAULT_PARAMS, new Trigger());
+		NettyKcpClient client = NettyKcpClient.create(KcpClientConfig.DEFAULT_CLIENT_CONFIG, new Trigger());
 		long start = System.currentTimeMillis();
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {

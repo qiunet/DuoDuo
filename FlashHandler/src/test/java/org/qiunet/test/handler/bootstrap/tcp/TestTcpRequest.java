@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -41,7 +41,7 @@ public class TestTcpRequest extends BasicTcpBootStrap implements IPersistConnRes
 	@BeforeEach
 	public void connect(){
 		currThread = Thread.currentThread();
-		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.DEFAULT_PARAMS, this);
+		NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientConfig.DEFAULT_PARAMS, this);
 		tcpClientConnector = tcpClient.connect(host, port);
 	}
 	@AfterEach

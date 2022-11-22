@@ -2,7 +2,7 @@ package org.qiunet.test.handler.startup.context;
 
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
+import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 
 /***
  *

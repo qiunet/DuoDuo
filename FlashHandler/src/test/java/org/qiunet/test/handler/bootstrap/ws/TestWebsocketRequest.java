@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
@@ -26,7 +26,7 @@ import java.util.concurrent.CountDownLatch;
  * 17/12/1
  */
 public class TestWebsocketRequest extends HttpBootStrap {
-	private final ISession client = NettyWebSocketClient.create(WebSocketClientParams.custom()
+	private final ISession client = NettyWebSocketClient.create(WebSocketClientConfig.custom()
 			.setAddress("localhost", port).build(), new ResponseTrigger());
 	private final CountDownLatch latch = new CountDownLatch(1);
 	private String text;

@@ -8,11 +8,11 @@ import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.header.ServerNodeProtocolHeader;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.IEventData;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * 2020-10-09 11:13
  */
 public class ServerNode extends AbstractMessageActor<ServerNode> {
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeader(ServerNodeProtocolHeader.instance).build(), new TcpNodeClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientConfig.custom().setProtocolHeader(ServerNodeProtocolHeader.instance).build(), new TcpNodeClientTrigger());
 	/** server node 创建同步锁redis key */
 	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
 	private TimeOutFuture timeOutFuture;

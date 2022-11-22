@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.param.adapter.message;
+package org.qiunet.flash.handler.netty.server.config.adapter.message;
 
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;

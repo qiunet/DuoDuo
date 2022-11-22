@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
  * Created by qiunet.
  * 17/11/22
  */
-public abstract class AbstractClientParam implements IClientConfig {
+public abstract class AbstractClientConfig implements IClientConfig {
 	/***
 	 * 地址
 	 */
@@ -44,9 +44,9 @@ public abstract class AbstractClientParam implements IClientConfig {
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 * */
-	public abstract class SuperBuilder<P extends AbstractClientParam, B extends SuperBuilder> {
+	public abstract class SuperBuilder<P extends AbstractClientConfig, B extends SuperBuilder> {
 		public B setAddress(InetSocketAddress address) {
-			AbstractClientParam.this.address = address;
+			AbstractClientConfig.this.address = address;
 			return (B) this;
 		}
 		public B setAddress(String host, int port) {
@@ -58,17 +58,17 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @return
 		 */
 		public B setProtocolHeader(IProtocolHeader protocolHeader) {
-			AbstractClientParam.this.protocolHeader = protocolHeader;
+			AbstractClientConfig.this.protocolHeader = protocolHeader;
 			return (B) this;
 		}
 
 		public B setMaxReceivedLength(int maxReceivedLength) {
-			AbstractClientParam.this.maxReceivedLength = maxReceivedLength;
+			AbstractClientConfig.this.maxReceivedLength = maxReceivedLength;
 			return (B) this;
 		}
 
 		public B setEncryption(boolean encryption) {
-			AbstractClientParam.this.encryption = encryption;
+			AbstractClientConfig.this.encryption = encryption;
 			return (B) this;
 		}
 
@@ -77,13 +77,13 @@ public abstract class AbstractClientParam implements IClientConfig {
 		 * @return
 		 */
 		public P build(){
-			return newParams();
+			return newConfig();
 		}
 
 		/**
 		 * 得到一个新的param
 		 * @return
 		 */
-		protected abstract P newParams();
+		protected abstract P newConfig();
 	}
 }

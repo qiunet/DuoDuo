@@ -17,7 +17,7 @@ import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
@@ -33,14 +33,14 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends BaseRequestContext<RequestData> implements IHttpRequestContext<RequestData, ResponseData> {
 	private Map<String ,List<String>> parameters;
-	protected ServerBootStrapParam params;
+	protected ServerBootStrapConfig config;
 	private HttpRequest request;
 	private String uriPath;
 
-	public void init(MessageContent content, Channel channel, ServerBootStrapParam params, HttpRequest request)  {
+	public void init(MessageContent content, Channel channel, ServerBootStrapConfig config, HttpRequest request)  {
 		super.init(content, channel);
 		this.request = request;
-		this.params = params;
+		this.config = config;
 
 		this.uriPath = content.getUriPath();
 	}
@@ -100,7 +100,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		if (uriPath != null) {
 			return uriPath;
 		}
-		return params.getHttpParam().getGameURIPath();
+		return config.getHttpBootstrapConfig().getGameURIPath();
 	}
 
 	@Override
@@ -143,7 +143,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		IChannelMessage<?> responseDataMessage = getResponseDataMessage(responseData);
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
-		if (getUriPath().equals(params.getHttpParam().getGameURIPath())) {
+		if (getUriPath().equals(config.getHttpBootstrapConfig().getGameURIPath())) {
 			content = responseDataMessage.withHeaderByteBuf(channel, true);
 		}else {
 			// 不是游戏业务. 不写业务头.

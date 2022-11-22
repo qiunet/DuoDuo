@@ -11,13 +11,13 @@ import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthReq;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthRsp;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.ToString;
@@ -33,10 +33,10 @@ import java.util.Objects;
 public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private final ServerBootStrapParam params;
+	private final ServerBootStrapConfig config;
 
-	public KcpServerHandler(ServerBootStrapParam params) {
-		this.params = params;
+	public KcpServerHandler(ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
 
@@ -48,10 +48,10 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 		ChannelUtil.bindSession(session);
 		logger.debug("Kcp session {} active!", session);
-		ctx.channel().attr(ServerConstants.HANDLER_PARAM_KEY).set(params);
-		if (! params.getKcpParam().isDependOnTcpWs()) {
+		ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
+		if (! config.getKcpBootstrapConfig().isDependOnTcpWs()) {
 			// 从tcp那取到PlayerActor
-			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(params.getStartupContext().buildMessageActor(session));
+			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(config.getStartupContext().buildMessageActor(session));
 			PlayerActor playerActor = (PlayerActor) ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
 			session.addCloseListener("IKcpUsabilityLose", (session0, cause) -> {
 				playerActor.syncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
@@ -113,11 +113,11 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			return;
 		}
 
-		ChannelUtil.channelRead(ctx.channel(), params, content);
+		ChannelUtil.channelRead(ctx.channel(), config, content);
 	}
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ChannelUtil.cause(params.getStartupContext(), ctx.channel(), cause);
+		ChannelUtil.cause(config.getStartupContext(), ctx.channel(), cause);
 	}
 }

@@ -8,10 +8,10 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 
 import java.util.Arrays;
@@ -23,13 +23,13 @@ import java.util.List;
  * 17/8/13
  */
 public class ChannelChoiceDecoder extends ByteToMessageDecoder {
-	private final ServerBootStrapParam param;
+	private final ServerBootStrapConfig config;
 
-	private ChannelChoiceDecoder(ServerBootStrapParam param) {
-		this.param = param;
+	private ChannelChoiceDecoder(ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
-	public static ChannelChoiceDecoder valueOf(ServerBootStrapParam param){
+	public static ChannelChoiceDecoder valueOf(ServerBootStrapConfig param){
 		return new ChannelChoiceDecoder(param);
 	}
 
@@ -44,17 +44,17 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			ChannelPipeline pipeline = ctx.channel().pipeline();
 			byte [] bytes = new byte[protocolHeader.getConnectInMagic().length];
 			in.readBytes(bytes);
-			if (param.isBanHttpServer() || Arrays.equals(protocolHeader.getConnectInMagic(), bytes)) {
+			if (config.isBanHttpServer() || Arrays.equals(protocolHeader.getConnectInMagic(), bytes)) {
 				pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
-				pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(param.getMaxReceivedLength(), param.isEncryption()));
-				pipeline.addLast("IdleStateHandler", new IdleStateHandler(param.getReadIdleCheckSeconds(), 0, 0));
+				pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+				pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 				pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-				pipeline.addLast("TcpServerHandler", new TcpServerHandler(param));
+				pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
 				ctx.fireChannelActive();
 			}else {
 				pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
-				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(param.getMaxReceivedLength()));
-				pipeline.addLast("HttpServerHandler", new HttpServerHandler(param));
+				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
+				pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
 			}
 			pipeline.remove(ChannelChoiceDecoder.class);
 		}finally {

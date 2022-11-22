@@ -64,7 +64,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			if (! (e instanceof StatusResultException)) {
 				logger.error("Execute exception: " , e);
 			}
-			channel.attr(ServerConstants.HANDLER_PARAM_KEY).get().getStartupContext().exception(channel, e);
+			channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get().getStartupContext().exception(channel, e);
 		} finally {
 			this.recycle();
 		}

@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
-import org.qiunet.flash.handler.netty.client.param.KcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.handler.proto.GenderType;
@@ -39,7 +39,7 @@ public class TestKcpRequest extends BasicKcpBootStrap implements IPersistConnRes
 	@BeforeEach
 	public void connect(){
 		currThread = Thread.currentThread();
-		NettyKcpClient tcpClient = NettyKcpClient.create(KcpClientParams.DEFAULT_PARAMS, this);
+		NettyKcpClient tcpClient = NettyKcpClient.create(KcpClientConfig.DEFAULT_CLIENT_CONFIG, this);
 		this.session = tcpClient.connect(host, port);
 	}
 	@AfterEach

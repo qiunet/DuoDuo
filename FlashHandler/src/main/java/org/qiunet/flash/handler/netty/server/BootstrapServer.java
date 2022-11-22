@@ -5,11 +5,11 @@ import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.collection.enums.ForEachResult;
@@ -90,7 +90,7 @@ public class BootstrapServer {
 		logger.error("BootstrapServer sendHookMsg [{}]!", msg);
 		try {
 			NetUtil.udpSendData("localhost", hookPort, msg.getBytes(CharsetUtil.UTF_8));
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			logger.error("BootstrapServer sendHookMsg: ", e);
 			System.exit(1);
 		}
@@ -99,14 +99,14 @@ public class BootstrapServer {
 	/**
 	 * 监听一个服务
 	 * 服务可以是kcp tcp  http  ws 会自动切换
-	 * @param param server的参数
+	 * @param config server的参数
 	 * @return  BootstrapServer 实例
 	 */
-	public BootstrapServer listener(ServerBootStrapParam param) {
+	public BootstrapServer listener(ServerBootStrapConfig config) {
 		// 默认启动tcp  http监听
-		this.nettyServers.add(new NettyTcpServer(param));
-		if (param.getKcpParam() != null) {
-			this.nettyServers.add(new NettyKcpServer(param));
+		this.nettyServers.add(new NettyTcpServer(config));
+		if (config.getKcpBootstrapConfig() != null) {
+			this.nettyServers.add(new NettyKcpServer(config));
 		}
 		return this;
 	}
@@ -126,7 +126,7 @@ public class BootstrapServer {
 		}catch (CustomException e) {
 			e.logger(logger);
 			System.exit(1);
-		} catch(Exception e) {
+		} catch(Throwable e) {
 			logger.error(e.getMessage(), e);
 			System.exit(1);
 		}
@@ -284,8 +284,8 @@ public class BootstrapServer {
 			try(DatagramChannel channel = DatagramChannel.open()) {
 				try {
 					channel.bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hook.getHookPort()));
-				}catch (Exception e) {
-					logger.error("Bind error", e);
+				}catch (Throwable e) {
+					logger.error("Bind Hook Error", e);
 					System.exit(1);
 				}
 

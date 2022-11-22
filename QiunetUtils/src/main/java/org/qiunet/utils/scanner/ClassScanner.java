@@ -88,7 +88,7 @@ public final class ClassScanner implements IApplicationContext {
 	public void scanner(String ... packetPrefix) {
 		try {
 			this.scanner0(packetPrefix);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			logger.error("Scanner Exception:", e);
 			System.exit(1);
 		}finally {

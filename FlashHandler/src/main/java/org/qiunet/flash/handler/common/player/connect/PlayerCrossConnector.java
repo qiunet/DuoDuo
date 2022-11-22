@@ -10,11 +10,11 @@ import org.qiunet.flash.handler.common.player.event.UserEventData;
 import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.client.param.TcpClientParams;
+import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
 import org.qiunet.utils.exceptions.CustomException;
 
 /***
@@ -27,7 +27,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * client
 	 */
-	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientParams.custom().setProtocolHeader(CrossProtocolHeader.instance).build(), new PlayerConnectorClientTrigger());
+	private static final NettyTcpClient tcpClient = NettyTcpClient.create(TcpClientConfig.custom().setProtocolHeader(CrossProtocolHeader.instance).build(), new PlayerConnectorClientTrigger());
 	/**
 	 * session
 	 */

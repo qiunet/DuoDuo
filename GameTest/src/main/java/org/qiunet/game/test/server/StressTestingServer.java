@@ -68,7 +68,7 @@ public final class StressTestingServer {
 		logger.error("StressTestingServer sendHookMsg [{}]!", msg);
 		try {
 			NetUtil.udpSendData("localhost", hookPort, msg.getBytes(CharsetUtil.UTF_8));
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			logger.error("StressTestingServer sendHookMsg: ", e);
 			System.exit(1);
 		}
@@ -110,7 +110,7 @@ public final class StressTestingServer {
 			try(DatagramChannel channel = DatagramChannel.open()) {
 				try {
 					channel.bind(new InetSocketAddress(InetAddress.getByName("127.0.0.1"), this.hookPort));
-				}catch (Exception e) {
+				}catch (Throwable e) {
 					logger.error("Bind error", e);
 					System.exit(1);
 				}

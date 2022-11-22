@@ -9,10 +9,10 @@ import org.qiunet.utils.math.MathUtil;
  * Created by qiunet.
  * 17/7/19
  */
-public final class KcpClientParams extends AbstractClientParam {
+public final class KcpClientConfig extends AbstractClientConfig {
 	// 使用默认的连接参数， 端口和地址后面connect时候给出。
-	public static final KcpClientParams DEFAULT_PARAMS = KcpClientParams.custom().build();
-	private KcpClientParams(){}
+	public static final KcpClientConfig DEFAULT_CLIENT_CONFIG = KcpClientConfig.custom().build();
+	private KcpClientConfig(){}
 
 	/**
 	 * 会话ID
@@ -36,23 +36,23 @@ public final class KcpClientParams extends AbstractClientParam {
 	 * @return
 	 */
 	public static Builder custom(){
-		KcpClientParams params = new KcpClientParams();
+		KcpClientConfig params = new KcpClientConfig();
 		return params.new Builder();
 	}
 
 	/***
 	 * 使用build模式 set和 get 分离. 以后有有顺序的构造时候也可以不动
 	 */
-	public class Builder extends SuperBuilder<KcpClientParams, Builder> {
+	public class Builder extends SuperBuilder<KcpClientConfig, Builder> {
 
 		public Builder setConvId(int convId) {
-			KcpClientParams.this.convId = convId;
+			KcpClientConfig.this.convId = convId;
 			return this;
 		}
 
 		@Override
-		protected KcpClientParams newParams() {
-			return KcpClientParams.this;
+		protected KcpClientConfig newConfig() {
+			return KcpClientConfig.this;
 		}
 	}
 }

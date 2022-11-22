@@ -4,9 +4,9 @@ import io.netty.util.ResourceLeakDetector;
 import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerInfo;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
-import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
 import org.qiunet.test.cross.common.Constants;
 import org.qiunet.test.cross.common.redis.RedisDataUtil;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -30,8 +30,8 @@ public class CrossServer {
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)
-				.listener(ServerBootStrapParam.newBuild("跨服服务", Constants.CROSS_SERVER_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).build())
-				.listener(ServerBootStrapParam.newBuild("跨服节点", Constants.CROSS_NODE_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).build())
+				.listener(ServerBootStrapConfig.newBuild("跨服服务", Constants.CROSS_SERVER_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).build())
+				.listener(ServerBootStrapConfig.newBuild("跨服节点", Constants.CROSS_NODE_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).build())
 				.await();
 	}
 

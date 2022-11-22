@@ -29,15 +29,15 @@ import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
-import org.qiunet.flash.handler.netty.server.param.adapter.IStartupContext;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ClientPingRequest;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.logger.LoggerType;
@@ -167,21 +167,21 @@ public final class ChannelUtil {
 	/**
 	 * 处理长连接的通道读数据
 	 * @param channel
-	 * @param params
+	 * @param config
 	 * @param content
 	 */
-	public static void channelRead(Channel channel, ServerBootStrapParam params, MessageContent content){
+	public static void channelRead(Channel channel, ServerBootStrapConfig config, MessageContent content){
 		ISession session = ChannelUtil.getSession(channel);
 		Preconditions.checkNotNull(session);
 
-		if (! params.getStartupContext().userServerValidate(session)) {
+		if (! config.getStartupContext().userServerValidate(session)) {
 			return;
 		}
 
 		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
 			boolean isKcp = channel.attr(ServerConstants.HANDLER_TYPE_KEY).get() == ServerConnType.KCP;
-			if (isKcp && params.getKcpParam().isDependOnTcpWs()) {
+			if (isKcp && config.getKcpBootstrapConfig().isDependOnTcpWs()) {
 				// 不需要
 				return;
 			}
@@ -215,7 +215,7 @@ public final class ChannelUtil {
 
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
-			channel.writeAndFlush(params.getStartupContext().getHandlerNotFound());
+			channel.writeAndFlush(config.getStartupContext().getHandlerNotFound());
 			return;
 		}
 

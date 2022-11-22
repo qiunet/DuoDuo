@@ -254,7 +254,7 @@ abstract class BaseSession implements ISession {
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");
 		if (channel != null) {
-			boolean isServer = channel.hasAttr(ServerConstants.HANDLER_PARAM_KEY);
+			boolean isServer = channel.hasAttr(ServerConstants.BOOTSTRAP_CONFIG_KEY);
 			sj.add(isServer ? "Server": "Client");
 			sj.add("Type = "+channel.attr(ServerConstants.HANDLER_TYPE_KEY).get());
 			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);

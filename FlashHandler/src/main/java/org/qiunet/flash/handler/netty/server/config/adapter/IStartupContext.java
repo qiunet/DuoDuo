@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.param.adapter;
+package org.qiunet.flash.handler.netty.server.config.adapter;
 
 import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.Channel;
@@ -12,11 +12,11 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.HandlerNotFoundResponse;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerCloseRsp;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.HandlerNotFoundResponse;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerCloseRsp;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.ServerExceptionResponse;
-import org.qiunet.flash.handler.netty.server.param.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;

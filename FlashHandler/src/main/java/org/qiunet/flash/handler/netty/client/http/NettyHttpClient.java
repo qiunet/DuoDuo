@@ -28,7 +28,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.netty.client.param.HttpClientParams;
+import org.qiunet.flash.handler.netty.client.param.HttpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IHttpResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
@@ -47,7 +47,7 @@ import java.util.concurrent.Future;
  */
 @Deprecated
 public final class NettyHttpClient {
-	private final HttpClientParams clientParams;
+	private final HttpClientConfig config;
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1, new DefaultThreadFactory("netty-http-client-event-loop-"));
 
 	/**
@@ -57,12 +57,12 @@ public final class NettyHttpClient {
 		group.shutdownGracefully();
 	}
 
-	private NettyHttpClient(HttpClientParams params){
-		this.clientParams = params;
+	private NettyHttpClient(HttpClientConfig config){
+		this.config = config;
 	}
 
-	public static NettyHttpClient create(HttpClientParams params) {
-		return new NettyHttpClient(params);
+	public static NettyHttpClient create(HttpClientConfig config) {
+		return new NettyHttpClient(config);
 	}
 	/***
 	 * 取到port
@@ -85,7 +85,7 @@ public final class NettyHttpClient {
 	 * @param trigger
 	 */
 	public Future<FullHttpResponse> sendRequest(MessageContent content, String pathAndQuery, IHttpResponseTrigger trigger) {
-		String uri = clientParams.getURI(pathAndQuery);
+		String uri = config.getURI(pathAndQuery);
 		Promise<FullHttpResponse> promise = ImmediateEventExecutor.INSTANCE.newPromise();
 		promise.addListener(future -> trigger.response((FullHttpResponse) future.get()));
 
@@ -154,7 +154,7 @@ public final class NettyHttpClient {
 	 * @return
 	 * @throws Exception
 	 */
-	private Bootstrap createBootstrap(NioEventLoopGroup group, final HttpClientHandler clientHandler, HttpClientParams params, URI uri) throws Exception {
+	private Bootstrap createBootstrap(NioEventLoopGroup group, final HttpClientHandler clientHandler, HttpClientConfig params, URI uri) throws Exception {
 		final SslContext sslCtx;
 		if ("https".equalsIgnoreCase(uri.getScheme())) {
 			sslCtx = SslContextBuilder.forClient()

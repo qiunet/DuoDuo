@@ -3,7 +3,7 @@ package org.qiunet.test.cross.client;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.netty.client.param.WebSocketClientParams;
+import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.cross.common.Constants;
@@ -27,7 +27,7 @@ public class Client {
 	@BeforeAll
 	public static void connect(){
 		ClassScanner.getInstance(ScannerType.CLIENT).scanner();
-		websocketClient = NettyWebSocketClient.create(WebSocketClientParams.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(),
+		websocketClient = NettyWebSocketClient.create(WebSocketClientConfig.custom().setAddress("localhost", Constants.LOGIC_SERVER_PORT).build(),
 		(session, data) -> {
 			System.out.println(counter.incrementAndGet() + "--------------------------"+data.getProtocolId());
 		});

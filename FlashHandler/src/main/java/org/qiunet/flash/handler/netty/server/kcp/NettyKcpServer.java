@@ -12,9 +12,9 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.qiunet.flash.handler.netty.coder.KcpSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketServerEncoder;
 import org.qiunet.flash.handler.netty.server.INettyServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -33,17 +33,17 @@ public class NettyKcpServer implements INettyServer {
 	private static final EventLoopGroup GROUP = new NioEventLoopGroup(OSUtil.availableProcessors(), new DefaultThreadFactory("netty-kcp-server-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final ServerBootStrapParam param;
+	private final ServerBootStrapConfig config;
 
 	private List<ChannelFuture> channelFutures;
 
-	public NettyKcpServer(ServerBootStrapParam param) {
-		this.param = param;
+	public NettyKcpServer(ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
 	@Override
 	public String serverName() {
-		return this.param.getServerName();
+		return this.config.getServerName();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class NettyKcpServer implements INettyServer {
 
 	@Override
 	public String threadName() {
-		return param.getServerName();
+		return config.getServerName();
 	}
 
 	@Override
@@ -66,26 +66,26 @@ public class NettyKcpServer implements INettyServer {
 					.option(ChannelOption.SO_RCVBUF, 1024 * 128)
 					.option(ChannelOption.SO_SNDBUF, 1024 * 128)
 					.option(ChannelOption.SO_REUSEADDR, true)
-					.childAttr(ServerConstants.PROTOCOL_HEADER, param.getProtocolHeader())
+					.childAttr(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader())
 					.childHandler(new ChannelInitializer<UkcpChannel>() {
 						@Override
 						public void initChannel(UkcpChannel ch) throws Exception {
 							ChannelPipeline p = ch.pipeline();
 							p.addLast("KcpSocketEncoder", new KcpSocketServerEncoder())
-							.addLast("KcpSocketDecoder", new KcpSocketServerDecoder(param.getMaxReceivedLength(), param.isEncryption()))
-							.addLast("IdleStateHandler", new IdleStateHandler(param.getReadIdleCheckSeconds(), 0, 0))
+							.addLast("KcpSocketDecoder", new KcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()))
+							.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0))
 							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler())
-							.addLast("KcpServerHandler", new KcpServerHandler(param));
+							.addLast("KcpServerHandler", new KcpServerHandler(config));
 						}
 					});
-			ServerBootStrapParam.KcpBootstrapParam.Param param = this.param.getKcpParam().getParam();
-			ChannelOptionHelper.nodelay(b, param.noDelay(), param.interval(), param.fastResend(), param.noCwnd())
-					.childOption(UkcpChannelOption.UKCP_MTU, param.mtu())
-					.childOption(UkcpChannelOption.UKCP_SND_WND, param.snd_wnd())
-					.childOption(UkcpChannelOption.UKCP_RCV_WND, param.rcv_wnd())
+			ServerBootStrapConfig.KcpBootstrapConfig.KcpParam kcpParameter = this.config.getKcpBootstrapConfig().getKcpParam();
+			ChannelOptionHelper.nodelay(b, kcpParameter.noDelay(), kcpParameter.interval(), kcpParameter.fastResend(), kcpParameter.noCwnd())
+					.childOption(UkcpChannelOption.UKCP_MTU, kcpParameter.mtu())
+					.childOption(UkcpChannelOption.UKCP_SND_WND, kcpParameter.snd_wnd())
+					.childOption(UkcpChannelOption.UKCP_RCV_WND, kcpParameter.rcv_wnd())
 					.childOption(UkcpChannelOption.UKCP_AUTO_SET_CONV, true);
 
-			Set<Integer> udpPorts = this.param.getKcpParam().getPorts();
+			Set<Integer> udpPorts = this.config.getKcpBootstrapConfig().getPorts();
 			this.channelFutures = Lists.newArrayListWithCapacity(udpPorts.size());
 			// Start the server.
 			for (int port : udpPorts) {
@@ -94,7 +94,7 @@ public class NettyKcpServer implements INettyServer {
 			}
 			logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(udpPorts, "", "" ,","));
 			this.channelFutures.get(0).channel().closeFuture().sync();
-		} catch (InterruptedException e) {
+		} catch (Throwable e) {
 			logger.error("[NettyKcpServer] Exception: ", e);
 			System.exit(1);
 		} finally {

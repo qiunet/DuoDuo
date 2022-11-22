@@ -8,8 +8,8 @@ import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
 import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -35,10 +35,10 @@ public class HttpBootStrap {
 
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			ServerBootStrapParam httpParams = ServerBootStrapParam.newBuild("Http测试", port)
+			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("Http测试", port)
 					.setStartupContext(new StartupContext())
 					.build();
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(httpParams);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(config);
 			server.await( () -> LockSupport.unpark(currThread));
 		});
 		thread.start();

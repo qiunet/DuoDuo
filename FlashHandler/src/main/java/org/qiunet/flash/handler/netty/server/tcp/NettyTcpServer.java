@@ -5,8 +5,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import org.qiunet.flash.handler.netty.server.INettyServer;
+import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.param.ServerBootStrapParam;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -20,15 +20,15 @@ public final class NettyTcpServer implements INettyServer {
 	public static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-tcp-server-boss-event-loop-");
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final ServerBootStrapParam param;
+	private final ServerBootStrapConfig config;
 
 	private ChannelFuture channelFuture;
 	/***
 	 * 启动
-	 * @param param  启动使用的端口等启动参数
+	 * @param config  启动使用的端口等启动参数
 	 */
-	public NettyTcpServer(ServerBootStrapParam param) {
-		this.param = param;
+	public NettyTcpServer(ServerBootStrapConfig config) {
+		this.config = config;
 	}
 
 	@Override
@@ -38,18 +38,18 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.group(BOSS, ServerConstants.WORKER);
 
 			bootstrap.channel(NettyUtil.serverSocketChannelClass());
-			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER, param.getProtocolHeader());
-			bootstrap.childHandler(new NettyTcpServerInitializer(param));
+			bootstrap.childAttr(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());
+			bootstrap.childHandler(new NettyTcpServerInitializer(config));
 
 			bootstrap.option(ChannelOption.SO_BACKLOG, 256);
 			bootstrap.option(ChannelOption.SO_REUSEADDR, true);
 			bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
 			bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128);
 			bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128);
-			this.channelFuture = bootstrap.bind(param.getPort());
-			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), param.getPort());
+			this.channelFuture = bootstrap.bind(config.getPort());
+			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
 			channelFuture.channel().closeFuture().sync();
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			logger.error("[NettyTcpServer] Exception: ", e);
 			System.exit(1);
 		}finally {
@@ -60,7 +60,7 @@ public final class NettyTcpServer implements INettyServer {
 
 	@Override
 	public String serverName() {
-		return this.param.getServerName();
+		return this.config.getServerName();
 	}
 
 	@Override
@@ -70,6 +70,6 @@ public final class NettyTcpServer implements INettyServer {
 
 	@Override
 	public String threadName() {
-		return "BootstrapServer-Tcp Address ["+ param.getPort()+"]";
+		return "BootstrapServer-Tcp Address ["+ config.getPort()+"]";
 	}
 }
