@@ -1,8 +1,5 @@
 package org.qiunet.log.record.logger;
 
-import org.qiunet.log.record.enums.ILogRecordType;
-import org.qiunet.log.record.msg.ILogRecordMsg;
-
 /***
  *
  * 自己的一个通用logger接口.
@@ -10,16 +7,5 @@ import org.qiunet.log.record.msg.ILogRecordMsg;
  * @author qiunet
  * 2020-03-25 10:36
  ***/
-public interface IRecordLogger {
-	/**
-	 * logger 的名称
-	 * @return
-	 */
-	 String recordLoggerName();
-
-	/**
-	 * 记录日志
-	 * @param logRecordMsg
-	 */
-	 <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T>> void send(L logRecordMsg);
+public interface IRecordLogger<D> extends IBasicRecordLogger<D> {
 }

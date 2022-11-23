@@ -13,7 +13,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-03-30 07:52
  **/
-public abstract class MapLogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> extends LogRecordMsg<LogType> {
+public abstract class MapLogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> extends LogRecordMsg<LogType, Map<String, Object>> {
 	/**
 	 * string joiner 带分隔符
 	 */

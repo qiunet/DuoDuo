@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author qiunet
  * 2020-03-30 07:52
  **/
-abstract class LogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> implements ILogRecordMsg<LogType>{
+abstract class LogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>, DATA> implements ILogRecordMsg<LogType, DATA>{
 	private final AtomicBoolean logged = new AtomicBoolean();
 	protected final LogType eventLogType;
 	protected final long createTime;
@@ -22,7 +22,7 @@ abstract class LogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogTy
 	}
 
 	@Override
-	public Object getData() {
+	public DATA getData() {
 		if (! logged.compareAndSet(false, true)) {
 			throw new CustomException("Already output message!");
 		}
@@ -35,7 +35,7 @@ abstract class LogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogTy
 	 * 填充日志
 	 */
 	protected abstract void fillLogRecordMsg();
-	protected abstract Object getData0();
+	protected abstract DATA getData0();
 	@Override
 	public long createTime() {
 		return createTime;

@@ -10,7 +10,7 @@ import org.qiunet.log.record.logger.LogRecordManager;
  * @author qiunet
  * 2022/11/18 18:15
  */
-public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> {
+public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>, D> {
 	/***
 	 *  创建时间
 	 */
@@ -40,7 +40,7 @@ public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<Lo
 	 * 获得数据, 可以是编好的字符串. 也可以是其它. 比如map list什么的.
 	 * @return
 	 */
-	Object getData();
+	D getData();
 	/**
 	 * 发送日志
 	 */

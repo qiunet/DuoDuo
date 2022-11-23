@@ -2,7 +2,6 @@ package org.qiunet.log.record.logger;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.log.record.enums.ILogRecordType;
 import org.qiunet.log.record.msg.ILogRecordMsg;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.config.anno.DConfigValue;
@@ -29,7 +28,7 @@ public enum LogRecordManager {
 	instance;
 
 
-	public <LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(ILogRecordMsg<LogType> msg) {
+	public void sendLog(ILogRecordMsg msg) {
 		LogRecordManager0.instance.sendLog(msg);
 	}
 
@@ -45,16 +44,16 @@ public enum LogRecordManager {
 		/**
 		 * 需要打印的日志
 		 */
-		private final List<IRecordLogger> loggers = Lists.newLinkedList();
+		private final List<IBasicRecordLogger> loggers = Lists.newLinkedList();
 		/**
 		 * 消息队列
 		 */
-		private final Queue<ILogRecordMsg<?>> queue = new ConcurrentLinkedQueue<>();
+		private final Queue<ILogRecordMsg> queue = new ConcurrentLinkedQueue<>();
 		/**
 		 * 发送日志
 		 * @param log
 		 */
-		<LogType extends Enum<LogType> & ILogRecordType<LogType>> void sendLog(ILogRecordMsg<LogType> log) {
+		void sendLog(ILogRecordMsg log) {
 			Preconditions.checkNotNull(log);
 			queue.add(log);
 
@@ -68,7 +67,7 @@ public enum LogRecordManager {
 		private void consumeLog() {
 			ILogRecordMsg msg;
 			while ((msg = queue.poll()) != null) {
-				for (IRecordLogger logger : loggers) {
+				for (IBasicRecordLogger<?> logger : loggers) {
 					logger.send(msg);
 				}
 				size.decrementAndGet();
@@ -79,7 +78,7 @@ public enum LogRecordManager {
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends IRecordLogger>> subTypesOf = context.getSubTypesOf(IRecordLogger.class);
 			for (Class<? extends IRecordLogger> clz : subTypesOf) {
-				IRecordLogger instance = (IRecordLogger) context.getInstanceOfClass(clz);
+				IRecordLogger<?> instance = (IRecordLogger<?>) context.getInstanceOfClass(clz);
 				if (RECORD_LOG_NAMES == null || ! RECORD_LOG_NAMES.contains(instance.recordLoggerName())) {
 					continue;
 				}
@@ -92,7 +91,7 @@ public enum LogRecordManager {
 					Class.forName("ch.qos.logback.classic.Logger");
 
 					Class<?> aClass = Class.forName("org.qiunet.log.record.logger.LogBackRecordLogger");
-					loggers.add(((IRecordLogger) context.getInstanceOfClass(aClass)));
+					loggers.add(((IBasicRecordLogger<?>) context.getInstanceOfClass(aClass)));
 				}catch (ClassNotFoundException e) {
 					LoggerType.DUODUO.error("LogRecordManager ERROR:", new CustomException("logback jar not setting!"));
 				}

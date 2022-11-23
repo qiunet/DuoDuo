@@ -12,7 +12,7 @@ import java.util.StringJoiner;
  * @author qiunet
  * 2020-03-30 07:52
  **/
-public abstract class StringLogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> extends LogRecordMsg<LogType> {
+public abstract class StringLogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> extends LogRecordMsg<LogType, String> {
 	/**
 	 * string joiner 带分隔符
 	 */

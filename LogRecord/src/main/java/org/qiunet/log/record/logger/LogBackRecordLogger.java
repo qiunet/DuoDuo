@@ -25,7 +25,7 @@ import java.util.Map;
  * @author qiunet
  * 2020-04-02 11:06
  ***/
-public enum LogBackRecordLogger implements IRecordLogger {
+public enum LogBackRecordLogger implements IBasicRecordLogger<String> {
 	instance;
 
 	private final Map<String, Logger> loggers = Maps.newConcurrentMap();
@@ -77,9 +77,9 @@ public enum LogBackRecordLogger implements IRecordLogger {
 	}
 
 	@Override
-	public <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T>>  void send(L logRecordMsg) {
+	public <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T, String>>  void send(L logRecordMsg) {
 		Logger logger = loggers.computeIfAbsent(logRecordMsg.logType().getName(), this::createLogger);
-		LoggingEvent le = new LoggingEvent(Logger.FQCN, logger, Level.INFO, logRecordMsg.getData().toString(), null, null);
+		LoggingEvent le = new LoggingEvent(Logger.FQCN, logger, Level.INFO, logRecordMsg.getData(), null, null);
 		le.setTimeStamp(logRecordMsg.createTime());
 		logger.callAppenders(le);
 	}
