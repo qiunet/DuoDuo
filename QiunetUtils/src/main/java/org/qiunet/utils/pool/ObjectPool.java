@@ -3,13 +3,10 @@ package org.qiunet.utils.pool;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.qiunet.utils.system.OSUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /***
  * 一个简单的对象池
@@ -18,11 +15,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2022/8/15 15:29
  */
 public abstract class ObjectPool<T> {
-	private static final ThreadLocal<Map<DStack<?> , LinkedBlockingDeque<Node<?>>>> DELAYED_QUEUE = ThreadLocal.withInitial(HashMap::new);
+	private static final ThreadLocal<Map<DStack<?> , SwitchList<Node>>> DELAYED_QUEUE = ThreadLocal.withInitial(HashMap::new);
 	private final ThreadLocal<DStack<T>> stackThreadLocal;
 
 	public ObjectPool() {
-		this(512, OSUtil.availableProcessors() * 2);
+		this(512, OSUtil.availableProcessors() * 3);
 	}
 
 	public ObjectPool(int maxCapacity, int queueCapacityForPerThread) {
@@ -46,7 +43,7 @@ public abstract class ObjectPool<T> {
 	 */
 	public int threadScopeSize() {
 		DStack<T> tdStack = stackThreadLocal.get();
-		int sum = tdStack.asyncRecycleMap.values().stream().mapToInt(LinkedBlockingDeque::size).sum();
+		int sum = tdStack.asyncRecycleMap.values().stream().mapToInt(List::size).sum();
 		return tdStack.stack.size + sum;
 	}
 	/**
@@ -63,7 +60,7 @@ public abstract class ObjectPool<T> {
 	 */
 	public int asyncThreadRecycleSize() {
 		DStack<T> tdStack = stackThreadLocal.get();
-		return tdStack.asyncRecycleMap.values().stream().mapToInt(LinkedBlockingDeque::size).sum();
+		return tdStack.asyncRecycleMap.values().stream().mapToInt(List::size).sum();
 	}
 
 	/**
@@ -123,6 +120,10 @@ public abstract class ObjectPool<T> {
 		@Override
 		public int size() {
 			return size;
+		}
+
+		public boolean full() {
+			return this.lastCapacity() <= 0;
 		}
 
 		public int lastCapacity() {
@@ -190,13 +191,7 @@ public abstract class ObjectPool<T> {
 		/**
 		 * 异步回收的数据
 		 */
-		final Map<Thread, LinkedBlockingDeque<Node<?>>> asyncRecycleMap = Maps.newConcurrentMap();
-		/**
-		 * 需要回收的线程
-		 */
-		final Set<Thread> needRecycleThreads = Sets.newConcurrentHashSet();
-
-		final AtomicBoolean needRecycleThread = new AtomicBoolean();
+		final Map<Thread, SwitchList<Node>> asyncRecycleMap = Maps.newConcurrentMap();
 		final WeakReference<Thread> threadRef;
 		final int queueCapacityForPerThread;
 		final DLinkedList<T> stack;
@@ -216,9 +211,6 @@ public abstract class ObjectPool<T> {
 		 * @return
 		 */
 		Node<T> pop() {
-			if (needRecycleThread.get()) {
-				this.scannerSpecifyThread();
-			}
 			if (stack.isEmpty()) {
 				if (! this.scannerAllThread()) {
 					return null;
@@ -235,44 +227,22 @@ public abstract class ObjectPool<T> {
 			}
 			return node;
 		}
-
-		/**
-		 * 对某些指定的线程回收
-		 * @return
-		 */
-		private void scannerSpecifyThread() {
-			for(Iterator<Thread> it = this.needRecycleThreads.iterator(); it.hasNext(); ) {
-				LinkedBlockingDeque<Node<?>> deque = asyncRecycleMap.get(it.next());
-				if (deque != null) {
-					this.recycleDequeNode(deque);
-				}
-				it.remove();
-			}
-
-			this.needRecycleThread.set(false);
-		}
-
 		/**
 		 * 从其它线程的回收栈回收对象.
 		 */
 		private boolean scannerAllThread() {
-			for (LinkedBlockingDeque<Node<?>> deque : asyncRecycleMap.values()) {
-				this.recycleDequeNode(deque);
+			for (SwitchList<Node> list : asyncRecycleMap.values()) {
+				if (list.isEmpty()) {
+					continue;
+				}
+				if (this.stack.full()) {
+					break;
+				}
+				List<Node> nodes = list.lSwitch();
+				nodes.forEach(this.stack::add);
 			}
 			return ! this.stack.isEmpty();
 		}
-
-		/**
-		 * 回收某个deque的node
-		 * 如果回收超出最大容量. 也清空掉对应的deque.
-		 *
-		 * @param deque
-		 * @return
-		 */
-		private void recycleDequeNode(LinkedBlockingDeque<Node<?>> deque) {
-			deque.drainTo((Collection) this.stack);
-		}
-
 		/**
 		 * 压入一个对象
 		 * @param obj
@@ -290,25 +260,64 @@ public abstract class ObjectPool<T> {
 		 * @param obj
 		 */
 		private void asyncPush(Node<T> obj) {
-			Map<DStack<?>, LinkedBlockingDeque<Node<?>>> map = DELAYED_QUEUE.get();
-			LinkedBlockingDeque<Node<?>> deque = map.get(this);
+			Map<DStack<?>, SwitchList<Node>> map = DELAYED_QUEUE.get();
+			SwitchList<Node> list = map.get(this);
 			Thread currentThread = Thread.currentThread();
-			if (deque == null) {
-				deque = new LinkedBlockingDeque<>();
-				this.asyncRecycleMap.put(currentThread, deque);
-				map.put(this, deque);
+			if (list == null) {
+				list = new SwitchList<>();
+				this.asyncRecycleMap.put(currentThread, list);
+				map.put(this, list);
 			}
 
-			if (deque.size() >= queueCapacityForPerThread) {
+			if (list.size() >= queueCapacityForPerThread) {
 				if (stack.lastCapacity() < queueCapacityForPerThread) {
 					// drop object
 					return;
 				}
-
-				this.needRecycleThreads.add(currentThread);
-				this.needRecycleThread.set(true);
 			}
-			deque.addLast(obj);
+			list.add(obj);
+		}
+	}
+
+	/**
+	 * 可以切换的list
+	 * @param <E>
+	 */
+	public static class SwitchList<E> extends AbstractList<E> {
+		private List<E> currList;
+
+		public SwitchList() {
+			this.currList = new LinkedList<>();
+		}
+
+		public List<E> lSwitch() {
+			List<E> list = currList;
+			this.currList = new LinkedList<>();
+			return list;
+		}
+		@Override
+		public E get(int index) {
+			return currList.get(index);
+		}
+
+		@Override
+		public int size() {
+			return currList.size();
+		}
+
+		@Override
+		public List<E> subList(int fromIndex, int toIndex) {
+			return currList.subList(fromIndex, toIndex);
+		}
+
+		@Override
+		public boolean add(E e) {
+			return currList.add(e);
+		}
+
+		@Override
+		public void clear() {
+			currList.clear();
 		}
 	}
 }

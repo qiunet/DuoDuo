@@ -16,7 +16,6 @@ import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.function.gm.proto.req.GmDebugProtocolReq;
 import org.qiunet.function.gm.proto.rsp.GmDebugProtocolRsp;
-import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -50,32 +49,43 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 
 
 		IChannelData channelData = JsonUtil.getGeneralObj(data, aClass);
-		final LazyLoader<ByteBuf> bufferLazyLoader = new LazyLoader<>(channelData::toByteBuf);
-		ChannelUtil.processHandler(context.channel(), handler, MessageContent.valueOf(new IProtocolHeader.ProtocolHeader() {
+		ByteBuf byteBuf = channelData.toByteBuf();
+		MessageContent messageContent = MessageContent.valueOf(new IProtocolHeader.ProtocolHeader() {
 			@Override
-			public void recycle() {}
+			public void recycle() {
+			}
+
 			@Override
 			public int getProtocolId() {
 				return protocolID;
 			}
+
 			@Override
 			public ByteBuf headerByteBuf() {
 				// 不会调用到
 				return null;
 			}
+
 			@Override
 			public boolean isValidMessage() {
 				return true;
 			}
+
 			@Override
 			public int getLength() {
-				return bufferLazyLoader.get().readableBytes();
+				return byteBuf.readableBytes();
 			}
+
 			@Override
 			public boolean validEncryption(ByteBuffer buffer) {
 				return true;
 			}
-		}, bufferLazyLoader.get()));
+		}, byteBuf);
+		try {
+			ChannelUtil.processHandler(context.channel(), handler, messageContent);
+		}finally {
+			messageContent.release();
+		}
 		// 上面throw exception 不会执行下面.
 		playerActor.sendMessage(GmDebugProtocolRsp.valueOf());
 	}

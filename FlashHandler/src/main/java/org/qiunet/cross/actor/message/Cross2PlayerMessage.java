@@ -68,6 +68,7 @@ public class Cross2PlayerMessage extends BaseByteBufMessage<IChannelData> implem
 		this.buffer.reset(true);
 		this.skipMessage = false;
 		this.kcpChannel = false;
+		this.data.recycle();
 		this.flush = false;
 		this.data = null;
 		this.pid = 0;

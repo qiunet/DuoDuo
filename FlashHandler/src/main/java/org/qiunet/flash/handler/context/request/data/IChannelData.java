@@ -36,6 +36,12 @@ public abstract class IChannelData {
 	}
 
 	/**
+	 * channel data to bytebuf 后.
+	 * 会调用该方法. 如果需要回收的东西.
+	 * 可以写这个里面
+	 */
+	public void recycle() {}
+	/**
 	 * 得到protocolId
 	 * @return
 	 */
