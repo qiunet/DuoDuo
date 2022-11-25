@@ -7,5 +7,5 @@ package org.qiunet.log.record.logger;
  * @author qiunet
  * 2020-03-25 10:36
  ***/
-public interface IRecordLogger<D> extends IBasicRecordLogger<D> {
+public interface IRecordLogger extends IBasicRecordLogger {
 }

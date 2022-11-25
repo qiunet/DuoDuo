@@ -23,21 +23,12 @@ public final class ServerStartup {
 		this.startuped = true;
 
 		final Thread currThread = Thread.currentThread();
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				BootstrapServer server = BootstrapServer.createBootstrap(hook);
-				server.listener(ServerBootStrapConfig.newBuild("压测服务测试", ServerType.LC_ROOM.port())
-						.setStartupContext(new StartupContext())
-						.build());
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				LockSupport.unpark(currThread);
-				server.await();
-			}
+		Thread thread = new Thread(() -> {
+			BootstrapServer server = BootstrapServer.createBootstrap(hook);
+			server.listener(ServerBootStrapConfig.newBuild("压测服务测试", ServerType.LC_ROOM.port())
+					.setStartupContext(new StartupContext())
+					.build());
+			server.await(() -> LockSupport.unpark(currThread));
 		}, "Client-Server-Startup");
 		thread.start();
 		LockSupport.park();

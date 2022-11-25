@@ -1,7 +1,10 @@
 package org.qiunet.log.record.msg;
 
+import org.qiunet.log.record.content.ILogContentGetter;
 import org.qiunet.log.record.enums.ILogRecordType;
 import org.qiunet.log.record.logger.LogRecordManager;
+
+import java.util.function.Consumer;
 
 /***
  *
@@ -10,7 +13,7 @@ import org.qiunet.log.record.logger.LogRecordManager;
  * @author qiunet
  * 2022/11/18 18:15
  */
-public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>, D> {
+public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<LogType>> {
 	/***
 	 *  创建时间
 	 */
@@ -37,10 +40,19 @@ public interface ILogRecordMsg<LogType extends Enum<LogType> & ILogRecordType<Lo
 	 */
 	void append(String key, Object val);
 	/**
-	 * 获得数据, 可以是编好的字符串. 也可以是其它. 比如map list什么的.
-	 * @return
+	 * 循环获取LogData
+	 * @param consumer 消费者
 	 */
-	D getData();
+	void forEachData(Consumer<LogRowData> consumer);
+	/**
+	 * 将日志转换为对应的日志数据
+	 * @param getter 数据转换器
+	 * @return D类型的数据
+	 * @param <D> string map之类的
+	 */
+	default <D> D getLogContentData(ILogContentGetter<D> getter) {
+		return getter.getData(this);
+	}
 	/**
 	 * 发送日志
 	 */

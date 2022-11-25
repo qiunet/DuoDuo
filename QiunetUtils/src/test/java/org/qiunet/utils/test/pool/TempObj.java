@@ -8,7 +8,7 @@ import org.qiunet.utils.pool.ObjectPool;
  * 2022/8/19 11:40
  */
 public class TempObj {
-	public static final ObjectPool<TempObj> POOL = new ObjectPool<TempObj>() {
+	public static final ObjectPool<TempObj> POOL = new ObjectPool<TempObj>(20, 1) {
 		@Override
 		protected TempObj newObject(Handle<TempObj> handler) {
 			return new TempObj(handler);

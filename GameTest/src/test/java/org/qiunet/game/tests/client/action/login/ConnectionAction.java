@@ -37,7 +37,7 @@ public class ConnectionAction extends TestAction {
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
-		return BlackBoard.connected.get(getOwner()) ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
+		return !BlackBoard.connected.isNull(getOwner()) && BlackBoard.connected.get(getOwner()) ? ActionStatus.SUCCESS : ActionStatus.RUNNING;
 	}
 
 	/**

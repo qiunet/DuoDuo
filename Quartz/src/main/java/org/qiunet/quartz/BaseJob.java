@@ -1,9 +1,9 @@
 package org.qiunet.quartz;
 
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
  * Created by qiunet on 4/12/17.
  */
 abstract class BaseJob implements IJob {
-	protected final static Logger logger = LoggerFactory.getLogger(BaseJob.class);
+	protected final static Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * job 的名称
 	 */

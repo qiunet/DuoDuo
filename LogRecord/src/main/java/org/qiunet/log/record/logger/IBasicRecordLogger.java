@@ -10,7 +10,7 @@ import org.qiunet.log.record.msg.ILogRecordMsg;
  * @author qiunet
  * 2020-03-25 10:36
  ***/
-interface IBasicRecordLogger<D> {
+interface IBasicRecordLogger {
 	/**
 	 * logger 的名称
 	 * @return
@@ -21,5 +21,5 @@ interface IBasicRecordLogger<D> {
 	 * 记录日志
 	 * @param logRecordMsg
 	 */
-	 <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T, D>> void send(L logRecordMsg);
+	 <T extends Enum<T> & ILogRecordType<T>, L extends ILogRecordMsg<T>> void send(L logRecordMsg);
 }

@@ -188,8 +188,8 @@ public class CronExpression implements Serializable {
 	protected static final Integer ALL_SPEC = ALL_SPEC_INT;
 	protected static final Integer NO_SPEC = NO_SPEC_INT;
 
-	protected static final Map<String, Integer> monthMap = new HashMap<String, Integer>(20);
-	protected static final Map<String, Integer> dayMap = new HashMap<String, Integer>(60);
+	protected static final Map<String, Integer> monthMap = new HashMap<>(20);
+	protected static final Map<String, Integer> dayMap = new HashMap<>(60);
 	static {
 		monthMap.put("JAN", 0);
 		monthMap.put("FEB", 1);
@@ -250,30 +250,6 @@ public class CronExpression implements Serializable {
 		this.cronExpression = cronExpression.toUpperCase(Locale.US);
 
 		buildExpression(this.cronExpression);
-	}
-
-	/**
-	 * Constructs a new {@code CronExpression} as a copy of an existing
-	 * instance.
-	 *
-	 * @param expression
-	 *            The existing cron expression to be copied
-	 */
-	public CronExpression(CronExpression expression) {
-		/*
-		 * We don't call the other constructor here since we need to swallow the
-		 * ParseException. We also elide some of the sanity checking as it is
-		 * not logically trippable.
-		 */
-		this.cronExpression = expression.getCronExpression();
-		try {
-			buildExpression(cronExpression);
-		} catch (ParseException ex) {
-			throw new AssertionError();
-		}
-		if (expression.getTimeZone() != null) {
-			setTimeZone((TimeZone) expression.getTimeZone().clone());
-		}
 	}
 
 	/**
@@ -1039,16 +1015,15 @@ public class CronExpression implements Serializable {
 		// type, and using modulus max to determine the value being added.
 		int max = -1;
 		if (stopAt < startAt) {
-			switch (type) {
-				case       SECOND : max = 60; break;
-				case       MINUTE : max = 60; break;
-				case         HOUR : max = 24; break;
-				case        MONTH : max = 12; break;
-				case  DAY_OF_WEEK : max = 7;  break;
-				case DAY_OF_MONTH : max = 31; break;
-				case         YEAR : throw new IllegalArgumentException("Start year must be less than stop year");
-				default           : throw new IllegalArgumentException("Unexpected type encountered");
-			}
+			max = switch (type) {
+				case SECOND, MINUTE -> 60;
+				case HOUR -> 24;
+				case MONTH -> 12;
+				case DAY_OF_WEEK -> 7;
+				case DAY_OF_MONTH -> 31;
+				case YEAR -> throw new IllegalArgumentException("Start year must be less than stop year");
+				default -> throw new IllegalArgumentException("Unexpected type encountered");
+			};
 			stopAt += max;
 		}
 
@@ -1071,24 +1046,16 @@ public class CronExpression implements Serializable {
 	}
 
 	TreeSet<Integer> getSet(int type) {
-		switch (type) {
-			case SECOND:
-				return seconds;
-			case MINUTE:
-				return minutes;
-			case HOUR:
-				return hours;
-			case DAY_OF_MONTH:
-				return daysOfMonth;
-			case MONTH:
-				return months;
-			case DAY_OF_WEEK:
-				return daysOfWeek;
-			case YEAR:
-				return years;
-			default:
-				return null;
-		}
+		return switch (type) {
+			case SECOND -> seconds;
+			case MINUTE -> minutes;
+			case HOUR -> hours;
+			case DAY_OF_MONTH -> daysOfMonth;
+			case MONTH -> months;
+			case DAY_OF_WEEK -> daysOfWeek;
+			case YEAR -> years;
+			default -> null;
+		};
 	}
 
 	protected ValueSet getValue(int v, String s, int i) {
@@ -1401,10 +1368,7 @@ public class CronExpression implements Serializable {
 						daysToAdd = dow + (7 - cDow);
 					}
 
-					boolean dayShifted = false;
-					if (daysToAdd > 0) {
-						dayShifted = true;
-					}
+					boolean dayShifted = daysToAdd > 0;
 
 					day += daysToAdd;
 					int weekOfMonth = day / 7;
@@ -1583,38 +1547,17 @@ public class CronExpression implements Serializable {
 
 	protected int getLastDayOfMonth(int monthNum, int year) {
 
-		switch (monthNum) {
-			case 1:
-				return 31;
-			case 2:
-				return (isLeapYear(year)) ? 29 : 28;
-			case 3:
-				return 31;
-			case 4:
-				return 30;
-			case 5:
-				return 31;
-			case 6:
-				return 30;
-			case 7:
-				return 31;
-			case 8:
-				return 31;
-			case 9:
-				return 30;
-			case 10:
-				return 31;
-			case 11:
-				return 30;
-			case 12:
-				return 31;
-			default:
-				throw new IllegalArgumentException("Illegal month number: "
+		return switch (monthNum) {
+			case 2 -> (isLeapYear(year)) ? 29 : 28;
+			case 1, 5, 7, 8, 10, 3, 12 -> 31;
+			case 4, 6, 9, 11 -> 30;
+			default -> throw new IllegalArgumentException("Illegal month number: "
 					+ monthNum);
-		}
+		};
 	}
 
 
+	@Serial
 	private void readObject(java.io.ObjectInputStream stream)
 		throws java.io.IOException, ClassNotFoundException {
 

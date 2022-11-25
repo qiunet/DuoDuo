@@ -9,7 +9,7 @@ import org.qiunet.utils.scanner.ScannerType;
 /***
  * 扫描annotation
  */
-enum CronAnnotationScannerHandler implements IApplicationContextAware {
+enum CronHandler implements IApplicationContextAware {
 	instance;
 
 	@Override

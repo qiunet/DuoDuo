@@ -26,7 +26,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  ***/
 public enum LogRecordManager {
 	instance;
-
+	// 默认的logger
+	static final String DEFAULT_LOGGER_RECORD_NAME = "logbackRecord";
 
 	public void sendLog(ILogRecordMsg msg) {
 		LogRecordManager0.instance.sendLog(msg);
@@ -67,7 +68,7 @@ public enum LogRecordManager {
 		private void consumeLog() {
 			ILogRecordMsg msg;
 			while ((msg = queue.poll()) != null) {
-				for (IBasicRecordLogger<?> logger : loggers) {
+				for (IBasicRecordLogger logger : loggers) {
 					logger.send(msg);
 				}
 				size.decrementAndGet();
@@ -78,20 +79,20 @@ public enum LogRecordManager {
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends IRecordLogger>> subTypesOf = context.getSubTypesOf(IRecordLogger.class);
 			for (Class<? extends IRecordLogger> clz : subTypesOf) {
-				IRecordLogger<?> instance = (IRecordLogger<?>) context.getInstanceOfClass(clz);
+				IRecordLogger instance = (IRecordLogger) context.getInstanceOfClass(clz);
 				if (RECORD_LOG_NAMES == null || ! RECORD_LOG_NAMES.contains(instance.recordLoggerName())) {
 					continue;
 				}
 				loggers.add(instance);
 			}
 
-			if (RECORD_LOG_NAMES == null || RECORD_LOG_NAMES.isEmpty()) {
+			if (RECORD_LOG_NAMES == null || RECORD_LOG_NAMES.isEmpty() || RECORD_LOG_NAMES.contains(DEFAULT_LOGGER_RECORD_NAME)) {
 				try {
 					// 先判断有没有jar.
 					Class.forName("ch.qos.logback.classic.Logger");
 
 					Class<?> aClass = Class.forName("org.qiunet.log.record.logger.LogBackRecordLogger");
-					loggers.add(((IBasicRecordLogger<?>) context.getInstanceOfClass(aClass)));
+					loggers.add(((IBasicRecordLogger) context.getInstanceOfClass(aClass)));
 				}catch (ClassNotFoundException e) {
 					LoggerType.DUODUO.error("LogRecordManager ERROR:", new CustomException("logback jar not setting!"));
 				}
