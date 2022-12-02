@@ -7,7 +7,7 @@ import org.qiunet.data.support.anno.LoadAllData;
 
 @LoadAllData
 @Alias("GuildDo")
-@Table(name = "guild", dbSource = "basic")
+@Table(name = "guild", keyName = "guildId", dbSource = "basic")
 public class GuildDo extends CacheEntity<Long> {
 	private long guildId;
 	private String name;
@@ -40,10 +40,5 @@ public class GuildDo extends CacheEntity<Long> {
 	@Override
 	public Long key() {
 		return guildId;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "guildId";
 	}
 }

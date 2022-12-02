@@ -9,7 +9,7 @@ import org.qiunet.data.core.support.db.Table;
 * 对象为自动创建 不要修改
 */
 @Alias("EquipDo")
-@Table(name = "equip", dbSource = "basic")
+@Table(name = "equip", keyName = "uid", subKeyName = "equip_id", dbSource = "basic")
 public class EquipDo {
 	@Column(comment = "玩家id", isKey = true)
 	private long uid;

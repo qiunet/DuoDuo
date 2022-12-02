@@ -16,12 +16,6 @@ public interface IEntity<Key> {
 	 * @return
 	 */
 	Key key();
-
-	/***
-	 * 主键的字段名
-	 * @return
-	 */
-	String keyFieldName();
 	/**
 	 * 如果分表的话.
 	 * 得到 tbIndex

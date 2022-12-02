@@ -24,7 +24,11 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 
 	public RedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(redisUtil, doClass, supplier);
-		this.NULL = defaultDo;
+		try {
+			this.NULL = doClass.getDeclaredConstructor().newInstance();
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/***
@@ -68,7 +72,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 
 	@Override
 	protected void deleteFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
+		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key());
 		databaseSupport().delete(deleteStatement, map);
 	}
 
@@ -119,7 +123,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 		}
 
 		if (aDo == null) {
-			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+			DbParamMap map = DbParamMap.create(table, table.keyName(), key);
 			aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
 				returnJedis().set(redisKey, PLACE_HOLDER, SetParams.setParams().ex(NORMAL_LIFECYCLE).nx());

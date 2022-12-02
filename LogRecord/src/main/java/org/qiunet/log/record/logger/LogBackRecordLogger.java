@@ -53,7 +53,7 @@ public class LogBackRecordLogger implements IBasicRecordLogger {
 
 		PatternLayoutEncoder encoder = new PatternLayoutEncoder();
 		encoder.setCharset(StandardCharsets.UTF_8);
-		encoder.setPattern("%m%n");
+		encoder.setPattern("[%d{yyyy-MM-dd HH:mm:ss.SSS}] %m%n");
 		encoder.setContext(lc);
 		encoder.start();
 

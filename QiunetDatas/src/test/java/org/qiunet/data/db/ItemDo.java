@@ -5,7 +5,7 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.db.entity.DbEntityList;
 
 @Alias("ItemDo")
-@Table(name = "item", dbSource = "basic")
+@Table(name = "item", keyName = "uid", subKeyName = "item_id", dbSource = "basic")
 public class ItemDo extends DbEntityList<Long, Integer> {
 	private long uid;
 	private int item_id;
@@ -41,17 +41,7 @@ public class ItemDo extends DbEntityList<Long, Integer> {
 	}
 
 	@Override
-	public String subKeyFieldName() {
-		return "item_id";
-	}
-
-	@Override
 	public Long key() {
 		return uid;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "uid";
 	}
 }

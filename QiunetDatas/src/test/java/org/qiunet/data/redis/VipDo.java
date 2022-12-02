@@ -3,7 +3,7 @@ package org.qiunet.data.redis;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntity;
 
-@Table(name = "vip", dbSource = "basic")
+@Table(name = "vip", keyName = "uid", dbSource = "basic")
 public class VipDo extends RedisEntity<Long> {
 	private long uid;
 	private int level;
@@ -36,10 +36,5 @@ public class VipDo extends RedisEntity<Long> {
 	@Override
 	public Long key() {
 		return uid;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "uid";
 	}
 }

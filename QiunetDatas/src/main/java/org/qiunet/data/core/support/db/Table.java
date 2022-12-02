@@ -29,6 +29,18 @@ public @interface Table {
 	 * @return
 	 */
 	String dbSource();
+
+	/**
+	 * 主键名
+	 * @return 主键名
+	 */
+	String keyName();
+
+	/**
+	 * 第二个主键名
+	 * @return 主键名
+	 */
+	String subKeyName() default "NULL";
 	/**
 	 * 需要分表的这里为 true
 	 * @return

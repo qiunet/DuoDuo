@@ -15,7 +15,11 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 
 	public CacheDataSupport(Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
 		super(doClass, supplier);
-		this.NULL = supplier.get(defaultDo);
+		try {
+			this.NULL = supplier.get(doClass.getDeclaredConstructor().newInstance());
+		} catch (Throwable e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -35,7 +39,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 
 	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), aDo.key());
+		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key());
 		databaseSupport().delete(deleteStatement, map);
 	}
 
@@ -60,7 +64,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 		if (bo == NULL) return null;
 
 		if (bo == null) {
-			DbParamMap map = DbParamMap.create(table, defaultDo.keyFieldName(), key);
+			DbParamMap map = DbParamMap.create(table, table.keyName(), key);
 
 			Do aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {

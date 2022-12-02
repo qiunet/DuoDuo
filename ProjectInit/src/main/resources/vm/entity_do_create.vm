@@ -20,7 +20,7 @@ import ${define.entityClass.name};
 @LoadAllData
 #end
 @Alias("${define.DoName}")
-@Table(name = "${define.tableName}"#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end#if(!${define.dbSourceEmpty}), dbSource = "${define.dbSource}"#end#if(!${define.async}), async = false#end)
+@Table(name = "${define.tableName}", keyName="${define.keyName}"#if(${define.list}), subKeyName="${define.subKeyName}"#end#if(!${define.commentEmpty}), comment="${define.comment}"#end#if(${define.splitTable}), splitTable = true#end#if(!${define.dbSourceEmpty}), dbSource = "${define.dbSource}"#end#if(!${define.async}), async = false#end)
 public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.keyType}#if(${define.list}), ${define.subKeyType}#end> {
 #foreach(${field} in ${define.fieldDefines})
 	@Column(comment = "${field.comment}"#if(${field.name} == ${define.key} || ${field.name} == ${define.subKey}), isKey = true#end#if(${field.haveDefaultVal}), defaultValue="${field.defaultVal}" , isNull = false#end#if(${field.jdbcTypeNotEmpty}), jdbcType = ColumnJdbcType.${field.jdbcType}#end)
@@ -55,21 +55,11 @@ public class ${define.DoName} extends ${define.EntityClass.simpleName}<${define.
 	public ${define.keyType} key() {
 		return ${define.keyName};
 	}
-
-	@Override
-	public String keyFieldName() {
-		return "${define.keyName}";
-	}
 #if(${define.list})
 
 	@Override
 	public ${define.subKeyType} subKey() {
 		return ${define.subKeyName};
-	}
-
-	@Override
-	public String subKeyFieldName() {
-		return "${define.subKeyName}";
 	}
 #end
 }

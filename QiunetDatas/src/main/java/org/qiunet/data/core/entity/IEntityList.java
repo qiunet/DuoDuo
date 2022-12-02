@@ -14,10 +14,4 @@ public interface IEntityList<Key, SubKey> extends IEntity<Key> {
 	 * @return
 	 */
 	SubKey subKey();
-
-	/**
-	 * 得到联合主键的字段名
-	 * @return
-	 */
-	String subKeyFieldName();
 }

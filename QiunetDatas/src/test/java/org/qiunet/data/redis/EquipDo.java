@@ -3,7 +3,7 @@ package org.qiunet.data.redis;
 import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.redis.entity.RedisEntityList;
 
-@Table(name = "equip", dbSource = "basic")
+@Table(name = "equip", keyName = "uid", subKeyName = "equip_id", dbSource = "basic")
 public class EquipDo extends RedisEntityList<Long, Integer> {
 	private long uid;
 	private int equip_id;
@@ -38,18 +38,9 @@ public class EquipDo extends RedisEntityList<Long, Integer> {
 		return equip_id;
 	}
 
-	@Override
-	public String subKeyFieldName() {
-		return "equip_id";
-	}
 
 	@Override
 	public Long key() {
 		return uid;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "uid";
 	}
 }

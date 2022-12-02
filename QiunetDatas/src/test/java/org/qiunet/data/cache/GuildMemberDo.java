@@ -5,7 +5,7 @@ import org.qiunet.data.cache.entity.CacheEntityList;
 import org.qiunet.data.core.support.db.Table;
 
 @Alias("GuildMemberDo")
-@Table(name = "guild_member", dbSource = "basic")
+@Table(name = "guild_member", keyName = "guildId", subKeyName = "memberId", dbSource = "basic")
 public class GuildMemberDo extends CacheEntityList<Long, Long> {
 	private long guildId;
 	private long memberId;
@@ -40,18 +40,9 @@ public class GuildMemberDo extends CacheEntityList<Long, Long> {
 		return memberId;
 	}
 
-	@Override
-	public String subKeyFieldName() {
-		return "memberId";
-	}
 
 	@Override
 	public Long key() {
 		return guildId;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "guildId";
 	}
 }

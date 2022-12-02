@@ -10,7 +10,7 @@ import org.qiunet.data.core.support.db.Table;
 * 对象为自动创建 不要修改
 */
 @Alias("GuildDo")
-@Table(name = "guild", dbSource = "basic")
+@Table(name = "guild", keyName = "guildId", dbSource = "basic")
 public class Guild2Do {
 	@Column(comment = "公会id", isKey = true)
 	private long guildId;

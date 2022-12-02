@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 	protected BoSupplier<Do, Bo> supplier;
 	protected Class<Do> doClass;
 	/** 默认的一个Do 查询一些Key  subKey名称*/
- 	protected Do defaultDo;
 	/**	po的名称. 用来组装 statement */
 	protected String doName;
 	/**是否是异步*/
@@ -60,7 +59,6 @@ import org.slf4j.Logger;
 	 * @return
 	 */
 	private void init(Class<Do> doClass) throws IllegalAccessException, InstantiationException {
-		this.defaultDo = doClass.newInstance();
 		this.doName = doClass.getSimpleName();
 
 		this.table = doClass.getAnnotation(Table.class);

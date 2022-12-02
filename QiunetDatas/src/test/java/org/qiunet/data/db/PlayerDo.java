@@ -5,7 +5,7 @@ import org.qiunet.data.core.support.db.Table;
 import org.qiunet.data.db.entity.DbEntity;
 
 @Alias("PlayerDo")
-@Table(name = "player", dbSource = "basic")
+@Table(name = "player", keyName = "uid", dbSource = "basic")
 public class PlayerDo extends DbEntity<Long> {
 	private long uid;
 	private String name;
@@ -47,10 +47,5 @@ public class PlayerDo extends DbEntity<Long> {
 	@Override
 	public Long key() {
 		return uid;
-	}
-
-	@Override
-	public String keyFieldName() {
-		return "uid";
 	}
 }
