@@ -23,7 +23,7 @@ public final class CrossConstants {
 	 * 服务与服务之间通讯的启动参数
 	 */
 	public static final ServerBootStrapConfig NODE_SERVER_TCP_BOOTSTRAP_CONFIG = ServerBootStrapConfig.newBuild("节点通讯", ServerConfig.getNodePort())
-		.setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT)
+		.setStartupContext(IStartupContext.DEFAULT_SERVER_NODE_START_CONTEXT)
 		.setReadIdleCheckSeconds(60 * 10)
 		.build();
 }

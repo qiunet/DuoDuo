@@ -84,7 +84,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 */
 	public <T extends IEventData> void fireCrossEvent(T eventData) {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
-		this.sendMessage(request);
+		this.sendMessage(request, true);
 	}
 	/**
 	 * 服务给玩家的事件触发 .走cross通道.
@@ -93,7 +93,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 */
 	public <T extends UserEventData> void fireUserCrossEvent(T eventData, long playerId) {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData, playerId);
-		this.sendMessage(request);
+		this.sendMessage(request, true);
 	}
 	/**
 	 * 获得serverId

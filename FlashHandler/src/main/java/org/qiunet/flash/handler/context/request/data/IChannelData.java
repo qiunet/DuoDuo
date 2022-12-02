@@ -40,12 +40,12 @@ public abstract class IChannelData {
 	 * 会调用该方法. 如果需要回收的东西.
 	 * 可以写这个里面
 	 */
-	public void recycle() {}
+	public void finishCycle() {}
 	/**
 	 * 得到protocolId
 	 * @return
 	 */
 	public int protocolId() {
-		return ChannelDataMapping.protocolId(getClass());
+		return getClass().getAnnotation(ChannelData.class).ID();
 	}
 }

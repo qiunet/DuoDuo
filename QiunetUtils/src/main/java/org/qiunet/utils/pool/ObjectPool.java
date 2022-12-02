@@ -6,7 +6,8 @@ import com.google.common.collect.Maps;
 import org.qiunet.utils.system.OSUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * 一个简单的对象池
@@ -15,7 +16,7 @@ import java.util.*;
  * 2022/8/15 15:29
  */
 public abstract class ObjectPool<T> {
-	private static final ThreadLocal<Map<DStack<?> , SwitchList<Node>>> DELAYED_QUEUE = ThreadLocal.withInitial(HashMap::new);
+	private static final ThreadLocal<Map<DStack<?> , UnreliablyList<?>>> DELAYED_QUEUE = ThreadLocal.withInitial(HashMap::new);
 	private final ThreadLocal<DStack<T>> stackThreadLocal;
 
 	public ObjectPool() {
@@ -43,7 +44,7 @@ public abstract class ObjectPool<T> {
 	 */
 	public int threadScopeSize() {
 		DStack<T> tdStack = stackThreadLocal.get();
-		int sum = tdStack.asyncRecycleMap.values().stream().mapToInt(List::size).sum();
+		int sum = tdStack.asyncRecycleMap.values().stream().mapToInt(UnreliablyList::size).sum();
 		return tdStack.stack.size + sum;
 	}
 	/**
@@ -60,7 +61,7 @@ public abstract class ObjectPool<T> {
 	 */
 	public int asyncThreadRecycleSize() {
 		DStack<T> tdStack = stackThreadLocal.get();
-		return tdStack.asyncRecycleMap.values().stream().mapToInt(List::size).sum();
+		return tdStack.asyncRecycleMap.values().stream().mapToInt(UnreliablyList::size).sum();
 	}
 
 	/**
@@ -86,7 +87,7 @@ public abstract class ObjectPool<T> {
 		DStack<T> stack;
 		T value;
 		/** 链表结构*/
-		Node<T> pre, next;
+		Node<T> next;
 
 		public Node(DStack<T> stack) {
 			this.stack = stack;
@@ -103,7 +104,7 @@ public abstract class ObjectPool<T> {
 		}
 	}
 
-	private static final class DLinkedList<T> extends AbstractCollection<Node<T>> {
+	private static final class DLinkedList<T> {
 		private final int maxCapacity;
 		private Node<T> head, tail;
 		private int size;
@@ -113,11 +114,6 @@ public abstract class ObjectPool<T> {
 			this.maxCapacity = maxCapacity;
 		}
 
-		@Override
-		public Iterator<Node<T>> iterator() {
-			return new DIterator<>(this.head);
-		}
-		@Override
 		public int size() {
 			return size;
 		}
@@ -129,22 +125,21 @@ public abstract class ObjectPool<T> {
 		public int lastCapacity() {
 			return maxCapacity - size;
 		}
-		@Override
-		public boolean add(Node<T> t) {
-			if (lastCapacity() <= 0) {
-				return false;
-			}
+		public void add(Node<T> node) {
+			while (node != null) {
+				if (lastCapacity() <= 0) {
+					return;
+				}
 
-			if (isEmpty()) {
-				head = tail = t;
+				if (isEmpty()) {
+					head = tail = node;
+				}else {
+					tail.next = node;
+					tail = node;
+				}
+				node = node.next;
 				size ++;
-				return true;
 			}
-			tail.next = t;
-			t.pre = tail;
-			tail = t;
-			size ++;
-			return true;
 		}
 
 		public Node<T> poll() {
@@ -156,34 +151,14 @@ public abstract class ObjectPool<T> {
 				head = tail = null;
 			}else {
 				head = head.next;
-				head.pre = null;
 			}
-			temp.pre = null;
 			temp.next = null;
 			size --;
 			return temp;
 		}
-	}
 
-	private static final class DIterator<T> implements Iterator<Node<T>> {
-		private Node<T> node;
-
-		public DIterator(Node<T> node) {
-			this.node = node;
-		}
-
-		@Override
-		public boolean hasNext() {
-			return node != null;
-		}
-
-		@Override
-		public Node<T> next() {
-			if (! this.hasNext())
-				throw new NoSuchElementException();
-			Node<T> temp = this.node;
-			this.node = node.next;
-			return temp;
+		public boolean isEmpty() {
+			return size == 0;
 		}
 	}
 
@@ -191,15 +166,13 @@ public abstract class ObjectPool<T> {
 		/**
 		 * 异步回收的数据
 		 */
-		final Map<Thread, SwitchList<Node>> asyncRecycleMap = Maps.newConcurrentMap();
+		final Map<Thread, UnreliablyList<T>> asyncRecycleMap = Maps.newConcurrentMap();
 		final WeakReference<Thread> threadRef;
 		final int queueCapacityForPerThread;
 		final DLinkedList<T> stack;
 
-		final int leastRecycleNum;
 		final int maxCapacity;
 		DStack(Thread thread, int maxCapacity, int queueCapacityForPerThread) {
-			this.leastRecycleNum = Math.min(5, Math.max(1, queueCapacityForPerThread / 4));
 			this.queueCapacityForPerThread = queueCapacityForPerThread;
 			this.threadRef = new WeakReference<>(thread);
 			this.stack = new DLinkedList<>(maxCapacity);
@@ -234,15 +207,11 @@ public abstract class ObjectPool<T> {
 		 * 从其它线程的回收栈回收对象.
 		 */
 		private boolean scannerAllThread() {
-			for (SwitchList<Node> list : asyncRecycleMap.values()) {
-				if (list.size() <= leastRecycleNum) {
-					continue;
-				}
+			for (UnreliablyList<T> list : asyncRecycleMap.values()) {
 				if (this.stack.full()) {
 					break;
 				}
-				List<Node> nodes = list.renew();
-				nodes.forEach(this.stack::add);
+				this.stack.add(list.cleanAndGetHead());
 			}
 			return ! this.stack.isEmpty();
 		}
@@ -263,64 +232,53 @@ public abstract class ObjectPool<T> {
 		 * @param obj
 		 */
 		private void asyncPush(Node<T> obj) {
-			Map<DStack<?>, SwitchList<Node>> map = DELAYED_QUEUE.get();
-			SwitchList<Node> list = map.get(this);
+			Map<DStack<?>, UnreliablyList<?>> map = DELAYED_QUEUE.get();
+			UnreliablyList<T> list = (UnreliablyList<T>) map.get(this);
 			Thread currentThread = Thread.currentThread();
 			if (list == null) {
-				list = new SwitchList<>();
+				list = new UnreliablyList<>();
 				this.asyncRecycleMap.put(currentThread, list);
 				map.put(this, list);
 			}
 
 			if (list.size() >= queueCapacityForPerThread) {
-				if (stack.lastCapacity() < queueCapacityForPerThread) {
-					// drop object
-					return;
-				}
+				// drop object
+				return;
 			}
 			list.add(obj);
 		}
 	}
 
 	/**
-	 * 可以切换的list
+	 * 不可靠的linked list
+	 * 并发可能丢失数据
 	 * @param <E>
 	 */
-	public static class SwitchList<E> extends AbstractList<E> {
-		private List<E> currList;
+	private static class UnreliablyList<E> {
 
-		public SwitchList() {
-			this.currList = new LinkedList<>();
+		Node<E> head, tail;
+
+		private int size;
+
+		public void add(Node<E> node) {
+			if (tail == null) {
+				head = tail = node;
+			}else {
+				tail.next = node;
+				tail = node;
+			}
+			size ++;
 		}
 
-		public List<E> renew() {
-			List<E> list = currList;
-			this.currList = new LinkedList<>();
-			return list;
-		}
-		@Override
-		public E get(int index) {
-			return currList.get(index);
+		public Node<E> cleanAndGetHead() {
+			Node<E> temp = head;
+			head = tail = null;
+			size = 0;
+			return temp;
 		}
 
-		@Override
 		public int size() {
-			return currList.size();
-		}
-
-		@Override
-		public List<E> subList(int fromIndex, int toIndex) {
-			return currList.subList(fromIndex, toIndex);
-		}
-
-		@Override
-		public boolean add(E e) {
-			return currList.add(e);
-		}
-
-		@Override
-		public void clear() {
-			currList.clear();
+			return size;
 		}
 	}
 }

@@ -31,7 +31,7 @@ public class CrossServer {
 
 			BootstrapServer.createBootstrap(hook)
 				.listener(ServerBootStrapConfig.newBuild("跨服服务", Constants.CROSS_SERVER_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_START_CONTEXT).build())
-				.listener(ServerBootStrapConfig.newBuild("跨服节点", Constants.CROSS_NODE_PORT).setStartupContext(IStartupContext.DEFAULT_CROSS_NODE_START_CONTEXT).build())
+				.listener(ServerBootStrapConfig.newBuild("跨服节点", Constants.CROSS_NODE_PORT).setStartupContext(IStartupContext.DEFAULT_SERVER_NODE_START_CONTEXT).build())
 				.await();
 	}
 

@@ -32,6 +32,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.HandlerNotFoundResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -51,6 +52,7 @@ import java.net.InetSocketAddress;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public final class ChannelUtil {
+	private static final IChannelData HANDLER_NOT_FOUND = new HandlerNotFoundResponse();
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelUtil(){}
 	/***
@@ -215,7 +217,7 @@ public final class ChannelUtil {
 
 		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 		if (handler == null) {
-			channel.writeAndFlush(config.getStartupContext().getHandlerNotFound());
+			channel.writeAndFlush(HANDLER_NOT_FOUND);
 			return;
 		}
 

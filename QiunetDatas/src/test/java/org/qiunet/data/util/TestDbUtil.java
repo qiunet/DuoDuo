@@ -56,7 +56,7 @@ public class TestDbUtil {
 
 		int serverId = serverType.buildServerId(groupId, 4);
 
-		Assertions.assertEquals(2104, serverId);
+		Assertions.assertEquals(2041, serverId);
 		Assertions.assertEquals(groupId, ServerType.getGroupId(serverId));
 
 		Assertions.assertEquals(serverType, ServerType.getServerType(serverId));
@@ -69,7 +69,7 @@ public class TestDbUtil {
 
 		int serverId = serverType.buildServerId(groupId, 4);
 
-		Assertions.assertEquals(204, serverId);
+		Assertions.assertEquals(42, serverId);
 		Assertions.assertEquals(groupId, ServerType.getGroupId(serverId));
 
 		Assertions.assertEquals(serverType, ServerType.getServerType(serverId));

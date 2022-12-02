@@ -82,7 +82,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public static ServerType getServerType(int serverId) {
-		int type = (serverId % 1000) / 100;
+		int type = serverId % 10;
 		return parse(type);
 	}
 
@@ -93,7 +93,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public int buildServerId(int groupId, int incrId) {
-		return groupId * 1000 + getType() * 100 + incrId;
+		return groupId * 1000 + incrId * 10 + getType();
 	}
 
 	ServerType(int type) {

@@ -24,6 +24,29 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 	default <O extends IObserver> Observer<O> attachObserver(Class<O> clazz, O o) {
 		return getObserverSupport().attach(clazz, o);
 	}
+
+	/**
+	 * 定义一个group 挂到组里
+	 * @param group 组名
+	 * @param clazz class 对象
+	 * @param o 实例
+	 * @return Observer
+	 * @param <O>
+	 */
+	default <O extends IObserver> Observer<O> attach(String group, Class<O> clazz, O o) {
+		return getObserverSupport().attach(group, clazz, o);
+	}
+
+	/**
+	 * 只被触发一次
+	 * @param clazz class 对象
+	 * @param o 实例
+	 * @return  Observer
+	 * @param <O>
+	 */
+	default <O extends IObserver> Observer<O> once(Class<O> clazz, O o) {
+		return getObserverSupport().once(clazz, o);
+	}
 	/***
 	 * 移除观察者
 	 * @param observer
@@ -33,6 +56,13 @@ public interface IObserverSupportOwner<Owner extends MessageHandler<Owner>> {
 		return getObserverSupport().remove(observer);
 	}
 
+	/**
+	 * 按照group 移除监听
+	 * @param group 组名
+	 */
+	default void remove(String group) {
+		getObserverSupport().remove(group);
+	}
 	/***
 	 * 移除某一类观察者
 	 * @param
