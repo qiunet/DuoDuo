@@ -1,4 +1,4 @@
-# DuoDuo
+# DuoDuo | [Wiki](https://github.com/qiunet/DuoDuo/wiki)
 [![Java CI with Maven](https://github.com/qiunet/DuoDuo/actions/workflows/maven.yml/badge.svg)](https://github.com/qiunet/DuoDuo/actions/workflows/maven.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.qiunet/duoduo-all?logo=apache-maven&logoColor=white)](https://search.maven.org/artifact/io.github.qiunet/duoduo-all)
 [![Java support](https://img.shields.io/badge/Java-17+-green?logo=java&logoColor=white)](https://openjdk.java.net/)
@@ -16,7 +16,7 @@
  - 不对换行符做自动转换<br />
 `git config --global core.autocrlf input`
 
-## 模块简介 [DuoDuo WIKI](https://github.com/qiunet/DuoDuo/wiki)
+## 模块简介
 | 模块名                                 | 简介                                                     |
 | -------------------------------------- | -------------------------------------------------------- |
 | [Quartz](Quartz/README.md)             | 定时调度相关的模块                                       |
