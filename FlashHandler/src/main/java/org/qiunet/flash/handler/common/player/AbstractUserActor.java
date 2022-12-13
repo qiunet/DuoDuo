@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.listener.event.EventManager;
@@ -38,7 +38,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * 跨服的提交跨服那边. 本服调用自己的
 	 * @param eventData
 	 */
-	public <D extends UserEventData> void fireEvent(D eventData){
+	public <D extends UserEvent> void fireEvent(D eventData){
 		EventManager.fireEventHandler(eventData.setPlayer(this));
 	}
 
@@ -47,7 +47,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>> extends 
 	 * 跨服的提交跨服那边. 本服调用自己的
 	 * @param eventData
 	 */
-	public <D extends UserEventData> void fireAsyncEvent(D eventData){
+	public <D extends UserEvent> void fireAsyncEvent(D eventData){
 		this.addMessage(p -> {
 			EventManager.fireEventHandler(eventData.setPlayer(p));
 		});

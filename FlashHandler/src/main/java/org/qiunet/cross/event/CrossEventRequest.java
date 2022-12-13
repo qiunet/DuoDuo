@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
@@ -31,11 +31,11 @@ public class CrossEventRequest extends IChannelData implements IDataToString {
 	@Protobuf
 	private TransferJsonData jsonData;
 
-	public static CrossEventRequest valueOf(IEventData data) {
+	public static CrossEventRequest valueOf(IListenerEvent data) {
 		return valueOf(data, 0);
 	}
 
-	public static CrossEventRequest valueOf(IEventData data, long playerId) {
+	public static CrossEventRequest valueOf(IListenerEvent data, long playerId) {
 		Preconditions.checkNotNull(data);
 
 		CrossEventRequest request = new CrossEventRequest();
@@ -60,8 +60,8 @@ public class CrossEventRequest extends IChannelData implements IDataToString {
 		this.jsonData = jsonData;
 	}
 
-	public IEventData getData() {
-		return (IEventData) jsonData.getData();
+	public IListenerEvent getData() {
+		return (IListenerEvent) jsonData.getData();
 	}
 	@Override
 	public String _toString() {

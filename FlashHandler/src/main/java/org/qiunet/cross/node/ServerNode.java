@@ -5,7 +5,7 @@ import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.header.ServerNodeProtocolHeader;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRe
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.Timeout;
 
@@ -82,7 +82,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public <T extends IEventData> void fireCrossEvent(T eventData) {
+	public <T extends IListenerEvent> void fireCrossEvent(T eventData) {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);
 		this.sendMessage(request, true);
 	}
@@ -91,7 +91,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public <T extends UserEventData> void fireUserCrossEvent(T eventData, long playerId) {
+	public <T extends UserEvent> void fireUserCrossEvent(T eventData, long playerId) {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData, playerId);
 		this.sendMessage(request, true);
 	}

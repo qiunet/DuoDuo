@@ -21,6 +21,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
@@ -214,7 +215,8 @@ abstract class BaseSession implements ISession {
 	}
 
 	private static final GenericFutureListener<? extends Future<? super Void>> listener = f -> {
-		if (! f.isSuccess()) {
+		// ClosedChannelException 不打印了
+		if (! f.isSuccess() && ! (f.cause() instanceof ClosedChannelException)) {
 			logger.error("channel send message error:", f.cause());
 		}
 	};

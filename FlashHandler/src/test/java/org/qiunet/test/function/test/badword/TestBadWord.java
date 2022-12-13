@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.function.badword.BadWordFilter;
 import org.qiunet.function.badword.DefaultBadWord;
-import org.qiunet.function.badword.LoadBadWordEventData;
+import org.qiunet.function.badword.LoadBadWordEvent;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -23,7 +23,7 @@ public class TestBadWord {
 	@Test
 	public void testBadWord() {
 		DefaultBadWord defaultBadWord = new DefaultBadWord(new String[]{"柟", "王岐山", "王玉刚", "毛泽东", "fuck", "www.qq.com"});
-		LoadBadWordEventData.valueOf(defaultBadWord).fireEventHandler();
+		LoadBadWordEvent.valueOf(defaultBadWord).fireEventHandler();
 
 		Assertions.assertEquals("毛泽东", BadWordFilter.instance.powerFind("sss毛2泽3东7--"));
 		Assertions.assertEquals("fuck", BadWordFilter.instance.powerFind("sss毛fuck东7--"));

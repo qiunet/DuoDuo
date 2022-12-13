@@ -6,15 +6,15 @@ import org.qiunet.utils.listener.event.EventListener;
 public class Test2Service {
 
 	@EventListener
-	public void onLevelUp(LevelUpEventData data) {
+	public void onLevelUp(LevelUpEvent data) {
 		TestListener.levelUpEventCount.incrementAndGet();
-		Assertions.assertEquals(TestListener.uid, data.getUid());
-		Assertions.assertEquals(TestListener.oldLevel, data.getOldLevel());
-		Assertions.assertEquals(TestListener.newLevel, data.getNewLevel());
+		Assertions.assertEquals(TestListener.uid, data.uid());
+		Assertions.assertEquals(TestListener.oldLevel, data.oldLevel());
+		Assertions.assertEquals(TestListener.newLevel, data.newLevel());
 	}
 
 	@EventListener
-	private void onLogin(LoginEventData data) {
+	private void onLogin(LoginEvent data) {
 		Assertions.assertEquals(3, TestListener.loginEventCount.incrementAndGet());
 	}
 }

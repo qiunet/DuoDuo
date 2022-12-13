@@ -41,6 +41,7 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>QiunetDatas</artifactId>
+			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

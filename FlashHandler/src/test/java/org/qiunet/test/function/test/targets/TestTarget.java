@@ -6,8 +6,8 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.function.targets.TargetContainer;
 import org.qiunet.function.targets.Targets;
 import org.qiunet.test.function.test.TestDSession;
-import org.qiunet.test.function.test.targets.event.KillBossEventData;
-import org.qiunet.test.function.test.targets.event.LevelUpEventData;
+import org.qiunet.test.function.test.targets.event.KillBossEvent;
+import org.qiunet.test.function.test.targets.event.LevelUpEvent;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.ClassScanner;
@@ -43,12 +43,12 @@ public class TestTarget {
 				}
 			}, 1);
 
-		playerActor.fireEvent(LevelUpEventData.valueOf(5));
-		playerActor.fireEvent(LevelUpEventData.valueOf(11));
+		playerActor.fireEvent(LevelUpEvent.valueOf(5));
+		playerActor.fireEvent(LevelUpEvent.valueOf(11));
 
-		playerActor.fireEvent(KillBossEventData.valueOf(224));
-		playerActor.fireEvent(KillBossEventData.valueOf(111));
-		playerActor.fireEvent(KillBossEventData.valueOf(111));
+		playerActor.fireEvent(KillBossEvent.valueOf(224));
+		playerActor.fireEvent(KillBossEvent.valueOf(111));
+		playerActor.fireEvent(KillBossEvent.valueOf(111));
 
 
 		// 测试从数据库加载json后. 任务的情况.

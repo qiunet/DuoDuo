@@ -11,7 +11,7 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.function.badword.DefaultBadWord;
-import org.qiunet.function.badword.LoadBadWordEventData;
+import org.qiunet.function.badword.LoadBadWordEvent;
 import org.qiunet.test.handler.bootstrap.http.HttpBootStrap;
 import org.qiunet.test.handler.proto.LoginResponse;
 import org.qiunet.test.handler.proto.WsPbLoginRequest;
@@ -32,7 +32,7 @@ public class TestMuchWebSocketRequest extends HttpBootStrap {
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);
 	@Test
 	public void testMuchWebSocket() throws InterruptedException {
-		LoadBadWordEventData.valueOf(new DefaultBadWord(Lists.newArrayList("毛泽东"))).fireEventHandler();
+		LoadBadWordEvent.valueOf(new DefaultBadWord(Lists.newArrayList("毛泽东"))).fireEventHandler();
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {

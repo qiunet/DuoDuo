@@ -5,7 +5,7 @@ import org.qiunet.function.rank.BaseCacheRankHandler;
 import org.qiunet.function.rank.IRankHandler;
 import org.qiunet.function.rank.IRankHandlerWrapper;
 import org.qiunet.function.rank.RankData;
-import org.qiunet.test.function.test.targets.event.LevelUpEventData;
+import org.qiunet.test.function.test.targets.event.LevelUpEvent;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.listener.event.EventListener;
 
@@ -24,7 +24,7 @@ public enum LevelCacheRank implements IRankHandlerWrapper<RankType> {
 	private final LazyLoader<IRankHandler<RankType>> rankHandler = new LazyLoader<>(RankHandler::new);
 
 	@EventListener
-	private void LevelChange(LevelUpEventData eventData) {
+	private void LevelChange(LevelUpEvent eventData) {
 		rankHandler.get().updateRank(RankData.custom(eventData.getPlayer().getId(), eventData.getLevel()).addName(eventData.getPlayer().getOpenId()).build());
 	}
 

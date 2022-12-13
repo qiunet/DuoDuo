@@ -16,8 +16,8 @@ import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -123,7 +123,7 @@ public class BootstrapServer {
 		hookThread.setDaemon(true);
 		hookThread.start();
 		try {
-			ServerStartupEventData.fireStartupEventHandler();
+			ServerStartupEvent.fireStartupEventHandler();
 		}catch (CustomException e) {
 			e.logger(logger);
 			System.exit(1);
@@ -185,7 +185,7 @@ public class BootstrapServer {
 			// 停止玩家进入 请求
 			ServerClosedEvent.fireClosed();
 			// 触发停服事件
-			ServerShutdownEventData.fireShutdownEventHandler();
+			ServerShutdownEvent.fireShutdownEventHandler();
 
 			// 停止所有服务
 			for (INettyServer server : nettyServers) {

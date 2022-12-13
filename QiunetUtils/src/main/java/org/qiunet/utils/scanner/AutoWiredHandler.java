@@ -7,7 +7,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.scanner.anno.IgnoreEmptyWired;
-import org.qiunet.utils.scanner.event.AutoWireCompleteEventData;
+import org.qiunet.utils.scanner.event.AutoWireCompleteEvent;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -56,7 +56,7 @@ import java.util.Set;
 			}
 			ReflectUtil.setField(declaringObj, field, autoWiredObj);
 		}
-		AutoWireCompleteEventData.instance.fireEventHandler();
+		AutoWireCompleteEvent.instance.fireEventHandler();
 	}
 
 	private static final LazyLoader<Class<?>> cfgWrapperClass = new LazyLoader<>(() -> {

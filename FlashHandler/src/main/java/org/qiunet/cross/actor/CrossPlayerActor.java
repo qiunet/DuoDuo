@@ -8,12 +8,12 @@ import org.qiunet.cross.actor.data.CrossDataGetter;
 import org.qiunet.cross.actor.data.IUserTransferData;
 import org.qiunet.cross.actor.data._CrossDataNeedUpdateEvent;
 import org.qiunet.cross.actor.message.Cross2PlayerMessage;
-import org.qiunet.cross.event.BaseCrossPlayerEventData;
+import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.exceptions.CustomException;
@@ -85,7 +85,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	 * @param event
 	 * @param <T>
 	 */
-	public  <T extends BaseCrossPlayerEventData> void fireEvent(T event) {
+	public  <T extends BaseCrossPlayerEvent> void fireEvent(T event) {
 		super.fireEvent(event);
 	}
 
@@ -94,7 +94,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	 * @param eventData
 	 * @param <T>
 	 */
-	public  <T extends UserEventData> void fireCrossEvent(T eventData) {
+	public  <T extends UserEvent> void fireCrossEvent(T eventData) {
 		Preconditions.checkState(isAuth(), "Need auth!");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData);

@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
@@ -53,7 +54,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			// 从tcp那取到PlayerActor
 			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(config.getStartupContext().buildMessageActor(session));
 			PlayerActor playerActor = (PlayerActor) ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
-			session.addCloseListener("IKcpUsabilityLose", (session0, cause) -> {
+			session.addCloseListener("IKcpUsabilityClose", (session0, cause) -> {
 				playerActor.syncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
 			});
 		}
@@ -90,15 +91,17 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 
 			PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(kcpParamInfo.getPlayerId());
-			ChannelUtil.getSession(ctx.channel()).addCloseListener("IKcpUsabilityLose", (session, cause) -> {
-				playerActor.syncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
-			});
 			// 老session踢下线
 			if (playerActor.getSession().getKcpSession() != null) {
 				playerActor.getSession().getKcpSession().close(CloseCause.LOGIN_REPEATED);
 			}
 
 			ChannelUtil.getSession(ctx.channel()).attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
+			ChannelUtil.getSession(ctx.channel()).addCloseListener("IKcpUsabilityClose", (session, cause) -> {
+				IMessageActor actor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+				((PlayerActor) actor).syncFireObserver(IKcpUsabilityChange.class, o -> o.ability(false));
+			});
+
 			playerActor.getSession().bindKcpSession(((KcpSession) ChannelUtil.getSession(ctx.channel())));
 			ChannelUtil.getSession(ctx.channel()).sendKcpMessage(KcpBindAuthRsp.valueOf(true), true);
 			playerActor.asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));

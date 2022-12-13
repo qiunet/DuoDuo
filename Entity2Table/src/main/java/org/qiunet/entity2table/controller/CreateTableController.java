@@ -4,7 +4,7 @@ import org.qiunet.data.core.entity.IEntity;
 import org.qiunet.data.core.enums.ColumnJdbcType;
 import org.qiunet.data.core.support.db.Column;
 import org.qiunet.data.core.support.db.Table;
-import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
+import org.qiunet.data.core.support.db.event.DbLoaderOverEvent;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.entity2table.command.Columns;
 import org.qiunet.entity2table.command.FieldParam;
@@ -234,7 +234,7 @@ class CreateTableController implements IApplicationContextAware {
 	}
 
 	@EventListener(EventHandlerWeightType.HIGH)
-	public void createTable(DbLoaderOverEventData eventData){
+	public void createTable(DbLoaderOverEvent eventData){
 		// 没有context说明没有setApplication. ScannerType 设置不对.
 		if (context == null) {
 			return;

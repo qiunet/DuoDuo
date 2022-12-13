@@ -1,6 +1,6 @@
 package org.qiunet.function.badword;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 import java.io.File;
 
@@ -12,14 +12,14 @@ import java.io.File;
  * @author qiunet
  * 2021/11/25 10:35
  */
-public class LoadBadWordFileEventData implements IEventData {
+public class LoadBadWordFileEvent implements IListenerEvent {
 	/**
 	 * 文件
 	 */
 	private File file;
 
-	public static LoadBadWordFileEventData valueOf(File file){
-		LoadBadWordFileEventData data = new LoadBadWordFileEventData();
+	public static LoadBadWordFileEvent valueOf(File file){
+		LoadBadWordFileEvent data = new LoadBadWordFileEvent();
 		data.file = file;
 		return data;
 	}

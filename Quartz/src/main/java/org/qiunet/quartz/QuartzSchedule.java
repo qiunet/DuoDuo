@@ -2,7 +2,7 @@ package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
@@ -32,7 +32,7 @@ public enum QuartzSchedule {
 	}
 
 	@EventListener
-	private void shutdown(ServerShutdownEventData eventData) {
+	private void shutdown(ServerShutdownEvent eventData) {
 		this.jobs.forEach(job -> {
 			job.canceled = true;
 			job.future.cancel(false);

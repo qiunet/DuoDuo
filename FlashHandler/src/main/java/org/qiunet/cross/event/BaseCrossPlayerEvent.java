@@ -1,7 +1,7 @@
 package org.qiunet.cross.event;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 
 /***
  * 跨服事件的基础类.
@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.common.player.event.UserEventData;
  * @author qiunet
  * 2020-10-15 15:36
  */
-public abstract class BaseCrossPlayerEventData extends UserEventData {
+public abstract class BaseCrossPlayerEvent extends UserEvent {
 
 	@Override
 	public CrossPlayerActor getPlayer() {

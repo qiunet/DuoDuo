@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.common.player.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import org.qiunet.flash.handler.common.player.IPlayer;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 玩家事件的共同父类
@@ -11,7 +11,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-10-21 11:02
  */
-public abstract class UserEventData implements IEventData {
+public abstract class UserEvent implements IListenerEvent {
 	/**
 	 * 玩家的对象.
 	 */
@@ -22,7 +22,7 @@ public abstract class UserEventData implements IEventData {
 		return (T) player;
 	}
 
-	public UserEventData setPlayer(IPlayer player) {
+	public UserEvent setPlayer(IPlayer player) {
 		this.player = player;
 		return this;
 	}

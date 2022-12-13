@@ -1,6 +1,6 @@
 package org.qiunet.data.db.loader.event;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 玩家踢出事件
@@ -8,7 +8,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021/11/25 14:34
  */
-public class PlayerKickOutEvent implements IEventData {
+public class PlayerKickOutEvent implements IListenerEvent {
 	/**
 	 * 玩家ID
 	 */

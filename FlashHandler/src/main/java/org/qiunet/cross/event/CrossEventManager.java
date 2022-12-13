@@ -4,9 +4,9 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.utils.listener.event.EventManager;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 跨服事件处理
@@ -21,7 +21,7 @@ public final class CrossEventManager {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public static <T extends IEventData> void fireCrossEvent(int serverId, T eventData) {
+	public static <T extends IListenerEvent> void fireCrossEvent(int serverId, T eventData) {
 		if (serverId == ServerConfig.getServerId()) {
 			EventManager.fireEventHandler(eventData);
 			return;
@@ -36,7 +36,7 @@ public final class CrossEventManager {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public static <T extends UserEventData> void fireCrossUserEvent(int serverId, T eventData, long playerId) {
+	public static <T extends UserEvent> void fireCrossUserEvent(int serverId, T eventData, long playerId) {
 		if (serverId == ServerConfig.getServerId()) {
 			AbstractUserActor playerActor = UserOnlineManager.instance.getActor(playerId);
 			playerActor.fireAsyncEvent(eventData);

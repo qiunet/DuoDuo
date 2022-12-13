@@ -1,13 +1,13 @@
 package org.qiunet.flash.handler.netty.server.event;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  *
  * @author qiunet
  * 2021/12/29 13:55
  */
-public class ServerStartupCompleteEvent implements IEventData {
+public class ServerStartupCompleteEvent implements IListenerEvent {
 
 	private ServerStartupCompleteEvent(){}
 

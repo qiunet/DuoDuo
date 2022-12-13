@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.common.player.IPlayer;
  * @author qiunet
  * 2020-10-15 12:51
  */
-public class LoginSuccessEvent extends UserEventData {
+public class LoginSuccessEvent extends UserEvent {
 
 	public LoginSuccessEvent(AbstractUserActor player) {
 		this.setPlayer(player);

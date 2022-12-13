@@ -10,10 +10,10 @@ import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -103,7 +103,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * 给所有的跨服连接发送事件
 	 * @param eventData
 	 */
-	private void allCrossEvent(UserEventData eventData) {
+	private void allCrossEvent(UserEvent eventData) {
 		crossConnectors.values().forEach(crossConnector -> {
 			crossConnector.fireCrossEvent(eventData);
 		});
@@ -271,7 +271,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * @param event
 	 * @param <D>
 	 */
-	public <D extends UserEventData> void fireCrossEvent(D event) {
+	public <D extends UserEvent> void fireCrossEvent(D event) {
 		crossConnectors.get(crossServerType).fireCrossEvent(event);
 	}
 
@@ -281,7 +281,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * @param event
 	 * @param <D>
 	 */
-	public <D extends BasePlayerEventData> void fireEvent(D event) {
+	public <D extends BasePlayerEvent> void fireEvent(D event) {
 		super.fireEvent(event);
 	}
 

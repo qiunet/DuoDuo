@@ -7,7 +7,7 @@ package org.qiunet.flash.handler.common.player.event;
  * @author qiunet
  * 2021/11/26 09:38
  */
-public class CrossPlayerDestroyEvent extends BasePlayerEventData {
+public class CrossPlayerDestroyEvent extends BasePlayerEvent {
 	/**
 	 * 退出的serverId
 	 */

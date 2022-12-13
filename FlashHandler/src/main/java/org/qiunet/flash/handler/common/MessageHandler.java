@@ -5,7 +5,7 @@ import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -189,7 +189,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		return future;
 	}
 	@EventListener(EventHandlerWeightType.LESS)
-	private static void shutdown(ServerShutdownEventData event) {
+	private static void shutdown(ServerShutdownEvent event) {
 		for (DExecutorService service : executorService.eventLoops) {
 			service.shutdown();
 		}

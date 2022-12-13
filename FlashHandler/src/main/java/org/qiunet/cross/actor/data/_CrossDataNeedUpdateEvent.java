@@ -1,13 +1,13 @@
 package org.qiunet.cross.actor.data;
 
-import org.qiunet.flash.handler.common.player.event.BasePlayerEventData;
+import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 
 /***
  * cross data 更新事件
  * @author qiunet
  * 2022/9/17 14:29
  */
-public class _CrossDataNeedUpdateEvent extends BasePlayerEventData {
+public class _CrossDataNeedUpdateEvent extends BasePlayerEvent {
 	/**
 	 * cross data key
 	 */

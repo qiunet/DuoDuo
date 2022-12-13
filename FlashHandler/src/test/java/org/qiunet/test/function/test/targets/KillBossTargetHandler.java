@@ -2,7 +2,7 @@ package org.qiunet.test.function.test.targets;
 
 import org.qiunet.function.targets.BaseTargetHandler;
 import org.qiunet.function.targets.ITargetDef;
-import org.qiunet.test.function.test.targets.event.KillBossEventData;
+import org.qiunet.test.function.test.targets.event.KillBossEvent;
 import org.qiunet.utils.listener.event.EventListener;
 
 /***
@@ -17,7 +17,7 @@ public class KillBossTargetHandler extends BaseTargetHandler<TargetType> {
 	}
 
 	@EventListener
-	public void killBossEvent(KillBossEventData eventData) {
+	public void killBossEvent(KillBossEvent eventData) {
 		this.process(eventData.getPlayer(), (target) -> {
 			ITargetDef def = target.getTargetDef();
 			if (eventData.getBossId() == Integer.parseInt(def.getTargetParam())) {

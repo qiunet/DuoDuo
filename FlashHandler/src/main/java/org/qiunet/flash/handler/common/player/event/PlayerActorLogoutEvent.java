@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
  * @author qiunet
  * 2020-10-15 12:51
  */
-public class PlayerActorLogoutEvent extends UserEventData {
+public class PlayerActorLogoutEvent extends UserEvent {
 	private final CloseCause cause;
 
 	public PlayerActorLogoutEvent(CloseCause cause) {

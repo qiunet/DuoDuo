@@ -1,6 +1,6 @@
 package org.qiunet.utils.listener.event.data;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 启动db事件
@@ -8,7 +8,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-09-05 06:07
  **/
-public class DbLoaderEvent implements IEventData {
+public class DbLoaderEvent implements IListenerEvent {
 
 		private DbLoaderEvent(){}
 

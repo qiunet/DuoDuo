@@ -20,8 +20,8 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -59,7 +59,7 @@ public enum UserOnlineManager {
 	private final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
 
 	@EventListener
-	public void serverStartup(ServerStartupEventData eventData) {
+	public void serverStartup(ServerStartupEvent eventData) {
 		Gauge.builder("online.player.count", onlineCrossPlayers.values(), Collection::size)
 				.tag("type", "cross")
 				.register(RootRegistry.instance.registry());
@@ -319,7 +319,7 @@ public enum UserOnlineManager {
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
-	private void serverShutdown(ServerShutdownEventData event) {
+	private void serverShutdown(ServerShutdownEvent event) {
 		if (ServerConfig.getServerType() != ServerType.LOGIC && ServerConfig.getServerType() != ServerType.CROSS) {
 			return;
 		}

@@ -1,7 +1,7 @@
 package org.qiunet.function.badword;
 
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
 
@@ -28,12 +28,12 @@ public enum  BadWordFilter {
 	private static final String DEFAULT_BAD_WORD_FILE_NAME = "bad_word.txt";
 
 	@EventListener
-	private void serverStart(ServerStartupEventData eventData) {
+	private void serverStart(ServerStartupEvent eventData) {
 		this.loadDefaultFile();
 	}
 
 	@EventListener
-	private void loadFile(LoadBadWordFileEventData eventData) {
+	private void loadFile(LoadBadWordFileEvent eventData) {
 		if (eventData.getFile() == null) {
 			this.loadDefaultFile();
 			return;
@@ -42,7 +42,7 @@ public enum  BadWordFilter {
 	}
 
 	@EventListener
-	private void loadData(LoadBadWordEventData eventData) {
+	private void loadData(LoadBadWordEvent eventData) {
 		this.loadBadWord(eventData.getBadWord());
 	}
 

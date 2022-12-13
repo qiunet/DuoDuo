@@ -6,7 +6,7 @@ package org.qiunet.utils.listener.event;
  * 其它数据在自己的子类里面获取
  * @author qiunet
  */
-public interface IEventData {
+public interface IListenerEvent {
 	/***
 	 * 触发事件处理
 	 */

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 enum EventManager0 implements IApplicationContextAware {
 	instance;
-	private final Map<Class<? extends IEventData>, List<EventSubscriber>> listeners = new HashMap<>();
+	private final Map<Class<? extends IListenerEvent>, List<EventSubscriber>> listeners = new HashMap<>();
 	private final AtomicBoolean inited = new AtomicBoolean();
 	private IApplicationContext context;
 
@@ -43,7 +43,7 @@ enum EventManager0 implements IApplicationContextAware {
 		this.context = context;
 		Set<Method> typesAnnotated = context.getMethodsAnnotatedWith(EventListener.class);
 		for (Method method : typesAnnotated) {
-			Class<? extends IEventData> eventDataClass = eventDataClass(method);
+			Class<? extends IListenerEvent> eventDataClass = eventDataClass(method);
 			List<EventSubscriber> subscriberList = this.listeners.computeIfAbsent(eventDataClass, key -> Lists.newArrayList());
 			subscriberList.add(wrapper(method));
 		}
@@ -67,10 +67,10 @@ enum EventManager0 implements IApplicationContextAware {
 	 * @param method
 	 * @return
 	 */
-	private Class<? extends IEventData> eventDataClass(Method method) {
+	private Class<? extends IListenerEvent> eventDataClass(Method method) {
 		Preconditions.checkArgument(method.getParameterCount() == 1, "EventListener Method parameter count %s error!", method.getParameterCount());
-		Preconditions.checkArgument(IEventData.class.isAssignableFrom(method.getParameterTypes()[0]), "EventListener Method parameter must be IEventData");
-		return (Class<? extends IEventData>) method.getParameterTypes()[0];
+		Preconditions.checkArgument(IListenerEvent.class.isAssignableFrom(method.getParameterTypes()[0]), "EventListener Method parameter must be IEventData");
+		return (Class<? extends IListenerEvent>) method.getParameterTypes()[0];
 	}
 
 	/**
@@ -92,7 +92,7 @@ enum EventManager0 implements IApplicationContextAware {
 	 *
 	 * @param eventData
 	 */
-	void post(IEventData eventData) {
+	void post(IListenerEvent eventData) {
 		if (! inited.get()) {
 			throw new CustomException("Event not init");
 		}
@@ -120,7 +120,7 @@ enum EventManager0 implements IApplicationContextAware {
 			method.setAccessible(true);
 		}
 
-		void handleEvent(IEventData data) {
+		void handleEvent(IListenerEvent data) {
 			if (this.limitCount != 0 && (currCount >= this.limitCount || (currCount++) >= this.limitCount)) {
 				return;
 			}

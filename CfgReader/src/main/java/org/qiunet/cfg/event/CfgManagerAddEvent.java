@@ -1,7 +1,7 @@
 package org.qiunet.cfg.event;
 
 import org.qiunet.cfg.manager.base.ICfgManager;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 添加ICfgManager 到 CfgManagers 事件
@@ -9,7 +9,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2020-09-18 17:19
  */
-public class CfgManagerAddEvent implements IEventData {
+public class CfgManagerAddEvent implements IListenerEvent {
 
 	private ICfgManager cfgManager;
 

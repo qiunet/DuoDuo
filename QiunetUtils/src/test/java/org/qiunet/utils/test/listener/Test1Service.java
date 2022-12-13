@@ -7,8 +7,8 @@ import org.qiunet.utils.listener.event.EventListener;
 public class Test1Service {
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
-	public void onLogin(LoginEventData data) {
-		Assertions.assertEquals(data.getUid(), TestListener.uid);
+	public void onLogin(LoginEvent data) {
+		Assertions.assertEquals(data.uid(), TestListener.uid);
 		Assertions.assertEquals(1, TestListener.loginEventCount.incrementAndGet());
 	}
 

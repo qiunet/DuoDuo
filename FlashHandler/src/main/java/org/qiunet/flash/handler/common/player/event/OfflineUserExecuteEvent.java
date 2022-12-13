@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player.event;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 让Offline user 执行一个代码
@@ -8,7 +8,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021/12/10 19:57
  */
-public class OfflineUserExecuteEvent implements IEventData {
+public class OfflineUserExecuteEvent implements IListenerEvent {
 
 	private long playerId;
 

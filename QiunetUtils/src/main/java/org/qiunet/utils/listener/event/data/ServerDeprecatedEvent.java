@@ -1,6 +1,6 @@
 package org.qiunet.utils.listener.event.data;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 服务器被弃用通知
@@ -8,7 +8,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021/12/8 13:59
  */
-public class ServerDeprecatedEvent implements IEventData {
+public class ServerDeprecatedEvent implements IListenerEvent {
 	private ServerDeprecatedEvent(){}
 
 	/***因为没有参数. 所以可以使用单例 . 有参数的eventData 还是得自己new */

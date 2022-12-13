@@ -1,6 +1,6 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 获得奖励事件
@@ -9,7 +9,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021-01-05 20:43
  */
-public class GainRewardEvent implements IEventData {
+public class GainRewardEvent implements IListenerEvent {
 	/**
 	 * 奖励的上下文
 	 */

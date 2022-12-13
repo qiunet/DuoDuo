@@ -1,6 +1,6 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 消耗事件
@@ -8,7 +8,7 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021-01-05 20:52
  */
-public class ConsumeEvent implements IEventData {
+public class ConsumeEvent implements IListenerEvent {
 
 	private ConsumeContext context;
 

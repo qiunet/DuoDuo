@@ -9,7 +9,7 @@ import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.badword.DefaultBadWord;
-import org.qiunet.function.badword.LoadBadWordEventData;
+import org.qiunet.function.badword.LoadBadWordEvent;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -24,7 +24,7 @@ public class TestProtobufData {
 	@BeforeAll
 	public static void beforeExec() throws Exception {
 		ClassScanner.getInstance(ScannerType.CHANNEL_DATA ,ScannerType.EVENT).scanner();
-		LoadBadWordEventData.valueOf(new DefaultBadWord(new String[] {"毛泽东"})).fireEventHandler();
+		LoadBadWordEvent.valueOf(new DefaultBadWord(new String[] {"毛泽东"})).fireEventHandler();
 	}
 	@Test
 	public void testByteBuf (){

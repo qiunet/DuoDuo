@@ -3,7 +3,7 @@ package org.qiunet.data.async;
 import org.qiunet.quartz.CronSchedule;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.timer.TimerManager;
@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
-	private void onShutdown(ServerShutdownEventData data) {
+	private void onShutdown(ServerShutdownEvent data) {
 		if (! nodes.isEmpty()) {
 			nodes.forEach(IAsyncNode::syncToDatabase);
 		}

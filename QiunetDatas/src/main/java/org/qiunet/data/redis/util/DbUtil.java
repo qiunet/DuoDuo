@@ -174,7 +174,8 @@ public final class DbUtil {
 	 */
 	public static String buildRedisKey(String doName, Object... keys){
 		StringJoiner sj = new StringJoiner("#");
-		sj.add(doName);
+		// 同一个redis下, 可能需要区分是哪个组. 因为数据库不一样.
+		sj.add(doName).add(String.valueOf(ServerConfig.getServerGroupId()));
 		for (Object key : keys) {
 			sj.add(String.valueOf(key));
 		}

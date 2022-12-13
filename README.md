@@ -6,6 +6,9 @@
 [![GitHub release](https://img.shields.io/github/release/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/releases)
 [![GitHub Contributors](https://img.shields.io/github/contributors/qiunet/DuoDuo)](https://github.com/qiunet/DuoDuo/graphs/contributors)
 	
+## Wiki
+[https://github.com/qiunet/DuoDuo/wiki](https://github.com/qiunet/DuoDuo/wiki)
+
 ## 协议支持
 | 是否支持     | Tcp | Kcp | WebSocket | Http |
 |----------|-----|-----|-----------|------|
@@ -47,7 +50,7 @@
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
 		<artifactId>duoduo-all</artifactId>
-		<version>${version}</version>
+		<version>7.0.9</version>
 	</dependency>
 
  

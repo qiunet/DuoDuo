@@ -1,11 +1,11 @@
 package org.qiunet.data.core.support.db;
 
-import org.qiunet.data.core.support.db.event.DbLoaderOverEventData;
+import org.qiunet.data.core.support.db.event.DbLoaderOverEvent;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.DbLoaderEvent;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.string.StringUtil;
 
 /***
@@ -16,7 +16,7 @@ class DbStartHandler {
 	private static final String SKIP_TEST_START_LOADER = "db.skip_load_db";
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
-	public void onServerStartUp(ServerStartupEventData data) {
+	public void onServerStartUp(ServerStartupEvent data) {
 		this.loader();
 	}
 	@EventListener
@@ -37,6 +37,6 @@ class DbStartHandler {
 		}
 
 		DbLoader.getInstance();
-		DbLoaderOverEventData.fireEvent();
+		DbLoaderOverEvent.fireEvent();
 	}
 }

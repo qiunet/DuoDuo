@@ -17,8 +17,8 @@ import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
-import org.qiunet.utils.listener.event.data.ServerStartupEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -174,7 +174,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@EventListener
-	private void onServerStart(ServerStartupEventData data){
+	private void onServerStart(ServerStartupEvent data){
 		if (this.currServerInfo.getNodePort() == 0) {
 			return;
 		}
@@ -232,7 +232,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@EventListener(EventHandlerWeightType.MIDDLE)
-	private void onShutdown(ServerShutdownEventData data) {
+	private void onShutdown(ServerShutdownEvent data) {
 		if (redisUtil == null) {
 			return;
 		}

@@ -1,7 +1,7 @@
 package org.qiunet.cross.actor.auth;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.cross.actor.event.CrossPlayerAuthSuccessEventData;
+import org.qiunet.cross.actor.event.CrossPlayerAuthSuccessEvent;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
@@ -23,7 +23,7 @@ public class CrossPlayerAuthHandler extends PersistConnPbHandler<CrossPlayerActo
 			playerActor.sendMessage(CrossPlayerLogoutPush.instance);
 		}
 		playerActor.setKcpPrepare(context.getRequestData().isKcpPrepare());
-		playerActor.fireEvent(CrossPlayerAuthSuccessEventData.valueOf());
+		playerActor.fireEvent(CrossPlayerAuthSuccessEvent.valueOf());
 	}
 
 	@Override

@@ -3,7 +3,7 @@ package org.qiunet.utils.listener.hook;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEventData;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -75,7 +75,7 @@ public class ShutdownHookUtil {
 
 
 	@EventListener(EventHandlerWeightType.LESS)
-	private void onShutdown(ServerShutdownEventData data) {
+	private void onShutdown(ServerShutdownEvent data) {
 		this.shutdownNow();
 	}
 

@@ -1,6 +1,6 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  * 服务器节点的心跳.
@@ -9,6 +9,6 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021/11/3 10:47
  */
-public enum ServerNodeTickEvent implements IEventData {
+public enum ServerNodeTickEvent implements IListenerEvent {
 	instance
 }

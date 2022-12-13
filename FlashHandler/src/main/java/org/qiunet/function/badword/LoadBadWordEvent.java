@@ -1,6 +1,6 @@
 package org.qiunet.function.badword;
 
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
  *
@@ -9,14 +9,14 @@ import org.qiunet.utils.listener.event.IEventData;
  * @author qiunet
  * 2021/11/25 10:35
  */
-public class LoadBadWordEventData implements IEventData {
+public class LoadBadWordEvent implements IListenerEvent {
 	/**
 	 * 加载数据
 	 */
 	private IBadWord badWord;
 
-	public static LoadBadWordEventData valueOf(IBadWord badWord){
-		LoadBadWordEventData data = new LoadBadWordEventData();
+	public static LoadBadWordEvent valueOf(IBadWord badWord){
+		LoadBadWordEvent data = new LoadBadWordEvent();
 		data.badWord = badWord;
 		return data;
 	}

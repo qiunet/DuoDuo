@@ -23,8 +23,8 @@ public class TestListener {
 
 	@Test
 	public void listener(){
-		new LoginEventData(uid).fireEventHandler();
-		EventManager.fireEventHandler(new LevelUpEventData(uid, oldLevel, newLevel));
+		new LoginEvent(uid).fireEventHandler();
+		EventManager.fireEventHandler(new LevelUpEvent(uid, oldLevel, newLevel));
 
 		Assertions.assertEquals(3, loginEventCount.get());
 		Assertions.assertEquals(1, levelUpEventCount.get());

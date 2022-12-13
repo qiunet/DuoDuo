@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
-import org.qiunet.flash.handler.common.player.event.UserEventData;
+import org.qiunet.flash.handler.common.player.event.UserEvent;
 
 /***
  * 离线玩家actor
@@ -58,7 +58,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	 * 触发事件
 	 * @param eventData
 	 */
-	public void fireEvent(UserEventData eventData) {
+	public void fireEvent(UserEvent eventData) {
 		eventData.setPlayer(this);
 		this.addMessage(a -> eventData.fireEventHandler());
 	}

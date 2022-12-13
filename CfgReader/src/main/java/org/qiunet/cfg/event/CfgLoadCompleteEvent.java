@@ -2,7 +2,7 @@ package org.qiunet.cfg.event;
 
 
 import org.qiunet.cfg.manager.base.ICfgManager;
-import org.qiunet.utils.listener.event.IEventData;
+import org.qiunet.utils.listener.event.IListenerEvent;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
  * @author qiunet
  * 2020-04-24 11:25
  ***/
-public class CfgLoadCompleteEvent implements IEventData {
+public class CfgLoadCompleteEvent implements IListenerEvent {
 	private final List<ICfgManager<?, ?>> list;
 
 	private CfgLoadCompleteEvent(List<ICfgManager<?, ?>> list) {

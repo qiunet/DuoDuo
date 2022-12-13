@@ -1,7 +1,7 @@
 package org.qiunet.test.function.test.targets;
 
 import org.qiunet.function.targets.BaseTargetHandler;
-import org.qiunet.test.function.test.targets.event.LevelUpEventData;
+import org.qiunet.test.function.test.targets.event.LevelUpEvent;
 import org.qiunet.utils.listener.event.EventListener;
 
 /***
@@ -13,7 +13,7 @@ import org.qiunet.utils.listener.event.EventListener;
 public class LevelTargetHandler extends BaseTargetHandler<TargetType> {
 
 	@EventListener
-	public void handlerLevelUp(LevelUpEventData eventData) {
+	public void handlerLevelUp(LevelUpEvent eventData) {
 		process(eventData.getPlayer(), (target) -> target.alterToCount(eventData.getLevel()));
 	}
 
