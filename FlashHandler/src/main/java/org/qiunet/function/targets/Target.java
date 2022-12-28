@@ -4,6 +4,10 @@ import com.alibaba.fastjson2.annotation.JSONField;
 import com.google.common.base.Preconditions;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 /***
  * 单个目标的进度管理
  *
@@ -11,11 +15,24 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
  * 2020-11-23 12:58
  */
 public class Target {
+	/**
+	 * 更新回调
+	 */
+	@JSONField(serialize = false)
+	transient Consumer<Target> updateCallback;
+	/**
+	 * 目标容器
+	 */
+	@JSONField(serialize = false)
+	transient TargetContainer container;
+	/**
+	 * 用户数据. 可以序列化的对象
+	 */
+	private Map<String, String> userdata;
+
 	@JSONField(serialize = false)
 	transient ITargetDef targetDef;
 
-	@JSONField(serialize = false)
-	transient Targets targets;
 	/**
 	 * 任务目标的配置定义ID
 	 */
@@ -25,11 +42,12 @@ public class Target {
 	 */
 	private long value;
 
-	static Target valueOf(Targets targets, ITargetDef targetDef) {
+	static Target valueOf(PlayerActor player, Consumer<Target> updateCallback, ITargetDef targetDef) {
 		Target target = new Target();
+		target.container = TargetContainer.get(player);
+		target.updateCallback = updateCallback;
 		target.tid = targetDef.getId();
 		target.targetDef = targetDef;
-		target.targets = targets;
 		return target;
 	}
 	/**
@@ -37,7 +55,7 @@ public class Target {
 	 * @return actor
 	 */
 	public PlayerActor getPlayer() {
-		return targets.getPlayer();
+		return container.getPlayer();
 	}
 	/**
 	 * 进度 + 1
@@ -56,7 +74,7 @@ public class Target {
 		}
 		Preconditions.checkState(count > 0);
 		this.value += count;
-		targets.updateCallback(this);
+		updateCallback.accept(this);
 		this.tryFinish();
 	}
 
@@ -65,23 +83,60 @@ public class Target {
 	 * @param count 数量
 	 */
 	public synchronized void alterToCount(int count) {
-		// = 0 可能为gm重置任务
-		Preconditions.checkState(count >= 0);
 		if (isFinished()) {
 			return;
 		}
 		this.value = count;
-		targets.updateCallback(this);
+		updateCallback.accept(this);
 		this.tryFinish();
 	}
 
 	private void tryFinish() {
 		if (isFinished()) {
 			// 可能在forEach时候. unwatch了
-			getPlayer().addMessage((p0) -> {
-				TargetContainer.get(p0).unWatch(this);
-			});
+			this.remove();
 		}
+	}
+
+	/**
+	 * 获得用户数据
+	 * @param key
+	 * @return
+	 */
+	public String getUserdata(String key) {
+		if (userdata == null) {
+			return null;
+		}
+		return userdata.get(key);
+	}
+	/**
+	 * 清理某个key
+	 * @param key
+	 */
+	public void removeUserdata(String key) {
+		if (userdata != null) {
+			userdata.remove(key);
+		}
+	}
+	/**
+	 * 增加用户数据
+	 * @param key
+	 * @param data
+	 */
+	public void addUserdata(String key, String data) {
+		if (this.userdata == null) {
+			this.userdata = new HashMap<>();
+		}
+		this.userdata.put(key, data);
+	}
+	/**
+	 * 移除自己
+	 */
+	public void remove() {
+		// 可能在forEach时候. unwatch了
+		getPlayer().addMessage((p0) -> {
+			container.unWatch(this);
+		});
 	}
 
 	@JSONField(serialize = false)
@@ -94,19 +149,11 @@ public class Target {
 		return targetDef;
 	}
 
-	public void setTid(int tid) {
-		this.tid = tid;
-	}
-
 	public int getTid() {
 		return tid;
 	}
 
 	public long getValue() {
 		return value;
-	}
-
-	public void setValue(long value) {
-		this.value = value;
 	}
 }

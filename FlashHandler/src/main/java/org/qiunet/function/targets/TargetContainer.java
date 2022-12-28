@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /***
@@ -47,64 +46,40 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 		this.player = player;
 	}
 
-	/***
-	 * 创建任务的Targets. 并且开启监听
-	 *
-	 * @param targetsDefGetter 目标的配置列表getter
-	 * @param updateCallback 更新回调
-	 * @param id
-	 */
-	public Targets createAndWatchTargets(ITargetsDefGetter targetsDefGetter, BiConsumer<Targets, Target> updateCallback, int id) {
-		lock.lock();
-		try {
-			Targets targets = Targets.valueOf(this, targetsDefGetter, updateCallback, id);
-			targets.forEachTarget(target -> this.watch(target, true));
-			return targets;
-		}finally {
-			lock.unlock();
-		}
-	}
-
-	/**
-	 * 初始化时候, 从存储的数据库取出来的targets. 添加到容器里面.
-	 *
-	 * @param updateCallback 更新回调.
-	 * @param targets 任务集合
-	 */
-	public void addTargets(ITargetDefGetter getter, BiConsumer<Targets, Target> updateCallback, Targets targets) {
-		lock.lock();
-		try {
-			targets.updateCallback = updateCallback;
-			targets.container = this;
-			targets.forEachTarget(target -> {
-				target.targetDef = getter.getTargetDef(target.getTid());
-				target.targets = targets;
-			});
-
-			targets.forEachTarget(target -> {
-				if (target.isFinished()) {
-					updateCallback.accept(targets, target);
-					return;
-				}
-				this.watch(target, false);
-			});
-
-		}finally {
-			lock.unlock();
-		}
-	}
 
 	/**
 	 * 中途添加一个任务到Targets
 	 *
-	 * @param targets 需要添加到的Targets
-	 * @param targetDef 添加的任务
+	 * @param targets 添加的任务
 	 */
-	public Target addTarget(Targets targets, ITargetDef targetDef) {
+	public void addTargets(Consumer<Target> updateCallback, List<Target> targets, ITargetDefGetter getter) {
 		lock.lock();
 		try {
-			Target target = Target.valueOf(targets, targetDef);
-			targets.getTargets().add(target);
+			for (Target target : targets) {
+				target.targetDef = getter.getTargetDef(target.getTid());
+				target.updateCallback = updateCallback;
+				target.container = this;
+				if (target.isFinished()) {
+					updateCallback.accept(target);
+					continue;
+				}
+				this.watch(target, false);
+			}
+		}finally {
+			lock.unlock();
+		}
+	}
+
+	/**
+	 * 添加一个任务
+	 * @param updateCallback 回调函数
+	 * @param targetDef 任务的配置数据
+	 * @return Target数据
+	 */
+	public Target addTarget(Consumer<Target> updateCallback, ITargetDef targetDef) {
+		lock.lock();
+		try {
+			Target target = Target.valueOf(getPlayer(), updateCallback, targetDef);
 			this.watch(target, true);
 			return target;
 		}finally {
@@ -179,6 +154,11 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 	 * 清理所有的任务
 	 */
 	public void clear() {
-		this.targetMap.clear();
+		lock.lock();
+		try {
+			this.targetMap.clear();
+		}finally {
+			lock.unlock();
+		}
 	}
 }
