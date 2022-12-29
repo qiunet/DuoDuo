@@ -7,7 +7,6 @@ import org.qiunet.data.redis.util.RedisDataUtil;
 import org.qiunet.data.support.RedisDataListSupport;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
-import org.qiunet.utils.thread.ThreadContextData;
 
 import java.util.Map;
 
@@ -19,10 +18,10 @@ public class TestRedisDataListSupport {
 		 dataListSupport = new RedisDataListSupport<>(RedisDataUtil.getInstance(), EquipDo.class, EquipBo::new);
 	}
 
-	private final long uid = 100000;
 	@Test
 	public void testNormalList(){
 		EquipDo equipDo1 = new EquipDo();
+		long uid = 100000;
 		equipDo1.setUid(uid);
 		equipDo1.setEquip_id(1);
 		equipDo1.setLevel(1);
@@ -33,7 +32,7 @@ public class TestRedisDataListSupport {
 		equipDo2.setEquip_id(2);
 		equipDo2.setLevel(2);
 		EquipBo equipBo = dataListSupport.insert(equipDo2);
-
+		//EquipBo equipBo = new EquipBo(equipDo2);
 		equipDo2.setLevel(3);
 		equipBo.update();
 
@@ -58,7 +57,6 @@ public class TestRedisDataListSupport {
 		Map<Integer, EquipBo> map = dataListSupport.getBoMap(uid);
 		Assertions.assertTrue(map.isEmpty());
 		for (int i = 0; i < 3; i++) {
-			ThreadContextData.removeAll();
 			map = dataListSupport.getBoMap(uid);
 			Assertions.assertTrue(map.isEmpty());
 		}
@@ -69,7 +67,6 @@ public class TestRedisDataListSupport {
 		equipDo1.setLevel(1);
 		dataListSupport.insert(equipDo1);
 
-		ThreadContextData.removeAll();
 		map = dataListSupport.getBoMap(uid);
 		Assertions.assertFalse(map.isEmpty());
 
@@ -80,6 +77,5 @@ public class TestRedisDataListSupport {
 	public void expire(long uid) {
 		String redisKey = "EquipDo#"+uid;
 		RedisDataUtil.jedis().expire(redisKey, 0L);
-		ThreadContextData.removeKey(redisKey);
 	}
 }

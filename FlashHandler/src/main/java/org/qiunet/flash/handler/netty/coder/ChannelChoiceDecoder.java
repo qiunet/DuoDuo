@@ -13,6 +13,8 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +25,9 @@ import java.util.List;
  * 17/8/13
  */
 public class ChannelChoiceDecoder extends ByteToMessageDecoder {
+	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private static final byte[] POST_BYTES = {'P', 'O', 'S', 'T'};
+	private static final byte[] GET_BYTES = {'G', 'E', 'T', ' '};
 	private final ServerBootStrapConfig config;
 
 	private ChannelChoiceDecoder(ServerBootStrapConfig config) {
@@ -51,10 +56,13 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 				pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 				pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
 				ctx.fireChannelActive();
-			}else {
+			}else if (Arrays.equals(POST_BYTES, bytes) || Arrays.equals(GET_BYTES, bytes)){
 				pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
 				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
 				pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
+			}else {
+				logger.error("Invalidate connection!");
+				ctx.close();
 			}
 			pipeline.remove(ChannelChoiceDecoder.class);
 		}finally {

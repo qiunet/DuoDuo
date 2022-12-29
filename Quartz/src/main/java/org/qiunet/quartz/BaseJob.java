@@ -1,7 +1,6 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 
@@ -37,7 +36,6 @@ abstract class BaseJob implements IJob {
 			logger.error("Job  ["+jobName+"] Exception ", e);
 		}
 		finally {
-			ThreadContextData.removeAll();
 			useTimer.printUseTime();
 		}
 		return true;

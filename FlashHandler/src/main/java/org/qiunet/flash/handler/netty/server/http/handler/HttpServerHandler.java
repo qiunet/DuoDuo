@@ -22,7 +22,6 @@ import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
@@ -178,8 +177,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			} catch (Exception e) {
 				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 				logger.error("Http Exception:", e);
-			}finally {
-				ThreadContextData.removeAll();
 			}
 		});
 	}

@@ -1,12 +1,10 @@
 package org.qiunet.data.support;
 
-import com.google.common.base.Preconditions;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntityList;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.thread.ThreadContextData;
 
 import java.util.List;
 import java.util.Map;
@@ -87,12 +85,6 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	 */
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		String redisKey = getRedisKey(doName, key);
-
-		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
-		if (map != null) {
-			return map;
-		}
-
 		List<Do> doList = returnDoListFromRedis(redisKey);
 		if (doList != null && doList.isEmpty()) {
 			DbParamMap paramMap = DbParamMap.create(table, table.keyName(), key);
@@ -110,13 +102,12 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 				});
 			}
 		}
-
+		Map<SubKey, Bo> map;
 		if (doList == null || doList.isEmpty()) {
 			map = new ConcurrentHashMap<>();
 		}else {
 			map = doList.stream().collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 		}
-		ThreadContextData.put(redisKey, map);
 		return map;
 	}
 
@@ -128,19 +119,11 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			returnJedis().hdel(redisKey, PLACE_HOLDER);
 		}
 
-		Bo bo = super.insert(aDo);
-		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
-		Preconditions.checkNotNull(map);
-		map.putIfAbsent(aDo.subKey(), bo);
-		return bo;
+		return super.insert(aDo);
 	}
 
 	@Override
 	public void delete(Bo bo) {
-		String redisKey = getRedisKey(doName, bo.getDo().key());
-		Map<SubKey, Bo> map = ThreadContextData.get(redisKey);
-		Preconditions.checkNotNull(map);
-		map.remove(bo.getDo().subKey());
 		super.delete(bo);
 	}
 }

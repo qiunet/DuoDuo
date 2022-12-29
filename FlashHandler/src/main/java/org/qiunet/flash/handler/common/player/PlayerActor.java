@@ -260,7 +260,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 		handler.session.clearCloseListener();
 		this.setSession(handler.session);
-		super.merge(handler);
 		handler.dataLoader.unregister();
 		handler.dataLoader = null;
 		dataLoader.register();

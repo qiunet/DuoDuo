@@ -5,7 +5,6 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
-import org.qiunet.utils.thread.ThreadContextData;
 import redis.clients.jedis.params.SetParams;
 
 /***
@@ -90,7 +89,6 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 	protected void delFromRedis(Do aDo) {
 		String redisKey = getRedisKey(doName, aDo.key());
 		returnJedis().expire(redisKey, 0);
-		ThreadContextData.removeKey(redisKey);
 	}
 
 	@Override
@@ -98,7 +96,6 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 		super.delete(bo);
 
 		String redisKey = getRedisKey(doName, bo.getDo().key());
-		ThreadContextData.removeKey(redisKey);
 	}
 
 	@Override
@@ -106,22 +103,16 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 		Bo bo = super.insert(aDo);
 
 		String redisKey = getRedisKey(doName, aDo.key());
-		ThreadContextData.put(redisKey, bo);
 		return bo;
 	}
 
 	public Bo getBo(Key key) {
 		String redisKey = getRedisKey(doName, key);
-		Bo bo = ThreadContextData.get(redisKey);
-		if (bo != null) {
-			return bo;
-		}
-
 		Do aDo = getDataObjectJson(redisKey, true);
 		if (aDo == NULL) {
 			return null;
 		}
-
+		Bo bo;
 		if (aDo == null) {
 			DbParamMap map = DbParamMap.create(table, table.keyName(), key);
 			aDo = databaseSupport().selectOne(selectStatement, map);
@@ -132,10 +123,8 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 
 			bo = supplier.get(aDo);
 			this.setDataObjectJson(aDo);
-			ThreadContextData.put(redisKey, bo);
 		}else{
 			bo = supplier.get(aDo);
-			ThreadContextData.put(redisKey, bo);
 		}
 		return bo;
 	}

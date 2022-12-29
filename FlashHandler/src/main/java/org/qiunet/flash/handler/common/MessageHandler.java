@@ -11,19 +11,15 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.thread.IThreadSafe;
-import org.qiunet.utils.thread.ThreadContextData;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
-import org.qiunet.utils.timer.UseTimer;
 import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -34,54 +30,17 @@ import java.util.stream.IntStream;
  * 2020-02-08 20:53
  **/
 public abstract class MessageHandler<H extends IMessageHandler<H>>
-		implements Runnable, IMessageHandler<H>, IThreadSafe {
+		implements IMessageHandler<H>, IThreadSafe {
 	private static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
 
 	private final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
-	private final UseTimer useTimer = new UseTimer(this::getIdentity, 300);
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final Queue<IMessage<H>> messages = new ConcurrentLinkedQueue<>();
 	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private final AtomicBoolean destroyed = new AtomicBoolean();
 
-	private final AtomicInteger size = new AtomicInteger();
-	@Override
-	public void run() {
-		try {
-			run0();
-		}finally {
-			ThreadContextData.removeAll();
-		}
-	}
-
-	private void run0() {
-		long start = System.nanoTime();
-		while (true) {
-			IMessage<H> message = messages.poll();
-			if (message == null) {
-				break;
-			}
-			try {
-				useTimer.start();
-				message.execute((H) this);
-				useTimer.printUseTime(() -> message.getClass().getName());
-			}catch (Exception e) {
-				logger.error("{}", getClass().getName(), e);
-			}
-
-			if (this.size.decrementAndGet()  <= 0) {
-				break;
-			}
-			// 超过2秒执行时间. 需要让出. 给后面的队列任务执行
-			if (TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - start) >= 2) {
-				executor.get().execute(this);
-				break;
-			}
-		}
-	}
 	/**
 	 * 添加一条可以执行消息
 	 * @param msg
@@ -92,11 +51,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
 			return false;
 		}
-		messages.add(msg);
-		int size = this.size.incrementAndGet();
-		if (size == 1) {
-			executor.get().execute(this);
-		}
+		executor.get().execute(() -> msg.execute((H) this));
 		return true;
 	}
 
@@ -143,14 +98,6 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 */
 	public boolean isDestroyed() {
 		return destroyed.get();
-	}
-	/**
-	 * 合并另一个的所有的消息
-	 * 然后销毁被合并方.
-	 * @return
-	 */
-	public void merge(MessageHandler<H> handler){
-		this.messages.addAll(handler.messages);
 	}
 	/**
 	 * 结束所有的调度
