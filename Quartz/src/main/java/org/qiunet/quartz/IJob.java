@@ -48,4 +48,12 @@ public interface IJob {
 	 * @return 表达式字符串
 	 */
 	String cronExpression();
+
+	/**
+	 * 一定的时间偏移
+	 * @return
+	 */
+	default int randRangeMillis() {
+		return 0;
+	}
 }

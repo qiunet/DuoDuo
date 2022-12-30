@@ -11,10 +11,9 @@ import java.lang.reflect.Method;
 	private final String cronExpression;
 	private final Method workMethod;
 	private final Object caller;
-
-	 CommonCronJob(String cronExpression, int warnExecMillis,
+	 CommonCronJob(String cronExpression, int warnExecMillis, int randRangeMillis,
 						 Method workMethod, Object caller) {
-	 	super(workMethod, warnExecMillis);
+	 	super(workMethod, warnExecMillis, randRangeMillis);
 		this.cronExpression = cronExpression;
 		this.workMethod = workMethod;
 		this.caller = caller;

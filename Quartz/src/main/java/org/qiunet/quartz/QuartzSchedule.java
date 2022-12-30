@@ -4,6 +4,7 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -70,7 +71,11 @@ public enum QuartzSchedule {
 
 			Date nextDt = expression.getTimeAfter(this.fireTime);
 			if (nextDt != null) {
-				this.future = TimerManager.instance.scheduleWithTimeMillis(this, nextDt.getTime());
+				long nextDtTime = nextDt.getTime();
+				if (job.randRangeMillis() > 0) {
+					nextDtTime += MathUtil.random(job.randRangeMillis());
+				}
+				this.future = TimerManager.instance.scheduleWithTimeMillis(this, nextDtTime);
 				this.future.whenComplete((res, e) ->{
 					if (! (e instanceof CancellationException)) {
 						this.doNextJob();

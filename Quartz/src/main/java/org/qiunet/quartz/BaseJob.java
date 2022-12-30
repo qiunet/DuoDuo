@@ -19,10 +19,15 @@ abstract class BaseJob implements IJob {
 	 * 告警的执行时间毫秒
 	 */
 	protected int warnMillis;
+	/**
+	 * 允许一定毫秒时间的偏移
+	 */
+	private final int randRangeMillis;
 
-	protected BaseJob(Method method, int warnMillis) {
+	protected BaseJob(Method method, int warnMillis, int randRangeMillis) {
 		this.jobName = method.getDeclaringClass().getName() +
 			"." + method.getName();
+		this.randRangeMillis = randRangeMillis;
 		this.warnMillis = warnMillis;
 	}
 
@@ -40,6 +45,12 @@ abstract class BaseJob implements IJob {
 		}
 		return true;
 	}
+
+	@Override
+	public int randRangeMillis() {
+		return randRangeMillis;
+	}
+
 	/***
 	 * 调度
 	 * @return

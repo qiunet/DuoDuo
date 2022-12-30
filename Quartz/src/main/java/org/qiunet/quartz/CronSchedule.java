@@ -24,6 +24,12 @@ public @interface CronSchedule {
 	 * @return
 	 */
 	int warnExecMillis() default 500;
+	/**
+	 * 在cron的基础上, 有个随机毫秒范围
+	 * 可以保证所有机器不会在同一个时间执行.
+	 * @return
+	 */
+	int randRangeMillis() default 0;
 }
 
 

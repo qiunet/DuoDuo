@@ -5,14 +5,11 @@ import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.math.MathUtil;
-import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 异步更新的公用类
@@ -33,18 +30,16 @@ import java.util.concurrent.TimeUnit;
 	/***
 	 * 异步更新到db
 	 */
-	@CronSchedule("0 * * * * ?")
+	@CronSchedule(value = "0 * * * * ?", randRangeMillis = 200)
 	public void asyncToDb(){
-		nodes.forEach(node -> TimerManager.executor.scheduleWithDelay(() -> {
+		nodes.forEach(node -> {
 			try {
 				// 必须try catch 否则导致线程停止
 				node.syncToDatabase();
 			}catch (Exception e) {
 				logger.error(MessageFormat.format("[{0}] Exception: ", getClass().getSimpleName()), e);
 			}
-			return null;
-			// 会延迟一定时间执行 免得凑一块了.
-		}, MathUtil.random(0, 200), TimeUnit.MILLISECONDS));
+		});
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
