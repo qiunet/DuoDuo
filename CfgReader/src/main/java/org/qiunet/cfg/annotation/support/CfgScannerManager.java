@@ -109,7 +109,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 		}
 	}
 
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private void completeLoader(CfgLoadCompleteEvent data) {
 		loadOverList.forEach(LoadOverMethod::call);
 	}

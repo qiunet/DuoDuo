@@ -18,7 +18,7 @@ public class RecycleListOwner<E> {
 	}
 
 	public RecycleListOwner(int threadMaxCapacity, int queueCapacityForPerThread) {
-		this.RECYCLE = new ObjectPool<RecycleList<E>>(threadMaxCapacity, queueCapacityForPerThread) {
+		this.RECYCLE = new ObjectPool<>(threadMaxCapacity, queueCapacityForPerThread) {
 			@Override
 			protected RecycleList<E> newObject(Handle<RecycleList<E>> handler) {
 				return new RecycleList<>(handler);

@@ -30,25 +30,8 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static int getTbIndex(Object key) {
-		int groupId = ServerConfig.getServerGroupId();
-		return getTbIndex(key, groupId);
-	}
-
-	/**
-	 * 获得分表索引
-	 * @param key id openId playerId 等主键ID
-	 * @param groupId 服务组id
-	 * @return
-	 */
-	public static int getTbIndex(Object key, int groupId) {
-		int length = ServerType.getGroupIdLength(groupId);
-		int pow = POW10_NUMS[length + 1];
 		int code = hashCode(key);
-		if (code <= pow) {
-			// 可能key 不是按照规则生成的. 直接取最后的数字即可. 否则都是0
-			return code % MAX_TABLE_FOR_TB_SPLIT;
-		}
-		return (code / pow) % MAX_TABLE_FOR_TB_SPLIT;
+		return code % MAX_TABLE_FOR_TB_SPLIT;
 	}
 
 	 /***

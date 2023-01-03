@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.event.HookCustomCmdEvent;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
@@ -281,7 +282,7 @@ public class BootstrapServer {
 			} else if (msg.equalsIgnoreCase(hook.hotswapMsg())) {
 				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
 			}else {
-				hook.custom(msg);
+				HookCustomCmdEvent.valueOf(msg).fireEventHandler();
 			}
 		}
 

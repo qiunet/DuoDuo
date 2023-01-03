@@ -97,7 +97,7 @@ public final class ServerConstants {
 		"04255472e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e";
 
 
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onStartupComplete(ServerStartupCompleteEvent event) {
 		if (startDt.get() > 0) {
 			LoggerType.DUODUO_FLASH_HANDLER.error("Server startup successful in {} ms", (System.currentTimeMillis() - startDt.get()));

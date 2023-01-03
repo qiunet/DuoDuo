@@ -17,7 +17,7 @@ public class RecycleMapOwner<K, V> {
 		this(256, 64);
 	}
 	public RecycleMapOwner(int threadMaxCapacity, int queueCapacityForPerThread) {
-		this.RECYCLE = new ObjectPool<RecycleMap<K, V>>(threadMaxCapacity, queueCapacityForPerThread) {
+		this.RECYCLE = new ObjectPool<>(threadMaxCapacity, queueCapacityForPerThread) {
 			@Override
 			protected RecycleMap<K, V> newObject(Handle<RecycleMap<K, V>> handler) {
 				return new RecycleMap<>(handler);

@@ -36,17 +36,16 @@ public class TestDbUtil {
 		long id = DbUtil.buildId(incrId, serverGroupId);
 		Assertions.assertEquals(id, 1121);
 
-		Assertions.assertEquals(1, DbUtil.getTbIndex(id, serverGroupId));
+		Assertions.assertEquals(1, DbUtil.getTbIndex(id));
 
 		Assertions.assertEquals(serverGroupId, DbUtil.getServerGroupId(id));
 	}
 
 	@Test
 	public void testTbIndex(){
-		String openId = "1";
-		int groupId = 1;
+		long openId = 10111;
 
-		Assertions.assertEquals(9, DbUtil.getTbIndex(openId, groupId));
+		Assertions.assertEquals(1, DbUtil.getTbIndex(openId));
 	}
 
 	@Test

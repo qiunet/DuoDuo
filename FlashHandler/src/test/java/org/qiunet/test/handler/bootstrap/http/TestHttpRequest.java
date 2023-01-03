@@ -55,7 +55,7 @@ public class TestHttpRequest extends HttpBootStrap {
 	public void testOtherHttpString(){
 		final String test = "p1=val1&p2=val2";
 		final Thread currThread = Thread.currentThread();
-		HttpRequest.post(params.getURI("/back?a=b"))
+		HttpRequest.post(params.getURI("/back.do?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
 			.asyncExecutor((call, response) -> {
 				Assertions.assertEquals(response.code(), HttpResponseStatus.OK.code());
@@ -96,7 +96,7 @@ public class TestHttpRequest extends HttpBootStrap {
 		map.put("SourceType" ,1);
 		map.put("test" ,"myTest");
 
-		String respContent = HttpRequest.post("http://localhost:"+port+"/jsonUrl")
+		String respContent = HttpRequest.post("http://localhost:"+port+"/jsonUrl.do")
 			.withJsonData(map)
 			.executor();
 		System.out.println("================="+ respContent);

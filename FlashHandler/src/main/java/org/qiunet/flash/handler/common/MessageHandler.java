@@ -135,7 +135,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		this.scheduleFutures.add(future);
 		return future;
 	}
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private static void shutdown(ServerShutdownEvent event) {
 		for (DExecutorService service : executorService.eventLoops) {
 			service.shutdown();

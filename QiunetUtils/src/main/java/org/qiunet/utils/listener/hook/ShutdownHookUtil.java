@@ -74,7 +74,7 @@ public class ShutdownHookUtil {
 	}
 
 
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onShutdown(ServerShutdownEvent data) {
 		this.shutdownNow();
 	}

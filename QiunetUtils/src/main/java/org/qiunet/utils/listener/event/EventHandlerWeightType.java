@@ -9,6 +9,14 @@ public enum  EventHandlerWeightType {
 	/**
 	 * 最低
 	 */
+	LOWEST,
+	/**
+	 * 低
+	 */
+	LOW,
+	/**
+	 * 少
+	 */
 	LESS,
 	/***
 	 * 普通

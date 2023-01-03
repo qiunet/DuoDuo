@@ -84,7 +84,7 @@ public enum UserOnlineManager {
 	 * 登出事件
 	 * @param eventData
 	 */
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onLogout(PlayerActorLogoutEvent eventData) {
 		PlayerActor actor = onlinePlayers.remove(eventData.getPlayer().getId());
 		if (actor == null) {
@@ -112,7 +112,7 @@ public enum UserOnlineManager {
 	 * 登出事件
 	 * @param eventData
 	 */
-	@EventListener(EventHandlerWeightType.LESS)
+	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onLogout(CrossActorLogoutEvent eventData) {
 		eventData.getPlayer().fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
 		this.destroyPlayer(eventData.getPlayer());
