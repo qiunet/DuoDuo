@@ -27,7 +27,7 @@ import java.util.List;
 public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private static final byte[] POST_BYTES = {'P', 'O', 'S', 'T'};
-	private static final byte[] GET_BYTES = {'G', 'E', 'T', ' '};
+	private static final byte[] GET_BYTES = {'G', 'E', 'T'};
 	private final ServerBootStrapConfig config;
 
 	private ChannelChoiceDecoder(ServerBootStrapConfig config) {
@@ -56,7 +56,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 				pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 				pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
 				ctx.fireChannelActive();
-			}else if (Arrays.equals(POST_BYTES, bytes) || Arrays.equals(GET_BYTES, bytes)){
+			}else if (equals(POST_BYTES, bytes) || equals(GET_BYTES, bytes)){
 				pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
 				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
 				pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
@@ -68,5 +68,20 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 		}finally {
 			in.resetReaderIndex();
 		}
+	}
+
+	/**
+	 * 对比数组. 只要符合origin即可
+	 * @param origin
+	 * @param bytes
+	 * @return
+	 */
+	private boolean equals(byte [] origin, byte [] bytes) {
+		for (int i = 0; i < origin.length; i++) {
+			if (bytes[i] != origin[i]) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

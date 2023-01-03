@@ -423,6 +423,10 @@ public class ServerBootStrapConfig {
 		 * http://localhost:8080/f?a=b&c=d 后面的/f
 		 */
 		private String gameURIPath = "/f";
+		/**
+		 * uri 后缀
+		 */
+		private String uriPostfix = ".do";
 
 		private HttpBootstrapConfig() {}
 
@@ -438,11 +442,20 @@ public class ServerBootStrapConfig {
 			return gameURIPath;
 		}
 
+		public String getUriPostfix() {
+			return uriPostfix;
+		}
+
 		public class Builder {
 			private Builder() {}
 
 			public Builder setWebsocketPath(String websocketPath) {
 				HttpBootstrapConfig.this.websocketPath = websocketPath;
+				return this;
+			}
+
+			public Builder setUriPostfix(String uriPostfix) {
+				HttpBootstrapConfig.this.uriPostfix = uriPostfix;
 				return this;
 			}
 

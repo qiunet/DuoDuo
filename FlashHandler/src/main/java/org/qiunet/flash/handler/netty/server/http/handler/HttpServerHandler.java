@@ -22,6 +22,7 @@ import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
@@ -73,7 +74,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 
 		// 探测程序返回200
-		if (msg.uri().equals("/") || msg.uri().equals("/favicon.ico")) {
+		if (msg.uri().equals("/favicon.ico")) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.OK);
 			return;
 		}
@@ -185,6 +186,14 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @return
 	 */
 	private void handlerOtherUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request, String uriPath){
+		if (! StringUtil.isEmpty(config.getHttpBootstrapConfig().getUriPostfix())) {
+			if (! uriPath.endsWith(config.getHttpBootstrapConfig().getUriPostfix())) {
+				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
+				return;
+			}
+			uriPath = uriPath.substring(0, uriPath.length() - config.getHttpBootstrapConfig().getUriPostfix().length());
+		}
+
 		MessageContent content = MessageContent.valueOf(uriPath, request.content().retain());
 		try {
 			this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);

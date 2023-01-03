@@ -75,7 +75,7 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
-		HttpRequest.post(params.getURI("/jsonUrl")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
+		HttpRequest.post(params.getURI("/jsonUrl.do")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
 				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
 				String responseString = httpResponse.body().string();
 
