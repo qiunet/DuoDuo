@@ -61,7 +61,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
 				pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
 			}else {
-				logger.error("Invalidate connection!");
+				logger.debug("Invalidate connection!");
 				ctx.close();
 			}
 			pipeline.remove(ChannelChoiceDecoder.class);

@@ -39,7 +39,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 
 	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key());
+		DbParamMap map = DbParamMap.create(table, aDo.key());
 		databaseSupport().delete(deleteStatement, map);
 	}
 
@@ -64,7 +64,7 @@ public class CacheDataSupport<Key, Do extends ICacheEntity<Key>, Bo extends IEnt
 		if (bo == NULL) return null;
 
 		if (bo == null) {
-			DbParamMap map = DbParamMap.create(table, table.keyName(), key);
+			DbParamMap map = DbParamMap.create(table, key);
 
 			Do aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {

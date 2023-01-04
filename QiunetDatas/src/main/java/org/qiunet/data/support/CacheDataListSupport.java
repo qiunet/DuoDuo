@@ -53,7 +53,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 	public Map<SubKey, Bo> getBoMap(Key key) {
 		try {
 			return cache.get(key, () -> {
-				DbParamMap map = DbParamMap.create(table, table.keyName(), key);
+				DbParamMap map = DbParamMap.create(table, key);
 				List<Do> doList = databaseSupport().selectList(selectStatement, map);
 
 				return doList.stream()
@@ -79,7 +79,7 @@ public class CacheDataListSupport<Key, SubKey, Do extends ICacheEntityList<Key, 
 
 	@Override
 	protected void deleteDoFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key())
+		DbParamMap map = DbParamMap.create(table, aDo.key())
 			.put(table.subKeyName(), aDo.subKey());
 		databaseSupport().delete(deleteStatement, map);
 	}

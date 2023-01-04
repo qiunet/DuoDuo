@@ -71,7 +71,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 
 	@Override
 	protected void deleteFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key());
+		DbParamMap map = DbParamMap.create(table, aDo.key());
 		databaseSupport().delete(deleteStatement, map);
 	}
 
@@ -114,7 +114,7 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key>, Bo extend
 		}
 		Bo bo;
 		if (aDo == null) {
-			DbParamMap map = DbParamMap.create(table, table.keyName(), key);
+			DbParamMap map = DbParamMap.create(table, key);
 			aDo = databaseSupport().selectOne(selectStatement, map);
 			if (aDo == null) {
 				returnJedis().set(redisKey, PLACE_HOLDER, SetParams.setParams().ex(NORMAL_LIFECYCLE).nx());

@@ -100,10 +100,10 @@ class DbEntityAsyncQueue {
 					DbParamMap map;
 					if (IDbEntityList.class.isAssignableFrom(entity.getDo().getClass())) {
 						IDbEntityList entityList = (IDbEntityList) entity.getDo();
-						map = DbParamMap.create(table, table.keyName(), entityList.key())
+						map = DbParamMap.create(table, entityList.key())
 								.put(table.subKeyName(), entityList.subKey());
 					}else {
-						map = DbParamMap.create(table, table.keyName(), entity.getDo().key());
+						map = DbParamMap.create(table, entity.getDo().key());
 					}
 					databaseSupport.delete(deleteStatement, map);
 					break;

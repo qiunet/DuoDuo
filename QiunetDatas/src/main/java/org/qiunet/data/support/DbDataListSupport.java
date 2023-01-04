@@ -19,7 +19,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 	 * @return
 	 */
 	public Map<SubKey, Bo> getBoMap(Key key) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), key);
+		DbParamMap map = DbParamMap.create(table, key);
 		List<Do> doList = databaseSupport().selectList(selectStatement, map);
 		if (doList == null) return Maps.newHashMap();
 
@@ -35,7 +35,7 @@ public class DbDataListSupport<Key, SubKey, Do extends IDbEntityList<Key, SubKey
 	}
 
 	public void delete(Key key, SubKey subKey) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), key)
+		DbParamMap map = DbParamMap.create(table, key)
 			.put(table.subKeyName(), subKey);
 
 		databaseSupport().delete(deleteStatement, map);

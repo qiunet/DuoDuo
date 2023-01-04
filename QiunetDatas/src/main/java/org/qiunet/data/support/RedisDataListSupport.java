@@ -26,7 +26,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 
 	@Override
 	protected void deleteFromDb(Do aDo) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), aDo.key())
+		DbParamMap map = DbParamMap.create(table, aDo.key())
 			.put(table.subKeyName(), aDo.subKey());
 		databaseSupport().delete(deleteStatement, map);
 	}
@@ -87,7 +87,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 		String redisKey = getRedisKey(doName, key);
 		List<Do> doList = returnDoListFromRedis(redisKey);
 		if (doList != null && doList.isEmpty()) {
-			DbParamMap paramMap = DbParamMap.create(table, table.keyName(), key);
+			DbParamMap paramMap = DbParamMap.create(table, key);
 			doList = databaseSupport().selectList(selectStatement, paramMap);
 
 			if (! doList.isEmpty()) {

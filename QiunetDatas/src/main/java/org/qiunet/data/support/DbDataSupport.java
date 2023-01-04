@@ -13,7 +13,7 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key>, Bo extends IEntityBo<
 	}
 
 	public Bo getBo(Key key) {
-		Map<String, Object> map = DbParamMap.create(table, table.keyName(), key);
+		Map<String, Object> map = DbParamMap.create(table, key);
 		Do aDo = databaseSupport().selectOne(selectStatement, map);
 		if (aDo == null) return null;
 
@@ -33,7 +33,7 @@ public class DbDataSupport<Key, Do extends IDbEntity<Key>, Bo extends IEntityBo<
 	 * @param key
 	 */
 	public void deleteByKey(Key key) {
-		DbParamMap map = DbParamMap.create(table, table.keyName(), key);
+		DbParamMap map = DbParamMap.create(table, key);
 		databaseSupport().delete(deleteStatement, map);
 	}
 }

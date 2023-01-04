@@ -92,7 +92,7 @@ public class TestRedisDataSupport {
 		dataSupport.syncToDatabase();
 
 		Table table = vipDo.getClass().getAnnotation(Table.class);
-		DbParamMap map = DbParamMap.create(table, table.keyName(), vipDo.key());
+		DbParamMap map = DbParamMap.create(table, vipDo.key());
 		DbSourceDatabaseSupport.getInstance(table.dbSource()).insert("deleteVipDo", map);
 
 		vipBo.delete();

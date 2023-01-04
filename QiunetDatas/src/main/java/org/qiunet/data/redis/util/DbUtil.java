@@ -15,10 +15,12 @@ public final class DbUtil {
 	 * @param key
 	 * @return
 	 */
-	private static int hashCode(Object key) {
-		int hashCode = key.hashCode();
-		if (hashCode == Integer.MIN_VALUE) {
-			hashCode += 1;
+	private static long hashCode(Object key) {
+		long hashCode;
+		if (key instanceof Number) {
+			hashCode = ((Number) key).longValue();
+		}else {
+			hashCode = key.hashCode();
 		}
 		return Math.abs(hashCode);
 	}
@@ -30,8 +32,8 @@ public final class DbUtil {
 	 * @return
 	 */
 	public static int getTbIndex(Object key) {
-		int code = hashCode(key);
-		return code % MAX_TABLE_FOR_TB_SPLIT;
+		long code = hashCode(key);
+		return (int) (code % MAX_TABLE_FOR_TB_SPLIT);
 	}
 
 	 /***
