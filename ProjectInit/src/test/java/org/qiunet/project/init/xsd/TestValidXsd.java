@@ -17,7 +17,7 @@ public class TestValidXsd {
 
 
 	@Test
-	public void vliadXMLWithXsd() throws SAXException, IOException {
+	public void validXMLWithXsd() throws SAXException, IOException {
 		SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		URL url = Thread.currentThread().getContextClassLoader().getResource("xsd/DbEntity.xsd");
 

@@ -1,20 +1,19 @@
 package org.qiunet.project.init.creator;
 
-import org.apache.commons.digester3.Digester;
+import org.qiunet.project.init.common.Digester;
 import org.qiunet.project.init.define.mybatis.MybatisConfigDefine;
 import org.qiunet.project.init.define.mybatis.MybatisExtraDefine;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
-import org.qiunet.project.init.util.DigesterUtil;
 import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.system.SystemPropertyUtil;
 import org.slf4j.Logger;
-import org.xml.sax.SAXException;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -82,13 +81,13 @@ public final class ProjectInitCreator {
 	 * 给出对应classpath的xml文件夹File
 	 */
 	public static void create(String mybatisConfigFileName, File xmlDirectory, File outputModuleDir) {
+		ClassScanner.getInstance(ScannerType.OBJ_CONVERT).scanner();
 		if (! xmlDirectory.isDirectory()) {
 			throw new CustomException("["+xmlDirectory.getAbsolutePath()+"] is not a directory");
 		}
 		if (outputModuleDir!= null && ! outputModuleDir.isDirectory()) {
 			throw new CustomException("["+outputModuleDir.getAbsolutePath()+"] is not a directory");
 		}
-
 		try {
 			new ProjectInitCreator(mybatisConfigFileName, xmlDirectory, outputModuleDir).process();
 		}catch (Exception e) {
@@ -139,13 +138,12 @@ public final class ProjectInitCreator {
 		}
 		this.mybatisConfigFileName = mybatisConfigFile.getName();
 
-		Digester digester = new Digester();
-		digester.push(this);
-		DigesterUtil.addObjectCreate(digester,"mybatis_config", MybatisConfigDefine.class, "setMybatisConfig");
-		DigesterUtil.addObjectCreate(digester,"mybatis_config/extraConfigs/extra", MybatisExtraDefine.class, "addExtraFile");
+		Digester digester = new Digester(this);
+		digester.addObjectCreate("mybatis_config", MybatisConfigDefine.class, "setMybatisConfig");
+		digester.addObjectCreate("mybatis_config/extraConfigs/extra", MybatisExtraDefine.class, "addExtraFile");
 		try {
 			digester.parse(mybatisConfigFile);
-		} catch (IOException | SAXException e) {
+		} catch (Exception e) {
 			logger.error("processMybatisConfig ["+mybatisConfigFile.getName()+"] create exception:", e);
 		}
 	}

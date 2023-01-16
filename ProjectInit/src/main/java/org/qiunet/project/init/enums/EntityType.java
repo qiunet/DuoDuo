@@ -1,9 +1,8 @@
 package org.qiunet.project.init.enums;
 
-import org.apache.commons.digester3.Digester;
 import org.qiunet.data.support.*;
+import org.qiunet.project.init.common.Digester;
 import org.qiunet.project.init.define.*;
-import org.qiunet.project.init.util.DigesterUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,60 +31,60 @@ public enum  EntityType {
 	DB_ENTITY("DbEntity.xsd", DbDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "db_entity", DbEntityDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "db_entity/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "db_entity/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "db_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("db_entity", DbEntityDefine.class, "setEntityDefine");
+			digester.addObjectCreate("db_entity/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("db_entity/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("db_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	CACHE_ENTITY("CacheEntity.xsd", CacheDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "cache_entity", CacheEntityDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "cache_entity/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "cache_entity/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "cache_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("cache_entity", CacheEntityDefine.class, "setEntityDefine");
+			digester.addObjectCreate("cache_entity/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("cache_entity/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("cache_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	REDIS_ENTITY("RedisEntity.xsd", RedisDataSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "redis_entity", RedisEntityDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "redis_entity/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "redis_entity/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "redis_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("redis_entity", RedisEntityDefine.class, "setEntityDefine");
+			digester.addObjectCreate("redis_entity/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("redis_entity/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("redis_entity/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	DB_ENTITY_LIST("DbEntityList.xsd", DbDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "db_entity_list", DbEntityListDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "db_entity_list/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "db_entity_list/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "db_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("db_entity_list", DbEntityListDefine.class, "setEntityDefine");
+			digester.addObjectCreate("db_entity_list/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("db_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("db_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	CACHE_ENTITY_LIST("CacheEntityList.xsd", CacheDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "cache_entity_list", CacheEntityListDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "cache_entity_list/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "cache_entity_list/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "cache_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("cache_entity_list", CacheEntityListDefine.class, "setEntityDefine");
+			digester.addObjectCreate("cache_entity_list/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("cache_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("cache_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 
 	REDIS_ENTITY_LIST("RedisEntityList.xsd", RedisDataListSupport.class) {
 		@Override
 		public void initDigester(Digester digester) {
-			DigesterUtil.addObjectCreate(digester, "redis_entity_list", RedisEntityListDefine.class, "setEntityDefine");
-			DigesterUtil.addObjectCreate(digester, "redis_entity_list/field", FieldDefine.class, "addField");
-			DigesterUtil.addObjectCreate(digester, "redis_entity_list/constructor", ConstructorDefine.class, "addConstructor");
-			DigesterUtil.addObjectCreate(digester, "redis_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
+			digester.addObjectCreate("redis_entity_list", RedisEntityListDefine.class, "setEntityDefine");
+			digester.addObjectCreate("redis_entity_list/field", FieldDefine.class, "addField");
+			digester.addObjectCreate("redis_entity_list/constructor", ConstructorDefine.class, "addConstructor");
+			digester.addObjectCreate("redis_entity_list/constructor/constructor_arg", ConstructorArgDefine.class, "addField");
 		}
 	},
 	;

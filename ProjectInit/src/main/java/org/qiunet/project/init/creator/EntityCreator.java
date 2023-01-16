@@ -1,17 +1,15 @@
 package org.qiunet.project.init.creator;
 
-import org.apache.commons.digester3.Digester;
+import org.qiunet.project.init.common.Digester;
 import org.qiunet.project.init.define.IEntityDefine;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.InitProjectUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.xml.sax.SAXException;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -48,12 +46,11 @@ public class EntityCreator {
 	void parse(){
 		this.validXml();
 
-		Digester digester = new Digester();
-		digester.push(this);
+		Digester digester = new Digester(this);
 		entityType.initDigester(digester);
 		try {
 			digester.parse(file);
-		} catch (IOException | SAXException e) {
+		} catch (Exception e) {
 			logger.error("Digester parse error:" , e);
 		}
 
