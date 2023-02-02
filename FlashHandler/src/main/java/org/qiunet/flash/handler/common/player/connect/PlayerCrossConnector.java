@@ -17,6 +17,8 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.util.function.Consumer;
+
 /***
  *  tcp 连接
  *
@@ -31,7 +33,11 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * session
 	 */
-	private final ISession session;
+	private ISession session;
+	/**
+	 * 玩家
+	 */
+	private PlayerActor actor;
 	/**
 	 *
 	 */
@@ -49,16 +55,27 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			throw new CustomException("connect to self!");
 		}
+		this.playerId = actor.getPlayerId();
+		this.serverId = serverId;
+		this.actor = actor;
+	}
+
+	/**
+	 * 连接
+	 * @param callback 失败或者成功的回调
+	 */
+	public void connect(Consumer<Boolean> callback) {
 		ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
 		// 因为大部分服务都是内网组网. 所以使用host.如果以后不在内网. 有两个解决方案
 		// 1. 直接修改下面为publicHost . 2. 云运营商跨区域组网
-		this.session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCrossPort(), f -> f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor));
+		this.session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCrossPort(), f -> {
+			f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
+			callback.accept(f.isSuccess());
+		});
 		this.session.addCloseListener("connectorQuitCross", ((session1, cause) -> actor.quitCross(serverInfo.getServerType(), cause)));
 		session.sendMessage(ConnectionReq.valueOf(String.valueOf(actor.getId())), true);
 
 		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.isKcpSessionPrepare()), true);
-		this.playerId = actor.getPlayerId();
-		this.serverId = serverId;
 	}
 
 	public int getServerId() {

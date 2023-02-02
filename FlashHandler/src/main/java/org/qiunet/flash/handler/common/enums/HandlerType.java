@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.common.enums;
 
 import io.netty.channel.Channel;
-import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -16,12 +15,7 @@ public enum HandlerType {
 	/**
 	 * 包括http  https
 	 */
-	HTTP {
-		@Override
-		public IMessage createRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			throw new CustomException("Not support for that! Please do it manual!");
-		}
-	},
+	HTTP,
 	/**
 	 * 长连接
 	 * persistent connection
@@ -29,8 +23,8 @@ public enum HandlerType {
 	 */
 	PERSIST_CONN {
 		@Override
-		public IMessage createRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor) {
-			return handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
+		public IRequestContext createRequestContext(IHandler handler, MessageContent content, Channel channel) {
+			return handler.getDataType().createRequestContext(content, channel);
 		}
 	};
 
@@ -38,5 +32,7 @@ public enum HandlerType {
 	 * 根据handlerType 创建requestContext
 	 * @return
 	 */
-	public abstract IMessage createRequestContext(MessageContent content, Channel channel, IHandler handler, IMessageActor messageActor);
+	public IRequestContext createRequestContext(IHandler handler, MessageContent content, Channel channel) {
+		throw new CustomException("Not support!!");
+	}
 }

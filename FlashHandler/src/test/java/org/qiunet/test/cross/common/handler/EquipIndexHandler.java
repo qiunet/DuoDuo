@@ -24,8 +24,11 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 		if (playerActor.isCrossStatus()) {
 			throw new CustomException("{} 已经跨服. 需要去crossHandler", playerActor.toString());
 		}
-		playerActor.crossToServer(Constants.CROSS_SERVER_ID);
-		playerActor.fireCrossEvent(new CrossPlayerLoginEvent());
+		playerActor.crossToServer(Constants.CROSS_SERVER_ID, result -> {
+			if (result) {
+				playerActor.fireCrossEvent(new CrossPlayerLoginEvent());
+			}
+		});
 	}
 
 	@Override

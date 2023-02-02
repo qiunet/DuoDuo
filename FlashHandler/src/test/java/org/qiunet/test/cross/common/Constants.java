@@ -8,8 +8,8 @@ package org.qiunet.test.cross.common;
  */
 public interface Constants {
 
-	int LOGIC_SERVER_ID = 101;
-	int CROSS_SERVER_ID = 201;
+	int LOGIC_SERVER_ID = 1011;
+	int CROSS_SERVER_ID = 1012;
 
 	int CROSS_SERVER_PORT = 8001;
 	int CROSS_NODE_PORT = 8002;

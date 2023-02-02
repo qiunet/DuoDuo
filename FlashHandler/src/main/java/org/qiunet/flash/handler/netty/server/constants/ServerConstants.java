@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.netty.server.constants;
 import com.google.common.collect.Lists;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
@@ -50,6 +51,10 @@ public final class ServerConstants {
 	 * 启动参数
 	 */
 	public static final AttributeKey<ServerBootStrapConfig> BOOTSTRAP_CONFIG_KEY = AttributeKey.newInstance("BOOTSTRAP_CONFIG");
+	/***
+	 * HTTP request
+	 */
+	public static final AttributeKey<HttpRequest> HTTP_REQUEST_KEY = AttributeKey.newInstance("HTTP_REQUEST");
 	/***
 	 * messageActor 存储在channel的key
 	 */

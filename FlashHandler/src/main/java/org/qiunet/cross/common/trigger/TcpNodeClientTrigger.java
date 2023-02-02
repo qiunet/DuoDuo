@@ -4,6 +4,7 @@ import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -35,7 +36,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		if (handler == null) {
 			LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());
 		}
-		IMessage message = handler.getHandlerType().createRequestContext(data, session.channel(), handler, iMessageActor);
-		iMessageActor.addMessage(message);
+		IRequestContext message = handler.getHandlerType().createRequestContext(handler, data, session.channel());
+		iMessageActor.addMessage((IMessage) message);
 	}
 }

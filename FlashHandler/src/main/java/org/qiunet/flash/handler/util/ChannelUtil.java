@@ -11,6 +11,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
+import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.event.ClientPingEvent;
@@ -22,9 +23,9 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequestContext;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -248,8 +249,8 @@ public final class ChannelUtil {
 			return;
 		}
 		if (channel.isActive()) {
-			IPersistConnRequestContext context = handler.getDataType().createPersistConnRequestContext(content, channel, handler, messageActor);
-			messageActor.addMessage(context);
+			IRequestContext context = handler.getDataType().createRequestContext(content, channel);
+			messageActor.addMessage((IMessage) context);
 		}
 	}
 

@@ -27,6 +27,7 @@ import org.qiunet.utils.logger.LoggerType;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 /***
  * 玩家playerActor 的父类
@@ -121,7 +122,20 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
-	public void crossToServer(int serverId) {
+	public void crossToServer(int serverId, Consumer<Boolean> resultCallback) {
+		if (inSelfThread()) {
+			this.crossToServer0(serverId, resultCallback);
+		}else {
+			this.addMessage(p -> p.crossToServer0(serverId, resultCallback));
+		}
+	}
+
+	/**
+	 * 跨服
+	 * @param serverId
+	 * @param resultCallback 结果回调
+	 */
+	private void crossToServer0(int serverId, Consumer<Boolean> resultCallback) {
 		ServerType serverType = ServerType.getServerType(serverId);
 		if (isCrossStatus(serverType)) {
 			throw new CustomException("Current is cross to a [{}] server!", serverType);
@@ -130,9 +144,22 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			throw new CustomException("Can not cross to self!");
 		}
-		LoggerType.DUODUO_FLASH_HANDLER.info("player {} cross to serverId {}", this.getId(), serverId);
-		crossConnectors.computeIfAbsent(serverType, key -> new PlayerCrossConnector(this, serverId));
-		this.crossServerType = serverType;
+
+		PlayerCrossConnector connector = new PlayerCrossConnector(this, serverId);
+		connector.connect(result -> {
+			if (result) {
+				LoggerType.DUODUO_FLASH_HANDLER.info("player {} cross to serverId {} success!", this.getId(), serverId);
+				crossConnectors.put(serverType, connector);
+				this.crossServerType = serverType;
+			}else {
+				LoggerType.DUODUO_FLASH_HANDLER.error("Player {} cross to serverId {} FAIL!", this.getId(), serverId);
+			}
+
+			if (resultCallback != null) {
+				resultCallback.accept(result);
+			}
+		});
+
 	}
 
 	@Override
@@ -148,18 +175,18 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	@Override
 	public void quitCross(ServerType serverType, CloseCause cause) {
 		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverType);
-		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server type {}", this.getId(), serverType);
 		if (playerCrossConnector == null) {
 			return;
 		}
+
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server type {}", this.getId(), serverType);
 		playerCrossConnector.getSession().close(cause);
 		if (crossServerType == serverType) {
 			this.switchCross(null);
 		}
 	}
 
-	@Override
-	public void switchCross(ServerType serverType) {
+	private void switchCross(ServerType serverType) {
 		if (serverType != null && ! isCrossStatus(serverType)) {
 			throw new CustomException("Current not cross a [{}] server!", serverType);
 		}
@@ -345,12 +372,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 	@Override
 	public void syncBbMessage(Runnable runnable) {
-		if (inSelfThread() || isDestroyed()) {
-			runnable.run();
-			return;
-		}
-		boolean addMessage = this.addMessage(h -> runnable.run());
-		if (! addMessage) {
+		if (inSelfThread() || isDestroyed() || ! this.addMessage(h -> runnable.run())) {
 			runnable.run();
 		}
 	}

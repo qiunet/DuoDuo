@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.client.tcp;
 
+import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.epoll.Epoll;
@@ -19,6 +20,7 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 
 /**
  * Created by qiunet.
@@ -60,6 +62,8 @@ public class NettyTcpClient {
 	 * @return
 	 */
 	public ISession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
+		Preconditions.checkArgument(!StringUtil.isEmpty(host));
+		Preconditions.checkArgument(port > 0);
 		return new DSession(
 				DSessionConnectParam.newBuilder(() -> bootstrap.connect(host, port))
 				.setConnectListener(listener)

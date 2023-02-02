@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /***
- * 兼容以前的 协议处理头
+ * 跨服的 协议处理头
  *
  * @author qiunet
  * 2022/10/20 08:55

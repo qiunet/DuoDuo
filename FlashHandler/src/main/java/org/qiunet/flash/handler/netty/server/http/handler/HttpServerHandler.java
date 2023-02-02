@@ -12,13 +12,14 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
-import org.qiunet.flash.handler.context.request.http.IHttpRequestContext;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -170,8 +171,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
-
-		IHttpRequestContext context = handler.getDataType().createHttpRequestContext(content, ctx.channel(), handler, config, request);
+		ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
+		ctx.channel().attr(ServerConstants.HTTP_REQUEST_KEY).set(request);
+		IRequestContext context = handler.getDataType().createRequestContext(content, ctx.channel());
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();

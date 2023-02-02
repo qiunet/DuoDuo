@@ -6,6 +6,8 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
+import java.util.function.Consumer;
+
 /***
  * 跨服状态的actor
  *
@@ -39,9 +41,18 @@ public interface ICrossStatusActor {
 	ServerType currentCrossType();
 	/**
 	 * 跨服到某个server
-	 * @param serverId
+	 * @param serverId 服务ID
 	 */
-	void crossToServer(int serverId);
+	default void crossToServer(int serverId) {
+		crossToServer(serverId, null);
+	}
+
+	/**
+	 * 跨服到某个server
+	 * @param serverId 服务ID
+	 * @param resultCallback 结果回调
+	 */
+	void crossToServer(int serverId, Consumer<Boolean> resultCallback);
 	/**
 	 * 退出当前的跨服
 	 */
@@ -51,11 +62,6 @@ public interface ICrossStatusActor {
 		}
 		this.quitCross(this.currentCrossType(), cause);
 	}
-	/**
-	 * 切换跨服
-	 * @param serverType
-	 */
-	void switchCross(ServerType serverType);
 	/**
 	 * 是否有某种类型的服务跨服
 	 * @param serverType
