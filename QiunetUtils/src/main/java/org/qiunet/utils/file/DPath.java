@@ -3,6 +3,8 @@ package org.qiunet.utils.file;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -20,10 +22,7 @@ public class DPath {
 	 * @return 文件名
 	 */
 	public static String fileName(String path) {
-		if (path.contains("\\")) {
-			return path.substring(path.lastIndexOf("\\") + 1);
-		}
-		return path.substring(path.lastIndexOf("/") + 1);
+		return Paths.get(path).getFileName().toString();
 	}
 
 	/**
@@ -34,10 +33,11 @@ public class DPath {
 	 * @return
 	 */
 	public static String dirName(String path) {
-		if (path.contains("\\")) {
-			return path.substring(0, path.lastIndexOf("\\"));
+		Path path0 = Paths.get(path);
+		if (path0.toFile().isDirectory()) {
+			return path0.toString();
 		}
-		return path.substring(0, path.lastIndexOf("/"));
+		return path0.getParent().toString();
 	}
 
 	/**

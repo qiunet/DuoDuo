@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 /***
  * 配置文件里面的字段对象转换器
@@ -100,7 +99,7 @@ public enum ConvertManager implements IApplicationContextAware {
 			.filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
 			.map(clazz -> (BaseObjConvert)context.getInstanceOfClass(clazz))
 			.filter(Objects::nonNull)
-			.collect(Collectors.toList());
+			.toList();
 
 		LoggerType.DUODUO_CFG_READER.debug("find {} cfg field convert!", this.converts.size());
 	}

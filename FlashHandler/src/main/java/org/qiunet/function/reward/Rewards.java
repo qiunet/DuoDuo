@@ -16,7 +16,6 @@ import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /***
  * 奖励
@@ -146,7 +145,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @return
 	 */
 	public String toDbJsonString(){
-		List<RewardConfig> collect = getRewardList().stream().map(BaseReward::toRewardConfig).collect(Collectors.toList());
+		List<RewardConfig> collect = getRewardList().stream().map(BaseReward::toRewardConfig).toList();
 		return JsonUtil.toJsonString(collect);
 	}
 
@@ -163,7 +162,7 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObj(json, REWARD_CONFIG_TYPE);
 		List<BaseReward> collect = rewardConfigs.stream()
 				.map(config -> config.convertToRewardItem(BasicFunctionManager.instance::getResType))
-				.collect(Collectors.toList());
+				.toList();
 		return new Rewards(collect);
 	}
 }

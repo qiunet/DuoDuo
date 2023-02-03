@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /***
  * 本服排行
@@ -117,7 +116,7 @@ public abstract class BaseCacheRankHandler<Type extends Enum<Type> & IRankType>
 	public List<RankData> getRankVos(int startRank, int size) {
 		return rankData.stream()
 			.filter(vo -> vo.rank >= startRank)
-			.limit(size).collect(Collectors.toList());
+			.limit(size).toList();
 	}
 
 	@Override

@@ -6,7 +6,6 @@ import org.qiunet.utils.async.ParallelProcess;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /***
@@ -18,7 +17,7 @@ public class TestParallelProcess {
 
 	@Test
 	public void test() {
-		List<Integer> integers = IntStream.range(0, 10).boxed().collect(Collectors.toList());
+		List<Integer> integers = IntStream.range(0, 10).boxed().toList();
 		AtomicInteger counter = new AtomicInteger();
 		ParallelProcess.newProcess(integers).handle(val -> {
 					System.out.println(Thread.currentThread().getName());

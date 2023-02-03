@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 其它可以通用逻辑的工具类
@@ -54,7 +53,7 @@ public class CommonUtil {
 		if(list==null || list.isEmpty()){
 			return null;
 		}
-		return list.stream().skip(skip).limit(count).collect(Collectors.toList());
+		return list.stream().skip(skip).limit(count).toList();
 	}
 
 	/***

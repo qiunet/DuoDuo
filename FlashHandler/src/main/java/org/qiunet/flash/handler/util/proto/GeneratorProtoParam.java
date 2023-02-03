@@ -12,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /***
  *
@@ -47,7 +46,7 @@ public class GeneratorProtoParam extends GeneratorProtoCache {
 		this.allPbClass = allClass.stream()
 				.filter(IChannelData.class::isAssignableFrom)
 				.sorted((o1, o2) -> ComparisonChain.start().compare(o1.getSimpleName(), o2.getSimpleName()).result())
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	public ProtoGeneratorModel getModel() {

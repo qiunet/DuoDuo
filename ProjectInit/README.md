@@ -4,7 +4,16 @@
 	
 	xml 集中放置在一个目录. 每个模块一个xml即可.
 	
-	
+## 使用
+需要增加maven引用:
+
+	<dependency>
+		<groupId>io.github.qiunet</groupId>
+		<artifactId>ProjectInit</artifactId>
+		<version>7.0.10</version>
+	</dependency>
+
+引用的scope如果有需要, 可以设置为`test`
 	
 ## 调用 
 	 ProjectInitCreator.create(String xmlDirectoryName) 需要给出xml的放置目录

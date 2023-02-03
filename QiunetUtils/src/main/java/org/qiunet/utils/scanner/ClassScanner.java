@@ -112,7 +112,7 @@ public final class ClassScanner implements IApplicationContext {
 		List<IApplicationContextAware> collect = subTypesOf.stream()
 			.map(aClass -> (IApplicationContextAware) getInstanceOfClass(aClass))
 			.sorted((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).compare(o1.scannerType().ordinal(), o2.scannerType().ordinal()).result())
-			.collect(Collectors.toList());
+			.toList();
 
 		AtomicReference<Exception> reference = new AtomicReference<>();
 		CountDownLatch latch = new CountDownLatch(collect.size());

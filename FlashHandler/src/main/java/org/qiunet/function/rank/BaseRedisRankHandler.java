@@ -8,7 +8,6 @@ import org.qiunet.utils.json.JsonUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /***
  * redis 跨服类型的排行.
@@ -108,7 +107,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 			RankData rankData = JsonUtil.getGeneralObj(str, RankData.class);
 			rankData.rank = rank.incrementAndGet();
 			return rankData;
-		}).collect(Collectors.toList());
+		}).toList();
 	}
 
 	@Override

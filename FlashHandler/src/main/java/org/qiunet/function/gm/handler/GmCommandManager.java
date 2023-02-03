@@ -25,7 +25,6 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /***
  * 处理gm命令
@@ -51,7 +50,7 @@ enum GmCommandManager implements IApplicationContextAware {
 						.compare(o2.getAnnotation(GmCommand.class).order(), o1.getAnnotation(GmCommand.class).order())
 						.compare(o1.getAnnotation(GmCommand.class).order(), o2.getAnnotation(GmCommand.class).order())
 						.result()
-		).collect(Collectors.toList());
+		).toList();
 
 		// 使用自己的排序. 不用外部给定type
 		AtomicInteger id = new AtomicInteger();
@@ -69,7 +68,7 @@ enum GmCommandManager implements IApplicationContextAware {
 						.compare(o1.annotation.commandName(), o2.annotation.commandName())
 						.result()
 				).map(data -> GmCommandInfo.valueOf(data.type, data.annotation.commandName(), data.paramList))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	@Override

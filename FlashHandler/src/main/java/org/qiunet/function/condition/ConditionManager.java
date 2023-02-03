@@ -20,7 +20,6 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /***
  * 条件生成管理
@@ -133,7 +132,7 @@ public class ConditionManager {
 						 }
 						 return iCondition;
 					 })
-					 .collect(Collectors.toList());
+					 .toList();
 			 return new Conditions(collect);
 		 }
 

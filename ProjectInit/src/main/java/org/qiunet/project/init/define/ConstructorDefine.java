@@ -31,6 +31,6 @@ public class ConstructorDefine {
 		Map<String, FieldDefine> map = entityDefine.getFieldDefines().stream()
 			.collect(Collectors.toMap(FieldDefine::getName, field -> field));
 
-		return fields.stream().map(map::get).collect(Collectors.toList());
+		return fields.stream().map(map::get).toList();
 	}
 }

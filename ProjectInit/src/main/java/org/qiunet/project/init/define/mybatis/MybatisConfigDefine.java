@@ -8,7 +8,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /***
  *
@@ -80,7 +79,7 @@ public class MybatisConfigDefine implements ITemplateObjectDefine {
 				this.files.remove(this.fileName);
 			}
 		}
-		return files.stream().sorted().collect(Collectors.toList());
+		return files.stream().sorted().toList();
 	}
 
 	public void addAliasPackage(String packageName) {

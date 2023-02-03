@@ -66,7 +66,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 				return null;
 			}
 
-			return hvals.stream().map(json -> JsonUtil.getGeneralObj(json, doClass)).collect(Collectors.toList());
+			return hvals.stream().map(json -> JsonUtil.getGeneralObj(json, doClass)).toList();
 		});
 	}
 

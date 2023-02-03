@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author  zhengj
@@ -90,7 +89,7 @@ abstract class BaseJsonCfgManager<ID, Cfg extends ICfg<ID>> extends BaseCfgManag
 			jsonObjects.addAll(generalList);
 		}
 
-		return jsonObjects.stream().map(this::generalCfg).collect(Collectors.toList());
+		return jsonObjects.stream().map(this::generalCfg).toList();
 	}
 
 

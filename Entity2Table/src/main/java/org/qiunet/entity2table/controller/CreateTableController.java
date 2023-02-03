@@ -146,7 +146,7 @@ class CreateTableController implements IApplicationContextAware {
 
 		List<FieldParam> addFieldList = entityFieldList.stream()
 				.filter(f -> !tableColumnNames.contains(f.getFieldName()))
-				.collect(Collectors.toList());
+				.toList();
 
 		if (! addFieldList.isEmpty()) {
 			this.addTableFields(new TableParam(table.name(), addFieldList, table.splitTable(), table.dbSource()));

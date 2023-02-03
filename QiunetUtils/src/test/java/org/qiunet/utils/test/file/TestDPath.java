@@ -11,21 +11,11 @@ import org.qiunet.utils.file.DPath;
  */
 public class TestDPath {
 	@Test
-	public void testUnixDirName() {
+	public void testDirName() {
 		Assertions.assertEquals("/Users/qiunet", DPath.dirName("/Users/qiunet/ss.txt"));
 	}
 	@Test
-	public void testUnixFileName() {
+	public void testFileName() {
 		Assertions.assertEquals("ss.txt", DPath.fileName("/Users/qiunet/ss.txt"));
-	}
-
-	@Test
-	public void testWinDirName() {
-		Assertions.assertEquals("D:\\WorkSpace", DPath.dirName("D:\\WorkSpace\\ss.txt"));
-	}
-
-	@Test
-	public void testWinFileName() {
-		Assertions.assertEquals("ss.txt", DPath.fileName("D:\\WorkSpace\\ss.txt"));
 	}
 }

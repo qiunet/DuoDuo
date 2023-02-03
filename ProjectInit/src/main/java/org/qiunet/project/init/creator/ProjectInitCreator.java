@@ -19,7 +19,6 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by qiunet on 4/8/17.
@@ -103,7 +102,7 @@ public final class ProjectInitCreator {
 		if (listFiles == null) {
 			throw new NullPointerException("No file in xmlDirectory ["+xmlDirectory+"]");
 		}
-		List<File> files = Arrays.stream(listFiles).sorted().collect(Collectors.toList());
+		List<File> files = Arrays.stream(listFiles).sorted().toList();
 		for (File file : files) {
 			if (mybatisConfigFileName.equals(file.getName())) {
 				continue;

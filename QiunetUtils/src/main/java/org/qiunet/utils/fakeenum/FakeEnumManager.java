@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /***
@@ -75,7 +74,7 @@ class FakeEnumManager {
 		public void enumClassProcess(Class<?> clazz) {
 			List<Field> fieldList = Stream.of(clazz.getDeclaredFields()).sorted(
 					((o1, o2) -> ComparisonChain.start().compare(o1.getName(), o2.getName()).result())
-			).collect(Collectors.toList());
+			).toList();
 			for (Field field : fieldList) {
 				if (! FakeEnum.class.isAssignableFrom(field.getType())) {
 					continue;

@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 /***
- *
+ * 随机执行器.
+ * 每次根据权重随机抽取一个子节点执行.
+ * 可以在构造方法执行执行过的不再参与随机.
  *
  * qiunet
  * 2021/8/9 12:10

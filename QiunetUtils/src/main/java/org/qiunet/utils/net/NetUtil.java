@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -150,7 +149,7 @@ public class NetUtil {
 				}
 				return result;
 			}
-		}).collect(Collectors.toList());
+		}).toList();
 
 		try {
 			String publicIp = ThreadPoolManager.NORMAL.invokeAny(callables);

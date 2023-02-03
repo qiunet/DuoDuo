@@ -12,7 +12,6 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /***
  * 错误信息提示响应
@@ -38,7 +37,7 @@ public class StatusTipsRsp extends IChannelData {
 
 	private StatusTipsRsp(int status, String desc, Object... params) {
 		if (params != null && params.length > 0) {
-			this.params = Arrays.stream(params).map(String::valueOf).collect(Collectors.toList());
+			this.params = Arrays.stream(params).map(String::valueOf).toList();
 		}
 		this.status = status;
 		this.desc = desc;

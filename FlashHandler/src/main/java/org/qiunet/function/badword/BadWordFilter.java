@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /***
  * 涉及玩家输入的敏感词屏蔽
@@ -69,7 +68,7 @@ public enum  BadWordFilter {
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try (FileReader fileReader = new FileReader(file);
 				 LineNumberReader lReader = new LineNumberReader(fileReader)){
-				List<String> collect = lReader.lines().collect(Collectors.toList());
+				List<String> collect = lReader.lines().toList();
 				this.loadBadWord(new DefaultBadWord(collect));
 			} catch (IOException e) {
 				LoggerType.DUODUO.error("Read bad word exception", e);

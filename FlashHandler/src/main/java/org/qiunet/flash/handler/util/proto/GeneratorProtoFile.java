@@ -80,7 +80,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 					int protocolId2 = o2.isAnnotationPresent(ChannelData.class) ? o2.getAnnotation(ChannelData.class).ID() : 0;
 					return ComparisonChain.start().compare(protocolId2, protocolId1).result();
 				})
-			.collect(Collectors.toList());
+			.toList();
 
 		GeneratorProtoFile.classes.addAll(collect);
 	}

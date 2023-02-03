@@ -7,7 +7,6 @@ import org.qiunet.utils.json.JsonUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /***
  * 对Obj 的条件校验.
@@ -69,7 +68,7 @@ public class Conditions<Obj> implements IConditions<Obj> {
 	 * @return
 	 */
 	public String toJsonString(){
-		List<ConditionConfig> collect = this.conditions.stream().map(ICondition::conditionConfig).collect(Collectors.toList());
+		List<ConditionConfig> collect = this.conditions.stream().map(ICondition::conditionConfig).toList();
 		return JsonUtil.toJsonString(collect);
 	}
 }
