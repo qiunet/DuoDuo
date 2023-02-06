@@ -2,6 +2,7 @@ package org.qiunet.cross.event;
 
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.IPlayerFireEvent;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
@@ -25,12 +26,12 @@ public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor
 		if (obj instanceof UserEvent eventData) {
 
 			if (actor instanceof AbstractUserActor) {
-				((AbstractUserActor) actor).fireAsyncEvent(eventData);
+				((IPlayerFireEvent) actor).fireAsyncEvent(eventData);
 			}else if (requestData.getPlayerId() != 0) {
 				AbstractUserActor playerActor = UserOnlineManager.instance.getActor(requestData.getPlayerId());
 				if (playerActor != null) {
 					// 在线的情况
-					playerActor.fireAsyncEvent(eventData);
+					((IPlayerFireEvent) playerActor).fireAsyncEvent(eventData);
 				}else {
 					OfflineUserRequestEvent.valueOf(eventData, requestData.getPlayerId()).fireEventHandler();
 				}

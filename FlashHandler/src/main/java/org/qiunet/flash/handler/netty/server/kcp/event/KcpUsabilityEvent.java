@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.netty.server.kcp.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
-import org.qiunet.flash.handler.common.player.event.UserEvent;
+import org.qiunet.cross.event.BaseCrossPlayerEvent;
 
 /***
  *
@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.common.player.event.UserEvent;
  * @author qiunet
  * 2022/5/19 15:09
  */
-public class KcpUsabilityEvent extends UserEvent {
+public class KcpUsabilityEvent extends BaseCrossPlayerEvent {
 	@Protobuf
 	private boolean prepare;
 

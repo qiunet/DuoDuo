@@ -105,5 +105,8 @@ public interface IProtocolId {
 		int CONNECTION_REQ = 705;
 		int CONNECTION_RSP = 706;
 
+		/**登出*/
+		int LOGOUT_REQ = 707;
+
     }
 }

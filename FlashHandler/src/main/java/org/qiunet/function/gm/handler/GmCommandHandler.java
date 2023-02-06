@@ -5,6 +5,7 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.function.gm.proto.req.GmCommandReq;
 import org.qiunet.function.gm.proto.rsp.GmCommandRsp;
 import org.qiunet.utils.logger.LoggerType;
@@ -36,6 +37,9 @@ public class GmCommandHandler extends PersistConnPbHandler<PlayerActor, GmComman
 		}
 
 		IGameStatus status = commandInfo.handler(playerActor, requestData.getParams());
+		if (status.getStatus() != IGameStatus.SUCCESS.getStatus()) {
+			playerActor.sendMessage(StatusTipsRsp.valueOf(status));
+		}
 		playerActor.sendMessage(GmCommandRsp.valueOf(status));
 	}
 }

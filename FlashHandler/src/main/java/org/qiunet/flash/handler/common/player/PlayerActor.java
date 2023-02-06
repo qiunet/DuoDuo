@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import com.google.common.collect.Maps;
+import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.async.ISyncDbMessage;
 import org.qiunet.data.db.entity.DbEntityList;
@@ -8,12 +9,10 @@ import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.db.loader.DbEntityBo;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
-import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
-import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -25,6 +24,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.Map;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -36,11 +36,15 @@ import java.util.function.Consumer;
  * 2020-10-21 10:08
  */
 public final class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
-		IPlayer, IPlayerDataLoader, ISyncDbMessage {
+		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayer, IPlayerDataLoader, ISyncDbMessage {
 	/**
 	 * 跨服的连接管理
 	 */
-	private final Map<ServerType, PlayerCrossConnector> crossConnectors = Maps.newEnumMap(ServerType.class);
+	private final Map<Integer, PlayerCrossConnector> crossConnectors = Maps.newHashMap();
+	/**
+	 * 保证玩家跨服从一个服务退出. 回到前一个服务
+	 */
+	private final Stack<Integer> crosssServerStack = new Stack<>();
 	/**
 	 * 等待重连状态
 	 * 该状态下, 跨服的包不往下发.
@@ -54,7 +58,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 当前跨服类型
 	 */
-	private ServerType crossServerType;
+	private int currentCrossServerId;
 	/**
 	 * 登录成功的actor
 	 */
@@ -100,13 +104,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		}, 20, TimeUnit.SECONDS);
 
 	}
-	/**
-	 * 给所有的跨服连接发送事件
-	 * @param eventData
-	 */
-	private void allCrossEvent(UserEvent eventData) {
+
+	@Override
+	public <E extends BaseCrossPlayerEvent> void allCrossEvent(E event) {
 		crossConnectors.values().forEach(crossConnector -> {
-			crossConnector.fireCrossEvent(eventData);
+			crossConnector.fireCrossEvent(event);
 		});
 	}
 
@@ -136,9 +138,8 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * @param resultCallback 结果回调
 	 */
 	private void crossToServer0(int serverId, Consumer<Boolean> resultCallback) {
-		ServerType serverType = ServerType.getServerType(serverId);
-		if (isCrossStatus(serverType)) {
-			throw new CustomException("Current is cross to a [{}] server!", serverType);
+		if (isCrossStatus(serverId)) {
+			throw new CustomException("Current is cross to a [{}] server!", serverId);
 		}
 
 		if (serverId == ServerNodeManager.getCurrServerId()) {
@@ -149,8 +150,9 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		connector.connect(result -> {
 			if (result) {
 				LoggerType.DUODUO_FLASH_HANDLER.info("player {} cross to serverId {} success!", this.getId(), serverId);
-				crossConnectors.put(serverType, connector);
-				this.crossServerType = serverType;
+				this.crosssServerStack.push(this.currentCrossServerId);
+				crossConnectors.put(serverId, connector);
+				this.currentCrossServerId = serverId;
 			}else {
 				LoggerType.DUODUO_FLASH_HANDLER.error("Player {} cross to serverId {} FAIL!", this.getId(), serverId);
 			}
@@ -163,55 +165,55 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
-	public ServerType currentCrossType() {
-		return crossServerType;
+	public int currentCrossServerId() {
+		return currentCrossServerId;
+	}
+
+	@Override
+	public void quitCurrentCross(CloseCause cause) {
+		if (! isCrossStatus()) {
+			return;
+		}
+		this.quitCross(this.currentCrossServerId, cause);
 	}
 
 	/**
 	 * 退出指定类型的跨服
-	 * @param serverType
+	 * @param serverId
 	 * @param cause
 	 */
-	@Override
-	public void quitCross(ServerType serverType, CloseCause cause) {
-		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverType);
+	public void quitCross(int serverId, CloseCause cause) {
+		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverId);
 		if (playerCrossConnector == null) {
 			return;
 		}
 
-		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server type {}", this.getId(), serverType);
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
 		playerCrossConnector.getSession().close(cause);
-		if (crossServerType == serverType) {
-			this.switchCross(null);
+		if (currentCrossServerId == serverId) {
+			this.currentCrossServerId = crosssServerStack.pop();
 		}
-	}
-
-	private void switchCross(ServerType serverType) {
-		if (serverType != null && ! isCrossStatus(serverType)) {
-			throw new CustomException("Current not cross a [{}] server!", serverType);
-		}
-		this.crossServerType = serverType;
 	}
 
 	@Override
-	public boolean isCrossStatus(ServerType serverType) {
-		return crossConnectors.containsKey(serverType);
+	public boolean isCrossStatus(int serverId) {
+		return crossConnectors.containsKey(serverId);
 	}
 
 	@Override
 	public void sendCrossMessage(IChannelMessage<?> channelMessage) {
-		if (crossServerType == null) {
+		if (currentCrossServerId == 0) {
 			throw new CustomException("Current not cross to any server");
 		}
-		crossConnectors.get(crossServerType).sendMessage(channelMessage, true);
+		crossConnectors.get(currentCrossServerId).sendMessage(channelMessage, true);
 	}
 
 	@Override
 	public ISession crossSession() {
-		if (crossServerType == null) {
+		if (currentCrossServerId == 0) {
 			throw new CustomException("Current not cross to any server");
 		}
-		return crossConnectors.get(crossServerType).getSession();
+		return crossConnectors.get(currentCrossServerId).getSession();
 	}
 
 	@Override
@@ -295,20 +297,10 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 对当前跨服的服务器发送跨服事件
 	 * @param event
-	 * @param <D>
 	 */
-	public <D extends UserEvent> void fireCrossEvent(D event) {
-		crossConnectors.get(crossServerType).fireCrossEvent(event);
-	}
-
-	/**
-	 * 触发本服事件
-	 *
-	 * @param event
-	 * @param <D>
-	 */
-	public <D extends BasePlayerEvent> void fireEvent(D event) {
-		super.fireEvent(event);
+	@Override
+	public void fireCrossEvent(BaseCrossPlayerEvent event) {
+		crossConnectors.get(currentCrossServerId).fireCrossEvent(event);
 	}
 
 	public long getPlayerId() {

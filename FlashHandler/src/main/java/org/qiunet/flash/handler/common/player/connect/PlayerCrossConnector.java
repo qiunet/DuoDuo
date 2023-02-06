@@ -37,7 +37,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 	/**
 	 * 玩家
 	 */
-	private PlayerActor actor;
+	private final PlayerActor actor;
 	/**
 	 *
 	 */
@@ -72,7 +72,7 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 			f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
 			callback.accept(f.isSuccess());
 		});
-		this.session.addCloseListener("connectorQuitCross", ((session1, cause) -> actor.quitCross(serverInfo.getServerType(), cause)));
+		this.session.addCloseListener("connectorQuitCross", ((session1, cause) -> actor.quitCross(serverInfo.getServerId(), cause)));
 		session.sendMessage(ConnectionReq.valueOf(String.valueOf(actor.getId())), true);
 
 		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.isKcpSessionPrepare()), true);

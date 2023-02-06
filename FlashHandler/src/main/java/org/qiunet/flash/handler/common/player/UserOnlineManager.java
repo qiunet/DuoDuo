@@ -106,6 +106,12 @@ public enum UserOnlineManager {
 			// 给10分钟重连时间
 			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 10 * 60, TimeUnit.SECONDS);
 			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
+
+
+			if (actor.isCrossStatus()) {
+				// 告诉跨服服务. 玩家这里断线了.
+				actor.fireCrossEvent(PlayerBrokenEvent.valueOf());
+			}
 		}
 	}
 	/**
@@ -145,7 +151,9 @@ public enum UserOnlineManager {
 
 		onlinePlayers.put(playerId, waitActor.actor);
 		currActor.destroy();
-
+		// 通知跨服和本服
+		waitActor.actor.fireCrossEvent(PlayerReconnectEvent.valueOf());
+		waitActor.actor.fireEvent(ActorReconnectEvent.valueOf());
 		return waitActor.actor;
 	}
 

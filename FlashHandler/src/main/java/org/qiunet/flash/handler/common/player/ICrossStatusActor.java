@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
-import org.qiunet.data.util.ServerType;
+import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -20,7 +20,7 @@ public interface ICrossStatusActor {
 	 * @return
 	 */
 	default boolean isCrossStatus() {
-		return currentCrossType() != null;
+		return currentCrossServerId() != 0;
 	}
 	/**
 	 * 退出所有跨服
@@ -28,17 +28,10 @@ public interface ICrossStatusActor {
 	 */
 	void quitAllCross(CloseCause cause);
 	/**
-	 * 退出指定类型的跨服
-	 * @param serverType 指定类型
-	 * @param cause
-	 */
-	void quitCross(ServerType serverType, CloseCause cause);
-
-	/**
 	 * 当前跨服的类型
 	 * @return
 	 */
-	ServerType currentCrossType();
+	int currentCrossServerId();
 	/**
 	 * 跨服到某个server
 	 * @param serverId 服务ID
@@ -56,18 +49,13 @@ public interface ICrossStatusActor {
 	/**
 	 * 退出当前的跨服
 	 */
-	default void quitCurrentCross(CloseCause cause) {
-		if (! isCrossStatus()) {
-			return;
-		}
-		this.quitCross(this.currentCrossType(), cause);
-	}
+	void quitCurrentCross(CloseCause cause);
 	/**
 	 * 是否有某种类型的服务跨服
-	 * @param serverType
+	 * @param serverId
 	 * @return
 	 */
-	boolean isCrossStatus(ServerType serverType);
+	boolean isCrossStatus(int serverId);
 	/**
 	 * 给当前跨服的服务发送消息
 	 * @return
@@ -75,6 +63,11 @@ public interface ICrossStatusActor {
 	default void sendCrossMessage(IChannelData channelData) {
 		this.sendCrossMessage(channelData.buildChannelMessage());
 	}
+	/**
+	 * 给所有的跨服连接发送事件
+	 * @param event
+	 */
+	<E extends BaseCrossPlayerEvent> void allCrossEvent(E event);
 
 	void sendCrossMessage(IChannelMessage<?> channelData);
 	/**

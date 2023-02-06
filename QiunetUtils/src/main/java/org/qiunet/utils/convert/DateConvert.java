@@ -24,7 +24,13 @@ public class DateConvert extends BaseObjConvert<Date> {
 		if (StringUtil.isEmpty(str)) {
 			return ZERO_DATE;
 		}
+
 		try {
+			if (str.length() >= 13 && ! str.contains(" ") && StringUtil.isNum(str)) {
+				// 时间戳类型
+				return new Date(Long.parseLong(str));
+			}
+
 			if(str.length() > 10) {
 				return datetimeSdf.get().parse(str);
 			}
