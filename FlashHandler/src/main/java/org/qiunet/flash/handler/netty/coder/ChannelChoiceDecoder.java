@@ -7,6 +7,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 消息的解析
@@ -30,13 +32,22 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 	private static final byte[] HEAD_BYTES = {'H', 'E', 'A', 'D'};
 	private static final byte[] GET_BYTES = {'G', 'E', 'T'};
 	private final ServerBootStrapConfig config;
-
+	private ScheduledFuture<?> closeFuture;
 	private ChannelChoiceDecoder(ServerBootStrapConfig config) {
 		this.config = config;
 	}
 
 	public static ChannelChoiceDecoder valueOf(ServerBootStrapConfig param){
 		return new ChannelChoiceDecoder(param);
+	}
+
+	@Override
+	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+		this.closeFuture = ctx.channel().eventLoop().schedule(() -> {
+			// 关闭那些只连接. 不发送任何协议的客户端
+			ctx.channel().close();
+		}, 20, TimeUnit.SECONDS);
+		super.channelRegistered(ctx);
 	}
 
 	@Override
@@ -65,6 +76,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 				logger.debug("Invalidate connection!");
 				ctx.close();
 			}
+			closeFuture.cancel(true);
 			pipeline.remove(ChannelChoiceDecoder.class);
 		}finally {
 			in.resetReaderIndex();
