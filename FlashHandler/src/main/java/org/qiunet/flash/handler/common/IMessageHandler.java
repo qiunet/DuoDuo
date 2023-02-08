@@ -30,6 +30,12 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	boolean addMessage(IMessage<H> message);
 
 	/**
+	 * 在自己的线程
+	 * @return
+	 */
+	boolean inSelfThread();
+
+	/**
 	 * 直接运行 message
 	 * 使用在不需要保证线程安全的地方.
 	 * @param message

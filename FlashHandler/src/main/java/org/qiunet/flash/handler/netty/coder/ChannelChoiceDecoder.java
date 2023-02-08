@@ -17,7 +17,6 @@ import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -53,45 +52,41 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		IProtocolHeader protocolHeader = ctx.channel().attr(ServerConstants.PROTOCOL_HEADER).get();
-		if (in.readableBytes() < protocolHeader.getConnectInMagic().length) {
-			return;
-		}
-		in.markReaderIndex();
-		try {
-			ChannelPipeline pipeline = ctx.channel().pipeline();
-			byte [] bytes = new byte[protocolHeader.getConnectInMagic().length];
-			in.readBytes(bytes);
-			if (config.isBanHttpServer() || Arrays.equals(protocolHeader.getConnectInMagic(), bytes)) {
-				pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
-				pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
-				pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
-				pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-				pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
-				ctx.fireChannelActive();
-			}else if (equals(POST_BYTES, bytes) || equals(GET_BYTES, bytes) || equals(HEAD_BYTES, bytes)){
-				pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
-				pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
-				pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
-			}else {
-				logger.debug("Invalidate connection!");
-				ctx.close();
-			}
-			closeFuture.cancel(true);
+
+		ChannelPipeline pipeline = ctx.channel().pipeline();
+		if (config.isBanHttpServer() || equals(protocolHeader.getConnectInMagic(), in)) {
+			pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
+			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
+			pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
+			pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
 			pipeline.remove(ChannelChoiceDecoder.class);
-		}finally {
-			in.resetReaderIndex();
+			ctx.fireChannelActive();
+		}else if (equals(POST_BYTES, in) || equals(GET_BYTES, in) || equals(HEAD_BYTES, in)){
+			pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
+			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
+			pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
+			pipeline.remove(ChannelChoiceDecoder.class);
+		}else {
+			logger.debug("Invalidate connection!");
+			ctx.close();
 		}
+		closeFuture.cancel(true);
 	}
 
 	/**
 	 * 对比数组. 只要符合origin即可
 	 * @param origin
-	 * @param bytes
+	 * @param in
 	 * @return
 	 */
-	private boolean equals(byte [] origin, byte [] bytes) {
+	private boolean equals(byte [] origin, ByteBuf in) {
+		if (in.readableBytes() < origin.length) {
+			return false;
+		}
+
 		for (int i = 0; i < origin.length; i++) {
-			if (bytes[i] != origin[i]) {
+			if (in.getByte(i) != origin[i]) {
 				return false;
 			}
 		}

@@ -14,7 +14,7 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
  * @author qiunet
  * 2020-10-26 15:24
  */
-public abstract class BaseTcpPbTransmitHandler<REQ extends IChannelData>
+public abstract class BasePbTransmitHandler<REQ extends IChannelData>
 	extends PersistConnPbHandler<PlayerActor, REQ> implements ITransmitHandler<CrossPlayerActor, REQ> {
 
 }

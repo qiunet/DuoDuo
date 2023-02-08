@@ -80,42 +80,29 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 		}
 	}
 
-	private static class ClosableJedisProxy implements InvocationHandler {
-		private final JedisPool jedisPool;
-		private final boolean log;
-		ClosableJedisProxy(JedisPool jedisPool, boolean log) {
-			this.jedisPool = jedisPool;
-			this.log = log;
-		}
+	private record ClosableJedisProxy(JedisPool jedisPool, boolean log) implements InvocationHandler {
 		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			try (Jedis jedis = jedisPool.getResource()){
-				return JedisProxy.exec(method, args, jedis, log);
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				try (Jedis jedis = jedisPool.getResource()) {
+					return JedisProxy.exec(method, args, jedis, log);
+				}
 			}
 		}
-	}
 
-	private static class JedisProxy implements InvocationHandler {
-		private final boolean log;
-		private final Jedis jedis;
-
-		JedisProxy(Jedis jedis, boolean log) {
-			this.jedis = jedis;
-			this.log = log;
-		}
+	private record JedisProxy(Jedis jedis, boolean log) implements InvocationHandler {
 		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			return exec(method, args, jedis, log);
-		}
-
-		public static Object exec(Method method, Object[] args, Jedis jedis, boolean log) throws InvocationTargetException, IllegalAccessException {
-			long startDt = System.currentTimeMillis();
-			Object object = method.invoke(jedis, args);
-			if (log && logger.isInfoEnabled()){
-				logCommand(method, args, object, startDt);
+			public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+				return exec(method, args, jedis, log);
 			}
-			return object;
+
+			public static Object exec(Method method, Object[] args, Jedis jedis, boolean log) throws InvocationTargetException, IllegalAccessException {
+				long startDt = System.currentTimeMillis();
+				Object object = method.invoke(jedis, args);
+				if (log && logger.isInfoEnabled()) {
+					logCommand(method, args, object, startDt);
+				}
+				return object;
+			}
 		}
-	}
 
 }

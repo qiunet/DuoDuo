@@ -12,11 +12,15 @@ import org.qiunet.utils.listener.event.EventManager;
  */
 public interface IPlayerFireEvent<E extends UserEvent, C extends UserEvent, P extends AbstractUserActor<P>> extends IMessageHandler<P> {
 	/**
-	 * 触发事件
+	 * 触发事件 必须是自己的线程
 	 * @param event 事件数据
 	 */
 	default void fireEvent(E event) {
-		EventManager.fireEventHandler(event.setPlayer((IPlayer) this));
+		if (! inSelfThread()) {
+			this.fireAsyncEvent(event);
+		}else {
+			EventManager.fireEventHandler(event.setPlayer((IPlayer) this));
+		}
 	}
 	/**
 	 * 异步触发事件

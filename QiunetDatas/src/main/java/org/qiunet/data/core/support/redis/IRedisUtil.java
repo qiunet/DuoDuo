@@ -36,10 +36,10 @@ public interface IRedisUtil {
 	RedisLock redisLock(String key);
 
 	/**
-	 * 使用指定的key指定一段代码.
-	 * @param key
-	 * @param call
-	 * @return 是否锁定成功. 成功则执行了
+	 * 使用指定的key 加锁 执行一段代码.
+	 * @param key key
+	 * @param call 执行代码
+	 * @return 执行的返回值
 	 */
 	<R> R redisLockRun(String key, Callable<R> call);
 	/***
