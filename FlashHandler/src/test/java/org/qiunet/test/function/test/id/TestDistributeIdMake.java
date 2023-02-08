@@ -21,7 +21,7 @@ public class TestDistributeIdMake {
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	private static final int totalCount = 100;
 	private static final int thread = 5;
-	private int id;
+	private int id = 0;
 
 	@BeforeAll
 	public static void init(){
@@ -30,13 +30,10 @@ public class TestDistributeIdMake {
 
 	@Test
 	public void test() throws InterruptedException {
-		//Preconditions.checkArgument(totalCount % thread == 0);
 		CountDownLatch latch = new CountDownLatch(totalCount);
-		DistributeIdMaker maker = new DistributeIdMaker("Test_", RedisDataUtil.getInstance(), () -> id++,
-				() -> {
-					logger.info("update!");
-				},
-				11);
+		DistributeIdMaker maker = new DistributeIdMaker("Test_", RedisDataUtil.getInstance(), () -> id,
+				(b) -> id = b, 11);
+		RedisDataUtil.getInstance().returnJedis().del(maker.getRedisKey());
 		for (int i = 0; i < thread; i++) {
 			int count = totalCount / thread;
 			new Thread(() -> {

@@ -1,11 +1,9 @@
 package org.qiunet.function.id;
 
 import org.qiunet.data.core.support.redis.IRedisUtil;
-import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.data.redis.util.DbUtil;
 
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /***
@@ -17,30 +15,22 @@ import java.util.function.Supplier;
  */
 public class DistributeIdMaker {
 	/**
-	 * 需要的用户数量
-	 */
-	private final AtomicInteger counter = new AtomicInteger();
-	/**
-	 * 自增键getter
+	 * 初始ID loader
 	 * 一般是从db根据group id 取
 	 */
-	private final Supplier<Integer> incrIdGetter;
-	/**
-	 * redis lock
-	 */
-	private RedisLock redisLock;
+	private final Supplier<Integer> idLoader;
 	/**
 	 * 保存 到 db
 	 */
-	private final Runnable update;
+	private final Consumer<Integer> update;
 	/**
 	 * 组ID
 	 */
 	private final int serverGroupId;
 	/**
-	 * redis lock 前缀
+	 * 自增 redis key
 	 */
-	private final String redisLockKey;
+	private final String redisKey;
 	/**
 	 * 使用到的redis
 	 */
@@ -48,16 +38,16 @@ public class DistributeIdMaker {
 	/**
 	 *
 	 * @param redisUtil redis
-	 * @param incrIdGetter 一般是从db根据group id取
+	 * @param idLoader 初始idLoader 一般是从db根据group id取
 	 * @param update 保存到db
 	 * @param serverGroupId group id
 	 */
-	public DistributeIdMaker(String redisLockKeyPrefix, IRedisUtil redisUtil, Supplier<Integer> incrIdGetter,
-							 Runnable update, int serverGroupId) {
-		this.redisLockKey = redisLockKeyPrefix + serverGroupId;
-		this.incrIdGetter = incrIdGetter;
+	public DistributeIdMaker(String redisKeyPrefix, IRedisUtil redisUtil, Supplier<Integer> idLoader,
+							 Consumer<Integer> update, int serverGroupId) {
+		this.redisKey = redisKeyPrefix + serverGroupId;
 		this.serverGroupId = serverGroupId;
 		this.redisUtil = redisUtil;
+		this.idLoader = idLoader;
 		this.update = update;
 	}
 	/**
@@ -65,26 +55,34 @@ public class DistributeIdMaker {
 	 * @return
 	 */
 	public long generateId() {
-		try {
-			if (counter.incrementAndGet() == 1) {
-				(redisLock = redisUtil.redisLock(redisLockKey)).lock();
-			}
-			return this.makeId();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (counter.decrementAndGet() == 0) {
-				this.update.run();
-				redisLock.unlock();
-			}
+		if (! redisUtil.returnJedis().exists(redisKey)) {
+			redisUtil.redisLockRun(redisKey, () -> {
+				if (redisUtil.returnJedis().exists(redisKey)) {
+					return null;
+				}
+				redisUtil.returnJedis().set(redisKey, String.valueOf(idLoader.get()));
+				return null;
+			});
 		}
+		long incrId = redisUtil.returnJedis().incr(redisKey);
+		this.update.accept((int) incrId);
+		return DbUtil.buildId(incrId, getServerGroupId());
 	}
 
 	/**
-	 * 获取id
-	 * @return id
+	 * 获得对应的server group id
+	 * @return
 	 */
-	private synchronized long makeId() {
-		return DbUtil.buildId(incrIdGetter.get(), serverGroupId);
+	public int getServerGroupId() {
+		return serverGroupId;
+	}
+
+	/**
+	 * 获得redis key
+	 * 外部可能需要操作什么
+	 * @return key
+	 */
+	public String getRedisKey() {
+		return redisKey;
 	}
 }

@@ -183,16 +183,22 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 * @param cause
 	 */
 	public void quitCross(int serverId, CloseCause cause) {
+		if (! isCrossStatus()) {
+			return;
+		}
+
+		if (currentCrossServerId != serverId) {
+			throw new CustomException("not cross to server {}", serverId);
+		}
+
 		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverId);
 		if (playerCrossConnector == null) {
 			return;
 		}
 
 		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
+		this.currentCrossServerId = crosssServerStack.pop();
 		playerCrossConnector.getSession().close(cause);
-		if (currentCrossServerId == serverId) {
-			this.currentCrossServerId = crosssServerStack.pop();
-		}
 	}
 
 	@Override

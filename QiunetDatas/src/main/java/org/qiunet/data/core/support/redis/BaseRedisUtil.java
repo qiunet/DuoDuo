@@ -8,7 +8,6 @@ import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPoolConfig;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.Callable;
@@ -60,13 +59,11 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	}
 
 	@Override
-	public <R> R redisLockRun(String key, Callable<R> call) throws IOException {
+	public <R> R redisLockRun(String key, Callable<R> call) {
 		try (RedisLock lock = redisLock(key)) {
 			if (lock.lock()) {
 				return call.call();
 			}
-		} catch (IOException e) {
-			throw e;
 		} catch (Exception e) {
 			throw new CustomException("call redis lock run exception: ", e);
 		}

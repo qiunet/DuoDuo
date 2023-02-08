@@ -66,7 +66,7 @@ public class RedisLock implements AutoCloseable {
 		}
 		// 渐进式延缓查询是否能获得锁.
 		for (int i = 1; i <= 10; i++) {
-			DFuture<Boolean> lockFuture = TimerManager.executor.scheduleWithDelay(this::lock0, i*10, TimeUnit.MILLISECONDS);
+			DFuture<Boolean> lockFuture = TimerManager.executor.scheduleWithDelay(this::lock0, i*5, TimeUnit.MILLISECONDS);
 			try {
 				if (lockFuture.get()) {
 					return true;

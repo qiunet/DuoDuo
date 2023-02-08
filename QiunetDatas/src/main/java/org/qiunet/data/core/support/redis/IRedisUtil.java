@@ -1,7 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
 
-import java.io.IOException;
 import java.util.concurrent.Callable;
 
 public interface IRedisUtil {
@@ -42,7 +41,7 @@ public interface IRedisUtil {
 	 * @param call
 	 * @return 是否锁定成功. 成功则执行了
 	 */
-	<R> R redisLockRun(String key, Callable<R> call) throws IOException;
+	<R> R redisLockRun(String key, Callable<R> call);
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close 默认打印日志
