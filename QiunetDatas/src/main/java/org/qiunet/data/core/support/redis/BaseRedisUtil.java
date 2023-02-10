@@ -1,16 +1,20 @@
 package org.qiunet.data.core.support.redis;
 
+import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.params.SetParams;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
 	 static final Class [] JEDIS_INTERFACES = new Class[]{IJedis.class};
@@ -70,6 +74,39 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		return null;
 	}
 
+	@Override
+	public void asyncRedisLockRun(String key, Runnable call) {
+		this.asyncRedisLockRun0(key+".lock", 1, call);
+	}
+
+	/**
+	 * 加入次数.
+	 * @param key
+	 * @param count
+	 * @param call
+	 */
+	private void asyncRedisLockRun0(String key, int count, Runnable call) {
+		// hard code!
+		if (count > 10) {
+			 throw new CustomException("redis lock [{}] timeout!", key);
+		}
+
+		String ret = this.returnJedis().set(key, "", SetParams.setParams().ex(30L).nx());
+		boolean locked = "OK".equals(ret);
+		if (locked) {
+			DFuture<Long> future = TimerManager.executor.scheduleWithDelay(() -> this.returnJedis().expire(key, 30L), 20, TimeUnit.SECONDS);
+			try {
+				call.run();
+			}finally {
+				future.cancel(true);
+				this.returnJedis().del(key);
+			}
+			return;
+		}
+		TimerManager.executor.scheduleWithDelay(() -> {
+			this.asyncRedisLockRun0(key, count + 1, call);
+		}, 10, TimeUnit.MILLISECONDS);
+	}
 	/**
 	 * 打印命令
 	 * @param method

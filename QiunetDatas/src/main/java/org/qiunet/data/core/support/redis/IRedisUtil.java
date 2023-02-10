@@ -42,6 +42,12 @@ public interface IRedisUtil {
 	 * @return 执行的返回值
 	 */
 	<R> R redisLockRun(String key, Callable<R> call);
+	/**
+	 * 异步在锁里执行数据
+	 * @param key key
+	 * @param call 执行代码
+	 */
+	void asyncRedisLockRun(String key, Runnable call);
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close 默认打印日志
