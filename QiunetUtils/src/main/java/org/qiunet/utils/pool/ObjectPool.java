@@ -125,21 +125,40 @@ public abstract class ObjectPool<T> {
 		public int lastCapacity() {
 			return maxCapacity - size;
 		}
-		public void add(Node<T> node) {
-			while (node != null) {
-				if (lastCapacity() <= 0) {
-					return;
-				}
 
-				if (isEmpty()) {
-					head = tail = node;
-				}else {
-					tail.next = node;
-					tail = node;
-				}
-				node = node.next;
-				size ++;
+		/**
+		 * 从 {@link UnreliablyList}回收数据
+		 * @param head0 list的head
+		 * @param tail0 list的tail
+		 * @param size0 list的size
+		 */
+		public void add(Node<T> head0, Node<T> tail0, int size0) {
+			if (isEmpty()) {
+				this.head = head0;
+			}else {
+				this.tail.next = head0;
 			}
+			this.tail = tail0;
+			this.size += size0;
+		}
+
+		/***
+		 * 本地回收 node
+		 * @param node 需要回收的node
+		 */
+		public void add(Node<T> node) {
+			if (lastCapacity() <= 0) {
+				return;
+			}
+
+			if (isEmpty()) {
+				head = tail = node;
+			}else {
+				tail.next = node;
+				tail = node;
+			}
+			size ++;
+
 		}
 
 		public Node<T> poll() {
@@ -211,7 +230,12 @@ public abstract class ObjectPool<T> {
 				if (this.stack.full()) {
 					break;
 				}
-				this.stack.add(list.cleanAndGetHead());
+
+				if (list.size() < 5) {
+					continue;
+				}
+
+				list.consumerAndReset(stack::add);
 			}
 			return ! this.stack.isEmpty();
 		}
@@ -260,7 +284,7 @@ public abstract class ObjectPool<T> {
 
 		private int size;
 
-		public void add(Node<E> node) {
+		public synchronized void add(Node<E> node) {
 			if (tail == null) {
 				head = tail = node;
 			}else {
@@ -270,15 +294,34 @@ public abstract class ObjectPool<T> {
 			size ++;
 		}
 
-		public Node<E> cleanAndGetHead() {
-			Node<E> temp = head;
-			head = tail = null;
-			size = 0;
-			return temp;
+		/**
+		 * 消费掉现有的数据, 然后重置
+		 * @param consumer 消费者
+		 */
+		public void consumerAndReset(TConsumer<Node<E>,Node<E>, Integer> consumer) {
+			if (size == 0) {
+				return;
+			}
+
+			Node<E> tempHead, tempTail;
+			int tempSize;
+			synchronized (this) {
+				tempTail = tail;
+				tempHead = head;
+				tempSize = size;
+				head = tail = null;
+				size = 0;
+			}
+			consumer.accept(tempHead, tempTail, tempSize);
 		}
 
 		public int size() {
 			return size;
 		}
+	}
+
+	@FunctionalInterface
+	private interface TConsumer<O, T, S> {
+		void accept(O o, T t, S s);
 	}
 }
