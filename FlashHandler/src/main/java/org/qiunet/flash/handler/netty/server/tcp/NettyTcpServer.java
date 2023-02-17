@@ -21,13 +21,18 @@ public final class NettyTcpServer implements INettyServer {
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private final ServerBootStrapConfig config;
+	/**
+	 * 完成了. 调用
+	 */
+	private final Runnable completeRunner;
 
 	private ChannelFuture channelFuture;
 	/***
 	 * 启动
 	 * @param config  启动使用的端口等启动参数
 	 */
-	public NettyTcpServer(ServerBootStrapConfig config) {
+	public NettyTcpServer(ServerBootStrapConfig config, Runnable completeRunner) {
+		this.completeRunner = completeRunner;
 		this.config = config;
 	}
 
@@ -46,8 +51,18 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
 			bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128);
 			bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128);
-			this.channelFuture = bootstrap.bind(config.getPort());
-			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
+			this.channelFuture = bootstrap.bind(config.getPort()).addListener(future -> {
+				if (future.cause() != null) {
+					logger.error("[NettyTcpServer] === Tcp server {} fail to listener! ===", serverName());
+					return;
+				}
+
+				if (future.isSuccess()) {
+					logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
+					completeRunner.run();
+				}
+			});
+
 			channelFuture.channel().closeFuture().sync();
 		}catch (Throwable e) {
 			logger.error("[NettyTcpServer] Exception: ", e);

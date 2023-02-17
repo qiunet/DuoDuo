@@ -74,10 +74,10 @@ public final class ServerConstants {
 	/**
 	 * 启动时间
 	 */
-	public static final AtomicLong startDt = new AtomicLong();
+	public static AtomicLong startDt = new AtomicLong();
 
 	/** 祈福标 */
-	private static final String ICON = "0a2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2ee998bfe5bca5e99980e4bd9b2e2e" +
+	private static String ICON = "0a2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2ee998bfe5bca5e99980e4bd9b2e2e" +
 		"2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e2e0a20202020202020202020202020202020202020202020205f6f6f306f6f5f202" +
 		"020202020202020202020202020202020202020200a202020202020202020202020202020202020202020206f383838383838386f" +
 		"2020202020202020202020202020202020202020200a20202020202020202020202020202020202020202020383822202e2022383" +
@@ -107,10 +107,12 @@ public final class ServerConstants {
 		if (startDt.get() > 0) {
 			LoggerType.DUODUO_FLASH_HANDLER.error("Server startup successful in {} ms", (System.currentTimeMillis() - startDt.get()));
 		}
+		startDt = null;
 	}
 
 	@EventListener
 	private void onServerStart(ServerStartupCompleteEvent eventData){
 		LoggerType.DUODUO_FLASH_HANDLER.error(StrCodecUtil.decrypt(ICON));
+		ICON = null;
 	}
 }

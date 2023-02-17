@@ -59,10 +59,7 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 				target.targetDef = getter.getTargetDef(target.getTid());
 				target.updateCallback = updateCallback;
 				target.container = this;
-				if (target.isFinished()) {
-					updateCallback.accept(target);
-					continue;
-				}
+
 				this.watch(target, false);
 			}
 		}finally {
@@ -110,6 +107,9 @@ public class TargetContainer<Type extends Enum<Type> & ITargetType> {
 				// onStartWatch中调用 set 和 addCount 都会调用该方法.
 				// target.tryComplete();
 				handler.onStartWatch(player, target);
+			}
+			if (target.isFinished()) {
+				target.updateCallback.accept(target);
 			}
 		}finally {
 			lock.unlock();

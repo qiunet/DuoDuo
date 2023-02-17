@@ -33,6 +33,7 @@ import java.nio.channels.DatagramChannel;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,6 +51,7 @@ public class BootstrapServer {
 
 	private final Set<INettyServer> nettyServers = new HashSet<>(8);
 	private final HookListener hookListener;
+	private CountDownLatch countdown;
 
 	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new CustomException("Instance Duplication!");
@@ -105,10 +107,11 @@ public class BootstrapServer {
 	 * @return  BootstrapServer 实例
 	 */
 	public BootstrapServer listener(ServerBootStrapConfig config) {
+		new CountDownLatch(1);
 		// 默认启动tcp  http监听
-		this.nettyServers.add(new NettyTcpServer(config));
+		this.nettyServers.add(new NettyTcpServer(config, () -> countdown.countDown()));
 		if (config.getKcpBootstrapConfig() != null) {
-			this.nettyServers.add(new NettyKcpServer(config));
+			this.nettyServers.add(new NettyKcpServer(config, () -> countdown.countDown()));
 		}
 		return this;
 	}
@@ -123,6 +126,8 @@ public class BootstrapServer {
 		Thread hookThread = new Thread(hookListener, "HookListener");
 		hookThread.setDaemon(true);
 		hookThread.start();
+
+		countdown = new CountDownLatch(nettyServers.size());
 		try {
 			ServerStartupEvent.fireStartupEventHandler();
 		}catch (CustomException e) {
@@ -138,11 +143,14 @@ public class BootstrapServer {
 			thread.setDaemon(true);
 			thread.start();
 		}
+
 		try {
-			// 等nettyServer的启动.
-			Thread.sleep(100);
+			countdown.await();
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			logger.error(e.getMessage(), e);
+			System.exit(1);
+		}finally {
+			countdown = null;
 		}
 
 		ServerStartupCompleteEvent.fireStartupCompleteEvent();

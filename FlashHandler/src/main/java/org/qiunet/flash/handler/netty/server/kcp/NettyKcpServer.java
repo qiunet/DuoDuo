@@ -36,8 +36,13 @@ public class NettyKcpServer implements INettyServer {
 	private final ServerBootStrapConfig config;
 
 	private List<ChannelFuture> channelFutures;
+	/**
+	 * 完成了. 调用
+	 */
+	private final Runnable completeRunner;
 
-	public NettyKcpServer(ServerBootStrapConfig config) {
+	public NettyKcpServer(ServerBootStrapConfig config, Runnable completeRunner) {
+		this.completeRunner = completeRunner;
 		this.config = config;
 	}
 
@@ -92,7 +97,17 @@ public class NettyKcpServer implements INettyServer {
 				ChannelFuture channelFuture = b.bind(port).sync();
 				this.channelFutures.add(channelFuture);
 			}
-			logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(udpPorts, "", "" ,","));
+			this.channelFutures.get(this.channelFutures.size() - 1).addListener(future -> {
+				if (future.cause() != null) {
+					logger.error("[NettyKcpServer] === Kcp server {} fail to listener! ===", serverName());
+					return;
+				}
+
+				if (future.isSuccess()) {
+					logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(udpPorts, "", "", ","));
+					completeRunner.run();
+				}
+			});
 			this.channelFutures.get(0).channel().closeFuture().sync();
 		} catch (Throwable e) {
 			logger.error("[NettyKcpServer] Exception: ", e);
