@@ -6,6 +6,7 @@ import org.qiunet.utils.file.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -14,15 +15,18 @@ import java.util.List;
  */
 public class TestFileUtil {
 	@Test
-	public void testCopy(){
+	public void testCopy() throws IOException {
 		String baseDir = System.getProperty("user.dir");
-		if (!baseDir.endsWith(File.separator)) baseDir += File.separator;
+		String fileName = "Test.txt";
 
-		String targetFilePath = baseDir + "clazzes/org/test/";
-		String targetFile = targetFilePath + "ObjectB.class";
+		File targetFile = new File(baseDir, fileName);
+		String targetFilePath = targetFile.getParent();
+		FileUtil.deleteFile(targetFile);
+		FileUtil.appendToFile(targetFile, "Test");
+
 
 		String currPath = getClass().getResource(".").getPath();
-		String currPathFile = currPath + "ObjectB.class";
+		String currPathFile = Paths.get(currPath, fileName).toString();
 
 		FileUtil.copy(targetFile, currPathFile);
 
@@ -35,14 +39,17 @@ public class TestFileUtil {
 		Assertions.assertTrue(file.exists());
 
 		FileUtil.move(file, targetFilePath);
-		file = new File(targetFile);
+		file = new File(targetFilePath);
 		Assertions.assertTrue(file.exists());
 
 		FileUtil.copy(targetFile, currPathFile);
 		file = new File(currPathFile);
 		Assertions.assertTrue(file.exists());
 		file.delete();
+		FileUtil.deleteFile(targetFile);
 	}
+
+
 	@Test
 	public void appendToFile() throws IOException {
 		File file = new File(System.getProperty("user.dir"), "Test.txt");
