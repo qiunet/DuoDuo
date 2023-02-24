@@ -231,7 +231,7 @@ public abstract class ObjectPool<T> {
 					break;
 				}
 
-				if (list.size() < 5) {
+				if (list.rSize() == 0) {
 					continue;
 				}
 
@@ -279,12 +279,53 @@ public abstract class ObjectPool<T> {
 	 * @param <E>
 	 */
 	private static class UnreliablyList<E> {
+		private final NodeLinkedList<E> currList = new NodeLinkedList<>();
+		private final NodeLinkedList<E> rList = new NodeLinkedList<>();
+
+		public void add(Node<E> node) {
+			currList.add(node);
+			int size = currList.size;
+
+			if (size >= 3) {
+				Node<E> head = currList.head;
+				Node<E> tail = currList.tail;
+				currList.clear();
+
+				rList.add(head, tail, size);
+			}
+		}
+
+		public int size() {
+			return rList.size + currList.size;
+		}
+
+		public int rSize() {
+			return rList.size;
+		}
+
+		public void consumerAndReset(TConsumer<Node<E>,Node<E>, Integer> consumer) {
+			rList.consumerAndReset(consumer);
+		}
+	}
+
+
+	private static class NodeLinkedList<E> {
 
 		Node<E> head, tail;
 
 		private int size;
 
-		public synchronized void add(Node<E> node) {
+		public synchronized void add(Node<E> head0, Node<E> tail0, int size0) {
+			if (this.tail == null) {
+				this.head = head0;
+			}else {
+				this.tail.next = head0;
+			}
+			this.tail = tail0;
+			this.size += size0;
+		}
+
+		public void add(Node<E> node) {
 			if (tail == null) {
 				head = tail = node;
 			}else {
@@ -309,14 +350,14 @@ public abstract class ObjectPool<T> {
 				tempTail = tail;
 				tempHead = head;
 				tempSize = size;
-				head = tail = null;
-				size = 0;
+				this.clear();
 			}
 			consumer.accept(tempHead, tempTail, tempSize);
 		}
 
-		public int size() {
-			return size;
+		void clear() {
+			head = tail = null;
+			size = 0;
 		}
 	}
 

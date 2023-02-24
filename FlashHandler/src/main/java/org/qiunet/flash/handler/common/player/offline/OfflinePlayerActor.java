@@ -69,24 +69,24 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	}
 
 	public void destroy(){
-		this.fireEvent(OfflineUserDestroyEvent.valueOf());
-		this.addMessage(OfflinePlayerActor::destroy0);
-	}
-	private void destroy0(){
 		if (isDestroyed()) {
 			return;
 		}
 
-		super.destroy();
-
+		this.fireEvent(OfflineUserDestroyEvent.valueOf());
 
 		UserOfflineManager.instance.remove(getPlayerId());
 		this.dataLoader.unregister();
 
+		this.addMessage(p -> super.destroy());
 	}
 
 	@Override
 	public void syncBbMessage(Runnable runnable) {
-		this.addMessage(h -> runnable.run());
+		if (inSelfThread()) {
+			runnable.run();
+		}else {
+			this.addMessage(h -> runnable.run());
+		}
 	}
 }
