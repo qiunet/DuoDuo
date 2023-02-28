@@ -119,7 +119,6 @@ public final class ProtoIDLGenerator {
 				code.append("\t// ").append(field.getDescription()).append("\n");
 			}
 
-			String fieldTypeName = field.getFieldType().getType().toLowerCase();
 			String required = version.getFieldDescribe();
 			Class<?> c = field.getField().getType();
 			if (field.isList()) {
@@ -127,12 +126,29 @@ public final class ProtoIDLGenerator {
 				required = "\trepeated ";
 			}
 
-			if (field.getFieldType() == FieldType.OBJECT || field.getFieldType() == FieldType.ENUM) {
+			FieldType fieldType = field.getFieldType();
+			if (field.getField().isAnnotationPresent(ProtoSubstitute.class)) {
+				c = field.getField().getAnnotation(ProtoSubstitute.class).value();
+				fieldType = ProtobufProxyUtils.TYPE_MAPPING.get(c);
+				if (fieldType == null) {
+					// check if type is enum
+					if (Enum.class.isAssignableFrom(c)) {
+						fieldType = FieldType.ENUM;
+					} else if (field.isMap()) {
+						fieldType = FieldType.MAP;
+					} else {
+						fieldType = FieldType.OBJECT;
+					}
+				}
+			}
+
+			String fieldTypeName = fieldType.getType().toLowerCase();
+			if (fieldType == FieldType.OBJECT || fieldType == FieldType.ENUM) {
 				fieldTypeName = c.getSimpleName();
 			}
 
 			if (ProtobufProxyUtils.isScalarType(c)) {
-				fieldTypeName = field.getFieldType().getType().toLowerCase();
+				fieldTypeName = fieldType.getType().toLowerCase();
 			}
 
 			if (c.isEnum() && GeneratorProtoFeature.ENUM_TO_INT.prepare()) {
@@ -140,7 +156,7 @@ public final class ProtoIDLGenerator {
 				fieldTypeName = FieldType.INT32.getType();
 			}
 
-			if (field.getFieldType() == FieldType.MAP) {
+			if (fieldType == FieldType.MAP) {
 				Class keyClass = field.getGenericKeyType();
 				Class valueClass = field.getGenericeValueType();
 				fieldTypeName = fieldTypeName + "<" + ProtobufProxyUtils.processProtobufType(keyClass) + ", ";
@@ -338,6 +354,15 @@ public final class ProtoIDLGenerator {
 		}
 		List<FieldInfo> fieldInfos = ProtobufProxyUtils.fetchFieldInfos(cls, false);
 		for (FieldInfo fieldInfo : fieldInfos) {
+			if (fieldInfo.getField().isAnnotationPresent(ProtoSubstitute.class)) {
+				Class<?> type = fieldInfo.getField().getAnnotation(ProtoSubstitute.class).value();
+				if (! ProtobufProxyUtils.isScalarType(type) && type != cls) {
+					haveCommonProtoMessage |= recursiveObjClass(type, cache, currCommonProtoMessage, handleCls);
+					protoInfo.addFieldInfo(type);
+				}
+				continue;
+			}
+
 			if (fieldInfo.isList()) {
 				Class<?> type = ReflectUtil.getListGenericParameterizedType(fieldInfo.getField());
 				if (! ProtobufProxyUtils.isScalarType(type) && type != cls) {

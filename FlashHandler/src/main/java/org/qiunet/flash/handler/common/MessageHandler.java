@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
+import io.netty.util.concurrent.FastThreadLocalThread;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -179,7 +180,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 
 		private Thread newThread(Runnable runnable) {
-			this.thread = new Thread(runnable, this.threadName);
+			this.thread = new FastThreadLocalThread(runnable, this.threadName);
 			this.thread.setDaemon(true);
 			return this.thread;
 		}

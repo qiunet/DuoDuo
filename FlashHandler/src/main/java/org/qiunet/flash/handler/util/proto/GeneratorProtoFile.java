@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.data.ArgsData;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
@@ -49,7 +50,12 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 	 * @throws Exception -
 	 */
 	public static void generator(File directory, ProtoGeneratorModel model, ProtobufVersion version, ArgsData.Two<GeneratorProtoFeature, Object>... features) throws Exception {
-		Preconditions.checkState(directory != null && directory.isDirectory(), "Directory must be a directory!");
+		if (! directory.exists()) {
+			if (! directory.mkdirs()) {
+				throw new CustomException("mkdir {} error", directory.getAbsolutePath());
+			}
+		}
+		Preconditions.checkState(directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
 
 		GeneratorProtoFeature.features.putAll(Arrays.stream(features).collect(Collectors.toMap(ArgsData.Two::a, ArgsData.Two::b)));
