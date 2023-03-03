@@ -6,7 +6,6 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.pool.ObjectPool;
 import org.slf4j.Logger;
 
@@ -99,11 +98,9 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		private static final byte [] MAGIC = {'F', 'l', 'a', 's', 'h', 'M', 'a', 'n'};
 		private final byte [] magic = new byte[MAGIC.length];
 
-		private static final int HEADER_LENGTH = MAGIC.length + 4 + 4 + 2;
+		private static final int HEADER_LENGTH = MAGIC.length + 4 + 2;
 		private int protocolId;
 		private int length;
-
-		private int sequence;
 
 
 		public static ServerConnectHeader valueOf(ByteBuf in, Channel channel){
@@ -111,24 +108,12 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			in.readBytes(data.magic);
 			data.protocolId = in.readInt();
 			data.length = in.readUnsignedShort();
-			data.sequence = in.readInt();
-
-			if (channel != null && ! channel.attr(REQ_SEQUENCE_KEY).compareAndSet(null, data.sequence)) {
-				// 表示无效
-				data.sequence = -1;
-			}
 			return data;
 		}
 
 
 		public static ServerConnectHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerConnectHeader data = new ServerConnectHeader();
-
-			if (channel != null) {
-				AtomicInteger atomicInteger = new AtomicInteger(MathUtil.random(1000000));
-				channel.attr(SEQUENCE_COUNTER_KEY).set(atomicInteger);
-				data.sequence = atomicInteger.incrementAndGet();
-			}
 
 			System.arraycopy(MAGIC, 0, data.magic, 0, MAGIC.length);
 			data.length = message.byteBuffer().limit();
@@ -155,7 +140,6 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			out.writeBytes(magic);
 			out.writeInt(protocolId);
 			out.writeShort(length);
-			out.writeInt(sequence);
 			return out;
 		}
 
@@ -167,7 +151,7 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		@Override
 		public boolean isValidMessage() {
 			// connectIn 的包的sequence 必须不为负数
-			return this.sequence >= 0 && Arrays.equals(MAGIC, this.magic);
+			return Arrays.equals(MAGIC, this.magic);
 		}
 	}
 
@@ -235,13 +219,13 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 	private static class ServerReqHeader implements IServerInHeader, IClientOutHeader {
 		private final ObjectPool.Handle<ServerReqHeader> recyclerHandle;
 
-		private static final int HEADER_LENGTH = 10;
+		private static final int HEADER_LENGTH = 6;
 		private transient Channel channel;
+
 		private int protocolId;
 
 		private int length;
 
-		private int sequence;
 
 		private ServerReqHeader(ObjectPool.Handle<ServerReqHeader> recyclerHandle) {
 			this.recyclerHandle = recyclerHandle;
@@ -251,17 +235,12 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
 			header.protocolId = in.readInt();
 			header.length = in.readUnsignedShort();
-			header.sequence = in.readInt();
 			header.channel = channel;
 			return header;
 		}
 
 		public static ServerReqHeader valueOf(IChannelMessage<?> message, Channel channel) {
 			ServerReqHeader header = SERVER_REQ_RECYCLER.get();
-			if (channel != null) {
-				AtomicInteger counter = channel.attr(SEQUENCE_COUNTER_KEY).get();
-				header.sequence = counter.incrementAndGet();
-			}
 			header.length = message.byteBuffer().limit();
 			header.protocolId = message.getProtocolID();
 			return header;
@@ -282,7 +261,6 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeInt(protocolId);
 			out.writeShort(length);
-			out.writeInt(sequence);
 			return out;
 		}
 
@@ -293,14 +271,6 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 
 		@Override
 		public boolean isValidMessage() {
-			if (this.channel != null) {
-				Integer sequence = channel.attr(REQ_SEQUENCE_KEY).get();
-				if (this.sequence != sequence + 1) {
-					logger.error("Invalid sequence! this.sequence {} , cache {}", this.sequence, sequence);
-					return false;
-				}
-				channel.attr(REQ_SEQUENCE_KEY).set(this.sequence);
-			}
 			return true;
 		}
 
@@ -308,7 +278,6 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 		public void recycle() {
 			this.protocolId = 0;
 			this.channel = null;
-			this.sequence = 0;
 			this.length = 0;
 			this.recyclerHandle.recycle();
 		}
