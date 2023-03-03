@@ -38,7 +38,7 @@ public enum DataType {
 			if (handler.getHandlerType() == HandlerType.HTTP) {
 				return new HttpPbRequestContext(content, channel, channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get(), channel.attr(ServerConstants.HTTP_REQUEST_KEY).get());
 			}else {
-				return PersistConnPbRequestContext.valueOf(content, channel, channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get());
+				return PersistConnPbRequestContext.valueOf(content, channel);
 			}
 
 		}

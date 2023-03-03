@@ -11,5 +11,5 @@ public interface IMessage<H extends IMessageHandler<H>> {
 	 * 执行
 	 * @param h
 	 */
-	void execute(H h);
+	void execute(H h) throws Exception;
 }

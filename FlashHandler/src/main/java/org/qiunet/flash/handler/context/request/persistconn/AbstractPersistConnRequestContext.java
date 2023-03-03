@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 
-import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -16,11 +15,8 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 		extends BaseRequestContext<RequestData>
 		implements IPersistConnRequestContext<RequestData, P> {
 
-	protected P messageActor;
-
-	protected void init(MessageContent content, Channel channel, P messageActor) {
+	protected void init(MessageContent content, Channel channel) {
 		super.init(content, channel);
-		this.messageActor = Preconditions.checkNotNull(messageActor);
 	}
 
 

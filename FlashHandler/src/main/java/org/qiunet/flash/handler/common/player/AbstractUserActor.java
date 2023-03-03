@@ -3,7 +3,9 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
  * 玩家类型的messageActor 继承该类
@@ -64,5 +66,13 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	public void destroy() {
 		super.destroy();
 		observerSupport.clear();
+	}
+	@Override
+	protected void exceptionHandle(Exception e) {
+		if (! (e instanceof StatusResultException)) {
+			super.exceptionHandle(e);
+			return;
+		}
+		session.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get().getStartupContext().exception(session.channel(), e);
 	}
 }

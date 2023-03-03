@@ -49,8 +49,16 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		try {
 			message.execute((H) this);
 		}catch (Exception e) {
-			logger.error("Message handler exception:", e);
+			this.exceptionHandle(e);
 		}
+	}
+
+	/**
+	 * 处理异常情况
+	 * @param e
+	 */
+	protected void exceptionHandle(Exception e) {
+		logger.error("Message handler run exception:", e);
 	}
 
 	/**

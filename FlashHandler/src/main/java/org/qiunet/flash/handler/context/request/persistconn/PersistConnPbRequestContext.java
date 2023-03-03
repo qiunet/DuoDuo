@@ -7,7 +7,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
@@ -36,18 +35,17 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		this.recyclerHandle = recyclerHandle;
 	}
 
-	public static PersistConnPbRequestContext valueOf(MessageContent content, Channel channel, IMessageActor messageActor) {
+	public static PersistConnPbRequestContext valueOf(MessageContent content, Channel channel) {
 		PersistConnPbRequestContext context = RECYCLER.get();
-		context.init(content, channel, messageActor);
+		context.init(content, channel);
 		return context;
 	}
 
-	public void init(MessageContent content, Channel channel, P messageActor) {
-		super.init(content, channel, messageActor);
+	public void init(MessageContent content, Channel channel) {
+		super.init(content, channel);
 	}
 
 	private void recycle() {
-		this.messageActor = null;
 		this.requestData = null;
 		this.attributes = null;
 		this.handler = null;
@@ -57,14 +55,9 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	}
 
 	@Override
-	public void execute(P p) {
+	public void execute(P p) throws Exception {
 		try {
 			this.handlerRequest();
-		}catch (Exception e) {
-			if (! (e instanceof StatusResultException)) {
-				logger.error("Execute exception: " , e);
-			}
-			channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get().getStartupContext().exception(channel, e);
 		} finally {
 			this.recycle();
 		}
@@ -72,6 +65,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 	@Override
 	public void handlerRequest() throws Exception{
+		P messageActor = (P) channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+
 		if (getRequestData() == null) {
 			logger.error("RequestData is null for case playerId {} , protocol: {}", messageActor.getIdentity(), getHandler().getClass().getSimpleName());
 			return;
