@@ -52,9 +52,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	private Map<String ,List<String>> parameters(){
 		if (parameters == null) {
-			parameters = Maps.newHashMap();
 			QueryStringDecoder decoder1 = new QueryStringDecoder(request.uri());
-			parameters.putAll(decoder1.parameters());
+			parameters = Maps.newHashMap(decoder1.parameters());
 			UriPathHandler uriPathHandler = getHandler().getClass().getAnnotation(UriPathHandler.class);
 			if (uriPathHandler != null && uriPathHandler.post_params()) {
 				decoder1 = new QueryStringDecoder(getRequestData().toString(), false);

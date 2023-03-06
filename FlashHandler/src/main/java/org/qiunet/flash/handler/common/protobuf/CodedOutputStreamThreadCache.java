@@ -29,8 +29,8 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 
 	static CodedOutputStreamThreadCache get() {
 		CodedOutputStreamThreadCache obj = pool.get();
-		// 大部分小对象. 64 够用
-		obj.buffer = PooledByteBufAllocator.DEFAULT.buffer(64);
+		// 大部分小对象. 128 够用
+		obj.buffer = PooledByteBufAllocator.DEFAULT.buffer(128);
 		return obj;
 	}
 

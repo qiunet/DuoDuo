@@ -96,6 +96,6 @@ public interface IBehaviorNode<Owner extends MessageHandler<Owner>> extends IWei
 	 * @return 子类覆盖实现
 	 */
 	default int weight(){
-		return 1;
+		return 10000;
 	}
 }

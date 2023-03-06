@@ -2,6 +2,7 @@ package org.qiunet.game.test.robot;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IMessageHandler;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -92,16 +93,18 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 	private final String account;
 
 	public Robot(String account, int tickMillis, boolean printLog) {
-		this.tickMillis = tickMillis;
-		this.behaviorRootTree = RobotBehaviorBuilderManager.instance.buildRootExecutor((Robot)this, printLog);
+
+		this.behaviorRootTree = RobotBehaviorBuilderManager.instance.newBehaviorRootTree(this, printLog);
 		this.behaviorRootTree.attachObserver(IBHTAddNodeObserver.class, o -> {
 			if (IBehaviorAction.class.isAssignableFrom(o.getClass())) {
 				this.registerAction((BaseRobotAction) o);
 			}
 		});
-		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), MathUtil.random(20, 200), TimeUnit.MILLISECONDS);
-		counter.incrementAndGet();
+		RobotBehaviorBuilderManager.instance.buildRootExecutor(this.behaviorRootTree);
 
+		this.tickFuture = this.scheduleMessage(h -> this.tickRun(), MathUtil.random(200, 500), TimeUnit.MILLISECONDS);
+		this.tickMillis = tickMillis;
+		counter.incrementAndGet();
 		this.account = account;
 	}
 
@@ -292,8 +295,9 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 			Class<?> declaringClass = method.getDeclaringClass();
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
 			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.byteBuffer());
-
-			logger.info("[{}] <<< {}", Robot.this.getIdentity(), ToString.toString(realData));
+			if (logger.isInfoEnabled() && ! realData.getClass().isAnnotationPresent(SkipDebugOut.class)) {
+				logger.info("[{}] <<< {}", Robot.this.getIdentity(), ToString.toString(realData));
+			}
 			try {
 				method.invoke(action, realData);
 			} catch (Exception e) {

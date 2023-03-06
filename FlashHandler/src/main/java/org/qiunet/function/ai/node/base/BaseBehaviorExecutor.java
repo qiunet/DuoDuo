@@ -44,17 +44,26 @@ public abstract class BaseBehaviorExecutor<Owner extends MessageHandler<Owner>> 
 			ReflectUtil.setField(node, "parent", this);
 			if (this.rootNode() != null) {
 				this.rootNode().syncFireObserver(IBHTAddNodeObserver.class, o -> o.addNode(node));
-			}else {
-				this.rootNode.addCompleteListener((n) -> {
-					n.syncFireObserver(IBHTAddNodeObserver.class, o -> o.addNode(node));
-				});
+				// node 被添加进来, 说明它的children 肯定也没有被添加
+				this.syncObserver(node);
 			}
 			this.nodes.add(node);
 		}
 		this.addChildNodeHandler(nodes);
 		return this;
 	}
-
+	/**
+	 * 同步触发添加事件
+	 * @param node
+	 */
+	private void syncObserver(IBehaviorNode<Owner> node) {
+		if (node instanceof IBehaviorExecutor<Owner> _node) {
+			_node.getChildNodes().forEach(node0 -> {
+				this.rootNode().syncFireObserver(IBHTAddNodeObserver.class, o -> o.addNode(node0));
+				this.syncObserver(node0);
+			});
+		}
+	}
 	/**
 	 * 添加了子节点 . 子类处理
 	 */

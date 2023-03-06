@@ -31,14 +31,25 @@ public enum RobotBehaviorBuilderManager implements IApplicationContextAware {
 		}
 	}
 
+
+	public <Owner extends MessageHandler<Owner>> BehaviorRootTree<Owner> newBehaviorRootTree(Owner obj, boolean printLog) {
+		return new BehaviorRootTree<>(obj, printLog);
+	}
 	/**
 	 * 构造一个 root executor
 	 * @param obj 传入的参数
 	 * @return
 	 */
 	public <Owner extends MessageHandler<Owner>> BehaviorRootTree<Owner> buildRootExecutor(Owner obj, boolean printLog) {
-		BehaviorRootTree<Owner> root = new BehaviorRootTree<>(obj, printLog);
-		datas.forEach(data -> root.addChild(data.build(obj)));
+		return this.buildRootExecutor(newBehaviorRootTree(obj, printLog));
+	}
+	/**
+	 * 构造一个 root executor
+	 * 自己提供BehaviorRootTree的对象
+	 * @return
+	 */
+	public <Owner extends MessageHandler<Owner>> BehaviorRootTree<Owner> buildRootExecutor(BehaviorRootTree<Owner> root) {
+		datas.forEach(data -> root.addChild(data.build(root.getOwner())));
 		root.initialize();
 		return root;
 	}

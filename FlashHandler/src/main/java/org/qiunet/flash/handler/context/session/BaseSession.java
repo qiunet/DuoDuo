@@ -9,7 +9,6 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.player.IRobot;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
@@ -239,7 +238,7 @@ abstract class BaseSession implements ISession {
 			return channel.newPromise();
 		}
 
-		if ( logger.isInfoEnabled() && messageActor != null && ( message.needLogger() || messageActor instanceof IRobot)) {
+		if ( logger.isInfoEnabled() && messageActor != null && message.needLogger()) {
 			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
 		}
 		ChannelFuture future;
