@@ -6,7 +6,6 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 import java.nio.ByteBuffer;
@@ -42,20 +41,16 @@ public interface IChannelMessage<T> {
 	 * 是否需要打印输出
 	 * @return
 	 */
-	default boolean needLogger(){
+	default boolean debugOut(){
 		return ! this.getContent().getClass().isAnnotationPresent(SkipDebugOut.class);
 	}
 
 	/**
-	 * 转logger 格式字符串
+	 * 格式字符串
 	 * @return
 	 */
-	default String toStr() {
-		T content = this.getContent();
-		if (IDataToString.class.isAssignableFrom(content.getClass())) {
-			return ((IDataToString) content)._toString();
-		}
-		return ToString.toString(content);
+	default String _toString() {
+		return ToString.toString(getContent());
 	}
 
 	/**

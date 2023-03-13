@@ -2,8 +2,6 @@ package org.qiunet.cross.actor.data;
 
 import org.qiunet.cross.transaction.ITransactionRsp;
 import org.qiunet.cross.transaction.TransferJsonData;
-import org.qiunet.utils.string.IDataToString;
-import org.qiunet.utils.string.ToString;
 
 /***
  * 跨服获取玩家数据的事务请求数据
@@ -11,7 +9,7 @@ import org.qiunet.utils.string.ToString;
  * @author qiunet
  * 2020-10-28 12:03
  */
-public class CrossDataTransactionRsp implements ITransactionRsp, IDataToString {
+public class CrossDataTransactionRsp implements ITransactionRsp {
 
 	private TransferJsonData jsonData;
 
@@ -31,10 +29,5 @@ public class CrossDataTransactionRsp implements ITransactionRsp, IDataToString {
 
 	public IUserTransferData getData() {
 		return (IUserTransferData) jsonData.getData();
-	}
-
-	@Override
-	public String _toString() {
-		return ToString.toString(getData());
 	}
 }

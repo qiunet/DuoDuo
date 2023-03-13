@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
@@ -11,7 +10,6 @@ import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.utils.pool.ObjectPool;
-import org.qiunet.utils.string.ToString;
 
 /**
  * 该对象会回收. 所以只能在本线程用. addMessage 后. 就会回收掉
@@ -80,8 +78,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			return;
 		}
 		long startTime = System.currentTimeMillis();
-		if (logger.isInfoEnabled() && ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)) {
-			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), ToString.toString(getRequestData()));
+		if (logger.isInfoEnabled() && getRequestData().debugOut()) {
+			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), getRequestData()._toString());
 		}
 
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {

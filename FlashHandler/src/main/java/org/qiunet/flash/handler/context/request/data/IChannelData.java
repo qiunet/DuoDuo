@@ -2,8 +2,10 @@ package org.qiunet.flash.handler.context.request.data;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import io.netty.buffer.ByteBuf;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
+import org.qiunet.utils.string.ToString;
 
 /***
  * requestData and responseData 的父类接口.
@@ -34,7 +36,21 @@ public abstract class IChannelData {
 	public DefaultProtobufMessage buildChannelMessage(){
 		return DefaultProtobufMessage.valueOf(protocolId(), this);
 	}
+	/**
+	 * 跳过交互输出, 输出内容为 {@link #_toString()}
+	 * @return true 打印 false 跳过
+	 */
+	public boolean debugOut() {
+		return ! getClass().isAnnotationPresent(SkipDebugOut.class);
+	}
 
+	/**
+	 * 打印该对象
+	 * @return 对象有效字符串.
+	 */
+	public String _toString(){
+		return ToString.toString(this);
+	}
 	/**
 	 * channel data to bytebuf 后.
 	 * 会调用该方法. 如果需要回收的东西.

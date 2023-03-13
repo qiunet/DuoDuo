@@ -5,8 +5,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.string.IDataToString;
-import org.qiunet.utils.string.ToString;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  * 传输一个对象
@@ -15,7 +14,7 @@ import org.qiunet.utils.string.ToString;
  * 2021/12/29 10:36
  */
 @ProtobufClass
-public class TransferJsonData implements IDataToString {
+public class TransferJsonData {
 	@Ignore
 	@JSONField(deserialize = false, serialize = false)
 	private Object data;
@@ -53,13 +52,9 @@ public class TransferJsonData implements IDataToString {
 				Class<?> aClass = Class.forName(clazz);
 				data = JsonUtil.getGeneralObj(jsonData, aClass);
 			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
+				LoggerType.DUODUO_FLASH_HANDLER.error("Get data  exception: ", e);
 			}
 		}
 		return data;
-	}
-	@Override
-	public String _toString() {
-		return ToString.toString(getData());
 	}
 }

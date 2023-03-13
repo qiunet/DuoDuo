@@ -1,12 +1,12 @@
 package org.qiunet.cross.transaction;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
-import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /***
@@ -18,7 +18,7 @@ import org.qiunet.utils.string.ToString;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.TRANSACTION_RSP, desc = "处理事务请求")
-public class RouteTransactionRsp extends IChannelData implements IDataToString {
+public class RouteTransactionRsp extends IChannelData {
 	/**
 	 * 响应端维护自增的id, 需要带着返回给请求服务器.
 	 */
@@ -48,6 +48,11 @@ public class RouteTransactionRsp extends IChannelData implements IDataToString {
 
 	public ITransactionRsp getData() {
 		return (ITransactionRsp) jsonData.getData();
+	}
+
+	@Override
+	public boolean debugOut() {
+		return ! getData().getClass().isAnnotationPresent(SkipDebugOut.class);
 	}
 
 	@Override

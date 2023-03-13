@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.utils.pool.ObjectPool;
-import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /***
@@ -15,8 +14,8 @@ import org.qiunet.utils.string.ToString;
  * @author qiunet
  * 2020-10-26 12:15
  */
-public class Cross2PlayerMessage extends BaseByteBufMessage<IChannelData> implements IDataToString {
-	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = new ObjectPool<Cross2PlayerMessage>(1024, 32) {
+public class Cross2PlayerMessage extends BaseByteBufMessage<IChannelData> {
+	private static final ObjectPool<Cross2PlayerMessage> RECYCLER = new ObjectPool<>(1024, 32) {
 		@Override
 		public Cross2PlayerMessage newObject(Handle<Cross2PlayerMessage> handler) {
 			return new Cross2PlayerMessage(handler);
@@ -76,11 +75,11 @@ public class Cross2PlayerMessage extends BaseByteBufMessage<IChannelData> implem
 	}
 
 	@Override
-	public boolean needLogger() {
+	public boolean debugOut() {
 		if (this.skipMessage) {
 			return false;
 		}
-		return super.needLogger();
+		return super.debugOut();
 	}
 
 	public boolean isFlush() {

@@ -22,7 +22,6 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
 /***
@@ -91,7 +90,7 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
 				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 				ServerConnType serverConnType = iMessageActor.getSender().channel().attr(ServerConstants.HANDLER_TYPE_KEY).get();
-				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, ToString.toString(channelData));
+				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, channelData._toString());
 			}
 		}
 

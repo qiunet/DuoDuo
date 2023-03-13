@@ -3,17 +3,16 @@ package org.qiunet.flash.handler.context.request.persistconn;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.utils.pool.ThreadScopeObjectPool;
 
 /**
  * Created by qiunet.
  * 17/12/2
  */
 class FacadePersistConnRequest<RequestData, P extends IMessageActor<P>> implements IPersistConnRequest<RequestData> {
-	private static final ThreadScopeObjectPool<FacadePersistConnRequest> pool = new ThreadScopeObjectPool<>(FacadePersistConnRequest::new);
+	private static final ThreadLocal<FacadePersistConnRequest> pool = ThreadLocal.withInitial(FacadePersistConnRequest::new);
 	private AbstractPersistConnRequestContext<RequestData, P> context;
 
-	public FacadePersistConnRequest() {}
+	private FacadePersistConnRequest() {}
 
 	static <RequestData, P extends IMessageActor<P>> FacadePersistConnRequest<RequestData, P> valueOf(AbstractPersistConnRequestContext<RequestData, P> context) {
 		FacadePersistConnRequest request = pool.get();
@@ -23,7 +22,6 @@ class FacadePersistConnRequest<RequestData, P extends IMessageActor<P>> implemen
 
 	void recycle(){
 		this.context = null;
-		pool.recycle(this);
 	}
 	@Override
 	public RequestData getRequestData() {

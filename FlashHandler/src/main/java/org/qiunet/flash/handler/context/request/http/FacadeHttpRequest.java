@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.request.http;
 
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.cookie.Cookie;
-import org.qiunet.utils.pool.ThreadScopeObjectPool;
 
 import java.util.List;
 import java.util.Set;
@@ -12,7 +11,7 @@ import java.util.Set;
  * 17/11/21
  */
 class FacadeHttpRequest<RequestData, ResponseData> implements IHttpRequest<RequestData> {
-	private static final ThreadScopeObjectPool<FacadeHttpRequest> pool = new ThreadScopeObjectPool<>(FacadeHttpRequest::new);
+	private static final ThreadLocal<FacadeHttpRequest> pool = ThreadLocal.withInitial(FacadeHttpRequest::new);
 
 	private IHttpRequestContext<RequestData, ResponseData> context;
 
@@ -26,7 +25,6 @@ class FacadeHttpRequest<RequestData, ResponseData> implements IHttpRequest<Reque
 
 	public void recycle() {
 		this.context = null;
-		pool.recycle(this);
 	}
 
 	@Override

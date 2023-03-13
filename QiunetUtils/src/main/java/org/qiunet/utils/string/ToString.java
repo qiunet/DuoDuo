@@ -56,9 +56,6 @@ public final class ToString {
 
 
 	public static String toString(Object obj) {
-		if (obj instanceof IDataToString) {
-			return ((IDataToString) obj)._toString();
-		}
 		return ToString.objToString(obj);
 	}
 

@@ -167,7 +167,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerRequest(Supplier<IHandler> handlerGetter, MessageContent content, ChannelHandlerContext ctx, FullHttpRequest request) {
 		IHandler handler = handlerGetter.get();
 		if (handler == null) {
-			logger.error("Handler [{}] not found!", content.toString());
+			logger.info("Handler [{}] not found!", content.toString());
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}

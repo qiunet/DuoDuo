@@ -229,8 +229,11 @@ abstract class BaseSession implements ISession {
 	private ChannelFuture realSendMessage(IChannelMessage<?> message, boolean flush) {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! this.channel.isOpen()) {
-			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-			logger.error("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
+			if (logger.isDebugEnabled() && message.debugOut()) {
+				String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
+				logger.debug("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message._toString());
+			}
+
 			if (message instanceof BaseByteBufMessage && ((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
 					((BaseByteBufMessage<?>) message).getByteBuf().release();
 			}
@@ -238,8 +241,8 @@ abstract class BaseSession implements ISession {
 			return channel.newPromise();
 		}
 
-		if ( logger.isInfoEnabled() && messageActor != null && message.needLogger()) {
-			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message.toStr());
+		if ( logger.isInfoEnabled() && messageActor != null && message.debugOut()) {
+			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message._toString());
 		}
 		ChannelFuture future;
 		if (flush) {

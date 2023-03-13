@@ -3,13 +3,13 @@ package org.qiunet.cross.event;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.base.Preconditions;
 import org.qiunet.cross.transaction.TransferJsonData;
+import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.util.proto.SkipProtoGenerator;
 import org.qiunet.utils.listener.event.IListenerEvent;
-import org.qiunet.utils.string.IDataToString;
 import org.qiunet.utils.string.ToString;
 
 /***
@@ -21,7 +21,7 @@ import org.qiunet.utils.string.ToString;
 @SkipProtoGenerator
 @ServerCommunicationData
 @ChannelData(ID = IProtocolId.System.CROSS_EVENT_REQ, desc = "跨服事件处理")
-public class CrossEventRequest extends IChannelData implements IDataToString {
+public class CrossEventRequest extends IChannelData {
 	/**
 	 * 系统发给玩家的事件. 需要有playerID. 会在玩家的线程执行
 	 */
@@ -63,6 +63,12 @@ public class CrossEventRequest extends IChannelData implements IDataToString {
 	public IListenerEvent getData() {
 		return (IListenerEvent) jsonData.getData();
 	}
+
+	@Override
+	public boolean debugOut() {
+		return ! getData().getClass().isAnnotationPresent(SkipDebugOut.class);
+	}
+
 	@Override
 	public String _toString() {
 		return "=CrossEvent= "+ ToString.toString(getData());

@@ -19,7 +19,7 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 	}
 
 	@Override
-	public boolean needLogger() {
+	public boolean debugOut() {
 		return false;
 	}
 
@@ -34,7 +34,7 @@ public class DefaultBytesMessage implements IChannelMessage<byte []> {
 	}
 
 	@Override
-	public String toStr() {
+	public String _toString() {
 		return "ProtocolID: "+protocolId;
 	}
 

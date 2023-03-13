@@ -2,7 +2,6 @@ package org.qiunet.game.test.robot;
 
 import com.google.common.collect.Maps;
 import org.qiunet.flash.handler.common.IMessageHandler;
-import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
@@ -36,7 +35,6 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
-import org.qiunet.utils.string.ToString;
 import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
@@ -295,8 +293,8 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 			Class<?> declaringClass = method.getDeclaringClass();
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
 			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.byteBuffer());
-			if (logger.isInfoEnabled() && ! realData.getClass().isAnnotationPresent(SkipDebugOut.class)) {
-				logger.info("[{}] <<< {}", Robot.this.getIdentity(), ToString.toString(realData));
+			if (logger.isInfoEnabled() && realData.debugOut()) {
+				logger.info("[{}] <<< {}", getAccount(), realData._toString());
 			}
 			try {
 				method.invoke(action, realData);

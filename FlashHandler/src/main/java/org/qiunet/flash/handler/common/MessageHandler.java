@@ -9,10 +9,10 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.thread.IThreadSafe;
-import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
@@ -82,7 +82,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			return;
 		}
 
-		ThreadPoolManager.NORMAL.execute(() -> this.executorMessage(message));
+		executorService.randEventLoop().execute(() -> this.executorMessage(message));
 	}
 
 
@@ -169,6 +169,14 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			this.eventLoops = IntStream.range(0, count)
 				.mapToObj(DExecutorService::new)
 			.toList();
+		}
+
+		/**
+		 * 随机指定一个 DExecutorService
+		 * @return
+		 */
+		public DExecutorService randEventLoop() {
+			return eventLoops.get(MathUtil.random(eventLoops.size()));
 		}
 
 		public DExecutorService getEventLoop(Object key) {
