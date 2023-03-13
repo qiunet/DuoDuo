@@ -219,15 +219,18 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	 * @throws Exception
 	 */
 	private void processSyncHttp(ISyncHttpHandler<RequestData, ResponseData> handler) throws Exception {
-		FacadeHttpRequest<RequestData, ResponseData> request = new FacadeHttpRequest<>(this);
+		FacadeHttpRequest<RequestData, ResponseData> request = FacadeHttpRequest.valueOf(this);
 		long startTime = System.currentTimeMillis();
-		ResponseData data = handler.handler(request);
-
-		if (data == null) {
-			throw new NullPointerException("Response data can not be null!");
+		try {
+			ResponseData data = handler.handler(request);
+			if (data == null) {
+				throw new NullPointerException("Response data can not be null!");
+			}
+			long useTime = System.currentTimeMillis() - startTime;
+			this.getHandler().recordUseTime(useTime);
+			this.response(data);
+		}finally {
+			request.recycle();
 		}
-		long useTime = System.currentTimeMillis() - startTime;
-		this.getHandler().recordUseTime(useTime);
-		this.response(data);
 	}
 }

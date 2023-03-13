@@ -201,8 +201,6 @@ public class BootstrapServer {
 				server.shutdown();
 			}
 
-			// 停止共用的线程池
-			ServerConstants.WORKER.shutdownGracefully();
 			// 放开主线程
 			LockSupport.unpark(awaitThread);
 		}
