@@ -167,4 +167,31 @@ public class MathUtil {
 		}
 		return i;
 	}
+
+	/**
+	 * 将x  y 组成一个大的数值
+	 * @param x x
+	 * @param y y
+	 * @return long型值
+	 */
+	public static long buildVal(int x, int y) {
+		return (((long)x) << Integer.SIZE) | (y & 0xffffffffL);
+	}
+
+	/***
+	 * 计算{@link #buildVal(int, int)} 中x的值
+	 * @param val {@link #buildVal(int, int)} 的值
+	 * @return x值
+	 */
+	public static int calX(long val) {
+		return (int) (val >> Integer.SIZE);
+	}
+	/***
+	 * 计算{@link #buildVal(int, int)} 中y的值
+	 * @param val {@link #buildVal(int, int)} 的值
+	 * @return y值
+	 */
+	public static int calY(long val) {
+		return (int) val;
+	}
 }

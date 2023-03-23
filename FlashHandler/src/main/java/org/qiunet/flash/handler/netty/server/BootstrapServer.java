@@ -107,7 +107,6 @@ public class BootstrapServer {
 	 * @return  BootstrapServer 实例
 	 */
 	public BootstrapServer listener(ServerBootStrapConfig config) {
-		new CountDownLatch(1);
 		// 默认启动tcp  http监听
 		this.nettyServers.add(new NettyTcpServer(config, () -> countdown.countDown()));
 		if (config.getKcpBootstrapConfig() != null) {

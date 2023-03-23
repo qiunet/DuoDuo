@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.netty.server.constants;
 
 import com.google.common.collect.Lists;
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
@@ -12,9 +13,11 @@ import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
+import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.StrCodecUtil;
 
@@ -27,6 +30,8 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class ServerConstants {
 	private ServerConstants(){}
+
+	public static final EventLoopGroup WORKER = NettyUtil.newEventLoopGroup(0, "netty-tcp-server-worker-event-loop-");
 	/**
 	 * 感兴趣的消息列表
 	 */
@@ -110,5 +115,10 @@ public final class ServerConstants {
 	private void onServerStart(ServerStartupCompleteEvent eventData){
 		LoggerType.DUODUO_FLASH_HANDLER.error(StrCodecUtil.decrypt(ICON));
 		ICON = null;
+	}
+
+	@EventListener
+	private void onServerShutdown(ServerShutdownEvent event) {
+		WORKER.shutdownGracefully();
 	}
 }
