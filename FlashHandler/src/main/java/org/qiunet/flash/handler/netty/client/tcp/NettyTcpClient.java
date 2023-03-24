@@ -10,14 +10,15 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
+import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -64,15 +65,21 @@ public class NettyTcpClient {
 	public ISession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
 		Preconditions.checkArgument(!StringUtil.isEmpty(host));
 		Preconditions.checkArgument(port > 0);
-		return new DSession(
-				DSessionConnectParam.newBuilder(() -> bootstrap.connect(host, port))
-				.setConnectListener(listener)
-				.build()
-		);
+		// Start the client.
+		try {
+			ChannelFuture f = this.bootstrap.connect(host, port).sync();
+			if (listener != null) {
+				f.addListener(listener);
+			}
+			return ChannelUtil.getSession(f.channel());
+		} catch (Exception e) {
+			LoggerType.DUODUO.error("", e);
+		}
+		return null;
 	}
 
-	public TcpClientConnector connect(String host, int port) {
-		return new TcpClientConnector(connect(host, port, null));
+	public ISession connect(String host, int port) {
+		return connect(host, port, null);
 	}
 
 	public static void shutdown(){
@@ -84,25 +91,22 @@ public class NettyTcpClient {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
-			ch.attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
-			ch.attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
+			ClientSession clientSession = new ClientSession(ch);
+			ChannelUtil.bindSession(clientSession, ch);
+
+			clientSession.attachObj(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());
+			clientSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
 			pipeline.addLast(new NettyClientHandler());
 		}
 	}
 
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
-
-		@Override
-		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
-			super.channelActive(ctx);
-		}
-
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(ctx.channel().attr(ServerConstants.SESSION_KEY).get(), msg);
+			trigger.response(ChannelUtil.getSession(ctx.channel()), ctx.channel(), msg);
 		}
 
 		@Override

@@ -40,14 +40,6 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	public abstract boolean isCrossPlayer();
 
 	/**
-	 * 获得session
-	 * @return
-	 */
-	public ISession getSession(){
-		return session;
-	}
-
-	/**
 	 * 是player Actor
 	 * @return
 	 */
@@ -73,6 +65,6 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 			super.exceptionHandle(e);
 			return;
 		}
-		session.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get().getStartupContext().exception(session.channel(), e);
+		session.getAttachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY).getStartupContext().exception(session, e);
 	}
 }

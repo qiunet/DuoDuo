@@ -4,28 +4,23 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.util.AttributeKey;
+import io.netty.channel.ChannelPromise;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
 import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.Map;
-import java.util.StringJoiner;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *
@@ -40,71 +35,12 @@ abstract class BaseSession implements ISession {
 	 */
 	protected DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
 	/**
-	 * 判断是否已经在计时flush
-	 */
-	private final AtomicBoolean flushScheduling = new AtomicBoolean();
-	/**
-	 * 写次数计数
-	 */
-	private final AtomicInteger counter = new AtomicInteger();
-
-	protected Channel channel;
-
-	protected void setChannel(Channel channel) {
-		if (channel != null) {
-			// 测试可能为null
-			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
-		}
-		this.channel = channel;
-	}
-	/**
 	 * 设置 session 的参数
 	 */
 	public ISession sessionConfig(DSessionConfig config) {
 		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 3000));
 		this.sessionConfig = config;
 		return this;
-	}
-	/**
-	 * session是否是活跃的.
-	 * @return
-	 */
-	@Override
-	public boolean isActive() {
-		return channel != null && channel.isActive();
-	}
-
-	/**
-	 * flush
-	 */
-	private synchronized void flush0(){
-		counter.set(0);
-		channel.flush();
-	}
-
-
-	@Override
-	public void flush() {
-		this.flush0();
-	}
-
-	@Override
-	public Channel channel() {
-		return channel;
-	}
-
-	@Override
-	public String getIp() {
-		return ChannelUtil.getIp(channel);
-	}
-	@Override
-	public <T> T getAttachObj(AttributeKey<T> key) {
-		return channel.attr(key).get();
-	}
-
-	@Override
-	public <T> void attachObj(AttributeKey<T> key, T obj) {
-		channel.attr(key).set(obj);
 	}
 
 	private final AtomicBoolean closed = new AtomicBoolean();
@@ -158,59 +94,20 @@ abstract class BaseSession implements ISession {
 			this.closeChannel(cause);
 		}
 	}
+
 	/**
 	 * 关闭channel
-	 * @param cause
+	 * @param cause 原因
 	 */
-	private void closeChannel(CloseCause cause) {
-		if (channel == null) {
-			return;
-		}
-		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
-		if ((channel.isActive() || channel.isOpen())) {
-			logger.info("Session [{}] closed", this);
-			this.flush();
-		}
-		channel.close();
-	}
-
-	@Override
-	public ChannelFuture sendMessage(IChannelMessage<?> message) {
-		return this.sendMessage(message, true);
-	}
-
-	@Override
-	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
-		return this.doSendMessage(message, flush);
-	}
-
+	protected abstract void closeChannel(CloseCause cause);
 	/**
 	 * 发送message
 	 * @param message
 	 * @param flush
 	 * @return
 	 */
-	protected ChannelFuture doSendMessage(IChannelMessage<?> message, boolean flush) {
-		if (flush) {
-			return this.realSendMessage(message, true);
-		}
-
-		ChannelFuture future;
-		synchronized (this) {
-			future = this.realSendMessage(message, false);
-		}
-
-		if (counter.incrementAndGet() >= 10) {
-			this.flush0();
-			return future;
-		}
-
-		if (flushScheduling.compareAndSet(false, true)) {
-			// 不取消future 也没有损失.
-			channel.eventLoop().schedule(this::flush0, sessionConfig.getFlush_delay_ms(), TimeUnit.MILLISECONDS);
-			this.flushScheduling.set(false);
-		}
-		return future;
+	protected ChannelFuture doSendMessage(Channel channel, IChannelMessage<?> message, boolean flush) {
+		return this.realSendMessage(channel, message, flush);
 	}
 
 	private static final GenericFutureListener<? extends Future<? super Void>> listener = f -> {
@@ -222,16 +119,24 @@ abstract class BaseSession implements ISession {
 
 	/**
 	 * 发送消息在这里
+	 *
 	 * @param message
 	 * @param flush
 	 * @return
 	 */
-	private ChannelFuture realSendMessage(IChannelMessage<?> message, boolean flush) {
+	private ChannelFuture realSendMessage(Channel channel, IChannelMessage<?> message, boolean flush) {
+		ChannelPromise promise = channel.newPromise();
+		channel.eventLoop().execute(() -> {
+			this.realSendMessage0(promise, channel, message, flush);
+		});
+		return promise;
+	}
+	private ChannelFuture realSendMessage0(ChannelPromise promise, Channel channel, IChannelMessage<?> message, boolean flush) {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (! this.channel.isOpen()) {
+		if (! channel.isOpen()) {
 			if (logger.isDebugEnabled() && message.debugOut()) {
 				String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-				logger.debug("[{}] discard [{}({})] message: {}", identityDesc, channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message._toString());
+				logger.debug("[{}] discard [{}({})] message: {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
 			}
 
 			if (message instanceof BaseByteBufMessage && ((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
@@ -242,35 +147,16 @@ abstract class BaseSession implements ISession {
 		}
 
 		if ( logger.isInfoEnabled() && messageActor != null && message.debugOut()) {
-			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), message._toString());
+			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
 		}
-		ChannelFuture future;
-		if (flush) {
-			future = this.channel.writeAndFlush(message);
-		}else {
-			future = this.channel.write(message);
-		}
-		future.addListener(listener);
-		return future;
-	}
 
-	@Override
-	public String toString() {
-		StringJoiner sj = new StringJoiner(",", "[", "]");
-		if (channel != null) {
-			boolean isServer = channel.hasAttr(ServerConstants.BOOTSTRAP_CONFIG_KEY);
-			sj.add(isServer ? "Server": "Client");
-			sj.add("Type = "+channel.attr(ServerConstants.HANDLER_TYPE_KEY).get());
-			IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (messageActor != null) {
-				sj.add(messageActor.getIdentity());
-			}
-			sj.add("ID = " + channel.id().asShortText());
-			if (isServer) {
-				sj.add("Ip = " + getIp());
-			}
+		if (flush) {
+			channel.writeAndFlush(message, promise);
+		}else {
+			channel.write(message, promise);
 		}
-		return sj.toString();
+		promise.addListener(listener);
+		return promise;
 	}
 
 	@Override
@@ -287,9 +173,4 @@ abstract class BaseSession implements ISession {
 	}
 
 	protected final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
-
-	@Override
-	public IChannelMessageSender getSender() {
-		return this;
-	}
 }

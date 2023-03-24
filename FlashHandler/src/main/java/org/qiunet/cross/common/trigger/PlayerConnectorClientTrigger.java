@@ -1,5 +1,6 @@
 package org.qiunet.cross.common.trigger;
 
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
@@ -17,6 +18,7 @@ import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -34,7 +36,7 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	@Override
-	public void response(ISession session, MessageContent data) {
+	public void response(ISession session, Channel channel, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
 		|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
 		) {
@@ -50,7 +52,7 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 				LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());
 				return;
 			}
-			IRequestContext message = handler.getHandlerType().createRequestContext(handler, data, session.channel());
+			IRequestContext message = handler.getHandlerType().createRequestContext(handler, session, data, channel);
 			playerActor.addMessage((IMessage<PlayerActor>) message);
 			return;
 		}
@@ -85,18 +87,21 @@ public class PlayerConnectorClientTrigger implements IPersistConnResponseTrigger
 	}
 
 	private void c2pMessage(IMessageActor iMessageActor, DefaultByteBufMessage message, boolean kcp, boolean flush) {
+		ISession session = iMessageActor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
 				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-				ServerConnType serverConnType = iMessageActor.getSender().channel().attr(ServerConstants.HANDLER_TYPE_KEY).get();
+				ServerConnType serverConnType = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
 				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, channelData._toString());
 			}
 		}
-
-		if (kcp && iMessageActor.isKcpSessionPrepare()) {
-			iMessageActor.getSender().sendKcpMessage(message, flush);
+		if (kcp
+		&& IKcpSessionHolder.class.isAssignableFrom(session.getClass())
+		&& ((IKcpSessionHolder)session).isKcpSessionPrepare()) {
+			((IKcpSessionHolder) session).sendKcpMessage(message, flush);
 		}else {
-			iMessageActor.getSender().sendMessage(message, flush);
-		}	}
+			iMessageActor.getSession().sendMessage(message, flush);
+		}
+	}
 }

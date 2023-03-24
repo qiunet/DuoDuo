@@ -143,7 +143,7 @@ public enum UserOnlineManager {
 		waitActor.actor.clearObservers();
 		waitActor.actor.merge(currActor);
 		waitActor.future.cancel(true);
-		currActor.getSender().channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(waitActor.actor);
+		currActor.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, waitActor.actor);
 
 		if (waitActor.actor.isNotNull(ServerConstants.INTEREST_MESSAGE_LIST)) {
 			waitActor.actor.addMessage(this::resentInterestMsg);
@@ -166,7 +166,7 @@ public enum UserOnlineManager {
 		List<DefaultBytesMessage> list = playerActor.getVal(ServerConstants.INTEREST_MESSAGE_LIST);
 		list.forEach(msg -> playerActor.sendMessage(msg, false));
 		playerActor.clear(ServerConstants.INTEREST_MESSAGE_LIST);
-		playerActor.flush();
+		playerActor.getSession().flush();
 	}
 
 	/**
@@ -193,7 +193,7 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		if (userActor.isCrossPlayer() && userActor.getSender().isActive()) {
+		if (userActor.isCrossPlayer() && userActor.getSession().isActive()) {
 			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
 		}
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));

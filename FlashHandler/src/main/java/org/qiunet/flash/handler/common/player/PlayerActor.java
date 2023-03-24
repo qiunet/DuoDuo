@@ -15,6 +15,7 @@ import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -353,6 +354,11 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			throw new RuntimeException("Not in self thread!");
 		}
 		return IPlayerDataLoader.super.getMapData(clazz);
+	}
+
+	@Override
+	public DSession getSession() {
+		return (DSession) super.getSession();
 	}
 
 	@Override

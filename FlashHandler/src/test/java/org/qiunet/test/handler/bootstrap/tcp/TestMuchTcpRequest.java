@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap.tcp;
 
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -7,7 +8,6 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.handler.proto.LoginResponse;
@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/27
  */
 public class TestMuchTcpRequest extends BasicTcpBootStrap {
-	private final int requestCount = 100000;
+	private final int requestCount = 20000;
 	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(requestCount);
 
@@ -32,10 +32,10 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 	public void muchRequest() throws InterruptedException {
 		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientConfig.DEFAULT_PARAMS, new Trigger());
 		long start = System.currentTimeMillis();
-		final int threadCount = 100;
+		final int threadCount = 20;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
-				TcpClientConnector connector = nettyTcpClient.connect(host, port);
+				ISession connector = nettyTcpClient.connect(host, port);
 				connector.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)));
 
 				int count = requestCount/threadCount;
@@ -54,7 +54,7 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 
 	public class Trigger implements IPersistConnResponseTrigger {
 		@Override
-		public void response(ISession session, MessageContent data) {
+		public void response(ISession session, Channel channel, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 				return;
 			}

@@ -1,8 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.IMessageHandler;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.utils.string.StringUtil;
 
 /***
@@ -10,7 +9,7 @@ import org.qiunet.utils.string.StringUtil;
  * @author qiunet
  * 2020/3/1 21:43
  **/
-public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandler<P>, IChannelMessageSender {
+public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandler<P>, ISessionHolder {
 	/***
 	 * 得到 Id playerActor一般是playerId
 	 * crossActor 是 serverId
@@ -25,11 +24,6 @@ public interface IMessageActor<P extends IMessageActor<P>> extends IMessageHandl
 	default String getIdentity(){
 		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), getId());
 	}
-	/**
-	 * 获得session
-	 * @return
-	 */
-	ISession getSender();
 	/**
 	 * 是否已经鉴权认证.
 	 * 一般初始化是只有DSession,

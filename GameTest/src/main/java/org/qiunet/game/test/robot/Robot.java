@@ -1,6 +1,7 @@
 package org.qiunet.game.test.robot;
 
 import com.google.common.collect.Maps;
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -152,7 +153,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 
 		super.destroy();
 		this.clients.forEach((key, val) -> {
-			val.getSession().channel().close();
+			val.getSession().close(CloseCause.LOGOUT);
 		});
 		this.tickFuture.cancel(false);
 		counter.decrementAndGet();
@@ -254,7 +255,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 				case TCP:
 					return NettyTcpClient.create((TcpClientConfig) config, trigger)
 							.connect(config.getAddress().getHostString(), config.getAddress().getPort())
-							.getSender();
+							.getSession();
 				default:
 					throw new CustomException("Type [{}] is not support", config.getConnType());
 			}
@@ -264,7 +265,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 	private class PersistConnResponseTrigger implements IPersistConnResponseTrigger {
 
 		@Override
-		public void response(ISession session, MessageContent data) {
+		public void response(ISession session, Channel channel, MessageContent data) {
 			data.retain();
 			Robot.this.addMessage(h -> {
 				try {

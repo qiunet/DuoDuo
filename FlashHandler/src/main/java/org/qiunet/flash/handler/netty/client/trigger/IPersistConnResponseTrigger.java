@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.client.trigger;
 
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.ISession;
 
@@ -12,5 +13,5 @@ public interface IPersistConnResponseTrigger {
 	 * 触发的响应
 	 * @param data
 	 */
-	void response(ISession session, MessageContent data);
+	void response(ISession session, Channel channel, MessageContent data);
 }

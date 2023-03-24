@@ -90,7 +90,7 @@ public enum CrossProtocolHeader implements IProtocolHeader {
 		private final ObjectPool.Handle<ServerReqHeader> recyclerHandle;
 
 			private static final byte [] MAGIC = {'F', 'a', 's', 't'};
-		private static final int HEADER_LENGTH = MAGIC.length + 12;
+		private static final int HEADER_LENGTH = MAGIC.length + 6;
 		private final byte [] magic = new byte[MAGIC.length];
 
 		private int protocolId;

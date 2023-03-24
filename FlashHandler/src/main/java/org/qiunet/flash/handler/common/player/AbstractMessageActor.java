@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.MessageHandler;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
@@ -17,7 +17,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * 2020/3/1 21:45
  **/
 public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
-	extends MessageHandler<P> implements IMessageActor<P>, IChannelMessageSender, IArgsContainer {
+	extends MessageHandler<P> implements IMessageActor<P>, ISessionHolder, IArgsContainer {
 	private final ArgsContainer container = new ArgsContainer();
 
 	private String msgExecuteIndex;
@@ -49,14 +49,14 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	@Override
-	public ISession getSender() {
-		return session;
-	}
-
-	@Override
 	public void destroy() {
 		super.destroy();
 		this.container.clear();
+	}
+
+	@Override
+	public ISession getSession() {
+		return session;
 	}
 
 	@Override

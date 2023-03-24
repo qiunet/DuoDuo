@@ -18,6 +18,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
+import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
@@ -123,6 +124,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(config));
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
+		pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
 
 		ctx.channel().config().setOption(ChannelOption.SO_SNDBUF, 1024 * 128);
 		ctx.channel().config().setOption(ChannelOption.SO_RCVBUF, 1024 * 128);
@@ -173,7 +175,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		}
 		ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
 		ctx.channel().attr(ServerConstants.HTTP_REQUEST_KEY).set(request);
-		IRequestContext context = handler.getDataType().createRequestContext(content, ctx.channel());
+		IRequestContext context = handler.getDataType().createRequestContext(null, content, ctx.channel());
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();

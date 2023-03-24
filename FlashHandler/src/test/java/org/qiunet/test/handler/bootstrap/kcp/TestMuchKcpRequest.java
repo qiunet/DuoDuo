@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap.kcp;
 
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -53,7 +54,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 
 	public class Trigger implements IPersistConnResponseTrigger {
 		@Override
-		public void response(ISession session, MessageContent data) {
+		public void response(ISession session, Channel channel, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 				return;
 			}

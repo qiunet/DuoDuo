@@ -15,23 +15,19 @@ import io.netty.handler.codec.http.websocketx.WebSocketHandshakeException;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
-import org.qiunet.flash.handler.context.session.DSession;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.config.DSessionConnectParam;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientEncoder;
+import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
-import org.qiunet.utils.async.future.DPromise;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-
-import java.util.concurrent.ExecutionException;
 
 /**
  * webSocket 客户端
@@ -39,20 +35,21 @@ import java.util.concurrent.ExecutionException;
  * Created by qiunet.
  * 17/12/1
  */
-public class NettyWebSocketClient implements IChannelMessageSender {
+public class NettyWebSocketClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final IPersistConnResponseTrigger trigger;
+	private final NettyClientHandler clientHandler;
 	private final WebSocketClientConfig config;
 	private final Bootstrap bootstrap;
-	private ISession session;
 
 	private NettyWebSocketClient(WebSocketClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
 		this.config = config;
 
-		bootstrap = new Bootstrap();
-		bootstrap.group(group);
+ 		this.clientHandler = new NettyClientHandler();
+		this.bootstrap = new Bootstrap();
+		this.bootstrap.group(group);
 
 		bootstrap.channel(NioSocketChannel.class);
 		bootstrap.option(ChannelOption.TCP_NODELAY,true);
@@ -65,19 +62,13 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 	}
 
 	private ISession connect() {
-		DPromise<ChannelFuture> promise = DPromise.create();
-		ChannelFuture future = bootstrap.connect(config.getAddress());
-		future.addListener(f1 -> {
-			ChannelFuture handshakeFuture = ((NettyClientHandler) future.channel().pipeline().get("NettyClientHandler")).handshakeFuture();
-			promise.trySuccess(handshakeFuture);
-		});
-		return (this.session = new DSession(DSessionConnectParam.newBuilder(() -> {
-			try {
-				return promise.get();
-			} catch (InterruptedException | ExecutionException e) {
-				throw new CustomException(e, "Connect to server {} error!", config.getURI());
-			}
-		}).build()));
+		try {
+			bootstrap.connect(config.getAddress()).sync();
+			return ChannelUtil.getSession(clientHandler.handshakeFuture.sync().channel());
+		} catch (Exception e) {
+			LoggerType.DUODUO.error("", e);
+		}
+		return null;
 	}
 
 	private class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
@@ -86,7 +77,7 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 			ChannelPipeline pipeline = ch.pipeline();
 			pipeline.addLast("HttpClientCodec", new HttpClientCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(1024 * 128));
-			pipeline.addLast("NettyClientHandler", new NettyClientHandler());
+			pipeline.addLast("NettyClientHandler", clientHandler);
 		}
 	}
 
@@ -94,24 +85,25 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 	private class NettyClientHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
 		private final WebSocketClientHandshaker handshaker;
 		private ChannelPromise handshakeFuture;
-		public ChannelFuture handshakeFuture() {
-			return handshakeFuture;
-		}
 
 		public NettyClientHandler(){
 			this.handshaker = WebSocketClientHandshakerFactory.newHandshaker(
 				config.getURI(), WebSocketVersion.V13, null, true, new DefaultHttpHeaders());
 		}
 
-
 		@Override
 		public void handlerAdded(ChannelHandlerContext ctx) {
+			ClientSession clientSession = new ClientSession(ctx.channel());
+			ChannelUtil.bindSession(clientSession, ctx.channel());
+
+			clientSession.attachObj(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());
+			clientSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
+
 			handshakeFuture = ctx.newPromise();
 		}
 
 		@Override
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.WS);
 			handshaker.handshake(ctx.channel());
 			super.channelActive(ctx);
 		}
@@ -125,13 +117,12 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 					ChannelPipeline pipeline = ctx.channel().pipeline();
 					pipeline.remove(this);
 
-
 					pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 					pipeline.addLast("WebSocketDecoder", new WebSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 					pipeline.addLast("WebSocketServerHandler", new NettyWSClientHandler());
 					pipeline.addLast("encode", new WebSocketClientEncoder());
+					pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
 
-					ctx.channel().attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {
 					handshakeFuture.setFailure(e);
@@ -148,15 +139,10 @@ public class NettyWebSocketClient implements IChannelMessageSender {
 		}
 	}
 
-	@Override
-	public ISession getSender() {
-		return session;
-	}
-
 	private class NettyWSClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(session, msg);
+			trigger.response(ChannelUtil.getSession(ctx.channel()), ctx.channel(), msg);
 		}
 	}
 	public static void shutdown(){

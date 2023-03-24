@@ -1,5 +1,6 @@
 package org.qiunet.cross.common.trigger;
 
+import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -20,7 +21,7 @@ import org.qiunet.utils.logger.LoggerType;
  */
 public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 	@Override
-	public void response(ISession session, MessageContent data) {
+	public void response(ISession session, Channel channel, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
 		|| data.getProtocolId() == IProtocolId.System.CLIENT_PING
 		|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
@@ -36,7 +37,7 @@ public class TcpNodeClientTrigger implements IPersistConnResponseTrigger {
 		if (handler == null) {
 			LoggerType.DUODUO_CROSS.error("Server not handler protocolId [{}]", data.getProtocolId());
 		}
-		IRequestContext message = handler.getHandlerType().createRequestContext(handler, data, session.channel());
+		IRequestContext message = handler.getHandlerType().createRequestContext(handler, session, data, channel);
 		iMessageActor.addMessage((IMessage) message);
 	}
 }

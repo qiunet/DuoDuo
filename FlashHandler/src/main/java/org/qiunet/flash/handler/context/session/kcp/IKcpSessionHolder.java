@@ -1,27 +1,34 @@
-package org.qiunet.flash.handler.context.sender;
+package org.qiunet.flash.handler.context.session.kcp;
 
 import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.KcpSession;
 
 /***
- * 所有发送响应的都实现该接口
+ * 有kcp能力的Session
  * @author qiunet
- * 2020/3/1 20:53
- **/
-public interface IChannelMessageSender {
-	/***
-	 * 得到session
-	 */
-	IChannelMessageSender getSender();
+ * 2023/3/24 21:04
+ */
+public interface IKcpSessionHolder {
 	/**
-	 * 是否有kcp session
+	 * 获得kcp session
+	 * @return
+	 */
+	KcpSession getKcpSession();
+	/**
+	 * 是否有准备
 	 * @return
 	 */
 	default boolean isKcpSessionPrepare() {
-		return getSender().isKcpSessionPrepare();
+		return getKcpSession() != null && getKcpSession().isActive();
 	}
-
+	/**
+	 * 绑定kcp session
+	 * 仅 tcp 和 ws可以.
+	 * @param kcpSession
+	 */
+	void bindKcpSession(KcpSession kcpSession);
 	/**
 	 * 如果有绑定udp session.
 	 * 发送udp消息
@@ -40,7 +47,7 @@ public interface IChannelMessageSender {
 	 * @return
 	 */
 	default ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
-		return getSender().sendKcpMessage(message, flush);
+		return getKcpSession().sendMessage(message, flush);
 	}
 
 	/**
@@ -62,39 +69,5 @@ public interface IChannelMessageSender {
 	 */
 	default ChannelFuture sendKcpMessage(IChannelData message, boolean flush) {
 		return this.sendKcpMessage(message.buildChannelMessage(), flush);
-	}
-	/**
-	 * 发送消息
-	 * @param message
-	 * @return
-	 */
-	default ChannelFuture sendMessage(IChannelMessage<?> message) {
-		return getSender().sendMessage(message);
-	}
-
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	default ChannelFuture sendMessage(IChannelData message) {
-		return this.sendMessage(message.buildChannelMessage());
-	}
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	default ChannelFuture sendMessage(IChannelData message, boolean flush) {
-		return this.sendMessage(message.buildChannelMessage(), flush);
-	}
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	default ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush){
-		return getSender().sendMessage(message, flush);
-	}
-
-	default void flush(){
-		getSender().flush();
 	}
 }

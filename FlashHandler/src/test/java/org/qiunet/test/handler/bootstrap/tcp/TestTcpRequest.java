@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap.tcp;
 
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +11,6 @@ import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.tcp.TcpClientConnector;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.test.handler.proto.GenderType;
@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public class TestTcpRequest extends BasicTcpBootStrap implements IPersistConnResponseTrigger {
-	protected TcpClientConnector tcpClientConnector;
+	protected ISession tcpClientConnector;
 	private String text;
 
 	@Test
@@ -51,7 +51,7 @@ public class TestTcpRequest extends BasicTcpBootStrap implements IPersistConnRes
 	}
 
 	@Override
-	public void response(ISession session, MessageContent data) {
+	public void response(ISession session, Channel channel, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 			return;
 		}

@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.server.config.adapter;
 
 import io.jpower.kcp.netty.KcpException;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNode;
@@ -15,7 +14,6 @@ import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerCloseR
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -70,7 +68,7 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @param cause
 	 * @return
 	 */
-	default ChannelFuture exception(Channel channel, Throwable cause){
+	default ChannelFuture exception(ISession session, Throwable cause){
 		IChannelData message;
 		if (cause instanceof StatusResultException) {
 			message = StatusTipsRsp.valueOf(((StatusResultException) cause));
@@ -83,12 +81,12 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 			message = SERVER_EXCEPTION_MESSAGE.get();
 		}
 
-		IMessageActor messageActor = channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (messageActor instanceof CrossPlayerActor) {
 			// 在cross平台. 如果是玩家抛出的异常. 直接发送给客户端
 			return messageActor.sendMessage(message);
 		}
-		return ChannelUtil.getSession(channel).sendMessage(message);
+		return session.sendMessage(message);
 	}
 
 	/**

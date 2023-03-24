@@ -1,6 +1,7 @@
 package org.qiunet.test.handler.bootstrap.ws;
 
 import com.google.common.collect.Lists;
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -42,7 +43,7 @@ public class TestWebsocketRequest extends HttpBootStrap {
 
 	public class ResponseTrigger implements IPersistConnResponseTrigger {
 		@Override
-		public void response(ISession session, MessageContent data) {
+		public void response(ISession session, Channel channel, MessageContent data) {
 			if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 				return;
 			}

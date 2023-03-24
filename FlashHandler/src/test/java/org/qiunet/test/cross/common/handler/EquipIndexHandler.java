@@ -11,6 +11,8 @@ import org.qiunet.test.cross.common.proto.req.EquipIndexRequest;
 import org.qiunet.test.cross.common.proto.resp.CrossLoginResponse;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /***
  *
  *
@@ -18,7 +20,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * 2020-10-26 15:56
  */
 public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
-
+	private static final AtomicInteger counter = new AtomicInteger();
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<EquipIndexRequest> context) throws Exception {
 		if (playerActor.isCrossStatus()) {
@@ -37,7 +39,7 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 		crossData.setPlayerName("qiunet-change");
 		actor.updateCrossData(PlayerCrossData.TEST_CROSS_DATA);
 
-		logger.info("Cross服: 第二次EquipIndexRequest: 取到CrossData: PlayerId: {} playerName: {}", crossData.getUid(), crossData.getPlayerName());
-		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"));
+		logger.info("Cross服: 第{}次EquipIndexRequest: 取到CrossData: PlayerId: {} playerName: {}", counter.incrementAndGet(), crossData.getUid(), crossData.getPlayerName());
+		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"), true);
 	}
 }

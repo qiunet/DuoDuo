@@ -9,8 +9,8 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
 import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
@@ -36,8 +36,8 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 		this.config = config;
 	}
 
-	public static ChannelChoiceDecoder valueOf(ServerBootStrapConfig param){
-		return new ChannelChoiceDecoder(param);
+	public static ChannelChoiceDecoder valueOf(ServerBootStrapConfig config){
+		return new ChannelChoiceDecoder(config);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		IProtocolHeader protocolHeader = ctx.channel().attr(ServerConstants.PROTOCOL_HEADER).get();
+		IProtocolHeader protocolHeader = config.getProtocolHeader();
 
 		ChannelPipeline pipeline = ctx.channel().pipeline();
 		if (config.isBanHttpServer() || equals(protocolHeader.getConnectInMagic(), in)) {
@@ -60,6 +60,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 			pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 			pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
+			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
 			pipeline.remove(ChannelChoiceDecoder.class);
 			ctx.fireChannelActive();
 		}else if (equals(POST_BYTES, in) || equals(GET_BYTES, in) || equals(HEAD_BYTES, in)){

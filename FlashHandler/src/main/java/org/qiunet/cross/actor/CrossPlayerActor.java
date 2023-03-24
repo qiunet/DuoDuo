@@ -16,7 +16,10 @@ import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.KcpSession;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventManager;
@@ -29,7 +32,8 @@ import java.util.Map;
  * @author qiunet
  * 2020-10-14 17:20
  */
-public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> implements IPlayerFireEvent<BaseCrossPlayerEvent, BasePlayerEvent, CrossPlayerActor> {
+public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
+		implements IPlayerFireEvent<BaseCrossPlayerEvent, BasePlayerEvent, CrossPlayerActor>, IKcpSessionHolder {
 	/***
 	 * 跨服的数据持有者
 	 */
@@ -62,8 +66,8 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	}
 
 	@Override
-	public boolean isKcpSessionPrepare() {
-		return kcpPrepare;
+	public void bindKcpSession(KcpSession kcpSession) {
+		// do nothing
 	}
 
 	public void setKcpPrepare(boolean kcpPrepare) {
@@ -86,7 +90,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 		Preconditions.checkState(isAuth(), "Need auth!");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(event);
-		session.sendMessage(request.buildChannelMessage());
+		session.sendMessage(request.buildChannelMessage(), true);
 	}
 
 	public long getPlayerId() {
@@ -149,8 +153,24 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor> 
 	}
 
 	@Override
+	public boolean isKcpSessionPrepare() {
+		return kcpPrepare;
+	}
+
+	@Override
+	public KcpSession getKcpSession() {
+		// 并非真是依靠kcpSession发送.
+		return null;
+	}
+
+	@Override
 	public ChannelFuture sendKcpMessage(IChannelData channelData, boolean flush) {
 		// kcp 要求实时. 直接发送出去
-		return super.sendMessage(Cross2PlayerMessage.valueOf(channelData, flush, true), flush);
+		return this.sendKcpMessage(Cross2PlayerMessage.valueOf(channelData, flush, true), flush);
+	}
+
+	@Override
+	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
+		return super.sendMessage(message, flush);
 	}
 }

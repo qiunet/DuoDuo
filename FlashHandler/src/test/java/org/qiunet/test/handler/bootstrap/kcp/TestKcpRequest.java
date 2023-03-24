@@ -1,5 +1,6 @@
 package org.qiunet.test.handler.bootstrap.kcp;
 
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ public class TestKcpRequest extends BasicKcpBootStrap implements IPersistConnRes
 	}
 
 	@Override
-	public void response(ISession session, MessageContent data) {
+	public void response(ISession session, Channel channel, MessageContent data) {
 		if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 			return;
 		}

@@ -1,8 +1,9 @@
 package org.qiunet.flash.handler.context.session;
 
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /***
@@ -10,19 +11,8 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
  * @author qiunet
  * 2022/4/26 15:18
  */
-public interface ISession extends IChannelMessageSender {
-	/**
-	 * 绑定kcp session
-	 * 仅 tcp 和 ws可以.
-	 * @param kcpSession
-	 */
-	void bindKcpSession(KcpSession kcpSession);
+public interface ISession {
 
-	/**
-	 * 获得kcp session
-	 * @return
-	 */
-	 KcpSession getKcpSession();
 	/**
 	 * 是否活跃
 	 * @return
@@ -30,11 +20,9 @@ public interface ISession extends IChannelMessageSender {
 	boolean isActive();
 
 	/**
-	 * 得到channel
-	 * @return
+	 * flush
 	 */
-	Channel channel();
-
+	void flush();
 	/**
 	 * 添加一个close 监听
 	 * @param listener
@@ -73,7 +61,33 @@ public interface ISession extends IChannelMessageSender {
 	 * @param <T>
 	 */
 	<T> void attachObj(AttributeKey<T> key, T obj);
-
+	/**
+	 * 发送消息
+	 * @param message
+	 * @return
+	 */
+	default ChannelFuture sendMessage(IChannelMessage<?> message) {
+		return this.sendMessage(message, false);
+	}
+	/**
+	 * 发送消息
+	 * @param message
+	 */
+	default ChannelFuture sendMessage(IChannelData message) {
+		return this.sendMessage(message.buildChannelMessage());
+	}
+	/**
+	 * 发送消息
+	 * @param message
+	 */
+	default ChannelFuture sendMessage(IChannelData message, boolean flush) {
+		return this.sendMessage(message.buildChannelMessage(), flush);
+	}
+	/**
+	 * 发送消息
+	 * @param message
+	 */
+	ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush);
 
 	@FunctionalInterface
 	interface SessionCloseListener {

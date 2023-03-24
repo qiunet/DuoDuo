@@ -13,6 +13,7 @@ import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.event.IListenerEvent;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
@@ -47,13 +48,13 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		this.serverId = serverId;
 
 		super.setSession(tcpClient.connect(host, port, f -> {
-			this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+			ISession iSession = ChannelUtil.getSession(f.channel());
+			iSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+
+			iSession.sendMessage(ConnectionReq.valueOf(String.valueOf(ServerNodeManager.getCurrServerId())), true);
+			// 发送鉴权请求
+			iSession.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
 		}));
-
-		this.sendMessage(ConnectionReq.valueOf(String.valueOf(ServerNodeManager.getCurrServerId())), true);
-		// 发送鉴权请求
-		this.sendMessage(ServerNodeAuthRequest.valueOf(ServerNodeManager.getCurrServerId()), true);
-
 	}
 	@Override
 	public boolean addMessage(IMessage<ServerNode> msg) {

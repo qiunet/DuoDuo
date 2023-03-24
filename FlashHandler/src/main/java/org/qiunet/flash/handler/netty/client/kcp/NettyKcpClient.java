@@ -9,12 +9,15 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientEncoder;
+import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -38,11 +41,18 @@ public class NettyKcpClient {
 				.handler(new ChannelInitializer<UkcpChannel>() {
 					@Override
 					protected void initChannel(UkcpChannel ch) throws Exception {
+						KcpSession kcpSession = new KcpSession(((UkcpClientChannel) ch).conv(config.getConvId()));
+						ChannelUtil.bindSession(kcpSession, ch);
+
+						kcpSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.KCP);
+
 						ChannelPipeline p = ch.pipeline();
 						ch.attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
 						p.addLast("KcpSocketEncoder", new KcpSocketClientEncoder())
 						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()))
-						.addLast("KcpServerHandler", new NettyClientHandler());
+						.addLast("KcpServerHandler", new NettyClientHandler())
+						.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+						;
 					}
 				})
 				.option(ChannelOption.SO_RCVBUF, 1024 * 128)
@@ -71,14 +81,12 @@ public class NettyKcpClient {
 	 * @param port
 	 * @return
 	 */
-	public KcpSession connect(String host, int port) {
+	public ISession connect(String host, int port) {
 		// Start the client.
 		try {
 			ChannelFuture f = this.bootstrap.connect(host, port).sync();
-			KcpSession kcpSession = new KcpSession(((UkcpClientChannel) f.channel()).conv(config.getConvId()));
-			f.channel().attr(ServerConstants.SESSION_KEY).set(kcpSession);
-			return kcpSession;
-		} catch (InterruptedException e) {
+			return ChannelUtil.getSession(f.channel());
+		} catch (Exception e) {
 			LoggerType.DUODUO.error("", e);
 		}
 		return null;
@@ -87,14 +95,8 @@ public class NettyKcpClient {
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 
 		@Override
-		public void channelActive(ChannelHandlerContext ctx) throws Exception {
-			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.KCP);
-			super.channelActive(ctx);
-		}
-
-		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(ctx.channel().attr(ServerConstants.SESSION_KEY).get(), msg);
+			trigger.response(ChannelUtil.getSession(ctx.channel()), ctx.channel(), msg);
 		}
 
 		@Override

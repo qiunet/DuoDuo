@@ -26,13 +26,13 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
 		DSession session = new DSession(ctx.channel());
+		ChannelUtil.bindSession(session, ctx.channel());
 
-		ChannelUtil.bindSession(session);
 		logger.debug("Tcp session {} active!", session);
-		ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
-		ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(config.getStartupContext().buildMessageActor(session));
+		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
+		session.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
+		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, config.getStartupContext().buildMessageActor(session));
 		ctx.fireChannelActive();
 	}
 

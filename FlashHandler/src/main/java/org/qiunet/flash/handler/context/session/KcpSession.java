@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpDisconnectPush;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -11,7 +9,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * @author qiunet
  * 2022/4/26 15:46
  */
-public class KcpSession extends BaseSession {
+public class KcpSession extends DSession {
 
 	public KcpSession(Channel channel) {
 		this.addCloseListener("KcpDisconnectPush", (session, cause) -> {
@@ -23,14 +21,6 @@ public class KcpSession extends BaseSession {
 	}
 
 	@Override
-	public boolean isKcpSessionPrepare() {
-		return true;
-	}
-
-	@Override
-	public void flush() {}
-
-	@Override
 	public void bindKcpSession(KcpSession kcpSession) {
 		throw new CustomException("Not Support!");
 	}
@@ -38,10 +28,5 @@ public class KcpSession extends BaseSession {
 	@Override
 	public KcpSession getKcpSession() {
 		return this;
-	}
-
-	@Override
-	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
-		return this.doSendMessage(message, flush);
 	}
 }

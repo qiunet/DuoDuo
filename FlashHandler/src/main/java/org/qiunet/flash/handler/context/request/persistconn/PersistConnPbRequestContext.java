@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
@@ -33,19 +34,20 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		this.recyclerHandle = recyclerHandle;
 	}
 
-	public static PersistConnPbRequestContext valueOf(MessageContent content, Channel channel) {
+	public static PersistConnPbRequestContext valueOf(ISession session, MessageContent content, Channel channel) {
 		PersistConnPbRequestContext context = RECYCLER.get();
-		context.init(content, channel);
+		context.init(session, content, channel);
 		return context;
 	}
 
-	public void init(MessageContent content, Channel channel) {
-		super.init(content, channel);
+	public void init(ISession session, MessageContent content, Channel channel) {
+		super.init(session, content, channel);
 	}
 
 	private void recycle() {
 		this.requestData = null;
 		this.attributes = null;
+		this.session = null;
 		this.handler = null;
 		this.channel = null;
 
@@ -63,7 +65,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 	@Override
 	public void handlerRequest() throws Exception{
-		P messageActor = (P) channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		P messageActor = (P) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 
 		if (getRequestData() == null) {
 			logger.error("RequestData is null for case playerId {} , protocol: {}", messageActor.getIdentity(), getHandler().getClass().getSimpleName());
@@ -72,14 +74,14 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		ChannelDataMapping.requestCheck(channel, getRequestData());
 
 		if (handler.needAuth() && ! messageActor.isAuth()) {
-			logger.error("Handler [{}] need auth. but session {} not auth!", handler.getClass().getSimpleName(), messageActor.getSender());
+			logger.error("Handler [{}] need auth. but session {} not auth!", handler.getClass().getSimpleName(), messageActor.getSession());
 			// 先不管. 客户端重连可能有问题. 不能掐掉
 			//ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
 		long startTime = System.currentTimeMillis();
 		if (logger.isInfoEnabled() && getRequestData().debugOut()) {
-			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel().attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), getRequestData()._toString());
+			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), getRequestData()._toString());
 		}
 
 		if (messageActor instanceof CrossPlayerActor && getHandler() instanceof ITransmitHandler) {

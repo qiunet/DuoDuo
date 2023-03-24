@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -65,16 +66,16 @@ public final class ChannelUtil {
 	}
 	/***
 	 * 关联Session 和 channel
-	 * @param val
+	 * @param session
 	 * @return
 	 */
-	public static boolean bindSession(ISession val) {
-		Preconditions.checkNotNull(val);
-		Attribute<ISession> attr = val.channel().attr(ServerConstants.SESSION_KEY);
-		boolean result = attr.compareAndSet(null, val);
+	public static boolean bindSession(ISession session, Channel channel) {
+		Preconditions.checkNotNull(session);
+		Attribute<ISession> attr = channel.attr(ServerConstants.SESSION_KEY);
+		boolean result = attr.compareAndSet(null, session);
 		if (! result) {
-			logger.error("Session [{}] Duplicate", val);
-			val.close(CloseCause.LOGIN_REPEATED);
+			logger.error("Session [{}] Duplicate", session);
+			session.close(CloseCause.LOGIN_REPEATED);
 		}
 		return result;
 	}
@@ -88,6 +89,7 @@ public final class ChannelUtil {
 		if (channel == null) {
 			return false;
 		}
+
 		Attribute<Boolean> attr = channel.attr(ServerConstants.ALREADY_CONNECT_KEY);
 		return attr.setIfAbsent(true) == null;
 	}
@@ -106,42 +108,45 @@ public final class ChannelUtil {
 	 * @return
 	 */
 	public static String getIp(Channel channel) {
-		return getIp(channel.attr(ServerConstants.HTTP_WS_HEADER_KEY).get(), channel);
-	}
 
-	/**
-	 * 得到真实ip. http类型的父类
-	 * @param headers
-	 * @return
-	 */
-	public static String getIp(HttpHeaders headers, Channel channel) {
-		String ip;
-		if (headers != null) {
-			if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
-				return ip;
-			}
+		SocketAddress socketAddress = channel.remoteAddress();
 
-			if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
-				return ip;
-			}
-
-			if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
-				return ip;
-			}
-
-			if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
-				return ip;
-			}
-
-			if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
-				return ip;
-			}
-		}
-		if (channel.remoteAddress() == null) {
+		if (socketAddress == null) {
 			return "unknown-address";
 		}
 
-		return ((InetSocketAddress) channel.remoteAddress()).getAddress().getHostAddress();
+		return ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
+	}
+	/**
+	 *  获得ip
+	 * @return
+	 */
+	public static String getIp(HttpHeaders headers) {
+		if (headers == null) {
+			return null;
+		}
+
+		String ip;
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+
+		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
+			return ip;
+		}
+		return null;
 	}
 
 	/**
@@ -154,11 +159,11 @@ public final class ChannelUtil {
 		if (content.getProtocolId() != IProtocolId.System.CLIENT_PING) {
 			return false;
 		}
-
+		ISession session = ChannelUtil.getSession(channel);
 		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
-		ChannelUtil.getSession(channel).sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
-		IMessageActor actor = channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
-		if (channel.attr(ServerConstants.HANDLER_TYPE_KEY).get() == ServerConnType.TCP
+		session.sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
+		IMessageActor actor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY) == ServerConnType.TCP
 		&& actor instanceof PlayerActor playerActor){
 			playerActor.fireEvent(ClientPingEvent.getInstance());
 		}
@@ -181,7 +186,7 @@ public final class ChannelUtil {
 
 		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
-			boolean isKcp = channel.attr(ServerConstants.HANDLER_TYPE_KEY).get() == ServerConnType.KCP;
+			boolean isKcp = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY) == ServerConnType.KCP;
 			if (isKcp && config.getKcpBootstrapConfig().isDependOnTcpWs()) {
 				// 不需要
 				return;
@@ -189,7 +194,7 @@ public final class ChannelUtil {
 
 			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
-				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channel.id().asShortText(), connectionReq._toString());
+				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), connectionReq._toString());
 			}
 
 			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
@@ -247,18 +252,19 @@ public final class ChannelUtil {
 			return;
 		}
 		if (channel.isActive()) {
-			IRequestContext context = handler.getDataType().createRequestContext(content, channel);
+			IRequestContext context = handler.getDataType().createRequestContext(session, content, channel);
 			messageActor.addMessage((IMessage) context);
 		}
 	}
 
 
 	private static void transmitMessage(IMessageActor messageActor, DefaultByteBufMessage message, Channel channel) {
+		ISession session = messageActor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
 				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), channel.attr(ServerConstants.HANDLER_TYPE_KEY).get(), channelData._toString());
+				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 			}
 		}
 
@@ -309,7 +315,7 @@ public final class ChannelUtil {
 		}
 
 		if (channel.isOpen() || channel.isActive()) {
-			startupContext.exception(channel, cause)
+			startupContext.exception(session, cause)
 					.addListener(f -> {
 						closeChannel.run();
 					});

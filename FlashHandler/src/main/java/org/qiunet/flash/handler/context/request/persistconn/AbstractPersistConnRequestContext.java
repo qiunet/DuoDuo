@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.util.ChannelUtil;
 
 /**
@@ -15,8 +16,11 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 		extends BaseRequestContext<RequestData>
 		implements IPersistConnRequestContext<RequestData, P> {
 
-	protected void init(MessageContent content, Channel channel) {
+	protected ISession session;
+
+	protected void init(ISession session, MessageContent content, Channel channel) {
 		super.init(content, channel);
+		this.session = session;
 	}
 
 

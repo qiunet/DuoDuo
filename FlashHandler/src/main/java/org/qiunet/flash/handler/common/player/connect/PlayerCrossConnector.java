@@ -8,13 +8,14 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.function.Consumer;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
  * @author qiunet
  * 2021/11/16 17:32
  */
-public class PlayerCrossConnector implements IChannelMessageSender {
+public class PlayerCrossConnector implements ISessionHolder {
 	/**
 	 * client
 	 */
@@ -69,13 +70,14 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 		// 因为大部分服务都是内网组网. 所以使用host.如果以后不在内网. 有两个解决方案
 		// 1. 直接修改下面为publicHost . 2. 云运营商跨区域组网
 		this.session = tcpClient.connect(serverInfo.getHost(), serverInfo.getCrossPort(), f -> {
-			f.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(actor);
+			CrossPlayerAuthRequest request = CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.getSession().isKcpSessionPrepare());
+			ISession iSession = ChannelUtil.getSession(f.channel());
+			iSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, actor);
+			iSession.sendMessage(ConnectionReq.valueOf(String.valueOf(actor.getId())), true);
+			iSession.sendMessage(request, true);
 			callback.accept(f.isSuccess());
 		});
 		this.session.addCloseListener("connectorQuitCross", ((session1, cause) -> actor.quitCross(serverInfo.getServerId(), cause)));
-		session.sendMessage(ConnectionReq.valueOf(String.valueOf(actor.getId())), true);
-
-		session.sendMessage(CrossPlayerAuthRequest.valueOf(actor.getId(), ServerNodeManager.getCurrServerId(), actor.isKcpSessionPrepare()), true);
 	}
 
 	public int getServerId() {
@@ -109,10 +111,5 @@ public class PlayerCrossConnector implements IChannelMessageSender {
 
 	public long getPlayerId() {
 		return playerId;
-	}
-
-	@Override
-	public IChannelMessageSender getSender() {
-		return session;
 	}
 }

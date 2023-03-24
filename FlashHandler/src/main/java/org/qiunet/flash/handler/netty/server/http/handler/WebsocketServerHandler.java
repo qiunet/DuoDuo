@@ -22,20 +22,18 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 	private final ServerBootStrapConfig config;
 
-
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
 		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
 			HttpHeaders headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
-			ctx.channel().attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.WS);
-
 			DSession iSession = new DSession(ctx.channel());
+			ChannelUtil.bindSession(iSession, ctx.channel());
 
-			ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY).set(config.getStartupContext().buildMessageActor(iSession));
-			ctx.channel().attr(ServerConstants.HTTP_WS_HEADER_KEY).set(headers);
-			ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
-			ChannelUtil.bindSession(iSession);
+			iSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, config.getStartupContext().buildMessageActor(iSession));
+			iSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
+			iSession.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
+			iSession.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
 		}
 		super.userEventTriggered(ctx, evt);
 	}
@@ -48,7 +46,6 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
 		ChannelUtil.channelRead(ctx.channel(), config, content);
 	}
-
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

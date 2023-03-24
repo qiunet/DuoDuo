@@ -74,10 +74,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		ServerNode serverNode = nodes.get(node.getServerId());
 
 		if (serverNode != null) {
-			serverNode.getSender().close(CloseCause.INACTIVE);
+			serverNode.getSession().close(CloseCause.INACTIVE);
 		}
 
-		node.getSender().addCloseListener("removeServerNode", (session, cause) -> {
+		node.getSession().addCloseListener("removeServerNode", (session, cause) -> {
 			this.removeNode(node);
 		});
 
@@ -87,7 +87,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	synchronized void removeNode(ServerNode serverNode) {
 		if (nodes.remove(serverNode.getServerId()) != null) {
 			LoggerType.DUODUO_FLASH_HANDLER.info("====ServerId {} was removed!", serverNode.getServerId());
-			serverNode.getSender().close(CloseCause.CHANNEL_CLOSE);
+			serverNode.getSession().close(CloseCause.CHANNEL_CLOSE);
 		}
 
 	}

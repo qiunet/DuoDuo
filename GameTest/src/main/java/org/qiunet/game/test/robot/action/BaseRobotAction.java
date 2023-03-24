@@ -1,6 +1,6 @@
 package org.qiunet.game.test.robot.action;
 
-import org.qiunet.flash.handler.context.sender.IChannelMessageSender;
+import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.function.ai.enums.ActionStatus;
@@ -17,7 +17,7 @@ import org.qiunet.utils.logger.LoggerType;
  * 2021/8/8 11:46
  **/
 public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
-		implements IChannelMessageSender {
+		implements ISessionHolder {
 	/**
 	 * 使用的连接名
 	 */
@@ -42,7 +42,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	}
 
 	@Override
-	public ISession getSender() {
+	public ISession getSession() {
 		return getOwner().getConnector(this.connectorName);
 	}
 
