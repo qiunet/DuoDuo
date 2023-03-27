@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
  * @author qiunet
  * 2022/8/19 16:14
  */
-public abstract class BaseByteBufMessage<T> implements IChannelMessage<T> {
+public abstract class BaseByteBufMessage<T> extends ExtraInfo implements IChannelMessage<T> {
 
 	protected LazyLoader<ByteBuf> buffer = new LazyLoader<>(this::get);
 

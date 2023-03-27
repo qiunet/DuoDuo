@@ -1,9 +1,11 @@
 package org.qiunet.flash.handler.netty.server.channel;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.Channel;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.ISender;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSender;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -32,29 +34,31 @@ public class ChannelMessageBroadcast implements AutoCloseable {
 	 */
 	private ByteBuf byteBuf;
 
-	public ChannelMessageBroadcast(IChannelMessage message) {
+	public ChannelMessageBroadcast(IChannelData channelData) {
+		this(channelData.buildChannelMessage());
+	}
+
+	public ChannelMessageBroadcast(IChannelMessage<?> message) {
 		this.byteBuf = message.withoutHeaderByteBuf();
 		this.protocolId = message.getProtocolID();
 	}
-
-	/**
-	 * 用指定的channel 发送一个消息. 并且flush
-	 * @param channel 发送到的channel
-	 */
-	public void sendMessage(Channel channel) {
-		this.sendMessage(channel, true);
-	}
-
 	/**
 	 * 发送一个消息
-	 * @param channel channel
+	 * @param sender session
+	 * @param kcp 是否是kcp
 	 * @param flush 是否flush
 	 */
-	public void sendMessage(Channel channel, boolean flush) {
-		channel.write(DefaultByteBufMessage.valueOf(protocolId, byteBuf.retain()));
-		if (flush) {
-			channel.flush();
+	public void sendMessage(ISender sender, boolean kcp, boolean flush) {
+		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(protocolId, byteBuf.retain());
+		if (kcp && IKcpSender.class.isAssignableFrom(sender.getClass())) {
+			((IKcpSender) sender).sendKcpMessage(message, flush);
+			return;
 		}
+		// 如果指定kcp, 也可以先标记位kcp的message
+		if (kcp) {
+			message.asKcpMsg();
+		}
+		sender.sendMessage(message, flush);
 	}
 
 	@Override

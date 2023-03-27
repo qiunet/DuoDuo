@@ -3,11 +3,14 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.args.IArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.logger.LoggerType;
+import org.slf4j.Logger;
 
 /***
  * Player 的一个总的处理对象.
@@ -18,6 +21,7 @@ import org.qiunet.utils.exceptions.CustomException;
  **/
 public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	extends MessageHandler<P> implements IMessageActor<P>, ISessionHolder, IArgsContainer {
+	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final ArgsContainer container = new ArgsContainer();
 
 	private String msgExecuteIndex;
@@ -45,6 +49,7 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	protected void setSession(ISession session) {
+		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		this.session = session;
 	}
 

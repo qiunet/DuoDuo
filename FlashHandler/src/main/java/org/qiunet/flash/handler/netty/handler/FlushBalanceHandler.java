@@ -33,7 +33,7 @@ public class FlushBalanceHandler extends ChannelDuplexHandler {
 	private int currWriteCount;
 
 	public FlushBalanceHandler() {
-		this(50, 10);
+		this(100, 10);
 	}
 
 	public FlushBalanceHandler(int delayFlushMilliSeconds, int limitWriteCount) {

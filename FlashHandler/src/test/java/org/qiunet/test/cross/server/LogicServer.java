@@ -31,7 +31,6 @@ public class LogicServer {
 
 			BootstrapServer.createBootstrap(hook)
 				.listener(ServerBootStrapConfig.newBuild("测试服务", Constants.LOGIC_SERVER_PORT).setStartupContext(IStartupContext.SERVER_STARTUP_CONTEXT).build())
-				.listener(ServerBootStrapConfig.newBuild("节点服务",Constants.LOGIC_NODE_PORT).setStartupContext(IStartupContext.DEFAULT_SERVER_NODE_START_CONTEXT).build())
 				.await();
 	}
 

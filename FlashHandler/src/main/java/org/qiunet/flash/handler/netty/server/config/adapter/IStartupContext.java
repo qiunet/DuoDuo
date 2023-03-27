@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.netty.server.config.adapter;
 import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -29,13 +28,6 @@ import java.io.IOException;
 public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
 	/**
-	 * 默认的cross 启动上下文
-	 */
-	IStartupContext<CrossPlayerActor> DEFAULT_CROSS_START_CONTEXT = CrossPlayerActor::new;
-	/**
-	 * 默认的cross server node 启动上下文
-	 */
-	IStartupContext<ServerNode> DEFAULT_SERVER_NODE_START_CONTEXT = ServerNode::new;
 	/**
 	 * 默认对玩家的服务启动上下文
 	 */

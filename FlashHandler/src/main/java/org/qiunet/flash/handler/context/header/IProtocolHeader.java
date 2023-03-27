@@ -8,6 +8,9 @@ import org.qiunet.utils.pool.IRecycle;
 import java.nio.ByteBuffer;
 
 /***
+ * 协议头.
+ * 只有客户端到服务端的协议头可以自定义.
+ * 服务端节点通讯. 跨服通讯都是使用DuoDuo默认指定的.
  *
  * @author qiunet
  * 2022/10/18 18:04
@@ -193,10 +196,38 @@ public interface IProtocolHeader {
 	interface IClientOutHeader extends IConnectInHeader {}
 
 	/**
-	 * 玩家跨服的响应头
+	 * 跨服的响应头
 	 */
-	interface IPlayerCrossRspHeader {
+	interface INodeServerHeader {
+		/**
+		 * 是否是 服务间 通讯
+		 * @return true 是
+		 */
+		boolean isServerNodeMsg();
+		/**
+		 *  是否是 玩家的通讯
+		 * @return true 是
+		 */
+		boolean isPlayerMsg();
+		/**
+		 * 得到对面的serverId
+		 * @return
+		 */
+		int getServerId();
+		/**
+		 * 是否flush
+		 * @return
+		 */
 		boolean isFlush();
+		/**
+		 *  是否是kcp消息
+		 * @return
+		 */
 		boolean isKcp();
+		/**
+		 * 对应的id
+		 * @return
+		 */
+		long id();
 	}
 }

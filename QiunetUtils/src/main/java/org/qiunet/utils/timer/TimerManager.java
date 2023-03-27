@@ -5,8 +5,7 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
@@ -34,15 +33,8 @@ public enum TimerManager {
 	private final ScheduledExecutorService schedule;
 	TimerManager(ScheduledExecutorService executorService) {
 		this.schedule = executorService;
+		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdown);
 	}
-
-	@EventListener
-	private void shutdown(ServerShutdownEvent eventData) {
-		for (TimerManager value : values()) {
-			value.schedule.shutdown();
-		}
-	}
-
 	/**
 	 * 立刻执行
 	 * @param callable

@@ -45,6 +45,7 @@ public class DefaultByteBufMessage extends BaseByteBufMessage<ByteBuf> {
 
 	@Override
 	public void recycle() {
+		super.recycle();
 		this.buffer.reset(true);
 		this.protocolId = 0;
 		this.byteBuf = null;

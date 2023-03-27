@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSender;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -14,7 +15,8 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  * 2020-10-13 20:51
  */
 public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
-		extends AbstractMessageActor<T> implements IObserverSupportOwner<T>, IPlayer {
+		extends AbstractMessageActor<T> implements IObserverSupportOwner<T>,
+		IPlayer , IKcpSender {
 	/**
 	 * 观察者
 	 */
@@ -22,11 +24,6 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 
 	public AbstractUserActor(ISession session) {
 		super(session);
-	}
-
-	@Override
-	protected void setSession(ISession session) {
-		this.session = session;
 	}
 
 	@Override
@@ -45,6 +42,14 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	 */
 	public boolean isPlayerActor() {
 		return ! isCrossPlayer();
+	}
+
+	@Override
+	public ISession getKcpSession() {
+		if (IKcpSender.class.isAssignableFrom(session.getClass())) {
+			return ((IKcpSender) session).getKcpSession();
+		}
+		return null;
 	}
 
 	/**

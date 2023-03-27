@@ -2,13 +2,9 @@ package org.qiunet.flash.handler.netty.server.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.CrossProtocolHeader;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.header.ServerNodeProtocolHeader;
 import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.utils.math.PollChooserFactory;
 import org.qiunet.utils.system.OSUtil;
@@ -190,22 +186,6 @@ public class ServerBootStrapConfig {
 		 * @return
 		 */
 		private IProtocolHeader customProtocolHeader() {
-			//protocol header 自定义主要是要来限制客户端到游戏服.
-			if (ServerNodeManager.getCurrServerType() == ServerType.CROSS && getPort() == ServerNodeManager.getCurrServerInfo().getServerPort()) {
-				// 玩法服的server port 必须使用 CrossProtocolHeader.
-				return CrossProtocolHeader.instance;
-			}
-
-			if (getPort() == ServerNodeManager.getCurrServerInfo().getCrossPort()) {
-				// cross port 必须使用 CrossProtocolHeader.
-				return CrossProtocolHeader.instance;
-			}
-
-			if (getPort() == ServerNodeManager.getCurrServerInfo().getNodePort()) {
-				// 服务器之间通讯 必须使用 ServerNodeProtocolHeader.
-				return ServerNodeProtocolHeader.instance;
-			}
-
 			// 之后有设定. 使用设定的. 否则默认的
 			if (protocolHeader != null) {
 				return protocolHeader;

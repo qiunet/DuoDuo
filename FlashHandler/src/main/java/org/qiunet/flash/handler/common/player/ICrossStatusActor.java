@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 import java.util.function.Consumer;
@@ -14,7 +13,7 @@ import java.util.function.Consumer;
  * @author qiunet
  * 2020-10-26 14:54
  */
-public interface ICrossStatusActor {
+public interface ICrossStatusActor extends IPlayer {
 	/**
 	 * 是否跨服状态
 	 * @return
@@ -68,11 +67,9 @@ public interface ICrossStatusActor {
 	 * @param event
 	 */
 	<E extends BaseCrossPlayerEvent> void allCrossEvent(E event);
-
-	void sendCrossMessage(IChannelMessage<?> channelData);
 	/**
-	 * 当前的跨服session
-	 * @return
+	 * 发送跨服消息
+	 * @param message message
 	 */
-	ISession crossSession();
+	void sendCrossMessage(IChannelMessage message);
 }

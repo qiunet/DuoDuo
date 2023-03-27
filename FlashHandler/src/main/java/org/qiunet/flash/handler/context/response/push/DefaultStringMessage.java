@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
  * Created by qiunet.
  * 17/12/11
  */
-public class DefaultStringMessage implements IChannelMessage<String> {
+public class DefaultStringMessage extends ExtraInfo implements IChannelMessage<String> {
 
 	private final int protocolId;
 

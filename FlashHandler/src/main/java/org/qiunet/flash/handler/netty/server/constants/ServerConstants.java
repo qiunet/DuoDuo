@@ -17,7 +17,7 @@ import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.event.data.ServerStoppedEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.secret.StrCodecUtil;
 
@@ -39,7 +39,7 @@ public final class ServerConstants {
 	/**
 	 * netty 保存的handShaker
 	 */
-	public static final AttributeKey<WebSocketServerHandshaker> HANDSHAKER_ATTR_KEY = AttributeKey.valueOf(WebSocketServerHandshaker.class, "HANDSHAKER");
+	public static final AttributeKey<WebSocketServerHandshaker> HANDLER_SHAKER_ATTR_KEY = AttributeKey.valueOf(WebSocketServerHandshaker.class, "HANDSHAKER");
 	/***
 	 * channel 存储他是使用哪种方式连接的.
 	 */
@@ -118,7 +118,7 @@ public final class ServerConstants {
 	}
 
 	@EventListener
-	private void onServerShutdown(ServerShutdownEvent event) {
+	private void onServerShutdown(ServerStoppedEvent event) {
 		WORKER.shutdownGracefully();
 	}
 }

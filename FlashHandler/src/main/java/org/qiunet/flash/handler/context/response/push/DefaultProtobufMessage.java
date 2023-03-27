@@ -45,6 +45,7 @@ public class DefaultProtobufMessage extends BaseByteBufMessage<IChannelData> {
 
 	@Override
 	public void recycle() {
+		super.recycle();
 		this.buffer.reset(true);
 		this.message.finishCycle();
 		this.protocolId = 0;

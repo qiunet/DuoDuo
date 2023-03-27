@@ -4,9 +4,7 @@ import com.google.common.collect.Sets;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.listener.event.EventHandlerWeightType;
-import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
+import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
@@ -155,12 +153,6 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		this.scheduleFutures.add(future);
 		return future;
 	}
-	@EventListener(EventHandlerWeightType.LOWEST)
-	private static void shutdown(ServerShutdownEvent event) {
-		for (DExecutorService service : executorService.eventLoops) {
-			service.shutdown();
-		}
-	}
 
 	private static class MessageHandlerEventLoop {
 		private final List<DExecutorService> eventLoops;
@@ -169,6 +161,9 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			this.eventLoops = IntStream.range(0, count)
 				.mapToObj(DExecutorService::new)
 			.toList();
+			ShutdownHookUtil.getInstance().addShutdownHook(() -> {
+				eventLoops.forEach(DExecutorService::shutdown);
+			});
 		}
 
 		/**

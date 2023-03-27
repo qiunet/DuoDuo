@@ -5,12 +5,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.micrometer.core.instrument.Gauge;
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
+import org.qiunet.flash.handler.context.session.NodeServerSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
@@ -18,6 +19,7 @@ import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
+import org.qiunet.utils.common.functional.DSupplier1;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
@@ -73,9 +75,6 @@ public enum UserOnlineManager {
 	private void addPlayerActor(LoginSuccessEvent eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
-		if (userActor.isCrossPlayer()) {
-			onlineCrossPlayers.put(userActor.getId(), ((CrossPlayerActor) userActor));
-		}
 		if (userActor.isPlayerActor()) {
 			onlinePlayers.put(userActor.getId(), (PlayerActor) userActor);
 		}
@@ -120,7 +119,7 @@ public enum UserOnlineManager {
 	 */
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onLogout(CrossActorLogoutEvent eventData) {
-		eventData.getPlayer().fireCrossEvent(CrossPlayerLogoutEvent.valueOf(ServerConfig.getServerId()));
+		// 销毁 PlayerActor
 		this.destroyPlayer(eventData.getPlayer());
 	}
 	/**
@@ -193,8 +192,11 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		if (userActor.isCrossPlayer() && userActor.getSession().isActive()) {
-			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerConfig.getServerId()));
+		if (userActor.isCrossPlayer()
+		&& ! (((NodeServerSession) userActor.getSession()).isNoticedRemote())
+		) {
+			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerNodeManager.getCurrServerId()));
+			((NodeServerSession) userActor.getSession()).setNoticedRemote();
 		}
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
 		LoggerType.DUODUO_FLASH_HANDLER.info("{} was destroy", userActor.getSession());
@@ -203,6 +205,17 @@ public enum UserOnlineManager {
 		onlinePlayers.remove(userActor.getId());
 
 		userActor.destroy();
+	}
+
+	/**
+	 * 游戏服对玩法服的CrossPlayerActor发出登出事件推送
+	 * @param event
+	 */
+	@EventListener
+	private void playerQuitCross(PlayerQuitCrossEvent event) {
+		((NodeServerSession) event.getPlayer().getSession()).setNoticedRemote();
+		CrossPlayerActor actor = event.getPlayer();
+		actor.logout();
 	}
 	/**
 	 * 在线本服玩家数量
@@ -294,6 +307,17 @@ public enum UserOnlineManager {
 	public CrossPlayerActor getCrossPlayerActor(long playerId) {
 		return onlineCrossPlayers.get(playerId);
 	}
+
+	/**
+	 * get 或者创建一个CrossPlayerActor
+	 * @param playerId 玩家ID
+	 * @param supplier
+	 * @return
+	 */
+	public CrossPlayerActor getOrCreateCrossPlayerActor(long playerId, DSupplier1<Long, CrossPlayerActor> supplier) {
+		return onlineCrossPlayers.computeIfAbsent(playerId, supplier::get);
+	}
+
 	/**
 	 * 得到等待重连的player
 	 * @param playerId 玩家id
@@ -316,7 +340,8 @@ public enum UserOnlineManager {
 	private ScheduledFuture<?> scheduledFuture;
 	@EventListener
 	private void serverStart(ServerStartupCompleteEvent event) {
-		if (ServerConfig.getServerType() != ServerType.LOGIC && ServerConfig.getServerType() != ServerType.CROSS) {
+		if (ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.LOGIC
+		 && ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.CROSS) {
 			return;
 		}
 		this.scheduledFuture = TimerManager.executor.scheduleAtFixedRate(() -> {
@@ -328,7 +353,8 @@ public enum UserOnlineManager {
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void serverShutdown(ServerShutdownEvent event) {
-		if (ServerConfig.getServerType() != ServerType.LOGIC && ServerConfig.getServerType() != ServerType.CROSS) {
+		if (ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.LOGIC
+		 && ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.CROSS) {
 			return;
 		}
 		LoggerType.DUODUO_FLASH_HANDLER.error("==Online user session close start==");

@@ -27,6 +27,7 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -37,7 +38,6 @@ import org.qiunet.flash.handler.netty.server.config.adapter.message.HandlerNotFo
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
 import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
@@ -205,10 +205,6 @@ public final class ChannelUtil {
 
 			messageActor.setMsgExecuteIndex(connectionReq.getIdKey());
 			messageActor.sendMessage(ConnectionRsp.getInstance());
-
-			if (isKcp) {
-				((PlayerActor) messageActor).asyncFireObserver(IKcpUsabilityChange.class, o -> o.ability(true));
-			}
 			return;
 		}
 
@@ -258,7 +254,7 @@ public final class ChannelUtil {
 	}
 
 
-	private static void transmitMessage(IMessageActor messageActor, DefaultByteBufMessage message, Channel channel) {
+	private static void transmitMessage(IMessageActor messageActor, IChannelMessage message, Channel channel) {
 		ISession session = messageActor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
@@ -268,8 +264,7 @@ public final class ChannelUtil {
 			}
 		}
 
-		ISession crossSession = ((ICrossStatusActor) messageActor).crossSession();
-		crossSession.sendMessage(message, true);
+		((ICrossStatusActor) messageActor).sendCrossMessage(message);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {

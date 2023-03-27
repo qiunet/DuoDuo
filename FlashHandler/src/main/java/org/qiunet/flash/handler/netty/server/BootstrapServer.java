@@ -2,6 +2,8 @@ package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
@@ -11,14 +13,12 @@ import org.qiunet.flash.handler.netty.server.event.HookCustomCmdEvent;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
+import org.qiunet.flash.handler.netty.server.node.NettyNodeServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.listener.event.data.ServerClosedEvent;
-import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
-import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
-import org.qiunet.utils.listener.event.data.ServerStartupEvent;
+import org.qiunet.utils.listener.event.data.*;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -107,6 +107,11 @@ public class BootstrapServer {
 	 * @return  BootstrapServer 实例
 	 */
 	public BootstrapServer listener(ServerBootStrapConfig config) {
+		if (config.getPort() == ServerConfig.getNodePort()) {
+			// 不允许在这里进行node port 监听!
+			throw new CustomException("Node port can not be listen here!");
+		}
+
 		// 默认启动tcp  http监听
 		this.nettyServers.add(new NettyTcpServer(config, () -> countdown.countDown()));
 		if (config.getKcpBootstrapConfig() != null) {
@@ -114,6 +119,18 @@ public class BootstrapServer {
 		}
 		return this;
 	}
+
+	/**
+	 * 如果有. 添加node server
+	 */
+	private void addNodeServer() {
+		if (ServerNodeManager.getCurrServerInfo().getNodePort() <= 0) {
+			return;
+		}
+
+		this.nettyServers.add(new NettyNodeServer(() -> countdown.countDown()));
+	}
+
 	private Thread awaitThread;
 	/***
 	 * 阻塞线程 最后调用阻塞当前线程
@@ -124,7 +141,12 @@ public class BootstrapServer {
 	public void await(Runnable completeRunnable){
 		Thread hookThread = new Thread(hookListener, "HookListener");
 		hookThread.setDaemon(true);
+		this.addNodeServer();
 		hookThread.start();
+
+		if (nettyServers.isEmpty()) {
+			throw new CustomException("No server need start!");
+		}
 
 		countdown = new CountDownLatch(nettyServers.size());
 		try {
@@ -199,7 +221,8 @@ public class BootstrapServer {
 			for (INettyServer server : nettyServers) {
 				server.shutdown();
 			}
-
+			// 触发停止事件
+			ServerStoppedEvent.fireEvent();
 			// 放开主线程
 			LockSupport.unpark(awaitThread);
 		}

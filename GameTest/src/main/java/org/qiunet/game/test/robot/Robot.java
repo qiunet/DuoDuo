@@ -254,8 +254,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 							.connect(config.getAddress().getHostString(), config.getAddress().getPort());
 				case TCP:
 					return NettyTcpClient.create((TcpClientConfig) config, trigger)
-							.connect(config.getAddress().getHostString(), config.getAddress().getPort())
-							.getSession();
+							.connect(config.getAddress().getHostString(), config.getAddress().getPort());
 				default:
 					throw new CustomException("Type [{}] is not support", config.getConnType());
 			}

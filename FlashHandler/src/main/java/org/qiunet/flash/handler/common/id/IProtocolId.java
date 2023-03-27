@@ -67,10 +67,6 @@ public interface IProtocolId {
 		/** server Node 鉴权 */
 		int SERVER_NODE_AUTH = 603;
 
-		int SERVER_NODE_AUTH_RSP = 604;
-		/** 跨服玩家鉴权. */
-		int CROSS_PLAYER_AUTH = 605;
-
 		/** gm 首页请求 */
 		int GM_COMMAND_INDEX_REQ = 606;
 		int GM_COMMAND_LIST_RSP = 607;

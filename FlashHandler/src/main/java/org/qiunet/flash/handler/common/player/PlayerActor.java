@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
@@ -19,11 +20,10 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.flash.handler.netty.server.kcp.event.KcpUsabilityEvent;
-import org.qiunet.flash.handler.netty.server.kcp.observer.IKcpUsabilityChange;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +41,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 跨服的连接管理
 	 */
-	private final Map<Integer, PlayerCrossConnector> crossConnectors = Maps.newHashMap();
+	private final Map<Integer, PlayerCrossConnector> crossConnectors = Maps.newConcurrentMap();
 	/**
 	 * 保证玩家跨服从一个服务退出. 回到前一个服务
 	 */
@@ -78,9 +78,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	public PlayerActor(ISession session) {
 		super(session);
-
-		// kcp 变动通知推送
-		this.attachObserver(IKcpUsabilityChange.class, (prepare -> this.allCrossEvent(KcpUsabilityEvent.valueOf(prepare))));
 	}
 
 	@Override
@@ -88,23 +85,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		super.setSession(session);
 	}
 
-	/**
-	 * 跨服session的心跳
-	 */
-	private void crossHeartBeat(){
-		if (isDestroyed()){
-			return;
-		}
-
-		this.scheduleMessage(p -> {
-			if (isDestroyed()){
-				return;
-			}
-			crossConnectors.values().forEach(PlayerCrossConnector::heartBeat);
-			this.crossHeartBeat();
-		}, 20, TimeUnit.SECONDS);
-
-	}
 
 	@Override
 	public <E extends BaseCrossPlayerEvent> void allCrossEvent(E event) {
@@ -170,36 +150,40 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		return currentCrossServerId;
 	}
 
+	/**
+	 * 退出指定的跨服session
+	 * @param serverId
+	 * @param cause
+	 */
+	public void quitCross(int serverId, CloseCause cause) {
+		if (serverId == currentCrossServerId()) {
+			this.quitCurrentCross(cause);
+			return;
+		}
+
+		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(currentCrossServerId);
+		if (playerCrossConnector == null) {
+			return;
+		}
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
+		crosssServerStack.remove((Integer) serverId);
+		playerCrossConnector.quit(cause);
+	}
+
 	@Override
 	public void quitCurrentCross(CloseCause cause) {
 		if (! isCrossStatus()) {
 			return;
 		}
-		this.quitCross(this.currentCrossServerId, cause);
-	}
 
-	/**
-	 * 退出指定类型的跨服
-	 * @param serverId
-	 * @param cause
-	 */
-	public void quitCross(int serverId, CloseCause cause) {
-		if (! isCrossStatus()) {
-			return;
-		}
-
-		if (currentCrossServerId != serverId) {
-			throw new CustomException("not cross to server {}", serverId);
-		}
-
-		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(serverId);
+		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(currentCrossServerId);
 		if (playerCrossConnector == null) {
 			return;
 		}
 
-		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), currentCrossServerId);
 		this.currentCrossServerId = crosssServerStack.pop();
-		playerCrossConnector.getSession().close(cause);
+		playerCrossConnector.quit(cause);
 	}
 
 	@Override
@@ -208,19 +192,12 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	}
 
 	@Override
-	public void sendCrossMessage(IChannelMessage<?> channelMessage) {
+	public 	void sendCrossMessage(IChannelMessage message) {
 		if (currentCrossServerId == 0) {
 			throw new CustomException("Current not cross to any server");
 		}
-		crossConnectors.get(currentCrossServerId).sendMessage(channelMessage, true);
-	}
-
-	@Override
-	public ISession crossSession() {
-		if (currentCrossServerId == 0) {
-			throw new CustomException("Current not cross to any server");
-		}
-		return crossConnectors.get(currentCrossServerId).getSession();
+		// 跨服发送消息, 为了实时性, 都直接flush!
+		crossConnectors.get(currentCrossServerId).sendMessage(message.asCrossPlayerMsg(), true);
 	}
 
 	@Override
@@ -230,7 +207,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		}
 
 		dataLoader = new PlayerDataLoader(this, this, id);
-		this.crossHeartBeat();
 		this.playerId = id;
 		this.clockTick();
 	}
@@ -278,7 +254,8 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 		super.destroy();
 
-		crossConnectors.values().forEach(c -> c.getSession().close(CloseCause.DESTROY));
+		ArrayList<PlayerCrossConnector> list = Lists.newArrayList(crossConnectors.values());
+		list.forEach(c -> c.getSession().close(CloseCause.DESTROY));
 		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
 		if (loginSuccess && dataLoader != null) {
 			dataLoader.unregister();

@@ -1,9 +1,7 @@
 package org.qiunet.flash.handler.context.session;
 
-import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
-import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import io.netty.util.AttributeMap;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
 /***
@@ -11,7 +9,7 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
  * @author qiunet
  * 2022/4/26 15:18
  */
-public interface ISession {
+public interface ISession extends AttributeMap, ISender {
 
 	/**
 	 * 是否活跃
@@ -48,46 +46,26 @@ public interface ISession {
 
 	/**
 	 * 获得channel里面的对象.
-	 * @param key
-	 * @param <T>
-	 * @return
+	 * @param key key
+	 * @param <T> 类型
+	 * @return null 或者 里面的对象
 	 */
-	<T> T getAttachObj(AttributeKey<T> key);
-
+	default <T> T getAttachObj(AttributeKey<T> key) {
+		if (!hasAttr(key)) {
+			return null;
+		}
+		return attr(key).get();
+	}
 	/**
 	 * 设置对象到channel
-	 * @param key
-	 * @param obj
-	 * @param <T>
+	 * @param key key
+	 * @param obj 新的数据
+	 * @param <T> 类型
+	 * @return 老的数据
 	 */
-	<T> void attachObj(AttributeKey<T> key, T obj);
-	/**
-	 * 发送消息
-	 * @param message
-	 * @return
-	 */
-	default ChannelFuture sendMessage(IChannelMessage<?> message) {
-		return this.sendMessage(message, false);
+	default <T> T attachObj(AttributeKey<T> key, T obj) {
+		return attr(key).getAndSet(obj);
 	}
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	default ChannelFuture sendMessage(IChannelData message) {
-		return this.sendMessage(message.buildChannelMessage());
-	}
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	default ChannelFuture sendMessage(IChannelData message, boolean flush) {
-		return this.sendMessage(message.buildChannelMessage(), flush);
-	}
-	/**
-	 * 发送消息
-	 * @param message
-	 */
-	ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush);
 
 	@FunctionalInterface
 	interface SessionCloseListener {

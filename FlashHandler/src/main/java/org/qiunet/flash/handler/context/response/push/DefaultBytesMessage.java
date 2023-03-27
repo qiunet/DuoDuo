@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
  * @Author qiunet
  * @Date Create in 2018/5/26 23:49
  **/
-public class DefaultBytesMessage implements IChannelMessage<byte []> {
+public class DefaultBytesMessage extends ExtraInfo implements IChannelMessage<byte []> {
 
 	private final int protocolId;
 

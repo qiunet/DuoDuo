@@ -1,14 +1,25 @@
 package org.qiunet.cross.node;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.cross.common.contants.ScannerParamKey;
+import org.qiunet.cross.pool.NodeChannelPoolHandler;
 import org.qiunet.data.core.support.redis.IRedisUtil;
-import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
-import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
+import org.qiunet.flash.handler.common.enums.ServerConnType;
+import org.qiunet.flash.handler.context.session.NodeSessionType;
+import org.qiunet.flash.handler.context.session.ServerNodeSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.exceptions.CustomException;
@@ -28,7 +39,6 @@ import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import redis.clients.jedis.params.SetParams;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,12 +56,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
 	/** 注册中心redis key 前缀 with server type */
 	private static final String SERVER_REGISTER_CENTER_PREFIX = "SERVER_REGISTER_CENTER#";
-	// 所有当前的节点
-	private final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
+	// 客户端当前的节点
+	final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
 	final AtomicBoolean deprecated = new AtomicBoolean();
 	/**服务器对外停止服务*/
 	final AtomicBoolean serverClosed = new AtomicBoolean();
+	/***自己的bootstrap*/
+	final Bootstrap bootstrap = bootstrap();
 
 	/**
 	 * 当前server node 的 info key
@@ -64,33 +76,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	// redis
 	private IRedisUtil redisUtil;
-
-	/**
-	 * 添加一个服务器节点
-	 * @param node
-	 */
-	synchronized void addNode(ServerNode node) {
-		Preconditions.checkState(node.isAuth(), "ServerNode need auth");
-		ServerNode serverNode = nodes.get(node.getServerId());
-
-		if (serverNode != null) {
-			serverNode.getSession().close(CloseCause.INACTIVE);
-		}
-
-		node.getSession().addCloseListener("removeServerNode", (session, cause) -> {
-			this.removeNode(node);
-		});
-
-		nodes.put(node.getServerId(), node);
-	}
-
-	synchronized void removeNode(ServerNode serverNode) {
-		if (nodes.remove(serverNode.getServerId()) != null) {
-			LoggerType.DUODUO_FLASH_HANDLER.info("====ServerId {} was removed!", serverNode.getServerId());
-			serverNode.getSession().close(CloseCause.CHANNEL_CLOSE);
-		}
-
-	}
 
 	/**
 	 * 获得serverInfo
@@ -128,31 +113,54 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		// 目前服务器和服务器肯定是内网. 如果以后有多区域需要互通. 有两个解决方案:
 		// 1. 让云服务器 跨区域搭内网
 		// 2. 下面的getHost 修改为 getPublicHost
-		return lockAndCreateServerNode(serverId, serverInfo.getHost(), serverInfo.getNodePort());
+		return nodes.computeIfAbsent(serverId, key -> this.createServerNode(serverInfo));
 	}
 
 	/**
-	 * 锁定. 然后创建serverNode
-	 * @param serverId
+	 * 获得一个Bootstrap
+	 * @return
 	 */
-	private synchronized ServerNode lockAndCreateServerNode(int serverId, String host, int port) {
-		if (nodes.containsKey(serverId)) {
-			return nodes.get(serverId);
-		}
-		RedisLock redisLock = redisUtil.redisLock(ServerNode.getServerNodeLockRedisKey(currServerInfo.getServerId(), serverId));
-		try {
-			if (redisLock.lock()) {
-				if (nodes.containsKey(serverId)) {
-					redisLock.unlock();
-					return nodes.get(serverId);
-				}
-				return new ServerNode(redisLock, serverId, host, port);
+	private static Bootstrap bootstrap() {
+		Bootstrap bootstrap = new Bootstrap();
+		NodeChannelPoolHandler nodeChannelPoolHandler = new NodeChannelPoolHandler(new ServerNodeClientTrigger(), 8192);
+		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
+		bootstrap.option(ChannelOption.TCP_NODELAY,true);
+		bootstrap.group(ServerConstants.WORKER);
+		bootstrap.channel(socketChannelClz);
+		bootstrap.handler(new ChannelInitializer<>() {
+			@Override
+			protected void initChannel(Channel ch) throws Exception {
+				nodeChannelPoolHandler.channelCreated(ch);
 			}
-		} catch (IOException e) {
-			LoggerType.DUODUO_FLASH_HANDLER.error("ServerNode Connect Exception:", e);
-			redisLock.unlock();
+		});
+		return bootstrap;
+	}
+	/**
+	 * 锁定. 然后创建serverNode
+	 * @param serverInfo
+	 */
+	private ServerNode createServerNode(ServerInfo serverInfo) {
+		Channel channel;
+		try {
+			ChannelFuture channelFuture = bootstrap.connect(serverInfo.getHost(), serverInfo.getNodePort()).sync();
+			channel = channelFuture.channel();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
-		throw new CustomException("Create server node [{}] fail", serverId);
+		ServerNodeSession session = new ServerNodeSession(NodeSessionType.SERVER_NODE, channel, currServerInfo.getServerId());
+		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
+		ServerNode node = new ServerNode(session, serverInfo.getServerId());
+		node.getSession().addCloseListener("removeServerNode", (s, cause) -> {
+			ServerNode node0;
+			if ((node0 = nodes.remove(serverInfo.getServerId())) != null) {
+				LoggerType.DUODUO_FLASH_HANDLER.info("====Server Node Client ServerId {} was removed!", serverInfo.getServerId());
+				if (!((ServerNodeSession) node0.getSession()).isNoticedRemote()) {
+					((ServerNodeSession) node0.getSession()).setNoticedRemote();
+					node0.fireCrossEvent(ServerNodeQuitEvent.valueOf());
+				}
+			}
+		});
+		return node;
 	}
 
 	@Override
@@ -170,7 +178,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			// 启动检测 redis 是否通畅.
 			this.redisUtil.returnJedis().exists("");
 		}
-
 	}
 
 	@EventListener
@@ -231,6 +238,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return ScannerType.SERVER_NODE;
 	}
 
+	@EventListener
+	private void serverNodeQuitEvent(ServerNodeQuitEvent event) {
+		ServerNode serverNode = nodes.remove(event.getServerId());
+		if (serverNode != null) {
+			serverNode.getSession().close(CloseCause.LOGOUT);
+		}
+	}
+
 	@EventListener(EventHandlerWeightType.MIDDLE)
 	private void onShutdown(ServerShutdownEvent data) {
 		if (redisUtil == null) {
@@ -243,8 +258,9 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			return null;
 		});
 
-		nodes.values().forEach(this::removeNode);
-		NettyTcpClient.shutdown();
+		nodes.values().forEach(serverNode -> {
+			serverNode.getSession().close(CloseCause.SERVER_SHUTDOWN);
+		});
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
@@ -17,7 +18,7 @@ import java.util.StringJoiner;
  * @author qiunet
  * 2023/3/24 20:37
  */
-abstract class BaseChannelSession extends BaseSession {
+class BaseChannelSession extends BaseSession {
 	/**
 	 * channel
 	 */
@@ -70,13 +71,13 @@ abstract class BaseChannelSession extends BaseSession {
 	}
 
 	@Override
-	public <T> T getAttachObj(AttributeKey<T> key) {
-		return channel.attr(key).get();
+	public <T> Attribute<T> attr(AttributeKey<T> key) {
+		return channel.attr(key);
 	}
 
 	@Override
-	public <T> void attachObj(AttributeKey<T> key, T obj) {
-		channel.attr(key).set(obj);
+	public <T> boolean hasAttr(AttributeKey<T> key) {
+		return channel.hasAttr(key);
 	}
 
 	@Override

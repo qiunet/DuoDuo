@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
  * @author qiunet.
  * 17/12/11
  */
-public interface IChannelMessage<T> {
+public interface IChannelMessage<T> extends IExtraInfo {
 	/***
 	 * 得到消息的内容
 	 * @return
@@ -33,10 +33,6 @@ public interface IChannelMessage<T> {
 	 */
 	int getProtocolID();
 
-	/**
-	 * 回收
-	 */
-	default void recycle(){}
 	/**
 	 * 是否需要打印输出
 	 * @return

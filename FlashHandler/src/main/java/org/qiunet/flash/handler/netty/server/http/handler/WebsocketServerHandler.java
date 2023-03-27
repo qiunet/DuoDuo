@@ -30,10 +30,10 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 			DSession iSession = new DSession(ctx.channel());
 			ChannelUtil.bindSession(iSession, ctx.channel());
 
-			iSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, config.getStartupContext().buildMessageActor(iSession));
 			iSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
 			iSession.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
 			iSession.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
+			config.getStartupContext().buildMessageActor(iSession);
 		}
 		super.userEventTriggered(ctx, evt);
 	}

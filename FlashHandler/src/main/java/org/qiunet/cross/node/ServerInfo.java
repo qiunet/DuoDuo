@@ -44,11 +44,6 @@ public final class ServerInfo extends HashMap<String, Object> {
 	private static final String public_ip4 = "publicHost";
 	/**IP6地址**/
 	private static final String public_ip6 = "publicIp6";
-	/**
-	 * 玩法服叫 server_port
-	 * 游戏服叫 cross_port
-	 * **/
-	private static final String cross_port = "crossPort";
 	/**服务器ID*/
 	private static final String server_id = "serverId";
 	/**节点通讯端口**/
@@ -81,9 +76,6 @@ public final class ServerInfo extends HashMap<String, Object> {
 		node.put(ServerInfo.server_port, serverPort);
 		node.put(ServerInfo.node_port, nodePort);
 		node.put(ServerInfo.server_id, serverId);
-		if (ServerConfig.getConfig() != null && ServerConfig.getConfig().containKey(ServerConfig.CROSS_PORT)) {
-			node.put(ServerInfo.cross_port, ServerConfig.getConfig().getInt(ServerConfig.CROSS_PORT));
-		}
 		String publicHost = null;
 		if (ServerConfig.getConfig() != null) {
 			publicHost = ServerConfig.getInstance().getValue(public_host_key);
@@ -168,22 +160,6 @@ public final class ServerInfo extends HashMap<String, Object> {
 	@Override
 	public String toString() {
 		return JsonUtil.toJsonString(this);
-	}
-
-	/**
-	 * 玩法服叫 server_port
-	 * 游戏服叫 cross_port
-	 * @return
-	 */
-	public int getCrossPort() {
-		if (getServerType() == ServerType.CROSS) {
-			return getServerPort();
-		}
-		Object crossPort = get(ServerInfo.cross_port);
-		if (crossPort == null) {
-			return 0;
-		}
-		return Integer.parseInt(crossPort.toString());
 	}
 	/**
 	 * server info的redis key

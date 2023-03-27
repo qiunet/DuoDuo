@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.context.session;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -11,7 +10,6 @@ import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.config.DSessionConfig;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
@@ -30,18 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 abstract class BaseSession implements ISession {
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	/**
-	 * 配置
-	 */
-	protected DSessionConfig sessionConfig = DSessionConfig.DEFAULT_CONFIG;
-	/**
-	 * 设置 session 的参数
-	 */
-	public ISession sessionConfig(DSessionConfig config) {
-		Preconditions.checkState(config.isDefault_flush() || (config.getFlush_delay_ms() >= 5 && config.getFlush_delay_ms() < 3000));
-		this.sessionConfig = config;
-		return this;
-	}
 
 	private final AtomicBoolean closed = new AtomicBoolean();
 	public void close(CloseCause cause) {
@@ -124,14 +110,12 @@ abstract class BaseSession implements ISession {
 	 * @param flush
 	 * @return
 	 */
-	private ChannelFuture realSendMessage(Channel channel, IChannelMessage<?> message, boolean flush) {
+	private ChannelPromise realSendMessage(Channel channel, IChannelMessage<?> message, boolean flush) {
 		ChannelPromise promise = channel.newPromise();
-		channel.eventLoop().execute(() -> {
-			this.realSendMessage0(promise, channel, message, flush);
-		});
+		channel.eventLoop().execute(() -> this.realSendMessage0(promise, channel, message, flush));
 		return promise;
 	}
-	private ChannelFuture realSendMessage0(ChannelPromise promise, Channel channel, IChannelMessage<?> message, boolean flush) {
+	private void realSendMessage0(ChannelPromise promise, Channel channel, IChannelMessage<?> message, boolean flush) {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! channel.isOpen()) {
 			if (logger.isDebugEnabled() && message.debugOut()) {
@@ -143,7 +127,8 @@ abstract class BaseSession implements ISession {
 					((BaseByteBufMessage<?>) message).getByteBuf().release();
 			}
 			message.recycle();
-			return channel.newPromise();
+			channel.newPromise();
+			return;
 		}
 
 		if ( logger.isInfoEnabled() && messageActor != null && message.debugOut()) {
@@ -151,12 +136,11 @@ abstract class BaseSession implements ISession {
 		}
 
 		if (flush) {
-			channel.writeAndFlush(message, promise);
+			channel.writeAndFlush(message.needFlush(), promise);
 		}else {
 			channel.write(message, promise);
 		}
 		promise.addListener(listener);
-		return promise;
 	}
 
 	@Override

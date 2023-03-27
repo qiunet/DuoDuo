@@ -32,7 +32,7 @@ public class TcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		logger.debug("Tcp session {} active!", session);
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		session.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
-		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, config.getStartupContext().buildMessageActor(session));
+		config.getStartupContext().buildMessageActor(session);
 		ctx.fireChannelActive();
 	}
 
