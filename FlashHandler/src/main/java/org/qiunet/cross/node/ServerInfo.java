@@ -163,10 +163,18 @@ public final class ServerInfo extends HashMap<String, Object> {
 	}
 	/**
 	 * server info的redis key
-	 * @param serverId
-	 * @return
+	 * @param serverId server id
+	 * @return server info redis key
+	 */
+	public static String serverInfoRedisKey(String serverId) {
+		return REDIS_KEY_PREFIX+serverId;
+	}
+	/**
+	 * server info的redis key
+	 * @param serverId server id
+	 * @return server info redis key
 	 */
 	public static String serverInfoRedisKey(int serverId) {
-		return REDIS_KEY_PREFIX+serverId;
+		return serverInfoRedisKey(String.valueOf(serverId));
 	}
 }

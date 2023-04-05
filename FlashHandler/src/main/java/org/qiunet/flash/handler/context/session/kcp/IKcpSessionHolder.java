@@ -10,7 +10,7 @@ import org.qiunet.flash.handler.context.session.ISession;
  * @author qiunet
  * 2023/3/24 21:04
  */
-public interface IKcpSender {
+public interface IKcpSessionHolder {
 	/**
 	 * 获得kcp session
 	 * @return

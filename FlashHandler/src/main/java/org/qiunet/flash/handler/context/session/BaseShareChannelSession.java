@@ -48,12 +48,12 @@ class BaseShareChannelSession extends BaseSession {
 
 	@Override
 	public boolean isActive() {
-		return channelPool != null;
+		return channel.isActive();
 	}
 
 	@Override
 	public void flush() {
-		// do nothing
+		channel.flush();
 	}
 
 	@Override

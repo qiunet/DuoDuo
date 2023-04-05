@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.ToString;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,15 +41,12 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 	public void channelReleased(Channel ch) throws Exception {
 		int num = ch.attr(NodeChannelPool.COUNTER_KEY).get().decrementAndGet();
 		if (num <= 0 && ch.isActive()) {
-			ScheduledFuture<?> future = ch.eventLoop().schedule(new Runnable() {
-				@Override
-				public void run() {
-					if (ch.attr(NodeChannelPool.COUNTER_KEY).get().get() > 0) {
-						return;
-					}
-					ch.close();
+			ScheduledFuture<?> future = ch.eventLoop().schedule(() -> {
+				if (ch.attr(NodeChannelPool.COUNTER_KEY).get().get() > 0) {
+					return;
 				}
-			}, 60, TimeUnit.SECONDS);
+				ch.close();
+			}, TimeUnit.MINUTES.toSeconds(10), TimeUnit.SECONDS);
 			ch.attr(CLOSE_CHANNEL_FUTURE).set(future);
 		}
 	}
@@ -99,6 +97,10 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 			}
 
 			ISession nodeSession = this.channelTrigger.getNodeSession(ctx.channel(), header);
+			if (nodeSession == null) {
+				LoggerType.DUODUO_FLASH_HANDLER.error("Session ID {} not exist! Can not handler protocol id [{}]!", ToString.toString(header), msg.getProtocolId());
+				return;
+			}
 			this.channelTrigger.response(nodeSession, ctx.channel(), msg);
 		}
 

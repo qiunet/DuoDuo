@@ -1,6 +1,8 @@
 package org.qiunet.flash.handler.common.player.connect;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.util.AttributeKey;
+import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -31,7 +33,7 @@ public class PlayerCrossConnector implements ISessionHolder {
 	/**
 	 * 玩家
 	 */
-	private final PlayerActor actor;
+	private final PlayerActor playerActor;
 	/**
 	 *
 	 */
@@ -51,7 +53,7 @@ public class PlayerCrossConnector implements ISessionHolder {
 		}
 		this.playerId = actor.getPlayerId();
 		this.serverId = serverId;
-		this.actor = actor;
+		this.playerActor = actor;
 	}
 
 	/**
@@ -70,11 +72,12 @@ public class PlayerCrossConnector implements ISessionHolder {
 		// 因为大部分服务都是内网组网. 所以使用host.如果以后不在内网. 有两个解决方案
 		// 1. 直接修改下面为publicHost . 2. 云运营商跨区域组网
 		this.session = new NodeClientSession(NodeSessionType.CROSS_PLAYER, CrossSessionManager.instance.getChannelPool(this.serverId), this.playerId);
+		CrossPlayerAuthRequest request = CrossPlayerAuthRequest.valueOf(playerId, ServerNodeManager.getCurrServerId());
 		CrossSessionManager.instance.addNewSession(playerId, this.serverId, this.session);
-		this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, actor);
+		this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
+		ChannelFuture future = this.session.sendMessage(request, true);
+		future.addListener(f -> callback.accept(f.isSuccess()));
 		this.session.attachObj(CONNECTOR, this);
-		callback.accept(true);
-
 	}
 
 	/**

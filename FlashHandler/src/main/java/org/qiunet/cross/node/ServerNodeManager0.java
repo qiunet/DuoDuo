@@ -39,7 +39,10 @@ import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import redis.clients.jedis.params.SetParams;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
@@ -124,15 +127,15 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		Bootstrap bootstrap = new Bootstrap();
 		NodeChannelPoolHandler nodeChannelPoolHandler = new NodeChannelPoolHandler(new ServerNodeClientTrigger(), 8192);
 		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
-		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.group(ServerConstants.WORKER);
-		bootstrap.channel(socketChannelClz);
 		bootstrap.handler(new ChannelInitializer<>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
 				nodeChannelPoolHandler.channelCreated(ch);
 			}
 		});
+		bootstrap.option(ChannelOption.TCP_NODELAY,true);
+		bootstrap.group(ServerConstants.WORKER);
+		bootstrap.channel(socketChannelClz);
 		return bootstrap;
 	}
 	/**
@@ -188,9 +191,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 		redisUtil.returnJedis().sadd(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		TimerManager.executor.scheduleAtFixedRate(() -> {
-			if (deprecated.get()) {
-				return;
-			}
 			// 触发心跳 业务可能修改ServerInfo数据.
 			currServerInfo.refreshUpdateDt();
 			ServerNodeTickEvent.instance.fireEventHandler();
@@ -200,6 +200,31 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 	ServerInfo getCurrServerInfo() {
 		return currServerInfo;
+	}
+
+	/**
+	 * 获得 某个server 类型的所有的 server info
+	 * @param type 类型
+	 * @return 列表
+	 */
+	List<ServerInfo> getServerInfoList(ServerType type) {
+		String registerCenterRedisKey = serverRegisterCenterRedisKey(type);
+		Set<String> members = redisUtil.returnJedis().smembers(registerCenterRedisKey);
+		return redisUtil.execCommands(jedis -> {
+			List<ServerInfo> infos = new ArrayList<>(members.size());
+			for (String member : members) {
+				String infoString = jedis.get(ServerInfo.serverInfoRedisKey(member));
+				if (StringUtil.isEmpty(infoString)) {
+					continue;
+				}
+				ServerInfo serverInfo = JsonUtil.getGeneralObj(infoString, ServerInfo.class);
+				if (serverInfo.isOffline()) {
+					continue;
+				}
+ 				infos.add(serverInfo);
+			}
+			return infos;
+		});
 	}
 
 	/**
@@ -219,7 +244,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 		if (this.deprecated.compareAndSet(false, true)) {
 			redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
-			redisUtil.returnJedis().del(CURRENT_SERVER_NODE_INFO_REDIS_KEY);
 		}
 	}
 

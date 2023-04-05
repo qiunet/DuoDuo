@@ -4,8 +4,7 @@ import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.ISender;
-import org.qiunet.flash.handler.context.session.kcp.IKcpSender;
+import org.qiunet.flash.handler.context.session.IPlayerSender;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -48,17 +47,13 @@ public class ChannelMessageBroadcast implements AutoCloseable {
 	 * @param kcp 是否是kcp
 	 * @param flush 是否flush
 	 */
-	public void sendMessage(ISender sender, boolean kcp, boolean flush) {
+	public void sendMessage(IPlayerSender sender, boolean kcp, boolean flush) {
 		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(protocolId, byteBuf.retain());
-		if (kcp && IKcpSender.class.isAssignableFrom(sender.getClass())) {
-			((IKcpSender) sender).sendKcpMessage(message, flush);
-			return;
-		}
-		// 如果指定kcp, 也可以先标记位kcp的message
 		if (kcp) {
-			message.asKcpMsg();
+			sender.sendKcpMessage(message, flush);
+		}else {
+			sender.sendMessage(message, flush);
 		}
-		sender.sendMessage(message, flush);
 	}
 
 	@Override

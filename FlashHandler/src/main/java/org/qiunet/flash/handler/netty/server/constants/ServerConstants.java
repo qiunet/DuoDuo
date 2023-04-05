@@ -105,16 +105,13 @@ public final class ServerConstants {
 
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onStartupComplete(ServerStartupCompleteEvent event) {
+		LoggerType.DUODUO_FLASH_HANDLER.error(StrCodecUtil.decrypt(ICON));
+		ICON = null;
+
 		if (startDt.get() > 0) {
 			LoggerType.DUODUO_FLASH_HANDLER.error("Server startup successful in {} ms", (System.currentTimeMillis() - startDt.get()));
 		}
 		startDt = null;
-	}
-
-	@EventListener
-	private void onServerStart(ServerStartupCompleteEvent eventData){
-		LoggerType.DUODUO_FLASH_HANDLER.error(StrCodecUtil.decrypt(ICON));
-		ICON = null;
 	}
 
 	@EventListener

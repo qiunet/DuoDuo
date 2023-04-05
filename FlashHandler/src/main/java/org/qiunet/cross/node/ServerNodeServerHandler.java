@@ -38,7 +38,7 @@ public class ServerNodeServerHandler extends BaseNodeServerHandler {
 		Attribute<IMessageActor> actorAttribute = ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY);
 		ServerNode serverNode = (ServerNode) actorAttribute.get();
 		if (serverNode == null) {
-			serverNode = newServerNode(ctx.channel(), header.getServerId());
+			serverNode = newServerNode(ctx.channel(), (int) header.id());
 			actorAttribute.set(serverNode);
 		}
 

@@ -21,7 +21,7 @@ import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.NodeClientSession;
-import org.qiunet.flash.handler.context.session.kcp.IKcpSender;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.data.ByteUtil;
@@ -153,9 +153,9 @@ enum CrossSessionManager implements NodeChannelTrigger {
 			}
 		}
 		if (kcp
-		&& IKcpSender.class.isAssignableFrom(session.getClass())
-		&& ((IKcpSender)session).isKcpSessionPrepare()) {
-			((IKcpSender) session).sendKcpMessage(message, flush);
+		&& IKcpSessionHolder.class.isAssignableFrom(session.getClass())
+		&& ((IKcpSessionHolder)session).isKcpSessionPrepare()) {
+			((IKcpSessionHolder) session).sendKcpMessage(message, flush);
 		}else {
 			iMessageActor.getSession().sendMessage(message, flush);
 		}

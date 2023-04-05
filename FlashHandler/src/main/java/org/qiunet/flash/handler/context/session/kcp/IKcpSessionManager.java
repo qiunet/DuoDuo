@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.session.KcpSession;
  * @author qiunet
  * 2023/3/30 14:38
  */
-public interface IKcpSessionManager extends IKcpSender {
+public interface IKcpSessionManager extends IKcpSessionHolder {
 	/**
 	 * 绑定kcp session
 	 * 仅 tcp 和 ws可以.

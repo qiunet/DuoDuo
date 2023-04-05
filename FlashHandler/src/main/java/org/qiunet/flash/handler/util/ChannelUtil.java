@@ -198,8 +198,12 @@ public final class ChannelUtil {
 			}
 
 			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
-				logger.info("ConnectionReq idKey is null!");
-				channel.close();
+				messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
+				return;
+			}
+
+			if (! config.getStartupContext().userConnectionCheck(connectionReq.getIdKey())) {
+				messageActor.getSession().close(CloseCause.FORBID_ACCOUNT);
 				return;
 			}
 
@@ -211,7 +215,7 @@ public final class ChannelUtil {
 
 		if (messageActor.msgExecuteIndex() == null) {
 			logger.info("{} msgExecuteIndex is null! Need call ConnectionReq first", messageActor.getIdentity());
-			channel.close();
+			messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
 			return;
 		}
 

@@ -9,17 +9,16 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
+import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.NodeServerSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.collection.enums.ForEachResult;
-import org.qiunet.utils.common.functional.DSupplier1;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
@@ -59,9 +58,18 @@ public enum UserOnlineManager {
 	 * 等待重连
 	 */
 	private final Map<Long, WaitActor> waitReconnects = Maps.newConcurrentMap();
+	/**
+	 * 打印 Schedule
+	 */
+	private ScheduledFuture<?> scheduledFuture;
 
 	@EventListener
-	public void serverStartup(ServerStartupEvent eventData) {
+	private void serverStartup(ServerStartupEvent eventData) {
+		if (ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.LOGIC
+				&& ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.CROSS) {
+			return;
+		}
+
 		Gauge.builder("online.player.count", onlineCrossPlayers.values(), Collection::size)
 				.tag("type", "cross")
 				.register(RootRegistry.instance.registry());
@@ -69,12 +77,20 @@ public enum UserOnlineManager {
 		Gauge.builder("online.player.count", onlinePlayers.values(), Collection::size)
 				.tag("type", "local")
 				.register(RootRegistry.instance.registry());
+		this.scheduledFuture = TimerManager.executor.scheduleAtFixedRate(() -> {
+			int playerSize = onlinePlayerSize();
+			int crossPlayerSize = crossPlayerSize();
+			LoggerType.DUODUO_ONLINE.error("Current online: {}, player: {}, cross player: {}", (playerSize + crossPlayerSize), playerSize, crossPlayerSize);
+		}, 1, 10, TimeUnit.SECONDS);
 	}
 
 	@EventListener
 	private void addPlayerActor(LoginSuccessEvent eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
 		Preconditions.checkState(userActor.isAuth());
+		if (userActor.isCrossPlayer()) {
+			onlineCrossPlayers.put(userActor.getId(), ((CrossPlayerActor) userActor));
+		}
 		if (userActor.isPlayerActor()) {
 			onlinePlayers.put(userActor.getId(), (PlayerActor) userActor);
 		}
@@ -192,18 +208,21 @@ public enum UserOnlineManager {
 			return;
 		}
 
-		if (userActor.isCrossPlayer()
-		&& ! (((NodeServerSession) userActor.getSession()).isNoticedRemote())
-		) {
-			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerNodeManager.getCurrServerId()));
-			((NodeServerSession) userActor.getSession()).setNoticedRemote();
-		}
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
 		LoggerType.DUODUO_FLASH_HANDLER.info("{} was destroy", userActor.getSession());
 		onlineCrossPlayers.remove(userActor.getId());
 		waitReconnects.remove(userActor.getId());
 		onlinePlayers.remove(userActor.getId());
 
+		if (userActor.isCrossPlayer()
+				&& ! (((NodeServerSession) userActor.getSession()).isNoticedRemote())
+		) {
+			// 发送过期服务器推送 让客户端退出
+			userActor.sendMessage(CrossPlayerLogoutPush.instance);
+
+			((CrossPlayerActor) userActor).fireCrossEvent(CrossPlayerDestroyEvent.valueOf(ServerNodeManager.getCurrServerId()));
+			((NodeServerSession) userActor.getSession()).setNoticedRemote();
+		}
 		userActor.destroy();
 	}
 
@@ -307,17 +326,6 @@ public enum UserOnlineManager {
 	public CrossPlayerActor getCrossPlayerActor(long playerId) {
 		return onlineCrossPlayers.get(playerId);
 	}
-
-	/**
-	 * get 或者创建一个CrossPlayerActor
-	 * @param playerId 玩家ID
-	 * @param supplier
-	 * @return
-	 */
-	public CrossPlayerActor getOrCreateCrossPlayerActor(long playerId, DSupplier1<Long, CrossPlayerActor> supplier) {
-		return onlineCrossPlayers.computeIfAbsent(playerId, supplier::get);
-	}
-
 	/**
 	 * 得到等待重连的player
 	 * @param playerId 玩家id
@@ -336,19 +344,6 @@ public enum UserOnlineManager {
 			this.actor = actor;
 			this.future = future;
 		}
-	}
-	private ScheduledFuture<?> scheduledFuture;
-	@EventListener
-	private void serverStart(ServerStartupCompleteEvent event) {
-		if (ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.LOGIC
-		 && ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.CROSS) {
-			return;
-		}
-		this.scheduledFuture = TimerManager.executor.scheduleAtFixedRate(() -> {
-			int playerSize = onlinePlayerSize();
-			int crossPlayerSize = crossPlayerSize();
-			LoggerType.DUODUO_ONLINE.error("Current online: {}, player: {}, cross player: {}", (playerSize + crossPlayerSize), playerSize, crossPlayerSize);
-		}, 1, 10, TimeUnit.SECONDS);
 	}
 
 	@EventListener(EventHandlerWeightType.HIGHEST)

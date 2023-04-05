@@ -3,9 +3,7 @@ package org.qiunet.flash.handler.netty.server.config.adapter;
 import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -27,26 +25,6 @@ import java.io.IOException;
  **/
 public interface IStartupContext<T extends IMessageActor<T>> {
 	LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
-	/**
-	/**
-	 * 默认对玩家的服务启动上下文
-	 */
-	IStartupContext<PlayerActor> SERVER_STARTUP_CONTEXT = new IStartupContext<>() {
-		@Override
-		public PlayerActor buildMessageActor(ISession session) {
-			return new PlayerActor(session);
-		}
-
-		@Override
-		public boolean userServerValidate(ISession session) {
-			if (ServerNodeManager.isServerClosed()) {
-				session.sendMessage(ServerCloseRsp.valueOf());
-				return false;
-			}
-			return true;
-		}
-	};
-
 	/**
 	 * 构造MessageActor
 	 * http情况不会调用.
@@ -87,4 +65,11 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @return true 可用 false 不可用
 	 */
 	default boolean userServerValidate(ISession session) { return true;}
+
+	/**
+	 * 玩家连接检查
+	 * @param idKey 用户传入的id key
+	 * @return
+	 */
+	default boolean userConnectionCheck(String idKey) { return true;}
 }

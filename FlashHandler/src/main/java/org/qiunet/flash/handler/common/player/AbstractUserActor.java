@@ -2,8 +2,9 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
+import org.qiunet.flash.handler.context.session.IPlayerSender;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.kcp.IKcpSender;
+import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -16,7 +17,7 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  */
 public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 		extends AbstractMessageActor<T> implements IObserverSupportOwner<T>,
-		IPlayer , IKcpSender {
+		IPlayer , IPlayerSender {
 	/**
 	 * 观察者
 	 */
@@ -46,8 +47,8 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 
 	@Override
 	public ISession getKcpSession() {
-		if (IKcpSender.class.isAssignableFrom(session.getClass())) {
-			return ((IKcpSender) session).getKcpSession();
+		if (IKcpSessionHolder.class.isAssignableFrom(session.getClass())) {
+			return ((IKcpSessionHolder) session).getKcpSession();
 		}
 		return null;
 	}

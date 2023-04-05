@@ -50,7 +50,7 @@
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
 		<artifactId>duoduo-all</artifactId>
-		<version>7.0.10</version>
+		<version>7.1.1</version>
 	</dependency>
 
  

@@ -12,9 +12,11 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayerFireEvent;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
+import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
+import org.qiunet.utils.listener.event.EventManager;
 
 import java.util.Map;
 
@@ -61,6 +63,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
 	@Override
 	public void auth(long playerId) {
 		this.playerId = playerId;
+		EventManager.fireEventHandler(new LoginSuccessEvent(this));
 	}
 
 	@Override

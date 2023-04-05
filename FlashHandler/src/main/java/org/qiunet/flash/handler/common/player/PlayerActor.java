@@ -37,7 +37,7 @@ import java.util.function.Consumer;
  * 2020-10-21 10:08
  */
 public final class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
-		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayer, IPlayerDataLoader, ISyncDbMessage {
+		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayerDataLoader, ISyncDbMessage {
 	/**
 	 * 跨服的连接管理
 	 */

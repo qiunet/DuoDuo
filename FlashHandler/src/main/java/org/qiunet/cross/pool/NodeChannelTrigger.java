@@ -1,11 +1,4 @@
 package org.qiunet.cross.pool;
-
-/***
- *
- * @author qiunet
- * 2023/3/28 14:27
- */
-
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -22,8 +15,10 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
 
-/**
- * 触发
+/***
+ * 节点通讯响应触发
+ * @author qiunet
+ * 2023/3/28 14:27
  */
 public interface NodeChannelTrigger extends IPersistConnResponseTrigger {
 

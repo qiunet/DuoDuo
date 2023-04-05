@@ -127,7 +127,6 @@ abstract class BaseSession implements ISession {
 					((BaseByteBufMessage<?>) message).getByteBuf().release();
 			}
 			message.recycle();
-			channel.newPromise();
 			return;
 		}
 
