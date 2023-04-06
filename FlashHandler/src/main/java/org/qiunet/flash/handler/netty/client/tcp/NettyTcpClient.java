@@ -3,10 +3,10 @@ package org.qiunet.flash.handler.netty.client.tcp;
 import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -19,7 +19,6 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
 import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
-import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 
@@ -28,7 +27,7 @@ import org.qiunet.utils.string.StringUtil;
  * 17/11/25
  */
 public class NettyTcpClient {
-	private static final EventLoopGroup group = NettyUtil.newEventLoopGroup(8, "netty-tcp-client-event-loop-");
+	private static final NioEventLoopGroup group = new NioEventLoopGroup(new DefaultThreadFactory("netty-tcp-client-event-loop-"));
 	private final IPersistConnResponseTrigger trigger;
 	private final TcpClientConfig config;
 	private final Bootstrap bootstrap;
@@ -38,10 +37,9 @@ public class NettyTcpClient {
 	 */
 	private NettyTcpClient(TcpClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.bootstrap = new Bootstrap();
-		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
 		this.bootstrap.option(ChannelOption.TCP_NODELAY,true);
 		this.bootstrap.handler(new NettyClientInitializer());
-		this.bootstrap.channel(socketChannelClz);
+		this.bootstrap.channel(NioSocketChannel.class);
 		this.bootstrap.group(group);
 		this.trigger = trigger;
 		this.config = config;

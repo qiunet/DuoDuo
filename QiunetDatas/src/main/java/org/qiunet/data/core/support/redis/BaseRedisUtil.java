@@ -13,7 +13,6 @@ import redis.clients.jedis.params.SetParams;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
@@ -60,18 +59,6 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 	 */
 	 String getConfigKey(String originConfigKey) {
 		return "redis."+redisName+"."+originConfigKey;
-	}
-
-	@Override
-	public <R> R redisLockRun(String key, Callable<R> call) {
-		try (RedisLock lock = redisLock(key)) {
-			if (lock.lock()) {
-				return call.call();
-			}
-		} catch (Exception e) {
-			throw new CustomException("call redis lock run exception: ", e);
-		}
-		return null;
 	}
 
 	@Override

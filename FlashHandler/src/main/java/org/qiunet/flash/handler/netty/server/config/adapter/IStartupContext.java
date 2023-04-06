@@ -1,8 +1,6 @@
 package org.qiunet.flash.handler.netty.server.config.adapter;
 
-import io.jpower.kcp.netty.KcpException;
 import io.netty.channel.ChannelFuture;
-import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -10,11 +8,8 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerCloseRsp;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
-
-import java.io.IOException;
 
 /***
  *
@@ -39,24 +34,11 @@ public interface IStartupContext<T extends IMessageActor<T>> {
 	 * @return
 	 */
 	default ChannelFuture exception(ISession session, Throwable cause){
-		IChannelData message;
 		if (cause instanceof StatusResultException) {
-			message = StatusTipsRsp.valueOf(((StatusResultException) cause));
-		} else {
-			if (cause instanceof KcpException || cause instanceof IOException) {
-				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常: {}", cause.getMessage());
-			}else {
-				LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
-			}
-			message = SERVER_EXCEPTION_MESSAGE.get();
+			return session.sendMessage(StatusTipsRsp.valueOf(((StatusResultException) cause)), true);
 		}
-
-		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (messageActor instanceof CrossPlayerActor) {
-			// 在cross平台. 如果是玩家抛出的异常. 直接发送给客户端
-			return messageActor.sendMessage(message);
-		}
-		return session.sendMessage(message);
+		LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
+		return session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true);
 	}
 
 	/**

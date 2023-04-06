@@ -1,8 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
 
-import java.util.concurrent.Callable;
-
 public interface IRedisUtil {
 	/***
 	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
@@ -34,14 +32,6 @@ public interface IRedisUtil {
 	 * @return
 	 */
 	RedisLock redisLock(String key);
-
-	/**
-	 * 使用指定的key 加锁 执行一段代码.
-	 * @param key key
-	 * @param call 执行代码
-	 * @return 执行的返回值
-	 */
-	<R> R redisLockRun(String key, Callable<R> call);
 	/**
 	 * 异步在锁里执行数据
 	 * @param key key

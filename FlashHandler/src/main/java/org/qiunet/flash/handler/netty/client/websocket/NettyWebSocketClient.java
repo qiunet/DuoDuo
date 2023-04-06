@@ -36,7 +36,7 @@ import org.slf4j.Logger;
  * 17/12/1
  */
 public class NettyWebSocketClient {
-	private static final NioEventLoopGroup group = new NioEventLoopGroup(1 , new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
+	private static final NioEventLoopGroup group = new NioEventLoopGroup( new DefaultThreadFactory("netty-web-socket-client-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final IPersistConnResponseTrigger trigger;
 	private final NettyClientHandler clientHandler;

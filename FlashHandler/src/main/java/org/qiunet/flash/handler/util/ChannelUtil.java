@@ -289,12 +289,6 @@ public final class ChannelUtil {
 	 */
 	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
 		ISession session = ChannelUtil.getSession(channel);
-		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		if (cause instanceof KcpException || cause instanceof IOException) {
-			logger.error(errMeg + " errMsg: " + cause.getMessage());
-		}else {
-			logger.error(errMeg, cause);
-		}
 
 		Runnable closeChannel = () -> {
 			if (session != null) {
@@ -304,15 +298,21 @@ public final class ChannelUtil {
 			}
 		};
 
-		if ("Connection reset by peer".equals(cause.getMessage())) {
+		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
+		if (cause instanceof KcpException || cause instanceof IOException) {
+			logger.info(errMeg + " errMsg: " + cause.getMessage());
 			closeChannel.run();
 			return;
 		}
 
-		if (! (cause instanceof StatusResultException)) {
-			counter.increment();
+		if (cause instanceof StatusResultException) {
+			// 应该在 IHandler 就处理掉.
+			logger.error("StatusResultException reach in ChannelOutBound");
+			return;
 		}
 
+		logger.error(errMeg, cause);
+		counter.increment();
 		if (channel.isOpen() || channel.isActive()) {
 			startupContext.exception(session, cause)
 					.addListener(f -> {
