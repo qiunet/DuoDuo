@@ -1,6 +1,7 @@
 package org.qiunet.function.id;
 
 import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.data.redis.util.DbUtil;
 
 import java.util.function.Consumer;
@@ -54,15 +55,17 @@ public class DistributeIdMaker {
 	 * 产生一个ID
 	 * @return
 	 */
-	public long generateId() {
+	public long generateId() throws IllegalStateException {
 		if (! redisUtil.returnJedis().exists(redisKey)) {
-			redisUtil.redisLockRun(redisKey, () -> {
-				if (redisUtil.returnJedis().exists(redisKey)) {
-					return null;
+			try (RedisLock redisLock = redisUtil.redisLock(redisKey)) {
+				if (redisLock.tryLock()) {
+					if (! redisUtil.returnJedis().exists(redisKey)) {
+						redisUtil.returnJedis().set(redisKey, String.valueOf(idLoader.get()));
+					}
+				}else {
+					throw new IllegalStateException("Redis lock timeout");
 				}
-				redisUtil.returnJedis().set(redisKey, String.valueOf(idLoader.get()));
-				return null;
-			});
+			}
 		}
 		long incrId = redisUtil.returnJedis().incr(redisKey);
 		this.update.accept((int) incrId);
