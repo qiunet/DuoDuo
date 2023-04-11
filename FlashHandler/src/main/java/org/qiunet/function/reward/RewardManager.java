@@ -1,8 +1,5 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.function.base.basic.IBasicFunction;
-import org.qiunet.utils.scanner.anno.AutoWired;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -14,9 +11,6 @@ import java.util.List;
 public enum RewardManager {
 	instance;
 
-
-	@AutoWired
-	private static IBasicFunction resourceManager;
 	/**
 	 * 空的 rewards
 	 */

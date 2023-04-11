@@ -27,22 +27,19 @@ public final class UnmodifiableConsumes<Obj extends IThreadSafe> extends Consume
 	}
 
 	@Override
-	protected List<BaseConsume<Obj>> getConsumeList() {
-		if (this.consumeConfigs == null) {
-			return super.getConsumeList();
+	public void loadData() {
+		if (consumeConfigs == null) {
+			return;
 		}
-
 		List<BaseConsume<Obj>> baseConsumeList = Lists.newArrayListWithCapacity(consumeConfigs.size());
 		for (ConsumeConfig config : consumeConfigs) {
-			BaseConsume baseConsume = config.convertToConsume(id -> basicFunction.getResType(id));
+			BaseConsume baseConsume = config.convertToConsume();
 			if (baseConsume == null) {
 				throw new CustomException("ConsumeConfig {} convert result is null", JsonUtil.toJsonString(config));
 			}
 			baseConsumeList.add(baseConsume);
 		}
 		super.consumeList = ImmutableList.copyOf(baseConsumeList);
-		consumeConfigs = null;
-
-		return super.getConsumeList();
+		this.consumeConfigs = null;
 	}
 }

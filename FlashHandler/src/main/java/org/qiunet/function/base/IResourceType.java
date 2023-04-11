@@ -14,7 +14,7 @@ import org.qiunet.function.reward.RewardConfig;
 public interface IResourceType {
 	/**
 	 *  枚举名
-	 * @return
+	 * @return 枚举名
 	 */
 	String name();
 	/**

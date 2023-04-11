@@ -3,7 +3,7 @@ package org.qiunet.cfg.manager.keyval;
 import org.qiunet.cfg.annotation.CfgValAutoWired;
 import org.qiunet.cfg.base.IKeyValCfg;
 import org.qiunet.cfg.event.CfgLoadCompleteEvent;
-import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgWrapper;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
@@ -62,7 +62,7 @@ public enum KeyValManager {
 			}
 
 			eventData.getList().stream().filter(cfg -> IKeyValCfg.class.isAssignableFrom(cfg.getCfgClass()))
-					.forEach(cfgManager -> ((ISimpleMapCfgManager<String, IKeyValCfg>) cfgManager).allCfgs().forEach((key, data) -> {
+					.forEach(cfgManager -> ((ISimpleMapCfgWrapper<String, IKeyValCfg>) cfgManager).allCfgs().forEach((key, data) -> {
 				CfgAutoFieldInfo fieldInfo = keyFields.get(key);
 				if (fieldInfo == null) {
 					return;
@@ -74,7 +74,7 @@ public enum KeyValManager {
 				}
 
 				if (fieldInfo.cfgManager == null) {
-					fieldInfo.cfgManager = (ISimpleMapCfgManager<String, IKeyValCfg>) cfgManager;
+					fieldInfo.cfgManager = (ISimpleMapCfgWrapper<String, IKeyValCfg>) cfgManager;
 				}
 
 				fieldInfo.injectVal();
@@ -113,7 +113,7 @@ public enum KeyValManager {
 			/**
 			 * 对应的manager
 			 */
-			ISimpleMapCfgManager<String, ? extends IKeyValCfg> cfgManager;
+			ISimpleMapCfgWrapper<String, ? extends IKeyValCfg> cfgManager;
 			/**
 			 * 需要注入的字段
 			 */

@@ -90,7 +90,7 @@ public class RedisLock implements AutoCloseable {
 					return true;
 				}
 			} catch (InterruptedException | ExecutionException e) {
-				throw new CustomException("redis lock: ", e);
+				throw new CustomException(e, "redis lock: ");
 			}
 			lastTime -= delayTime;
 		}

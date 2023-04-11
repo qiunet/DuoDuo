@@ -1,13 +1,12 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.ISortable;
-import org.qiunet.cfg.manager.base.INestListCfgManager;
+import org.qiunet.cfg.manager.base.ICfgWrapper;
+import org.qiunet.cfg.manager.base.INestListCfgWrapper;
 import org.qiunet.utils.collection.safe.SafeList;
 import org.qiunet.utils.collection.safe.SafeMap;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,57 +18,48 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class NestListJsonCfgManager <ID, Cfg extends INestListCfg<ID>>
-	extends BaseJsonCfgManager<ID, Cfg> implements INestListCfgManager<ID, Cfg> {
+	extends BaseJsonCfgManager<ID, Cfg> implements INestListCfgWrapper<ID, Cfg> {
 	private Map<ID, List<Cfg>> cfgMap;
 
 	public NestListJsonCfgManager(Class<Cfg> cfgClass) {
 		super(cfgClass);
 	}
 
-
+	@Override
+	protected void loadCfg0(ICfgWrapper<ID, Cfg> wrapper) {
+		this.cfgMap = ((INestListCfgWrapper<ID, Cfg>) wrapper).allCfgs();
+	}
 
 	@Override
-	void init() throws Exception {
-		this.cfgMap = getNestListCfg();
-		this.initCfgSelf();
-	}
-
-	/***
-	 * 如果cfg 对象是实现了 initCfg接口,
-	 * 就调用init方法实现cfg的二次init.
-	 */
-	private void initCfgSelf() {
-		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
-			return;
-		}
-
-		this.cfgMap.values().stream().flatMap(Collection::stream)
-				.map(cfg -> (INeedInitCfg)cfg)
-				.forEach(INeedInitCfg::init);
-	}
-
-	/***
-	 * 得到嵌套list的map数据
-	 * 一个key  对应一个 cfg list的结构
-	 * @return
-	 * @throws Exception
-	 */
-	protected Map<ID, List<Cfg>> getNestListCfg() throws Exception {
+	protected ICfgWrapper<ID, Cfg> buildWrapper(List<Cfg> cfgList) {
 		SafeMap<ID, List<Cfg>> cfgMap = new SafeMap<>();
-		for (Cfg cfg : this.cfgList) {
+		for (Cfg cfg : cfgList) {
 			List<Cfg> subList = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeList<>());
 			subList.add(cfg);
 		}
-		for (List<Cfg> cfgList : cfgMap.values()) {
+		for (List<Cfg> cl : cfgMap.values()) {
 			if (ISortable.class.isAssignableFrom(getCfgClass())) {
-				Collections.sort(((List<? extends Comparable>) this.cfgList));
+				Collections.sort(((List<? extends Comparable>) cl));
 			}
 
-			((SafeList) cfgList).convertToUnmodifiable();
+			((SafeList) cl).convertToUnmodifiable();
 		}
-		cfgMap.loggerIfAbsent();
 		cfgMap.convertToUnmodifiable();
-		return cfgMap;
+		cfgMap.loggerIfAbsent();
+		return new INestListCfgWrapper<>() {
+			@Override
+			public Map<ID, List<Cfg>> allCfgs() {
+				return cfgMap;
+			}
+			@Override
+			public Class<Cfg> getCfgClass() {
+				return cfgClass;
+			}
+			@Override
+			public List<Cfg> list() {
+				return cfgList;
+			}
+		};
 	}
 
 	@Override

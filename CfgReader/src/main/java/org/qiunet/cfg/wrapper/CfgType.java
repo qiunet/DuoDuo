@@ -7,6 +7,7 @@ import org.qiunet.cfg.base.ICfg;
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.ICfgWrapper;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.EnumParseException;
 
@@ -22,7 +23,7 @@ import java.util.Map;
 public enum  CfgType {
 	SIMPLE_MAP(ISimpleMapCfg.class) {
 		@Override
-		ICfgWrapper getCfgWrapper(CfgFileType cfgFileType, Class<? extends ICfg> clazz) {
+        ICfgWrapper getCfgWrapper(CfgFileType cfgFileType, Class<? extends ICfg> clazz) {
 			return cfgFileType.createSimpleMapCfgWrapper((Class<ISimpleMapCfg>)clazz);
 		}
 	},

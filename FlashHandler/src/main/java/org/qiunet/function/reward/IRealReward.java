@@ -1,7 +1,7 @@
 package org.qiunet.function.reward;
 
+import org.qiunet.cfg.manager.base.LoadSandbox;
 import org.qiunet.function.base.IResourceCfg;
-import org.qiunet.function.base.basic.BasicFunctionManager;
 
 /***
  * 真实奖励. 方便客户端展示
@@ -36,6 +36,6 @@ public interface IRealReward {
 	 * @return
 	 */
 	default <T extends IResourceCfg> T getResourceCfg() {
-		return BasicFunctionManager.instance.getResById(getCfgId());
+		return LoadSandbox.instance.getResById(getCfgId());
 	}
 }

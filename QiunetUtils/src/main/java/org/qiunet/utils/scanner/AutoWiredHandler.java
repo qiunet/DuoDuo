@@ -60,7 +60,7 @@ import java.util.Set;
 	}
 
 	private static final LazyLoader<Class<?>> cfgWrapperClass = new LazyLoader<>(() -> {
-		String cfgAutoWireClass = "org.qiunet.cfg.wrapper.ICfgWrapper";
+		String cfgAutoWireClass = "org.qiunet.cfg.manager.base.ICfgWrapper";
 		try {
 			return Class.forName(cfgAutoWireClass);
 		}catch (Exception e) {

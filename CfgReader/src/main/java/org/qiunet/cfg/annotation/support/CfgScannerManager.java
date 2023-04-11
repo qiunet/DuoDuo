@@ -1,25 +1,22 @@
 package org.qiunet.cfg.annotation.support;
 
-import com.google.common.collect.Lists;
 import org.qiunet.cfg.annotation.Cfg;
-import org.qiunet.cfg.annotation.CfgLoadOver;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.event.CfgLoadCompleteEvent;
-import org.qiunet.cfg.event.StartInitCfgEvent;
+import org.qiunet.cfg.event.CfgPrepareEndEvent;
+import org.qiunet.cfg.manager.base.ICfgWrapper;
 import org.qiunet.cfg.wrapper.CfgType;
-import org.qiunet.cfg.wrapper.ICfgWrapper;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.listener.event.EventHandlerWeightType;
-import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
-import java.lang.reflect.*;
-import java.util.List;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Set;
 
 /**
@@ -29,12 +26,11 @@ import java.util.Set;
  */
 enum CfgScannerManager implements IApplicationContextAware {
 	instance;
-	private final List<LoadOverMethod> loadOverList = Lists.newArrayList();
 	private IApplicationContext context;
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
-		this.scannerLoadOverMethod();
+
 		this.createCfgWrapper();
 		this.cfgAutoWired();
 		this.initCfg();
@@ -51,16 +47,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 	}
 
 	private void initCfg() {
-		StartInitCfgEvent.instance.fireEventHandler();
-	}
-	/**
-	 * 扫描所有cfgLoadOver method
-	 */
-	private void scannerLoadOverMethod() {
-		Set<Method> methods = context.getMethodsAnnotatedWith(CfgLoadOver.class);
-		for (Method method : methods) {
-			loadOverList.add(new LoadOverMethod(context.getInstanceOfClass(method.getDeclaringClass()), method));
-		}
+		CfgPrepareEndEvent.instance.fireEventHandler();
 	}
 
 	/**
@@ -104,35 +91,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 			Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
 			Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
 
-			field.setAccessible(true);
-			field.set(obj, CfgType.getCfgWrapper(cfgClass));
-		}
-	}
-
-	@EventListener(EventHandlerWeightType.LOWEST)
-	private void completeLoader(CfgLoadCompleteEvent data) {
-		loadOverList.forEach(LoadOverMethod::call);
-	}
-
-	private static class LoadOverMethod {
-		private final Object object;
-		private final Method method;
-
-		public LoadOverMethod(Object object, Method method) {
-			this.object = object;
-			this.method = method;
-			if (method.getParameterCount() > 0) {
-				throw new CustomException("LoadOver method not need parameter!");
-			}
-			ReflectUtil.makeAccessible(method);
-		}
-
-		public void call() {
-			try {
-				method.invoke(object);
-			} catch (Exception e) {
-				throw new CustomException(e, "load over method call error!");
-			}
+			ReflectUtil.makeAccessible(field).set(obj, CfgType.getCfgWrapper(cfgClass));
 		}
 	}
 }

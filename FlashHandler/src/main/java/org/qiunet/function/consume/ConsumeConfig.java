@@ -1,11 +1,12 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.IResourceType;
+import org.qiunet.cfg.manager.base.LoadSandbox;
+import org.qiunet.function.base.IResourceCfg;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /***
  * 消耗配置的json类
@@ -29,11 +30,14 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 
 	/**
 	 * 转 Consume
-	 * @param typeGetter cfgId → type
 	 * @return Consume
 	 */
-	public BaseConsume convertToConsume(Function<Integer, IResourceType> typeGetter) {
-		return typeGetter.apply(getCfgId()).createConsume(this);
+	public BaseConsume convertToConsume() {
+		IResourceCfg res = LoadSandbox.instance.getResById(getCfgId());
+		if (res == null) {
+			throw new CustomException("Res id {} null point exception:", getCfgId());
+		}
+		return res.type().createConsume(this);
 	}
 
 	/**

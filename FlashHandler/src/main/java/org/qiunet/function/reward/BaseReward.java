@@ -1,13 +1,13 @@
 package org.qiunet.function.reward;
 
 import com.google.common.base.Preconditions;
+import org.qiunet.cfg.manager.base.LoadSandbox;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
+import org.qiunet.function.base.IResourceCfg;
 import org.qiunet.function.base.IResourceType;
-import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.thread.IThreadSafe;
 
 /***
@@ -21,9 +21,6 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * 需要格子总和
 	 */
 	protected static final ArgumentKey<Integer> needGridSum = new ArgumentKey<>();
-
-	@AutoWired
-	private static IBasicFunction basicFunction;
 
 	/**
 	 * 奖励id
@@ -128,6 +125,8 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @return
 	 */
 	public <Type extends Enum<Type> & IResourceType> Type resType() {
-		return basicFunction.getResType(cfgId);
+		IResourceCfg res = LoadSandbox.instance.getResById(cfgId);
+		assert res != null;
+		return res.type();
 	}
 }

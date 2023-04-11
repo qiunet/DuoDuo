@@ -1,10 +1,11 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.INestMapCfg;
-import org.qiunet.cfg.manager.base.INestMapCfgManager;
+import org.qiunet.cfg.manager.base.ICfgWrapper;
+import org.qiunet.cfg.manager.base.INestMapCfgWrapper;
 import org.qiunet.utils.collection.safe.SafeMap;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>>
-	extends BaseJsonCfgManager<ID, Cfg> implements INestMapCfgManager<ID, SubId, Cfg> {
+	extends BaseJsonCfgManager<ID, Cfg> implements INestMapCfgWrapper<ID, SubId, Cfg> {
 	private Map<ID, Map<SubId, Cfg>> cfgs;
 
 	public NestMapJsonCfgManager(Class<Cfg> cfgClass) {
@@ -22,47 +23,14 @@ public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>
 	}
 
 	@Override
-	void init() throws Exception {
-		this.cfgs = getNestMapCfg();
-		this.initCfgSelf();
-	}
-	/***
-	 * 如果cfg 对象是实现了 initCfg接口,
-	 * 就调用init方法实现cfg的二次init.
-	 */
-	private void initCfgSelf() {
-		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
-			return;
-		}
-
-		this.cfgs.values().stream().flatMap(val -> val.values().stream())
-				.map(cfg -> (INeedInitCfg)cfg)
-				.forEach(INeedInitCfg::init);
+	protected void loadCfg0(ICfgWrapper<ID, Cfg> wrapper) {
+		this.cfgs = ((INestMapCfgWrapper<ID, SubId, Cfg>) wrapper).allCfgs();
 	}
 
-	/***
-	 * 根据id 和 subId 得到一条cfg数据
-	 * @param id
-	 * @param subId
-	 * @return
-	 */
-	public Cfg getCfgByIdAndSubId(ID id, SubId subId) {
-		Map<SubId, Cfg> subIdCfgMap = cfgs.get(id);
-		if (subIdCfgMap == null) {
-			return null;
-		}
-		return subIdCfgMap.get(subId);
-	}
-
-	/***
-	 * 得到一个一定格式的嵌套map
-	 * 格式: key 对应 Map[subKey, cfg]
-	 * @return
-	 * @throws Exception
-	 */
-	protected Map<ID, Map<SubId, Cfg>> getNestMapCfg() throws Exception {
+	@Override
+	protected ICfgWrapper<ID, Cfg> buildWrapper(List<Cfg> cfgList) {
 		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
-		for (Cfg cfg : this.cfgList) {
+		for (Cfg cfg : cfgList) {
 			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeMap<>());
 			subMap.put(cfg.getSubId(), cfg);
 		}
@@ -72,7 +40,20 @@ public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>
 		}
 		cfgMap.loggerIfAbsent();
 		cfgMap.convertToUnmodifiable();
-		return cfgMap;
+		return new INestMapCfgWrapper<>() {
+			@Override
+			public Map<ID, Map<SubId, Cfg>> allCfgs() {
+				return cfgMap;
+			}
+			@Override
+			public Class<Cfg> getCfgClass() {
+				return cfgClass;
+			}
+			@Override
+			public List<Cfg> list() {
+				return cfgList;
+			}
+		};
 	}
 
 	@Override

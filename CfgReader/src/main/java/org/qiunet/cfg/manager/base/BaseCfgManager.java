@@ -3,11 +3,15 @@ package org.qiunet.cfg.manager.base;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.qiunet.cfg.base.ICfg;
+import org.qiunet.cfg.base.ICfgDelayLoadData;
+import org.qiunet.cfg.event.CfgManagerAddEvent;
 import org.qiunet.cfg.manager.CfgManagers;
 import org.qiunet.cfg.manager.exception.UnknownFieldException;
 import org.qiunet.utils.convert.ConvertManager;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.file.DPath;
 import org.qiunet.utils.file.FileUtil;
+import org.qiunet.utils.file.IFileChangeCallback;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.system.SystemPropertyUtil;
@@ -18,6 +22,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,36 +45,106 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 	 * 是否需要重新加载.
 	 */
 	private static final AtomicBoolean needReloadCfg = new AtomicBoolean(false);
-
-	protected String fileName;
-
+	/**
+	 * 需要延迟加载的字段
+	 */
+	final ArrayList<Field> delayLoadFields = new ArrayList<>();
+	/**
+	 * 文件名.
+	 * 或者pattern
+	 */
+	protected final String fileName;
+	/**
+	 * 所有文件
+	 */
+	private final File [] files;
+	/**
+	 * cfg class name
+	 */
 	protected Class<Cfg> cfgClass;
 	/**
 	 * 加载顺序
 	 */
 	private final int order;
 	/**
-	 * 预留一个用户自定义的钩子函数, 可以自己做一些事情
-	 * 目前是空的实现,开发者选择是否覆盖函数
-	 * 举例: json配置加载完成后,可以进一步对cfg对象做一些处理.初步解析,或者组装数据.方便项目使用配置表.
-	 * @throws Exception
+	 * 所有数据
 	 */
-	protected void afterLoad() throws Exception {
+	private List<Cfg> cfgList;
 
+	protected BaseCfgManager(Class<Cfg> cfgClass) {
+		org.qiunet.cfg.annotation.Cfg cfg = cfgClass.getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
+		this.fileName = cfg.value();
+		this.cfgClass = cfgClass;
+		this.order = cfg.order();
+		this.files = getFiles();
+
+		this.fileChangeListener();
+		this.checkCfgClass();
+
+		CfgManagerAddEvent.fireEvent(this);
 	}
 
+	@Override
+	public void loadCfg() throws Exception {
+		ICfgWrapper<ID, Cfg> wrapper = buildWrapper(readCfgList(files));
+		LoadSandbox.instance.addWrapper(wrapper);
+	}
+	/**
+	 * 读取cfg list
+	 * @return list
+	 */
+	protected abstract List<Cfg> readCfgList(File [] files);
+	/**
+	 * 获取配置文件真实路径
+	 * @return File数组
+	 */
+	private File [] getFiles() {
+		if(fileName.contains("*")) {
+			List<File> files = Lists.newLinkedList();
+			String dirName = Objects.requireNonNull(getClass().getClassLoader().getResource(DPath.dirName(fileName))).getFile();
+			String finalFileName = DPath.fileName(fileName).replaceAll("\\.", "\\\\.").replaceAll("\\*", "(.*)");
+			DPath.listDir(dirName, files::add, file -> file.getName().matches(finalFileName));
+			return files.toArray(new File[0]);
+		}
+		String filePath = Objects.requireNonNull(getClass().getClassLoader().getResource(fileName)).getFile();
+		return new File[]{ new File(filePath)};
+	}
+	/**
+	 * 初始化数据
+	 * @param wrapper 包含数据的沙盒 wrapper
+	 */
+	void switchCfgToRuntime(ICfgWrapper<ID, Cfg> wrapper) {
+		this.cfgList = wrapper.list();
+		this.loadCfg0(wrapper);
+	}
+
+	/***
+	 * 初始化数据
+	 * @param wrapper 沙盒的wrapper
+	 */
+	protected abstract void loadCfg0(ICfgWrapper<ID, Cfg> wrapper);
+	/**
+	 * 构造一个 wrapper 给沙盒
+	 * @param cfgList list
+	 * @return wrapper
+	 */
+	protected abstract ICfgWrapper<ID, Cfg> buildWrapper(List<Cfg> cfgList);
+
+	@Override
+	public List<Cfg> list() {
+		return cfgList;
+	}
 	/**
 	 * 监听文件变动.
 	 * 一个cfgManager 可能有多个文件. 延时500 毫秒再加载.
-	 * @param file
 	 */
-	protected void fileChangeListener(File file) {
+	protected void fileChangeListener() {
 		if ( SystemPropertyUtil.getOsName().is(SystemPropertyUtil.OSType.LINUX)) {
 			// linux 正式环境. 还是人来决定什么时候更新好点.
 			return;
 		}
 
-		FileUtil.changeListener(file, (file1) -> {
+		IFileChangeCallback callback = (file1) -> {
 			LoggerType.DUODUO_CFG_READER.debug("Cfg file [{}] changing", file1.getPath());
 			synchronized (this) {
 				needReloadCfgs.add(this);
@@ -83,7 +160,11 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 					return null;
 				}, 2, TimeUnit.SECONDS);
 			}
-		});
+		};
+
+		for (File file : files) {
+			FileUtil.changeListener(file, callback);
+		}
 	}
 
 	private synchronized void handlerReload() {
@@ -106,17 +187,6 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 		return cfgClass;
 	}
 
-
-	public BaseCfgManager(Class<Cfg> cfgClass) {
-		org.qiunet.cfg.annotation.Cfg cfg = cfgClass.getAnnotation(org.qiunet.cfg.annotation.Cfg.class);
-		this.fileName = cfg.value();
-		this.cfgClass = cfgClass;
-		this.order = cfg.order();
-
-		this.checkCfgClass(cfgClass);
-		CfgManagers.getInstance().addCfgManager(this);
-	}
-
 	@Override
 	public int order() {
 		return order;
@@ -124,23 +194,27 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 
 	/***
 	 * 检查cfg class 不能有set方法
-	 * @param cfgClass
 	 */
-	private void checkCfgClass(Class cfgClass) {
+	private void checkCfgClass() {
 		for (Field field : cfgClass.getDeclaredFields()) {
 			if (isInvalidField(field)) {
 				continue;
 			}
 			boolean haveMethod = true;
 			try {
-				getSetMethod(cfgClass, field);
+				if (ICfgDelayLoadData.class.isAssignableFrom(field.getType())) {
+					delayLoadFields.add(field);
+				}
+				getSetMethod(field);
 			} catch (NoSuchMethodException e) {
 				haveMethod = false;
 			}
+
 			if (haveMethod) {
 				throw new CustomException("Cfg ["+cfgClass.getName()+"] field ["+field.getName()+"] can not define set method");
 			}
 		}
+		delayLoadFields.trimToSize();
 	}
 
 	/**
@@ -157,12 +231,10 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 
 	/**
 	 * 得到对应的set方法
-	 * @param cfgClass
-	 * @param field
-	 * @return
-	 * @throws NoSuchMethodException
+	 * @param field 字段
+	 * @throws NoSuchMethodException 没有方法异常. 外面需要捕获
 	 */
-	private Method getSetMethod(Class cfgClass, Field field) throws NoSuchMethodException {
+	private Method getSetMethod(Field field) throws NoSuchMethodException {
 		char [] chars = ("set"+field.getName()).toCharArray();
 		chars[3] -= 32;
 		String methodName = new String(chars);
@@ -175,9 +247,8 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 	 * @param cfg 配置文件对象
 	 * @param name 字段名称
 	 * @param val 字符串值
-	 * @param <Cfg> 配置文件类
 	 */
-	protected <Cfg extends ICfg> void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
+	protected void handlerObjConvertAndAssign(Cfg cfg, String name, String val) {
 		Field field = ReflectUtil.findField(cfgClass, name);
 		if (field == null) {
 			throw new UnknownFieldException(cfgClass.getName(), fileName, name);

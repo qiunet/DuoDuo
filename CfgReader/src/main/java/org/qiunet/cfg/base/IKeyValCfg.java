@@ -10,7 +10,7 @@ package org.qiunet.cfg.base;
 public interface IKeyValCfg extends ISimpleMapCfg<String> {
 	/**
 	 * key
-	 * @return
+	 * @return key
 	 */
 	default String key(){
 		return getId();
@@ -18,7 +18,7 @@ public interface IKeyValCfg extends ISimpleMapCfg<String> {
 
 	/**
 	 * val
-	 * @return
+	 * @return val
 	 */
 	String val();
 }

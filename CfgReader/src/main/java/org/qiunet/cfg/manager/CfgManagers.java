@@ -4,7 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.cfg.event.CfgManagerAddEvent;
-import org.qiunet.cfg.event.StartInitCfgEvent;
+import org.qiunet.cfg.event.CfgPrepareEndEvent;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventListener;
@@ -35,7 +35,7 @@ public enum CfgManagers {
 	 * 初始化会比重新加载多一层排序
 	 */
 	@EventListener
-	private void initSetting(StartInitCfgEvent event) {
+	private void initSetting(CfgPrepareEndEvent event) {
 		gameSettingList.sort(comparator);
 		this.reloadSetting(gameSettingList, false);
 	}
@@ -43,8 +43,6 @@ public enum CfgManagers {
 	/***
 	 * 重新加载 指定cfg Manager
 	 * 文件变动热更使用
-	 * @return 返回加载失败的文件名称
-	 * @throws Exception
 	 */
 	public synchronized void reloadSetting(List<ICfgManager<?, ?>> gameSettingList) {
 		gameSettingList.sort(comparator);
@@ -52,8 +50,6 @@ public enum CfgManagers {
 	}
 	/***
 	 * 重新加载
-	 * @return 返回加载失败的文件名称
-	 * @throws Exception
 	 */
 	public synchronized void reloadSetting() {
 		this.reloadSetting(gameSettingList, true);
@@ -69,6 +65,8 @@ public enum CfgManagers {
 		try {
 			reloading.compareAndSet(false, true);
 			this.loadDataSetting(gameSettingList);
+			// 通知更新完毕
+			CfgLoadCompleteEvent.valueOf(gameSettingList).fireEventHandler();
 		}catch (CustomException e) {
 			if (needLogger) {
 				e.logger(logger);
@@ -78,16 +76,14 @@ public enum CfgManagers {
 			reloading.compareAndSet(true, false);
 		}
 		logger.error("Game Setting Data Load over.....");
-		CfgLoadCompleteEvent.valueOf(gameSettingList).fireEventHandler();
 	}
 
 	/**
 	 * 添加 Manager
-	 * @param manager
 	 */
-	public void addCfgManager(ICfgManager<?, ?> manager) {
-		CfgManagerAddEvent.fireEvent(manager);
-		this.gameSettingList.add(manager);
+	@EventListener
+	private void addCfgManager(CfgManagerAddEvent event) {
+		this.gameSettingList.add(event.getCfgManager());
 	}
 
 	/***

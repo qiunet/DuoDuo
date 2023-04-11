@@ -64,20 +64,20 @@ public class UnknownFieldException extends CustomException {
 		}
 	}
 
-	public Iterator keys() {
+	public Iterator<String> keys() {
 		return stuff.keySet().iterator();
 	}
 
 	public String getMessage() {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		if (super.getMessage() != null) {
 			result.append(super.getMessage());
 		}
 		if (!result.toString().endsWith(SEPARATOR)) {
 			result.append("\n---- Debugging information ----");
 		}
-		for (Iterator iterator = keys(); iterator.hasNext();) {
-			String k = (String) iterator.next();
+		for (Iterator<String> iterator = keys(); iterator.hasNext();) {
+			String k = iterator.next();
 			String v = get(k);
 			result.append('\n').append(k);
 			result.append("                    ".substring(Math.min(20, k.length())));

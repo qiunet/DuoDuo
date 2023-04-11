@@ -1,11 +1,13 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.function.base.IResourceType;
+import org.qiunet.cfg.manager.base.LoadSandbox;
+import org.qiunet.cfg.resource.IResourceCfg0;
+import org.qiunet.function.base.IResourceCfg;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /***
  * 奖励的配置
@@ -26,11 +28,14 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 
 	/**
 	 * 转 rewardItem
-	 * @param subTypeGetter subType 获取
 	 * @return rewardItem 实例
 	 */
-	public BaseReward convertToRewardItem(Function<Integer, IResourceType> subTypeGetter) {
-		return subTypeGetter.apply(getCfgId()).createRewardItem(this);
+	public BaseReward convertToRewardItem() {
+		IResourceCfg0 res = LoadSandbox.instance.getResById(getCfgId());
+		if (res == null) {
+			throw new CustomException("res {} null point exception", getCfgId());
+		}
+		return ((IResourceCfg) res).type().createRewardItem(this);
 	}
 
 	public int getCfgId() {

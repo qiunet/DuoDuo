@@ -1,4 +1,4 @@
-package org.qiunet.cfg.wrapper;
+package org.qiunet.cfg.manager.base;
 
 import org.qiunet.cfg.base.ICfg;
 
@@ -14,18 +14,19 @@ import java.util.List;
 public interface ICfgWrapper<ID, Cfg extends ICfg<ID>> {
 	/**
 	 * 得到该类加载的cfg 类class
-	 * @return
+	 * @return cfg class
 	 */
 	Class<Cfg> getCfgClass();
 	/**
 	 * 配置数量
-	 * @return
+	 * @return 总数量
 	 */
-	int size();
-
+	default int size(){
+		return list().size();
+	}
 	/**
 	 * 所有的配置
-	 * @return
+	 * @return list
 	 */
 	List<Cfg> list();
 }

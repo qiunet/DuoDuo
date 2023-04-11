@@ -2,21 +2,17 @@ package org.qiunet.function.consume;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.qiunet.cfg.base.ICfgDelayLoadData;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.function.base.IResourceType;
-import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class Consumes<Obj extends IThreadSafe> {
-	@AutoWired
-	protected static IBasicFunction basicFunction;
+public class Consumes<Obj extends IThreadSafe> implements ICfgDelayLoadData {
 	/**
 	 * 主要的消耗内容
 	 */
@@ -89,18 +85,8 @@ public class Consumes<Obj extends IThreadSafe> {
 	 * @param count 数量
 	 */
 	public void addConsume(int cfgId, long count) {
-		this.addConsume(cfgId, count, false);
-	}
-
-	/**
-	 * 添加消耗
-	 * @param cfgId 资源id
-	 * @param count 数量
-	 * @param banReplace 禁止替换
-	 */
-	public void addConsume(int cfgId, long count, boolean banReplace) {
-		IResourceType type = basicFunction.getResType(cfgId);
-		this.addConsume(type.createConsume(new ConsumeConfig(cfgId, count, banReplace)));
+		ConsumeConfig consumeConfig = new ConsumeConfig(cfgId, count);
+		this.addConsume(consumeConfig.convertToConsume());
 	}
 	/**
 	 * 添加一个 consume
@@ -161,5 +147,10 @@ public class Consumes<Obj extends IThreadSafe> {
 	 */
 	public boolean isNotEmpty(){
 		return !isEmpty();
+	}
+
+	@Override
+	public void loadData() {
+		// do nothing
 	}
 }

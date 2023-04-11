@@ -3,6 +3,9 @@ package org.qiunet.cfg.wrapper;
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.INestListCfgWrapper;
+import org.qiunet.cfg.manager.base.INestMapCfgWrapper;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgWrapper;
 import org.qiunet.cfg.manager.json.NestListJsonCfgManager;
 import org.qiunet.cfg.manager.json.NestMapJsonCfgManager;
 import org.qiunet.cfg.manager.json.SimpleMapJsonCfgManager;
@@ -19,20 +22,17 @@ public enum  CfgFileType {
 	JSON {
 		@Override
 		public <ID, Cfg extends ISimpleMapCfg<ID>> ISimpleMapCfgWrapper<ID, Cfg> createSimpleMapCfgWrapper(Class<Cfg> clazz) {
-			SimpleMapJsonCfgManager<ID, Cfg> cfgManager = new SimpleMapJsonCfgManager<>(clazz);
-			return new SimpleMapCfgWrapper<>(cfgManager);
+			return new SimpleMapJsonCfgManager<>(clazz);
 		}
 
 		@Override
 		public <ID, SubId, Cfg extends INestMapCfg<ID, SubId>> INestMapCfgWrapper<ID, SubId, Cfg> createNestMapCfgWrapper(Class<Cfg> clazz) {
-			NestMapJsonCfgManager<ID, SubId, Cfg> cfgManager = new NestMapJsonCfgManager<>(clazz);
-			return new NestMapCfgWrapper<>(cfgManager);
+			return new NestMapJsonCfgManager<>(clazz);
 		}
 
 		@Override
 		public <ID, Cfg extends INestListCfg<ID>> INestListCfgWrapper<ID, Cfg> createNestListCfgWrapper(Class<Cfg> clazz) {
-			NestListJsonCfgManager<ID, Cfg> cfgManager = new NestListJsonCfgManager<>(clazz);
-			return new NestListCfgWrapper<>(cfgManager);
+			return new NestListJsonCfgManager<>(clazz);
 		}
 	},
 	;

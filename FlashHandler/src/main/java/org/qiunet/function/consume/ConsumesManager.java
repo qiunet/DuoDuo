@@ -1,13 +1,10 @@
 package org.qiunet.function.consume;
 
-import org.qiunet.function.base.basic.IBasicFunction;
-import org.qiunet.utils.scanner.anno.AutoWired;
-
 import java.util.Collections;
 import java.util.List;
 
 /***
- *
+ * 消费对象管理
  *
  * @author qiunet
  * 2020-12-28 15:17
@@ -15,8 +12,6 @@ import java.util.List;
 public enum ConsumesManager {
 	instance;
 
-	@AutoWired
-	private static IBasicFunction resourceManager;
 	/**
 	 * 空的consumes
 	 */

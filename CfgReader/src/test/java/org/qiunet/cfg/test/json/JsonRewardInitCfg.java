@@ -1,8 +1,9 @@
 package org.qiunet.cfg.test.json;
 
 import org.qiunet.cfg.annotation.Cfg;
-import org.qiunet.cfg.base.INeedInitCfg;
+import org.qiunet.cfg.base.ICfgCustomInit;
 import org.qiunet.cfg.base.ISimpleMapCfg;
+import org.qiunet.cfg.manager.base.ILoadSandbox;
 import org.qiunet.cfg.test.RewardData;
 
 /***
@@ -19,7 +20,7 @@ import org.qiunet.cfg.test.RewardData;
  * 2020-04-24 08:02
  **/
 @Cfg("config/init/init_data.json")
-public class JsonRewardInitCfg implements ISimpleMapCfg<Integer>, INeedInitCfg {
+public class JsonRewardInitCfg implements ISimpleMapCfg<Integer>, ICfgCustomInit {
 	private int id;
 	private RewardData val1;
 	private long val2;
@@ -43,7 +44,7 @@ public class JsonRewardInitCfg implements ISimpleMapCfg<Integer>, INeedInitCfg {
 	}
 
 	@Override
-	public void init() {
+	public void init(ILoadSandbox sandBox) {
 		val2 = Long.MAX_VALUE;
 	}
 }

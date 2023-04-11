@@ -48,7 +48,9 @@ enum EventManager0 implements IApplicationContextAware {
 			subscriberList.add(wrapper(method));
 		}
 
-		this.listeners.values().forEach(list -> list.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight).result()));
+		this.listeners.values().forEach(list -> list.sort((o1, o2) -> ComparisonChain.start().compare(o2.weight, o1.weight)
+			.compareTrueFirst(o1.selfMethod, o2.selfMethod) // 同等weight, DuoDuo包优先处理
+			.result()));
 		LoggerType.DUODUO.debug("EventManager find {} event!", this.listeners.size());
 	}
 
@@ -110,9 +112,11 @@ enum EventManager0 implements IApplicationContextAware {
 		private final Method method;
 		private final Object caller;
 		private final int limitCount;
+		private final boolean selfMethod;
 		private int currCount;
 
 		private EventSubscriber(Object caller, Method method, int weight, int limitCount) {
+			this.selfMethod = method.getDeclaringClass().getName().startsWith("org.qiunet");
 			this.caller = caller;
 			this.weight = weight;
 			this.method = method;

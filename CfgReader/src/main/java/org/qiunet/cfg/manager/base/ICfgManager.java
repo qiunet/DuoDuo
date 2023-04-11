@@ -5,29 +5,28 @@ import org.qiunet.cfg.base.ICfg;
 /**
  * 游戏设定数据处理类实现接口
  * @author qiunet
- *         Created on 17/2/9 12:18.
+ * Created on 17/2/9 12:18.
  */
-public interface ICfgManager<ID, Cfg extends ICfg<ID>> {
+public interface ICfgManager<ID, Cfg extends ICfg<ID>> extends ICfgWrapper<ID, Cfg> {
 	/**
 	 * 设定加载
-	 * @return
 	 */
 	void loadCfg() throws Exception;
 
 	/**
-	 * 得到加载的文件名
-	 * @return
+	 * 得到加载的文件名 或者 Pattern
+	 * @return 文件名
 	 */
 	String getLoadFileName();
 
 	/**
 	 * 得到该类加载的cfg 类class
-	 * @return
+	 * @return class
 	 */
 	Class<Cfg> getCfgClass();
 	/**
 	 * 加载顺序
-	 * @return
+	 * @return 加载顺序
 	 */
 	int order();
 }

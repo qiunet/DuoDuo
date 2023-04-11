@@ -1,4 +1,4 @@
-package org.qiunet.cfg.wrapper;
+package org.qiunet.cfg.manager.base;
 
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.utils.logger.LoggerType;
@@ -6,7 +6,7 @@ import org.qiunet.utils.logger.LoggerType;
 import java.util.Map;
 
 /***
- *
+ * 一对一的map存储结构
  *
  * @author qiunet
  * 2020-04-23 11:54
@@ -14,8 +14,8 @@ import java.util.Map;
 public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>> extends ICfgWrapper<ID, Cfg> {
 	/**
 	 * 根据id获得配置对象
-	 * @param id
-	 * @return
+	 * @param id 指定id
+	 * @return 指定的cfg对象
 	 */
 	default Cfg getCfgById(ID id){
 		if (! contains(id)) {
@@ -27,20 +27,14 @@ public interface ISimpleMapCfgWrapper<ID, Cfg extends ISimpleMapCfg<ID>> extends
 
 	/**
 	 * 得到所有的配置
-	 * @return
+	 * @return 包含所有数据的map
 	 */
 	Map<ID, Cfg> allCfgs();
 
-
-	@Override
-	default int size(){
-		return allCfgs().size();
-	}
-
 	/**
 	 * 是否有该id的配置
-	 * @param id
-	 * @return
+	 * @param id 指定id
+	 * @return 是否包含
 	 */
 	default boolean contains(ID id){
 		return allCfgs().containsKey(id);

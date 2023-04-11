@@ -24,23 +24,21 @@ public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewa
 		this.rewardConfigs = rewardConfigs;
 	}
 
-
 	@Override
-	protected List<BaseReward<Obj>> getRewardList() {
+	public void loadData() {
 		if (rewardConfigs == null) {
-			return super.getRewardList();
+			return;
 		}
 
 		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(rewardConfigs.size());
 		for (RewardConfig rewardConfig : rewardConfigs) {
-			BaseReward baseReward = rewardConfig.convertToRewardItem(id -> basicFunction.getResType(id));
+			BaseReward baseReward = rewardConfig.convertToRewardItem();
 			if (baseReward == null) {
 				throw new CustomException("rewardConfig {} convert result is null", JsonUtil.toJsonString(rewardConfig));
 			}
 			baseRewardList.add(baseReward);
 		}
 		super.baseRewardList = ImmutableList.copyOf(baseRewardList);
-		rewardConfigs = null;
-		return super.getRewardList();
+		this.rewardConfigs = null;
 	}
 }

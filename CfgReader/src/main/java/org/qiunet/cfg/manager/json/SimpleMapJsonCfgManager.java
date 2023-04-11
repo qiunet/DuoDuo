@@ -1,9 +1,9 @@
 package org.qiunet.cfg.manager.json;
 
-import org.qiunet.cfg.base.INeedInitCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.cfg.base.ISortable;
-import org.qiunet.cfg.manager.base.ISimpleMapCfgManager;
+import org.qiunet.cfg.manager.base.ICfgWrapper;
+import org.qiunet.cfg.manager.base.ISimpleMapCfgWrapper;
 import org.qiunet.utils.collection.safe.SafeMap;
 
 import java.util.Collections;
@@ -17,8 +17,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
-		extends BaseJsonCfgManager<ID, Cfg>
-		implements ISimpleMapCfgManager<ID, Cfg> {
+		extends BaseJsonCfgManager<ID, Cfg> implements ISimpleMapCfgWrapper<ID, Cfg> {
 
 	private Map<ID, Cfg> cfgMap;
 
@@ -27,37 +26,37 @@ public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
 	}
 
 	@Override
-	void init() throws Exception {
-		this.cfgMap = getSimpleMapCfg();
-		this.initCfgSelf();
-	}
-	/***
-	 * 如果cfg 对象是实现了 initCfg接口,
-	 * 就调用init方法实现cfg的二次init.
-	 */
-	private void initCfgSelf() {
-		if (! INeedInitCfg.class.isAssignableFrom(getCfgClass())) {
-			return;
-		}
-
-		this.cfgMap.values().stream()
-				.map(cfg -> (INeedInitCfg)cfg)
-				.forEach(INeedInitCfg::init);
+	protected void loadCfg0(ICfgWrapper<ID, Cfg> wrapper) {
+		this.cfgMap = ((ISimpleMapCfgWrapper<ID, Cfg>) wrapper).allCfgs();
 	}
 
-	protected Map<ID, Cfg> getSimpleMapCfg() throws Exception{
+	@Override
+	protected ICfgWrapper<ID, Cfg> buildWrapper(List<Cfg> cfgList) {
 		SafeMap<ID, Cfg> cfgMap = new SafeMap<>();
 
 		if (ISortable.class.isAssignableFrom(getCfgClass())) {
-			Collections.sort(((List<? extends Comparable>) this.cfgList));
+			Collections.sort(((List<? extends Comparable>) cfgList));
 		}
 
-		for (Cfg cfg : this.cfgList) {
+		for (Cfg cfg : cfgList) {
 			cfgMap.put(cfg.getId(), cfg);
 		}
 		cfgMap.loggerIfAbsent();
 		cfgMap.convertToUnmodifiable();
-		return cfgMap;
+		return new ISimpleMapCfgWrapper<>() {
+			@Override
+			public Map<ID, Cfg> allCfgs() {
+				return cfgMap;
+			}
+			@Override
+			public Class<Cfg> getCfgClass() {
+				return cfgClass;
+			}
+			@Override
+			public List<Cfg> list() {
+				return cfgList;
+			}
+		};
 	}
 
 	@Override

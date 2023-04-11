@@ -3,15 +3,12 @@ package org.qiunet.function.reward;
 import com.alibaba.fastjson2.TypeReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.qiunet.cfg.base.ICfgDelayLoadData;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.function.base.IOperationType;
-import org.qiunet.function.base.IResourceType;
-import org.qiunet.function.base.basic.BasicFunctionManager;
-import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
-import org.qiunet.utils.scanner.anno.AutoWired;
 import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.List;
@@ -23,9 +20,7 @@ import java.util.function.Consumer;
  * @author qiunet
  * 2020-12-28 20:35
  */
-public class Rewards<Obj extends IThreadSafe & IPlayer> {
-	@AutoWired
-	protected static IBasicFunction basicFunction;
+public class Rewards<Obj extends IThreadSafe & IPlayer> implements ICfgDelayLoadData {
 
 	protected List<BaseReward<Obj>> baseRewardList;
 
@@ -79,8 +74,8 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	 * @param count 数量
 	 */
 	public void addRewardItem(int cfgId, long count) {
-		IResourceType type = basicFunction.getResType(cfgId);
-		this.addRewardItem(type.createRewardItem(new RewardConfig(cfgId, count)));
+		RewardConfig rewardConfig = new RewardConfig(cfgId, count);
+		this.addRewardItem(rewardConfig.convertToRewardItem());
 	}
 
 	/**
@@ -161,8 +156,13 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> {
 	public static <Obj extends IThreadSafe & IPlayer> Rewards<Obj> jsonToRewards(String json){
 		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObj(json, REWARD_CONFIG_TYPE);
 		List<BaseReward> collect = rewardConfigs.stream()
-				.map(config -> config.convertToRewardItem(BasicFunctionManager.instance::getResType))
+				.map(RewardConfig::convertToRewardItem)
 				.toList();
 		return new Rewards(collect);
+	}
+
+	@Override
+	public void loadData() {
+		// do nothing
 	}
 }
