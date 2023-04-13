@@ -7,6 +7,9 @@ package org.qiunet.cfg.base;
  * 17/6/3
  */
 public interface INestMapCfg<ID, SubId> extends ICfg<ID> {
-
+	/**
+	 * 获得第二个key
+	 * @return 第二个key
+	 */
 	SubId getSubId();
 }

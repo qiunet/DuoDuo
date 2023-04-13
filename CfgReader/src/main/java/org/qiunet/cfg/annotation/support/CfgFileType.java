@@ -1,4 +1,4 @@
-package org.qiunet.cfg.wrapper;
+package org.qiunet.cfg.annotation.support;
 
 import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.INestMapCfg;
@@ -12,12 +12,13 @@ import org.qiunet.cfg.manager.json.SimpleMapJsonCfgManager;
 import org.qiunet.utils.exceptions.EnumParseException;
 
 /***
- *
+ * cfg 格式类型.
+ * 目前就json. 之前可以有 xd xml等
  *
  * @author qiunet
  * 2020-04-23 16:29
  ***/
-public enum  CfgFileType {
+enum CfgFileType {
 
 	JSON {
 		@Override

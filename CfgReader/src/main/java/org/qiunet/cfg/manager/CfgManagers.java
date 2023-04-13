@@ -4,7 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.event.CfgLoadCompleteEvent;
 import org.qiunet.cfg.event.CfgManagerAddEvent;
-import org.qiunet.cfg.event.CfgPrepareEndEvent;
+import org.qiunet.cfg.event.CfgPrepareOverEvent;
 import org.qiunet.cfg.manager.base.ICfgManager;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventListener;
@@ -35,7 +35,7 @@ public enum CfgManagers {
 	 * 初始化会比重新加载多一层排序
 	 */
 	@EventListener
-	private void initSetting(CfgPrepareEndEvent event) {
+	private void initSetting(CfgPrepareOverEvent event) {
 		gameSettingList.sort(comparator);
 		this.reloadSetting(gameSettingList, false);
 	}

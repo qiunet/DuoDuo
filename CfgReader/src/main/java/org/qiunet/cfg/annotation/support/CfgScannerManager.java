@@ -1,10 +1,10 @@
 package org.qiunet.cfg.annotation.support;
 
+import com.google.common.collect.Maps;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
-import org.qiunet.cfg.event.CfgPrepareEndEvent;
+import org.qiunet.cfg.event.CfgPrepareOverEvent;
 import org.qiunet.cfg.manager.base.ICfgWrapper;
-import org.qiunet.cfg.wrapper.CfgType;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,15 +48,19 @@ enum CfgScannerManager implements IApplicationContextAware {
 	}
 
 	private void initCfg() {
-		CfgPrepareEndEvent.instance.fireEventHandler();
+		CfgPrepareOverEvent.instance.fireEventHandler();
 	}
+	/**
+	 * 所有的 manager
+	 */
+	private final Map<Class, ICfgWrapper> map = Maps.newHashMap();
 
 	/**
 	 * 创建cfg 读取 manager.
 	 */
 	private void createCfgWrapper(){
 		Set<Class<? extends ICfg>> classSet = context.getSubTypesOf(ICfg.class);
-		for (Class<?> aClass : classSet) {
+		for (Class<? extends ICfg> aClass : classSet) {
 			if (aClass.isInterface()
 					|| Modifier.isAbstract(aClass.getModifiers())) {
 				continue;
@@ -65,7 +70,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 				throw new CustomException("Cfg class [{}] must specify Cfg Annotation!", aClass.getName());
 			}
 
-			CfgType.createCfgWrapper((Class<? extends ICfg>) aClass);
+			map.put(aClass, CfgType.createCfgWrapper(aClass));
 		}
 	}
 
@@ -91,7 +96,7 @@ enum CfgScannerManager implements IApplicationContextAware {
 			Type[] types = ((ParameterizedType) genericType).getActualTypeArguments();
 			Class<? extends ICfg> cfgClass = (Class<? extends ICfg>) types[types.length - 1];
 
-			ReflectUtil.makeAccessible(field).set(obj, CfgType.getCfgWrapper(cfgClass));
+			ReflectUtil.makeAccessible(field).set(obj, map.get(cfgClass));
 		}
 	}
 }

@@ -8,6 +8,6 @@ import org.qiunet.utils.listener.event.IListenerEvent;
  * @author qiunet
  * 2022/2/11 21:17
  */
-public enum CfgPrepareEndEvent implements IListenerEvent {
+public enum CfgPrepareOverEvent implements IListenerEvent {
 	instance
 }

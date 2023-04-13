@@ -28,7 +28,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 	OfflinePlayerActor(long playerId) {
 		this.setMsgExecuteIndex(String.valueOf(playerId));
 
-		this.dataLoader = new PlayerDataLoader(this, this, playerId);
+		this.dataLoader = new PlayerDataLoader(this, this, playerId, true);
 		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
 	}
 

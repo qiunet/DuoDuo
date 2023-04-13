@@ -1,6 +1,5 @@
-package org.qiunet.cfg.wrapper;
+package org.qiunet.cfg.annotation.support;
 
-import com.google.common.collect.Maps;
 import org.apache.commons.lang3.ClassUtils;
 import org.qiunet.cfg.annotation.Cfg;
 import org.qiunet.cfg.base.ICfg;
@@ -8,19 +7,17 @@ import org.qiunet.cfg.base.INestListCfg;
 import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.base.ISimpleMapCfg;
 import org.qiunet.cfg.manager.base.ICfgWrapper;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.exceptions.EnumParseException;
 
 import java.util.List;
-import java.util.Map;
 
 /***
- *
+ * Cfg 的类型.
  *
  * @author qiunet
  * 2020-04-23 17:10
  ***/
-public enum  CfgType {
+enum  CfgType {
 	SIMPLE_MAP(ISimpleMapCfg.class) {
 		@Override
         ICfgWrapper getCfgWrapper(CfgFileType cfgFileType, Class<? extends ICfg> clazz) {
@@ -49,26 +46,17 @@ public enum  CfgType {
 	abstract ICfgWrapper getCfgWrapper(CfgFileType cfgFileType, Class<? extends ICfg> clazz);
 
 
-	static final Map<Class, ICfgWrapper> cfgWrappers = Maps.newHashMap();
-	public static void createCfgWrapper(Class<? extends ICfg> clazz) {
+	static ICfgWrapper createCfgWrapper(Class<? extends ICfg> clazz) {
 		Cfg cfg = clazz.getAnnotation(Cfg.class);
 		CfgFileType fileType = CfgFileType.parse(cfg.value());
 		List<Class<?>> is = ClassUtils.getAllInterfaces(clazz);
 		for (CfgType type : values()) {
 			for (Class<?> i : is) {
 				if (i == type.clazz){
-					cfgWrappers.put(clazz, type.getCfgWrapper(fileType, clazz));
-					return;
+					return type.getCfgWrapper(fileType, clazz);
 				}
 			}
 		}
 		throw new EnumParseException(clazz.getName());
-	}
-
-	public static <T extends ICfgWrapper> T getCfgWrapper(Class clazz) {
-		if (! cfgWrappers.containsKey(clazz)) {
-			throw new CustomException("No wrapper for class [{}]", clazz.getName());
-		}
-		return (T) cfgWrappers.get(clazz);
 	}
 }
