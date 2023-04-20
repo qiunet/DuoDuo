@@ -11,7 +11,6 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
-import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -36,7 +35,6 @@ public class HttpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("Http测试", port)
-					.setStartupContext(new StartupContext())
 					.build();
 			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(config);
 			server.await( () -> LockSupport.unpark(currThread));

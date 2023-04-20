@@ -59,6 +59,7 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 		NodeServerSession session = new NodeServerSession(NodeSessionType.CROSS_PLAYER, ctx.channel(), playerId);
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		CrossPlayerActor crossPlayerActor = new CrossPlayerActor(session);
+		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, crossPlayerActor);
 		crossPlayerActor.setMsgExecuteIndex(String.valueOf(playerId));
 		return crossPlayerActor;
 	}

@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
@@ -49,7 +48,6 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	protected void setSession(ISession session) {
-		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		this.session = session;
 	}
 

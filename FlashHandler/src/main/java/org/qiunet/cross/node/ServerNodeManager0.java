@@ -153,6 +153,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		ServerNodeSession session = new ServerNodeSession(NodeSessionType.SERVER_NODE, channel, currServerInfo.getServerId());
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		ServerNode node = new ServerNode(session, serverInfo.getServerId());
+		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, node);
 		node.getSession().addCloseListener("removeServerNode", (s, cause) -> {
 			ServerNode node0;
 			if ((node0 = nodes.remove(serverInfo.getServerId())) != null) {

@@ -5,7 +5,6 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
-import org.qiunet.game.tests.server.context.StartupContext;
 import org.qiunet.game.tests.server.enums.ServerType;
 
 import java.util.concurrent.locks.LockSupport;
@@ -26,7 +25,6 @@ public final class ServerStartup {
 		Thread thread = new Thread(() -> {
 			BootstrapServer server = BootstrapServer.createBootstrap(hook);
 			server.listener(ServerBootStrapConfig.newBuild("压测服务测试", ServerType.LC_ROOM.port())
-					.setStartupContext(new StartupContext())
 					.build());
 			server.await(() -> LockSupport.unpark(currThread));
 		}, "Client-Server-Startup");

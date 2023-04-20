@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
-import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ObjectPool;
@@ -11,7 +10,6 @@ import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /***
  *
@@ -21,14 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public enum DefaultProtocolHeader implements IProtocolHeader {
 	instance;
 	public static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	/**
-	 * 请求时候. 本端计数的key
-	 */
-	private static final AttributeKey<AtomicInteger> SEQUENCE_COUNTER_KEY = AttributeKey.newInstance("sequence_counter_key");
-	/**
-	 * 接收到的最大值
-	 */
-	private static final AttributeKey<Integer> REQ_SEQUENCE_KEY = AttributeKey.newInstance("req_sequence_key");
 
 	private static final ObjectPool<ServerReqHeader> SERVER_REQ_RECYCLER = new ObjectPool<>() {
 		@Override

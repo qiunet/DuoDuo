@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
@@ -27,13 +28,13 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 		// 因为通过http添加的Handler , 所以activate 已经没法调用了. 只能通过handlerShark Complete 事件搞定
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
 			HttpHeaders headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
-			DSession iSession = new DSession(ctx.channel());
-			ChannelUtil.bindSession(iSession, ctx.channel());
+			DSession session = new DSession(ctx.channel());
+			ChannelUtil.bindSession(session, ctx.channel());
 
-			iSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
-			iSession.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
-			iSession.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
-			config.getStartupContext().buildMessageActor(iSession);
+			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, new PlayerActor(session));
+			session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
+			session.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
+			session.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
 		}
 		super.userEventTriggered(ctx, evt);
 	}

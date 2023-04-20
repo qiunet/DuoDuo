@@ -47,8 +47,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			session = new DSession(ctx.channel());
 			((DSession) session).bindKcpSession(new KcpSession(ctx.channel()));
 			// Kcp如果不依赖Tcp, 也是直接使用PlayerActor
-			PlayerActor playerActor = (PlayerActor) config.getStartupContext().buildMessageActor(session);
-			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
+			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, new PlayerActor(session));
 		}else {
 			 session = new KcpSession(ctx.channel());
 		}

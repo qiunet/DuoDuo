@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.netty.server.config.adapter;
 
 import io.netty.channel.ChannelFuture;
-import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
@@ -18,16 +17,8 @@ import org.qiunet.utils.logger.LoggerType;
  * @author qiunet
  * 2020/3/8 09:31
  **/
-public interface IStartupContext<T extends IMessageActor<T>> {
+public interface IStartupContext {
 	LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
-	/**
-	 * 构造MessageActor
-	 * http情况不会调用.
-	 * @param session
-	 * @return
-	 */
-	T buildMessageActor(ISession session);
-
 	/***
 	 * 出现异常
 	 * @param cause

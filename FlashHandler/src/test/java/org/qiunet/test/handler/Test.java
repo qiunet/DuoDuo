@@ -4,7 +4,6 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
-import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -20,7 +19,6 @@ public class Test {
 
 		BootstrapServer.createBootstrap(hook).listener(
 				ServerBootStrapConfig.newBuild("测试", 8888)
-					.setStartupContext(new StartupContext())
 					.encryption()
 					.build()
 		).await();

@@ -2,9 +2,9 @@ package org.qiunet.flash.handler.netty.server.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.netty.server.config.adapter.DefaultStartupContext;
 import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.utils.math.PollChooserFactory;
 import org.qiunet.utils.system.OSUtil;
@@ -23,7 +23,7 @@ public class ServerBootStrapConfig {
 	/**
 	 * 启动的上下文
 	 */
-	private IStartupContext<? extends IMessageActor<?>> startupContext;
+	private IStartupContext startupContext = new DefaultStartupContext();
 	/**
 	 * 可以自定义协议头
 	 */
@@ -104,7 +104,7 @@ public class ServerBootStrapConfig {
 		return banHttpServer;
 	}
 
-	public IStartupContext<? extends IMessageActor<?>> getStartupContext() {
+	public IStartupContext getStartupContext() {
 		return startupContext;
 	}
 
@@ -137,7 +137,7 @@ public class ServerBootStrapConfig {
 			return this;
 		}
 
-		public Builder setStartupContext(IStartupContext<? extends IMessageActor<?>> startupContext) {
+		public Builder setStartupContext(IStartupContext startupContext) {
 			ServerBootStrapConfig.this.startupContext = startupContext;
 			return this;
 		}

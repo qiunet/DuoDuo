@@ -58,6 +58,7 @@ public class ServerNodeServerHandler extends BaseNodeServerHandler {
 		}));
 		ServerNode serverNode = new ServerNode(session, serverId);
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
+		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, serverNode);
 		ServerNodeManager0.instance.nodes.putIfAbsent(serverId, serverNode);
 		return serverNode;
 	}

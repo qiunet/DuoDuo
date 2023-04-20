@@ -7,7 +7,6 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
-import org.qiunet.test.handler.startup.context.StartupContext;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
@@ -31,7 +30,6 @@ public abstract class BasicKcpBootStrap {
 		Thread thread = new Thread(() -> {
 			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("游戏服", port)
 					.setKcpBootStrapConfig(ServerBootStrapConfig.KcpBootstrapConfig.newBuild().setPortCount(0, 1).build())
-					.setStartupContext(new StartupContext())
 					.encryption()
 				.build();
 
