@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.channel;
+package org.qiunet.flash.handler.netty.server.broadcast;
 
 import io.netty.buffer.ByteBuf;
 import org.qiunet.flash.handler.context.request.data.IChannelData;

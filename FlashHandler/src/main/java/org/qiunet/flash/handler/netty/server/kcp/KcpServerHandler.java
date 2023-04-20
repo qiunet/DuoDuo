@@ -31,18 +31,12 @@ import java.util.Objects;
 public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-	private final ServerBootStrapConfig config;
-
-	public KcpServerHandler(ServerBootStrapConfig config) {
-		this.config = config;
-	}
-
 
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		ISession session;
-
+		ServerBootStrapConfig config = ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get();
 		if (! config.getKcpBootstrapConfig().isDependOnTcpWs()) {
 			session = new DSession(ctx.channel());
 			((DSession) session).bindKcpSession(new KcpSession(ctx.channel()));
@@ -52,9 +46,6 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			 session = new KcpSession(ctx.channel());
 		}
 		ChannelUtil.bindSession(session, ctx.channel());
-
-		ChannelUtil.getSession(ctx.channel()).attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.KCP);
-		session.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
 		logger.debug("Kcp session {} active!", session);
 		ctx.fireChannelActive();
 	}
@@ -71,6 +62,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			return false;
 		}
 
+		ServerBootStrapConfig config = ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get();
 		if (! config.getKcpBootstrapConfig().isDependOnTcpWs()) {
 			return false;
 		}
@@ -109,6 +101,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			return;
 		}
 
+		ServerBootStrapConfig config = ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get();
 		ISession session = ChannelUtil.getSession(ctx.channel());
 		// 没有鉴权
 		if (content.getProtocolId() != IProtocolId.System.CONNECTION_REQ
@@ -117,11 +110,14 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			return;
 		}
 
-		ChannelUtil.channelRead(ctx.channel(), config, content);
-	}
+		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
+			boolean isKcp = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY) == ServerConnType.KCP;
+			if (isKcp && config.getKcpBootstrapConfig().isDependOnTcpWs()) {
+				// 不需要
+				return;
+			}
+		}
 
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ChannelUtil.cause(config.getStartupContext(), ctx.channel(), cause);
+		ctx.fireChannelRead(content.retain());
 	}
 }

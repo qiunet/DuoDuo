@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientEncoder;
-import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
@@ -52,7 +52,6 @@ public class NettyKcpClient {
 						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler())
 						.addLast("FlushBalanceHandler", new FlushBalanceHandler());
-						;
 					}
 				})
 				.option(ChannelOption.SO_RCVBUF, 1024 * 128)

@@ -38,9 +38,4 @@ public abstract class BaseNodeServerHandler extends SimpleChannelInboundHandler<
 	}
 
 	protected abstract void channelRead1(ChannelHandlerContext ctx, MessageContent msg, IHandler handler) throws Exception;
-
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		logger.error("Node server handler exception:", cause);
-	}
 }

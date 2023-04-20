@@ -1,14 +1,12 @@
 package org.qiunet.flash.handler.netty.server.http.handler;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
-import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -18,10 +16,8 @@ import org.slf4j.Logger;
  * Created by qiunet.
  * 17/12/1
  */
-public class WebsocketServerHandler  extends SimpleChannelInboundHandler<MessageContent> {
+public class WebsocketServerHandler  extends ChannelInboundHandlerAdapter {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
-
-	private final ServerBootStrapConfig config;
 
 	@Override
 	public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
@@ -33,23 +29,8 @@ public class WebsocketServerHandler  extends SimpleChannelInboundHandler<Message
 
 			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, new PlayerActor(session));
 			session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
-			session.attachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY, config);
 			session.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
 		}
 		super.userEventTriggered(ctx, evt);
-	}
-
-	public WebsocketServerHandler (ServerBootStrapConfig config) {
-		this.config = config;
-	}
-
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		ChannelUtil.channelRead(ctx.channel(), config, content);
-	}
-
-	@Override
-	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ChannelUtil.cause(config.getStartupContext(), ctx.channel(), cause);
 	}
 }

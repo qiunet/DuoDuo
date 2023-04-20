@@ -25,6 +25,11 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 
 	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		logger.error("Node server handler exception:", cause);
+	}
+
+	@Override
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content, IHandler handler) throws Exception {
 		if (!IProtocolHeader.INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
 		|| ! ((IProtocolHeader.INodeServerHeader) content.getHeader()).isPlayerMsg()

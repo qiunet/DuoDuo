@@ -16,7 +16,7 @@ import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
-import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;

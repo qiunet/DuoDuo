@@ -1,9 +1,8 @@
 package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
-import io.jpower.kcp.netty.KcpException;
-import io.micrometer.core.instrument.Counter;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -17,7 +16,6 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.event.ClientPingEvent;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.ICrossStatusActor;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
@@ -27,33 +25,27 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
-import org.qiunet.flash.handler.netty.server.config.adapter.IStartupContext;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
-import org.qiunet.flash.handler.netty.server.config.adapter.message.HandlerNotFoundResponse;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
-import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.function.prometheus.RootRegistry;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public final class ChannelUtil {
-	private static final IChannelData HANDLER_NOT_FOUND = new HandlerNotFoundResponse();
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelUtil(){}
 	/***
@@ -171,64 +163,6 @@ public final class ChannelUtil {
 	}
 
 	/**
-	 * 处理长连接的通道读数据
-	 * @param channel
-	 * @param config
-	 * @param content
-	 */
-	public static void channelRead(Channel channel, ServerBootStrapConfig config, MessageContent content){
-		ISession session = ChannelUtil.getSession(channel);
-		Preconditions.checkNotNull(session);
-
-		if (! config.getStartupContext().userServerValidate(session)) {
-			return;
-		}
-
-		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
-			boolean isKcp = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY) == ServerConnType.KCP;
-			if (isKcp && config.getKcpBootstrapConfig().isDependOnTcpWs()) {
-				// 不需要
-				return;
-			}
-
-			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
-			if (logger.isInfoEnabled()) {
-				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), connectionReq._toString());
-			}
-
-			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
-				messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
-				return;
-			}
-
-			if (! config.getStartupContext().userConnectionCheck(connectionReq.getIdKey())) {
-				messageActor.getSession().close(CloseCause.FORBID_ACCOUNT);
-				return;
-			}
-
-			messageActor.setMsgExecuteIndex(connectionReq.getIdKey());
-			messageActor.sendMessage(ConnectionRsp.getInstance());
-			return;
-		}
-
-
-		if (messageActor.msgExecuteIndex() == null) {
-			logger.info("{} msgExecuteIndex is null! Need call ConnectionReq first", messageActor.getIdentity());
-			messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
-			return;
-		}
-
-		IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
-		if (handler == null) {
-			channel.writeAndFlush(HANDLER_NOT_FOUND);
-			return;
-		}
-
-		processHandler(channel, handler, content);
-	}
-
-	/**
 	 * 正式处理handler
 	 * @param channel
 	 * @param handler
@@ -241,7 +175,15 @@ public final class ChannelUtil {
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 			messageActor.addMessage(m -> {
 				try {
-					transmitMessage(messageActor, message, channel);
+					if (logger.isInfoEnabled()) {
+						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
+						if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
+							logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
+						}
+					}
+
+					((ICrossStatusActor) messageActor).sendCrossMessage(message);
 				}catch (Exception e) {
 					if (message.getContent() != null && message.getContent().refCnt() > 0) {
 						message.getContent().release();
@@ -257,18 +199,13 @@ public final class ChannelUtil {
 		}
 	}
 
-
-	private static void transmitMessage(IMessageActor messageActor, IChannelMessage message, Channel channel) {
-		ISession session = messageActor.getSession();
-		if (logger.isInfoEnabled()) {
-			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
-				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-				logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
-			}
+	private static final LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
+	public static ChannelFuture exception(ISession session, Throwable cause){
+		if (cause instanceof StatusResultException) {
+			return session.sendMessage(StatusTipsRsp.valueOf(((StatusResultException) cause)), true);
 		}
-
-		((ICrossStatusActor) messageActor).sendCrossMessage(message);
+		LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
+		return session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {
@@ -279,45 +216,5 @@ public final class ChannelUtil {
 
 	public static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
 		sendHttpResponseStatusAndClose(ctx.channel(), status);
-	}
-	private static final Counter counter = RootRegistry.instance.counter("project.exception");
-	/**
-	 * 异常处理
-	 * @param startupContext
-	 * @param channel
-	 * @param cause
-	 */
-	public static void cause(IStartupContext startupContext, Channel channel, Throwable cause) {
-		ISession session = ChannelUtil.getSession(channel);
-
-		Runnable closeChannel = () -> {
-			if (session != null) {
-				session.close(CloseCause.EXCEPTION);
-			}else {
-				channel.close();
-			}
-		};
-
-		String errMeg = "Exception session ["+(session != null ? session.toString(): "null")+"]";
-		if (cause instanceof KcpException || cause instanceof IOException) {
-			logger.info(errMeg + " errMsg: " + cause.getMessage());
-			closeChannel.run();
-			return;
-		}
-
-		if (cause instanceof StatusResultException) {
-			// 应该在 IHandler 就处理掉.
-			logger.error("StatusResultException reach in ChannelOutBound");
-			return;
-		}
-
-		logger.error(errMeg, cause);
-		counter.increment();
-		if (channel.isOpen() || channel.isActive()) {
-			startupContext.exception(session, cause)
-					.addListener(f -> {
-						closeChannel.run();
-					});
-		}
 	}
 }

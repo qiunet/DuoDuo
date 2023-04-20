@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.handler;
+package org.qiunet.flash.handler.netty.server.bound;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

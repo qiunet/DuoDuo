@@ -5,6 +5,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import org.qiunet.flash.handler.netty.coder.ChannelChoiceDecoder;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /**
  * Created by qiunet.
@@ -17,7 +18,8 @@ public class NettyTcpServerInitializer extends ChannelInitializer<SocketChannel>
 	}
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
+		ch.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
 		ChannelPipeline pipeline = ch.pipeline();
-		pipeline.addLast(ChannelChoiceDecoder.valueOf(config));
+		pipeline.addLast(new ChannelChoiceDecoder());
 	}
 }

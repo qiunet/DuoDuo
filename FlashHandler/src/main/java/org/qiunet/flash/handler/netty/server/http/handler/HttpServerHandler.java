@@ -18,10 +18,12 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
-import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -122,9 +124,11 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
 		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
-		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler(config));
+		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler());
+		pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
 		pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+		pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 
 		ctx.channel().config().setOption(ChannelOption.SO_SNDBUF, 1024 * 128);
 		ctx.channel().config().setOption(ChannelOption.SO_RCVBUF, 1024 * 128);

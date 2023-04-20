@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 
 /***
  * 玩家类型的messageActor 继承该类
@@ -65,12 +65,13 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 		super.destroy();
 		observerSupport.clear();
 	}
+
 	@Override
 	protected void exceptionHandle(Exception e) {
 		if (! (e instanceof StatusResultException)) {
 			super.exceptionHandle(e);
 			return;
 		}
-		session.getAttachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY).getStartupContext().exception(session, e);
+		ChannelUtil.exception(session, e);
 	}
 }

@@ -12,7 +12,7 @@ import org.qiunet.flash.handler.context.header.NodeProtocolHeader;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
-import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;

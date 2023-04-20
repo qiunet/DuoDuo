@@ -9,10 +9,13 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.netty.handler.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
-import org.qiunet.flash.handler.netty.server.idle.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -30,15 +33,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 	private static final byte[] POST_BYTES = {'P', 'O', 'S', 'T'};
 	private static final byte[] HEAD_BYTES = {'H', 'E', 'A', 'D'};
 	private static final byte[] GET_BYTES = {'G', 'E', 'T'};
-	private final ServerBootStrapConfig config;
 	private ScheduledFuture<?> closeFuture;
-	private ChannelChoiceDecoder(ServerBootStrapConfig config) {
-		this.config = config;
-	}
-
-	public static ChannelChoiceDecoder valueOf(ServerBootStrapConfig config){
-		return new ChannelChoiceDecoder(config);
-	}
 
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
@@ -51,6 +46,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+		ServerBootStrapConfig config = ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get();
 		IProtocolHeader protocolHeader = config.getProtocolHeader();
 
 		ChannelPipeline pipeline = ctx.channel().pipeline();
@@ -59,8 +55,10 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 			pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-			pipeline.addLast("TcpServerHandler", new TcpServerHandler(config));
+			pipeline.addLast("TcpServerHandler", new TcpServerHandler());
+			pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+			pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 			pipeline.remove(ChannelChoiceDecoder.class);
 			ctx.fireChannelActive();
 		}else if (! config.isBanHttpServer()

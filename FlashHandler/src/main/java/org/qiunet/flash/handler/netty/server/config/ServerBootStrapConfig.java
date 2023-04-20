@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.server.config.adapter.DefaultStartupContext;
@@ -27,7 +28,7 @@ public class ServerBootStrapConfig {
 	/**
 	 * 可以自定义协议头
 	 */
-	private IProtocolHeader protocolHeader;
+	private IProtocolHeader protocolHeader = DefaultProtocolHeader.instance;
 	/***
 	 * 客户端每5秒一次心跳
 	 * 读超时处理.
@@ -69,6 +70,7 @@ public class ServerBootStrapConfig {
 	private final int port;
 
 	private ServerBootStrapConfig(String serverName, int port) {
+		Preconditions.checkState(port != ServerNodeManager.getCurrServerInfo().getNodePort());
 		Preconditions.checkState(port > 1000);
 		Preconditions.checkNotNull(serverName);
 		this.serverName = serverName;
@@ -181,23 +183,7 @@ public class ServerBootStrapConfig {
 			return this;
 		}
 
-		/**
-		 * 定制 IProtocolHeader
-		 * @return
-		 */
-		private IProtocolHeader customProtocolHeader() {
-			// 之后有设定. 使用设定的. 否则默认的
-			if (protocolHeader != null) {
-				return protocolHeader;
-			}
-
-			return DefaultProtocolHeader.instance;
-		}
-
 		public ServerBootStrapConfig build() {
-			if (ServerBootStrapConfig.this.protocolHeader == null){
-				ServerBootStrapConfig.this.protocolHeader = customProtocolHeader();
-			}
 			return ServerBootStrapConfig.this;
 		}
 	}
