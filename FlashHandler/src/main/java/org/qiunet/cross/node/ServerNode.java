@@ -1,9 +1,12 @@
 package org.qiunet.cross.node;
 
+import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.event.CrossEventRequest;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ServerNodeSession;
 import org.qiunet.utils.listener.event.IListenerEvent;
 
@@ -65,6 +68,18 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 		CrossEventRequest request = CrossEventRequest.valueOf(eventData, playerId);
 		this.sendMessage(request, true);
 	}
+
+	// 默认都flush
+	@Override
+	public ChannelFuture sendMessage(IChannelMessage<?> message) {
+		return super.sendMessage(message, true);
+	}
+
+	@Override
+	public ChannelFuture sendMessage(IChannelData message) {
+		return super.sendMessage(message, true);
+	}
+
 	/**
 	 * 获得serverId
 	 * @return

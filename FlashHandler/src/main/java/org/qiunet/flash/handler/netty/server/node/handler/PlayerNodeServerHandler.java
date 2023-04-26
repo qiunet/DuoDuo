@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
 import org.qiunet.flash.handler.context.session.NodeServerSession;
@@ -31,14 +31,14 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 
 	@Override
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content, IHandler handler) throws Exception {
-		if (!IProtocolHeader.INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
-		|| ! ((IProtocolHeader.INodeServerHeader) content.getHeader()).isPlayerMsg()
+		if (!INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
+		|| ! ((INodeServerHeader) content.getHeader()).isPlayerMsg()
 		) {
 			ctx.fireChannelRead(content.retain());
 			return;
 		}
 
-		IProtocolHeader.INodeServerHeader header = (IProtocolHeader.INodeServerHeader) content.getHeader();
+		INodeServerHeader header = (INodeServerHeader) content.getHeader();
 		CrossPlayerActor crossPlayerActor = UserOnlineManager.instance.getCrossPlayerActor(header.id());
 		if (crossPlayerActor == null) {
 			if (content.getProtocolId() != IProtocolId.System.CROSS_PLAYER_AUTH) {

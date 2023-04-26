@@ -2,7 +2,7 @@ package org.qiunet.cross.node;
 
 import io.netty.channel.Channel;
 import org.qiunet.cross.pool.NodeChannelTrigger;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.util.ChannelUtil;
 
@@ -15,7 +15,7 @@ import org.qiunet.flash.handler.util.ChannelUtil;
 public class ServerNodeClientTrigger implements NodeChannelTrigger {
 
 	@Override
-	public ISession getNodeSession(Channel channel, IProtocolHeader.INodeServerHeader header) {
+	public ISession getNodeSession(Channel channel, INodeServerHeader header) {
 		return ChannelUtil.getSession(channel);
 	}
 

@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.session.NodeSessionType;
 import org.qiunet.flash.handler.context.session.ServerNodeSession;
@@ -32,14 +32,14 @@ public class ServerNodeServerHandler extends BaseNodeServerHandler {
 
 	@Override
 	public void channelRead1(ChannelHandlerContext ctx, MessageContent content, IHandler handler) throws Exception {
-		if (!IProtocolHeader.INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
-				|| ! ((IProtocolHeader.INodeServerHeader) content.getHeader()).isServerNodeMsg()
+		if (!INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
+				|| ! ((INodeServerHeader) content.getHeader()).isServerNodeMsg()
 		) {
 			ctx.fireChannelRead(content.retain());
 			return;
 		}
 
-		IProtocolHeader.INodeServerHeader header = (IProtocolHeader.INodeServerHeader) content.getHeader();
+		INodeServerHeader header = (INodeServerHeader) content.getHeader();
 		Attribute<IMessageActor> actorAttribute = ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY);
 		ServerNode serverNode = (ServerNode) actorAttribute.get();
 		if (serverNode == null) {

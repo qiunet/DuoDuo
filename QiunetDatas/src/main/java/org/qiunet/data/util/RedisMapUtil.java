@@ -26,7 +26,7 @@ public class RedisMapUtil {
 		Map<String, String> map = new HashMap<>();
 		for (Field field : obj.getClass().getDeclaredFields()) {
 			if (Modifier.isStatic(field.getModifiers())
-			 || Modifier.isFinal(field.getModifiers())) {
+				|| Modifier.isFinal(field.getModifiers())) {
 				continue;
 			}
 
@@ -36,15 +36,12 @@ public class RedisMapUtil {
 			}
 
 			if (val.getClass() == String.class
-			|| val.getClass() == Long.class
-			|| val.getClass() == Integer.class) {
+				|| val.getClass() == Long.class
+				|| val.getClass() == Integer.class) {
 				map.put(field.getName(), String.valueOf(val));
-			}
-			if (val instanceof Date) {
-				map.put(field.getName(), String.valueOf(((Date) val).getTime()));
-			}
-
-			if (Collection.class.isAssignableFrom(field.getType())) {
+			}else if (val instanceof Date dt) {
+				map.put(field.getName(), String.valueOf(dt.getTime()));
+			}else {
 				map.put(field.getName(), JsonUtil.toJsonString(val));
 			}
 		}
@@ -70,8 +67,11 @@ public class RedisMapUtil {
 				ReflectUtil.setField(t, field, Integer.parseInt(val));
 			}else if(field.getType() == Long.class || field.getType() == long.class){
 				ReflectUtil.setField(t, field, Long.parseLong(val));
-			}else if(Collection.class.isAssignableFrom(field.getType())){
+			}else if(Collection.class.isAssignableFrom(field.getType())
+			|| Map.class.isAssignableFrom(field.getType())){
 				ReflectUtil.setField(t, field, JsonUtil.getGeneralObj(val, field.getGenericType()));
+			}else {
+				ReflectUtil.setField(t, field, JsonUtil.getGeneralObj(val, field.getType()));
 			}
 		});
 		return t;

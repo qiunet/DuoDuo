@@ -124,9 +124,4 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
 		// 并非真是依靠kcpSession发送.
 		return session;
 	}
-
-	@Override
-	protected void exceptionHandle(Exception e) {
-		logger.error("Cross player actor exception:", e);
-	}
 }

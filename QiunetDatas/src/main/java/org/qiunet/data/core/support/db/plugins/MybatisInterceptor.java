@@ -4,7 +4,10 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
@@ -16,7 +19,6 @@ import org.slf4j.Logger;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 @Intercepts({
@@ -39,26 +41,28 @@ public class MybatisInterceptor implements Interceptor {
 		}
 	}
 
-	@Override
-	public Object plugin(Object target) {
-		return Plugin.wrap(target, this);
-	}
-
-	@Override
-	public void setProperties(Properties properties) {
-
-	}
+	/**
+	 * 参数规范化
+	 * @param obj 参数对象
+	 * @return 规范后的参数值
+	 */
 	private static String getParameterValue(Object obj) {
+		if (obj == null) {
+			return "<null>";
+		}
+
+		if (obj instanceof Date dt) {
+			return DateUtil.dateToString(dt);
+		}
+
 		String val;
 		if (obj instanceof String) {
 			val = "'" + obj + "'";
-		} else if (obj instanceof Date dt) {
-			val = DateUtil.dateToString(dt);
 		} else {
-			val = obj == null ? "<null>" : obj.toString();
+			val = obj.toString();
 		}
 		// 有问号会导致replaceFirst里面失效. 不会匹配到对应的地方
-		return val.replaceAll("\\?", "");
+		return val.replaceAll("[?, $]", "");
 	}
 
 	private String formatSql(Invocation invocation) {

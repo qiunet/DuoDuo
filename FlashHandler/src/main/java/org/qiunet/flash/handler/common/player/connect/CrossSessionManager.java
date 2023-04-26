@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerQuitCrossEvent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.InterestedChannelData;
@@ -75,7 +75,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 	}
 
 	@Override
-	public ISession getNodeSession(Channel channel, IProtocolHeader.INodeServerHeader header) {
+	public ISession getNodeSession(Channel channel, INodeServerHeader header) {
 		return getNodeSession(header.getServerId(), header.id());
 	}
 
@@ -127,7 +127,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		}
 
 		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
-		IProtocolHeader.INodeServerHeader header = (IProtocolHeader.INodeServerHeader) data.getHeader();
+		INodeServerHeader header = (INodeServerHeader) data.getHeader();
 		boolean flush = header.isFlush();
 		boolean kcp = header.isKcp();
 		playerActor.addMessage(m -> {

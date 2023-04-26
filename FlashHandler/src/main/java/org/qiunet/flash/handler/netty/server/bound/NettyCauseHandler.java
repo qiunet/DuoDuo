@@ -6,10 +6,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.status.StatusResultException;
-import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.logger.LoggerType;
@@ -29,10 +26,8 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		ISession session = ChannelUtil.getSession(ctx.channel());
 		Channel channel = ctx.channel();
-		ISession session = ChannelUtil.getSession(channel);
-		ServerBootStrapConfig config = channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get();
-
 		Runnable closeChannel = () -> {
 			if (session != null) {
 				session.close(CloseCause.EXCEPTION);
@@ -45,12 +40,6 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 		if (cause instanceof KcpException || cause instanceof IOException) {
 			logger.info(errMeg + " errMsg: " + cause.getMessage());
 			closeChannel.run();
-			return;
-		}
-
-		if (cause instanceof StatusResultException) {
-			// 应该在 IHandler 就处理掉.
-			logger.error("StatusResultException reach in ChannelOutBound");
 			return;
 		}
 

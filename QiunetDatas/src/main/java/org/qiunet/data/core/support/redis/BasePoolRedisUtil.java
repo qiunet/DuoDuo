@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Objects;
 
 public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisUtil {
 	/** 数据源 */
@@ -96,6 +97,9 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 			}
 
 			public static Object exec(Method method, Object[] args, Jedis jedis, boolean log) throws InvocationTargetException, IllegalAccessException {
+				if (Objects.equals(method.getName(), "toString")) {
+					return jedis.toString();
+				}
 				long startDt = System.currentTimeMillis();
 				Object object = method.invoke(jedis, args);
 				if (log && logger.isInfoEnabled()) {

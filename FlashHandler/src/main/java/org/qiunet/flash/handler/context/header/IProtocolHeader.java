@@ -194,40 +194,4 @@ public interface IProtocolHeader {
 	 * 客户端的请求服务器的消息头
 	 */
 	interface IClientOutHeader extends IConnectInHeader {}
-
-	/**
-	 * 跨服的响应头
-	 */
-	interface INodeServerHeader {
-		/**
-		 * 是否是 服务间 通讯
-		 * @return true 是
-		 */
-		boolean isServerNodeMsg();
-		/**
-		 *  是否是 玩家的通讯
-		 * @return true 是
-		 */
-		boolean isPlayerMsg();
-		/**
-		 * 得到对面的serverId
-		 * @return
-		 */
-		int getServerId();
-		/**
-		 * 是否flush
-		 * @return
-		 */
-		boolean isFlush();
-		/**
-		 *  是否是kcp消息
-		 * @return
-		 */
-		boolean isKcp();
-		/**
-		 * 对应的id
-		 * @return
-		 */
-		long id();
-	}
 }

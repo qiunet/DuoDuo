@@ -6,8 +6,8 @@ import org.qiunet.flash.handler.context.session.IPlayerSender;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.context.status.StatusResultException;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
-import org.qiunet.flash.handler.util.ChannelUtil;
 
 /***
  * 玩家类型的messageActor 继承该类
@@ -70,8 +70,8 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	protected void exceptionHandle(Exception e) {
 		if (! (e instanceof StatusResultException)) {
 			super.exceptionHandle(e);
-			return;
+		}else {
+			session.sendMessage(StatusTipsRsp.valueOf((StatusResultException) e), true);
 		}
-		ChannelUtil.exception(session, e);
 	}
 }

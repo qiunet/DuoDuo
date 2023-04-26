@@ -1,11 +1,12 @@
 package org.qiunet.cross.pool;
+
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
@@ -61,5 +62,5 @@ public interface NodeChannelTrigger extends IPersistConnResponseTrigger {
 	 * @param header 头信息
 	 * @return session
 	 */
-	ISession getNodeSession(Channel channel, IProtocolHeader.INodeServerHeader header);
+	ISession getNodeSession(Channel channel, INodeServerHeader header);
 }

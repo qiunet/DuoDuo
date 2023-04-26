@@ -26,12 +26,10 @@ import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
-import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
@@ -201,9 +199,6 @@ public final class ChannelUtil {
 
 	private static final LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
 	public static ChannelFuture exception(ISession session, Throwable cause){
-		if (cause instanceof StatusResultException) {
-			return session.sendMessage(StatusTipsRsp.valueOf(((StatusResultException) cause)), true);
-		}
 		LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
 		return session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true);
 	}

@@ -33,7 +33,7 @@ public class ServerBootStrapConfig {
 	 * 客户端每5秒一次心跳
 	 * 读超时处理.
 	 */
-	private int readIdleCheckSeconds = 60 * 5;
+	private int readIdleCheckSeconds = 30;
 	/**
 	 * 最大接受的数据长度
 	 */

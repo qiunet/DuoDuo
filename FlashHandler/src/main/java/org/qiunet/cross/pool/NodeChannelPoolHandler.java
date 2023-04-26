@@ -7,7 +7,7 @@ import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.header.NodeProtocolHeader;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
@@ -91,7 +91,7 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			IProtocolHeader.INodeServerHeader header = (IProtocolHeader.INodeServerHeader) msg.getHeader();
+			INodeServerHeader header = (INodeServerHeader) msg.getHeader();
 			if (msg.getProtocolId() == IProtocolId.System.SERVER_PONG || header.id() == 0) {
 				return;
 			}

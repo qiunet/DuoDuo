@@ -57,6 +57,7 @@ public class GeneratorProtoFile implements IApplicationContextAware {
 		}
 		Preconditions.checkState(directory.isDirectory(), "Directory must be a directory!");
 		Preconditions.checkState(model != null, "model is null");
+		GeneratorProtoFeature.features.clear();
 
 		GeneratorProtoFeature.features.putAll(Arrays.stream(features).collect(Collectors.toMap(ArgsData.Two::a, ArgsData.Two::b)));
 		boolean compatibleCheck = GeneratorProtoFeature.COMPATIBLE_CHECK.prepare();

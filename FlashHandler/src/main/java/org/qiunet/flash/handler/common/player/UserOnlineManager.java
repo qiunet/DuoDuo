@@ -118,8 +118,8 @@ public enum UserOnlineManager {
 		}
 
 		if (actor.casWaitReconnect(false, true)) {
-			// 给10分钟重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 10 * 60, TimeUnit.SECONDS);
+			// 给2分钟重连时间
+			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 2 * 60, TimeUnit.SECONDS);
 			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
 
 
