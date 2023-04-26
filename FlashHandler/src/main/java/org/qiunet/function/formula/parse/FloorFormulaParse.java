@@ -4,21 +4,22 @@ import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.IFormulaParam;
 
 /***
- *
- * 括号的parse
+ * 往下取整
  *
  * @author qiunet
- * 2020-12-02 11:03
+ * 2021/12/31 17:13
  */
-public class BracketsFormulaParse<Obj extends IFormulaParam> extends BasicBracketsFormulaParse<Obj> {
-	public BracketsFormulaParse() {
-		super(Formula::new, "");
+public class FloorFormulaParse<Obj extends IFormulaParam> extends BasicBracketsFormulaParse<Obj> {
+
+	public FloorFormulaParse() {
+		super(Formula::new, "floor");
 	}
+
 	/***
-	 * 括号
+	 * Math.floor
 	 *
 	 * @author qiunet
-	 * 2020-12-02 10:24
+	 * 2021/12/31 17:15
 	 */
 	private static class Formula<Obj extends IFormulaParam> implements IFormula<Obj> {
 		private final IFormula<Obj> formula;
@@ -29,12 +30,12 @@ public class BracketsFormulaParse<Obj extends IFormulaParam> extends BasicBracke
 
 		@Override
 		public double cal(Obj params) {
-			return formula.cal(params);
+			return Math.floor(this.formula.cal(params));
 		}
 
 		@Override
 		public String toString() {
-			return "("+formula.toString()+")";
+			return "floor("+formula.toString()+")";
 		}
 	}
 

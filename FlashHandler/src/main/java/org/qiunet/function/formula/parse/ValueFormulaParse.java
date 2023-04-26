@@ -1,6 +1,5 @@
 package org.qiunet.function.formula.parse;
 
-import org.qiunet.function.formula.FormulaValue;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.IFormulaParam;
 
@@ -23,8 +22,34 @@ public class ValueFormulaParse<Obj extends IFormulaParam> implements IFormulaPar
 	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
 		String value = formulaString.trim();
 		if (pattern.matcher(value).matches()){
-			return new FormulaValue<>(value);
+			return new Formula<>(value);
 		}
 		return null;
 	}
+
+	/***
+	 * 固定值.
+	 *
+	 * @author qiunet
+	 * 2020-12-01 18:28
+	 */
+	private static class Formula<Obj extends IFormulaParam> implements IFormula<Obj> {
+		private final String strVal;
+		private final double value;
+		public Formula(String strVal) {
+			this.strVal = strVal;
+			this.value = Double.parseDouble(strVal);
+		}
+
+		@Override
+		public double cal(Obj params) {
+			return value;
+		}
+
+		@Override
+		public String toString() {
+			return strVal;
+		}
+	}
+
 }

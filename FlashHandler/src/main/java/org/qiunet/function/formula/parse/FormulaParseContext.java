@@ -13,13 +13,13 @@ import java.util.List;
  * 2020-12-02 10:58
  */
 class FormulaParseContext<Obj extends IFormulaParam> {
-	private final List<IFormula<Obj>> brackets = Lists.newArrayListWithCapacity(2);
+	private List<IFormula<Obj>> brackets = Lists.newArrayListWithCapacity(2);
 
 	FormulaParseContext(){}
 
 	/**
 	 * 加入括号预处理列表
-	 * @param formula 公式
+	 * @param formula
 	 * @return
 	 */
 	int add(IFormula<Obj> formula) {
