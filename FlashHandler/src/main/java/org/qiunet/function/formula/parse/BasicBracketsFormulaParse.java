@@ -1,7 +1,6 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 
 import java.util.regex.Pattern;
 
@@ -11,17 +10,17 @@ import java.util.regex.Pattern;
  * @author qiunet
  * 2021/12/31 17:02
  */
-public abstract class BasicBracketsFormulaParse<Obj extends IFormulaParam> implements IFormulaParse<Obj> {
+public abstract class BasicBracketsFormulaParse implements IFormulaParse {
 	private final Pattern pattern;
-	private final IFormulaSupplier<Obj> supplier;
+	private final IFormulaSupplier supplier;
 
-	public BasicBracketsFormulaParse(IFormulaSupplier<Obj> supplier, String name) {
+	public BasicBracketsFormulaParse(IFormulaSupplier supplier, String name) {
 		this.pattern = Pattern.compile(name+"\\$\\{[0-9]+}");
 		this.supplier = supplier;
 	}
 
 	@Override
-	public IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
+	public IFormula parse(FormulaParseContext context, String formulaString) {
 		String value = formulaString.trim();
 		if (pattern.matcher(value).matches()) {
 			String realValue = value.substring(value.indexOf("{") + 1, value.length() - 1);

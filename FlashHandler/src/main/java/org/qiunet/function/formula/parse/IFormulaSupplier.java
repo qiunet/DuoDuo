@@ -1,7 +1,6 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 
 
 /***
@@ -10,7 +9,7 @@ import org.qiunet.function.formula.IFormulaParam;
  * 2021/12/31 17:07
  */
 @FunctionalInterface
-public interface IFormulaSupplier<Obj extends IFormulaParam> {
+public interface IFormulaSupplier {
 
-	IFormula<Obj> get(IFormula<Obj> formula);
+	IFormula get(IFormula formula);
 }

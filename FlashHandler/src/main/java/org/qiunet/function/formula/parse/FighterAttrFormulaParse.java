@@ -1,9 +1,9 @@
 package org.qiunet.function.formula.parse;
 
-import org.qiunet.function.attr.enums.IAttrEnum;
 import org.qiunet.function.base.basic.IBasicFunction;
 import org.qiunet.function.formula.IFormula;
 import org.qiunet.function.formula.enums.FighterParamSide;
+import org.qiunet.function.formula.param.DefaultFormulaParam;
 import org.qiunet.function.formula.param.FighterAttrFormulaParam;
 import org.qiunet.utils.scanner.anno.AutoWired;
 
@@ -13,16 +13,13 @@ import org.qiunet.utils.scanner.anno.AutoWired;
  * @author qiunet
  * 2020-12-30 14:46
  */
-public class FighterAttrFormulaParse <Type extends Enum<Type> & IAttrEnum<Type>>
-		implements IFormulaParse<FighterAttrFormulaParam<Type>>{
+public class FighterAttrFormulaParse implements IFormulaParse{
 
 	@AutoWired
 	private static IBasicFunction basicFunction;
 
 	@Override
-	public IFormula<FighterAttrFormulaParam<Type>> parse(
-		FormulaParseContext<FighterAttrFormulaParam<Type>> context,
-		 String formulaString) {
+	public IFormula parse(FormulaParseContext context, String formulaString) {
 		formulaString = formulaString.trim();
 		for (FighterParamSide side : FighterParamSide.values()) {
 			if (! formulaString.startsWith(side.name() + ".")) {
@@ -30,36 +27,30 @@ public class FighterAttrFormulaParse <Type extends Enum<Type> & IAttrEnum<Type>>
 			}
 
 			String attrStr = formulaString.substring(side.name().length() + 1);
-			Type attr = basicFunction.parse(attrStr);
-			return new Formula<>(side, attr);
+			Enum attr = basicFunction.parse(attrStr);
+			return new Formula(side, attr);
 		}
 
 		return null;
 	}
 
 	/***
-	 * 战斗玩家的属性
-	 *
-	 * @author qiunet
-	 * 2020-12-30 14:39
-	 */
-	private static class Formula<Type extends Enum<Type> & IAttrEnum<Type>> implements IFormula<FighterAttrFormulaParam<Type>> {
-		private final FighterParamSide side;
-		private final Type type;
+		 * 战斗玩家的属性
+		 *
+		 * @author qiunet
+		 * 2020-12-30 14:39
+		 */
+		private record Formula(FighterParamSide side, Enum type) implements IFormula {
 
-		public Formula(FighterParamSide side, Type type) {
-			this.side = side;
-			this.type = type;
-		}
-
-		@Override
-		public double cal(FighterAttrFormulaParam<Type> params) {
-			return side.getFighter(params).getAttr(type);
-		}
 
 		@Override
 		public String toString() {
-			return side + "." + type;
+				return side + "." + type;
+			}
+
+		@Override
+		public <Obj extends DefaultFormulaParam> double cal(Obj params) {
+			return side.getFighter(((FighterAttrFormulaParam) params)).getAttr(type);
 		}
 	}
 }

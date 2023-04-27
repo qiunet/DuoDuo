@@ -1,7 +1,6 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 
 /***
  *
@@ -9,13 +8,13 @@ import org.qiunet.function.formula.IFormulaParam;
  * @author qiunet
  * 2020-12-02 10:26
  */
-public interface IFormulaParse<Obj extends IFormulaParam> {
+public interface IFormulaParse {
 	/**
 	 * 解析公式.
 	 * @param context 解析上下文
 	 * @return null 表示没有匹配上
 	 */
-	IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString);
+	IFormula parse(FormulaParseContext context, String formulaString);
 	/**
 	 * 括号先执行.
 	 * 然后表达式
@@ -27,7 +26,7 @@ public interface IFormulaParse<Obj extends IFormulaParam> {
 		return 0;
 	}
 
-	default IFormula<Obj> _Parse(FormulaParseContext<Obj> context, String formulaString) {
+	default IFormula _Parse(FormulaParseContext context, String formulaString) {
 		return FormulaParseManager.FormulaParseManager0.instance.parse(context, formulaString);
 	}
 }

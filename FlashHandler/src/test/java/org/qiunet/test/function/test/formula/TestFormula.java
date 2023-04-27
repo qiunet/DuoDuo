@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.function.formula.parse.FormulaParseManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -67,7 +66,7 @@ public class TestFormula {
 	@Test
 	public void testAttr(){
 		String str = "self.ATT * 0.3 + var2";
-		IFormula<IFormulaParam> formula = FormulaParseManager.parse(str);
+		IFormula formula = FormulaParseManager.parse(str);
 		Assertions.assertEquals(formula.toString(), str);
 	}
 

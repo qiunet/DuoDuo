@@ -2,7 +2,6 @@ package org.qiunet.function.formula.parse;
 
 import com.google.common.collect.Lists;
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 
 import java.util.List;
 
@@ -12,8 +11,8 @@ import java.util.List;
  * @author qiunet
  * 2020-12-02 10:58
  */
-class FormulaParseContext<Obj extends IFormulaParam> {
-	private List<IFormula<Obj>> brackets = Lists.newArrayListWithCapacity(2);
+class FormulaParseContext {
+	private final List<IFormula> brackets = Lists.newArrayListWithCapacity(2);
 
 	FormulaParseContext(){}
 
@@ -22,12 +21,12 @@ class FormulaParseContext<Obj extends IFormulaParam> {
 	 * @param formula
 	 * @return
 	 */
-	int add(IFormula<Obj> formula) {
+	int add(IFormula formula) {
 		brackets.add(formula);
 		return brackets.size() - 1;
 	}
 
-	IFormula<Obj> get(int index) {
+	IFormula get(int index) {
 		return brackets.get(index);
 	}
 }

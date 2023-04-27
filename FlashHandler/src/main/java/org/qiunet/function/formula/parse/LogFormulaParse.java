@@ -1,7 +1,7 @@
 package org.qiunet.function.formula.parse;
 
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
+import org.qiunet.function.formula.param.DefaultFormulaParam;
 
 /***
  * 对某个数值进行 log
@@ -9,34 +9,29 @@ import org.qiunet.function.formula.IFormulaParam;
  * @author qiunet
  * 2021/12/31 17:13
  */
-public class LogFormulaParse<Obj extends IFormulaParam> extends BasicBracketsFormulaParse<Obj> {
+public class LogFormulaParse extends BasicBracketsFormulaParse {
 
 	public LogFormulaParse() {
 		super(Formula::new, "log");
 	}
 
 	/***
-	 * Math.log
-	 *
-	 * @author qiunet
-	 * 2021/12/31 17:15
-	 */
-	private static class Formula<Obj extends IFormulaParam> implements IFormula<Obj> {
-		private final IFormula<Obj> formula;
-
-		public Formula(IFormula<Obj> formula) {
-			this.formula = formula;
-		}
+		 * Math.log
+		 *
+		 * @author qiunet
+		 * 2021/12/31 17:15
+		 */
+		private record Formula(IFormula formula) implements IFormula {
 
 		@Override
-		public double cal(Obj params) {
-			return Math.log(this.formula.cal(params));
-		}
+			public <Obj extends DefaultFormulaParam> double cal(Obj params) {
+				return Math.log(this.formula.cal(params));
+			}
 
-		@Override
-		public String toString() {
-			return "log("+formula.toString()+")";
+			@Override
+			public String toString() {
+				return "log(" + formula.toString() + ")";
+			}
 		}
-	}
 
 }

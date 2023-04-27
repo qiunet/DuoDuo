@@ -1,14 +1,12 @@
 package org.qiunet.function.formula.param;
 
-import org.qiunet.function.formula.IFormulaParam;
-
 /***
  * 默认的参数.
  *
  * @author qiunet
  * 2020-12-30 12:43
  */
-public class DefaultFormulaParam implements IFormulaParam {
+public class DefaultFormulaParam {
 	private static final DefaultFormulaParam DEFAULT_PARAMS = new DefaultFormulaParam();
 	/**
 	 * 参数.

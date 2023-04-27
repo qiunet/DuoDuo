@@ -5,7 +5,6 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.qiunet.function.formula.IFormula;
-import org.qiunet.function.formula.IFormulaParam;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -26,10 +25,9 @@ public class FormulaParseManager {
 	/**
 	 * 解析公式
 	 * @param formulaString
-	 * @param <Obj>
 	 * @return
 	 */
-	public static <Obj extends IFormulaParam> IFormula<Obj> parse(String formulaString) {
+	public static IFormula parse(String formulaString) {
 		return FormulaParseManager0.instance.parse(formulaString);
 	}
 
@@ -48,6 +46,11 @@ public class FormulaParseManager {
 			return ScannerType.FORMULA;
 		}
 
+		@Override
+		public int order() {
+			return Integer.MAX_VALUE;
+		}
+
 		private final List<IFormulaParse> parses = Lists.newArrayList();
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
@@ -61,9 +64,9 @@ public class FormulaParseManager {
 			parses.sort((o1, o2) -> ComparisonChain.start().compare(o2.order(), o1.order()).result());
 		}
 
-		<Obj extends IFormulaParam> IFormula<Obj> parse(FormulaParseContext<Obj> context, String formulaString) {
+		IFormula parse(FormulaParseContext context, String formulaString) {
 			for (IFormulaParse parse : parses) {
-				IFormula<Obj> formula = parse.parse(context, formulaString);
+				IFormula formula = parse.parse(context, formulaString);
 				if (formula != null) {
 					return formula;
 				}
@@ -71,12 +74,12 @@ public class FormulaParseManager {
 			return null;
 		}
 
-		<Obj extends IFormulaParam> IFormula<Obj> parse(String formulaString) {
+		IFormula parse(String formulaString) {
 			int count1 = StringUtils.countMatches(formulaString, "(");
 			int count2 = StringUtils.countMatches(formulaString, ")");
 			Preconditions.checkState(count1 == count2, "Formula [%s] brackets is not match!", formulaString);
 
-			FormulaParseContext<Obj> context = new FormulaParseContext<>();
+			FormulaParseContext context = new FormulaParseContext();
 			String formula = this.bracketPreHandler(context, formulaString, 0);
 			return this.parse(context, formula);
 		}
@@ -86,7 +89,7 @@ public class FormulaParseManager {
 		 * (5 * (3 +  2)) / 5
 		 * (5 + 2) * (3 + 3)
 		 */
-		private <Obj extends IFormulaParam> String bracketPreHandler(FormulaParseContext<Obj> context, String string, int cursor) {
+		private String bracketPreHandler(FormulaParseContext context, String string, int cursor) {
 			String originString = string;
 			int begin = string.indexOf("(", cursor);
 			if (begin  < 0) {
