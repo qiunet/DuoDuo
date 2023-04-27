@@ -78,6 +78,10 @@ public interface IGameStatus {
 			this.desc = desc;
 		}
 
+		public boolean isSuccess() {
+			return this == SUCCESS;
+		}
+
 		@Override
 		public int getStatus() {
 			return status;

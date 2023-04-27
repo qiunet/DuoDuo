@@ -1,15 +1,12 @@
 package org.qiunet.game.test.robot;
 
 import com.google.common.collect.Maps;
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
-import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.IRobot;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
-import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
@@ -17,7 +14,7 @@ import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
-import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
+import org.qiunet.flash.handler.netty.client.trigger.IClientTrigger;
 import org.qiunet.flash.handler.netty.client.websocket.NettyWebSocketClient;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -176,7 +173,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 	 * @param name
 	 * @return
 	 */
-	public ISession getConnector(String name) {
+	public ClientSession getConnector(String name) {
 		if (! clients.containsKey(name)) {
 			throw new CustomException("Session {} not connect!", name);
 		}
@@ -203,13 +200,13 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 	 * @param name
 	 * @return
 	 */
-	public ISession connect(IClientConfig config, String name) {
-		ISession session1 = clients.computeIfAbsent(name, serverName -> new Connection(trigger, config)).getSession();
+	public ClientSession connect(IClientConfig config, String name) {
+		ClientSession session1 = clients.computeIfAbsent(name, serverName -> new Connection(trigger, config)).getSession();
 		session1.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		return session1;
 	}
 
-	private static class Connection {
+	private static class Connection  {
 		/**
 		 * 是否连接
 		 */
@@ -222,7 +219,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 		/**
 		 * session
 		 */
-		private ISession session;
+		private ClientSession session;
 
 		public Connection(PersistConnResponseTrigger trigger, IClientConfig config) {
 			this.trigger = trigger;
@@ -239,13 +236,13 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 		 * 获得连接
 		 * @return
 		 */
-		public ISession getSession() {
+		public ClientSession getSession() {
 			if (! this.connected.get() && this.connected.compareAndSet(false, true)) {
 				this.session = this.connect0();
 			}
 			return this.session;
 		}
-		private ISession connect0() {
+		private ClientSession connect0() {
 			switch (config.getConnType()) {
 				case WS:
 					return NettyWebSocketClient.create(((WebSocketClientConfig) config), trigger);
@@ -261,50 +258,47 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 		}
 	}
 
-	private class PersistConnResponseTrigger implements IPersistConnResponseTrigger {
+	private class PersistConnResponseTrigger implements IClientTrigger {
 
 		@Override
-		public void response(ISession session, Channel channel, MessageContent data) {
-			data.retain();
+		public void response(ClientSession session, IChannelData channelData) {
 			Robot.this.addMessage(h -> {
-				try {
-					response0(data);
-				}finally {
-					data.release();
-				}
+				response0(session, channelData);
 			});
 		}
 
-		private void response0(MessageContent data) {
-			if (data.getProtocolId() == IProtocolId.System.ERROR_STATUS_TIPS_RSP) {
-				this.handlerStatus(data);
+		private void response0(ClientSession session, IChannelData response) {
+			int protocolId = response.protocolId();
+			if (protocolId == IProtocolId.System.ERROR_STATUS_TIPS_RSP) {
+				this.handlerStatus((StatusTipsRsp) response);
 				return;
 			}
 
-			Class<? extends IChannelData> protocolClass = ChannelDataMapping.protocolClass(data.getProtocolId());
-			Method method = ResponseMapping.getResponseMethodByID(data.getProtocolId());
+			Method method = ResponseMapping.getResponseMethodByID(protocolId);
 			if (method == null) {
 				if (counter.get() < 5) {
-					logger.error("=====Response [{}] not define,skip message!======", protocolClass.getSimpleName());
+					logger.error("=====Response [{}] not define,skip message!======", response.getClass().getSimpleName());
 				}
 				return;
 			}
 
+			if (logger.isInfoEnabled() && response.debugOut()) {
+				logger.info("[{}] <<< {}", getAccount(), response._toString());
+			}
+
+
+
 			Class<?> declaringClass = method.getDeclaringClass();
 			IBehaviorAction action = actionClzMapping.get(declaringClass);
-			IChannelData realData = ProtobufDataManager.decode(protocolClass, data.byteBuffer());
-			if (logger.isInfoEnabled() && realData.debugOut()) {
-				logger.info("[{}] <<< {}", getAccount(), realData._toString());
-			}
+
 			try {
-				method.invoke(action, realData);
+				method.invoke(action, response);
 			} catch (Exception e) {
 				throw new CustomException(e, "response exception!");
 			}
 		}
 
-		private void handlerStatus(MessageContent data) {
-			StatusTipsRsp response = ProtobufDataManager.decode(StatusTipsRsp.class, data.byteBuffer());
+		private void handlerStatus(StatusTipsRsp response) {
 			Set<Method> methods = ResponseMapping.getResponseStatusHandler(response.getStatus());
 			if (methods.isEmpty()) {
 				// 出现这个. 一般是行为树参数或者逻辑问题,导致服务器校验不通过. 需要调整参数.

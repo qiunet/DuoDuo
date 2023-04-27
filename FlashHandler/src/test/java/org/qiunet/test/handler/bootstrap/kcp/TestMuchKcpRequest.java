@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
 import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
@@ -35,7 +36,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 		long start = System.currentTimeMillis();
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
-				ISession connector = client.connect(host, port);
+				ClientSession connector = client.connect(host, port);
 				connector.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)));
 
 				int count = requestCount/threadCount;

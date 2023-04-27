@@ -142,12 +142,12 @@ public interface IProtocolHeader {
 	interface ProtocolHeader extends IRecycle {
 		/**
 		 * 得到协议ID
-		 * @return
+		 * @return protocol id
 		 */
 		int getProtocolId();
 		/**
 		 * 得到body的长度
-		 * @return
+		 * @return body length
 		 */
 		int getLength();
 		/***

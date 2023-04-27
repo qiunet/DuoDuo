@@ -52,7 +52,7 @@ abstract class ExtraInfo implements IExtraInfo {
 	@Override
 	public void recycle() {
 		if (data != null) {
-			data = null;
+			data.clear();
 		}
 		this.extraInfo = 0;
 	}

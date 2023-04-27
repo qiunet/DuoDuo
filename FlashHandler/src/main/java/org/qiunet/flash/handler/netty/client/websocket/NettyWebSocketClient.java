@@ -16,7 +16,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketVersion;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.ClientSession;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientDecoder;
@@ -56,15 +55,15 @@ public class NettyWebSocketClient {
 		bootstrap.handler(new NettyWebSocketClient.NettyClientInitializer());
 	}
 
-	public static ISession create(WebSocketClientConfig config, IPersistConnResponseTrigger trigger){
+	public static ClientSession create(WebSocketClientConfig config, IPersistConnResponseTrigger trigger){
 		NettyWebSocketClient client = new NettyWebSocketClient(config, trigger);
 		return client.connect();
 	}
 
-	private ISession connect() {
+	private ClientSession connect() {
 		try {
 			bootstrap.connect(config.getAddress()).sync();
-			return ChannelUtil.getSession(clientHandler.handshakeFuture.sync().channel());
+			return (ClientSession) ChannelUtil.getSession(clientHandler.handshakeFuture.sync().channel());
 		} catch (Exception e) {
 			LoggerType.DUODUO.error("", e);
 		}
@@ -93,7 +92,7 @@ public class NettyWebSocketClient {
 
 		@Override
 		public void handlerAdded(ChannelHandlerContext ctx) {
-			ClientSession clientSession = new ClientSession(ctx.channel());
+			ClientSession clientSession = new ClientSession(ctx.channel(), config.getProtocolHeader());
 			ChannelUtil.bindSession(clientSession, ctx.channel());
 
 			clientSession.attachObj(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());

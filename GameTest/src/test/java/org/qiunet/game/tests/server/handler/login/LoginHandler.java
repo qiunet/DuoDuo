@@ -26,7 +26,7 @@ public class LoginHandler extends GameHandler<LoginRequest> {
 		playerActor.auth(10000);
 		playerActor.setOpenId(openId);
 		List<LoginInfo> loginInfos = ServerData.loginInfo.computeIfAbsent(openId, key -> Lists.newArrayListWithExpectedSize(3));
-		playerActor.sendMessage(LoginResponse.valueOf(loginInfos));
+		context.sendMessage(LoginResponse.valueOf(loginInfos));
 	}
 
 	@Override

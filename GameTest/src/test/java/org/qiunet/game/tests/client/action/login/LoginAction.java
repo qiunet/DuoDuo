@@ -3,7 +3,6 @@ package org.qiunet.game.tests.client.action.login;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.action.BehaviorAction;
 import org.qiunet.function.condition.IConditions;
-import org.qiunet.game.test.response.TestResponse;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.game.tests.client.action.base.TestAction;
 import org.qiunet.game.tests.client.data.BlackBoard;
@@ -26,21 +25,14 @@ public class LoginAction extends TestAction {
 	@Override
 	public ActionStatus execute() {
 		LoginRequest loginRequest = LoginRequest.valueOf(getOwner().getAccount());
-		this.sendMessage(loginRequest);
+		this.sendMessage(loginRequest, (status, rsp) -> {
+			BlackBoard.loginInfo.set(getOwner(), ((LoginResponse) rsp).getInfos());
+		});
 		return ActionStatus.RUNNING;
 	}
 
 	@Override
 	protected ActionStatus runningStatusUpdate() {
 		return 	BlackBoard.loginInfo.isNull(getOwner()) ? ActionStatus.RUNNING : ActionStatus.SUCCESS;
-	}
-
-	/**
-	 * 登录的响应.
-	 * @param loginResponse 登录下行数据
-	 */
-	@TestResponse
-	public void loginResponse(LoginResponse loginResponse) {
-		BlackBoard.loginInfo.set(getOwner(), loginResponse.getInfos());
 	}
 }

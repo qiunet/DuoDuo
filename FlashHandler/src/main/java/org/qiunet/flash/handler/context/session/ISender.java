@@ -12,29 +12,29 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 public interface ISender {
 	/**
 	 * 发送消息
-	 * @param message
+	 * @param message 发送消息
 	 */
 	default ChannelFuture sendMessage(IChannelData message) {
 		return this.sendMessage(message, false);
 	}
 	/**
 	 * 发送消息
-	 * @param message
+	 * @param message 发送消息
 	 */
 	default ChannelFuture sendMessage(IChannelData message, boolean flush) {
 		return this.sendMessage(message.buildChannelMessage(), flush);
 	}
 	/**
 	 * 发送消息
-	 * @param message
-	 * @return
+	 * @param message 发送消息
+	 * @return  Future
 	 */
 	default ChannelFuture sendMessage(IChannelMessage<?> message) {
 		return this.sendMessage(message, false);
 	}
 	/**
 	 * 发送消息
-	 * @param message
+	 * @param message 发送消息
 	 */
 	ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush);
 }

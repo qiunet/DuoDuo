@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
@@ -36,7 +37,7 @@ public class TestMuchWebSocketRequest extends HttpBootStrap {
 		long start = System.currentTimeMillis();
 		for (int i = 0; i < clientCount; i++) {
 			new Thread(() -> {
-				ISession client = NettyWebSocketClient.create(WebSocketClientConfig.custom()
+				ClientSession client = NettyWebSocketClient.create(WebSocketClientConfig.custom()
 					.setAddress("localhost", port).build(), new Trigger());
 				client.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)), true);
 

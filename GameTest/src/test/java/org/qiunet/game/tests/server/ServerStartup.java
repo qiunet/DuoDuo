@@ -1,6 +1,7 @@
 package org.qiunet.game.tests.server;
 
 
+import org.qiunet.flash.handler.context.header.SequenceIdProtocolHeader;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
@@ -25,6 +26,7 @@ public final class ServerStartup {
 		Thread thread = new Thread(() -> {
 			BootstrapServer server = BootstrapServer.createBootstrap(hook);
 			server.listener(ServerBootStrapConfig.newBuild("压测服务测试", ServerType.LC_ROOM.port())
+					.setProtocolHeader(SequenceIdProtocolHeader.instance)
 					.build());
 			server.await(() -> LockSupport.unpark(currThread));
 		}, "Client-Server-Startup");

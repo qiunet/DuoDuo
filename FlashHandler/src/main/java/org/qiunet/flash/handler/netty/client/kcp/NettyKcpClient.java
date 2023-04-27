@@ -9,8 +9,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.context.session.KcpSession;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.KcpSocketClientDecoder;
@@ -29,19 +28,17 @@ import org.qiunet.utils.logger.LoggerType;
 public class NettyKcpClient {
 	private static final NioEventLoopGroup group = new NioEventLoopGroup( new DefaultThreadFactory("netty-kcp-client-event-loop-"));
 	private final IPersistConnResponseTrigger trigger;
-	private final KcpClientConfig config;
 	private final Bootstrap bootstrap;
 
 	private NettyKcpClient(KcpClientConfig config, IPersistConnResponseTrigger trigger) {
 		this.trigger = trigger;
-		this.config = config;
 
 		this.bootstrap = new Bootstrap();
 		this.bootstrap.group(group).channel(UkcpClientChannel.class)
 				.handler(new ChannelInitializer<UkcpChannel>() {
 					@Override
 					protected void initChannel(UkcpChannel ch) throws Exception {
-						KcpSession kcpSession = new KcpSession(((UkcpClientChannel) ch).conv(config.getConvId()));
+						ClientSession kcpSession = new ClientSession(((UkcpClientChannel) ch).conv(config.getConvId()), config.getProtocolHeader());
 						ChannelUtil.bindSession(kcpSession, ch);
 
 						kcpSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.KCP);
@@ -66,9 +63,7 @@ public class NettyKcpClient {
 
 	/**
 	 * client
-	 * @param config
-	 * @param trigger
-	 * @return
+	 * @return Client
 	 */
 	public static NettyKcpClient create(KcpClientConfig config, IPersistConnResponseTrigger trigger) {
 		return new NettyKcpClient(config, trigger);
@@ -80,11 +75,11 @@ public class NettyKcpClient {
 	 * @param port
 	 * @return
 	 */
-	public ISession connect(String host, int port) {
+	public ClientSession connect(String host, int port) {
 		// Start the client.
 		try {
 			ChannelFuture f = this.bootstrap.connect(host, port).sync();
-			return ChannelUtil.getSession(f.channel());
+			return (ClientSession) ChannelUtil.getSession(f.channel());
 		} catch (Exception e) {
 			LoggerType.DUODUO.error("", e);
 		}

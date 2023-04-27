@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
 import org.qiunet.flash.handler.netty.client.param.KcpClientConfig;
@@ -26,7 +27,7 @@ import java.util.concurrent.locks.LockSupport;
  * 17/11/25
  */
 public class TestKcpRequest extends BasicKcpBootStrap implements IPersistConnResponseTrigger {
-	protected ISession session;
+	protected ClientSession session;
 	private String text;
 
 	@Test

@@ -1,13 +1,19 @@
 package org.qiunet.game.test.robot.action;
 
-import org.qiunet.flash.handler.context.sender.ISessionHolder;
-import org.qiunet.flash.handler.context.session.ISession;
+import io.netty.channel.ChannelFuture;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.ClientSession;
+import org.qiunet.flash.handler.context.session.IClientSession;
+import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.flash.handler.netty.client.param.IClientConfig;
 import org.qiunet.function.ai.enums.ActionStatus;
 import org.qiunet.function.ai.node.base.BaseBehaviorAction;
 import org.qiunet.function.condition.IConditions;
 import org.qiunet.game.test.robot.Robot;
 import org.qiunet.utils.logger.LoggerType;
+
+import java.util.function.BiConsumer;
 
 /***
  * 基础的 ActionNode
@@ -17,7 +23,7 @@ import org.qiunet.utils.logger.LoggerType;
  * 2021/8/8 11:46
  **/
 public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
-		implements ISessionHolder {
+		implements IClientSession {
 	/**
 	 * 使用的连接名
 	 */
@@ -42,7 +48,7 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	}
 
 	@Override
-	public ISession getSession() {
+	public ClientSession getSession() {
 		return getOwner().getConnector(this.connectorName);
 	}
 
@@ -53,7 +59,12 @@ public abstract class BaseRobotAction extends BaseBehaviorAction<Robot>
 	 * @param config
 	 * @return
 	 */
-	public ISession connector(IClientConfig config) {
+	public ClientSession connector(IClientConfig config) {
 		return getOwner().connect(config, this.connectorName);
+	}
+
+	@Override
+	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush, BiConsumer<StatusResult, IChannelData> consumer) {
+		return getSession().sendMessage(message, flush, consumer);
 	}
 }

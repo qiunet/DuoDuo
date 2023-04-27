@@ -12,7 +12,6 @@ import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
 
@@ -21,7 +20,7 @@ import org.qiunet.utils.logger.LoggerType;
  * @author qiunet
  * 2023/3/28 14:27
  */
-public interface NodeChannelTrigger extends IPersistConnResponseTrigger {
+public interface NodeChannelTrigger {
 
 	default boolean serverNode() {
 		return false;

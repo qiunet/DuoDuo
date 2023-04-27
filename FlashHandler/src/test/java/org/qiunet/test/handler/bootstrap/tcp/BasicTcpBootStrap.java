@@ -4,6 +4,7 @@ package org.qiunet.test.handler.bootstrap.tcp;
 import io.netty.util.ResourceLeakDetector;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.qiunet.flash.handler.context.header.SequenceIdProtocolHeader;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -32,6 +33,7 @@ public abstract class BasicTcpBootStrap {
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
 			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("Tcp测试", port)
+				.setProtocolHeader(SequenceIdProtocolHeader.instance)
 				.encryption()
 				.build();
 

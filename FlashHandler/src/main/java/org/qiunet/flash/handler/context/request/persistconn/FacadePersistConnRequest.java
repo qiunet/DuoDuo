@@ -2,7 +2,9 @@ package org.qiunet.flash.handler.context.request.persistconn;
 
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 
 /**
  * Created by qiunet.
@@ -48,4 +50,8 @@ class FacadePersistConnRequest<RequestData, P extends IMessageActor<P>> implemen
 		return context.channel();
 	}
 
+	@Override
+	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+		return context.sendMessage(message, flush);
+	}
 }

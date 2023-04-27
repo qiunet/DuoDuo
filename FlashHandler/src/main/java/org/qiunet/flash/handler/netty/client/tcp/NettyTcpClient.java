@@ -11,7 +11,6 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.session.ClientSession;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
@@ -60,7 +59,7 @@ public class NettyTcpClient {
 	 * @param port
 	 * @return
 	 */
-	public ISession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
+	public ClientSession connect(String host, int port, GenericFutureListener<ChannelFuture> listener) {
 		Preconditions.checkArgument(!StringUtil.isEmpty(host));
 		Preconditions.checkArgument(port > 0);
 		// Start the client.
@@ -69,14 +68,14 @@ public class NettyTcpClient {
 			if (listener != null) {
 				f.addListener(listener);
 			}
-			return ChannelUtil.getSession(f.channel());
+			return (ClientSession) ChannelUtil.getSession(f.channel());
 		} catch (Exception e) {
 			LoggerType.DUODUO.error("", e);
 		}
 		return null;
 	}
 
-	public ISession connect(String host, int port) {
+	public ClientSession connect(String host, int port) {
 		return connect(host, port, null);
 	}
 
@@ -89,7 +88,7 @@ public class NettyTcpClient {
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
 			ChannelPipeline pipeline = ch.pipeline();
-			ClientSession clientSession = new ClientSession(ch);
+			ClientSession clientSession = new ClientSession(ch, config.getProtocolHeader());
 			ChannelUtil.bindSession(clientSession, ch);
 
 			clientSession.attachObj(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());
@@ -104,7 +103,8 @@ public class NettyTcpClient {
 	private class NettyClientHandler extends SimpleChannelInboundHandler<MessageContent> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, MessageContent msg) throws Exception {
-			trigger.response(ChannelUtil.getSession(ctx.channel()), ctx.channel(), msg);
+			ClientSession session = (ClientSession) ChannelUtil.getSession(ctx.channel());
+			trigger.response(session, ctx.channel(), msg);
 		}
 
 		@Override

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
+import org.qiunet.flash.handler.context.header.SequenceIdProtocolHeader;
+import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.TcpClientConfig;
 import org.qiunet.flash.handler.netty.client.tcp.NettyTcpClient;
@@ -30,12 +32,12 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 
 	@Test
 	public void muchRequest() throws InterruptedException {
-		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientConfig.DEFAULT_PARAMS, new Trigger());
+		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientConfig.custom().setProtocolHeader(SequenceIdProtocolHeader.instance).build(), new Trigger());
 		long start = System.currentTimeMillis();
 		final int threadCount = 20;
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
-				ISession connector = nettyTcpClient.connect(host, port);
+				ClientSession connector = nettyTcpClient.connect(host, port);
 				connector.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)));
 
 				int count = requestCount/threadCount;

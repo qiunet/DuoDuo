@@ -7,7 +7,9 @@ import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.utils.pool.ObjectPool;
@@ -21,7 +23,7 @@ import org.qiunet.utils.pool.ObjectPool;
 public class PersistConnPbRequestContext<RequestData extends IChannelData, P extends IMessageActor<P>>
 		extends AbstractPersistConnRequestContext<RequestData, P> {
 
-	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = new ObjectPool<PersistConnPbRequestContext>() {
+	private static final ObjectPool<PersistConnPbRequestContext> RECYCLER = new ObjectPool<>() {
 		@Override
 		public PersistConnPbRequestContext newObject(Handle<PersistConnPbRequestContext> handler) {
 			return new PersistConnPbRequestContext(handler);
@@ -47,6 +49,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	private void recycle() {
 		this.requestData = null;
 		this.attributes = null;
+		this.reqSequence = 0;
 		this.session = null;
 		this.handler = null;
 		this.channel = null;
@@ -58,7 +61,9 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 	public void execute(P p) throws Exception {
 		try {
 			this.handlerRequest();
-		} finally {
+		} catch (StatusResultException e) {
+			this.sendMessage(StatusTipsRsp.valueOf(e), true);
+		}finally {
 			this.recycle();
 		}
 	}
