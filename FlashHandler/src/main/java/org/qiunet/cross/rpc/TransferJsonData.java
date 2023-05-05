@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rpc;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;

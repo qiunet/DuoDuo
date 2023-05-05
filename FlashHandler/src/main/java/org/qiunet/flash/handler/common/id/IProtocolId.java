@@ -65,6 +65,11 @@ public interface IProtocolId {
 		/** 事务响应 **/
 		int TRANSACTION_RSP = 602;
 
+		/** rpc请求 **/
+		int ROUTE_RPC_REQ = 603;
+		/** rpc响应 **/
+		int ROUTE_RPC_RSP = 604;
+
 		/** 跨服玩家鉴权. */
 		int CROSS_PLAYER_AUTH = 605;
 

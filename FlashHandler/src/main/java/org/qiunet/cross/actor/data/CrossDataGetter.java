@@ -1,8 +1,8 @@
 package org.qiunet.cross.actor.data;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
-import org.qiunet.cross.transaction.TransactionFuture;
-import org.qiunet.cross.transaction.TransactionManager;
+import org.qiunet.cross.rpc.RpcFuture;
+import org.qiunet.cross.rpc.RpcManager;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
 
@@ -50,10 +50,12 @@ public final class CrossDataGetter<Data extends IUserTransferData> {
 	}
 
 	private Data get0(){
-		CrossDataTransactionReq request = CrossDataTransactionReq.valueOf(getKey(), crossPlayerActor.getPlayerId());
-		TransactionFuture<CrossDataTransactionRsp> transactionFuture = TransactionManager.instance.beginTransaction(crossPlayerActor.getServerId(), request);
+		CrossDataRpcReq request = CrossDataRpcReq.valueOf(getKey(), crossPlayerActor.getPlayerId());
+		RpcFuture<CrossDataRpcRsp> rpcFuture = RpcManager.rpcCall(crossPlayerActor.getServerId(),
+			CrossDataHandler.instance::handler,
+			request);
 		try {
-			CrossDataTransactionRsp response = transactionFuture.get();
+			CrossDataRpcRsp response = rpcFuture.get();
 			return (Data) response.getData();
 		} catch (Exception e) {
 			throw new CustomException(e, "CrossDataGetter Exception!!");

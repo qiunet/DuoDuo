@@ -8,7 +8,6 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanner;
@@ -18,14 +17,13 @@ import org.slf4j.Logger;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author qiunet
@@ -39,7 +37,6 @@ public final class ClassScanner implements IApplicationContext {
 			Scanners.SubTypes,
 	};
 
-	private final ConcurrentHashMap<Class, Object> beanInstances = new ConcurrentHashMap<>();
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 	/**
 	 * 存储一些参数
@@ -230,24 +227,6 @@ public final class ClassScanner implements IApplicationContext {
 
 	@Override
 	public Object getInstanceOfClass(Class clazz, Object... params) {
-		return beanInstances.computeIfAbsent(clazz, key -> {
-			Optional<Object> first = Stream.of(key.getDeclaredFields())
-				.filter(f -> Modifier.isStatic(f.getModifiers()))
-				.filter(f -> f.getType() == key)
-				.map(f -> ReflectUtil.getField(f, (Object) null))
-				.filter(Objects::nonNull)
-				.findFirst();
-
-			if (first.isPresent()) {
-				return first.get();
-			}
-
-			Object ret = ReflectUtil.newInstance(key, params);
-			if (ret != null) {
-				return ret;
-			}
-
-			throw new NullPointerException("can not get instance for class ["+key.getName()+"]");
-		});
+		return ClassUtil.getInstanceOfClass(clazz, params);
 	}
 }

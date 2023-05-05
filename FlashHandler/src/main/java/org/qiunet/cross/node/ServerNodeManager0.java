@@ -170,7 +170,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.currServerInfo = argsContainer.isNull(ScannerParamKey.CUSTOM_SERVER_INFO)
-			? ServerInfo.valueOf(ServerConfig.getServerPort(), ServerConfig.getNodePort())
+			? ServerInfo.selfInfo(ServerConfig.getServerPort(), ServerConfig.getNodePort())
 			: argsContainer.getArgument(ScannerParamKey.CUSTOM_SERVER_INFO).get();
 
 		this.CURRENT_SERVER_NODE_INFO_REDIS_KEY = ServerInfo.serverInfoRedisKey(currServerInfo.getServerId());

@@ -17,14 +17,14 @@ import org.qiunet.utils.scanner.ScannerType;
  * 2020-10-22 21:24
  */
 public class CrossServer {
-	private static final Hook hook = new MyHook(Constants.CROSS_SERVER_PORT);
+	private static final Hook hook = new MyHook(Constants.CROSS_NODE_PORT);
 
 	public static void main(String[] args) {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
 		ClassScanner.getInstance(ScannerType.SERVER)
 			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, Constants.CROSS_SERVER_PORT, Constants.CROSS_NODE_PORT))
+			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, 0, Constants.CROSS_NODE_PORT))
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook).await();

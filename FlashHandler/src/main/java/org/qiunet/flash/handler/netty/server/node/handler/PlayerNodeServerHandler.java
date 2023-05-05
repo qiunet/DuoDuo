@@ -42,7 +42,7 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 		CrossPlayerActor crossPlayerActor = UserOnlineManager.instance.getCrossPlayerActor(header.id());
 		if (crossPlayerActor == null) {
 			if (content.getProtocolId() != IProtocolId.System.CROSS_PLAYER_AUTH) {
-				logger.error("Cross Player id {} protocolId: {} not auth!", header.id(), content.getProtocolId());
+				logger.error("Cross Player id {} protocolId: {} not authorize access!", header.id(), content.getProtocolId());
 				return;
 			}
 			crossPlayerActor = this.newCrossPlayerActor(ctx, header.id());

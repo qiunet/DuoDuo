@@ -1,30 +1,26 @@
 package org.qiunet.cross.actor.data;
 
-import org.qiunet.cross.transaction.DTransaction;
-import org.qiunet.cross.transaction.ITransactionHandler;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.listener.event.EventListener;
 
 /***
- * 获取跨服数据的事务处理
+ * 获取跨服数据的rpc处理
  *
  * @author qiunet
  * 2020-10-28 12:37
  */
-public class CrossDataTransactionHandler implements ITransactionHandler<CrossDataTransactionReq, CrossDataTransactionRsp> {
+public enum CrossDataHandler {
+	instance;
 
-	@Override
-	public void handler(DTransaction<CrossDataTransactionReq, CrossDataTransactionRsp> transaction) {
-		CrossDataTransactionReq request = transaction.getReqData();
+	public CrossDataRpcRsp handler(CrossDataRpcReq request) {
+		CrossData<?> crossData = (CrossData<?>) CrossData.valueOf(CrossData.class, request.getKey());
 		PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(request.getPlayerId());
-		playerActor.addMessage(p -> transaction.handler(req -> {
-			CrossData<?> crossData = (CrossData<?>) CrossData.valueOf(CrossData.class, req.getKey());
-			IUserTransferData data = crossData.get(p);
-			return CrossDataTransactionRsp.valueOf(data);
-		}));
+		IUserTransferData data = crossData.get(playerActor);
+		return CrossDataRpcRsp.valueOf(data);
 	}
+
 
 	@EventListener
 	private void crossDataUpdateEvent(_CrossDataNeedUpdateEvent event) {

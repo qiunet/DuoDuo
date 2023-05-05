@@ -26,7 +26,8 @@ public class RedisMapUtil {
 		Map<String, String> map = new HashMap<>();
 		for (Field field : obj.getClass().getDeclaredFields()) {
 			if (Modifier.isStatic(field.getModifiers())
-				|| Modifier.isFinal(field.getModifiers())) {
+			|| Modifier.isTransient(field.getModifiers())
+			|| Modifier.isFinal(field.getModifiers())) {
 				continue;
 			}
 

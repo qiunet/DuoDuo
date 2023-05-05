@@ -25,7 +25,7 @@ public class LogicServer {
 
 		ClassScanner.getInstance(ScannerType.SERVER)
 			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_SERVER_PORT, Constants.LOGIC_NODE_PORT))
+			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_NODE_PORT))
 			.scanner();
 
 			BootstrapServer.createBootstrap(hook)

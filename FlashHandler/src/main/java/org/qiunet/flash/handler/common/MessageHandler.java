@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
  **/
 public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements IMessageHandler<H>, IThreadSafe {
-	private static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
+	protected static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
 
 	private final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
@@ -60,6 +60,14 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 
 	/**
+	 * 得到当前MessageHandler 的 executor
+	 * @return
+	 */
+	protected DExecutorService getExecutor() {
+		return executor.get();
+	}
+
+	/**
 	 * 添加一条可以执行消息
 	 * @param msg
 	 */
@@ -69,7 +77,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
 			return false;
 		}
-		executor.get().execute(() -> this.executorMessage(msg));
+		this.getExecutor().execute(() -> this.executorMessage(msg));
 		return true;
 	}
 
@@ -86,7 +94,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	@Override
 	public boolean inSelfThread() {
-		return executor.get().inSelfThread();
+		return this.getExecutor().inSelfThread();
 	}
 
 	/**
@@ -154,7 +162,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		return future;
 	}
 
-	private static class MessageHandlerEventLoop {
+	protected static class MessageHandlerEventLoop {
 		private final List<DExecutorService> eventLoops;
 
 		public MessageHandlerEventLoop(int count) {

@@ -2,7 +2,7 @@ package org.qiunet.cross.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.base.Preconditions;
-import org.qiunet.cross.transaction.TransferJsonData;
+import org.qiunet.cross.rpc.TransferJsonData;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;

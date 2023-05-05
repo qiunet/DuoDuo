@@ -33,8 +33,8 @@ public interface IApplicationContext {
 	/***
 	 * 返回class的对象
 	 * 可以是自身持有对象的单例 没有就new 一个.
-	 * @param clazz
-	 * @return
+	 * @param clazz 类
+	 * @return 实例
 	 */
 	Object getInstanceOfClass(Class clazz, Object... params);
 

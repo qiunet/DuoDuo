@@ -13,14 +13,13 @@ import org.qiunet.utils.net.NetUtil;
  * 2021/10/28 16:41
  **/
 public class TestServerInfo {
-	private static final int communicationPort = 8081;
+	private static final int nodePort = 8081;
 	private static final int serverId = 1;
-	private static final int serverPort = 8080;
 	private static final int onlineNum = 11;
 
 	@Test
 	public void test(){
-		ServerInfo serverInfo0 = ServerInfo.valueOf(serverId, serverPort, communicationPort);
+		ServerInfo serverInfo0 = ServerInfo.valueOf(serverId, nodePort);
 		serverInfo0.put("onlineNum", onlineNum);
 		this.assert0(serverInfo0);
 
@@ -33,7 +32,6 @@ public class TestServerInfo {
 		Assertions.assertEquals(NetUtil.getInnerIp(), serverInfo0.getHost());
 		Assertions.assertEquals(serverId, serverInfo0.getServerId());
 		Assertions.assertEquals(onlineNum, serverInfo0.get("onlineNum"));
-		Assertions.assertEquals(serverPort, serverInfo0.getServerPort());
-		Assertions.assertEquals(communicationPort, serverInfo0.getNodePort());
+		Assertions.assertEquals(nodePort, serverInfo0.getNodePort());
 	}
 }
