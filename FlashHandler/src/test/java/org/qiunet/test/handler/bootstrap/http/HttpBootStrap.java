@@ -10,9 +10,8 @@ import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
+import org.qiunet.test.cross.common.redis.RedisDataUtil;
 import org.qiunet.test.handler.bootstrap.hook.MyHook;
-import org.qiunet.utils.scanner.ClassScanner;
-import org.qiunet.utils.scanner.ScannerType;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.LockSupport;
@@ -29,14 +28,10 @@ public class HttpBootStrap {
 	@BeforeAll
 	public static void init() throws Exception {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-
-		ClassScanner.getInstance(ScannerType.SERVER).scanner();
-
 		currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("Http测试", port)
-					.build();
-			BootstrapServer server = BootstrapServer.createBootstrap(hook).listener(config);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook, RedisDataUtil::getInstance)
+				.listener(ServerBootStrapConfig.newBuild("Http测试", port).build());
 			server.await( () -> LockSupport.unpark(currThread));
 		});
 		thread.start();

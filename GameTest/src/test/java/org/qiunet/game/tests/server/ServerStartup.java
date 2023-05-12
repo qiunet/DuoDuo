@@ -7,6 +7,8 @@ import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.game.tests.server.enums.ServerType;
+import org.qiunet.game.tests.server.redis.RedisDataUtil;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -24,7 +26,7 @@ public final class ServerStartup {
 
 		final Thread currThread = Thread.currentThread();
 		Thread thread = new Thread(() -> {
-			BootstrapServer server = BootstrapServer.createBootstrap(hook);
+			BootstrapServer server = BootstrapServer.createBootstrap(hook, RedisDataUtil::getInstance, ScannerType.GAME_TEST);
 			server.listener(ServerBootStrapConfig.newBuild("压测服务测试", ServerType.LC_ROOM.port())
 					.setProtocolHeader(SequenceIdProtocolHeader.instance)
 					.build());

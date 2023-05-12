@@ -3,6 +3,7 @@ package org.qiunet.cross.node;
 import org.qiunet.data.util.ServerType;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /***
  *
@@ -73,5 +74,72 @@ public class ServerNodeManager {
 	public static ServerNode getNode(int serverId) {
 		return ServerNodeManager0.instance.getNode(serverId);
 	}
-
+	/**
+	 * 根据server type 以及filter
+	 * @param serverType 服务类型
+	 * @return 最终的所有server id
+	 */
+	public static List<ServerInfo> serverList(ServerType serverType) {
+		return serverList(serverType, t -> true);
+	}
+	/**
+	 * 根据server type 以及filter
+	 * @param serverType 服务类型
+	 * @param filter 过滤器 true的才保留
+	 * @return 最终的所有server id
+	 */
+	public static List<ServerInfo> serverList(ServerType serverType, Predicate<Integer> filter) {
+		return ServerNodeManager0.instance.serverList(serverType, filter);
+	}
+	/**
+	 * 根据server type 以及filter
+	 * @param serverList 获取server list . {@link #serverList(ServerType, Predicate)}
+	 * @return 最终的所有server id
+	 */
+	public static ServerInfo assignServer(List<ServerInfo> serverList) {
+		return ServerNodeManager0.instance.assignServer(serverList, t -> true);
+	}
+	/**
+	 * 根据server type 以及filter
+	 * @param serverList 获取server list . {@link #serverList(ServerType, Predicate)}
+	 * @param filter 过滤器 true的才保留
+	 * @return 最终的所有server id
+	 */
+	public static ServerInfo assignServer(List<ServerInfo> serverList, Predicate<ServerInfo> filter) {
+		return ServerNodeManager0.instance.assignServer(serverList, filter);
+	}
+	/**
+	 * 在Logic 按照group 分配一个权重高机器
+	 * @param groupId server group id
+	 * @return 权重高的info
+	 */
+	public static ServerInfo assignLogicServerByGroupId(int groupId) {
+		return assignLogicServerByGroupId(groupId, t -> true);
+	}
+	/**
+	 * 在Logic 按照group 分配一个权重高机器
+	 * @param groupId server group id
+	 * @param filter 过滤器
+	 * @return 权重高的info
+	 */
+	public static ServerInfo assignLogicServerByGroupId(int groupId, Predicate<ServerInfo> filter) {
+		return assignServer(serverList(ServerType.LOGIC, id -> ServerType.getGroupId(id) == groupId), filter);
+	}
+	/**
+	 * 在指定server type里面找一个weight最高的服务.
+	 * @param serverType server type
+	 * @return 权重高的info
+	 */
+	public static ServerInfo assignServer(ServerType serverType) {
+		return assignServer(serverType, i -> true);
+	}
+	/**
+	 * 在指定server type里面找一个weight最高的服务.
+	 * @param serverType server type
+	 * @param filter 过滤器
+	 * @return 权重高的info
+	 */
+	public static ServerInfo assignServer(ServerType serverType, Predicate<ServerInfo> filter) {
+		return assignServer(serverList(serverType), filter);
+	}
 }

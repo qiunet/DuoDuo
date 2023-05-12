@@ -45,7 +45,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /***
  * 管理server节点.
@@ -197,6 +199,37 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			ServerNodeTickEvent.instance.fireEventHandler();
 			redisUtil.returnJedis(false).set(CURRENT_SERVER_NODE_INFO_REDIS_KEY, currServerInfo.toString(), SetParams.setParams().ex(ServerInfo.SERVER_OFFLINE_SECONDS));
 		}, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * 根据server type 以及filter
+	 * @param serverType 服务类型
+	 * @param filter 过滤器 true的才保留
+	 * @return 最终的所有server id
+	 */
+	List<ServerInfo> serverList(ServerType serverType, Predicate<Integer> filter) {
+		String redisKey = serverRegisterCenterRedisKey(serverType);
+		Set<String> members = redisUtil.returnJedis().smembers(redisKey);
+		return members.stream().map(Integer::parseInt)
+			.filter(filter).map(this::getServerInfo)
+			.collect(Collectors.toList());
+	}
+
+	/**
+	 * 根据server type 以及filter
+	 * @param serverIdList 获取server list . {@link #serverList(ServerType, Predicate)}
+	 * @param filter 过滤器 true的才保留
+	 * @return 最终的所有server id
+	 */
+	ServerInfo assignServer(List<ServerInfo> serverIdList, Predicate<ServerInfo> filter) {
+		if (serverIdList == null || serverIdList.isEmpty()) {
+			return null;
+		}
+		return serverIdList.stream()
+			.filter(filter).reduce((o1, o2) -> {
+				if (o1.weight() > o2.weight()) return o1;
+				return o2;
+			}).orElseThrow(() -> new CustomException("Can not assign server!"));
 	}
 
 	ServerInfo getCurrServerInfo() {

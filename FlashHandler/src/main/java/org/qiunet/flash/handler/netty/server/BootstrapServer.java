@@ -2,13 +2,16 @@ package org.qiunet.flash.handler.netty.server;
 
 import io.netty.util.CharsetUtil;
 import org.qiunet.cfg.manager.CfgManagers;
+import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.event.GlobalRedisPrepareEvent;
 import org.qiunet.flash.handler.netty.server.event.HookCustomCmdEvent;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
@@ -21,6 +24,8 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.data.*;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.net.NetUtil;
+import org.qiunet.utils.scanner.ClassScanner;
+import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
@@ -38,6 +43,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 服务器启动类
@@ -64,9 +71,34 @@ public class BootstrapServer {
 	/***
 	 * 可以自己添加给hook.
 	 * @param hook  钩子 关闭时候,先执行你的代码
+	 * @param globalRedis redis
+	 * @param packages 需要扫描的包
 	 * @return 实例
 	 */
-	public static BootstrapServer createBootstrap(Hook hook) {
+	public static BootstrapServer createBootstrap(Hook hook, Supplier<IRedisUtil> globalRedis, String ... packages) {
+		return createBootstrap(hook, globalRedis, ScannerType.SERVER, packages);
+	}
+	/***
+	 * 可以自己添加给hook.
+	 * @param hook  钩子 关闭时候,先执行你的代码
+	 * @param globalRedis 全局redis
+	 * @param scannerType 一般{@link ScannerType#SERVER}
+	 * @param packages 额外需要扫描的包
+	 * @return 实例
+	 */
+	public static BootstrapServer createBootstrap(Hook hook, Supplier<IRedisUtil> globalRedis, ScannerType scannerType, String ... packages) {
+		return createBootstrap(hook, globalRedis, scannerType, null, packages);
+	}
+	/***
+	 * 可以自己添加给hook.
+	 * @param hook  钩子 关闭时候,先执行你的代码
+	 * @param globalRedis 全局redis
+	 * @param scannerType 一般{@link ScannerType#SERVER}
+	 * @param beforeScanner 扫描前需要做的事情
+	 * @param packages 额外需要扫描的包
+	 * @return 实例
+	 */
+	public static BootstrapServer createBootstrap(Hook hook, Supplier<IRedisUtil> globalRedis, ScannerType scannerType, Consumer<ClassScanner> beforeScanner, String ... packages) {
 		if (StringUtil.isEmpty(hook.getShutdownMsg())) {
 			throw new NullPointerException("shutdownMsg can not be empty!");
 		}
@@ -74,12 +106,18 @@ public class BootstrapServer {
 		synchronized (BootstrapServer.class) {
 			if (instance == null)
 			{
+				// 先启动扫描
+				ClassScanner classScanner = ClassScanner.getInstance(scannerType).addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, globalRedis);
+				if (beforeScanner != null) {
+					beforeScanner.accept(classScanner);
+				}
+				classScanner.scanner(packages);
+				GlobalRedisPrepareEvent.valueOf(globalRedis.get()).fireEventHandler();
 				instance = new BootstrapServer(hook);
 			}
 		}
 		return instance;
 	}
-
 	/***
 	 * 给服务器的钩子发送消息, 需要另起Main线程. 所以无法读取到之前的BootstrapServer .
 	 * 默认给本地的端口发送

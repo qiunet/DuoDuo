@@ -3,9 +3,12 @@ package org.qiunet.flash.handler.common.player.offline;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
+import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
+import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 
 import java.util.concurrent.ExecutionException;
@@ -66,13 +69,18 @@ public enum UserOfflineManager {
 		}
 	}
 
+	// 所有踢出事件最后执行. 免得事情UserOnline没有插入. 但是这里没有查到. 重新创建了
+	@EventListener(EventHandlerWeightType.LOWEST)
+	private void kickOut(PlayerKickOutEvent event) {
+		this.data.invalidate(event.getPlayerId());
+	}
+	@EventListener(EventHandlerWeightType.LOWEST)
+	private void loginEvent(LoginSuccessEvent event) {
+		this.data.invalidate(event.getPlayer().getId());
+	}
 	@EventListener
-	private void kickOutPlayer(PlayerKickOutEvent event) {
-		OfflinePlayerActor actor = data.getIfPresent(event.getPlayerId());
-		if (actor == null) {
-			return;
-		}
-		actor.destroy();
+	private void logoutEvent(PlayerActorLogoutEvent event) {
+		this.data.invalidate(event.getPlayer().getId());
 	}
 
 	/**

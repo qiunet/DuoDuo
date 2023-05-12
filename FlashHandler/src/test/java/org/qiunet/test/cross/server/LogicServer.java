@@ -8,7 +8,6 @@ import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.cross.common.Constants;
 import org.qiunet.test.cross.common.redis.RedisDataUtil;
-import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
 /***
@@ -23,13 +22,9 @@ public class LogicServer {
 	public static void main(String[] args) {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
-		ClassScanner.getInstance(ScannerType.SERVER)
-			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, Constants.LOGIC_NODE_PORT))
-			.scanner();
-
-			BootstrapServer.createBootstrap(hook)
-				.listener(ServerBootStrapConfig.newBuild("测试服务", Constants.LOGIC_SERVER_PORT).build())
+			BootstrapServer.createBootstrap(hook, RedisDataUtil::getInstance, ScannerType.SERVER, classScanner -> {
+				classScanner.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.LOGIC_SERVER_ID, 0, Constants.LOGIC_NODE_PORT));
+				}).listener(ServerBootStrapConfig.newBuild("测试服务", Constants.LOGIC_SERVER_PORT).build())
 				.await();
 	}
 

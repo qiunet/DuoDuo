@@ -7,7 +7,6 @@ import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.cross.common.Constants;
 import org.qiunet.test.cross.common.redis.RedisDataUtil;
-import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
 /***
@@ -21,13 +20,9 @@ public class CrossServer {
 
 	public static void main(String[] args) {
 		ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-
-		ClassScanner.getInstance(ScannerType.SERVER)
-			.addParam(ScannerParamKey.SERVER_NODE_REDIS_INSTANCE_SUPPLIER, RedisDataUtil::getInstance)
-			.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, 0, Constants.CROSS_NODE_PORT))
-			.scanner();
-
-			BootstrapServer.createBootstrap(hook).await();
+		BootstrapServer.createBootstrap(hook, RedisDataUtil::getInstance, ScannerType.SERVER, classScanner -> {
+			classScanner.addParam(ScannerParamKey.CUSTOM_SERVER_INFO, ServerInfo.valueOf(Constants.CROSS_SERVER_ID, 0, Constants.CROSS_NODE_PORT));
+		}).await();
 	}
 
 	public static void shutdown(){
