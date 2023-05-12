@@ -9,10 +9,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
-import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
+import org.qiunet.flash.handler.netty.server.bound.*;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
@@ -51,6 +48,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 
 		ChannelPipeline pipeline = ctx.channel().pipeline();
 		if (equals(protocolHeader.getConnectInMagic(), in)) {
+			pipeline.addLast("InvalidChannelCleanHandler", new InvalidChannelCleanHandler());
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));

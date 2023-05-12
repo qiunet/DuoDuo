@@ -46,10 +46,10 @@ public enum CloseCause {
 	INACTIVE("不活跃了", true),
 	@Protobuf(description = "销毁")
 	DESTROY("销毁", false),
-
 	@Protobuf(description = "旧Session活跃时候重连,关闭旧Session")
 	LOGIN_RECONNECTION("旧Session活跃时候重连,关闭旧Session", true),
-	;
+	@Protobuf(description = "清理无效的连接")
+    INVALID_CHANNEL("清理无效的连接", false);
 	private final boolean waitConnect;
 	private final boolean logoutPush;
 	private final String desc;

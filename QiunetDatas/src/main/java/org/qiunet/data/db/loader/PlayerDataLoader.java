@@ -3,6 +3,7 @@ package org.qiunet.data.db.loader;
 import com.google.common.collect.Maps;
 import org.qiunet.data.async.ISyncDbMessage;
 import org.qiunet.data.cache.status.EntityStatus;
+import org.qiunet.data.core.entity.IEntityList;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.support.DataSupportMapping;
@@ -31,7 +32,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
 	 * 同步到库
 	 */
-	private ISyncDbMessage sync;
+	private final ISyncDbMessage sync;
 	/**
 	 * 是否线程安全
 	 */
@@ -54,7 +55,9 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 		this.playerId = playerId;
 		this.readOnly = readOnly;
 		this.sync = sync;
-		this.register();
+		if (! readOnly) {
+			this.register();
+		}
 	}
 
 	/**
@@ -73,6 +76,9 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * 销毁. 顺便要更新入库
 	 */
 	public void unregister(){
+		if (readOnly) {
+			return;
+		}
 		DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
 		this.syncToDb();
 		// 清除数据. 下次上线重新获取新数据
@@ -107,14 +113,18 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	@Override
 	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
 		if (readOnly) {
-			throw new CustomException("Data loader read only!");
+			// 帮转换. 不做处理 方便外面不需要判空!
+			return bo;
 		}
 
-		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
 		bo.playerDataLoader = this;
 		if (bo.getDo() instanceof DbEntityList aDo) {
 			Map mapData = this.getMapData(bo.getClass());
+			if (mapData.containsKey(((IEntityList) entity).subKey())) {
+				throw new CustomException("Current cache type {} have data already, can not insert again!", bo.getClass().getSimpleName() + ".class");
+			}
 			mapData.put(aDo.subKey(), bo);
 		}else {
 			DbEntityBo data = getData(bo.getClass());

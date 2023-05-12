@@ -18,10 +18,7 @@ import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
-import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
-import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
+import org.qiunet.flash.handler.netty.server.bound.*;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -114,6 +111,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	private void handlerWebSocketHandShark(ChannelHandlerContext ctx, FullHttpRequest request){
 		ChannelPipeline pipeline = ctx.pipeline();
 
+		pipeline.addLast("InvalidChannelCleanHandler", new InvalidChannelCleanHandler());
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WebSocketServerProtocolConfig.newBuilder()
