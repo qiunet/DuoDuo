@@ -1,6 +1,7 @@
 package org.qiunet.utils.async;
 
 import com.google.common.collect.Lists;
+import org.qiunet.utils.string.IgnoreToString;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
  * @author qiunet
  * 2020-09-23 22:47
  **/
+@IgnoreToString
 public class LazyLoader<T> {
 	private final AtomicReference<T> objRef = new AtomicReference<>();
 	/**

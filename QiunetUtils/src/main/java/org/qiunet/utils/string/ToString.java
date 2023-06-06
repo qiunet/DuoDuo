@@ -65,13 +65,8 @@ public final class ToString {
 	 * @param joiner
 	 */
 	private static void appendFields(Object obj, StringJoiner joiner) {
-		ReflectUtil.doWithFields(obj.getClass(), field -> {
-			if (Modifier.isStatic(field.getModifiers())
-					|| Modifier.isTransient(field.getModifiers())
-			) {
-				return;
-			}
-
+		ReflectUtil.doWithFields(obj.getClass(),
+		field -> {
 			try {
 				field.setAccessible(true);
 				final Object fieldValue = field.get(obj);
@@ -79,7 +74,11 @@ public final class ToString {
 			} catch (IllegalAccessException e) {
 				LoggerType.DUODUO.error("Object {} field {} get value error! {}", obj.getClass(), field.getName(), e);
 			}
-		}, field -> !(Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())));
+		},
+		field -> !(Modifier.isStatic(field.getModifiers())
+			|| Modifier.isTransient(field.getModifiers())
+			|| field.isAnnotationPresent(IgnoreToString.class)
+			|| field.getType().isAnnotationPresent(IgnoreToString.class)));
 	}
 
 	/**

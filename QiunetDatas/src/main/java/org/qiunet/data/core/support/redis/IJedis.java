@@ -1,5 +1,6 @@
 package org.qiunet.data.core.support.redis;
 
+import redis.clients.jedis.Transaction;
 import redis.clients.jedis.commands.JedisCommands;
 import redis.clients.jedis.commands.MultiKeyCommands;
 
@@ -10,4 +11,9 @@ import redis.clients.jedis.commands.MultiKeyCommands;
  * 2021/11/5 15:54
  */
 public interface IJedis extends JedisCommands, MultiKeyCommands {
+	/**
+	 * 事件
+	 * @return transaction
+	 */
+	Transaction multi();
 }

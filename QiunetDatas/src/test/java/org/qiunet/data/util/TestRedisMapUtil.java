@@ -14,10 +14,26 @@ import java.util.Map;
  */
 public class TestRedisMapUtil {
 
-	public static class User {
-		public static final String CONSTANT = "111";
+	public static class BasicUser {
 		private int id;
 
+		public BasicUser() {
+		}
+
+		public BasicUser(int id) {
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+	}
+	public static class User extends BasicUser {
 		private String name;
 
 		private long score;
@@ -27,7 +43,7 @@ public class TestRedisMapUtil {
 		public User() {}
 
 		public User(int id, String name, long score) {
-			this.id = id;
+			super(id);
 			this.name = name;
 			this.score = score;
 			this.pic = Lists.newArrayList("11111");
@@ -35,14 +51,6 @@ public class TestRedisMapUtil {
 
 		public List<String> getPic() {
 			return pic;
-		}
-
-		public int getId() {
-			return id;
-		}
-
-		public void setId(int id) {
-			this.id = id;
 		}
 
 		public String getName() {
@@ -70,15 +78,15 @@ public class TestRedisMapUtil {
 
 		User user = new User(id, name,  score);
 		Map<String, String> map = RedisMapUtil.toMap(user);
-		Assertions.assertEquals(score+"", map.get("score"));
-		Assertions.assertEquals(id+"", map.get("id"));
+		Assertions.assertEquals(String.valueOf(score), map.get("score"));
+		Assertions.assertEquals(String.valueOf(id), map.get("id"));
 		Assertions.assertEquals(name, map.get("name"));
 		Assertions.assertEquals(4, map.size());
 
 		User user1 = RedisMapUtil.toObj(map, User.class);
 		Assertions.assertEquals(score, user1.score);
 		Assertions.assertEquals(name, user1.name);
-		Assertions.assertEquals(id, user1.id);
+		Assertions.assertEquals(id, user1.getId());
 	}
 
 }

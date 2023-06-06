@@ -30,6 +30,11 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 		this.redisKey = "_GAME_RANK_"+getType().name();
 	}
 
+	public BaseRedisRankHandler(String redisKey, String redisDataKey) {
+		this.redisKey = redisKey;
+		this.redisDataKey = redisDataKey;
+	}
+
 	protected  abstract IRedisUtil redisUtil();
 	/**
 	 * 按照时间构造一个分数.
@@ -40,7 +45,7 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 	 */
 	private long buildScore(long value) {
 		Preconditions.checkState(value > 0);
-		long val =  value * 100_000_000L;
+		long val =  value * 10_000_000_000L;
 		val += DateUtil.currSeconds();
 		if (val < 0) val = Long.MAX_VALUE;
 		return val;
@@ -92,6 +97,14 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 			 rankData.rank = rank.intValue() + 1;
 			 return rankData;
 		 });
+	}
+
+	public String getRedisDataKey() {
+		return redisDataKey;
+	}
+
+	public String getRedisKey() {
+		return redisKey;
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package org.qiunet.data.redis.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.qiunet.data.core.support.redis.RedisDeque;
 import org.qiunet.data.core.support.redis.RedisLock;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -55,5 +56,23 @@ public class TestRedis {
 				System.out.println("====");
 			}
 		}
+	}
+
+	@Test
+	public void testDeque() {
+		RedisDeque deque = new RedisDeque(RedisDataUtil.getInstance(), "deque");
+		deque.clear();
+
+		deque.add("1");
+		deque.add("2");
+		deque.add("3");
+		Assertions.assertEquals(3, deque.size());
+		Assertions.assertEquals("3", deque.getLast());
+		Assertions.assertEquals("1", deque.getFirst());
+
+		boolean remove = deque.remove("2");
+		Assertions.assertEquals(2, deque.size());
+		Assertions.assertEquals("3", deque.getLast());
+		Assertions.assertEquals("1", deque.getFirst());
 	}
 }

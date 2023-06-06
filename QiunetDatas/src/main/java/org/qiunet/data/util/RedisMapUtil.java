@@ -18,13 +18,27 @@ import java.util.Map;
  */
 public class RedisMapUtil {
 	/**
-	 *
-	 * @param obj
-	 * @return
+	 * 将obj 转化为map{string, string}
+	 * @param obj 需要转化的obj
+	 * @return map
 	 */
 	public static Map<String, String> toMap(Object obj) {
 		Map<String, String> map = new HashMap<>();
-		for (Field field : obj.getClass().getDeclaredFields()) {
+		toMap(obj, obj.getClass(), map);
+		return map;
+	}
+
+	/**
+	 * 将obj 转化为map{string, string}
+	 * @param obj 需要转化的obj
+	 * @return map
+	 */
+	private static void toMap(Object obj, Class<?> clz, Map<String, String> map) {
+		if (clz.getSuperclass() != Object.class) {
+			toMap(obj, clz.getSuperclass(), map);
+		}
+
+		for (Field field : clz.getDeclaredFields()) {
 			if (Modifier.isStatic(field.getModifiers())
 			|| Modifier.isTransient(field.getModifiers())
 			|| Modifier.isFinal(field.getModifiers())) {
@@ -46,7 +60,6 @@ public class RedisMapUtil {
 				map.put(field.getName(), JsonUtil.toJsonString(val));
 			}
 		}
-		return map;
 	}
 
 	/**

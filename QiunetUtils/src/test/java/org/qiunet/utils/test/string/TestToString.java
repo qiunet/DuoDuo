@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.IgnoreToString;
 import org.qiunet.utils.string.ToString;
 
 import java.util.List;
@@ -24,35 +25,37 @@ public class TestToString {
 		Assertions.assertEquals(s, "DUODUO");
 
 		s = ToString.toString(new User("qiunet", ImmutableList.of(1, 2, 3)));
-		Assertions.assertEquals(s, "User[account = qiunet, scores = {1, 2, 3}]");
+		Assertions.assertEquals("User[account = qiunet, scores = {1, 2, 3}]", s);
 
 		s = ToString.toString(new int[]{1, 2, 3});
 		Assertions.assertEquals(s, "int[]{1, 2, 3}");
 	}
 
 	public static class User {
-		private String account;
-		private List<Integer> scores;
+		private final String account;
+		private final List<Integer> scores;
+		@IgnoreToString
+		private final String level;
 
+		private final ITest test;
 		public User(String account, List<Integer> scores) {
+			this.test = new ITest(2);
 			this.account = account;
+			this.level = "3423424";
 			this.scores = scores;
 		}
+	}
 
-		public String getAccount() {
-			return account;
+	@IgnoreToString
+	public static class ITest {
+		private final int val;
+
+		public ITest(int val) {
+			this.val = val;
 		}
 
-		public void setAccount(String account) {
-			this.account = account;
-		}
-
-		public List<Integer> getScores() {
-			return scores;
-		}
-
-		public void setScores(List<Integer> scores) {
-			this.scores = scores;
+		public int getVal() {
+			return val;
 		}
 	}
 }
