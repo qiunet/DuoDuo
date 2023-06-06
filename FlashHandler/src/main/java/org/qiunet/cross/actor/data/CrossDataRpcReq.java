@@ -1,6 +1,7 @@
 package org.qiunet.cross.actor.data;
 
 import org.qiunet.cross.rpc.IRpcRequest;
+import org.qiunet.flash.handler.common.player.IPlayer;
 
 /***
  * 跨服获取玩家数据的事务请求数据
@@ -8,7 +9,7 @@ import org.qiunet.cross.rpc.IRpcRequest;
  * @author qiunet
  * 2020-10-28 12:03
  */
-public class CrossDataRpcReq implements IRpcRequest {
+public class CrossDataRpcReq implements IRpcRequest, IPlayer {
 
 	private String key;
 
@@ -35,5 +36,10 @@ public class CrossDataRpcReq implements IRpcRequest {
 
 	public void setPlayerId(long playerId) {
 		this.playerId = playerId;
+	}
+
+	@Override
+	public long getId() {
+		return playerId;
 	}
 }

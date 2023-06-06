@@ -6,6 +6,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
+import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
@@ -72,8 +73,15 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			logger.info("[{}({})] <<< {}", "KCP", ctx.channel().id().asShortText(), req._toString());
 		}
 
-		KcpPlayerTokenMapping kcpParamInfo = KcpPlayerTokenMapping.getPlayer(req.getPlayerId());
 		ISession kcpSession = ChannelUtil.getSession(ctx.channel());
+		IMessageActor actor = kcpSession.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (actor != null && ((DSession) actor.getSession()).getKcpSession().channel() == ctx.channel()) {
+			// 重复请求
+			kcpSession.sendMessage(KcpBindAuthRsp.valueOf(true), true);
+			return true;
+		}
+
+		KcpPlayerTokenMapping kcpParamInfo = KcpPlayerTokenMapping.getPlayer(req.getPlayerId());
 		if (kcpParamInfo == null
 				|| ! Objects.equals(req.getToken(), kcpParamInfo.getToken())
 				|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()

@@ -11,6 +11,8 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.Objects;
+
 /***
  * Player 的一个总的处理对象.
  * 继承类
@@ -32,7 +34,8 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	}
 
 	public void setMsgExecuteIndex(String msgExecuteIndex) {
-		if (this.msgExecuteIndex != null) {
+		if (this.msgExecuteIndex != null
+		&& !Objects.equals(this.msgExecuteIndex, msgExecuteIndex)) {
 			throw new CustomException("msgExecuteIndex setting repeated");
 		}
 		this.msgExecuteIndex = msgExecuteIndex;

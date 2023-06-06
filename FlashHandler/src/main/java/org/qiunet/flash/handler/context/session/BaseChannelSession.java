@@ -85,6 +85,10 @@ class BaseChannelSession extends BaseSession {
 		return this.doSendMessage(channel, message, flush);
 	}
 
+	public Channel channel() {
+		return channel;
+	}
+
 	@Override
 	public String toString() {
 		StringJoiner sj = new StringJoiner(",", "[", "]");

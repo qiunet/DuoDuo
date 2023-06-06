@@ -29,7 +29,7 @@ abstract class BaseSession implements ISession {
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	private final AtomicBoolean closed = new AtomicBoolean();
+	protected final AtomicBoolean closed = new AtomicBoolean();
 	public void close(CloseCause cause) {
 		if (! closed.compareAndSet(false, true)) {
 			// 避免多次调用close. 多次调用监听.

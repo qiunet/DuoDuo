@@ -10,6 +10,7 @@ import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -69,12 +70,17 @@ public enum UserOfflineManager {
 		}
 	}
 
+	@EventListener(EventHandlerWeightType.HIGH)
+	private void serverShutdown(ServerShutdownEvent event) {
+		this.data.invalidateAll();
+	}
+
 	// 所有踢出事件最后执行. 免得事情UserOnline没有插入. 但是这里没有查到. 重新创建了
-	@EventListener(EventHandlerWeightType.LOWEST)
+	@EventListener
 	private void kickOut(PlayerKickOutEvent event) {
 		this.data.invalidate(event.getPlayerId());
 	}
-	@EventListener(EventHandlerWeightType.LOWEST)
+	@EventListener
 	private void loginEvent(LoginSuccessEvent event) {
 		this.data.invalidate(event.getPlayer().getId());
 	}

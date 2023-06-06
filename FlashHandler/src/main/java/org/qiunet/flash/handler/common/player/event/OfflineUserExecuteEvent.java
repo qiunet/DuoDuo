@@ -21,6 +21,10 @@ public class OfflineUserExecuteEvent implements IListenerEvent {
 		return data;
 	}
 
+	public static void fireEvent(Runnable runnable, long playerId) {
+		valueOf(runnable, playerId).fireEventHandler();
+	}
+
 	public long getPlayerId() {
 		return playerId;
 	}

@@ -194,9 +194,11 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 
 		redisUtil.returnJedis().sadd(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		TimerManager.executor.scheduleAtFixedRate(() -> {
-			// 触发心跳 业务可能修改ServerInfo数据.
-			currServerInfo.refreshUpdateDt();
-			ServerNodeTickEvent.instance.fireEventHandler();
+			if (! deprecated.get() && !serverClosed.get()) {
+				// 触发心跳 业务可能修改ServerInfo数据.
+				currServerInfo.refreshUpdateDt();
+				ServerNodeTickEvent.instance.fireEventHandler();
+			}
 			redisUtil.returnJedis(false).set(CURRENT_SERVER_NODE_INFO_REDIS_KEY, currServerInfo.toString(), SetParams.setParams().ex(ServerInfo.SERVER_OFFLINE_SECONDS));
 		}, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}

@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.player.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -20,7 +21,9 @@ public class PlayerLogoutPush extends IChannelData {
 
 	public static PlayerLogoutPush valueOf(CloseCause cause){
 		PlayerLogoutPush data = new PlayerLogoutPush();
-		data.canReconnect = cause.needWaitConnect();
+		data.canReconnect = cause.clientNeedReconnect()
+			&& !ServerNodeManager.isDeprecatedServer()
+			&& !ServerNodeManager.isServerClosed();
 		data.cause = cause;
 		return data;
 	}

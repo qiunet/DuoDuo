@@ -70,7 +70,11 @@ public enum UserServerStateManager {
 	 */
 	public <E extends IRpcRequest & IPlayer, R> void rpcCall(IRpcFunction<E, R> req, E reqData, BiConsumer<R, Throwable> consumer) {
 		// rpc 调用
-		RpcManager.rpcCall(this.assignServerId(reqData.getId()), req, reqData, consumer);
+		try {
+			RpcManager.rpcCall(this.assignServerId(reqData.getId()), req, reqData, consumer);
+		} catch (NoRegisterException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -79,7 +83,7 @@ public enum UserServerStateManager {
 	 * @param playerId 玩家id
 	 * @return server id
 	 */
-	public int assignServerId(long playerId) {
+	public int assignServerId(long playerId) throws NoRegisterException {
 		return assignServerId(playerId, false);
 	}
 
@@ -91,11 +95,10 @@ public enum UserServerStateManager {
 	 * @param onlineOnly 是否只返回在线的
 	 * @return server id
 	 */
-	public int assignServerId(long playerId, boolean onlineOnly) {
+	public int assignServerId(long playerId, boolean onlineOnly) throws NoRegisterException {
 		UserServerState state = getUserServerState(playerId);
 		if (state == null) {
-			logger.error("Player {} not register on logic server!", playerId);
-			return 0;
+			throw new NoRegisterException("Player "+playerId+" not register on logic server!");
 		}
 
 		int serverId = state.getServerId();
@@ -156,6 +159,7 @@ public enum UserServerStateManager {
 		if (state.getServerId() > 0) {
 			// 触发远端服务器事件
 			CrossEventManager.fireCrossUserEvent(state.getServerId(), event, playerId);
+			return;
 		}
 
 		if (onlineOnly) {
@@ -169,6 +173,10 @@ public enum UserServerStateManager {
 
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void userOnline(LoginSuccessEvent event) {
+		if (!((AbstractUserActor) event.getPlayer()).isPlayerActor()) {
+			return;
+		}
+
 		UserServerState userServerState = getUserServerState(event.getPlayer().getId());
 
 		if (userServerState == null) {
@@ -191,7 +199,17 @@ public enum UserServerStateManager {
 	@EventListener
 	private void userLogout(PlayerActorLogoutEvent event) {
 		String redisKey = UserServerState.redisKey(event.getPlayer().getId());
-		redisUtil.returnJedis().hdel(redisKey, SERVER_ID, ONLINE);
+		redisUtil.returnJedis().hdel(redisKey, ONLINE);
+	}
+
+	@EventListener
+	private void userDestroy(PlayerDestroyEvent event) {
+		if (! ((AbstractUserActor) event.getPlayer()).isPlayerActor()) {
+			return;
+		}
+
+		String redisKey = UserServerState.redisKey(event.getPlayer().getId());
+		redisUtil.returnJedis().hdel(redisKey, SERVER_ID);
 	}
 
 	@EventListener
@@ -208,6 +226,9 @@ public enum UserServerStateManager {
 	@EventListener
 	private void offlineUserDestroy(OfflineUserDestroyEvent event) {
 		String redisKey = UserServerState.redisKey(event.getPlayer().getId());
-		redisUtil.returnJedis().hdel(redisKey, SERVER_ID);
+		UserServerState serverState = getUserServerState(event.getPlayer().getId());
+		if (serverState != null && serverState.getServerId() == ServerNodeManager.getCurrServerId()) {
+			redisUtil.returnJedis().hdel(redisKey, SERVER_ID);
+		}
 	}
 }

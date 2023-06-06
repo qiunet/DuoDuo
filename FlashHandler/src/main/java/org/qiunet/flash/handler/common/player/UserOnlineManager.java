@@ -208,6 +208,9 @@ public enum UserOnlineManager {
 			return;
 		}
 
+		// 触发销毁
+		((IPlayerFireEvent) userActor).fireEvent(PlayerDestroyEvent.valueOf());
+
 		userActor.getObserverSupport().syncFire(IPlayerDestroy.class, p -> p.destroyActor(userActor));
 		LoggerType.DUODUO_FLASH_HANDLER.info("{} was destroy", userActor.getSession());
 		onlineCrossPlayers.remove(userActor.getId());
@@ -346,7 +349,7 @@ public enum UserOnlineManager {
 		}
 	}
 
-	@EventListener(EventHandlerWeightType.HIGHEST)
+	@EventListener(EventHandlerWeightType.HIGH)
 	private void serverShutdown(ServerShutdownEvent event) {
 		if (ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.LOGIC
 		 && ServerNodeManager.getCurrServerInfo().getServerType() != ServerType.CROSS) {

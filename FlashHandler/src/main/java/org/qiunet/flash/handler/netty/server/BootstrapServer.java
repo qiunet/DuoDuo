@@ -6,6 +6,7 @@ import org.qiunet.cross.common.contants.ScannerParamKey;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
@@ -27,6 +28,7 @@ import org.qiunet.utils.net.NetUtil;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
@@ -285,6 +287,11 @@ public class BootstrapServer {
 
 			ServerDeprecatedEvent.fireDeprecated();
 
+			// 非游戏服 玩法服. 就不需要执行等人了.
+			if (ServerNodeManager.getCurrServerType() == ServerType.LOGIN || ServerNodeManager.getCurrServerType() == ServerType.BACKSTAGE) {
+				return;
+			}
+
 			UserOnlineManager.instance.foreach(actor -> {
 				logger.debug("Push message to online user {}", actor.getId());
 				if (actor.isPlayerActor()) {
@@ -348,7 +355,10 @@ public class BootstrapServer {
 			} else if (msg.equalsIgnoreCase(hook.hotswapMsg())) {
 				ClassHotSwap.hotSwap(Paths.get(System.getProperty("hotSwap.dir")));
 			}else {
-				HookCustomCmdEvent.valueOf(msg).fireEventHandler();
+				String finalMsg = msg;
+				ThreadPoolManager.NORMAL.submit(() -> {
+					HookCustomCmdEvent.valueOf(finalMsg).fireEventHandler();
+				});
 			}
 		}
 

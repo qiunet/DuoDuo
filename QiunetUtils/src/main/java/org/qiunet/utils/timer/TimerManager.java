@@ -123,8 +123,8 @@ public enum TimerManager {
 	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
 		if (timeMillis < now) {
-			throw new IllegalArgumentException("timeMillis is less than currentTimeMillis");
+			LoggerType.DUODUO.error("timeMillis is less than currentTimeMillis");
 		}
-		return scheduleWithDelay(delayTask, (timeMillis - now), TimeUnit.MILLISECONDS);
+		return scheduleWithDelay(delayTask, Math.max(1, timeMillis - now), TimeUnit.MILLISECONDS);
 	}
 }

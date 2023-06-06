@@ -5,6 +5,7 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayerFireEvent;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.listener.event.IListenerEvent;
@@ -40,7 +41,11 @@ public final class CrossEventManager {
 	public static <T extends UserEvent> void fireCrossUserEvent(int serverId, T eventData, long playerId) {
 		if (serverId == ServerConfig.getServerId()) {
 			AbstractUserActor playerActor = UserOnlineManager.instance.getActor(playerId);
-			((IPlayerFireEvent) playerActor).fireAsyncEvent(eventData);
+			if (playerActor == null) {
+				OfflineUserExecuteEvent.fireEvent(eventData::fireEventHandler, playerId);
+			}else {
+				((IPlayerFireEvent) playerActor).fireAsyncEvent(eventData);
+			}
 			return;
 		}
 		ServerNodeManager.getNode(serverId).fireUserCrossEvent(eventData, playerId);
