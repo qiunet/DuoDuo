@@ -3,7 +3,6 @@ package org.qiunet.utils.listener.hook;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.listener.event.data.ServerStoppedEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ public class ShutdownHookUtil {
 	 * @param closeHook
 	 */
 	public void addShutdownHook(IShutdownCloseHook closeHook) {
-		this.addLast(closeHook);
+		this.addFirst(closeHook);
 	}
 
 	/***

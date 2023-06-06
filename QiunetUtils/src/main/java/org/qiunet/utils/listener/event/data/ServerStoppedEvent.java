@@ -1,6 +1,7 @@
 package org.qiunet.utils.listener.event.data;
 
 import org.qiunet.utils.listener.event.IListenerEvent;
+import org.qiunet.utils.logger.LoggerType;
 
 /***
  * 服务终止事件
@@ -17,6 +18,8 @@ public class ServerStoppedEvent implements IListenerEvent {
 		private static final ServerStoppedEvent instance = new ServerStoppedEvent();
 
 		public static void fireEvent(){
-			instance.fireEventHandler();
+			instance.fireEventHandler((m, e) -> {
+				LoggerType.DUODUO.error("Server shutdown exception:", e);
+			});
 		}
 }

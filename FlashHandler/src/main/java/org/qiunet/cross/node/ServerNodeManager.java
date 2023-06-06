@@ -1,6 +1,10 @@
 package org.qiunet.cross.node;
 
+import com.google.common.base.Preconditions;
+import io.netty.buffer.ByteBuf;
 import org.qiunet.data.util.ServerType;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -141,5 +145,37 @@ public class ServerNodeManager {
 	 */
 	public static ServerInfo assignServer(ServerType serverType, Predicate<ServerInfo> filter) {
 		return assignServer(serverList(serverType), filter);
+	}
+	/**
+	 * 对指定类型的服务器进行广播
+	 * @param serverType 类型
+	 * @param filter 过滤器
+	 * @param channelData 广播内容
+	 */
+	public static void broadcast(ServerType serverType, Predicate<Integer> filter, IChannelData channelData) {
+		Preconditions.checkNotNull(filter);
+		ByteBuf byteBuf = null;
+		try {
+			List<Integer> serveredIdList = ServerNodeManager0.instance.serverIdList(serverType, filter);
+			int protocolId = channelData.protocolId();
+			byteBuf = channelData.toByteBuf();
+			for (Integer serverId : serveredIdList) {
+				DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(protocolId, byteBuf.retainedDuplicate());
+				ServerNode serverNode = getNode(serverId);
+				serverNode.sendMessage(message);
+			}
+		}finally {
+			if (byteBuf != null) {
+				byteBuf.release();
+			}
+		}
+	}
+	/**
+	 * 对指定类型的服务器进行广播
+	 * @param serverType 类型
+	 * @param channelData 广播内容
+	 */
+	public static void broadcast(ServerType serverType, IChannelData channelData) {
+		broadcast(serverType, t -> true, channelData);
 	}
 }

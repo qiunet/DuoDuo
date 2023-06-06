@@ -42,6 +42,12 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 */
 	void runMessage(IMessage<H> message);
 	/**
+	 * 以某个MsgExecuteIndex 执行message
+	 * @param message 消息
+	 * @param msgExecuteIndex 消息的index
+	 */
+	void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex);
+	/**
 	 * 在某个毫秒时间戳执行
 	 * @param msg
 	 * @param executeMillis 执行的毫秒时间戳

@@ -1,5 +1,8 @@
 package org.qiunet.utils.listener.event;
 
+import java.lang.reflect.Method;
+import java.util.function.BiConsumer;
+
 /***
  * 包装事件的类的接口
  *
@@ -11,6 +14,12 @@ public interface IListenerEvent {
 	 * 触发事件处理
 	 */
 	default void fireEventHandler() {
-		EventManager.fireEventHandler(this);
+		EventManager.post(this);
+	}
+	/***
+	 * 触发事件处理
+	 */
+	default void fireEventHandler(BiConsumer<Method, Throwable> exConsume) {
+		EventManager.post(this, exConsume);
 	}
 }

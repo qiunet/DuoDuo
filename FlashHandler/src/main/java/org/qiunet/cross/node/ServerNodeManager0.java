@@ -200,18 +200,26 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			redisUtil.returnJedis(false).set(CURRENT_SERVER_NODE_INFO_REDIS_KEY, currServerInfo.toString(), SetParams.setParams().ex(ServerInfo.SERVER_OFFLINE_SECONDS));
 		}, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
-
 	/**
-	 * 根据server type 以及filter
+	 * 根据server type 以及filter 获得所有的serverId
 	 * @param serverType 服务类型
 	 * @param filter 过滤器 true的才保留
 	 * @return 最终的所有server id
 	 */
-	List<ServerInfo> serverList(ServerType serverType, Predicate<Integer> filter) {
+	List<Integer> serverIdList(ServerType serverType, Predicate<Integer> filter) {
 		String redisKey = serverRegisterCenterRedisKey(serverType);
 		Set<String> members = redisUtil.returnJedis().smembers(redisKey);
 		return members.stream().map(Integer::parseInt)
-			.filter(filter).map(this::getServerInfo)
+			.filter(filter).collect(Collectors.toList());
+	}
+	/**
+	 * 根据server type 以及filter 获得server info
+	 * @param serverType 服务类型
+	 * @param filter 过滤器 true的才保留
+	 * @return 最终的所有server info
+	 */
+	List<ServerInfo> serverList(ServerType serverType, Predicate<Integer> filter) {
+		return serverIdList(serverType, filter).stream().map(this::getServerInfo)
 			.collect(Collectors.toList());
 	}
 

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 /***
  * 监听器的manager
@@ -91,20 +92,43 @@ enum EventManager0 implements IApplicationContextAware {
 	}
 
 	/***
-	 *
-	 * @param eventData
+	 * 触发事件
+	 * @param event 事件数据
 	 */
-	void post(IListenerEvent eventData) {
+	void post(IListenerEvent event) {
+		this.post(event, (m, e) -> {
+			if (e instanceof IllegalAccessException) {
+				throw new CustomException(e, "Fire Event Handler [{}.{}] Error!", m.getDeclaringClass().getName(), m.getName());
+			}
+			else if (e instanceof InvocationTargetException) {
+				Throwable targetException = ((InvocationTargetException) e).getTargetException();
+				if (! (targetException instanceof CustomException)) {
+					throw new CustomException(targetException, "Fire Event Handler [{}.{}] Error!", m.getDeclaringClass().getName(), m.getName());
+				}else {
+					throw ((CustomException) targetException);
+				}
+			}else {
+				throw new CustomException(e, "Fire Event Error!");
+			}
+		});
+	}
+
+	/**
+	 * 触发事件 自己处理异常
+	 * @param event 事件数据
+	 * @param exConsume 异常消费
+	 */
+	void post(IListenerEvent event, BiConsumer<Method, Throwable> exConsume) {
 		if (! inited.get()) {
 			throw new CustomException("Event not init");
 		}
 
-		List<EventSubscriber> wrappers = listeners.get(eventData.getClass());
+		List<EventSubscriber> wrappers = listeners.get(event.getClass());
 		if (wrappers == null) {
 			return;
 		}
 
-		wrappers.forEach(w -> w.handleEvent(eventData));
+		wrappers.forEach(w -> w.handleEvent(event, exConsume));
 	}
 
 	private static class EventSubscriber {
@@ -124,21 +148,15 @@ enum EventManager0 implements IApplicationContextAware {
 			method.setAccessible(true);
 		}
 
-		void handleEvent(IListenerEvent data) {
+		void handleEvent(IListenerEvent data, BiConsumer<Method, Throwable> exConsume) {
 			if (this.limitCount != 0 && (currCount >= this.limitCount || (currCount++) >= this.limitCount)) {
 				return;
 			}
 
 			try {
 				method.invoke(caller, data);
-			} catch (IllegalAccessException e) {
-				throw new CustomException(e, "Fire Event Handler [{}.{}] Error!", caller.getClass().getName(), method.getName());
-			} catch (InvocationTargetException e) {
-				if (!(e.getTargetException() instanceof CustomException)) {
-					throw new CustomException(e.getTargetException(), "Fire Event Handler [{}.{}] Error!", caller.getClass().getName(), method.getName());
-				}else {
-					throw ((CustomException) e.getTargetException());
-				}
+			} catch (Throwable e) {
+				exConsume.accept(method, e);
 			}
 		}
 	}

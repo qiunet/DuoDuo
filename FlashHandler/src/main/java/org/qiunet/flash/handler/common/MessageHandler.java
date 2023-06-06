@@ -91,6 +91,10 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		executorService.randEventLoop().execute(() -> this.executorMessage(message));
 	}
 
+	@Override
+	public void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex) {
+		executorService.getEventLoop(msgExecuteIndex).execute(() -> this.executorMessage(message));
+	}
 
 	@Override
 	public boolean inSelfThread() {
@@ -169,7 +173,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			this.eventLoops = IntStream.range(0, count)
 				.mapToObj(DExecutorService::new)
 			.toList();
-			ShutdownHookUtil.getInstance().addShutdownHook(() -> {
+			ShutdownHookUtil.getInstance().addLast(() -> {
 				eventLoops.forEach(DExecutorService::shutdown);
 			});
 		}
