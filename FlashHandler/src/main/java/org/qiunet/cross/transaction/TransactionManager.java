@@ -8,7 +8,6 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
@@ -107,14 +106,8 @@ public enum TransactionManager {
 	 */
 	void handler(ITransactionReq req, DTransaction dTransaction) {
 		if (req instanceof IPlayer) {
-			AbstractUserActor actor = UserOnlineManager.instance.getActor(((IPlayer) req).getId());
-			if (actor != null) {
-				actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
-			}else {
-				OfflineUserExecuteEvent.valueOf(() -> {
-					TransactionManager0.handler(req.getClass(), dTransaction);
-				}, ((IPlayer) req).getId()).fireEventHandler();
-			}
+			AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) req).getId());
+			actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
 		}else {
 			TransactionManager0.handler(req.getClass(), dTransaction);
 		}

@@ -1,14 +1,16 @@
 package org.qiunet.data.db.loader;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import org.qiunet.data.async.IAsyncNode;
-import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
 import org.qiunet.data.support.DbDataListSupport;
 import org.qiunet.data.support.DbDataSupport;
 import org.qiunet.data.support.IDataSupport;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
@@ -17,7 +19,9 @@ import org.qiunet.utils.scanner.ScannerType;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /***
  *
@@ -27,39 +31,40 @@ import java.util.concurrent.atomic.AtomicBoolean;
 enum DataLoaderManager implements IAsyncNode {
 	instance;
 
-	private static final Map<Long, PlayerDataLoader> playerDataLoaders = Maps.newConcurrentMap();
-	/**
-	 * 注册到异步更新
-	 */
-	private static final AtomicBoolean registerToAsyncJob = new AtomicBoolean();
+	private static final Cache<Long, PlayerDataLoader> playerDataLoaders = CacheBuilder.newBuilder()
+		.expireAfterAccess(3, TimeUnit.MINUTES)
+		.removalListener(n -> {
+			// 被到时移除. 被主动移除. 都remove
+			if (n.getValue() != null) {
+				((PlayerDataLoader) n.getValue()).remove();
+			}
+		})
+		.build();
 
 	/**
 	 * 取消注册playerId
 	 * @param playerId
 	 */
 	void unRegisterPlayerLoader(long playerId) {
-		playerDataLoaders.remove(playerId);
+		playerDataLoaders.invalidate(playerId);
 	}
-
 	/**
-	 * 注册玩家的数据加载器
-	 * @param playerId
-	 * @param loader
+	 * 玩家的数据加载器
+	 * 保证如果在一个服务器. 肯定是只存在一个 loader.
+	 * @param playerId 玩家id
+	 * @param supplier 生成器
 	 */
-	void registerPlayerLoader(long playerId, PlayerDataLoader loader) {
-		if (registerToAsyncJob.compareAndSet(false, true)) {
-			// 放这里. 不会导致测试加载问题.
-			this.addToAsyncJob();
+	public PlayerDataLoader getPlayerLoader(long playerId, Supplier<PlayerDataLoader> supplier) {
+		try {
+			return playerDataLoaders.get(playerId, supplier::get);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
 		}
-		playerDataLoaders.put(playerId, loader);
 	}
 
 	@EventListener
-	private void kickOutPlayer(PlayerKickOutEvent event) {
-		PlayerDataLoader dataLoader = playerDataLoaders.get(event.getPlayerId());
-		if (dataLoader != null) {
-			dataLoader.unregister();
-		}
+	private void serverStartup(ServerStartupEvent event) {
+		this.addToAsyncJob();
 	}
 	/**
 	 *
@@ -79,7 +84,7 @@ enum DataLoaderManager implements IAsyncNode {
 
 	@Override
 	public void syncToDatabase() {
-		for (PlayerDataLoader loader : playerDataLoaders.values()) {
+		for (PlayerDataLoader loader : playerDataLoaders.asMap().values()) {
 			loader.syncToDb();
 		}
 	}

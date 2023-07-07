@@ -19,7 +19,7 @@ public interface IPlayerFireEvent<E extends UserEvent, C extends UserEvent, P ex
 		if (! inSelfThread()) {
 			this.fireAsyncEvent(event);
 		}else {
-			EventManager.fireEventHandler(event.setPlayer((IPlayer) this));
+			EventManager.fireEventHandler(event.setPlayer((AbstractUserActor) this));
 		}
 	}
 	/**

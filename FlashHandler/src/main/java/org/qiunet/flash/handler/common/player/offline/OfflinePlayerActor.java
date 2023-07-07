@@ -1,14 +1,12 @@
 package org.qiunet.flash.handler.common.player.offline;
 
-import com.google.common.base.Preconditions;
-import org.qiunet.data.async.ISyncDbMessage;
-import org.qiunet.data.db.loader.IPlayerDataLoader;
-import org.qiunet.data.db.loader.PlayerDataLoader;
-import org.qiunet.flash.handler.common.MessageHandler;
-import org.qiunet.flash.handler.common.player.IPlayer;
+import io.netty.channel.ChannelFuture;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
-import org.qiunet.flash.handler.common.player.event.UserEvent;
+import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.utils.exceptions.CustomException;
 
 /***
  * 离线玩家actor
@@ -18,54 +16,49 @@ import org.qiunet.flash.handler.common.player.event.UserEvent;
  * @author qiunet
  * 2021/11/19 11:55
  */
-public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> implements IPlayerDataLoader, IPlayer, ISyncDbMessage {
-	/**
-	 * 玩家的数据加载器
-	 */
-	private final PlayerDataLoader dataLoader;
-	private String msgExecuteIndex;
+public class OfflinePlayerActor extends PlayerActor {
+
 
 	OfflinePlayerActor(long playerId) {
+		super(null);
+		this.playerId = playerId;
 		this.setMsgExecuteIndex(String.valueOf(playerId));
-
-		this.dataLoader = new PlayerDataLoader(this, this, playerId, true);
 		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
 	}
-
-	public void setMsgExecuteIndex(String msgExecuteIndex) {
-		this.msgExecuteIndex = msgExecuteIndex;
+	@Override
+	public void crossToServer(int serverId) {
+		throw new CustomException("Offline player Actor can not cross to other server!");
 	}
 
 	@Override
-	public String msgExecuteIndex() {
-		Preconditions.checkNotNull(msgExecuteIndex, "Need set msgExecuteIndex in OfflineUserCreateEvent!");
-		return msgExecuteIndex;
-	}
-
-	public long getPlayerId() {
-		return this.dataLoader.getPlayerId();
+	public boolean isOnlineActor() {
+		return false;
 	}
 
 	@Override
-	public PlayerDataLoader dataLoader() {
-		return dataLoader;
+	public void auth(long id) {}
+
+	@Override
+	public void loginSuccess() {}
+
+	@Override
+	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
+		throw new CustomException("Can not send message use offline player actor");
 	}
 
 	@Override
-	public long getId() {
-		return getPlayerId();
+	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
+		throw new CustomException("Can not send message use offline player actor");
 	}
 
-	/**
-	 * 触发事件
-	 * @param eventData
-	 */
-	public void fireEvent(UserEvent eventData) {
-		if (! inSelfThread()) {
-			this.addMessage(a -> eventData.setPlayer(a).fireEventHandler());
-		}else {
-			eventData.setPlayer(this).fireEventHandler();
-		}
+	@Override
+	public ISession getKcpSession() {
+		return null;
+	}
+
+	@Override
+	public void logout() {
+		// do nothing
 	}
 
 	public void destroy(){
@@ -74,19 +67,7 @@ public class OfflinePlayerActor extends MessageHandler<OfflinePlayerActor> imple
 		}
 
 		this.fireEvent(OfflineUserDestroyEvent.valueOf());
-
 		UserOfflineManager.instance.remove(getPlayerId());
-		this.dataLoader.unregister();
-
-		this.addMessage(p -> super.destroy());
-	}
-
-	@Override
-	public void syncBbMessage(Runnable runnable) {
-		if (inSelfThread()) {
-			runnable.run();
-		}else {
-			this.addMessage(h -> runnable.run());
-		}
+		dataLoader().unregister();
 	}
 }

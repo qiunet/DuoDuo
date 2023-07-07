@@ -41,7 +41,7 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 			return;
 		}
 
-		if (!playerDataLoader.threadSafe.inSelfThread()) {
+		if (!playerDataLoader.sync.inSelfThread()) {
 			throw new RuntimeException("Not in self thread!");
 		}
 
@@ -51,10 +51,6 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 
 		if (delete) {
 			throw new CustomException("Entity already deleted!!");
-		}
-
-		if (playerDataLoader.readOnly) {
-			throw new CustomException("Data loader read only!");
 		}
 
 		// 如果上次的数据没有逻辑. 比如插入. 则这次更新不进行
@@ -68,10 +64,6 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 		if (playerDataLoader == null) {
 			IEntityBo.super.delete();
 			return;
-		}
-
-		if (playerDataLoader.readOnly) {
-			throw new CustomException("Data loader read only!");
 		}
 
 		if (delete) {

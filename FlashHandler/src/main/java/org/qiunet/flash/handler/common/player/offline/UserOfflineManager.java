@@ -4,8 +4,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
-import org.qiunet.flash.handler.common.player.event.OfflineUserExecuteEvent;
-import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
@@ -42,27 +40,6 @@ public enum UserOfflineManager {
 	 * @return
 	 */
 	public OfflinePlayerActor get(long playerId) {
-		return getOrCreate(playerId);
-	}
-
-	@EventListener
-	private void requestEvent(OfflineUserRequestEvent event) {
-		OfflinePlayerActor playerActor = getOrCreate(event.getPlayerId());
-		playerActor.fireEvent(event.getEventData());
-	}
-
-	@EventListener
-	private void executeEvent(OfflineUserExecuteEvent event) {
-		OfflinePlayerActor playerActor = getOrCreate(event.getPlayerId());
-		playerActor.addMessage(a -> event.run());
-	}
-
-	/**
-	 * 获取. 没有就创建一个
-	 * @param playerId
-	 * @return
-	 */
-	OfflinePlayerActor getOrCreate(long playerId) {
 		try {
 			return data.get(playerId, () -> new OfflinePlayerActor(playerId));
 		} catch (ExecutionException e) {

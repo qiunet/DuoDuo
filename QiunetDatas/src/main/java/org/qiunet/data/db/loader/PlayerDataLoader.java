@@ -1,16 +1,16 @@
 package org.qiunet.data.db.loader;
 
 import com.google.common.collect.Maps;
-import org.qiunet.data.async.ISyncDbMessage;
+import org.qiunet.data.async.ISyncDbExecutor;
 import org.qiunet.data.cache.status.EntityStatus;
 import org.qiunet.data.core.entity.IEntityList;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.support.DataSupportMapping;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.thread.IThreadSafe;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /***
  * 跟玩家相关的数据加载管理
@@ -32,39 +32,24 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
 	 * 同步到库
 	 */
-	private final ISyncDbMessage sync;
-	/**
-	 * 是否线程安全
-	 */
-	final IThreadSafe threadSafe;
+	final ISyncDbExecutor sync;
 	/**
      * 玩家ID
 	 */
 	private final long playerId;
-	/**
-	 * 只读
-	 */
-	final boolean readOnly;
 
-	public PlayerDataLoader(ISyncDbMessage sync, IThreadSafe threadSafe, long playerId) {
-		this(sync, threadSafe, playerId, false);
-	}
-
-	public PlayerDataLoader(ISyncDbMessage sync, IThreadSafe threadSafe, long playerId, boolean readOnly) {
-		this.threadSafe = threadSafe;
+	private PlayerDataLoader(ISyncDbExecutor sync, long playerId) {
 		this.playerId = playerId;
-		this.readOnly = readOnly;
 		this.sync = sync;
-		if (! readOnly) {
-			this.register();
-		}
 	}
-
 	/**
-	 * 注册
+	 *
+	 * @param sync 同步的线程对象. 是从messageHandler取到. player id不变. 则不会变
+	 * @param playerId 玩家id
+	 * @return 玩家的数据加载
 	 */
-	public void register(){
-		DataLoaderManager.instance.registerPlayerLoader(playerId, this);
+	public static PlayerDataLoader get(ISyncDbExecutor sync, long playerId) {
+		return DataLoaderManager.instance.getPlayerLoader(playerId, () -> new PlayerDataLoader(sync, playerId));
 	}
 
 	@Override
@@ -76,10 +61,14 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * 销毁. 顺便要更新入库
 	 */
 	public void unregister(){
-		if (readOnly) {
-			return;
-		}
-		DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
+		// 同步 并 移除数据
+		this.remove();
+	}
+
+	/**
+	 * 被移除
+	 */
+	void remove() {
 		this.syncToDb();
 		// 清除数据. 下次上线重新获取新数据
 		dataCache.clear();
@@ -88,8 +77,8 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
 	 * 同步数据到db
 	 */
-	public void syncToDb(){
-		this.sync.syncBbMessage(cacheAsyncToDb::syncToDb);
+	public Future<?> syncToDb(){
+		return this.sync.submit(cacheAsyncToDb::syncToDb);
 	}
 	/**
 	 * 获得玩家ID
@@ -114,11 +103,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	@Override
 	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
 		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
-		if (readOnly) {
-			// 帮转换. 不做处理 方便外面不需要判空!
-			return bo;
-		}
-
 		bo.playerDataLoader = this;
 		if (bo.getDo() instanceof DbEntityList aDo) {
 			Map mapData = this.getMapData(bo.getClass());

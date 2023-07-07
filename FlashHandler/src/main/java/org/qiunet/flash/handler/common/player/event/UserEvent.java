@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player.event;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Ignore;
-import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
@@ -16,13 +16,13 @@ public abstract class UserEvent implements IListenerEvent {
 	 * 玩家的对象.
 	 */
 	@Ignore
-	private IPlayer player;
+	private AbstractUserActor player;
 
-	public <T extends IPlayer> T getPlayer() {
+	public <T extends AbstractUserActor> T getPlayer() {
 		return (T) player;
 	}
 
-	public UserEvent setPlayer(IPlayer player) {
+	public UserEvent setPlayer(AbstractUserActor player) {
 		this.player = player;
 		return this;
 	}

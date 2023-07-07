@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.async.ISyncDbMessage;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.db.loader.DbEntityBo;
@@ -36,8 +35,8 @@ import java.util.function.Consumer;
  * @author qiunet
  * 2020-10-21 10:08
  */
-public final class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
-		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayerDataLoader, ISyncDbMessage {
+public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
+		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayerDataLoader {
 	/**
 	 * 跨服的连接管理
 	 */
@@ -53,10 +52,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	 */
 	private final AtomicBoolean waitReconnect = new AtomicBoolean();
 	/**
-	 * 玩家的数据加载器
-	 */
-	private PlayerDataLoader dataLoader;
-	/**
 	 * 当前跨服类型
 	 */
 	private int currentCrossServerId;
@@ -67,7 +62,7 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 	/**
 	 * 玩家ID
 	 */
-	private long playerId;
+	protected long playerId;
 	/**
 	 * 玩家平台ID
 	 */
@@ -206,7 +201,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 			return;
 		}
 
-		dataLoader = new PlayerDataLoader(this, this, id);
 		this.playerId = id;
 		this.clockTick();
 	}
@@ -217,6 +211,8 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		}
 
 		this.scheduleMessage(p -> {
+			// 触发获取DataLoader. 不让失效
+			this.dataLoader();
 			this.clockTick();
 		}, 2, TimeUnit.MINUTES);
 	}
@@ -257,8 +253,8 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		ArrayList<PlayerCrossConnector> list = Lists.newArrayList(crossConnectors.values());
 		list.forEach(c -> c.getSession().close(CloseCause.DESTROY));
 		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
-		if (loginSuccess && dataLoader != null) {
-			dataLoader.unregister();
+		if (loginSuccess) {
+			dataLoader().unregister();
 		}
 	}
 
@@ -273,9 +269,6 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 
 		handler.session.clearCloseListener();
 		this.setSession(handler.session);
-		handler.dataLoader.unregister();
-		handler.dataLoader = null;
-		dataLoader.register();
 	}
 
 	/**
@@ -338,9 +331,17 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		return (DSession) super.getSession();
 	}
 
+	/**
+	 * 是否在线
+	 * @return true 在线的actor false 相反
+	 */
+	public boolean isOnlineActor() {
+		return ! waitReconnect();
+	}
+
 	@Override
 	public PlayerDataLoader dataLoader() {
-		return dataLoader;
+		return PlayerDataLoader.get(executor.get(), getPlayerId());
 	}
 
 	public boolean waitReconnect(){
@@ -351,10 +352,4 @@ public final class PlayerActor extends AbstractUserActor<PlayerActor> implements
 		return this.waitReconnect.compareAndSet(expect, val);
 	}
 
-	@Override
-	public void syncBbMessage(Runnable runnable) {
-		if (inSelfThread() || isDestroyed() || ! this.addMessage(h -> runnable.run())) {
-			runnable.run();
-		}
-	}
 }

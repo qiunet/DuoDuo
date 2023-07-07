@@ -1,10 +1,9 @@
 package org.qiunet.cross.rpc;
 
 import org.qiunet.cross.node.ServerNode;
-import org.qiunet.flash.handler.common.MessageHandler;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
 import org.qiunet.utils.scanner.ClassUtil;
@@ -28,11 +27,7 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 		Method method =  aClass.getMethod(requestData.getMtd(), rpcRequest.getClass());
 
 		if (IPlayer.class.isAssignableFrom(rpcRequest.getClass()) && ((IPlayer) rpcRequest).getId() > 0) {
-			MessageHandler actor = UserOnlineManager.instance.getActor(((IPlayer) rpcRequest).getId());
-			if (actor == null) {
-				// 不在线玩家的处理
-				actor = UserOfflineManager.instance.get(((IPlayer) rpcRequest).getId());
-			}
+			AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) rpcRequest).getId());
 			actor.addMessage(h -> {
 				this.sendMessage(serverNode, requestData, method);
 			});

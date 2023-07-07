@@ -20,8 +20,11 @@ import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
+import redis.clients.jedis.params.SetParams;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 /***
@@ -34,6 +37,7 @@ import java.util.function.BiConsumer;
 public enum UserServerStateManager {
 	instance;
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private static final String USER_TEMP_SERVER_ID_REDIS_KEY = "user_temp_server_id_";
 	private static final String SERVER_ID = "serverId";
 	private static final String ONLINE = "online";
 	private IRedisUtil redisUtil;
@@ -102,11 +106,32 @@ public enum UserServerStateManager {
 		}
 
 		int serverId = state.getServerId();
-		if (serverId == 0 && !onlineOnly) {
-			ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
-			serverId = serverInfo.getServerId();
+		if (serverId != 0) {
+			return serverId;
 		}
-		return serverId;
+
+		if (onlineOnly) {
+			return 0;
+		}
+
+		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
+		String redisKey = USER_TEMP_SERVER_ID_REDIS_KEY + playerId;
+
+		String succ = redisUtil.returnJedis().set(redisKey, String.valueOf(serverInfo.getServerId()), SetParams.setParams()
+			.nx().ex(TimeUnit.MINUTES.toSeconds(1)));
+
+		if (Objects.equals("OK", succ)) {
+			return serverInfo.getServerId();
+		}
+
+		serverId = Integer.parseInt(redisUtil.returnJedis().get(redisKey));
+		if (redisUtil.returnJedis().exists(ServerInfo.serverInfoRedisKey(serverId))) {
+			return serverId;
+		}
+
+		// 可能服务器下线了.
+		redisUtil.returnJedis().del(redisKey);
+		return assignServerId(playerId, false);
 	}
 
 	/**
@@ -156,24 +181,24 @@ public enum UserServerStateManager {
 			return;
 		}
 
-		if (state.getServerId() > 0) {
-			// 触发远端服务器事件
-			CrossEventManager.fireCrossUserEvent(state.getServerId(), event, playerId);
+		int serverId = 0;
+		try {
+			serverId = this.assignServerId(playerId, onlineOnly);
+		} catch (NoRegisterException e) {
+			// do nothing
+		}
+
+		if (serverId == 0) {
 			return;
 		}
 
-		if (onlineOnly) {
-			return;
-		}
-
-		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
-		CrossEventManager.fireCrossUserEvent(serverInfo.getServerId(), event, playerId);
+		CrossEventManager.fireCrossUserEvent(serverId, event, playerId);
 	}
 
 
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void userOnline(LoginSuccessEvent event) {
-		if (!((AbstractUserActor) event.getPlayer()).isPlayerActor()) {
+		if (!event.getPlayer().isPlayerActor()) {
 			return;
 		}
 
@@ -204,7 +229,7 @@ public enum UserServerStateManager {
 
 	@EventListener
 	private void userDestroy(PlayerDestroyEvent event) {
-		if (! ((AbstractUserActor) event.getPlayer()).isPlayerActor()) {
+		if (! event.getPlayer().isPlayerActor()) {
 			return;
 		}
 

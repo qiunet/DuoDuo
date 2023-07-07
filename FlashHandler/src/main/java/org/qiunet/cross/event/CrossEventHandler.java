@@ -1,10 +1,8 @@
 package org.qiunet.cross.event;
 
-import org.qiunet.flash.handler.common.player.AbstractMessageActor;
-import org.qiunet.flash.handler.common.player.AbstractUserActor;
-import org.qiunet.flash.handler.common.player.IPlayerFireEvent;
-import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.OfflineUserRequestEvent;
+import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.flash.handler.common.player.*;
+import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
@@ -23,20 +21,16 @@ public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor
 	public void handler(AbstractMessageActor actor, IPersistConnRequest<CrossEventRequest> context) throws Exception {
 		CrossEventRequest requestData = context.getRequestData();
 		IListenerEvent obj = requestData.getData();
-		if (obj instanceof UserEvent eventData) {
-
+		if (obj instanceof UserEvent event) {
 			if (actor instanceof AbstractUserActor) {
-				((IPlayerFireEvent) actor).fireAsyncEvent(eventData);
+				((IPlayerFireEvent) actor).fireAsyncEvent(event);
 			}else if (requestData.getPlayerId() != 0) {
-				actor.runMessageWithMsgExecuteIndex(a -> {
-					AbstractUserActor playerActor = UserOnlineManager.instance.getActor(requestData.getPlayerId());
-					if (playerActor != null) {
-						// 在线的情况
-						((IPlayerFireEvent) playerActor).fireAsyncEvent(eventData);
-					}else {
-						OfflineUserRequestEvent.valueOf(eventData, requestData.getPlayerId()).fireEventHandler();
-					}
-				}, String.valueOf(requestData.getPlayerId()));
+				AbstractUserActor actor0 = UserOnlineManager.instance.returnActor(requestData.getPlayerId());
+				if (actor0.isPlayerActor()) {
+					((PlayerActor) actor0).fireAsyncEvent(((BasePlayerEvent) event));
+				}else {
+					((CrossPlayerActor) actor0).fireAsyncEvent((BaseCrossPlayerEvent) event);
+				}
 			}
 			return;
 		}

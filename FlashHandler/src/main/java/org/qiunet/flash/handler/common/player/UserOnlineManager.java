@@ -9,6 +9,7 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
+import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.ReconnectInvalidPush;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
@@ -306,6 +307,31 @@ public enum UserOnlineManager {
 	 */
 	public PlayerActor getPlayerActor(long playerId) {
 		return onlinePlayers.get(playerId);
+	}
+
+	/**
+	 * 如果user server state 显示在这个服务器.
+	 * 则该方法会优先查找 在线玩家(包含PlayerActor 和 CrossPlayerActor)..
+	 * 然后查找 断线等待玩家
+	 * 最后查找 离线玩家
+	 * 不存在. 则生成离线玩家OfflinePlayerActor
+	 * @param playerId 玩家id
+	 * @return actor 该方法不会返回null
+	 */
+	public AbstractUserActor returnActor(long playerId) {
+		AbstractUserActor actor = getActor(playerId);
+		if (actor != null) {
+			return actor;
+		}
+		PlayerActor playerActor = getPlayerActor(playerId);
+		if (playerActor != null) {
+			return playerActor;
+		}
+		WaitActor waitActor = waitReconnects.get(playerId);
+		if (waitActor != null) {
+			return waitActor.actor;
+		}
+		return UserOfflineManager.instance.get(playerId);
 	}
 
 	/**

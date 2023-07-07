@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
 import io.netty.util.concurrent.FastThreadLocalThread;
+import org.qiunet.data.async.ISyncDbExecutor;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
@@ -31,9 +32,9 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements IMessageHandler<H>, IThreadSafe {
 	protected static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
 
-	private final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
+	protected final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
-	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	protected final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
 	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
 
@@ -192,7 +193,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 	}
 
-	private static class DExecutorService extends ThreadPoolExecutor implements IThreadSafe {
+	private static class DExecutorService extends ThreadPoolExecutor implements ISyncDbExecutor {
 		private final String threadName;
 		private Thread thread;
 
