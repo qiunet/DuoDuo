@@ -10,6 +10,7 @@
 			<xs:enumeration value="String" />
 			<xs:enumeration value="int" />
 			<xs:enumeration value="long" />
+			<xs:enumeration value="boolean" />
 		</xs:restriction>
 	</xs:simpleType>
 

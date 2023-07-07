@@ -45,6 +45,10 @@ public enum  ColumnJdbcType {
 	 * 0 ~ 42亿的文本
 	 */
 	LONGTEXT("LONGTEXT", 205),
+	/***
+	 * boolean
+	 */
+	BOOLEAN("TINYINT", 301),
 	;
 	private final int factor;
 	private final String jdbcType;
@@ -74,9 +78,11 @@ public enum  ColumnJdbcType {
 
 		if (type == Integer.class || type == int.class)
 			return INT;
-		else if (type == Long.class || type == long.class)
+		if (type == Long.class || type == long.class)
 			return BIGINT;
-		else if (type == String.class) {
+		if (type == Boolean.class || type == boolean.class)
+			return BOOLEAN;
+		 if (type == String.class) {
 			if (jdbcType == NULL) {
 				if (key) return VARCHAR190;
 				return VARCHAR255;
@@ -97,6 +103,7 @@ public enum  ColumnJdbcType {
 		columnType = columnType.toLowerCase();
 		if (columnType.startsWith("int")) return INT;
 		if (columnType.startsWith("bigint")) return BIGINT;
+		if (columnType.startsWith("tinyint")) return BOOLEAN;
 		if (columnType.equals("varchar(190)")) return VARCHAR190;
 		if (columnType.equals("varchar(255)")) return VARCHAR255;
 		if (columnType.equals("varchar(1000)")) return VARCHAR1000;

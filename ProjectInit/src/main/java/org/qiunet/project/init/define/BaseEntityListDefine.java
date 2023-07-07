@@ -42,6 +42,8 @@ abstract class BaseEntityListDefine extends BaseEntityDefine implements IEntityL
 				return "String";
 			case "long":
 				return "Long";
+			case "boolean":
+				return "Boolean";
 			default:
 				throw new IllegalArgumentException("not support key type "+fieldDefine.getType());
 		}

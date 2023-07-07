@@ -216,6 +216,8 @@ import java.util.stream.Collectors;
 				return "Long";
 			case "String":
 				return "String";
+			case "boolean":
+				return "Boolean";
 			default:
 				throw new IllegalArgumentException("not support key type "+fieldDefine.getType());
 		}
@@ -251,13 +253,12 @@ import java.util.stream.Collectors;
 
 	@Override
 	public String getInsertSql() {
-		StringBuilder sb = new StringBuilder("INSERT INTO ");
-		sb.append(realTableName()).append(" (")
-		.append(fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("`, `", "`", "`")))
-		.append(") VALUES (")
-		.append(fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("}, #{", "#{", "}")))
-		.append(");");
-		return sb.toString();
+		String sb = "INSERT INTO " + realTableName() + " (" +
+			fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("`, `", "`", "`")) +
+			") VALUES (" +
+			fieldDefines.stream().map(FieldDefine::getName).collect(Collectors.joining("}, #{", "#{", "}")) +
+			");";
+		return sb;
 	}
 
 	@Override
