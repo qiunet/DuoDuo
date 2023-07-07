@@ -6,6 +6,7 @@ import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.timer.timeout.TimeOutFuture;
 import org.qiunet.utils.timer.timeout.Timeout;
 
+import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -20,10 +21,11 @@ import java.util.function.BiConsumer;
  * 2020-10-22 14:52
  */
 public class RpcFuture<T> {
+	private final DPromise<T> future;
 
 	private final int id;
 
-	private final DPromise<T> future;
+	Method method;
 
 	public RpcFuture() {
 		this.future = new DCompletePromise<>();

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 
@@ -83,7 +84,9 @@ public class RpcManager {
 			if (lambdaData.getImplMethodName().startsWith("lambda")) {
 				throw new RuntimeException("Lambda expression need specify exist method!");
 			}
-			RouteRpcReq routeRpcReq = RouteRpcReq.valueOf(rpcFuture.getId(), lambdaData.getImplClass().replace("/", "."), lambdaData.getImplMethodName(), reqData);
+			String declaringClass = lambdaData.getImplClass().replace("/", ".");
+			RouteRpcReq routeRpcReq = RouteRpcReq.valueOf(rpcFuture.getId(), declaringClass, lambdaData.getImplMethodName(), reqData);
+			rpcFuture.method = Class.forName(declaringClass).getMethod(lambdaData.getImplMethodName(), reqData.getClass());
 			ServerNode serverNode = ServerNodeManager.getNode(serverId);
 			cached.put(rpcFuture.getId(), rpcFuture);
 			serverNode.sendMessage(routeRpcReq);
@@ -101,12 +104,13 @@ public class RpcManager {
 	 * @param reqId 请求id
 	 * @param data 数据
 	 */
-	static void complete(int reqId, Object data) {
+	static void complete(int reqId, TransferJsonData data) {
 		RpcFuture future = cached.remove(reqId);
 		if (future == null || future.isDone()) {
 			return;
 		}
-		future.getFuture().trySuccess(data);
+		Object generalObj = JsonUtil.getGeneralObj(data.getJsonData(), future.method.getGenericReturnType());
+		future.getFuture().trySuccess(generalObj);
 	}
 	/**
 	 * 移除映射关系

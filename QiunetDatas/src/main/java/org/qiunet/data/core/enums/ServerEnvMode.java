@@ -7,6 +7,10 @@ package org.qiunet.data.core.enums;
  */
 public enum ServerEnvMode {
 	/**
+	 * 本地单元测试 很多可以不执行
+	 */
+	UNIT_TEST,
+	/**
 	 * 本地开发
 	 */
 	LOCAL,
@@ -20,6 +24,11 @@ public enum ServerEnvMode {
 	 * 可以使用GM命令
 	 */
 	STABLE,
+	/**
+	 * 预发布环境.
+	 * 或者提审环境
+	 */
+	PREVIEW,
 	/**
 	 * 正式环境
 	 */

@@ -15,6 +15,6 @@ public class RpcRspHandler extends PersistConnPbHandler<ServerNode, RouteRpcRsp>
 	@Override
 	public void handler(ServerNode playerActor, IPersistConnRequest<RouteRpcRsp> context) throws Exception {
 		RouteRpcRsp requestData = context.getRequestData();
-		RpcManager.complete(requestData.getReqId(), requestData.getJsonData().getData());
+		RpcManager.complete(requestData.getReqId(), requestData.getJsonData());
 	}
 }
