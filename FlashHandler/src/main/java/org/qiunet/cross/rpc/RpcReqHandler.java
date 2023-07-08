@@ -6,6 +6,7 @@ import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.ClassUtil;
 
 import java.lang.reflect.Method;
@@ -45,7 +46,7 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 			instance = ClassUtil.getInstanceOfClass(method.getDeclaringClass());
 		}
 
-		Object ret = method.invoke(instance, rpcRequest);
+		Object ret = ReflectUtil.makeAccessible(method).invoke(instance, rpcRequest);
 		if (ret instanceof RpcFuture<?> dFuture) {
 			dFuture.whenComplete((o, ex) -> {
 				if (ex != null) {

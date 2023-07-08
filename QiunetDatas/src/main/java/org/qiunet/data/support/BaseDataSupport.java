@@ -70,7 +70,7 @@ import org.slf4j.Logger;
 	 * @return
 	 */
 	private final LazyLoader<IDatabaseSupport> databaseSupport = new LazyLoader<>(() -> DbSourceDatabaseSupport.getInstance(this.table.dbSource()));
-	protected IDatabaseSupport databaseSupport() {
+	public IDatabaseSupport databaseSupport() {
 		return databaseSupport.get();
 	}
 }

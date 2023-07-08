@@ -86,7 +86,7 @@ public class RpcManager {
 			}
 			String declaringClass = lambdaData.getImplClass().replace("/", ".");
 			RouteRpcReq routeRpcReq = RouteRpcReq.valueOf(rpcFuture.getId(), declaringClass, lambdaData.getImplMethodName(), reqData);
-			rpcFuture.method = Class.forName(declaringClass).getMethod(lambdaData.getImplMethodName(), reqData.getClass());
+			rpcFuture.method = Class.forName(declaringClass).getDeclaredMethod(lambdaData.getImplMethodName(), reqData.getClass());
 			ServerNode serverNode = ServerNodeManager.getNode(serverId);
 			cached.put(rpcFuture.getId(), rpcFuture);
 			serverNode.sendMessage(routeRpcReq);
