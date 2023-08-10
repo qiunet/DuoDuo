@@ -28,7 +28,18 @@ public interface IPlayerDataLoader {
 	 * @return
 	 */
 	default <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
-		return dataLoader().insertDo(entity);
+		return insertDo(entity, false);
+	}
+	/**
+	 * 插入一个Do对象
+	 * @param entity IDbEntity
+	 * @param <Do> DbEntityDo
+	 * @param <Bo>  DbEntityBo
+	 * @param persistenceImmediately 立即入库
+	 * @return BO object
+	 */
+	default <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity, boolean persistenceImmediately) {
+		return dataLoader().insertDo(entity, persistenceImmediately);
 	}
 
 	/**

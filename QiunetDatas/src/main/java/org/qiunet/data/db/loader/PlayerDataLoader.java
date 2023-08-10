@@ -101,7 +101,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * @return
 	 */
 	@Override
-	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
+	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity, boolean persistenceImmediately) {
 		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
 		bo.playerDataLoader = this;
 		if (bo.getDo() instanceof DbEntityList aDo) {
@@ -118,7 +118,11 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 			dataCache.put(bo.getClass(), bo);
 		}
 		if (bo.atomicSetEntityStatus(EntityStatus.INIT, EntityStatus.INSERT)) {
-			cacheAsyncToDb.add(EntityOperate.INSERT, bo);
+			if (persistenceImmediately) {
+				cacheAsyncToDb.insertImmediately(bo);
+			}else {
+				cacheAsyncToDb.add(EntityOperate.INSERT, bo);
+			}
 		}
 		return bo;
 	}

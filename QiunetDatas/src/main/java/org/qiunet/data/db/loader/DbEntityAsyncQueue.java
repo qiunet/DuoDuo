@@ -28,6 +28,14 @@ class DbEntityAsyncQueue {
 	private static final Map<Class<? extends DbEntityBo>, SyncDoInfo> dbSourceCache = Maps.newConcurrentMap();
 
 	private final ConcurrentLinkedQueue<SyncEntityElement> syncKeyQueue = new ConcurrentLinkedQueue<>();
+	/**
+	 * 立刻插入
+	 * @param entity
+	 */
+	void insertImmediately(DbEntityBo entity) {
+		SyncDoInfo<DbEntityBo> syncDoInfo = dbSourceCache.computeIfAbsent(entity.getClass(), SyncDoInfo::new);
+		syncDoInfo.syncToDb(entity, PlayerDataLoader.EntityOperate.INSERT);
+	}
 
 	void add(PlayerDataLoader.EntityOperate operate, DbEntityBo entity) {
 		this.syncKeyQueue.add(new SyncEntityElement(operate, entity));
@@ -77,8 +85,11 @@ class DbEntityAsyncQueue {
 		}
 
 		public void syncToDb(SyncEntityElement<Entity> element) {
-			Entity entity = element.entity;
-			switch (element.operate) {
+			this.syncToDb(element.entity, element.operate);
+		}
+
+		public void syncToDb(Entity entity, PlayerDataLoader.EntityOperate operate) {
+			switch (operate) {
 				case INSERT:
 					if (entity.atomicSetEntityStatus(EntityStatus.INSERT, EntityStatus.NORMAL)) {
 						entity.serialize();
