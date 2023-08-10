@@ -30,7 +30,7 @@ public final class CrossEventManager {
 			return;
 		}
 
-		ServerNodeManager.getNode(serverId).fireCrossEvent(eventData);
+		ServerNodeManager.getNode(serverId, node -> node.fireCrossEvent(eventData));
 	}
 
 	/**
@@ -49,6 +49,6 @@ public final class CrossEventManager {
 			}
 			return;
 		}
-		ServerNodeManager.getNode(serverId).fireUserCrossEvent(event, playerId);
+		ServerNodeManager.getNode(serverId, node ->node.fireUserCrossEvent(event, playerId));
 	}
 }

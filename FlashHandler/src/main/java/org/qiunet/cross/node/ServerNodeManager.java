@@ -7,6 +7,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /***
@@ -75,8 +76,8 @@ public class ServerNodeManager {
 	 * @param serverId
 	 * @return
 	 */
-	public static ServerNode getNode(int serverId) {
-		return ServerNodeManager0.instance.getNode(serverId);
+	public static void getNode(int serverId, Consumer<ServerNode> consumer) {
+		ServerNodeManager0.instance.getNode(serverId, consumer);
 	}
 	/**
 	 * 根据server type 以及filter
@@ -161,8 +162,7 @@ public class ServerNodeManager {
 			byteBuf = channelData.toByteBuf();
 			for (Integer serverId : serveredIdList) {
 				DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(protocolId, byteBuf.retainedDuplicate());
-				ServerNode serverNode = getNode(serverId);
-				serverNode.sendMessage(message);
+				getNode(serverId, node ->node.sendMessage(message));
 			}
 		}finally {
 			if (byteBuf != null) {

@@ -3,7 +3,6 @@ package org.qiunet.cross.transaction;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.ChannelFuture;
-import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
@@ -15,6 +14,7 @@ import org.qiunet.utils.id.DefaultIdGenerator;
 import org.qiunet.utils.id.IdGenerator;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.util.Map;
@@ -88,14 +88,15 @@ public enum TransactionManager {
 			return respTransactionFuture;
 		}
 
-		ServerNode node = ServerNodeManager.getNode(serverId);
-		ChannelFuture channelFuture = node.sendMessage(routeTransactionReq);
-		channelFuture.addListener(f -> {
-			if (f.isSuccess()) {
-				respTransactionFuture.beginCalTimeOut(timeout, unit);
-			}else {
-				promise.tryFailure(new CustomException(f.cause(), "Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
-			}
+		ServerNodeManager.getNode(serverId, node -> {
+			ChannelFuture channelFuture = node.sendMessage(routeTransactionReq);
+			channelFuture.addListener(f -> {
+				if (f.isSuccess()) {
+					respTransactionFuture.beginCalTimeOut(timeout, unit);
+				}else {
+					promise.tryFailure(new CustomException(f.cause(), "Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
+				}
+			});
 		});
 		return respTransactionFuture;
 	}
@@ -109,7 +110,14 @@ public enum TransactionManager {
 			AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) req).getId());
 			actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
 		}else {
-			TransactionManager0.handler(req.getClass(), dTransaction);
+			ThreadPoolManager.NORMAL.submit(() -> {
+				// 让 Transaction 自己决定哪个线程
+				try {
+					TransactionManager0.handler(req.getClass(), dTransaction);
+				} catch (Exception e) {
+					LoggerType.DUODUO_FLASH_HANDLER.error("Exception:" , e);
+				}
+			});
 		}
 	}
 	/**

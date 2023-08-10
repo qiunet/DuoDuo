@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -59,8 +60,12 @@ import java.util.stream.Collectors;
  */
 enum ServerNodeManager0 implements IApplicationContextAware {
 	instance;
+	/** server node 创建同步锁redis key */
+	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
 	/** 注册中心redis key 前缀 with server type */
 	private static final String SERVER_REGISTER_CENTER_PREFIX = "SERVER_REGISTER_CENTER#";
+	/**server node 走外网ip*/
+	private static final String SERVER_NODE_USE_PUBLIC_IP = "server.node_use_public_ip";
 	// 客户端当前的节点
 	final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
@@ -101,24 +106,33 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param serverId
 	 * @return
 	 */
-	ServerNode getNode(int serverId) {
+	void getNode(int serverId, Consumer<ServerNode> consumer) {
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
 		}
 
 		ServerNode serverNode = nodes.get(serverId);
 		if (serverNode != null) {
-			return serverNode;
+			consumer.accept(serverNode);
+			return;
 		}
 
 		ServerInfo serverInfo = this.getServerInfo(serverId);
 		if (serverInfo == null) {
 			throw new CustomException("ID:{} ServerInfo absent!!", serverId);
 		}
-		// 目前服务器和服务器肯定是内网. 如果以后有多区域需要互通. 有两个解决方案:
-		// 1. 让云服务器 跨区域搭内网
-		// 2. 下面的getHost 修改为 getPublicHost
-		return nodes.computeIfAbsent(serverId, key -> this.createServerNode(serverInfo));
+
+		String redisKey = createServerNodeLockRedisKey(serverId);
+		redisUtil.asyncRedisLockRun(redisKey, () -> {
+			if (nodes.containsKey(serverId)) {
+				consumer.accept(nodes.get(serverId));
+				return;
+			}
+
+			ServerNode serverNode0 = this.createServerNode(serverInfo);
+			nodes.put(serverId, serverNode0);
+			consumer.accept(serverNode0);
+		});
 	}
 
 	/**
@@ -145,9 +159,14 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @param serverInfo
 	 */
 	private ServerNode createServerNode(ServerInfo serverInfo) {
+		// 目前服务器和服务器肯定是内网. 如果以后有多区域需要互通. 有两个解决方案:
+		// 1. 让云服务器 跨区域搭内网
+		// 2. 下面的getHost 修改为 getPublicHost
 		Channel channel;
 		try {
-			ChannelFuture channelFuture = bootstrap.connect(serverInfo.getHost(), serverInfo.getNodePort()).sync();
+			boolean usePubIp = ServerConfig.getConfig().getBoolean(SERVER_NODE_USE_PUBLIC_IP);
+			String host = usePubIp ? serverInfo.getPublicHost() : serverInfo.getHost();
+			ChannelFuture channelFuture = bootstrap.connect(host, serverInfo.getNodePort()).sync();
 			channel = channelFuture.channel();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -278,6 +297,20 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 */
 	private String serverRegisterCenterRedisKey(ServerType serverType) {
 		return SERVER_REGISTER_CENTER_PREFIX +serverType;
+	}
+
+	/**
+	 * 获得创建使用的key
+	 * @param destServerId 需要连过去的服务器.
+	 * @return redis key
+	 */
+	private String createServerNodeLockRedisKey(int destServerId) {
+		int srcServerId = currServerInfo.getServerId();
+		if (destServerId < srcServerId) {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + destServerId +"_"+ srcServerId;
+		}else {
+			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + srcServerId +"_"+  destServerId;
+		}
 	}
 
 	@EventListener

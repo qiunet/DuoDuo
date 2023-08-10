@@ -6,8 +6,10 @@ import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.scanner.ClassUtil;
+import org.qiunet.utils.thread.ThreadPoolManager;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -35,7 +37,13 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 			return;
 		}
 
-		this.sendMessage(serverNode, requestData, method);
+		ThreadPoolManager.NORMAL.submit(() -> {
+			try {
+				this.sendMessage(serverNode, requestData, method);
+			} catch (Exception e) {
+				LoggerType.DUODUO_FLASH_HANDLER.error("Exception:" , e);
+			}
+		});
 	}
 
 	private void sendMessage(ServerNode serverNode, RouteRpcReq requestData, Method method) throws Exception {
@@ -47,18 +55,6 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 		}
 
 		Object ret = ReflectUtil.makeAccessible(method).invoke(instance, rpcRequest);
-		if (ret instanceof RpcFuture<?> dFuture) {
-			dFuture.whenComplete((o, ex) -> {
-				if (ex != null) {
-					logger.error("error: ", ex);
-					return;
-				}
-
-				RouteRpcRsp rsp = RouteRpcRsp.valueOf(requestData.getReqId(), o);
-				serverNode.sendMessage(rsp);
-			});
-			return;
-		}
 		RouteRpcRsp rsp = RouteRpcRsp.valueOf(requestData.getReqId(), ret);
 		serverNode.sendMessage(rsp);
 	}

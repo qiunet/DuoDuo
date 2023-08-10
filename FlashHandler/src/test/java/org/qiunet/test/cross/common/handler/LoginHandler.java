@@ -1,6 +1,6 @@
 package org.qiunet.test.cross.common.handler;
 
-import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.test.cross.common.Constants;
@@ -22,7 +22,7 @@ public class LoginHandler extends BaseHandler<LoginRequest> {
 
 		playerActor.fireEvent(new PlayerLoginEvent());
 
-		ServerNodeManager.getNode(Constants.CROSS_SERVER_ID).fireCrossEvent(CrossNodeEvent.valueOf(playerActor.getPlayerId()));
+		CrossEventManager.fireCrossEvent(Constants.CROSS_SERVER_ID, CrossNodeEvent.valueOf(playerActor.getPlayerId()));
 	}
 
 	@Override

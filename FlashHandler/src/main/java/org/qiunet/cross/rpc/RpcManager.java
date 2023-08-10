@@ -1,8 +1,10 @@
 package org.qiunet.cross.rpc;
 
 import com.google.common.collect.Maps;
-import org.qiunet.cross.node.ServerNode;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.player.IPlayer;
+import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -13,7 +15,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 /***
  *
@@ -48,50 +49,38 @@ public class RpcManager {
 	public static <E extends IRpcRequest, R> RpcFuture<R> rpcCall(int serverId, IRpcFunction<E, R> req, E reqData) {
 		RpcFuture<R> rpcFuture = new RpcFuture<>(counter.incrementAndGet(), new DCompletePromise<>());
 		if (serverId == ServerNodeManager.getCurrServerId()) {
-			rpcFuture.getFuture().trySuccess(req.apply(reqData));
+			if (IPlayer.class.isAssignableFrom(reqData.getClass()) && ((IPlayer) reqData).getId() > 0) {
+				AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) reqData).getId());
+				actor.addMessage(a -> {
+					rpcFuture.getFuture().trySuccess(req.apply(reqData));
+				});
+			}else {
+				try {
+						rpcFuture.getFuture().trySuccess(req.apply(reqData));
+				}catch (Exception e) {
+					LoggerType.DUODUO_FLASH_HANDLER.error("Handler Rpc exception: " , e);
+					rpcFuture.getFuture().tryFailure(e);
+				}
+			}
 			return rpcFuture;
 		}
 
-		return sendRequest(req, rpcFuture, serverId, reqData);
-	}
-
-	/**
-	 * 跨服到某个serverId上, 远端会异步调用 并得到返回值.
-	 * @param serverId 去哪个服务器上执行
-	 * @param req 事件的主体
-	 * @param <E> 事件类型
-	 * @param <R> 返回值类型
-	 * @return  DFuture 自己在外面异步 或者同步取数据
-	 */
-	public static <E extends IRpcRequest, R> RpcFuture<R> asyncRpcCall(int serverId, IAsyncRpcFunction<E, R> req, E reqData) {
-		if (serverId == ServerNodeManager.getCurrServerId()) {
-			return req.apply(reqData);
-		}
-
-		RpcFuture<R> rpcFuture = new RpcFuture<>(counter.incrementAndGet(), new DCompletePromise<>());
-		return sendRequest(req, rpcFuture, serverId, reqData);
-	}
-
-	/**
-	 * 发送请求. 缓存数据
-	 */
-	private static <R> RpcFuture<R> sendRequest(Function function, RpcFuture<R> rpcFuture, int serverId, IRpcRequest reqData) {
 		// 从function取出序列化方法
-		Method writeReplaceMethod;
+
 		try {
-			writeReplaceMethod = function.getClass().getDeclaredMethod("writeReplace");
-			SerializedLambda lambdaData = (SerializedLambda) ReflectUtil.makeAccessible(writeReplaceMethod).invoke(function);
+			Method writeReplaceMethod = req.getClass().getDeclaredMethod("writeReplace");
+			SerializedLambda lambdaData = (SerializedLambda) ReflectUtil.makeAccessible(writeReplaceMethod).invoke(req);
 			if (lambdaData.getImplMethodName().startsWith("lambda")) {
 				throw new RuntimeException("Lambda expression need specify exist method!");
 			}
 			String declaringClass = lambdaData.getImplClass().replace("/", ".");
 			RouteRpcReq routeRpcReq = RouteRpcReq.valueOf(rpcFuture.getId(), declaringClass, lambdaData.getImplMethodName(), reqData);
 			rpcFuture.method = Class.forName(declaringClass).getDeclaredMethod(lambdaData.getImplMethodName(), reqData.getClass());
-			ServerNode serverNode = ServerNodeManager.getNode(serverId);
-			cached.put(rpcFuture.getId(), rpcFuture);
-			serverNode.sendMessage(routeRpcReq);
-			rpcFuture.beginCalTimeOut(6);
-
+			ServerNodeManager.getNode(serverId, node -> {
+				cached.put(rpcFuture.getId(), rpcFuture);
+				node.sendMessage(routeRpcReq);
+				rpcFuture.beginCalTimeOut(6);
+			});
 		} catch (Exception e) {
 			LoggerType.DUODUO_FLASH_HANDLER.error("rpc call: ", e);
 			rpcFuture.getFuture().tryFailure(e);
