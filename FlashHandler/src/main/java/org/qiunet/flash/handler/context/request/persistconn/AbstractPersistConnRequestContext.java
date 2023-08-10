@@ -9,7 +9,10 @@ import org.qiunet.flash.handler.context.header.ISequenceProtocolHeader;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.string.StringUtil;
+import org.qiunet.utils.string.ToString;
 
 /**
  * Created by qiunet.
@@ -52,5 +55,24 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 	@Override
 	public String getRemoteAddress() {
 		return ChannelUtil.getIp(channel);
+	}
+
+	@Override
+	public String toString() {
+		if (this.channel == null) {
+			if (this.requestData != null) {
+				return this.requestData.getClass().getName();
+			} else {
+				return "unknown request!";
+			}
+		}
+		P messageActor = (P) this.channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		String identifyDesc;
+		if (messageActor != null) {
+			identifyDesc = messageActor.getIdentity();
+		}else {
+			identifyDesc = this.channel.id().asShortText();
+		}
+		return StringUtil.slf4jFormat("[{}]: << {}", identifyDesc, ToString.toString(requestData));
 	}
 }

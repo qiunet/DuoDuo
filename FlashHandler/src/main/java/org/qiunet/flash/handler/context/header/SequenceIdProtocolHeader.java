@@ -160,7 +160,7 @@ public enum SequenceIdProtocolHeader implements IProtocolHeader {
 	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader, ISequenceProtocolHeader {
 		private final ObjectPool.Handle<ServerRspHeader> recyclerHandle;
 
-		private static final int HEADER_LENGTH = 6;
+		private static final int HEADER_LENGTH = 8;
 		private int protocolId;
 		private int sequence;
 		private int length;
@@ -232,7 +232,7 @@ public enum SequenceIdProtocolHeader implements IProtocolHeader {
 	private static class ServerReqHeader implements IServerInHeader, IClientOutHeader, ISequenceProtocolHeader{
 		private final ObjectPool.Handle<ServerReqHeader> recyclerHandle;
 
-		private static final int HEADER_LENGTH = 6;
+		private static final int HEADER_LENGTH = 8;
 		private transient Channel channel;
 
 		private int sequence;

@@ -130,8 +130,9 @@ abstract class BaseSession implements ISession {
 			return;
 		}
 
-		if ( logger.isInfoEnabled() && messageActor != null && message.debugOut()) {
-			logger.info("[{}] [{}({})] >>> {}", messageActor.getIdentity(), getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
+		if ( logger.isInfoEnabled() &&  message.debugOut()) {
+			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
+			logger.info("[{}] [{}({})] >>> {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
 		}
 
 		if (flush) {

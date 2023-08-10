@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
+import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthFirstPush;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthReq;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthRsp;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -114,7 +115,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		// 没有鉴权
 		if (content.getProtocolId() != IProtocolId.System.CONNECTION_REQ
 		&& session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY) == null) {
-			session.sendMessage(KcpBindAuthRsp.valueOf(false), true);
+			session.sendMessage(KcpBindAuthFirstPush.valueOf(), true);
 			return;
 		}
 

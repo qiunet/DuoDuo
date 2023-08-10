@@ -66,7 +66,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			}
 
 			messageActor.setMsgExecuteIndex(connectionReq.getIdKey());
-			messageActor.sendMessage(ConnectionRsp.getInstance());
+			messageActor.sendMessage(ConnectionRsp.getInstance(), true);
 			return;
 		}
 

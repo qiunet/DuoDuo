@@ -49,7 +49,9 @@ public enum CloseCause {
 	@Protobuf(description = "旧Session活跃时候重连,关闭旧Session")
 	LOGIN_RECONNECTION("旧Session活跃时候重连,关闭旧Session", true),
 	@Protobuf(description = "清理无效的连接")
-    INVALID_CHANNEL("清理无效的连接", false);
+    INVALID_CHANNEL("清理无效的连接", false),
+	@Protobuf(description = "Gm命令中断")
+	GM_COMMAND("Gm命令中断", true),;
 	private final boolean waitConnect;
 	private final boolean logoutPush;
 	private final String desc;

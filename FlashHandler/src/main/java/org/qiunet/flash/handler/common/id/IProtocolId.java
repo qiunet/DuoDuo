@@ -47,6 +47,8 @@ public interface IProtocolId {
 
 		/**断线重连无效*/
 		int RECONNECT_INVALID_PUSH = 12;
+		/**需要先AUTH*/
+		int KCP_BIND_AUTH_FIRST_PUSH = 13;
 
 		/**时钟同步*/
 		int CLOCK_TICK_PUSH = 14;

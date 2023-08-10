@@ -1,4 +1,4 @@
-package org.qiunet.flash.handler.netty.server.bound;
+package org.qiunet.flash.handler.netty.coder;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -27,19 +28,20 @@ public class InvalidChannelCleanHandler extends ChannelDuplexHandler {
 	public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
 		ctx.executor().schedule(() -> {
 			Attribute<IMessageActor> actorAttribute = ctx.channel().attr(ServerConstants.MESSAGE_ACTOR_KEY);
-			if (actorAttribute == null || ! actorAttribute.get().isAuth()) {
-
-				ISession session = ChannelUtil.getSession(ctx.channel());
-				if (session != null) {
-					session.close(CloseCause.INVALID_CHANNEL);
-				}else {
-					logger.error("Channel [{}] close by invalid channel clear!", ctx.channel().id().asShortText());
-					ctx.channel().close();
-				}
+			// DTools 工具的不断开
+			if (actorAttribute != null
+				&& (Objects.equals(actorAttribute.get().msgExecuteIndex(), "DTools") || actorAttribute.get().isAuth())) {
+				ctx.channel().pipeline().remove(this);
 				return;
 			}
 
-			ctx.channel().pipeline().remove(this);
+			ISession session = ChannelUtil.getSession(ctx.channel());
+			if (session != null) {
+				session.close(CloseCause.INVALID_CHANNEL);
+			}else {
+				logger.error("Channel [{}] close by invalid channel clear!", ctx.channel().id().asShortText());
+				ctx.channel().close();
+			}
 		}, 30, TimeUnit.SECONDS);
 	}
 }

@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
+import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -59,11 +60,21 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 
 	@Override
 	public void execute(P p) throws Exception {
+		Preconditions.checkArgument(this.channel != null);
+		long startTime = System.currentTimeMillis();
 		try {
 			this.handlerRequest();
 		} catch (StatusResultException e) {
 			this.sendMessage(StatusTipsRsp.valueOf(e), true);
 		}finally {
+			// 太频繁的请求不记录数据
+			if (getRequestData().debugOut()) {
+				long useTime = System.currentTimeMillis() - startTime;
+				this.getHandler().recordUseTime(useTime);
+				if (useTime > 500) {
+					logger.error("Request {} use [{}] ms to executor!", this, useTime);
+				}
+			}
 			this.recycle();
 		}
 	}
@@ -84,7 +95,6 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			//ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;
 		}
-		long startTime = System.currentTimeMillis();
 		if (logger.isInfoEnabled() && getRequestData().debugOut()) {
 			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), getRequestData()._toString());
 		}
@@ -99,7 +109,5 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 				facadeWebSocketRequest.recycle();
 			}
 		}
-		long useTime = System.currentTimeMillis() - startTime;
-		this.getHandler().recordUseTime(useTime);
 	}
 }

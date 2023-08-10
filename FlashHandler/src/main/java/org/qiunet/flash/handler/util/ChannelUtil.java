@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.util;
 
 import com.google.common.base.Preconditions;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -28,18 +27,17 @@ import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
-import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerExceptionResponse;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
-import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.function.Function;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -92,26 +90,7 @@ public final class ChannelUtil {
 	public static ISession getSession(Channel channel) {
 		return channel.attr(ServerConstants.SESSION_KEY).get();
 	}
-
-	/**
-	 *  获得ip
-	 * @return
-	 */
-	public static String getIp(Channel channel) {
-
-		SocketAddress socketAddress = channel.remoteAddress();
-
-		if (socketAddress == null) {
-			return "unknown-address";
-		}
-
-		return ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
-	}
-	/**
-	 *  获得ip
-	 * @return
-	 */
-	public static String getIp(HttpHeaders headers) {
+	private static final Function<HttpHeaders, String> ipGetter = (headers) -> {
 		if (headers == null) {
 			return null;
 		}
@@ -136,7 +115,31 @@ public final class ChannelUtil {
 		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
 			return ip;
 		}
+
 		return null;
+	};
+	/**
+	 *  获得ip
+	 * @return
+	 */
+	public static String getIp(Channel channel) {
+		SocketAddress socketAddress = channel.remoteAddress();
+		if (socketAddress == null) {
+			return "unknown-address";
+		}
+
+		return ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
+	}
+	/**
+	 *  获得ip
+	 * @return
+	 */
+	public static String getIp(HttpHeaders headers) {
+		String ip = ipGetter.apply(headers);
+		if (! StringUtil.isEmpty(ip) && ip.contains(",")) {
+			ip = ip.substring(0, ip.indexOf(","));
+		}
+		return ip;
 	}
 
 	/**
@@ -195,12 +198,6 @@ public final class ChannelUtil {
 			IRequestContext context = handler.getDataType().createRequestContext(session, content, channel);
 			messageActor.addMessage((IMessage) context);
 		}
-	}
-
-	private static final LazyLoader<IChannelData> SERVER_EXCEPTION_MESSAGE = new LazyLoader<>(ServerExceptionResponse::new);
-	public static ChannelFuture exception(ISession session, Throwable cause){
-		LoggerType.DUODUO_FLASH_HANDLER.error("ChannelHandler异常", cause);
-		return session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true);
 	}
 
 	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {
