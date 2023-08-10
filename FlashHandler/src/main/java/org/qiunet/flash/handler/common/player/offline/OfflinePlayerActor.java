@@ -43,12 +43,14 @@ public class OfflinePlayerActor extends PlayerActor {
 
 	@Override
 	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
-		throw new CustomException("Can not send message use offline player actor");
+		logger.error("Can not send message use offline player actor");
+		return null;
 	}
 
 	@Override
 	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
-		throw new CustomException("Can not send message use offline player actor");
+		logger.error("Can not send message use offline player actor");
+		return null;
 	}
 
 	@Override

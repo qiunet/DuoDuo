@@ -30,6 +30,7 @@ import org.qiunet.utils.timer.TimerManager;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -88,6 +89,11 @@ public enum UserOnlineManager {
 	@EventListener
 	private void addPlayerActor(LoginSuccessEvent eventData) {
 		AbstractUserActor userActor = eventData.getPlayer();
+		if (! userActor.getSession().isActive()) {
+			LoggerType.DUODUO_FLASH_HANDLER.error("Player {} is not activity!", eventData.getPlayer().getId());
+			return;
+		}
+
 		Preconditions.checkState(userActor.isAuth());
 		if (userActor.isCrossPlayer()) {
 			onlineCrossPlayers.put(userActor.getId(), ((CrossPlayerActor) userActor));
@@ -102,31 +108,37 @@ public enum UserOnlineManager {
 	 */
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onLogout(PlayerActorLogoutEvent eventData) {
-		PlayerActor actor = onlinePlayers.remove(eventData.getPlayer().getId());
-		if (actor == null) {
+		PlayerActor currActor = getPlayerActor(eventData.getPlayer().getPlayerId());
+		if (currActor == null || ! Objects.equals(currActor, eventData.getPlayer())) {
+			this.destroyPlayer(eventData.getPlayer());
+			return;
+		}
+
+		currActor = onlinePlayers.remove(eventData.getPlayer().getId());
+		if (currActor == null) {
 			this.destroyPlayer(eventData.getPlayer());
 			return;
 		}
 
 		// 清理 observers 避免重连重复监听.
-		actor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
+		currActor.getObserverSupport().clear(clz -> clz != IPlayerDestroy.class);
 
-		actor.dataLoader().syncToDb();
+		currActor.dataLoader().syncToDb();
 
-		if (! eventData.getCause().needWaitConnect() || !actor.isAuth()) {
-			this.destroyPlayer(actor);
+		if (! eventData.getCause().needWaitConnect() || !currActor.isAuth()) {
+			this.destroyPlayer(currActor);
 			return;
 		}
 
-		if (actor.casWaitReconnect(false, true)) {
+		if (currActor.casWaitReconnect(false, true)) {
 			// 给2分钟重连时间
-			DFuture<Void> future = actor.scheduleMessage(p -> this.destroyPlayer(actor), 2 * 60, TimeUnit.SECONDS);
-			waitReconnects.put(actor.getId(), new WaitActor(actor, future));
+			DFuture<Void> future = currActor.scheduleMessage(this::destroyPlayer, 2 * 60, TimeUnit.SECONDS);
+			waitReconnects.put(currActor.getId(), new WaitActor(currActor, future));
 
 
-			if (actor.isCrossStatus()) {
+			if (currActor.isCrossStatus()) {
 				// 告诉跨服服务. 玩家这里断线了.
-				actor.fireCrossEvent(PlayerBrokenEvent.valueOf());
+				currActor.fireCrossEvent(PlayerBrokenEvent.valueOf());
 			}
 		}
 	}
@@ -165,11 +177,10 @@ public enum UserOnlineManager {
 			waitActor.actor.addMessage(this::resentInterestMsg);
 		}
 
-		onlinePlayers.put(playerId, waitActor.actor);
-		currActor.destroy();
 		// 通知跨服和本服
 		waitActor.actor.fireCrossEvent(PlayerReconnectEvent.valueOf());
 		waitActor.actor.fireEvent(ActorReconnectEvent.valueOf());
+		currActor.destroy();
 		return waitActor.actor;
 	}
 

@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common;
 import com.google.common.collect.Sets;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import org.qiunet.data.async.ISyncDbExecutor;
+import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
@@ -39,19 +40,6 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private final AtomicBoolean destroyed = new AtomicBoolean();
-
-	/**
-	 * 执行消息
-	 * @param message 消息
-	 */
-	private void executorMessage(IMessage<H> message) {
-		try {
-			message.execute((H) this);
-		}catch (Exception e) {
-			this.exceptionHandle(e);
-		}
-	}
-
 	/**
 	 * 处理异常情况
 	 * @param e
@@ -78,7 +66,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
 			return false;
 		}
-		this.getExecutor().execute(() -> this.executorMessage(msg));
+		this.getExecutor().execute(new Message0(this, msg));
 		return true;
 	}
 
@@ -89,12 +77,12 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			return;
 		}
 
-		executorService.randEventLoop().execute(() -> this.executorMessage(message));
+		executorService.randEventLoop().execute(new Message0(this, message));
 	}
 
 	@Override
 	public void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex) {
-		executorService.getEventLoop(msgExecuteIndex).execute(() -> this.executorMessage(message));
+		executorService.getEventLoop(msgExecuteIndex).execute(new Message0(this, message));
 	}
 
 	@Override
@@ -254,6 +242,41 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		@Override
 		public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
 			return future.get(timeout, unit);
+		}
+	}
+	private static class Message0 implements Runnable {
+		private static final long WARN_NANO_TIME = TimeUnit.MILLISECONDS.toNanos(500);
+		private final MessageHandler handler;
+		private final IMessage message;
+		private final long addDt;
+
+		public Message0(MessageHandler handler, IMessage message) {
+			this.addDt = System.nanoTime();
+			this.handler = handler;
+			this.message = message;
+		}
+
+		@Override
+		public void run() {
+			if (handler.isDestroyed()) {
+				handler.logger.error("MessageHandler already destroy! message {} discard!", message.toString());
+				return;
+			}
+
+			long handlerStart = System.nanoTime();
+			if (handlerStart - addDt > WARN_NANO_TIME){
+				handler.logger.error("Message {} wait [{}] ms to executor!", message.toString(), TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
+			}
+			try {
+				message.execute(handler);
+			} catch (Exception e) {
+				handler.exceptionHandle(e);
+			}finally {
+				long handlerEnd = System.nanoTime();
+				if (handlerEnd - handlerStart > WARN_NANO_TIME && !IRequestContext.class.isAssignableFrom(message.getClass())){
+					handler.logger.error("Message {} use [{}] ms to executor!", message, TimeUnit.NANOSECONDS.toMillis(handlerEnd - handlerStart));
+				}
+			}
 		}
 	}
 }

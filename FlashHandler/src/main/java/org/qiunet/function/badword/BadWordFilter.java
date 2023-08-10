@@ -7,7 +7,6 @@ import org.qiunet.utils.thread.ThreadPoolManager;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.LineNumberReader;
 import java.net.URL;
 import java.util.*;
@@ -70,7 +69,7 @@ public enum  BadWordFilter {
 				 LineNumberReader lReader = new LineNumberReader(fileReader)){
 				List<String> collect = lReader.lines().toList();
 				this.loadBadWord(new DefaultBadWord(collect));
-			} catch (IOException e) {
+			} catch (Exception e) {
 				LoggerType.DUODUO.error("Read bad word exception", e);
 			}
 		});

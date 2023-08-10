@@ -4,7 +4,17 @@ import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
+import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
+import org.qiunet.cross.event.CrossEventRequest;
+import org.qiunet.cross.rpc.RouteRpcReq;
+import org.qiunet.cross.rpc.RouteRpcRsp;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
+import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
+import org.qiunet.flash.handler.netty.server.message.ConnectionReq;
+import org.qiunet.flash.handler.netty.server.message.ConnectionRsp;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -80,5 +90,21 @@ public class ProtobufDataManager {
 		}finally {
 			in.recycle();
 		}
+	}
+
+	/**
+	 * 预热部分协议
+	 * @param event
+	 */
+	@EventListener
+	private void startup(ServerStartupEvent event) {
+		ProtobufProxy.create(CrossPlayerAuthRequest.class);
+		ProtobufProxy.create(CrossEventRequest.class);
+		ProtobufProxy.create(ServerPongResponse.class);
+		ProtobufProxy.create(ClientPingRequest.class);
+		ProtobufProxy.create(RouteRpcReq.class);
+		ProtobufProxy.create(RouteRpcRsp.class);
+		ProtobufProxy.create(ConnectionReq.class);
+		ProtobufProxy.create(ConnectionRsp.class);
 	}
 }

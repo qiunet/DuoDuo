@@ -105,13 +105,14 @@ public enum UserServerStateManager {
 			throw new NoRegisterException("Player "+playerId+" not register on logic server!");
 		}
 
+		if (onlineOnly && ! state.isOnline()) {
+			logger.error("Player {} not online!", playerId);
+			return 0;
+		}
+
 		int serverId = state.getServerId();
 		if (serverId != 0) {
 			return serverId;
-		}
-
-		if (onlineOnly) {
-			return 0;
 		}
 
 		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
@@ -170,22 +171,11 @@ public enum UserServerStateManager {
 			return;
 		}
 
-		UserServerState state = getUserServerState(playerId);
-		if (state == null) {
-			logger.error("Player {} not register on logic server!", playerId);
-			return;
-		}
-
-		if (onlineOnly && ! state.isOnline()) {
-			logger.error("Player {} not online!", playerId);
-			return;
-		}
-
 		int serverId = 0;
 		try {
 			serverId = this.assignServerId(playerId, onlineOnly);
 		} catch (NoRegisterException e) {
-			// do nothing
+			logger.error("fire user event error: ", e);
 		}
 
 		if (serverId == 0) {
@@ -199,6 +189,10 @@ public enum UserServerStateManager {
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void userOnline(LoginSuccessEvent event) {
 		if (!event.getPlayer().isPlayerActor()) {
+			return;
+		}
+
+		if (! event.getPlayer().getSession().isActive()) {
 			return;
 		}
 
