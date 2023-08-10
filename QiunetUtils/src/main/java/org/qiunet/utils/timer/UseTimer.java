@@ -1,9 +1,9 @@
 package org.qiunet.utils.timer;
 
-import org.apache.commons.lang3.time.StopWatch;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 /***
@@ -25,7 +25,7 @@ public class UseTimer {
 	/**
 	 *
 	 */
-	private final StopWatch stopWatch;
+	private long startDt;
 
 	public UseTimer(String name, long warnUseTime) {
 		this(() -> name, warnUseTime);
@@ -34,23 +34,21 @@ public class UseTimer {
 	public UseTimer(Supplier<String> nameGetter, long warnUseTime) {
 		this.nameGetter = nameGetter;
 		this.warnUseTime = warnUseTime;
-		this.stopWatch = new StopWatch();
 		this.start();
 	}
 
 	public void reset() {
-		this.stopWatch.reset();
+		this.startDt = 0;
 	}
 
 	public void start(){
 		this.reset();
-		this.stopWatch.start();
+		this.startDt = System.nanoTime();
 	}
 
 
 	private long countUseTime(){
-		this.stopWatch.stop();
-		return stopWatch.getTime();
+		return TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startDt);
 	}
 
 	public long printUseTime(){
@@ -75,6 +73,6 @@ public class UseTimer {
 
 	@Override
 	public String toString() {
-		return nameGetter.get() + " current use [" + this.stopWatch.getTime() + "]ms";
+		return nameGetter.get() + " current use [" + this.countUseTime() + "]ms";
 	}
 }

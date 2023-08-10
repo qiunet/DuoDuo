@@ -1,5 +1,7 @@
 package org.qiunet.utils.listener.event;
 
+import org.qiunet.utils.thread.ThreadPoolManager;
+
 import java.lang.reflect.Method;
 import java.util.function.BiConsumer;
 
@@ -10,6 +12,15 @@ import java.util.function.BiConsumer;
  * @author qiunet
  */
 public interface IListenerEvent {
+	default void asyncFireEventHandler(BiConsumer<Method, Throwable> exConsume) {
+		ThreadPoolManager.NORMAL.submit(() -> this.fireEventHandler(exConsume));
+	}
+	/***
+	 * 异步触发事件处理
+	 */
+	default void asyncFireEventHandler() {
+		ThreadPoolManager.NORMAL.submit(() -> this.fireEventHandler());
+	}
 	/***
 	 * 触发事件处理
 	 */

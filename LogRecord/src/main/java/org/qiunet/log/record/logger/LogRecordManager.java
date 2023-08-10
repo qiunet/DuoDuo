@@ -10,12 +10,13 @@ import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
-import org.qiunet.utils.thread.ThreadPoolManager;
+import org.qiunet.utils.timer.TimerManager;
 
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /***
@@ -59,7 +60,7 @@ public enum LogRecordManager {
 			queue.add(log);
 
 			if (size.incrementAndGet() == 1) {
-				ThreadPoolManager.NORMAL.execute(this::consumeLog);
+				TimerManager.executor.scheduleWithDelay(this::consumeLog, 100, TimeUnit.MILLISECONDS);
 			}
 		}
 		/**

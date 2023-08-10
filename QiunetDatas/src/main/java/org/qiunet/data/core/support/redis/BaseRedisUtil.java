@@ -1,6 +1,5 @@
 package org.qiunet.data.core.support.redis;
 
-import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
@@ -13,6 +12,7 @@ import redis.clients.jedis.params.SetParams;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public abstract class BaseRedisUtil implements IRedisUtil {
@@ -78,21 +78,19 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 			 throw new CustomException("redis lock [{}] timeout!", key);
 		}
 
-		String ret = this.returnJedis().set(key, "", SetParams.setParams().ex(30L).nx());
-		boolean locked = "OK".equals(ret);
-		if (locked) {
-			DFuture<Long> future = TimerManager.executor.scheduleWithDelay(() -> this.returnJedis().expire(key, 30L), 20, TimeUnit.SECONDS);
-			try {
-				call.run();
-			}finally {
-				future.cancel(true);
-				this.returnJedis().del(key);
-			}
+		String setResult = this.returnJedis().set(key, "", SetParams.setParams().ex(TimeUnit.MINUTES.toSeconds(1)).nx());
+		if (! Objects.equals(setResult, "OK")) {
+			TimerManager.executor.scheduleWithDelay(() -> {
+				this.asyncRedisLockRun0(key, count + 1, call);
+			}, 100, TimeUnit.MILLISECONDS);
 			return;
 		}
-		TimerManager.executor.scheduleWithDelay(() -> {
-			this.asyncRedisLockRun0(key, count + 1, call);
-		}, 10, TimeUnit.MILLISECONDS);
+
+		try {
+			call.run();
+		}finally {
+			this.returnJedis().del(key);
+		}
 	}
 	/**
 	 * 打印命令
