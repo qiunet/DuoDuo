@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.qiunet.flash.handler.context.header.SequenceIdProtocolHeader;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.cross.common.redis.RedisDataUtil;
-import org.qiunet.test.handler.bootstrap.hook.MyHook;
 
 import java.util.concurrent.locks.LockSupport;
 
@@ -19,8 +19,8 @@ import java.util.concurrent.locks.LockSupport;
  */
 public abstract class BasicTcpBootStrap {
 	protected static final String host = "localhost";
+	protected static final Hook hook = new DefaultHook();
 	protected static final int port = 8888;
-	protected static final Hook hook = new MyHook();
 	protected static Thread currThread;
 
 	@BeforeAll

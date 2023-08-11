@@ -103,9 +103,8 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 		 long endDt = System.currentTimeMillis();
 
 		 StringBuilder sb = new StringBuilder();
-		 sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt))).append("ms Key[").append(args[0]).append("] ");
-		 if (args.length > 1) sb.append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", 1, args.length - 1, ",")).append(" ");
-		 sb.append("\tResult[");
+		 sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt)))
+			 .append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", ", ")).append(" ").append("\tResult[");
 		 if (result == null) {
 			 sb.append("<null>");
 		 }else {

@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/12/2
  */
 public class TestMuchWebSocketRequest extends HttpBootStrap {
-	private final int clientCount = 10;
+	private final int clientCount = 50;
 	private final int requestCount = 1000;
 	private final AtomicInteger counter = new AtomicInteger();
 	private final CountDownLatch latch = new CountDownLatch(clientCount * requestCount);

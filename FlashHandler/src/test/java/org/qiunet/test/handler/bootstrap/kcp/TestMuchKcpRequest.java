@@ -27,9 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class TestMuchKcpRequest extends BasicKcpBootStrap {
 	private final AtomicInteger counter = new AtomicInteger();
-	private final int requestCount = 50000;
+	private final int requestCount = 1000;
 	private final int threadCount = 50;
-	private final CountDownLatch latch = new CountDownLatch(requestCount);
+	private final CountDownLatch latch = new CountDownLatch(requestCount * threadCount);
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyKcpClient client = NettyKcpClient.create(KcpClientConfig.DEFAULT_CLIENT_CONFIG, new Trigger());
@@ -39,8 +39,7 @@ public class TestMuchKcpRequest extends BasicKcpBootStrap {
 				ClientSession connector = client.connect(host, port);
 				connector.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)));
 
-				int count = requestCount/threadCount;
-				for (int i = 0 ; i < count; i ++) {
+				for (int i = 0 ; i < requestCount; i ++) {
 					String text = "test [testKcpProtobuf]: "+i;
 					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, null);
 					connector.sendMessage(request);

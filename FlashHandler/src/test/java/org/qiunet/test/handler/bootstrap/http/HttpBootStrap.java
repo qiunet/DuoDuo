@@ -9,9 +9,9 @@ import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;
 import org.qiunet.flash.handler.netty.server.BootstrapServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.hook.DefaultHook;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.test.cross.common.redis.RedisDataUtil;
-import org.qiunet.test.handler.bootstrap.hook.MyHook;
 
 import java.nio.ByteBuffer;
 import java.util.concurrent.locks.LockSupport;
@@ -23,7 +23,7 @@ import java.util.concurrent.locks.LockSupport;
 public class HttpBootStrap {
 	protected static final IProtocolHeader PROTOCOL_HEADER = DefaultProtocolHeader.instance;
 	protected static final int port = 8090;
-	private static final Hook hook = new MyHook();
+	private static final Hook hook = new DefaultHook();
 	private static Thread currThread;
 	@BeforeAll
 	public static void init() throws Exception {

@@ -26,22 +26,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 17/11/27
  */
 public class TestMuchTcpRequest extends BasicTcpBootStrap {
-	private final int requestCount = 20000;
+	private final int requestCount = 1000;
+	private final int threadCount = 50;
 	private final AtomicInteger counter = new AtomicInteger();
-	private final CountDownLatch latch = new CountDownLatch(requestCount);
+	private final CountDownLatch latch = new CountDownLatch(threadCount * requestCount);
 
 	@Test
 	public void muchRequest() throws InterruptedException {
 		NettyTcpClient nettyTcpClient = NettyTcpClient.create(TcpClientConfig.custom().setProtocolHeader(SequenceIdProtocolHeader.instance).build(), new Trigger());
 		long start = System.currentTimeMillis();
-		final int threadCount = 20;
+
 		for (int j = 0; j < threadCount; j++) {
 			new Thread(() -> {
 				ClientSession connector = nettyTcpClient.connect(host, port);
 				connector.sendMessage(ConnectionReq.valueOf(StringUtil.randomString(10)));
 
-				int count = requestCount/threadCount;
-				for (int i = 0 ; i < count; i ++) {
+				for (int i = 0 ; i < requestCount; i ++) {
 					String text = "test [testTcpProtobuf]: "+i;
 					TcpPbLoginRequest request = TcpPbLoginRequest.valueOf(text, text, 11, null);
 					connector.sendMessage(request, true);

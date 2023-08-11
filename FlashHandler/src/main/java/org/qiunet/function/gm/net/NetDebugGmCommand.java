@@ -1,6 +1,7 @@
 package org.qiunet.function.gm.net;
 
 import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -31,6 +32,12 @@ enum NetDebugGmCommand {
 		if (kcpSession != null) {
 			kcpSession.close(CloseCause.GM_COMMAND);
 		}
+		return IGameStatus.SUCCESS;
+	}
+
+	@GmCommand(commandName = "通知客户端重走完整登录流程")
+	public IGameStatus sendReLogin(PlayerActor actor) {
+		actor.sendMessage(PlayerReLoginPush.valueOf());
 		return IGameStatus.SUCCESS;
 	}
 }

@@ -55,6 +55,9 @@ public class Target {
 	 * @return actor
 	 */
 	public PlayerActor getPlayer() {
+		if (container == null) {
+			return null;
+		}
 		return container.getPlayer();
 	}
 	/**
