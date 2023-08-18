@@ -15,6 +15,7 @@ import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.event.*;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.event.GlobalRedisPrepareEvent;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -205,20 +206,20 @@ public enum UserServerStateManager {
 		}
 
 		// 在serverId 踢出该用户
-		if (userServerState.getServerId() > 0 && userServerState.getServerId() != ServerNodeManager.getCurrServerId()) {
+		if (userServerState.getServerId() > 0) {
 			CrossEventManager.fireCrossEvent(userServerState.getServerId(), PlayerKickOutEvent.valueOf(event.getPlayer().getId()));
 		}
 
+		String redisKey = userServerState.getRedisKey();
 		Map<String, String> map = Maps.newHashMap();
 		map.put(SERVER_ID, String.valueOf(ServerNodeManager.getCurrServerId()));
 		map.put(ONLINE, "true");
-		redisUtil.returnJedis().hmset(userServerState.getRedisKey(), map);
-	}
+		redisUtil.returnJedis().hmset(redisKey, map);
 
-	@EventListener
-	private void userLogout(PlayerActorLogoutEvent event) {
-		String redisKey = UserServerState.redisKey(event.getPlayer().getId());
-		redisUtil.returnJedis().hdel(redisKey, ONLINE);
+		// 登出就移除在线标志
+		((DSession) event.getPlayer().getSession()).channel().closeFuture().addListener(f -> {
+			redisUtil.returnJedis().hdel(redisKey, ONLINE);
+		});
 	}
 
 	@EventListener
@@ -244,9 +245,10 @@ public enum UserServerStateManager {
 
 	@EventListener
 	private void offlineUserDestroy(OfflineUserDestroyEvent event) {
-		String redisKey = UserServerState.redisKey(event.getPlayer().getId());
 		UserServerState serverState = getUserServerState(event.getPlayer().getId());
+		// OfflinePlayerActor 被踢出的时候. 会多一次. 这个没啥问题.
 		if (serverState != null && serverState.getServerId() == ServerNodeManager.getCurrServerId()) {
+			String redisKey = UserServerState.redisKey(event.getPlayer().getId());
 			redisUtil.returnJedis().hdel(redisKey, SERVER_ID);
 		}
 	}

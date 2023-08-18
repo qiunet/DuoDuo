@@ -35,6 +35,7 @@ import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /***
  * 用户的actor管理.
@@ -104,19 +105,19 @@ public enum UserOnlineManager {
 	}
 	/**
 	 * 登出事件
-	 * @param eventData
+	 * @param event
 	 */
 	@EventListener(EventHandlerWeightType.LOWEST)
-	private void onLogout(PlayerActorLogoutEvent eventData) {
-		PlayerActor currActor = getPlayerActor(eventData.getPlayer().getPlayerId());
-		if (currActor == null || ! Objects.equals(currActor, eventData.getPlayer())) {
-			this.destroyPlayer(eventData.getPlayer());
+	private void onLogout(PlayerActorLogoutEvent event) {
+		PlayerActor currActor = getPlayerActor(event.getPlayer().getPlayerId());
+		if (currActor == null || ! Objects.equals(currActor, event.getPlayer())) {
+			this.destroyPlayer(event.getPlayer());
 			return;
 		}
 
-		currActor = onlinePlayers.remove(eventData.getPlayer().getId());
+		currActor = onlinePlayers.remove(event.getPlayer().getId());
 		if (currActor == null) {
-			this.destroyPlayer(eventData.getPlayer());
+			this.destroyPlayer(event.getPlayer());
 			return;
 		}
 
@@ -125,11 +126,19 @@ public enum UserOnlineManager {
 
 		currActor.dataLoader().syncToDb();
 
-		if (! eventData.getCause().needWaitConnect() || !currActor.isAuth()) {
+		if (! event.getCause().needWaitConnect() || !currActor.isAuth()) {
 			this.destroyPlayer(currActor);
 			return;
 		}
 
+		this.addToWait(currActor);
+	}
+
+	/**
+	 * 添加到wait 列表
+	 * @param currActor 玩家actor
+	 */
+	void addToWait(PlayerActor currActor) {
 		if (currActor.casWaitReconnect(false, true)) {
 			// 给2分钟重连时间
 			DFuture<Void> future = currActor.scheduleMessage(this::destroyPlayer, 2 * 60, TimeUnit.SECONDS);
@@ -142,6 +151,7 @@ public enum UserOnlineManager {
 			}
 		}
 	}
+
 	/**
 	 * 登出事件
 	 * @param eventData
@@ -154,37 +164,71 @@ public enum UserOnlineManager {
 	/**
 	 * 重连
 	 * 重连需要把新的session换到旧的里面。 把channel里面换成旧的
-	 * @param playerId 玩家id
+	 *
 	 * @param currActor 当前的actor
 	 * @return null 说明不能重连了. 否则之后使用返回的actor进行操作.
+	 * 不是重连的情况 也可能返回当前的actor
 	 */
-	public PlayerActor reconnect(long playerId, PlayerActor currActor) {
-		WaitActor waitActor = waitReconnects.remove(playerId);
+	public PlayerActor reconnect(PlayerActor currActor, Supplier<Boolean> isReconnect) {
+		Preconditions.checkState(currActor.inSelfThread());
+
+		PlayerActor playerActor = this.getPlayerActor(currActor.getPlayerId());
+		boolean reconnect = isReconnect.get();
+		if (playerActor != null) {
+			// 如果前面有存活的actor, 需要先断开.
+			LoggerType.DUODUO_FLASH_HANDLER.info("=====PlayerActor {} == {} login=====", playerActor.getPlayerId(), reconnect ? "reconnect" : "repeat");
+			playerActor.getSession().close(reconnect ? CloseCause.LOGIN_RECONNECTION : CloseCause.LOGIN_REPEATED);
+		}
+
+		// 不是重连. 就要销毁等待重连的对象.
+		if (! reconnect) {
+			this.destroyWaiter(currActor.getPlayerId());
+			return currActor;
+		}
+
+		if (! currActor.getSession().isActive()) {
+			// 如果当前连接非存活, 就不往下执行了. 但是需要返回当前actor
+			// 外面判断不为null. 不会失效掉重连信息对象.
+			return currActor;
+		}
+
+		WaitActor waitActor = waitReconnects.remove(currActor.getId());
 		if (waitActor == null || ! waitActor.actor.casWaitReconnect(true, false)) {
 			currActor.sendMessage(ReconnectInvalidPush.getInstance());
-			currActor.getSession().close(CloseCause.RECONNECT_INVALID);
 			return null;
 		}
 
-		LoggerType.DUODUO_FLASH_HANDLER.info("[{}] reconnected. Old Session: {}", currActor.getSession(), waitActor.actor.getSession());
-
-		waitActor.actor.clearObservers();
-		waitActor.actor.merge(currActor);
-		waitActor.future.cancel(true);
-		currActor.getSession().attachObj(ServerConstants.MESSAGE_ACTOR_KEY, waitActor.actor);
-
-		if (waitActor.actor.isNotNull(ServerConstants.INTEREST_MESSAGE_LIST)) {
-			waitActor.actor.addMessage(this::resentInterestMsg);
+		if (! waitActor.future.cancel(false)) {
+			currActor.sendMessage(ReconnectInvalidPush.getInstance());
+			return null;
 		}
 
-		// 通知跨服和本服
-		waitActor.actor.fireCrossEvent(PlayerReconnectEvent.valueOf());
-		waitActor.actor.fireEvent(ActorReconnectEvent.valueOf());
-		currActor.destroy();
-		return waitActor.actor;
+		PlayerActor finalActor = waitActor.actor;
+		try {
+			LoggerType.DUODUO_FLASH_HANDLER.info("[{}] reconnected. Old Session: {}", currActor.getSession(), finalActor.getSession());
+			finalActor.merge(currActor);
+
+			if (finalActor.isCrossStatus() && currActor.getSession().isActive()) {
+				// 通知跨服和本服
+				finalActor.fireCrossEvent(PlayerReconnectEvent.valueOf());
+				finalActor.fireEvent(ActorReconnectEvent.valueOf());
+			}
+
+			if (finalActor.isNotNull(ServerConstants.INTEREST_MESSAGE_LIST)) {
+				finalActor.addMessage(this::resentInterestMsg);
+			}
+			return finalActor;
+		}finally {
+			if (! finalActor.session.isActive()) {
+				this.addToWait(finalActor);
+			}
+		}
 	}
 
-
+	/**
+	 * 重新发感兴趣的消息
+	 * @param playerActor actor
+	 */
 	private void resentInterestMsg(PlayerActor playerActor) {
 		if (playerActor.waitReconnect()) {
 			return;
@@ -198,17 +242,19 @@ public enum UserOnlineManager {
 
 	/**
 	 * 销毁等待重连的对象.
-	 * 注意. 仅销毁. 不会触发 IDestroyPlayer
-	 * @param playerId
+	 * @param playerId 玩家id
 	 */
-	public void destroyWaiter(long playerId) {
+	private void destroyWaiter(long playerId) {
 		WaitActor waitActor = waitReconnects.remove(playerId);
 		if (waitActor == null) {
 			return;
 		}
+		this.destroyWaiter(waitActor);
+	}
+
+	private void destroyWaiter(WaitActor waitActor) {
 		waitActor.future.cancel(true);
 		this.destroyPlayer(waitActor.actor);
-		waitActor.actor.destroy();
 	}
 
 	/**
@@ -338,10 +384,12 @@ public enum UserOnlineManager {
 		if (playerActor != null) {
 			return playerActor;
 		}
-		WaitActor waitActor = waitReconnects.get(playerId);
-		if (waitActor != null) {
-			return waitActor.actor;
+
+		playerActor = getWaitReconnectPlayer(playerId);
+		if (playerActor != null) {
+			return playerActor;
 		}
+
 		return UserOfflineManager.instance.get(playerId);
 	}
 

@@ -25,12 +25,14 @@ public class CrossEventHandler extends PersistConnPbHandler<AbstractMessageActor
 			if (actor instanceof AbstractUserActor) {
 				((IPlayerFireEvent) actor).fireAsyncEvent(event);
 			}else if (requestData.getPlayerId() != 0) {
-				AbstractUserActor actor0 = UserOnlineManager.instance.returnActor(requestData.getPlayerId());
-				if (actor0.isPlayerActor()) {
-					((PlayerActor) actor0).fireAsyncEvent(((BasePlayerEvent) event));
-				}else {
-					((CrossPlayerActor) actor0).fireAsyncEvent((BaseCrossPlayerEvent) event);
-				}
+				actor.runMessageWithMsgExecuteIndex(a -> {
+					AbstractUserActor actor0 = UserOnlineManager.instance.returnActor(requestData.getPlayerId());
+					if (actor0.isPlayerActor()) {
+						((PlayerActor) actor0).fireAsyncEvent(((BasePlayerEvent) event));
+					}else {
+						((CrossPlayerActor) actor0).fireAsyncEvent((BaseCrossPlayerEvent) event);
+					}
+				}, String.valueOf(requestData.getPlayerId()));
 			}
 			return;
 		}

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.flash.handler.common.CommMessageHandler;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
@@ -29,6 +30,8 @@ import java.util.function.BiConsumer;
  */
 public enum TransactionManager {
 	instance;
+	private static final CommMessageHandler messageHandler = new CommMessageHandler();
+
 	private static final Logger logger = LoggerType.DUODUO_CROSS.getLogger();
 
 	private final IdGenerator<Long> idGenerator  = new DefaultIdGenerator();
@@ -107,17 +110,31 @@ public enum TransactionManager {
 	 */
 	void handler(ITransactionReq req, DTransaction dTransaction) {
 		if (req instanceof IPlayer) {
-			AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) req).getId());
-			actor.addMessage(a -> TransactionManager0.handler(req.getClass(), dTransaction));
+			messageHandler.runMessageWithMsgExecuteIndex((node) -> {
+				AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) req).getId());
+				actor.addMessage(a -> this.handler0(req, dTransaction));
+			}, String.valueOf(((IPlayer) req).getId()));
 		}else {
-			ThreadPoolManager.NORMAL.submit(() -> {
-				// 让 Transaction 自己决定哪个线程
-				try {
-					TransactionManager0.handler(req.getClass(), dTransaction);
-				} catch (Exception e) {
-					LoggerType.DUODUO_FLASH_HANDLER.error("Exception:" , e);
-				}
-			});
+			ThreadPoolManager.NORMAL.submit(() -> this.handler0(req, dTransaction));
+		}
+	}
+
+	/**
+	 * 处理事务.如果异常. 正常情况抛出给外面.
+	 * 否则打印
+	 * @param req 请求数据
+	 * @param dTransaction transaction 对象
+	 */
+	private void handler0(ITransactionReq req, DTransaction dTransaction) {
+		try {
+			TransactionManager0.handler(req.getClass(), dTransaction);
+		}catch (Exception e) {
+			DPromise dPromise = cacheRequests.get(dTransaction.getReqId());
+			if (dPromise != null) {
+				dPromise.tryFailure(e);
+			}else {
+				logger.error("transaction error!", e);
+			}
 		}
 	}
 	/**

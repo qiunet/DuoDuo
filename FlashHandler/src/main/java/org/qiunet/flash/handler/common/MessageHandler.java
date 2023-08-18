@@ -10,12 +10,15 @@ import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
+import org.qiunet.utils.reflect.ReflectUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
 import org.qiunet.utils.thread.IThreadSafe;
 import org.qiunet.utils.timer.TimerManager;
 import org.slf4j.Logger;
 
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -259,13 +262,13 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		@Override
 		public void run() {
 			if (handler.isDestroyed()) {
-				handler.logger.error("MessageHandler already destroy! message {} discard!", message.toString());
+				handler.logger.error("MessageHandler already destroy! message {} discard!", this.messageInfo());
 				return;
 			}
 
 			long handlerStart = System.nanoTime();
 			if (handlerStart - addDt > WARN_NANO_TIME){
-				handler.logger.error("Message {} wait [{}] ms to executor!", message.toString(), TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
+				handler.logger.error("Message {} wait [{}] ms to executor!", this.messageInfo(), TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
 			}
 			try {
 				message.execute(handler);
@@ -274,8 +277,26 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			}finally {
 				long handlerEnd = System.nanoTime();
 				if (handlerEnd - handlerStart > WARN_NANO_TIME && !IRequestContext.class.isAssignableFrom(message.getClass())){
-					handler.logger.error("Message {} use [{}] ms to executor!", message, TimeUnit.NANOSECONDS.toMillis(handlerEnd - handlerStart));
+					handler.logger.error("Message {} use [{}] ms to executor!", this.messageInfo(), TimeUnit.NANOSECONDS.toMillis(handlerEnd - handlerStart));
 				}
+			}
+		}
+
+		/**
+		 * message info
+		 * @return 对应的打印
+		 */
+		private String messageInfo() {
+			if (IRequestContext.class.isAssignableFrom(message.getClass())) {
+				return message.toString();
+			}
+
+			try {
+				Method m = message.getClass().getDeclaredMethod("writeReplace");
+				SerializedLambda sl=(SerializedLambda) ReflectUtil.makeAccessible(m).invoke(message);
+				return StringUtil.slf4jFormat("{}#{}", sl.getImplClass().replaceAll("/", "."), sl.getImplMethodName());
+			} catch (Exception e) {
+				return "unknown-info-message";
 			}
 		}
 	}

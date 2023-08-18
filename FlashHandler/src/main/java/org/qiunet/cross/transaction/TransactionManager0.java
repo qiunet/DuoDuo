@@ -1,8 +1,6 @@
 package org.qiunet.cross.transaction;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.qiunet.cross.actor.data.CrossData;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -35,17 +33,6 @@ class TransactionManager0 implements IApplicationContextAware {
 				throw new CustomException("Request Class [{}] in transaction handles is repeated!", requestClass.getName());
 			}
 			handles.put(requestClass, (ITransactionHandler)context.getInstanceOfClass(clazz));
-		}
-
-		Set<Class<? extends CrossData>> subTypesOf = context.getSubTypesOf(CrossData.class);
-		Set<String> classNames = Sets.newHashSet();
-		for (Class<? extends CrossData> aClass : subTypesOf) {
-			String realClass = aClass.getName().substring(0, aClass.getName().indexOf("$"));
-			if (classNames.contains(realClass)) {
-				continue;
-			}
-			Class.forName(realClass);
-			classNames.add(realClass);
 		}
 	}
 

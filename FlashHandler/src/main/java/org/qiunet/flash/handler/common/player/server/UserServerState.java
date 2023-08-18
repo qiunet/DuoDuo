@@ -62,6 +62,6 @@ public class UserServerState {
 	}
 
 	public boolean isOnline() {
-		return online;
+		return online && serverId > 0;
 	}
 }

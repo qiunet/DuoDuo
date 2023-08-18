@@ -18,7 +18,9 @@ public class LoginHandler extends BaseHandler<LoginRequest> {
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<LoginRequest> context) throws Exception {
 		playerActor.auth(context.getRequestData().getPlayerId());
-		playerActor.loginSuccess();
+		if (!playerActor.loginSuccess()) {
+			return;
+		}
 
 		playerActor.fireEvent(new PlayerLoginEvent());
 

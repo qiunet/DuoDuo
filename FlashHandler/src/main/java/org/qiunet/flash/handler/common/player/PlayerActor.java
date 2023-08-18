@@ -14,12 +14,13 @@ import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
-import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.logger.LoggerType;
 
 import java.util.ArrayList;
@@ -187,12 +188,11 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	}
 
 	@Override
-	public 	void sendCrossMessage(IChannelMessage message) {
+	public ISession currentCrossSession() {
 		if (currentCrossServerId == 0) {
 			throw new CustomException("Current not cross to any server");
 		}
-		// 跨服发送消息, 为了实时性, 都直接flush!
-		crossConnectors.get(currentCrossServerId).sendMessage(message.asCrossPlayerMsg(), true);
+		return crossConnectors.get(currentCrossServerId).getSession();
 	}
 
 	@Override
@@ -221,15 +221,21 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	 * 真的登录成功调用.
 	 * 没有PlayerBo 都不算.
 	 */
-	public void loginSuccess() {
-		new LoginSuccessEvent(this).fireEventHandler();
-		this.sessionCloseListener();
-		this.loginSuccess = true;
+	public boolean loginSuccess() {
+		boolean active = session.isActive();
+		if (active) {
+			new LoginSuccessEvent(this).fireEventHandler();
+			this.sessionCloseListener();
+			this.loginSuccess = true;
+		}
+		return active;
 	}
 
 	private void sessionCloseListener() {
 		session.addCloseListener("PlayerActorLogoutEvent", (s, cause) -> {
-			this.fireEvent(new PlayerActorLogoutEvent(cause));
+			EventManager.post(new PlayerActorLogoutEvent(cause).setPlayer(this), (mtd, ex) -> {
+				logger.error("PlayerActor: "+session.toString()+" session close error in method ["+mtd.getName()+"]!", ex);
+			});
 			if (s.isActive() && cause.needLogoutPush()) {
 				s.sendMessage(PlayerLogoutPush.valueOf(cause), true);
 			}
@@ -262,13 +268,23 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	 * 合并
 	 * @param handler
 	 */
-	public void merge(PlayerActor handler) {
+	void merge(PlayerActor handler) {
 		if (playerId != handler.playerId) {
 			throw new CustomException("PlayerId not the same!");
 		}
 
-		handler.session.clearCloseListener();
+		this.clearObservers();
+
+		handler.session.addCloseListener("merge", (s, c) -> {
+			if (! loginSuccess && c.needWaitConnect()) {
+				UserOnlineManager.instance.addToWait(this);
+			}
+		});
+
+		handler.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		this.setSession(handler.session);
+		this.loginSuccess = false;
+		handler.destroy();
 	}
 
 	/**
@@ -342,6 +358,10 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	@Override
 	public PlayerDataLoader dataLoader() {
 		return PlayerDataLoader.get(executor.get(), getPlayerId());
+	}
+
+	public boolean isLoginSuccess() {
+		return loginSuccess;
 	}
 
 	public boolean waitReconnect(){

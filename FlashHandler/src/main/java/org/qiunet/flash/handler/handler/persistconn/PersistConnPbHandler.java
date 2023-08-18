@@ -1,8 +1,5 @@
 package org.qiunet.flash.handler.handler.persistconn;
 
-import com.baidu.bjf.remoting.protobuf.Codec;
-import com.google.common.base.Preconditions;
-import com.google.protobuf.CodedInputStream;
 import io.micrometer.core.instrument.Timer;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
@@ -13,7 +10,6 @@ import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.async.LazyLoader;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
@@ -26,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData extends IChannelData>
 		extends BaseHandler<RequestData>
 		implements IPersistConnHandler<P, RequestData> {
-	private final LazyLoader<Codec<RequestData>> codec = new LazyLoader<>(() -> ProtobufDataManager.getCodec(getRequestClass()));
 	/**
 	 * 计时器
 	 */
@@ -48,13 +43,7 @@ public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData 
 
 	@Override
 	public RequestData parseRequestData(ByteBuffer buffer) {
-		try {
-			Codec<RequestData> dataCodec = codec.get();
-			return Preconditions.checkNotNull(dataCodec.readFrom(CodedInputStream.newInstance(buffer)));
-		} catch (IOException e) {
-			logger.error("Request data ["+this.getRequestClass().getName()+"] Protobuf decode exception", e);
-		}
-		return null;
+		return ProtobufDataManager.decode(getRequestClass(), buffer);
 	}
 
 	@Override

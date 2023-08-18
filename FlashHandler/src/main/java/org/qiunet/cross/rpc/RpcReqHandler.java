@@ -30,10 +30,12 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 		Method method =  aClass.getMethod(requestData.getMtd(), rpcRequest.getClass());
 
 		if (IPlayer.class.isAssignableFrom(rpcRequest.getClass()) && ((IPlayer) rpcRequest).getId() > 0) {
-			AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) rpcRequest).getId());
-			actor.addMessage(h -> {
-				this.sendMessage(serverNode, requestData, method);
-			});
+			serverNode.runMessageWithMsgExecuteIndex(node -> {
+				AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) rpcRequest).getId());
+				actor.addMessage(h -> {
+					this.sendMessage(serverNode, requestData, method);
+				});
+			}, String.valueOf(((IPlayer) rpcRequest).getId()));
 			return;
 		}
 

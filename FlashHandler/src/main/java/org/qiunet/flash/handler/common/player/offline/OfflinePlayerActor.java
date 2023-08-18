@@ -4,6 +4,7 @@ import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
+import org.qiunet.flash.handler.common.player.offline.enums.OfflinePlayerDestroyCause;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.exceptions.CustomException;
@@ -39,7 +40,9 @@ public class OfflinePlayerActor extends PlayerActor {
 	public void auth(long id) {}
 
 	@Override
-	public void loginSuccess() {}
+	public boolean loginSuccess() {
+		return true;
+	}
 
 	@Override
 	public ChannelFuture sendMessage(IChannelMessage<?> message, boolean flush) {
@@ -63,13 +66,16 @@ public class OfflinePlayerActor extends PlayerActor {
 		// do nothing
 	}
 
+	void destroy(OfflinePlayerDestroyCause cause) {
+		this.fireEvent(OfflineUserDestroyEvent.valueOf(cause));
+		this.destroy();
+	}
+
 	public void destroy(){
 		if (isDestroyed()) {
 			return;
 		}
 
-		this.fireEvent(OfflineUserDestroyEvent.valueOf());
-		UserOfflineManager.instance.remove(getPlayerId());
 		dataLoader().unregister();
 	}
 }

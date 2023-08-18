@@ -42,15 +42,15 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 			}
 		};
 
-		String errMeg = "Exception session ["+session.toString()+"]";
+		String errMeg = "Session ["+(session != null ? session.toString(): "null")+"]";
 		if (cause instanceof KcpException) {
-			logger.info("Kcp error: {} message: {}", errMeg, cause.getMessage());
+			logger.info("Kcp err: {} message: {}", errMeg, cause.getMessage());
 			closeChannel.run();
 			return;
 		}
 
 		if (cause instanceof IOException) {
-			logger.info("IO error: {}, message: {}", errMeg, cause.getMessage());
+			logger.info("IO err: {}, message: {}", errMeg, cause.getMessage());
 			closeChannel.run();
 			return;
 		}

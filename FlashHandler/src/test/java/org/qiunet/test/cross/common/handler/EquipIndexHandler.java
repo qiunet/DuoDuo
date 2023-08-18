@@ -4,8 +4,6 @@ import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.test.cross.common.Constants;
-import org.qiunet.test.cross.common.data.PlayerCrossData;
-import org.qiunet.test.cross.common.data.TestCrossDataUser;
 import org.qiunet.test.cross.common.event.CrossPlayerLoginEvent;
 import org.qiunet.test.cross.common.proto.req.EquipIndexRequest;
 import org.qiunet.test.cross.common.proto.resp.CrossLoginResponse;
@@ -35,11 +33,7 @@ public class EquipIndexHandler extends BaseTransmitHandler<EquipIndexRequest> {
 
 	@Override
 	public void crossHandler(CrossPlayerActor actor, EquipIndexRequest equipIndexRequest) {
-		TestCrossDataUser crossData = actor.getCrossData(PlayerCrossData.TEST_CROSS_DATA);
-		crossData.setPlayerName("qiunet-change");
-		actor.updateCrossData(PlayerCrossData.TEST_CROSS_DATA);
-
-		logger.info("Cross服: 第{}次EquipIndexRequest: 取到CrossData: PlayerId: {} playerName: {}", counter.incrementAndGet(), crossData.getUid(), crossData.getPlayerName());
+		logger.info("Cross服: 第{}次EquipIndexRequest!", counter.incrementAndGet());
 		actor.sendMessage(CrossLoginResponse.valueOf("qiunet"), true);
 	}
 }

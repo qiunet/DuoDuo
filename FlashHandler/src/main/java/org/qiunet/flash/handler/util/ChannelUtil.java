@@ -172,15 +172,17 @@ public final class ChannelUtil {
 	public static void processHandler(Channel channel, IHandler handler, MessageContent content) {
 		ISession session = ChannelUtil.getSession(channel);
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 			messageActor.addMessage(m -> {
 				try {
+					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
 					if (logger.isInfoEnabled()) {
 						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 						if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
 							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-							logger.info("[{}] transmit {} data: {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
+							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 						}
 					}
 

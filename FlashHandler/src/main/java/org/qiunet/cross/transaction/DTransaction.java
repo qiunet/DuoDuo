@@ -55,6 +55,10 @@ public final class DTransaction<REQ extends ITransactionReq, RESP extends ITrans
 		}
 	}
 
+	public long getReqId() {
+		return reqId;
+	}
+
 	public REQ getReqData() {
 		return reqData;
 	}
