@@ -69,7 +69,7 @@ public enum  BadWordFilter {
 				 LineNumberReader lReader = new LineNumberReader(fileReader)){
 				List<String> collect = lReader.lines().toList();
 				this.loadBadWord(new DefaultBadWord(collect));
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				LoggerType.DUODUO.error("Read bad word exception", e);
 			}
 		});

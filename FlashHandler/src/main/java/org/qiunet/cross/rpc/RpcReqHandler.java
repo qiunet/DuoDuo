@@ -42,7 +42,7 @@ public class RpcReqHandler extends PersistConnPbHandler<ServerNode, RouteRpcReq>
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				this.sendMessage(serverNode, requestData, method);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				LoggerType.DUODUO_FLASH_HANDLER.error("Exception:" , e);
 			}
 		});

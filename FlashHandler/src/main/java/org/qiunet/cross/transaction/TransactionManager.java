@@ -128,7 +128,7 @@ public enum TransactionManager {
 	private void handler0(ITransactionReq req, DTransaction dTransaction) {
 		try {
 			TransactionManager0.handler(req.getClass(), dTransaction);
-		}catch (Exception e) {
+		}catch (Throwable e) {
 			DPromise dPromise = cacheRequests.get(dTransaction.getReqId());
 			if (dPromise != null) {
 				dPromise.tryFailure(e);

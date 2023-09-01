@@ -16,13 +16,9 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
-import org.qiunet.flash.handler.netty.coder.InvalidChannelCleanHandler;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
-import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
-import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
-import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
+import org.qiunet.flash.handler.netty.server.bound.*;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -185,7 +181,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.INTERNAL_SERVER_ERROR);
 				logger.error("Http Exception:", e);
 			}

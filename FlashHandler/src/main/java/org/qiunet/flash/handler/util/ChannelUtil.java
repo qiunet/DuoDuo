@@ -175,6 +175,8 @@ public final class ChannelUtil {
 
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
+			// 回收content. 并防止里面的byteBuf被回收.
+			content.recycle();
 			messageActor.addMessage(m -> {
 				try {
 					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
@@ -185,7 +187,6 @@ public final class ChannelUtil {
 							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 						}
 					}
-
 					((ICrossStatusActor) messageActor).sendCrossMessage(message);
 				}catch (Exception e) {
 					if (message.getContent() != null && message.getContent().refCnt() > 0) {
@@ -193,7 +194,6 @@ public final class ChannelUtil {
 					}
 				}
 			});
-			content.recycle();
 			return;
 		}
 		if (channel.isActive()) {

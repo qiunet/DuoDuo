@@ -104,7 +104,7 @@ public abstract class BaseRedisUtil implements IRedisUtil {
 
 		 StringBuilder sb = new StringBuilder();
 		 sb.append("Command[").append(String.format("%-8s", method.getName())).append("]").append(String.format("%2s", (endDt-startDt)))
-			 .append("\tParams:").append(StringUtil.arraysToString(args, "[", "]", ", ")).append(" ").append("\tResult[");
+			 .append("ms\tParams:").append(StringUtil.arraysToString(args, "[", "]", ", ")).append(" ").append("\tResult[");
 		 if (result == null) {
 			 sb.append("<null>");
 		 }else {

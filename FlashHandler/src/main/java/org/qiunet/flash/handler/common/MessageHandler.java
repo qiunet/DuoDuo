@@ -47,7 +47,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * 处理异常情况
 	 * @param e
 	 */
-	protected void exceptionHandle(Exception e) {
+	protected void exceptionHandle(Throwable e) {
 		logger.error("Message handler run exception:", e);
 	}
 
@@ -272,7 +272,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			}
 			try {
 				message.execute(handler);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				handler.exceptionHandle(e);
 			}finally {
 				long handlerEnd = System.nanoTime();
@@ -295,7 +295,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 				Method m = message.getClass().getDeclaredMethod("writeReplace");
 				SerializedLambda sl=(SerializedLambda) ReflectUtil.makeAccessible(m).invoke(message);
 				return StringUtil.slf4jFormat("{}#{}", sl.getImplClass().replaceAll("/", "."), sl.getImplMethodName());
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				return "unknown-info-message";
 			}
 		}

@@ -55,7 +55,7 @@ public enum TimerManager {
 			try {
 				result = callable.call();
 				future.trySuccess(result);
-			} catch (Exception e) {
+			} catch (Throwable e) {
 				future.tryFailure(e);
 			}
 			return result;

@@ -70,9 +70,13 @@ class RequestStringParamCheck implements IRequestCheck {
 		if (checkEmpty && StringUtil.isEmpty(val)) {
 			throw StatusResultException.valueOf(IGameStatus.STRING_PARAM_EMPTY_ERROR);
 		}
-		int length = val.length();
-		if (cnCheck) {
-			length = StringUtil.getMixedStringLength(val);
+
+		int length = 0;
+		if (val != null) {
+			length = val.length();
+			if (cnCheck) {
+				length = StringUtil.getMixedStringLength(val);
+			}
 		}
 
 		if (min != 0 &&  length < min) {
@@ -81,6 +85,10 @@ class RequestStringParamCheck implements IRequestCheck {
 
 		if (max != 0 && length > max) {
 			throw StatusResultException.valueOf(IGameStatus.STRING_PARAM_LENGTH_ERROR);
+		}
+
+		if (val == null) {
+			return;
 		}
 
 		if (checkBadWorld && BadWordFilter.instance.powerFind(val) != null) {

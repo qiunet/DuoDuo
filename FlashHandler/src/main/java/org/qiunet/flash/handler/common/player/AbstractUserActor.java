@@ -67,7 +67,7 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	}
 
 	@Override
-	protected void exceptionHandle(Exception e) {
+	protected void exceptionHandle(Throwable e) {
 		if (! (e instanceof StatusResultException)) {
 			super.exceptionHandle(e);
 		}else {

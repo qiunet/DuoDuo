@@ -5,6 +5,7 @@ import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.json.JsonUtil;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -114,6 +115,9 @@ public abstract class BaseRedisRankHandler<Type extends Enum<Type> & IRankType> 
 
 		// 本质是list
 		Set<String> range = redisUtil().returnJedis().zrevrange(redisKey, startRank, startRank + size);
+		if (range.isEmpty()) {
+			return Collections.emptyList();
+		}
 		List<String> strings = redisUtil().returnJedis().hmget(redisDataKey, range.toArray(new String[0]));
 		AtomicInteger rank = new AtomicInteger(startRank);
 		return strings.stream().map(str -> {

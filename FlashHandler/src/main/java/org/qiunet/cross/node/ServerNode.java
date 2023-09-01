@@ -94,7 +94,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	}
 
 	@Override
-	protected void exceptionHandle(Exception e) {
+	protected void exceptionHandle(Throwable e) {
 		logger.error("Server Node exception:", e);
 	}
 }
