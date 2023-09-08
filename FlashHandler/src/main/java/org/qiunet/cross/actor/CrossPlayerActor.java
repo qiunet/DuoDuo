@@ -29,8 +29,8 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
 	private int serverId;
 
 
-	public CrossPlayerActor(ISession session) {
-		super(session);
+	public CrossPlayerActor(ISession session, String msgQueueIndex) {
+		super(session, msgQueueIndex);
 	}
 
 	@Override

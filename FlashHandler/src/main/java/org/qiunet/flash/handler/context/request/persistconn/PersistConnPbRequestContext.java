@@ -90,7 +90,7 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 		ChannelDataMapping.requestCheck(channel, getRequestData());
 
 		if (handler.needAuth() && ! messageActor.isAuth()) {
-			logger.error("Handler [{}] need auth. but session {} not authorize access!", handler.getClass().getSimpleName(), messageActor.getSession());
+			logger.info("Handler [{}] need auth. but session {} not authorize access!", handler.getClass().getSimpleName(), messageActor.getSession());
 			// 先不管. 客户端重连可能有问题. 不能掐掉
 			//ChannelUtil.getSession(channel).close(CloseCause.ERR_REQUEST);
 			return;

@@ -10,15 +10,8 @@ import org.qiunet.utils.string.StringUtil;
  */
 public class CommMessageHandler extends MessageHandler<CommMessageHandler> {
 
-	private final String msgExecuteIndex;
-
 	public CommMessageHandler() {
-		this.msgExecuteIndex = StringUtil.randomString(10);
-	}
-
-	@Override
-	public String msgExecuteIndex() {
-		return msgExecuteIndex;
+		super(StringUtil.randomString(10));
 	}
 }
 

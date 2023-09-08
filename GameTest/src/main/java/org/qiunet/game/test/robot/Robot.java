@@ -89,7 +89,7 @@ public class Robot extends AbstractMessageActor<Robot> implements IMessageHandle
 	private final String account;
 
 	public Robot(String account, int tickMillis, boolean printLog) {
-
+		super(account);
 		this.behaviorRootTree = RobotBehaviorBuilderManager.instance.newBehaviorRootTree(this, printLog);
 		this.behaviorRootTree.attachObserver(IBHTAddNodeObserver.class, o -> {
 			if (IBehaviorAction.class.isAssignableFrom(o.getClass())) {

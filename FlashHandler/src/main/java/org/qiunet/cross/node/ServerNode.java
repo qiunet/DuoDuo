@@ -24,8 +24,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	private final int serverId;
 
 	ServerNode(ServerNodeSession session, int serverId) {
-		super(session);
-		setMsgExecuteIndex(String.valueOf(serverId));
+		super(session, String.valueOf(serverId));
 		this.serverId = serverId;
 	}
 

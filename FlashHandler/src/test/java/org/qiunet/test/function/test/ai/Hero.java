@@ -3,6 +3,7 @@ package org.qiunet.test.function.test.ai;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.test.function.test.ai.enums.Enemy;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -25,6 +26,10 @@ public class Hero extends MessageHandler<Hero> {
 	 * action 仅仅判断是否走到地方即可
 	 */
 	private final AtomicBoolean runToTargetPoint = new AtomicBoolean();
+
+	public Hero() {
+		super(StringUtil.randomString(8));
+	}
 
 	/**
 	 * 是否看见某个敌人

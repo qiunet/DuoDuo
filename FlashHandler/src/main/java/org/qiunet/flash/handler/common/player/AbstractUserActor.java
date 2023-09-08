@@ -23,8 +23,8 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 	 */
 	private final ObserverSupport<T> observerSupport = new ObserverSupport<>((T)this);
 
-	public AbstractUserActor(ISession session) {
-		super(session);
+	public AbstractUserActor(ISession session, String msgQueueIndex) {
+		super(session, msgQueueIndex);
 	}
 
 	@Override

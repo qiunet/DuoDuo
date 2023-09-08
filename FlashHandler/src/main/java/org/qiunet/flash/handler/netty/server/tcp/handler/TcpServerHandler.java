@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.netty.server.tcp.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -24,7 +23,6 @@ public class TcpServerHandler extends ChannelInboundHandlerAdapter {
 		ChannelUtil.bindSession(session, ctx.channel());
 
 		logger.debug("Tcp session {} active!", session);
-		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, new PlayerActor(session));
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		ctx.fireChannelActive();
 	}

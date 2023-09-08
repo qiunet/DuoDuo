@@ -21,9 +21,8 @@ public class OfflinePlayerActor extends PlayerActor {
 
 
 	OfflinePlayerActor(long playerId) {
-		super(null);
+		super(null, String.valueOf(playerId));
 		this.playerId = playerId;
-		this.setMsgExecuteIndex(String.valueOf(playerId));
 		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
 	}
 	@Override

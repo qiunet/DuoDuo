@@ -72,15 +72,9 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	 * 玩家的构造
 	 * @param session
 	 */
-	public PlayerActor(ISession session) {
-		super(session);
+	public PlayerActor(ISession session, String msgQueueIndex) {
+		super(session, msgQueueIndex);
 	}
-
-	@Override
-	protected void setSession(ISession session) {
-		super.setSession(session);
-	}
-
 
 	@Override
 	public <E extends BaseCrossPlayerEvent> void allCrossEvent(E event) {

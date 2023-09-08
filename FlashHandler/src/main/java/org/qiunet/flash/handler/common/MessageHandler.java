@@ -43,6 +43,16 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	private final Set<Future<?>> scheduleFutures = Sets.newConcurrentHashSet();
 
 	private final AtomicBoolean destroyed = new AtomicBoolean();
+
+	private final String msgExecuteIndex;
+
+	private final String identify;
+
+	public MessageHandler(String msgExecuteIndex) {
+		this.identify = StringUtil.format("({0}:{1})", getClass().getSimpleName(), msgExecuteIndex);
+		this.msgExecuteIndex = msgExecuteIndex;
+	}
+
 	/**
 	 * 处理异常情况
 	 * @param e
@@ -57,6 +67,11 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 */
 	protected DExecutorService getExecutor() {
 		return executor.get();
+	}
+
+	@Override
+	public String msgExecuteIndex() {
+		return msgExecuteIndex;
 	}
 
 	/**
@@ -99,7 +114,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @return
 	 */
 	public String getIdentity(){
-		return StringUtil.format("({0}:{1})", getClass().getSimpleName(), this.msgExecuteIndex());
+		return identify;
 	}
 
 	/**
@@ -262,7 +277,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		@Override
 		public void run() {
 			if (handler.isDestroyed()) {
-				handler.logger.error("MessageHandler already destroy! message {} discard!", this.messageInfo());
+				handler.logger.info("MessageHandler already destroy! message {} discard!", this.messageInfo());
 				return;
 			}
 

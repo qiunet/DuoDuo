@@ -7,6 +7,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
+import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -48,32 +49,32 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			return;
 		}
 
-		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
 			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
-				logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), connectionReq._toString());
+				logger.info("[{}] <<< {}", session, connectionReq._toString());
 			}
 
 			if (StringUtil.isEmpty(connectionReq.getIdKey())) {
-				messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
+				session.close(CloseCause.CONNECTION_ID_KEY_ERROR);
 				return;
 			}
 
 			if (! config.getStartupContext().userConnectionCheck(connectionReq.getIdKey())) {
-				messageActor.getSession().close(CloseCause.FORBID_ACCOUNT);
+				session.close(CloseCause.FORBID_ACCOUNT);
 				return;
 			}
 
-			messageActor.setMsgExecuteIndex(connectionReq.getIdKey());
-			messageActor.sendMessage(ConnectionRsp.getInstance(), true);
+			PlayerActor playerActor = new PlayerActor(session, connectionReq.getIdKey());
+			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
+			playerActor.sendMessage(ConnectionRsp.getInstance(), true);
 			return;
 		}
 
-
-		if (messageActor.msgExecuteIndex() == null) {
+		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (messageActor == null) {
 			logger.info("{} msgExecuteIndex is null! Need call ConnectionReq first", messageActor.getIdentity());
-			messageActor.getSession().close(CloseCause.CONNECTION_ID_KEY_ERROR);
+			session.close(CloseCause.CONNECTION_ID_KEY_ERROR);
 			return;
 		}
 

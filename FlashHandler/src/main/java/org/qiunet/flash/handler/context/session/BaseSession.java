@@ -37,10 +37,7 @@ abstract class BaseSession implements ISession {
 		}
 
 		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (attachObj == null || attachObj.msgExecuteIndex() == null) {
-			if (attachObj != null) {
-				attachObj.destroy();
-			}
+		if (attachObj == null) {
 			this.closeChannel(cause);
 			return;
 		}

@@ -34,8 +34,7 @@ public class TestTarget {
 		var targetDefList = List.of(TargetDef.valueOf(1, TargetType.LEVEL, 10),
 				TargetDef.valueOf(2, TargetType.KILL_BOSS, 2, "111"));
 
-		PlayerActor playerActor = new PlayerActor(new TestDSession());
-		playerActor.setMsgExecuteIndex("Test");
+		PlayerActor playerActor = new PlayerActor(new TestDSession(), "Test");
 
 		TargetContainer<TargetType> targetContainer = TargetContainer.get(playerActor);
 		List<Target> targets = new ArrayList<>();

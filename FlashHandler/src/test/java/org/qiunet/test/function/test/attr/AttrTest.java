@@ -36,7 +36,7 @@ public class AttrTest {
 	@Test
 	public void test(){
 		AttrManager.printAttrTree();
-		PlayerActor playerActor = new PlayerActor(new TestDSession());
+		PlayerActor playerActor = new PlayerActor(new TestDSession(), "Test");
 
 		AttrBox<AttrType> attrBox = AttrManager.buildAttrBox(playerActor);
 		AttrRoad equipBaseRoad = EquipAttrNode.BASE.builderRoad();

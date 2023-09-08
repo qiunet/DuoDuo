@@ -5,7 +5,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
-import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -27,7 +26,6 @@ public class WebsocketServerHandler  extends ChannelInboundHandlerAdapter {
 			DSession session = new DSession(ctx.channel());
 			ChannelUtil.bindSession(session, ctx.channel());
 
-			session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, new PlayerActor(session));
 			session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
 			session.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);
 		}
