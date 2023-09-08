@@ -14,6 +14,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.mapping.KcpPlayerTokenMapping;
 import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpBindAuthFirstPush;
@@ -91,7 +92,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 				logger.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
 			}
 			kcpSession.sendMessage(KcpBindAuthRsp.valueOf(false), true);
-			ctx.channel().close();
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.AUTH_LOST, "auth fail!");
 			return true;
 		}
 

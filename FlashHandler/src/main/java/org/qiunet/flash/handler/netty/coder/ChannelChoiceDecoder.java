@@ -11,9 +11,11 @@ import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.server.bound.*;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
 import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -36,7 +38,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
 		this.closeFuture = ctx.channel().eventLoop().schedule(() -> {
 			// 关闭那些只连接. 不发送任何协议的客户端
-			ctx.channel().close();
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.INACTIVE, "20秒没有消息!");
 		}, 20, TimeUnit.SECONDS);
 		super.channelRegistered(ctx);
 	}
@@ -66,8 +68,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
 			pipeline.remove(ChannelChoiceDecoder.class);
 		}else {
-			logger.debug("Invalidate connection!");
-			ctx.close();
+			ChannelUtil.closeChannel(ctx.channel() , CloseCause.INVALID_CHANNEL, "Invalidate connection!");
 		}
 		closeFuture.cancel(true);
 	}

@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -39,21 +40,19 @@ public class WebSocketServerDecoder extends ByteToMessageDecoder implements IMes
 
 		// header里面的问题 不打印错误信息了. 仅仅本地调试时候打印
 		IProtocolHeader.ProtocolHeader header = getHeader(protocolHeader, in, ctx.channel(), connectReq);
-		if (header.getLength() < 0 || header.getLength() > maxReceivedLength) {
-			logger.debug("Invalid message, length is error! length is : "+ header.getLength());
-			ctx.channel().close();
+		if (! header.isValidMessage()) {
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.DECODE_ERROR,"Invalid message, magic {} is error! ", header);
 			return;
 		}
 
-		if (! header.isValidMessage()) {
-			logger.debug("Invalid message, message is error! "+ header);
-			ctx.channel().close();
+		if (header.getLength() < 0 || header.getLength() > maxReceivedLength) {
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.DECODE_ERROR, "Invalid message, length is error! header: {}, readableLength: {}", header, in.readableBytes());
 			return;
 		}
 
 		MessageContent content = MessageContent.valueOf(header, in.readRetainedSlice(header.getLength()));
 		if (encryption && !header.validEncryption(content.byteBuffer())) {
-			ctx.channel().close();
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.DECODE_ERROR, "encryption info error!");
 			content.release();
 			return;
 		}

@@ -44,6 +44,22 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public final class ChannelUtil {
 	private static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private ChannelUtil(){}
+	/**
+	 * 关闭通道 打印日志
+	 * @param channel 通道
+	 */
+	public static void closeChannel(Channel channel , CloseCause cause, String errMessage, Object ... params) {
+		ISession session = getSession(channel);
+		errMessage = StringUtil.slf4jFormat(errMessage, params);
+		if (session == null) {
+			logger.error(StringUtil.slf4jFormat("Channel [{}] cause [] message: {}", channel.id().asShortText(), channel, errMessage));
+			channel.close();
+			return;
+		}
+
+		logger.error(StringUtil.slf4jFormat("session[{}] message:{}", session, errMessage), new IllegalStateException());
+		session.close(cause);
+	}
 	/***
 	 * 得到channel保存的ProtocolHeader数据
 	 * @param channel

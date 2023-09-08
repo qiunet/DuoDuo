@@ -4,7 +4,6 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -35,13 +34,7 @@ public class InvalidChannelCleanHandler extends ChannelDuplexHandler {
 				return;
 			}
 
-			ISession session = ChannelUtil.getSession(ctx.channel());
-			if (session != null) {
-				session.close(CloseCause.INVALID_CHANNEL);
-			}else {
-				logger.error("Channel [{}] close by invalid channel clear!", ctx.channel().id().asShortText());
-				ctx.channel().close();
-			}
+			ChannelUtil.closeChannel(ctx.channel(), CloseCause.INVALID_CHANNEL, "Channel close by invalid channel clear!");
 		}, 30, TimeUnit.SECONDS);
 	}
 }

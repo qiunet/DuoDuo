@@ -32,26 +32,16 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		ISession session = ChannelUtil.getSession(ctx.channel());
 		Channel channel = ctx.channel();
-		Runnable closeChannel = () -> {
-			if (session != null) {
-				session.close(CloseCause.EXCEPTION);
-			}else {
-				channel.close();
-			}
-		};
-
+		ISession session = ChannelUtil.getSession(channel);
 		String errMeg = "Session ["+(session != null ? session.toString(): "null")+"]";
 		if (cause instanceof KcpException) {
-			logger.info("Kcp err: {} message: {}", errMeg, cause.getMessage());
-			closeChannel.run();
+			ChannelUtil.closeChannel(channel, CloseCause.EXCEPTION, "Kcp: {} err message: {}", errMeg, cause.getMessage());
 			return;
 		}
 
 		if (cause instanceof IOException) {
-			logger.info("IO err: {}, message: {}", errMeg, cause.getMessage());
-			closeChannel.run();
+			ChannelUtil.closeChannel(channel, CloseCause.EXCEPTION,"IO: {}, err message: {}", errMeg, cause.getMessage());
 			return;
 		}
 
@@ -63,7 +53,7 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 		counter.increment();
 		if (channel.isOpen() || channel.isActive()) {
 			session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true).addListener(f -> {
-					closeChannel.run();
+					ChannelUtil.closeChannel(channel, CloseCause.EXCEPTION, "exception!");
 				});
 		}
 	}

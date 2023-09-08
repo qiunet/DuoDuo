@@ -51,7 +51,10 @@ public enum CloseCause {
 	@Protobuf(description = "清理无效的连接")
     INVALID_CHANNEL("清理无效的连接", false),
 	@Protobuf(description = "Gm命令中断")
-	GM_COMMAND("Gm命令中断", true),;
+	GM_COMMAND("Gm命令中断", true),
+	@Protobuf(description = "解析上行包错误")
+	DECODE_ERROR("解析错误", true),
+	;
 	private final boolean waitConnect;
 	private final boolean logoutPush;
 	private final String desc;
