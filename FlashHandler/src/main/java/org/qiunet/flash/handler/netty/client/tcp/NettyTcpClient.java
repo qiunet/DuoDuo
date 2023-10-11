@@ -16,6 +16,7 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
 import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -96,6 +97,7 @@ public class NettyTcpClient {
 			pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+			pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 			pipeline.addLast(new NettyClientHandler());
 		}
 	}

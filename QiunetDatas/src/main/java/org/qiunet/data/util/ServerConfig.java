@@ -8,8 +8,12 @@ import org.qiunet.utils.config.anno.DConfigInstance;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.data.IKeyValueData;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 
+import java.time.ZoneId;
 import java.util.Map;
 
 /***
@@ -21,6 +25,8 @@ import java.util.Map;
 @DConfig(value = ServerConfig.CONFIG_FILE_NAME)
 public enum ServerConfig implements IKeyValueData<String, String> {
 	instance;
+	// 服务器时区信息
+	public static final String SERVER_ZONE_ID = "server.current_time_zone_id";
 	// 部分的配置字段名. 外部需要. 所以需要定义.
 	public static final String CONFIG_FILE_NAME = "server.conf";
 	// server port
@@ -144,5 +150,12 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	@Override
 	public Map<String, String> returnMap() {
 		return config.returnMap();
+	}
+
+	@EventListener
+	private void loadOverEvent(ServerStartupEvent event) {
+		if (config.containKey(SERVER_ZONE_ID)) {
+			DateUtil.setDefaultZoneId(ZoneId.of(config.getString(SERVER_ZONE_ID)));
+		}
 	}
 }

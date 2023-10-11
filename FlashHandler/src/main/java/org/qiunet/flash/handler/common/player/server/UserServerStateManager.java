@@ -20,6 +20,7 @@ import org.qiunet.flash.handler.netty.server.event.GlobalRedisPrepareEvent;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 import redis.clients.jedis.params.SetParams;
 
@@ -198,9 +199,10 @@ public enum UserServerStateManager {
 		}
 
 		UserServerState userServerState = getUserServerState(event.getPlayer().getId());
+		String randomString = StringUtil.randomString(8);
 
 		if (userServerState == null) {
-			userServerState = UserServerState.onlineData(event.getPlayer().getId());
+			userServerState = UserServerState.onlineData(event.getPlayer().getId(), randomString);
 			redisUtil.returnJedis().hmset(userServerState.getRedisKey(), RedisMapUtil.toMap(userServerState));
 			return;
 		}
@@ -213,12 +215,18 @@ public enum UserServerStateManager {
 		String redisKey = userServerState.getRedisKey();
 		Map<String, String> map = Maps.newHashMap();
 		map.put(SERVER_ID, String.valueOf(ServerNodeManager.getCurrServerId()));
-		map.put(ONLINE, "true");
+		map.put(ONLINE, randomString);
 		redisUtil.returnJedis().hmset(redisKey, map);
 
 		// 登出就移除在线标志
 		((DSession) event.getPlayer().getSession()).channel().closeFuture().addListener(f -> {
-			redisUtil.returnJedis().hdel(redisKey, ONLINE);
+			redisUtil.execCommands(jedis -> {
+				String string = jedis.hget(redisKey, ONLINE);
+				if (Objects.equals(randomString, string)) {
+					jedis.hdel(redisKey, ONLINE);
+				}
+				return null;
+			});
 		});
 	}
 

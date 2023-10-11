@@ -48,6 +48,11 @@ public @interface StringParam {
 	 */
 	boolean trim() default false;
 	/**
+	 * 只保留中英文+数字
+	 * @return
+	 */
+	boolean powerTrim() default false;
+	/**
 	 * 不能为 空
 	 * @return
 	 */
@@ -57,4 +62,5 @@ public @interface StringParam {
 	 * @return
 	 */
 	boolean cnCheck() default false;
+
 }

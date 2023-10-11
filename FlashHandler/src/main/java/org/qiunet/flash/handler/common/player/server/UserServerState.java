@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.player.server;
 
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.utils.string.StringUtil;
 
 /***
  * 对象一直保存在redis. 不失效.
@@ -24,15 +25,15 @@ public class UserServerState {
 	/**
 	 * 是否在线
 	 */
-	private boolean online;
+	private String online;
 
-	static UserServerState onlineData(long playerId){
+	static UserServerState onlineData(long playerId, String channelIdString){
 		UserServerState data = new UserServerState();
 		data.groupId = ServerNodeManager.getCurrServerInfo().getServerGroupId();
 		data.serverId = ServerNodeManager.getCurrServerId();
 		data.redisKey = redisKey(playerId);
+		data.online = channelIdString;
 		data.playerId = playerId;
-		data.online = true;
 		return data;
 	}
 
@@ -62,6 +63,6 @@ public class UserServerState {
 	}
 
 	public boolean isOnline() {
-		return online && serverId > 0;
+		return !StringUtil.isEmpty(online) && serverId > 0;
 	}
 }

@@ -1,6 +1,7 @@
 package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
@@ -12,6 +13,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.CancellationException;
 
 public enum QuartzSchedule {
@@ -58,6 +60,7 @@ public enum QuartzSchedule {
 			this.fireTime = new Date();
 			try {
 				this.expression = new CronExpression(job.cronExpression());
+				this.expression.setTimeZone(TimeZone.getTimeZone(DateUtil.getDefaultZoneId()));
 			} catch (ParseException e) {
 				LoggerType.DUODUO.error("", e);
 			}

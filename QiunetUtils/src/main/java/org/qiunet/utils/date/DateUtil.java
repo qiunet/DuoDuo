@@ -20,10 +20,12 @@ import java.util.concurrent.TimeUnit;
  * @author qiunet
  */
 public final class DateUtil {
-	private static final ZoneId defaultZoneId = ZoneId.systemDefault();
+	/**
+	 * 服务器当前时区
+	 */
+	private static ZoneId defaultZoneId = ZoneId.systemDefault();
 
-	private static final Clock SYSTEM_CLOCK =  Clock.systemDefaultZone();
-	private static Clock CLOCK =  SYSTEM_CLOCK;
+	private static Clock CLOCK = Clock.system(defaultZoneId);
 	/**
 	 * 默认的时间格式(日期 时间)
 	 */
@@ -53,6 +55,30 @@ public final class DateUtil {
 	 * 一周的毫秒数
 	 */
 	public static final long WEEK_MS = WEEK_SECONDS * 1000;
+
+	private DateUtil() {
+	}
+
+	public static void setDefaultZoneId(ZoneId defaultZoneId) {
+		DateUtil.defaultZoneId = defaultZoneId;
+		CLOCK = CLOCK.withZone(defaultZoneId);
+	}
+	/**
+	 * 获得默认区 ID
+	 * @return
+	 */
+	public static ZoneId getDefaultZoneId() {
+		return defaultZoneId;
+	}
+
+	/***
+	 * 对全局时间偏移做调整
+	 * @param offsetValue
+	 */
+	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
+		CLOCK = Clock.offset(CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
+	}
+
 	/***
 	 * 当前的秒
 	 * @return
@@ -87,24 +113,7 @@ public final class DateUtil {
 	public static LocalDateTime nowLocalDateTime(ZoneId zoneId) {
 		return LocalDateTime.ofInstant(currentInstant(), zoneId);
 	}
-	/**
-	 * 获得默认区 ID
-	 * @return
-	 */
-	public static ZoneId getDefaultZoneId() {
-		return defaultZoneId;
-	}
 
-	/***
-	 * 对全局时间偏移做调整
-	 * @param offsetValue
-	 */
-	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
-		CLOCK = Clock.offset(SYSTEM_CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
-	}
-
-	private DateUtil() {
-	}
 	/**
 	 * 计算Runnable 消耗毫秒
 	 * @param runnable 执行代码
@@ -140,7 +149,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static long getMilliByTime(LocalDateTime time) {
-		return time.atZone(getDefaultZoneId()).toInstant().toEpochMilli();
+		return getMilliByTime(time, getDefaultZoneId());
 	}
 
 	/**
@@ -148,8 +157,8 @@ public final class DateUtil {
 	 * @param time
 	 * @return
 	 */
-	public static long getMilliByTime(LocalDateTime time, ZoneOffset offset) {
-		return time.toInstant(offset).toEpochMilli();
+	public static long getMilliByTime(LocalDateTime time, ZoneId zoneId) {
+		return time.atZone(zoneId).toInstant().toEpochMilli();
 	}
 
 	/**
@@ -158,7 +167,7 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static long getSecondsByTime(LocalDateTime time) {
-		return time.atZone(getDefaultZoneId()).toInstant().getEpochSecond();
+		return getMilliByTime(time) / 1000;
 	}
 
 	/**
@@ -168,17 +177,17 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static LocalDateTime getLocalDateTime(long milliseconds) {
-		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), getDefaultZoneId());
+		return getLocalDateTime(milliseconds, getDefaultZoneId());
 	}
 
 	/**
 	 * 根据时间戳 得到LocalDateTime
 	 * @param milliseconds
-	 * @param zoneOffset
+	 * @param zoneId
 	 * @return
 	 */
-	public static LocalDateTime getLocalDateTime(long milliseconds, ZoneOffset zoneOffset) {
-		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), zoneOffset);
+	public static LocalDateTime getLocalDateTime(long milliseconds, ZoneId zoneId) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), zoneId);
 	}
 	/**
 	 * 日期转字符串 指定格式
@@ -273,8 +282,8 @@ public final class DateUtil {
 	 * @return
 	 */
 	public static boolean isSameDay(LocalDateTime time1, LocalDateTime time2) {
-		LocalDate localDate1 = time1.atZone(ZoneId.systemDefault()).toLocalDate();
-		LocalDate localDate2 = time2.atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate localDate1 = time1.atZone(getDefaultZoneId()).toLocalDate();
+		LocalDate localDate2 = time2.atZone(getDefaultZoneId()).toLocalDate();
 		return localDate1.isEqual(localDate2);
 	}
 	/**@

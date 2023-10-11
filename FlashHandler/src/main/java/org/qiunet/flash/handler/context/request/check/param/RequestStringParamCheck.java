@@ -33,9 +33,13 @@ class RequestStringParamCheck implements IRequestCheck {
 	 */
 	private final long max;
 	/**
-	 * 检查空
+	 * 移除两边空格字符
 	 */
 	private final boolean trim;
+	/**
+	 * 对字符串进行{@link StringUtil#powerfulTrim(String)}，只保留中英文+数字
+	 */
+	private final boolean powerTrim;
 	/**
 	 * 检查空
 	 */
@@ -54,6 +58,7 @@ class RequestStringParamCheck implements IRequestCheck {
 
 		this.checkBadWorld = param.checkBadWord();
 		this.checkEmpty = param.checkEmpty();
+		this.powerTrim = param.powerTrim();
 		this.trim = param.trim();
 
 		this.cnCheck = param.cnCheck();
@@ -63,6 +68,11 @@ class RequestStringParamCheck implements IRequestCheck {
 	public void check(Channel channel, IChannelData data) {
 		String val = (String) ReflectUtil.getField(this.field, data);
 		if (this.trim && !StringUtil.isEmpty(val)) {
+			val = StringUtil.powerfulTrim(val);
+			ReflectUtil.setField(data, field, val);
+		}
+
+		if (this.powerTrim && !StringUtil.isEmpty(val)) {
 			val = StringUtil.powerfulTrim(val);
 			ReflectUtil.setField(data, field, val);
 		}
