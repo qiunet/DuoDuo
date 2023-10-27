@@ -64,7 +64,7 @@ import java.util.concurrent.TimeUnit;
 		// 先登录一个 . 服务器的各种延迟加载的数据加载好.
 		create.run();
 		// 要错开登录. 不要一起
-		ScheduledFuture<?> scheduledFuture = TimerManager.instance.scheduleAtFixedRate(create, 5000, StressTestingConfig.getInterval(), TimeUnit.MILLISECONDS);
+		ScheduledFuture<?> scheduledFuture = TimerManager.executor.scheduleAtFixedRate(create, 5000, StressTestingConfig.getInterval(), TimeUnit.MILLISECONDS);
 		try {
 			latch.await();
 		} catch (InterruptedException e) {

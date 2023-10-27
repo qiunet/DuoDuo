@@ -6,13 +6,18 @@ import org.qiunet.log.record.msg.ILogRecordMsg;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.exceptions.CustomException;
+import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
+import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
+import org.qiunet.utils.thread.ThreadPoolManager;
 import org.qiunet.utils.timer.TimerManager;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -30,12 +35,17 @@ public enum LogRecordManager {
 	// 默认的logger
 	static final String DEFAULT_LOGGER_RECORD_NAME = "logbackRecord";
 
+
 	public void sendLog(ILogRecordMsg msg) {
 		LogRecordManager0.instance.sendLog(msg);
 	}
 
 	private enum LogRecordManager0 implements IApplicationContextAware {
 		instance;
+		/**
+		 * 基本的logger
+		 */
+		private IBasicRecordLogger basicLogger;
 		/**
 		 * 从配置读取 logger
 		 */
@@ -57,10 +67,18 @@ public enum LogRecordManager {
 		 */
 		void sendLog(ILogRecordMsg log) {
 			Preconditions.checkNotNull(log);
+			if (basicLogger != null) {
+				basicLogger.send(log);
+			}
+
+			if (loggers.isEmpty()) {
+				return;
+			}
+
 			queue.add(log);
 
 			if (size.incrementAndGet() == 1) {
-				TimerManager.executor.scheduleWithDelay(this::consumeLog, 100, TimeUnit.MILLISECONDS);
+				ThreadPoolManager.NORMAL.execute(this::consumeLog);
 			}
 		}
 		/**
@@ -69,10 +87,17 @@ public enum LogRecordManager {
 		private void consumeLog() {
 			ILogRecordMsg msg;
 			while ((msg = queue.poll()) != null) {
-				for (IBasicRecordLogger logger : loggers) {
-					logger.send(msg);
+				try {
+					for (IBasicRecordLogger logger : loggers) {
+						try {
+							logger.send(msg);
+						}catch (Exception e) {
+							LoggerType.DUODUO.error("consumeLog:", e);
+						}
+					}
+				}finally {
+					size.decrementAndGet();
 				}
-				size.decrementAndGet();
 			}
 		}
 
@@ -81,23 +106,35 @@ public enum LogRecordManager {
 			Set<Class<? extends IRecordLogger>> subTypesOf = context.getSubTypesOf(IRecordLogger.class);
 			for (Class<? extends IRecordLogger> clz : subTypesOf) {
 				IRecordLogger instance = (IRecordLogger) context.getInstanceOfClass(clz);
-				if (RECORD_LOG_NAMES == null || ! RECORD_LOG_NAMES.contains(instance.recordLoggerName())) {
+				if (RECORD_LOG_NAMES == null
+					|| ! RECORD_LOG_NAMES.contains(instance.recordLoggerName())
+					|| Objects.equals(DEFAULT_LOGGER_RECORD_NAME, instance.recordLoggerName())) {
 					continue;
 				}
 				loggers.add(instance);
 			}
 
-			if (RECORD_LOG_NAMES == null || RECORD_LOG_NAMES.isEmpty() || RECORD_LOG_NAMES.contains(DEFAULT_LOGGER_RECORD_NAME)) {
-				try {
-					// 先判断有没有jar.
-					Class.forName("ch.qos.logback.classic.Logger");
+			try {
+				// 先判断有没有jar.
+				Class.forName("ch.qos.logback.classic.Logger");
 
-					Class<?> aClass = Class.forName("org.qiunet.log.record.logger.LogBackRecordLogger");
-					loggers.add(((IBasicRecordLogger) context.getInstanceOfClass(aClass)));
-				}catch (ClassNotFoundException e) {
-					LoggerType.DUODUO.error("LogRecordManager ERROR:", new CustomException("logback jar not setting!"));
-				}
+				Class<?> aClass = Class.forName("org.qiunet.log.record.logger.LogBackRecordLogger");
+				this.basicLogger = ((IBasicRecordLogger) context.getInstanceOfClass(aClass));
+			}catch (ClassNotFoundException e) {
+				LoggerType.DUODUO.error("LogRecordManager ERROR:", new CustomException("logback jar not setting!"));
 			}
+		}
+
+
+		@EventListener
+		private void shutdown(ServerShutdownEvent event) {
+			this.consumeLog();
+		}
+
+
+		@EventListener
+		private void deprecate(ServerDeprecatedEvent event) {
+			this.consumeLog();
 		}
 
 		@Override

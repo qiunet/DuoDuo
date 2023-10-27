@@ -50,7 +50,10 @@ public enum ServerType {
 	 * 匹配服务器
 	 */
 	MATCH(6),
-
+	/**
+	 * 网关服务器
+	 */
+	GATE(7),
 	;
 	private final int type;
 

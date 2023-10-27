@@ -31,7 +31,7 @@ public enum ThreadPoolManager implements ExecutorService {
 			new LinkedBlockingDeque<>(maxCap), new DefaultThreadFactory(poolName),
 			new ThreadPoolExecutor.CallerRunsPolicy());
 
-		ShutdownHookUtil.getInstance().addLast(this.executorService::shutdown);
+		ShutdownHookUtil.getInstance().addLast(this.executorService::shutdownNow);
 	}
 	/**
 	 * 停止所有池资源

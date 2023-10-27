@@ -33,7 +33,7 @@ public enum TimerManager {
 	private final ScheduledExecutorService schedule;
 	TimerManager(ScheduledExecutorService executorService) {
 		this.schedule = executorService;
-		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdown);
+		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdownNow);
 	}
 	/**
 	 * 立刻执行

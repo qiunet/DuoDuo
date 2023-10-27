@@ -23,8 +23,8 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	/**
 	 * 使用form的方式提交数据
 	 *
-	 * @param params
-	 * @return
+	 * @param params map 参数
+	 * @return 对象本身
 	 */
 	public PostHttpRequest withFormData(Map<String, String> params) {
 		FormBody.Builder builder = new FormBody.Builder();
@@ -36,25 +36,33 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	/**
 	 * 使用json的方式提交数据
 	 *
-	 * @param params
-	 * @return
+	 * @param params map 参数
+	 * @return 对象本身
 	 */
 	public PostHttpRequest withJsonData(Map<String, Object> params) {
 		String json = JsonUtil.toJsonString(params);
-		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
-		return this;
+		return withJsonData(json);
 	}
 
 	/**
 	 * 使用json的方式提交数据
 	 *
 	 * @param params
-	 * @return
+	 * @return 对象本身
 	 */
 	public PostHttpRequest withJsonData(Object params) {
 		return this.withJsonData(JsonUtil.toJsonString(params));
 	}
 
+	/**
+	 * 使用string的方式提交数据
+	 * @param data string 数据
+	 * @return 对象本身
+	 */
+	public PostHttpRequest withStringData(String data) {
+		this.requestBody = RequestBody.create(MediaType.parse("text/plain;charset=" + charset), data);
+		return this;
+	}
 	/**
 	 * 使用json的方式提交数据
 	 *
@@ -62,7 +70,7 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return
 	 */
 	public PostHttpRequest withJsonData(String json) {
-		this.requestBody = RequestBody.create(MediaType.parse("application/json; charset=" + charset), json);
+		this.requestBody = RequestBody.create(MediaType.parse("application/json;charset=" + charset), json);
 		return this;
 	}
 	/**

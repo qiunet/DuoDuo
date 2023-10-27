@@ -151,7 +151,7 @@ public abstract class BaseCfgManager<ID, Cfg extends ICfg<ID>> implements ICfgMa
 			}
 
 			if (needReloadCfg.compareAndSet(false, true)) {
-				TimerManager.instance.scheduleWithDelay(() -> {
+				TimerManager.executor.scheduleWithDelay(() -> {
 					try {
 						this.handlerReload();
 					}finally {

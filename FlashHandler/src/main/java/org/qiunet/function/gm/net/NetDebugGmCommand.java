@@ -27,7 +27,7 @@ enum NetDebugGmCommand {
 
 	@GmCommand(commandName = "断开玩家TCP/WS链接")
 	public IGameStatus brokenTcp(PlayerActor actor) {
-		TimerManager.instance.scheduleWithDelay(() -> {
+		TimerManager.executor.scheduleWithDelay(() -> {
 			actor.getSession().close(CloseCause.GM_COMMAND);
 		},500, TimeUnit.MILLISECONDS);
 		return IGameStatus.SUCCESS;
