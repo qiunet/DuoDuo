@@ -21,6 +21,7 @@ import org.qiunet.flash.handler.netty.client.trigger.IPersistConnResponseTrigger
 import org.qiunet.flash.handler.netty.coder.WebSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketClientEncoder;
 import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.WebSocketFrameToByteBufHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -121,6 +122,7 @@ public class NettyWebSocketClient {
 					pipeline.addLast("WebSocketServerHandler", new NettyWSClientHandler());
 					pipeline.addLast("encode", new WebSocketClientEncoder());
 					pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+					pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 
 					handshakeFuture.setSuccess();
 				} catch (WebSocketHandshakeException e) {

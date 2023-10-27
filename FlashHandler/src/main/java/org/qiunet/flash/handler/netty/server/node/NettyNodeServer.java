@@ -2,6 +2,7 @@ package org.qiunet.flash.handler.netty.server.node;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.cross.node.ServerNodeServerHandler;
 import org.qiunet.flash.handler.context.header.NodeProtocolHeader;
@@ -9,10 +10,12 @@ import org.qiunet.flash.handler.netty.coder.TcpSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketServerEncoder;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
 import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.node.handler.PlayerNodeServerHandler;
 import org.qiunet.flash.handler.util.NettyUtil;
+import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -23,14 +26,13 @@ import org.slf4j.Logger;
 public final class NettyNodeServer implements INettyServer {
 	private static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-node-server-boss-event-loop-");
 	private static final ServerNodeServerHandler serverNodeServerHandler = new ServerNodeServerHandler();
-	private static final PlayerNodeServerHandler nodeServerHandler = new PlayerNodeServerHandler();
+	private static final PlayerNodeServerHandler playerNodeServerHandler = new PlayerNodeServerHandler();
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
+	private final Promise<Void> successFuture = new DNettyPromise<>();
 
 	/**
 	 * 完成了. 调用
 	 */
-	private final Runnable completeRunner;
-
 	private ChannelFuture channelFuture;
 
 	private final String serverName;
@@ -39,9 +41,8 @@ public final class NettyNodeServer implements INettyServer {
 	/***
 	 * 启动
 	 */
-	public NettyNodeServer(Runnable completeRunner) {
+	public NettyNodeServer() {
 		this.port = ServerNodeManager.getCurrServerInfo().getNodePort();
-		this.completeRunner = completeRunner;
 		this.serverName = "Node Server";
 	}
 
@@ -62,8 +63,9 @@ public final class NettyNodeServer implements INettyServer {
 					pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(8192, false));
 					pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 					pipeline.addLast("ServerNodeServerHandler", serverNodeServerHandler);
-					pipeline.addLast("PlayerNodeServerHandler", nodeServerHandler);
+					pipeline.addLast("PlayerNodeServerHandler", playerNodeServerHandler);
 					pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler(50, 10));
+					pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 				}
 			});
 
@@ -72,26 +74,23 @@ public final class NettyNodeServer implements INettyServer {
 			bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
 			bootstrap.childOption(ChannelOption.SO_RCVBUF, 1024 * 128);
 			bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128);
-			this.channelFuture = bootstrap.bind(port).addListener(future -> {
-				if (future.cause() != null) {
-					logger.error("[NettyNodeServer] === node server {} fail to listener! ===", serverName());
-					return;
-				}
-
-				if (future.isSuccess()) {
-					logger.error("[NettyNodeServer]  node server {} is Listener on port [{}]", serverName(), port);
-					completeRunner.run();
-				}
+			this.channelFuture = bootstrap.bind(port).sync();
+			this.channelFuture.addListener(channelFuture -> {
+				logger.error("[NettyNodeServer]  Tcp server {} is Listener on port [{}]", serverName(), this.port);
+				successFuture.trySuccess(null);
 			});
-
 			channelFuture.channel().closeFuture().sync();
 		}catch (Throwable e) {
-			logger.error("[NettyNodeServer] Exception: ", e);
-			System.exit(1);
+			this.successFuture.tryFailure(new RuntimeException("!!! [NettyNodeServer] start failed!", e));
 		}finally {
 			logger.error("[NettyNodeServer] {} is shutdown! ", serverName());
 			BOSS.shutdownGracefully();
 		}
+	}
+
+	@Override
+	public Promise<Void> successFuture() {
+		return successFuture;
 	}
 
 	@Override

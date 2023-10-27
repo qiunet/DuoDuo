@@ -52,12 +52,12 @@ public final class ChannelUtil {
 		ISession session = getSession(channel);
 		errMessage = StringUtil.slf4jFormat(errMessage, params);
 		if (session == null) {
-			logger.error(StringUtil.slf4jFormat("Channel [{}] cause [] message: {}", channel.id().asShortText(), channel, errMessage));
+			logger.error(StringUtil.slf4jFormat("Channel [{}] cause [{}] message: {}", channel.id().asShortText(), cause, errMessage));
 			channel.close();
 			return;
 		}
 
-		logger.error(StringUtil.slf4jFormat("session[{}] message:{}", session, errMessage), new IllegalStateException());
+		logger.error(StringUtil.slf4jFormat("session[{}] cause [{}] message:{}", session, cause, errMessage));
 		session.close(cause);
 	}
 	/***

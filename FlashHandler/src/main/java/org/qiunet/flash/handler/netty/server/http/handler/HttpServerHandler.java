@@ -126,7 +126,6 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());
 		pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
-		pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 
 		ctx.channel().config().setOption(ChannelOption.SO_SNDBUF, 1024 * 128);
 		ctx.channel().config().setOption(ChannelOption.SO_RCVBUF, 1024 * 128);

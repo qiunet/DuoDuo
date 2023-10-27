@@ -9,6 +9,7 @@ import io.netty.bootstrap.UkcpServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.netty.coder.KcpSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.KcpSocketServerEncoder;
@@ -20,6 +21,7 @@ import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.async.factory.DefaultThreadFactory;
+import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.system.OSUtil;
@@ -37,16 +39,13 @@ public class NettyKcpServer implements INettyServer {
 	private static final EventLoopGroup GROUP = new NioEventLoopGroup(OSUtil.availableProcessors(), new DefaultThreadFactory("netty-kcp-server-event-loop-"));
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
+	private final Promise<Void> successFuture = new DNettyPromise<>();
+
 	private final ServerBootStrapConfig config;
 
 	private List<ChannelFuture> channelFutures;
-	/**
-	 * 完成了. 调用
-	 */
-	private final Runnable completeRunner;
 
-	public NettyKcpServer(ServerBootStrapConfig config, Runnable completeRunner) {
-		this.completeRunner = completeRunner;
+	public NettyKcpServer(ServerBootStrapConfig config) {
 		this.config = config;
 	}
 
@@ -106,25 +105,21 @@ public class NettyKcpServer implements INettyServer {
 				ChannelFuture channelFuture = b.bind(port).sync();
 				this.channelFutures.add(channelFuture);
 			}
-			this.channelFutures.get(this.channelFutures.size() - 1).addListener(future -> {
-				if (future.cause() != null) {
-					logger.error("[NettyKcpServer] === Kcp server {} fail to listener! ===", serverName());
-					return;
-				}
-
-				if (future.isSuccess()) {
-					logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(udpPorts, "", "", ","));
-					completeRunner.run();
-				}
-			});
+			logger.error("[NettyKcpServer]  Kcp server {} is Listener on ports [{}]", serverName(), StringUtil.arraysToString(udpPorts, "", "" ,","));
+			// 同步的. 到这步, 是成功过. 否则会到异常那.
+			this.successFuture.trySuccess(null);
 			this.channelFutures.get(0).channel().closeFuture().sync();
 		} catch (Throwable e) {
-			logger.error("[NettyKcpServer] Exception: ", e);
-			System.exit(1);
+			this.successFuture.tryFailure(new RuntimeException("!!! [NettyKcpServer] start failed!", e));
 		} finally {
 			// Shut down all event loops to terminate all threads.
 			logger.error("[NettyKcpServer] {} is shutdown! ", serverName());
 			GROUP.shutdownGracefully();
 		}
+	}
+
+	@Override
+	public Promise<Void> successFuture() {
+		return successFuture;
 	}
 }

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.micrometer.core.instrument.Gauge;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.util.ServerType;
@@ -17,8 +18,8 @@ import org.qiunet.flash.handler.context.session.NodeServerSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.function.prometheus.RootRegistry;
-import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
+import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -444,9 +445,9 @@ public enum UserOnlineManager {
 		waitReconnects.values().forEach(w -> destroyPlayer(w.actor));
 		this.scheduledFuture.cancel(false);
 
-		List<Future<Boolean>> futures = Lists.newArrayListWithExpectedSize(onlineSize());
+		List<Promise<Boolean>> futures = Lists.newArrayListWithExpectedSize(onlineSize());
 		Consumer<AbstractUserActor<?>> consumer = actor -> {
-			DCompletePromise<Boolean> promise = new DCompletePromise<>();
+			Promise<Boolean> promise = new DNettyPromise<>();
 			actor.addMessage(a -> {
 				a.getSession().close(CloseCause.SERVER_SHUTDOWN);
 				promise.trySuccess(true);
@@ -456,10 +457,10 @@ public enum UserOnlineManager {
 
 		onlineCrossPlayers.values().forEach(consumer);
 		onlinePlayers.values().forEach(consumer);
-		for (Future<Boolean> future : futures) {
+		for (Promise<Boolean> future : futures) {
 			try {
-				future.get(6, TimeUnit.SECONDS);
-			} catch (InterruptedException | ExecutionException | TimeoutException e) {
+				future.sync();
+			} catch (InterruptedException e) {
 				LoggerType.DUODUO_FLASH_HANDLER.error("shutdown exception: ", e);
 			}
 		}

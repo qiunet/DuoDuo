@@ -4,11 +4,13 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.util.concurrent.Promise;
 import org.qiunet.flash.handler.netty.server.INettyServer;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.tcp.init.NettyTcpServerInitializer;
 import org.qiunet.flash.handler.util.NettyUtil;
+import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -20,19 +22,16 @@ public final class NettyTcpServer implements INettyServer {
 	private static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-tcp-server-boss-event-loop-");
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
+	private final Promise<Void> successFuture = new DNettyPromise<>();
+
 	private final ServerBootStrapConfig config;
-	/**
-	 * 完成了. 调用
-	 */
-	private final Runnable completeRunner;
 
 	private ChannelFuture channelFuture;
 	/***
 	 * 启动
 	 * @param config  启动使用的端口等启动参数
 	 */
-	public NettyTcpServer(ServerBootStrapConfig config, Runnable completeRunner) {
-		this.completeRunner = completeRunner;
+	public NettyTcpServer(ServerBootStrapConfig config) {
 		this.config = config;
 	}
 
@@ -70,22 +69,14 @@ public final class NettyTcpServer implements INettyServer {
 			 * 发送缓冲区用于保存发送数据，直到发送成功。
 			 */
 			bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128);
-			this.channelFuture = bootstrap.bind(config.getPort()).addListener(future -> {
-				if (future.cause() != null) {
-					logger.error("[NettyTcpServer] === Tcp server {} fail to listener! ===", serverName());
-					return;
-				}
-
-				if (future.isSuccess()) {
-					logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
-					completeRunner.run();
-				}
+			this.channelFuture = bootstrap.bind(config.getPort()).sync();
+			this.channelFuture.addListener(channelFuture -> {
+				successFuture.trySuccess(null);
 			});
-
+			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
 			channelFuture.channel().closeFuture().sync();
 		}catch (Throwable e) {
-			logger.error("[NettyTcpServer] Exception: ", e);
-			System.exit(1);
+			this.successFuture.tryFailure(new RuntimeException("!!! [NettyTcpServer] start failed!", e));
 		}finally {
 			logger.error("[NettyTcpServer] {} is shutdown! ", serverName());
 			BOSS.shutdownGracefully();
@@ -100,6 +91,11 @@ public final class NettyTcpServer implements INettyServer {
 	@Override
 	public void shutdown(){
 		this.channelFuture.channel().close();
+	}
+
+	@Override
+	public Promise<Void> successFuture() {
+		return successFuture;
 	}
 
 	@Override

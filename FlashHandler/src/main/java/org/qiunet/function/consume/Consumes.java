@@ -73,7 +73,7 @@ public class Consumes<Obj extends IThreadSafe> implements ICfgDelayLoadData {
 	 * @param multi 倍数
 	 * @return
 	 */
-	Consumes<Obj> createMulti(int multi) {
+	public Consumes<Obj> createMulti(int multi) {
 		Preconditions.checkState(multi > 0);
 		Consumes<Obj> consumes = new Consumes<>();
 		this.forEach(item -> consumes.addConsume(item.copy(multi)));

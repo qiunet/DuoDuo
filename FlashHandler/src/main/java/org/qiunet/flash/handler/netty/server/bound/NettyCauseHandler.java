@@ -51,6 +51,10 @@ public class NettyCauseHandler extends ChannelDuplexHandler {
 
 		logger.error(errMeg, cause);
 		counter.increment();
+		if (session == null) {
+			return;
+		}
+
 		if (channel.isOpen() || channel.isActive()) {
 			session.sendMessage(SERVER_EXCEPTION_MESSAGE.get(), true).addListener(f -> {
 					ChannelUtil.closeChannel(channel, CloseCause.EXCEPTION, "exception!");

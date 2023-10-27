@@ -60,7 +60,6 @@ public class BootstrapServer {
 
 	private final Set<INettyServer> nettyServers = new HashSet<>(8);
 	private final HookListener hookListener;
-	private CountDownLatch countdown;
 
 	private BootstrapServer(Hook hook) {
 		if (instance != null) throw new CustomException("Instance Duplication!");
@@ -153,9 +152,9 @@ public class BootstrapServer {
 		}
 
 		// 默认启动tcp  http监听
-		this.nettyServers.add(new NettyTcpServer(config, () -> countdown.countDown()));
+		this.nettyServers.add(new NettyTcpServer(config));
 		if (config.getKcpBootstrapConfig() != null) {
-			this.nettyServers.add(new NettyKcpServer(config, () -> countdown.countDown()));
+			this.nettyServers.add(new NettyKcpServer(config));
 		}
 		return this;
 	}
@@ -168,7 +167,7 @@ public class BootstrapServer {
 			return;
 		}
 
-		this.nettyServers.add(new NettyNodeServer(() -> countdown.countDown()));
+		this.nettyServers.add(new NettyNodeServer());
 	}
 
 	private Thread awaitThread;
@@ -179,16 +178,10 @@ public class BootstrapServer {
 		this.await(null);
 	}
 	public void await(Runnable completeRunnable){
-		Thread hookThread = new Thread(hookListener, "HookListener");
-		hookThread.setDaemon(true);
-		this.addNodeServer();
-		hookThread.start();
-
 		if (nettyServers.isEmpty()) {
 			throw new CustomException("No server need start!");
 		}
 
-		countdown = new CountDownLatch(nettyServers.size());
 		try {
 			ServerStartupEvent.fireStartupEventHandler();
 		}catch (CustomException e) {
@@ -205,14 +198,22 @@ public class BootstrapServer {
 			thread.start();
 		}
 
-		try {
-			countdown.await();
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage(), e);
-			System.exit(1);
-		}finally {
-			countdown = null;
+		for (INettyServer nettyServer : nettyServers) {
+			try {
+				nettyServer.successFuture().get();
+			} catch (Throwable e) {
+				logger.error("==========!!! Some server start fail!==============");
+				logger.error("==========!!! Some server start fail!==============");
+				logger.error("==========!!! Some server start fail!==============");
+				logger.error("Bootstrap server start exception:", e);
+				System.exit(1);
+			}
 		}
+
+		Thread hookThread = new Thread(hookListener, "HookListener");
+		hookThread.setDaemon(true);
+		this.addNodeServer();
+		hookThread.start();
 
 		ServerStartupCompleteEvent.fireStartupCompleteEvent();
 		awaitThread = Thread.currentThread();
@@ -316,7 +317,7 @@ public class BootstrapServer {
 		 */
 		private void waitForPlayerClean() {
 			AtomicInteger counter = new AtomicInteger();
-			TimerManager.instance.scheduleWithDelay(() -> {
+			TimerManager.executor.scheduleWithDelay(() -> {
 				if (counter.incrementAndGet() % 5 == 0) {
 					// 每10秒触发 full gc. 尽量缩减使用堆内存. 给新的进程使用.
 					System.gc();

@@ -58,18 +58,16 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			pipeline.addLast("TcpServerHandler", new TcpServerHandler());
 			pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
-			pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
-			pipeline.remove(ChannelChoiceDecoder.class);
 			ctx.fireChannelActive();
 		}else if (! config.isBanHttpServer()
 				&& (equals(POST_BYTES, in) || equals(GET_BYTES, in) || equals(HEAD_BYTES, in))){
 			pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
 			pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
-			pipeline.remove(ChannelChoiceDecoder.class);
 		}else {
 			ChannelUtil.closeChannel(ctx.channel() , CloseCause.INVALID_CHANNEL, "Invalidate connection!");
 		}
+		pipeline.remove(ChannelChoiceDecoder.class);
 		closeFuture.cancel(true);
 	}
 

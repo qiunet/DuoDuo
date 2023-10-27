@@ -118,6 +118,10 @@ public enum UserServerStateManager {
 		}
 
 		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
+		if (serverInfo == null) {
+			return 0;
+		}
+
 		String redisKey = USER_TEMP_SERVER_ID_REDIS_KEY + playerId;
 
 		String succ = redisUtil.returnJedis().set(redisKey, String.valueOf(serverInfo.getServerId()), SetParams.setParams()
