@@ -10,7 +10,7 @@
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
 		<artifactId>ProjectInit</artifactId>
-		<version>7.2.1</version>
+		<version>7.2.2</version>
 	</dependency>
 
 引用的scope如果有需要, 可以设置为`test`

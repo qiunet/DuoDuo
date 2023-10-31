@@ -178,6 +178,8 @@ public class BootstrapServer {
 		this.await(null);
 	}
 	public void await(Runnable completeRunnable){
+		this.addNodeServer();
+
 		if (nettyServers.isEmpty()) {
 			throw new CustomException("No server need start!");
 		}
