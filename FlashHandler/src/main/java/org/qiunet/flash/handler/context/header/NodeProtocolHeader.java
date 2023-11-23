@@ -194,5 +194,16 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 		public long id() {
 			return id;
 		}
+
+		@Override
+		public String toString() {
+			return "NodeServerHeader{" +
+				"extraInfo=" + extraInfo +
+				", protocolId=" + protocolId +
+				", length=" + length +
+				", serverId=" + serverId +
+				", id=" + id +
+				'}';
+		}
 	}
 }

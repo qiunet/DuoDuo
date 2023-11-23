@@ -3,6 +3,8 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.pool.IRecycle;
 
 import java.nio.ByteBuffer;
@@ -48,14 +50,13 @@ public interface IProtocolHeader {
 	/**
 	 * 根据 serverOrClient 返回对应的 ProtocolHeader
 	 * @param message  消息体
-	 * @param serverOrClient true server,  false client
 	 * @return ProtocolHeader 实例
 	 */
-	default ProtocolHeader outHeader(IChannelMessage<?> message, Channel channel, boolean serverOrClient, boolean connectReq) {
-		if (serverOrClient) {
+	default ProtocolHeader outHeader(IChannelMessage<?> message, Channel channel) {
+		if (channel.hasAttr(ServerConstants.BOOTSTRAP_CONFIG_KEY)) {
 			return serverNormalOut(message, channel);
 		}
-		if (connectReq) {
+		if (ChannelUtil.isConnectReq(channel)) {
 			return clientConnectOut(message, channel);
 		}
 		return clientNormalOut(message, channel);

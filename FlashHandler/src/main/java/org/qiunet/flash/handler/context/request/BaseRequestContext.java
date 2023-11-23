@@ -2,9 +2,9 @@ package org.qiunet.flash.handler.context.request;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.utils.logger.LoggerType;
@@ -19,21 +19,25 @@ import java.util.Map;
 public abstract class BaseRequestContext<RequestData> implements IRequestContext<RequestData> {
 	protected Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
-	protected Channel channel;
-
 	protected IHandler<RequestData> handler;
 	protected Map<String , Object> attributes;
 	// 请求数据. 必须在这里获取. 然后release MessageContent
 	protected RequestData requestData;
 
-	protected void init(MessageContent content, Channel channel) {
-		this.channel = Preconditions.checkNotNull(channel);
+	protected ISession session;
+
+	protected void init(ISession session, MessageContent content) {
+		this.session = Preconditions.checkNotNull(session);
 		if (content.getProtocolId() > 0) {
 			this.handler = Preconditions.checkNotNull(ChannelDataMapping.getHandler(content.getProtocolId()));
 		}else {
 			this.handler = Preconditions.checkNotNull(UrlRequestHandlerMapping.getHandler(content.getUriPath()));
 		}
 		this.requestData = getHandler().parseRequestData(content.byteBuffer());
+	}
+
+	public ISession getSession() {
+		return session;
 	}
 
 	@Override

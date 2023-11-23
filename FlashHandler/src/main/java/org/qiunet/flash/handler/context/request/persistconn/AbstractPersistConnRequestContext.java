@@ -1,7 +1,6 @@
 package org.qiunet.flash.handler.context.request.persistconn;
 
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
@@ -10,7 +9,6 @@ import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 
@@ -22,15 +20,13 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 		extends BaseRequestContext<RequestData>
 		implements IPersistConnRequestContext<RequestData, P> {
 
-	protected ISession session;
 	/**
 	 * 请求协议的序列
 	 */
 	protected int reqSequence;
 
-	protected void init(ISession session, MessageContent content, Channel channel) {
-		super.init(content, channel);
-		this.session = session;
+	protected void init(ISession session, MessageContent content) {
+		super.init(session, content);
 		if (ISequenceProtocolHeader.class.isAssignableFrom(content.getHeader().getClass())) {
 			this.reqSequence = ((ISequenceProtocolHeader) content.getHeader()).sequence();
 		}
@@ -47,31 +43,20 @@ abstract class AbstractPersistConnRequestContext<RequestData, P extends IMessage
 		return this.getSession().sendMessage(message, flush);
 	}
 
-	@Override
-	public Channel channel() {
-		return channel;
-	}
 
 	@Override
 	public String getRemoteAddress() {
-		return ChannelUtil.getIp(channel);
+		return session.getIp();
 	}
 
 	@Override
 	public String toString() {
-		if (this.channel == null) {
-			if (this.requestData != null) {
-				return this.requestData.getClass().getName();
-			} else {
-				return "unknown request!";
-			}
-		}
-		P messageActor = (P) this.channel.attr(ServerConstants.MESSAGE_ACTOR_KEY).get();
+		P messageActor = (P) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		String identifyDesc;
 		if (messageActor != null) {
 			identifyDesc = messageActor.getIdentity();
 		}else {
-			identifyDesc = this.channel.id().asShortText();
+			identifyDesc = "None-actor";
 		}
 		return StringUtil.slf4jFormat("[{}]: << {}", identifyDesc, ToString.toString(requestData));
 	}

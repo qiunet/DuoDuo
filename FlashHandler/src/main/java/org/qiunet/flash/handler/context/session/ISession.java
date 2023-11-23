@@ -67,7 +67,13 @@ public interface ISession extends AttributeMap, ISender {
 		return attr(key).getAndSet(obj);
 	}
 
-	@FunctionalInterface
+	/**
+	 * short id
+	 * @return id
+	 */
+    String aliasId();
+
+    @FunctionalInterface
 	interface SessionCloseListener {
 		void close(ISession session, CloseCause cause);
 	}

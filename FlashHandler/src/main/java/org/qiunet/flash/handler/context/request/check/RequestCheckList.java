@@ -1,11 +1,11 @@
 package org.qiunet.flash.handler.context.request.check;
 
 import com.google.common.collect.Lists;
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.context.request.check.cd.RequestCD;
 import org.qiunet.flash.handler.context.request.check.cd.RequestCdCheck;
 import org.qiunet.flash.handler.context.request.check.param.ParamCheckType;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.reflect.ReflectUtil;
 
 import java.util.Collections;
@@ -30,8 +30,8 @@ public class RequestCheckList {
 	 * 检查请求
 	 * @param data
 	 */
-	public void check(Channel channel, IChannelData data) {
-		list.forEach(check -> check.check(channel, data));
+	public void check(ISession session, IChannelData data) {
+		list.forEach(check -> check.check(session, data));
 	}
 
 	/**

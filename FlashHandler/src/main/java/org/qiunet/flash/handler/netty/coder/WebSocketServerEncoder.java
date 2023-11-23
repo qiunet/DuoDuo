@@ -15,6 +15,6 @@ public class WebSocketServerEncoder extends MessageToMessageEncoder<IChannelMess
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
-		out.add(new BinaryWebSocketFrame(msg.withHeaderByteBuf(ctx.channel(), true)));
+		out.add(new BinaryWebSocketFrame(msg.withHeaderByteBuf(ctx.channel())));
 	}
 }

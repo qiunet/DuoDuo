@@ -56,7 +56,16 @@ public final class ToString {
 
 
 	public static String toString(Object obj) {
-		return ToString.objToString(obj);
+		if (obj == null) {
+			return null;
+		}
+
+		try {
+			return ToString.objToString(obj);
+		}catch (Throwable e) {
+			LoggerType.DUODUO.error("ToString object class [{}] error!", obj.getClass().getSimpleName());
+			throw e;
+		}
 	}
 
 	/**

@@ -20,9 +20,9 @@ public abstract class BaseByteBufMessage<T> extends ExtraInfo implements IChanne
 	protected LazyLoader<ByteBuf> buffer = new LazyLoader<>(this::get);
 
 	@Override
-	public ByteBuf withHeaderByteBuf(Channel channel, boolean serverOrClient) {
+	public ByteBuf withHeaderByteBuf(Channel channel) {
 		IProtocolHeader header = ChannelUtil.getProtocolHeader(channel);
-		IProtocolHeader.ProtocolHeader protocolHeader = header.outHeader(this, channel, serverOrClient, ChannelUtil.isConnectReq(channel));
+		IProtocolHeader.ProtocolHeader protocolHeader = header.outHeader(this, channel);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(protocolHeader.headerByteBuf(), this.getByteBuf());
 		protocolHeader.recycle();
 		this.recycle();

@@ -82,7 +82,7 @@ public class GmDebugProtocolHandler extends PersistConnPbHandler<PlayerActor, Gm
 			}
 		}, byteBuf);
 		try {
-			ChannelUtil.processHandler(context.channel(), handler, messageContent);
+			ChannelUtil.processHandler(context.getSession(), handler, messageContent);
 		}finally {
 			messageContent.release();
 		}

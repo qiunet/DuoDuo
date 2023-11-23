@@ -2,14 +2,17 @@ package org.qiunet.flash.handler.context.session;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.string.StringUtil;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.StringJoiner;
 
 /***
@@ -26,10 +29,15 @@ class BaseChannelSession extends BaseSession {
 
 	protected void setChannel(Channel channel) {
 		if (channel != null) {
-			// 测试可能为null
+			// channel 跟 session 生命周期不一致的情况.不能调用该set.  会导致内存泄露
 			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
 		}
 		this.channel = channel;
+	}
+
+	@Override
+	public String aliasId() {
+		return channel.id().asShortText();
 	}
 
 	@Override
@@ -45,7 +53,6 @@ class BaseChannelSession extends BaseSession {
 		if (channel == null) {
 			return;
 		}
-		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
 		if ((channel.isActive() || channel.isOpen())) {
 			logger.info("Session [{}] closed", this);
 			this.flush();
@@ -63,11 +70,44 @@ class BaseChannelSession extends BaseSession {
 
 	@Override
 	public String getIp() {
-		String ip = ChannelUtil.getIp(getAttachObj(ServerConstants.HTTP_WS_HEADER_KEY));
-		if (ip != null) {
-			return ip;
+		String ip = getIp0();
+		if (! StringUtil.isEmpty(ip) && ip.contains(",")) {
+			ip = ip.substring(0, ip.indexOf(","));
 		}
-		return ChannelUtil.getIp(channel);
+		return ip;
+	}
+
+	private String getIp0() {
+		HttpHeaders headers = getAttachObj(ServerConstants.HTTP_WS_HEADER_KEY);
+		if (headers != null) {
+			String ip;
+			if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
+				return ip;
+			}
+
+			if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
+				return ip;
+			}
+
+			if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
+				return ip;
+			}
+
+			if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
+				return ip;
+			}
+
+			if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
+				return ip;
+			}
+		}
+
+		SocketAddress socketAddress = channel.remoteAddress();
+		if (socketAddress == null) {
+			return "unknown-address";
+		}
+
+		return ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
 	}
 
 	@Override
@@ -100,7 +140,7 @@ class BaseChannelSession extends BaseSession {
 			if (messageActor != null) {
 				sj.add(messageActor.getIdentity());
 			}
-			sj.add("ID = " + channel.id().asShortText());
+			sj.add("ID = " + this.aliasId());
 			if (isServer) {
 				sj.add("Ip = " + getIp());
 			}

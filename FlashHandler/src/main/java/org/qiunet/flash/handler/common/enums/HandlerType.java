@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.common.enums;
 
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -24,8 +23,8 @@ public enum HandlerType {
 	 */
 	PERSIST_CONN {
 		@Override
-		public IRequestContext createRequestContext(IHandler handler, ISession session, MessageContent content, Channel channel) {
-			return handler.getDataType().createRequestContext(session, content, channel);
+		public IRequestContext createRequestContext(IHandler handler, ISession session, MessageContent content) {
+			return handler.getDataType().createRequestContext(session, content);
 		}
 	};
 
@@ -33,7 +32,7 @@ public enum HandlerType {
 	 * 根据handlerType 创建requestContext
 	 * @return
 	 */
-	public IRequestContext createRequestContext(IHandler handler, ISession session, MessageContent content, Channel channel) {
+	public IRequestContext createRequestContext(IHandler handler, ISession session, MessageContent content) {
 		throw new CustomException("Not support!!");
 	}
 }

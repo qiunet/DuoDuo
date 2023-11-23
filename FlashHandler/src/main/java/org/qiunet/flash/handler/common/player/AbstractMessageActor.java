@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.context.sender.ISessionHolder;
 import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.args.ArgumentKey;
@@ -41,6 +42,9 @@ public abstract class AbstractMessageActor<P extends AbstractMessageActor<P>>
 	@Override
 	public void destroy() {
 		super.destroy();
+		if (this.session != null) {
+			this.session.close(CloseCause.DESTROY);
+		}
 		this.container.clear();
 	}
 

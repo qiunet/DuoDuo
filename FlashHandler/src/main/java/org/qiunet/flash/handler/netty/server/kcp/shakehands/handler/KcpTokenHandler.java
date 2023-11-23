@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.kcp.shakehands.handler;
 
-import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
@@ -20,8 +19,8 @@ import org.qiunet.flash.handler.netty.server.kcp.shakehands.message.KcpTokenRsp;
 public class KcpTokenHandler extends PersistConnPbHandler<PlayerActor, KcpTokenReq> {
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<KcpTokenReq> context) throws Exception {
-		Attribute<ServerConnType> attr = context.channel().attr(ServerConstants.HANDLER_TYPE_KEY);
-		if (attr.get() != ServerConnType.TCP && attr.get() != ServerConnType.WS) {
+		ServerConnType type = playerActor.getSession().getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
+		if (type != ServerConnType.TCP && type != ServerConnType.WS) {
 			throw StatusResultException.valueOf(StatusResult.FAIL);
 		}
 

@@ -14,11 +14,15 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
+import org.qiunet.flash.handler.context.session.HttpSession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerEncoder;
-import org.qiunet.flash.handler.netty.server.bound.*;
+import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.InvalidChannelCleanHandler;
+import org.qiunet.flash.handler.netty.server.bound.MessageReadHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
@@ -62,6 +66,9 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		try {
+			HttpSession httpSession = new HttpSession(ctx.channel());
+			httpSession.attachObj(ServerConstants.HTTP_REQUEST_KEY, msg);
+			ChannelUtil.bindSession(httpSession, ctx.channel());
 			this.channelRead1(ctx, msg);
 		}finally {
 			ctx.fireChannelRead(msg.retain());
@@ -94,7 +101,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				handlerGameUriPathRequest(ctx, msg);
 			} else if (config.getHttpBootstrapConfig().getWebsocketPath() != null && config.getHttpBootstrapConfig().getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
-				handlerWebSocketHandShark(ctx, msg);
+				handlerWebSocketHandShark(ctx);
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, msg, uri.getRawPath());
@@ -108,7 +115,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	/***
 	 * 处理升级握手信息
 	 */
-	private void handlerWebSocketHandShark(ChannelHandlerContext ctx, FullHttpRequest request){
+	private void handlerWebSocketHandShark(ChannelHandlerContext ctx){
 		ChannelPipeline pipeline = ctx.pipeline();
 
 		pipeline.addLast("InvalidChannelCleanHandler", new InvalidChannelCleanHandler());
@@ -139,7 +146,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 */
 	private void handlerGameUriPathRequest(ChannelHandlerContext ctx, FullHttpRequest request){
 		IProtocolHeader protocolHeader = ChannelUtil.getProtocolHeader(ctx.channel());
-		IProtocolHeader.ProtocolHeader header = protocolHeader.serverNormalIn(request.content(), null);
+		IProtocolHeader.ProtocolHeader header = protocolHeader.serverNormalIn(request.content(), ctx.channel());
 		if (! header.isValidMessage()) {
 			logger.error("Invalid message magic! client is "+ header);
 			// encryption 不对, 不被认证的请求
@@ -154,7 +161,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.UNAUTHORIZED);
 				return;
 			}
-			this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx, request);
+			this.handlerRequest(() -> ChannelDataMapping.getHandler(content.getProtocolId()), content, ctx);
 		}finally {
 			content.release();
 		}
@@ -165,18 +172,16 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	 * @param handlerGetter
 	 * @param content
 	 * @param ctx
-	 * @param request
 	 */
-	private void handlerRequest(Supplier<IHandler> handlerGetter, MessageContent content, ChannelHandlerContext ctx, FullHttpRequest request) {
+	private void handlerRequest(Supplier<IHandler> handlerGetter, MessageContent content, ChannelHandlerContext ctx) {
 		IHandler handler = handlerGetter.get();
 		if (handler == null) {
 			logger.info("Handler [{}] not found!", content.toString());
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.NOT_FOUND);
 			return;
 		}
-		ctx.channel().attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).set(config);
-		ctx.channel().attr(ServerConstants.HTTP_REQUEST_KEY).set(request);
-		IRequestContext context = handler.getDataType().createRequestContext(null, content, ctx.channel());
+
+		IRequestContext context = handler.getDataType().createRequestContext(ChannelUtil.getSession(ctx.channel()), content);
 		ThreadPoolManager.NORMAL.submit(() -> {
 			try {
 				context.handlerRequest();
@@ -201,7 +206,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 
 		MessageContent content = MessageContent.valueOf(uriPath, request.content().retain());
 		try {
-			this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx, request);
+			this.handlerRequest(() -> UrlRequestHandlerMapping.getHandler(content.getUriPath()), content, ctx);
 		}finally {
 			content.release();
 		}

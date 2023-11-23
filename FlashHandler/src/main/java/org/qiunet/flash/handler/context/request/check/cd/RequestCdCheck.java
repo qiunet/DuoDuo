@@ -1,9 +1,9 @@
 package org.qiunet.flash.handler.context.request.check.cd;
 
-import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.context.request.check.IRequestCheck;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.function.cd.TouchTimer;
@@ -31,11 +31,11 @@ public class RequestCdCheck implements IRequestCheck {
 	}
 
 	@Override
-	public void check(Channel channel, IChannelData data) {
+	public void check(ISession session, IChannelData data) {
 		TouchTimer timer;
-		if ((timer = channel.attr(timerAttribute).get()) == null) {
+		if ((timer = session.getAttachObj(timerAttribute)) == null) {
 			timer = new TouchTimer();
-			TouchTimer touchTimer = channel.attr(timerAttribute).setIfAbsent(timer);
+			TouchTimer touchTimer = session.attr(timerAttribute).setIfAbsent(timer);
 			if (touchTimer != null) {
 				timer = touchTimer;
 			}

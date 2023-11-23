@@ -84,6 +84,6 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			return;
 		}
 
-		ChannelUtil.processHandler(channel, handler, content);
+		ChannelUtil.processHandler(session, handler, content);
 	}
 }

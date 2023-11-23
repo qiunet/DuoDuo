@@ -7,7 +7,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
@@ -24,7 +23,7 @@ public class WebsocketServerHandler  extends ChannelInboundHandlerAdapter {
 		if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
 			HttpHeaders headers = ((WebSocketServerProtocolHandler.HandshakeComplete) evt).requestHeaders();
 			DSession session = new DSession(ctx.channel());
-			ChannelUtil.bindSession(session, ctx.channel());
+			ctx.channel().attr(ServerConstants.SESSION_KEY).set(session);
 
 			session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.WS);
 			session.attachObj(ServerConstants.HTTP_WS_HEADER_KEY, headers);

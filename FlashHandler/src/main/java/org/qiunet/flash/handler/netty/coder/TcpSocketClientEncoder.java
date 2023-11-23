@@ -14,6 +14,6 @@ public class TcpSocketClientEncoder extends MessageToMessageEncoder<IChannelMess
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
-		out.add(msg.withHeaderByteBuf(ctx.channel(), false));
+		out.add(msg.withHeaderByteBuf(ctx.channel()));
 	}
 }

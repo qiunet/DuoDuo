@@ -71,6 +71,16 @@ public class NodeServerSession extends BaseChannelSession {
 	}
 
 	@Override
+	public boolean isActive() {
+		return !closed.get() && super.isActive();
+	}
+
+	@Override
+	public String aliasId() {
+		return this.type +":"+super.aliasId();
+	}
+
+	@Override
 	public String getIp() {
 		return "cross node";
 	}

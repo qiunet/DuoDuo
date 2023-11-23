@@ -143,6 +143,14 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			// connectIn 的包的sequence 必须不为负数
 			return Arrays.equals(MAGIC, this.magic);
 		}
+
+		@Override
+		public String toString() {
+			return "ServerConnectHeader{" +
+				"protocolId=" + protocolId +
+				", length=" + length +
+				'}';
+		}
 	}
 
 	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader {
@@ -203,6 +211,14 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			this.protocolId = 0;
 			this.length = 0;
 			this.recyclerHandle.recycle();
+		}
+
+		@Override
+		public String toString() {
+			return "ServerRspHeader{" +
+				"protocolId=" + protocolId +
+				", length=" + length +
+				'}';
 		}
 	}
 
@@ -270,6 +286,14 @@ public enum DefaultProtocolHeader implements IProtocolHeader {
 			this.channel = null;
 			this.length = 0;
 			this.recyclerHandle.recycle();
+		}
+
+		@Override
+		public String toString() {
+			return "ServerReqHeader{" +
+				", protocolId=" + protocolId +
+				", length=" + length +
+				'}';
 		}
 	}
 }

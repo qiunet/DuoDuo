@@ -7,7 +7,7 @@ import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
-import org.qiunet.flash.handler.context.session.ServerNodeSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***
@@ -23,7 +23,7 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 	 */
 	private final int serverId;
 
-	ServerNode(ServerNodeSession session, int serverId) {
+	ServerNode(ISession session, int serverId) {
 		super(session, String.valueOf(serverId));
 		this.serverId = serverId;
 	}

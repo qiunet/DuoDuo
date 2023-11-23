@@ -11,6 +11,7 @@ public interface IExtraInfo {
 	enum ExtraInfoType {
 		SERVER_NODE_MSG,
 		CROSS_PLAYER_MSG,
+		PLAYER_MSG,
 		FLUSH,
 		KCP,
 		;

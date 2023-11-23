@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.common.enums;
 
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
@@ -10,7 +9,6 @@ import org.qiunet.flash.handler.context.request.http.HttpStringRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.exceptions.CustomException;
 
 /**
@@ -24,8 +22,8 @@ public enum DataType {
 	 */
 	STRING {
 		@Override
-		public IRequestContext createRequestContext(ISession session, MessageContent content, Channel channel) {
-			return new HttpStringRequestContext(content, channel, channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get(), channel.attr(ServerConstants.HTTP_REQUEST_KEY).get());
+		public IRequestContext createRequestContext(ISession session, MessageContent content) {
+			return new HttpStringRequestContext(session, content);
 		}
 	},
 	/**
@@ -34,12 +32,12 @@ public enum DataType {
 	PROTOBUF {
 
 		@Override
-		public IRequestContext createRequestContext(ISession session, MessageContent content, Channel channel) {
+		public IRequestContext createRequestContext(ISession session, MessageContent content) {
 			IHandler handler = ChannelDataMapping.getHandler(content.getProtocolId());
 			if (handler.getHandlerType() == HandlerType.HTTP) {
-				return new HttpPbRequestContext(content, channel, channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get(), channel.attr(ServerConstants.HTTP_REQUEST_KEY).get());
+				return new HttpPbRequestContext(session, content);
 			}else {
-				return PersistConnPbRequestContext.valueOf(session, content, channel);
+				return PersistConnPbRequestContext.valueOf(session, content);
 			}
 
 		}
@@ -49,18 +47,17 @@ public enum DataType {
 	 */
 	JSON {
 		@Override
-		public IRequestContext createRequestContext(ISession session, MessageContent content, Channel channel) {
-			return new HttpJsonRequestContext(content, channel, channel.attr(ServerConstants.BOOTSTRAP_CONFIG_KEY).get(), channel.attr(ServerConstants.HTTP_REQUEST_KEY).get());
+		public IRequestContext createRequestContext(ISession session, MessageContent content) {
+			return new HttpJsonRequestContext(session, content);
 		}
 	}
 	;
 	/**
 	 * 得到一个 request context
 	 * @param content
-	 * @param channel
 	 * @return
 	 */
-	public IRequestContext createRequestContext(ISession session, MessageContent content, Channel channel) {
+	public IRequestContext createRequestContext(ISession session, MessageContent content) {
 		throw new CustomException("Not support!!");
 	}
 }

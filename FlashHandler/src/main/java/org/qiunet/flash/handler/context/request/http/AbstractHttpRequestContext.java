@@ -3,7 +3,6 @@ package org.qiunet.flash.handler.context.request.http;
 import com.google.common.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -13,11 +12,14 @@ import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.context.request.BaseRequestContext;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
+import org.qiunet.flash.handler.context.session.HttpSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;
 import org.qiunet.flash.handler.handler.http.ISyncHttpHandler;
 import org.qiunet.flash.handler.handler.http.async.HttpAsyncTask;
 import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
@@ -37,10 +39,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	private HttpRequest request;
 	private String uriPath;
 
-	public void init(MessageContent content, Channel channel, ServerBootStrapConfig config, HttpRequest request)  {
-		super.init(content, channel);
-		this.request = request;
-		this.config = config;
+	public void init(ISession session, MessageContent content)  {
+		super.init(session, content);
+		this.config = session.getAttachObj(ServerConstants.BOOTSTRAP_CONFIG_KEY);
+		this.request = session.getAttachObj(ServerConstants.HTTP_REQUEST_KEY);
 
 		this.uriPath = content.getUriPath();
 	}
@@ -71,7 +73,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 	public void handlerRequest() throws Exception {
 		if (getRequestData() == null) {
 			logger.info("HTTP <<< null, cancel request!");
-			ChannelUtil.sendHttpResponseStatusAndClose(channel, HttpResponseStatus.NO_CONTENT);
+			ChannelUtil.sendHttpResponseStatusAndClose((HttpSession) session, HttpResponseStatus.NO_CONTENT);
 			return;
 		}
 
@@ -109,11 +111,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 
 	@Override
 	public String getRemoteAddress() {
-		String ip = ChannelUtil.getIp(request.headers());
-		if (ip != null) {
-			return ip;
-		}
-		return ChannelUtil.getIp(channel);
+		return session.getIp();
 	}
 
 	@Override
@@ -147,7 +145,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		// 不能使用pooled的对象. 因为不清楚什么时候release
 		ByteBuf content;
 		if (getUriPath().equals(config.getHttpBootstrapConfig().getGameURIPath())) {
-			content = responseDataMessage.withHeaderByteBuf(channel, true);
+			content = responseDataMessage.withHeaderByteBuf(((HttpSession) session).channel());
 		}else {
 			// 不是游戏业务. 不写业务头.
 			content = responseDataMessage.withoutHeaderByteBuf();
@@ -165,10 +163,10 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
 		}
 		// 下面的 `writeAndFlush(Unpooled.EMPTY_BUFFER)` 会flush
-		channel.writeAndFlush(response);
+		((HttpSession) session).channel().writeAndFlush(response);
 
 		if (! keepAlive) {
-			channel.writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
+			((HttpSession) session).channel().writeAndFlush(Unpooled.EMPTY_BUFFER).addListener(ChannelFutureListener.CLOSE);
 		}
 	}
 

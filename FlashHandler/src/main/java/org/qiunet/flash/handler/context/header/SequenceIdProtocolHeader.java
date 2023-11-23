@@ -155,6 +155,15 @@ public enum SequenceIdProtocolHeader implements IProtocolHeader {
 		public int sequence() {
 			return sequence;
 		}
+
+		@Override
+		public String toString() {
+			return "ServerConnectHeader{" +
+				"sequence=" + sequence +
+				", protocolId=" + protocolId +
+				", length=" + length +
+				'}';
+		}
 	}
 
 	private static class ServerRspHeader implements IServerOutHeader, IClientInHeader, ISequenceProtocolHeader {
@@ -226,6 +235,15 @@ public enum SequenceIdProtocolHeader implements IProtocolHeader {
 		@Override
 		public int sequence() {
 			return sequence;
+		}
+
+		@Override
+		public String toString() {
+			return "ServerRspHeader{" +
+				"protocolId=" + protocolId +
+				", sequence=" + sequence +
+				", length=" + length +
+				'}';
 		}
 	}
 
@@ -306,6 +324,15 @@ public enum SequenceIdProtocolHeader implements IProtocolHeader {
 		@Override
 		public int sequence() {
 			return sequence;
+		}
+
+		@Override
+		public String toString() {
+			return "ServerReqHeader{" +
+				"sequence=" + sequence +
+				", protocolId=" + protocolId +
+				", length=" + length +
+				'}';
 		}
 	}
 }

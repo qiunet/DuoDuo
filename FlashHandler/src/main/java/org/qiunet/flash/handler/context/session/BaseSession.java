@@ -35,7 +35,7 @@ abstract class BaseSession implements ISession {
 			// 避免多次调用close. 多次调用监听.
 			return;
 		}
-
+		logger.info("Session [{}] close by cause [{}]", this, cause.getDesc());
 		IMessageActor attachObj = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (attachObj == null) {
 			this.closeChannel(cause);
@@ -116,8 +116,8 @@ abstract class BaseSession implements ISession {
 		IMessageActor messageActor = getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (! channel.isOpen()) {
 			if (logger.isDebugEnabled() && message.debugOut()) {
-				String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-				logger.debug("[{}] discard [{}({})] message: {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
+				String identityDesc = messageActor == null ? this.aliasId() : messageActor.getIdentity();
+				logger.debug("[{}] discard [{}({})] message: {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), this.aliasId(), message._toString());
 			}
 
 			if (message instanceof BaseByteBufMessage && ((BaseByteBufMessage<?>) message).isByteBufPrepare()) {
@@ -128,8 +128,8 @@ abstract class BaseSession implements ISession {
 		}
 
 		if ( logger.isInfoEnabled() &&  message.debugOut()) {
-			String identityDesc = messageActor == null ? channel.id().asShortText() : messageActor.getIdentity();
-			logger.info("[{}] [{}({})] >>> {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channel.id().asShortText(), message._toString());
+			String identityDesc = messageActor == null ? this.aliasId() : messageActor.getIdentity();
+			logger.info("[{}] [{}({})] >>> {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), this.aliasId(), message._toString());
 		}
 
 		if (flush) {

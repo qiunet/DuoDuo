@@ -9,6 +9,8 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.exceptions.CustomException;
 
+import java.util.function.Consumer;
+
 /***
  * 离线玩家actor
  * 仅仅是读取数据使用.
@@ -25,8 +27,9 @@ public class OfflinePlayerActor extends PlayerActor {
 		this.playerId = playerId;
 		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
 	}
+
 	@Override
-	public void crossToServer(int serverId) {
+	public void crossToServer(int serverId, Consumer<Boolean> resultCallback) {
 		throw new CustomException("Offline player Actor can not cross to other server!");
 	}
 

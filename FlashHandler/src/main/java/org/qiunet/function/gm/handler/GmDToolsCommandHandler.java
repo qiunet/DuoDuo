@@ -1,6 +1,5 @@
 package org.qiunet.function.gm.handler;
 
-import io.netty.channel.Channel;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -8,6 +7,7 @@ import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;
@@ -43,32 +43,33 @@ public class GmDToolsCommandHandler extends PersistConnPbHandler<ServerNode, GmD
 
 		playerActor.addMessage(p -> {
 			try {
-				handler.handler(playerActor, new IPersistConnRequest<GmCommandReq>() {
-					@Override
-					public Channel channel() {
-						return context.channel();
-					}
+				handler.handler(playerActor, new IPersistConnRequest<>() {
 
-					@Override
-					public Object getAttribute(String key) {
-						return context.getAttribute(key);
-					}
+                    @Override
+                    public ISession getSession() {
+                        return playerActor.getSession();
+                    }
 
-					@Override
-					public void setAttribute(String key, Object val) {
-						context.setAttribute(key, val);
-					}
+                    @Override
+                    public Object getAttribute(String key) {
+                        return context.getAttribute(key);
+                    }
 
-					@Override
-					public GmCommandReq getRequestData() {
-						return gmCommandReq;
-					}
+                    @Override
+                    public void setAttribute(String key, Object val) {
+                        context.setAttribute(key, val);
+                    }
 
-					@Override
-					public String getRemoteAddress() {
-						return context.getRemoteAddress();
-					}
-				});
+                    @Override
+                    public GmCommandReq getRequestData() {
+                        return gmCommandReq;
+                    }
+
+                    @Override
+                    public String getRemoteAddress() {
+                        return context.getRemoteAddress();
+                    }
+                });
 				actor.sendMessage(new GmDToolsCommandRsp(true, null));
 			} catch (Exception e) {
 				LoggerType.DUODUO_FLASH_HANDLER.error("GmDToolsCommandHandler", e);

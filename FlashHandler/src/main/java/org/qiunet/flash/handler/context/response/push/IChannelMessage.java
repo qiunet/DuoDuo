@@ -52,12 +52,11 @@ public interface IChannelMessage<T> extends IExtraInfo {
 	/**
 	 * 获得 添加 protocol header 的 ByteBuf
 	 * @param channel
-	 * @param serverOrClient true server false client
 	 * @return
 	 */
-	default ByteBuf withHeaderByteBuf(Channel channel, boolean serverOrClient) {
+	default ByteBuf withHeaderByteBuf(Channel channel) {
 		IProtocolHeader protocolHeader = ChannelUtil.getProtocolHeader(channel);
-		IProtocolHeader.ProtocolHeader header = protocolHeader.outHeader(this, channel, serverOrClient, ChannelUtil.isConnectReq(channel));
+		IProtocolHeader.ProtocolHeader header = protocolHeader.outHeader(this, channel);
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(header.headerByteBuf(), _content());
 
 		header.recycle();

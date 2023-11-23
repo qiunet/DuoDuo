@@ -26,14 +26,15 @@ public class DSession extends BaseChannelSession implements IKcpSessionManager {
 	@Override
 	public void bindKcpSession(KcpSession kcpSession) {
 		if (this.kcpSession != null) {
-			this.closeListeners.remove("CloseKcpSession");
 			this.kcpSession.close(CloseCause.LOGIN_REPEATED);
 		}
-		this.kcpSession = kcpSession;
-		this.addCloseListener("CloseKcpSession", (session, cause) -> {
-			logger.debug("Close kcp session!");
-			this.kcpSession.close(cause);
+
+		this.closeListeners.put("CloseKcpSession", (s1, c) -> {
+			((DSession) s1).kcpSession.close(c);
 		});
+
+		kcpSession.setDependOnTcp();
+		this.kcpSession = kcpSession;
 	}
 
 	@Override

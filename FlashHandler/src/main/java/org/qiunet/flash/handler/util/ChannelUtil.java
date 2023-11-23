@@ -6,12 +6,10 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
-import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.event.ClientPingEvent;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -24,6 +22,7 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
+import org.qiunet.flash.handler.context.session.HttpSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
@@ -34,10 +33,6 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
-
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.function.Function;
 
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -71,9 +66,8 @@ public final class ChannelUtil {
 	/***
 	 * 关联Session 和 channel
 	 * @param session
-	 * @return
 	 */
-	public static boolean bindSession(ISession session, Channel channel) {
+	public static void bindSession(ISession session, Channel channel) {
 		Preconditions.checkNotNull(session);
 		Attribute<ISession> attr = channel.attr(ServerConstants.SESSION_KEY);
 		boolean result = attr.compareAndSet(null, session);
@@ -81,7 +75,6 @@ public final class ChannelUtil {
 			logger.error("Session [{}] Duplicate", session);
 			session.close(CloseCause.LOGIN_REPEATED);
 		}
-		return result;
 	}
 
 	/**
@@ -106,57 +99,7 @@ public final class ChannelUtil {
 	public static ISession getSession(Channel channel) {
 		return channel.attr(ServerConstants.SESSION_KEY).get();
 	}
-	private static final Function<HttpHeaders, String> ipGetter = (headers) -> {
-		if (headers == null) {
-			return null;
-		}
 
-		String ip;
-		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for")) && !"unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (! StringUtil.isEmpty(ip = headers.get("HTTP_X_FORWARDED_FOR")) && ! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("x-forwarded-for-pound")) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("Proxy-Client-IP") ) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		if (!StringUtil.isEmpty(ip = headers.get("WL-Proxy-Client-IP")) &&! "unknown".equalsIgnoreCase(ip)) {
-			return ip;
-		}
-
-		return null;
-	};
-	/**
-	 *  获得ip
-	 * @return
-	 */
-	public static String getIp(Channel channel) {
-		SocketAddress socketAddress = channel.remoteAddress();
-		if (socketAddress == null) {
-			return "unknown-address";
-		}
-
-		return ((InetSocketAddress) socketAddress).getAddress().getHostAddress();
-	}
-	/**
-	 *  获得ip
-	 * @return
-	 */
-	public static String getIp(HttpHeaders headers) {
-		String ip = ipGetter.apply(headers);
-		if (! StringUtil.isEmpty(ip) && ip.contains(",")) {
-			ip = ip.substring(0, ip.indexOf(","));
-		}
-		return ip;
-	}
 
 	/**
 	 * 处理ping信息
@@ -172,21 +115,19 @@ public final class ChannelUtil {
 		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
 		session.sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
 		IMessageActor actor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY) == ServerConnType.TCP
-		&& actor instanceof PlayerActor playerActor){
-			playerActor.fireEvent(ClientPingEvent.getInstance());
+		if (actor != null && actor instanceof PlayerActor playerActor && actor.isAuth()){
+			playerActor.fireEvent(ClientPingEvent.valueOf(channel.attr(ServerConstants.HANDLER_TYPE_KEY).get()));
 		}
 		return true;
 	}
 
 	/**
 	 * 正式处理handler
-	 * @param channel
+	 * @param session
 	 * @param handler
 	 * @param content
 	 */
-	public static void processHandler(Channel channel, IHandler handler, MessageContent content) {
-		ISession session = ChannelUtil.getSession(channel);
+	public static void processHandler(ISession session, IHandler handler, MessageContent content) {
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
@@ -212,19 +153,19 @@ public final class ChannelUtil {
 			});
 			return;
 		}
-		if (channel.isActive()) {
-			IRequestContext context = handler.getDataType().createRequestContext(session, content, channel);
+		if (session.isActive()) {
+			IRequestContext context = handler.getDataType().createRequestContext(session, content);
 			messageActor.addMessage((IMessage) context);
 		}
 	}
 
-	public static void sendHttpResponseStatusAndClose(Channel channel, HttpResponseStatus status) {
+	public static void sendHttpResponseStatusAndClose(HttpSession session, HttpResponseStatus status) {
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);
-		channel.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-		channel.close();
+		session.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+		session.channel().close();
 	}
 
 	public static void sendHttpResponseStatusAndClose(ChannelHandlerContext ctx, HttpResponseStatus status) {
-		sendHttpResponseStatusAndClose(ctx.channel(), status);
+		sendHttpResponseStatusAndClose((HttpSession) ChannelUtil.getSession(ctx.channel()), status);
 	}
 }
