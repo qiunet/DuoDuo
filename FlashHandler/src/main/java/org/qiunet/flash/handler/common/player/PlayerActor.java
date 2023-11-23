@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.common.player;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.db.entity.DbEntityList;
@@ -23,7 +23,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.logger.LoggerType;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Stack;
 import java.util.concurrent.TimeUnit;
@@ -91,7 +90,8 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		if (cause.needWaitConnect()) {
 			return;
 		}
-		crossConnectors.keySet().forEach(type -> this.quitCross(type, cause));
+		Sets.newHashSet(crossConnectors.keySet())
+			.forEach(serverId -> this.quitCross(serverId, cause));
 	}
 
 	@Override
@@ -152,10 +152,12 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		}
 
 		PlayerCrossConnector playerCrossConnector = crossConnectors.remove(currentCrossServerId);
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
 		if (playerCrossConnector == null) {
 			return;
 		}
-		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {}", this.getId(), serverId);
+
+		LoggerType.DUODUO_FLASH_HANDLER.info("Player: {} quit cross server id {} finished!", this.getId(), serverId);
 		crosssServerStack.remove((Integer) serverId);
 		playerCrossConnector.quit(cause);
 	}
@@ -248,10 +250,8 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 			return;
 		}
 
+		this.quitAllCross(CloseCause.DESTROY);
 		super.destroy();
-
-		ArrayList<PlayerCrossConnector> list = Lists.newArrayList(crossConnectors.values());
-		list.forEach(c -> c.getSession().close(CloseCause.DESTROY));
 		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
 		if (loginSuccess) {
 			dataLoader().unregister();
@@ -278,6 +278,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		handler.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
 		this.setSession(handler.session);
 		this.loginSuccess = false;
+		handler.setSession(null);
 		handler.destroy();
 	}
 

@@ -1,14 +1,13 @@
 package org.qiunet.test.cross.common.rpc;
 
 import org.qiunet.cross.rpc.IRpcRequest;
-import org.qiunet.flash.handler.common.player.IPlayer;
 
 /***
  *
  * @author qiunet
  * 2020-10-23 20:54
  **/
-public class TestRpcReq implements IRpcRequest, IPlayer {
+public class TestRpcReq implements IRpcRequest {
 
 	private long playerId;
 
@@ -26,7 +25,6 @@ public class TestRpcReq implements IRpcRequest, IPlayer {
 		this.playerId = playerId;
 	}
 
-	@Override
 	public long getId() {
 		return getPlayerId();
 	}

@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import org.qiunet.cross.rpc.TransferJsonData;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.common.player.protocol.IgnoreCommonProtocolCDCheck;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
@@ -20,6 +21,7 @@ import org.qiunet.utils.string.ToString;
  */
 @SkipProtoGenerator
 @ServerCommunicationData
+@IgnoreCommonProtocolCDCheck
 @ChannelData(ID = IProtocolId.System.CROSS_EVENT_REQ, desc = "跨服事件处理")
 public class CrossEventRequest extends IChannelData {
 	/**

@@ -3,6 +3,7 @@ package org.qiunet.cross.rpc;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
+import org.qiunet.flash.handler.common.player.protocol.IgnoreCommonProtocolCDCheck;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.request.data.ServerCommunicationData;
@@ -16,6 +17,7 @@ import org.qiunet.utils.string.ToString;
  */
 @SkipProtoGenerator
 @ServerCommunicationData
+@IgnoreCommonProtocolCDCheck
 @ChannelData(ID = IProtocolId.System.ROUTE_RPC_RSP, desc = "rpc response")
 public class RouteRpcRsp extends IChannelData {
 	@Protobuf(description = "请求id")

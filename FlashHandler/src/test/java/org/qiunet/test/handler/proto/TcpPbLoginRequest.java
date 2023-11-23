@@ -1,6 +1,7 @@
 package org.qiunet.test.handler.proto;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.flash.handler.common.player.protocol.IgnoreCommonProtocolCDCheck;
 import org.qiunet.flash.handler.context.request.data.ChannelData;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 
@@ -10,6 +11,7 @@ import org.qiunet.flash.handler.context.request.data.IChannelData;
  * @author qiunet
  * 2020-09-22 12:30
  */
+@IgnoreCommonProtocolCDCheck
 @ChannelData(ID = ProtocolId.Test.TCP_PB_LOGIN_REQ, desc = "tcp protobuf 测试")
 public class TcpPbLoginRequest extends IChannelData {
 

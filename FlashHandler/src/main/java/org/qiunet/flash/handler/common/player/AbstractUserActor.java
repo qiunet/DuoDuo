@@ -2,12 +2,14 @@ package org.qiunet.flash.handler.common.player;
 
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
+import org.qiunet.flash.handler.common.player.protocol.CommonProtocolCD;
 import org.qiunet.flash.handler.context.session.IPlayerSender;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
 import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.StatusTipsRsp;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
  * 玩家类型的messageActor 继承该类
@@ -25,6 +27,14 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 
 	public AbstractUserActor(ISession session, String msgQueueIndex) {
 		super(session, msgQueueIndex);
+	}
+
+	@Override
+	protected void setSession(ISession session) {
+		if (session != null) {
+			session.attachObj(ServerConstants.COMMON_PROTOCOL_CD_CHECK_KEY, new CommonProtocolCD());
+		}
+		super.setSession(session);
 	}
 
 	@Override

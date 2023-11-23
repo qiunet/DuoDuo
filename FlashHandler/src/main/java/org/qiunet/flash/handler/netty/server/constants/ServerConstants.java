@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
+import org.qiunet.flash.handler.common.player.protocol.CommonProtocolCD;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.DefaultBytesMessage;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -36,6 +37,11 @@ public final class ServerConstants {
 	 * 感兴趣的消息列表
 	 */
 	public static final ArgumentKey<List<DefaultBytesMessage>> INTEREST_MESSAGE_LIST = new ArgumentKey<>(Lists::newLinkedList);
+	/**
+	 * 通用协议cd 检查
+	 */
+	public static final AttributeKey<CommonProtocolCD> COMMON_PROTOCOL_CD_CHECK_KEY = AttributeKey.newInstance("COMMON_PROTOCOL_CD_CHECK_KEY");
+
 	/**
 	 * netty 保存的handShaker
 	 */

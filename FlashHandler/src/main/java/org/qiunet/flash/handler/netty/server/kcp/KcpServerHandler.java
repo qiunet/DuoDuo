@@ -87,7 +87,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 				|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
 		) {
 			if (kcpParamInfo == null) {
-				logger.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.instance.getPlayerActor(req.getPlayerId()) == null);
+				logger.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.instance.getPlayerActor(req.getPlayerId()) != null);
 			}else if (! Objects.equals(req.getToken(), kcpParamInfo.getToken())) {
 				logger.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
 			}

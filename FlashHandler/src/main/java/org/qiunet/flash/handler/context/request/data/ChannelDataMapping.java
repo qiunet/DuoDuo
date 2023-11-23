@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.context.request.data;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.context.request.check.RequestCheckList;
 import org.qiunet.flash.handler.handler.IHandler;
@@ -45,7 +44,11 @@ public class ChannelDataMapping implements IApplicationContextAware {
 
 	private ChannelDataMapping(){}
 
-	@Override
+	public static RequestCheckList getParamChecks(Class<? extends IChannelData> aClass) {
+		return paramChecks.get(aClass);
+	}
+
+    @Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 		this.context = context;
 		this.handlerPbChannelData(context);
@@ -106,18 +109,7 @@ public class ChannelDataMapping implements IApplicationContextAware {
 	public int order() {
 		return 9;
 	}
-
-	/**
-	 * 对请求进行检查.  会抛出{@link org.qiunet.flash.handler.context.status.StatusResultException}异常.
-	 * @param channelData
-	 */
-	public static void requestCheck(Channel channel, IChannelData channelData) {
-		RequestCheckList requestCheckList = paramChecks.get(channelData.getClass());
-		if (requestCheckList != null) {
-			requestCheckList.check(channel, channelData);
-		}
-	}
-
+	
 	public static int protocolId(Class<? extends IChannelData> clazz) {
 		return mapping.getVal(clazz);
 	}

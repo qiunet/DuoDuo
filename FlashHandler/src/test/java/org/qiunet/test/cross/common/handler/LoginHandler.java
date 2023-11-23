@@ -18,10 +18,6 @@ public class LoginHandler extends BaseHandler<LoginRequest> {
 	@Override
 	public void handler(PlayerActor playerActor, IPersistConnRequest<LoginRequest> context) throws Exception {
 		playerActor.auth(context.getRequestData().getPlayerId());
-		if (!playerActor.loginSuccess()) {
-			return;
-		}
-
 		playerActor.fireEvent(new PlayerLoginEvent());
 
 		CrossEventManager.fireCrossEvent(Constants.CROSS_SERVER_ID, CrossNodeEvent.valueOf(playerActor.getPlayerId()));
