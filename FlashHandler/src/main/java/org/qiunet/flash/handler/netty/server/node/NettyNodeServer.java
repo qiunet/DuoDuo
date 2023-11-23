@@ -13,7 +13,7 @@ import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
 import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
 import org.qiunet.flash.handler.netty.server.bound.NettyIdleCheckHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.server.node.handler.PlayerNodeServerHandler;
+import org.qiunet.flash.handler.netty.server.node.handler.CrossPlayerNodeServerHandler;
 import org.qiunet.flash.handler.util.NettyUtil;
 import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.logger.LoggerType;
@@ -25,8 +25,6 @@ import org.slf4j.Logger;
  */
 public final class NettyNodeServer implements INettyServer {
 	private static final EventLoopGroup BOSS = NettyUtil.newEventLoopGroup(1, "netty-node-server-boss-event-loop-");
-	private static final ServerNodeServerHandler serverNodeServerHandler = new ServerNodeServerHandler();
-	private static final PlayerNodeServerHandler playerNodeServerHandler = new PlayerNodeServerHandler();
 	private final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 	private final Promise<Void> successFuture = new DNettyPromise<>();
 
@@ -62,8 +60,8 @@ public final class NettyNodeServer implements INettyServer {
 					pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
 					pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(8192, false));
 					pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-					pipeline.addLast("ServerNodeServerHandler", serverNodeServerHandler);
-					pipeline.addLast("PlayerNodeServerHandler", playerNodeServerHandler);
+					pipeline.addLast("ServerNodeServerHandler", new ServerNodeServerHandler());
+					pipeline.addLast("PlayerNodeServerHandler", new CrossPlayerNodeServerHandler());
 					pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler(50, 10));
 					pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 				}

@@ -1,25 +1,22 @@
 package org.qiunet.cross.node;
 
 import com.google.common.collect.Maps;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import org.qiunet.cross.common.contants.ScannerParamKey;
-import org.qiunet.cross.pool.NodeChannelPoolHandler;
+import org.qiunet.cross.pool.NodeChannelPool;
+import org.qiunet.cross.pool.NodeChannelPoolMap;
+import org.qiunet.cross.pool.NodeChannelTrigger;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
+import org.qiunet.flash.handler.context.header.INodeServerHeader;
+import org.qiunet.flash.handler.context.session.ISession;
+import org.qiunet.flash.handler.context.session.NodeClientSession;
 import org.qiunet.flash.handler.context.session.NodeSessionType;
-import org.qiunet.flash.handler.context.session.ServerNodeSession;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.Argument;
 import org.qiunet.utils.exceptions.CustomException;
@@ -29,7 +26,6 @@ import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerClosedEvent;
 import org.qiunet.utils.listener.event.data.ServerDeprecatedEvent;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
-import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -58,23 +54,20 @@ import java.util.stream.Collectors;
  * @author qiunet
  * 2020-10-09 11:21
  */
-enum ServerNodeManager0 implements IApplicationContextAware {
+enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger {
 	instance;
-	/** server node 创建同步锁redis key */
-	private static final String SERVER_NODE_CREATE_SYNC_LOCK_KEY = "server_node_create_sync_lock_key_";
+	/**
+	 * poolMap
+	 */
+	private final NodeChannelPoolMap poolMap = new NodeChannelPoolMap(this, 2);
 	/** 注册中心redis key 前缀 with server type */
 	private static final String SERVER_REGISTER_CENTER_PREFIX = "SERVER_REGISTER_CENTER#";
-	/**server node 走外网ip*/
-	private static final String SERVER_NODE_USE_PUBLIC_IP = "server.node_use_public_ip";
 	// 客户端当前的节点
 	final Map<Integer, ServerNode> nodes = Maps.newConcurrentMap();
 	/** 服务器已经过期. 不再上传信息 . login 不再分配进入.*/
 	final AtomicBoolean deprecated = new AtomicBoolean();
 	/**服务器对外停止服务*/
 	final AtomicBoolean serverClosed = new AtomicBoolean();
-	/***自己的bootstrap*/
-	final Bootstrap bootstrap = bootstrap();
-
 	/**
 	 * 当前server node 的 info key
 	 */
@@ -107,6 +100,10 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	 * @return
 	 */
 	void getNode(int serverId, Consumer<ServerNode> consumer) {
+		if (serverId <= 0) {
+			throw new CustomException("serverId not a valid value!");
+		}
+
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
 		}
@@ -122,56 +119,20 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			throw new CustomException("ID:{} ServerInfo absent!!", serverId);
 		}
 
-		String redisKey = createServerNodeLockRedisKey(serverId);
-		redisUtil.asyncRedisLockRun(redisKey, () -> {
-			if (nodes.containsKey(serverId)) {
-				consumer.accept(nodes.get(serverId));
-				return;
-			}
-
-			ServerNode serverNode0 = this.createServerNode(serverInfo);
-			nodes.put(serverId, serverNode0);
-			consumer.accept(serverNode0);
-		});
-	}
-
-	/**
-	 * 获得一个Bootstrap
-	 * @return
-	 */
-	private static Bootstrap bootstrap() {
-		Bootstrap bootstrap = new Bootstrap();
-		NodeChannelPoolHandler nodeChannelPoolHandler = new NodeChannelPoolHandler(new ServerNodeClientTrigger(), 8192);
-		Class<? extends SocketChannel> socketChannelClz = Epoll.isAvailable() ? EpollSocketChannel.class : NioSocketChannel.class;
-		bootstrap.handler(new ChannelInitializer<>() {
-			@Override
-			protected void initChannel(Channel ch) throws Exception {
-				nodeChannelPoolHandler.channelCreated(ch);
-			}
-		});
-		bootstrap.option(ChannelOption.TCP_NODELAY,true);
-		bootstrap.group(ServerConstants.WORKER);
-		bootstrap.channel(socketChannelClz);
-		return bootstrap;
+		ServerNode serverNode0 = this.createServerNode(serverInfo);
+		consumer.accept(serverNode0);
 	}
 	/**
 	 * 锁定. 然后创建serverNode
 	 * @param serverInfo
 	 */
-	private ServerNode createServerNode(ServerInfo serverInfo) {
-		// 目前服务器和服务器肯定是内网. 如果以后有多区域需要互通. 有两个解决方案:
-		// 1. 让云服务器 跨区域搭内网
-		// 2. 下面的getHost 修改为 getPublicHost
-		Channel channel;
-		try {
-			boolean usePubIp = ServerConfig.getConfig().getBoolean(SERVER_NODE_USE_PUBLIC_IP);
-			String host = usePubIp ? serverInfo.getPublicHost() : serverInfo.getHost();
-			ChannelFuture channelFuture = bootstrap.connect(host, serverInfo.getNodePort()).sync();
-			channel = channelFuture.channel();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+	private synchronized ServerNode createServerNode(ServerInfo serverInfo) {
+		ServerNode serverNode = nodes.get(serverInfo.getServerId());
+		if (serverNode != null) {
+			return serverNode;
 		}
-		ServerNodeSession session = new ServerNodeSession(NodeSessionType.SERVER_NODE, channel, currServerInfo.getServerId());
+		NodeChannelPool pool = poolMap.get(serverInfo.getServerId());
+		NodeClientSession session = new NodeClientSession(NodeSessionType.SERVER_NODE, pool, currServerInfo.getServerId());
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		ServerNode node = new ServerNode(session, serverInfo.getServerId());
 		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, node);
@@ -179,12 +140,13 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 			ServerNode node0;
 			if ((node0 = nodes.remove(serverInfo.getServerId())) != null) {
 				LoggerType.DUODUO_FLASH_HANDLER.info("====Server Node Client ServerId {} was removed!", serverInfo.getServerId());
-				if (!((ServerNodeSession) node0.getSession()).isNoticedRemote()) {
-					((ServerNodeSession) node0.getSession()).setNoticedRemote();
+				if (!((NodeClientSession) node0.getSession()).isNoticedRemote()) {
+					((NodeClientSession) node0.getSession()).setNoticedRemote();
 					node0.fireCrossEvent(ServerNodeQuitEvent.valueOf());
 				}
 			}
 		});
+		nodes.put(serverInfo.getServerId(), node);
 		return node;
 	}
 
@@ -206,7 +168,7 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	}
 
 	@EventListener
-	private void onServerStart(ServerStartupEvent data){
+	private void onServerStart(ServerStartupCompleteEvent data){
 		if (this.currServerInfo.getNodePort() == 0) {
 			return;
 		}
@@ -299,19 +261,6 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 		return SERVER_REGISTER_CENTER_PREFIX +serverType;
 	}
 
-	/**
-	 * 获得创建使用的key
-	 * @param destServerId 需要连过去的服务器.
-	 * @return redis key
-	 */
-	private String createServerNodeLockRedisKey(int destServerId) {
-		int srcServerId = currServerInfo.getServerId();
-		if (destServerId < srcServerId) {
-			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + destServerId +"_"+ srcServerId;
-		}else {
-			return SERVER_NODE_CREATE_SYNC_LOCK_KEY + srcServerId +"_"+  destServerId;
-		}
-	}
 
 	@EventListener
 	private void deprecatedEvent(ServerDeprecatedEvent event) {
@@ -367,5 +316,16 @@ enum ServerNodeManager0 implements IApplicationContextAware {
 	@Override
 	public int order() {
 		return 8;
+	}
+
+
+	@Override
+	public boolean serverNode() {
+		return true;
+	}
+
+	@Override
+	public ISession getNodeSession(Channel channel, INodeServerHeader header) {
+		return nodes.get((int)header.id()).getSession();
 	}
 }

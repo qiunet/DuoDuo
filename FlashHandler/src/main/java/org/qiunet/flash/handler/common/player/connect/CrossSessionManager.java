@@ -31,6 +31,7 @@ import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.util.Collections;
 import java.util.Map;
 
 /***
@@ -65,12 +66,10 @@ enum CrossSessionManager implements NodeChannelTrigger {
 				clientSession.setNoticedRemote();
 			}
 
-			PlayerActor playerActor = (PlayerActor) session1.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			playerActor.quitCross(serverId, cause);
+			LoggerType.DUODUO_FLASH_HANDLER.info("Player CrossSession Id {} serverId {}  be removed! ", clientSession.getId(), serverId);
+			sessionMap.getOrDefault(serverId, Collections.emptyMap()).remove(((NodeClientSession)session1).getId());
 		}));
 
-		session.addCloseListener("RemoveSessionFromMap", ((session1, cause) -> sessionMap.get(serverId)
-				.remove(((NodeClientSession)session1).getId())));
 		map.put(playerId, session);
 	}
 
@@ -96,7 +95,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		return this.poolMap.get(serverId);
 	}
 
-	@EventListener(EventHandlerWeightType.HIGH)
+	@EventListener
 	private void shutdown(ServerShutdownEvent event) {
 		sessionMap.forEach((serverId, map) -> {
 			map.values().forEach(s -> s.close(CloseCause.SERVER_SHUTDOWN));

@@ -21,6 +21,14 @@ import org.qiunet.utils.listener.hook.ShutdownHookUtil;
  */
 public class NodeChannelPoolMap extends AbstractChannelPoolMap<Integer, NodeChannelPool> {
 	/**
+	 * 默认接受长度
+	 */
+	private static final int DEFAULT_MAX_RECEIVED_LENGTH = 1024 * 1024;
+	/**
+	 * 最大持有连接数量
+	 */
+	private static final int DEFAULT_MAX_CONNECTIONS = 20;
+	/**
 	 * trigger
 	 */
 	private final NodeChannelTrigger channelTrigger;
@@ -36,14 +44,18 @@ public class NodeChannelPoolMap extends AbstractChannelPoolMap<Integer, NodeChan
 	/**
 	 *  使用默认的参数构建Channel Pool
 	 */
+	public NodeChannelPoolMap(NodeChannelTrigger channelTrigger, int maxConnections) {
+		this(channelTrigger, DEFAULT_MAX_RECEIVED_LENGTH, maxConnections);
+	}
+
 	public NodeChannelPoolMap(NodeChannelTrigger channelTrigger) {
-		this(channelTrigger, 1024 * 8, 20);
-		ShutdownHookUtil.getInstance().addShutdownHook(this::close);
+		this(channelTrigger, DEFAULT_MAX_RECEIVED_LENGTH, DEFAULT_MAX_CONNECTIONS);
 	}
 	/**
 	 *  使用指定的参数构建Channel Pool
 	 */
 	public NodeChannelPoolMap(NodeChannelTrigger channelTrigger, int maxReceivedLength, int maxConnections) {
+		ShutdownHookUtil.getInstance().addShutdownHook(this::close);
 		this.maxReceivedLength = maxReceivedLength;
 		this.maxConnections = maxConnections;
 		this.channelTrigger = channelTrigger;

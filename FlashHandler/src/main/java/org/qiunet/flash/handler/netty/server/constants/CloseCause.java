@@ -54,6 +54,8 @@ public enum CloseCause {
 	GM_COMMAND("Gm命令中断", true),
 	@Protobuf(description = "解析上行包错误")
 	DECODE_ERROR("解析错误", true),
+	@Protobuf(description = "池channel关闭")
+	POOL_CHANNEL_CLOSE("池channel关闭", false),
 	;
 	private final boolean waitConnect;
 	private final boolean logoutPush;

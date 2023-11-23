@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.netty.server.node.handler;
 
+import com.google.common.collect.Maps;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.flash.handler.common.IMessage;
@@ -10,10 +11,14 @@ import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.NodeServerSession;
 import org.qiunet.flash.handler.context.session.NodeSessionType;
 import org.qiunet.flash.handler.handler.IHandler;
+import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+
+import java.util.Map;
 
 
 /**
@@ -22,7 +27,9 @@ import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
  * Created by qiunet.
  * 23/3/24
  */
-public class PlayerNodeServerHandler extends BaseNodeServerHandler {
+public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
+
+	private final Map<Long, ISession> sessions = Maps.newHashMap();
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -34,6 +41,7 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 		if (!INodeServerHeader.class.isAssignableFrom(content.getHeader().getClass())
 		|| ! ((INodeServerHeader) content.getHeader()).isPlayerMsg()
 		) {
+			ctx.channel().pipeline().remove(this);
 			ctx.fireChannelRead(content.retain());
 			return;
 		}
@@ -47,7 +55,7 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 			}
 			crossPlayerActor = this.newCrossPlayerActor(ctx, header.id());
 		}
-		IRequestContext context = handler.getDataType().createRequestContext(crossPlayerActor.getSession(), content, ctx.channel());
+		IRequestContext context = handler.getDataType().createRequestContext(crossPlayerActor.getSession(), content);
 		if (content.getProtocolId() == IProtocolId.System.CROSS_PLAYER_AUTH) {
 			((PersistConnPbRequestContext) context).execute(crossPlayerActor);
 			return;
@@ -65,6 +73,18 @@ public class PlayerNodeServerHandler extends BaseNodeServerHandler {
 		CrossPlayerActor crossPlayerActor = new CrossPlayerActor(session, String.valueOf(playerId));
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, crossPlayerActor);
+		session.addCloseListener("NodeServerHandlerRemoveSession", (s, c) -> {
+			sessions.remove(playerId);
+		});
+		sessions.put(playerId, session);
 		return crossPlayerActor;
+	}
+
+	@Override
+	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+		for (ISession s : sessions.values()) {
+			s.close(CloseCause.INACTIVE);
+		}
+		super.channelInactive(ctx);
 	}
 }

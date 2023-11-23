@@ -2,8 +2,6 @@ package org.qiunet.cross.pool;
 
 import io.netty.channel.*;
 import io.netty.channel.pool.ChannelPoolHandler;
-import io.netty.util.AttributeKey;
-import io.netty.util.concurrent.ScheduledFuture;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -13,10 +11,10 @@ import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientDecoder;
 import org.qiunet.flash.handler.netty.coder.TcpSocketClientEncoder;
 import org.qiunet.flash.handler.netty.server.bound.FlushBalanceHandler;
+import org.qiunet.flash.handler.netty.server.bound.NettyCauseHandler;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.utils.logger.LoggerType;
-import org.qiunet.utils.string.ToString;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +25,6 @@ import java.util.concurrent.TimeUnit;
  * 2023/3/31 13:42
  */
 public class NodeChannelPoolHandler implements ChannelPoolHandler {
-	private static final AttributeKey<ScheduledFuture<?>> CLOSE_CHANNEL_FUTURE = AttributeKey.newInstance("org.qiunet.cross.pool.NodeChannelPoolHandler.close.channel");
 	private final ClientChannelPoolHandler clientChannelPoolHandler;
 
 	private final int maxReceivedLength;
@@ -39,24 +36,12 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 
 	@Override
 	public void channelReleased(Channel ch) throws Exception {
-		int num = ch.attr(NodeChannelPool.COUNTER_KEY).get().decrementAndGet();
-		if (num <= 0 && ch.isActive()) {
-			ScheduledFuture<?> future = ch.eventLoop().schedule(() -> {
-				if (ch.attr(NodeChannelPool.COUNTER_KEY).get().get() > 0) {
-					return;
-				}
-				ch.close();
-			}, TimeUnit.MINUTES.toSeconds(10), TimeUnit.SECONDS);
-			ch.attr(CLOSE_CHANNEL_FUTURE).set(future);
-		}
+		ch.attr(NodeChannelPool.COUNTER_KEY).get().decrementAndGet();
 	}
 
 	@Override
 	public void channelAcquired(Channel ch) throws Exception {
 		ch.attr(NodeChannelPool.COUNTER_KEY).get().incrementAndGet();
-		if (ch.hasAttr(CLOSE_CHANNEL_FUTURE)) {
-			ch.attr(CLOSE_CHANNEL_FUTURE).getAndSet(null).cancel(false);
-		}
 	}
 
 	@Override
@@ -68,6 +53,7 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 		pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
 		pipeline.addLast("ClientChannelPoolHandler", clientChannelPoolHandler);
 		pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler(50, 10));
+		pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 		ch.eventLoop().scheduleAtFixedRate(() -> {
 			ch.writeAndFlush(ClientPingRequest.valueOf().buildChannelMessage());
 		}, 5, 30, TimeUnit.SECONDS);
@@ -98,7 +84,7 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 
 			ISession nodeSession = this.channelTrigger.getNodeSession(ctx.channel(), header);
 			if (nodeSession == null) {
-				LoggerType.DUODUO_FLASH_HANDLER.error("Session ID {} not exist! Can not handler protocol id [{}]!", ToString.toString(header), msg.getProtocolId());
+				LoggerType.DUODUO_FLASH_HANDLER.debug("Session ID {} not exist! Can not handler protocol id [{}]!", header, msg.getProtocolId());
 				return;
 			}
 			this.channelTrigger.response(nodeSession, ctx.channel(), msg);

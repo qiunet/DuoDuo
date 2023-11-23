@@ -71,9 +71,9 @@ public final class NettyTcpServer implements INettyServer {
 			bootstrap.childOption(ChannelOption.SO_SNDBUF, 1024 * 128);
 			this.channelFuture = bootstrap.bind(config.getPort()).sync();
 			this.channelFuture.addListener(channelFuture -> {
+				logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
 				successFuture.trySuccess(null);
 			});
-			logger.error("[NettyTcpServer]  Tcp server {} is Listener on port [{}]", serverName(), config.getPort());
 			channelFuture.channel().closeFuture().sync();
 		}catch (Throwable e) {
 			this.successFuture.tryFailure(new RuntimeException("!!! [NettyTcpServer] start failed!", e));

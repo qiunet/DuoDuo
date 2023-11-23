@@ -27,4 +27,9 @@ public interface ProtocolId extends IProtocolId {
 	interface Equip {
 		int EQUIP_INDEX = 1100;
 	}
+
+	interface Pool {
+		int TEST_REQ = 1201;
+		int TEST_RSP = 1201001;
+	}
 }

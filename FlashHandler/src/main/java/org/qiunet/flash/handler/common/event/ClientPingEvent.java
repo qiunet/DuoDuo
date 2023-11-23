@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.event;
 
+import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 
 /***
@@ -9,9 +10,17 @@ import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
  * 2022/11/1 10:21
  */
 public class ClientPingEvent extends BasePlayerEvent {
-	private static final ClientPingEvent instance = new ClientPingEvent();
 
-	public static ClientPingEvent getInstance() {
-		return instance;
+	private ServerConnType type;
+
+	public static ClientPingEvent valueOf(ServerConnType type){
+		ClientPingEvent data = new ClientPingEvent();
+	    data.type = type;
+		return data;
+	}
+
+	public ServerConnType getType() {
+		return type;
 	}
 }
+

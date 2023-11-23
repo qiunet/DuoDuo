@@ -1,6 +1,5 @@
 package org.qiunet.flash.handler.netty.server.node.handler;
 
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.qiunet.flash.handler.common.id.IProtocolId;
@@ -17,7 +16,6 @@ import org.slf4j.Logger;
  * @author qiunet
  * 2023/3/27 17:53
  */
-@ChannelHandler.Sharable
 public abstract class BaseNodeServerHandler extends SimpleChannelInboundHandler<MessageContent> {
 	protected final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 

@@ -27,7 +27,10 @@ public interface NodeChannelTrigger {
 	}
 
 	default void response(ISession session, Channel channel, MessageContent data) {
-		if (data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION
+		if (data.getProtocolId() == IProtocolId.System.SERVER_PONG
+			|| data.getProtocolId() == IProtocolId.System.CLIENT_PING
+			|| data.getProtocolId() == IProtocolId.System.CONNECTION_RSP
+			|| data.getProtocolId() == IProtocolId.System.SERVER_EXCEPTION
 		) {
 			return;
 		}
@@ -41,7 +44,7 @@ public interface NodeChannelTrigger {
 			}
 
 			IMessageActor iMessageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-			IRequestContext message = handler.getHandlerType().createRequestContext(handler, session, data, channel);
+			IRequestContext message = handler.getHandlerType().createRequestContext(handler, session, data);
 			iMessageActor.addMessage((IMessage<PlayerActor>) message);
 			return;
 		}

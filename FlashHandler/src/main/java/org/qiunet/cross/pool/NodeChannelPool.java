@@ -10,6 +10,7 @@ import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.FutureListener;
 import io.netty.util.concurrent.Promise;
+import org.qiunet.utils.logger.LoggerType;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +23,7 @@ import static io.netty.util.internal.ObjectUtil.checkNotNull;
  * @author qiunet
  * 2023/3/31 13:41
  */
-class NodeChannelPool implements ChannelPool {
+public class NodeChannelPool implements ChannelPool {
 	public static final AttributeKey<AtomicInteger> COUNTER_KEY = AttributeKey.newInstance("org.qiunet.cross.pool.NodeChannelPool.counter");
 	private static final AttributeKey<NodeChannelPool> POOL_KEY = AttributeKey.newInstance("io.netty.channel.pool.NodeChannelPool");
 	private final Set<Channel> channelSet = Sets.newConcurrentHashSet();
@@ -32,7 +33,7 @@ class NodeChannelPool implements ChannelPool {
 	private final int maxConnections;
 	private final Bootstrap bootstrap;
 
-	NodeChannelPool(Bootstrap bootstrap, NodeChannelTrigger channelTrigger, boolean releaseHealthCheck, int maxReceivedLength, int maxConnections) {
+	public NodeChannelPool(Bootstrap bootstrap, NodeChannelTrigger channelTrigger, boolean releaseHealthCheck, int maxReceivedLength, int maxConnections) {
 		this.handler = new NodeChannelPoolHandler(channelTrigger, maxReceivedLength);
 		this.healthCheck = ChannelHealthChecker.ACTIVE;
 		this.releaseHealthCheck = releaseHealthCheck;
@@ -64,26 +65,20 @@ class NodeChannelPool implements ChannelPool {
 	 */
 	private Channel acquireChannel() {
 		int size = channelSet.size();
-		if (size >= maxConnections) {
-			Channel channel = null;
-			int min = 0;
-			for(Channel channel0: channelSet) {
-				AtomicInteger atomicInteger = channel0.attr(COUNTER_KEY).get();
-				if (channel == null || atomicInteger.get() < min) {
-					min = atomicInteger.get();
-					channel = channel0;
-				}
-			}
-			return channel;
+		if (size < maxConnections) {
+			return null;
 		}
 
+		Channel channel = null;
+		int min = 0;
 		for(Channel channel0: channelSet) {
 			AtomicInteger atomicInteger = channel0.attr(COUNTER_KEY).get();
-			if (atomicInteger.get() <= 5) {
-				return channel0;
+			if (channel == null || atomicInteger.get() < min) {
+				min = atomicInteger.get();
+				channel = channel0;
 			}
 		}
-		return null;
+		return channel;
 	}
 
 	private Future<Channel> acquireHealthyFromPoolOrNew(final Promise<Channel> promise) {
@@ -119,10 +114,10 @@ class NodeChannelPool implements ChannelPool {
 			if (future.isSuccess()) {
 				channel = future.channel();
 				channelSet.add(channel);
-				Channel finalChannel = channel;
 				channel.attr(COUNTER_KEY).set(new AtomicInteger());
 				channel.closeFuture().addListener(f -> {
-					channelSet.remove(finalChannel);
+					LoggerType.DUODUO_FLASH_HANDLER.info("Channel pool channel {} release!", ((DefaultChannelPromise) f).channel().id().asShortText());
+					channelSet.remove(((DefaultChannelPromise) f).channel());
 				});
 				handler.channelAcquired(channel);
 				if (!promise.trySuccess(channel)) {
@@ -211,7 +206,7 @@ class NodeChannelPool implements ChannelPool {
 	private void doReleaseChannel(Channel channel, Promise<Void> promise) {
 		try {
 			assert channel.eventLoop().inEventLoop();
-			if (channel.attr(POOL_KEY).getAndSet(null) != this) {
+			if (channel.attr(POOL_KEY).get() != this) {
 				closeAndFail(channel, new IllegalArgumentException("Channel " + channel + " was not acquired from this ChannelPool"), promise);
 			} else {
 				if (releaseHealthCheck) {

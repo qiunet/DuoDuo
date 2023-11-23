@@ -6,6 +6,8 @@ import io.netty.channel.pool.ChannelPool;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import io.netty.util.DefaultAttributeMap;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 
@@ -21,6 +23,12 @@ import java.util.concurrent.TimeoutException;
  */
 class BaseShareChannelSession extends BaseSession {
 	/**
+	 * 关闭监听. 以防万一
+	 */
+	private final GenericFutureListener<? extends Future<? super Void>> closeListener = f -> {
+		this.close(CloseCause.INACTIVE);
+	};
+	/**
 	 * 负责保存session的数据
 	 */
 	private final DefaultAttributeMap attributeMap = new DefaultAttributeMap();
@@ -28,7 +36,9 @@ class BaseShareChannelSession extends BaseSession {
 	 * 池
 	 */
 	private final ChannelPool channelPool;
-
+	/**
+	 * 当前共享的channel
+	 */
 	private final Channel channel;
 
 	public BaseShareChannelSession(ChannelPool channelPool) {
@@ -37,6 +47,10 @@ class BaseShareChannelSession extends BaseSession {
 		} catch (InterruptedException | ExecutionException | TimeoutException e) {
 			throw new RuntimeException(e);
 		}
+		this.addCloseListener("cancelCloseFuture", ((session, cause) -> {
+			this.channel.closeFuture().removeListener(closeListener);
+		}));
+		this.channel.closeFuture().addListener(closeListener);
 		this.channelPool = channelPool;
 	}
 
@@ -48,7 +62,7 @@ class BaseShareChannelSession extends BaseSession {
 
 	@Override
 	public boolean isActive() {
-		return channel.isActive();
+		return channel.isActive() && !closed.get();
 	}
 
 	@Override
@@ -69,6 +83,11 @@ class BaseShareChannelSession extends BaseSession {
 	@Override
 	public <T> boolean hasAttr(AttributeKey<T> key) {
 		return attributeMap.hasAttr(key);
+	}
+
+	@Override
+	public String aliasId() {
+		return channel.id().asShortText();
 	}
 
 	@Override

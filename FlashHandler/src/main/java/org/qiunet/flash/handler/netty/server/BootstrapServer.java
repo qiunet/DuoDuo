@@ -40,7 +40,6 @@ import java.nio.channels.DatagramChannel;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -214,7 +213,6 @@ public class BootstrapServer {
 
 		Thread hookThread = new Thread(hookListener, "HookListener");
 		hookThread.setDaemon(true);
-		this.addNodeServer();
 		hookThread.start();
 
 		ServerStartupCompleteEvent.fireStartupCompleteEvent();
