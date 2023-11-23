@@ -56,12 +56,23 @@ public final class JavaAgent {
 			try {
 				ClassFile classFile = new ClassFile(file);
 				String className = classFile.getClassName();
-				className = className.replaceAll("\\/", ".");
+				className = className.replaceAll("/", ".");
 
 				logger("=======热加载Class名: "+className);
 
-				classDefinitions.add(new ClassDefinition(Class.forName(className),
-					Files.readAllBytes(file.toPath())));
+				byte[] bytes = Files.readAllBytes(file.toPath());
+				Class<?> aClass;
+				try {
+					aClass = Class.forName(className);
+				}catch (ClassNotFoundException e) {
+					Method method = ClassLoader.class.getDeclaredMethod("defineClass", String.class, byte[].class, Integer.TYPE, Integer.TYPE);
+					method.setAccessible(true);
+					method.invoke(Thread.currentThread().getContextClassLoader(), className, bytes, 0, bytes.length);
+					logger("======直接加载==["+className+"]=成功===");
+					continue;
+				}
+
+				classDefinitions.add(new ClassDefinition(aClass, bytes));
 			} catch (Exception e) {
 				logger("==HotSwap Fail!", e);
 			}
