@@ -5,7 +5,7 @@ do
 	local serverTcpPort = 0
 	local serverUdpPort = 0
 
-	function createGameProtocol(protoName, protoDesc)
+	function createGameProto(protoName, protoDesc)
 		local p_gameTcp = Proto(protoName, protoDesc)
 
 		local f_magic = ProtoField.bytes(protoName .. '.magic', '魔数')
@@ -66,7 +66,7 @@ do
 		return p_gameTcp
 	end
 
-	function createKcpProtocolDissector(NAME, protoDesc)
+	function createKcpProto(NAME, protoDesc)
 		local function CMD_TO_STRING(CMD)
 			if CMD:le_uint() == 81 then
 				return "PUSH(81)"
@@ -188,10 +188,7 @@ do
 				-- TODO
 			end
 
-			local tcp_port_table = DissectorTable.get('tcp.port')
-			game_dissector = tcp_port_table:get_dissector(serverTcpPort)
-			game_dissector:call(Buffer(KCP_HEADER_LENGTH):tvb(), Menu, T)
-
+			game_protocol_proto.dissector:call(Buffer(KCP_HEADER_LENGTH):tvb(), Menu, T)
 			return true
 		end
 		return KCP
@@ -211,36 +208,30 @@ do
 		-- reload_packets()
 	end
 
-	game_protocol_dissector = createGameProtocol("Game", "游戏协议")
-	kcp_dissector = createKcpProtocolDissector("Kcp", "KCP协议")
+	game_protocol_proto = createGameProto("Game", "游戏协议")
+	kcp_proto = createKcpProto("Kcp", "KCP协议")
 
 	-- 输入触发
 	local function dialog_triggle_func(tcpPort, kcpPort)
-		if serverTcpPort > 0 then
-			local tcp_port_table = DissectorTable.get('tcp.port')
-			tcp_port_table:remove(serverTcpPort, game_protocol_dissector)
-			serverTcpPort = 0
-		end
-
 		if serverUdpPort > 0 then
 			local udp_port_table = DissectorTable.get('udp.port')
-			udp_port_table:remove(serverUdpPort, kcp_dissector)
+			udp_port_table:remove(serverUdpPort, kcp_proto)
 			serverUdpPort = 0
 		end
-
 
 		serverTcpPort = tonumber(tcpPort)
 		if (kcpPort ~= nil and kcpPort ~= '') then
 			serverUdpPort = tonumber(kcpPort)
 		end
 
+		-- set 替换 tcp肯定有
 		local tcp_port_table = DissectorTable.get('tcp.port')
-		tcp_port_table:add(serverTcpPort, game_protocol_dissector)
+		tcp_port_table:set(serverTcpPort, game_protocol_proto)
 		print("Game Protocol Started")
 
 		if serverUdpPort > 0 then
 			local udp_port_table = DissectorTable.get('udp.port')
-			udp_port_table:add(serverUdpPort, kcp_dissector)
+			udp_port_table:add(serverUdpPort, kcp_proto)
 			print("Kcp Protocol Started")
 		end
 
