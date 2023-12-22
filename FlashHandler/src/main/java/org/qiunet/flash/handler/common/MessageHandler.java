@@ -133,6 +133,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * 是否已经销毁
 	 * @return
 	 */
+	@Override
 	public boolean isDestroyed() {
 		return destroyed.get();
 	}

@@ -54,6 +54,11 @@ abstract class BaseSession implements ISession {
 		}
 	}
 
+	@Override
+	public boolean isClose() {
+		return closed.get();
+	}
+
 	/**
 	 * 关闭session
 	 * @param cause

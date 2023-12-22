@@ -38,6 +38,14 @@ public class DSession extends BaseChannelSession implements IKcpSessionManager {
 	}
 
 	@Override
+	public void close(CloseCause cause) {
+		if (kcpSession != null) {
+			this.kcpSession.close(cause);
+		}
+		super.close(cause);
+	}
+
+	@Override
 	public ChannelFuture sendKcpMessage(IChannelMessage<?> message, boolean flush) {
 		if (this.getKcpSession() == null || ! this.getKcpSession().isActive()) {
 			logger.warn("Not bind kcp session or session inactive!");

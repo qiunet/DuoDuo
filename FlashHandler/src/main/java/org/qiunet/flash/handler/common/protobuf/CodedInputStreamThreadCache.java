@@ -1,6 +1,7 @@
 package org.qiunet.flash.handler.common.protobuf;
 
 import com.google.protobuf.CodedInputStream;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ThreadScopeObjectPool;
 import org.qiunet.utils.reflect.ReflectUtil;
 
@@ -21,7 +22,9 @@ class CodedInputStreamThreadCache extends InputStream {
 
 	private final CodedInputStream codedInputStream = CodedInputStream.newInstance(this);
 
-	private final Field field = ReflectUtil.makeAccessible(ReflectUtil.findField(codedInputStream.getClass(), "totalBytesRetired"));
+	private final Field field1 = ReflectUtil.makeAccessible(ReflectUtil.findField(codedInputStream.getClass(), "totalBytesRetired"));
+	private final Field field2 = ReflectUtil.makeAccessible(ReflectUtil.findField(codedInputStream.getClass(), "bufferSize"));
+	private final Field field3 = ReflectUtil.makeAccessible(ReflectUtil.findField(codedInputStream.getClass(), "pos"));
 
 	private ByteBuffer buffer;
 
@@ -44,11 +47,11 @@ class CodedInputStreamThreadCache extends InputStream {
 	public void recycle() {
 		try {
 			this.buffer = null;
-			field.set(codedInputStream, 0);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}finally {
-			pool.recycle(this);
+			field1.set(codedInputStream, 0);
+			field2.set(codedInputStream, 0);
+			field3.set(codedInputStream, 0);
+		} catch (Throwable e) {
+			LoggerType.DUODUO_FLASH_HANDLER.error("CodedInputStreamThreadCache recycle error!", e);
 		}
 	}
 

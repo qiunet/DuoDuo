@@ -34,6 +34,11 @@ public interface ISession extends AttributeMap, ISender {
 	void clearCloseListener();
 
 	/**
+	 * 是否关闭
+	 * @return
+	 */
+	boolean isClose();
+	/**
 	 * 关闭连接. 只能一次
 	 * @param cause
 	 */

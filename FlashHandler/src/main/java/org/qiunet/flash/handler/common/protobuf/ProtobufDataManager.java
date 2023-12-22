@@ -84,11 +84,11 @@ public class ProtobufDataManager {
 	public static <T> T decode(Class<T> clazz, ByteBuffer buffer) {
 		CodedInputStreamThreadCache in = CodedInputStreamThreadCache.get(buffer);
 		try {
-			return getCodec(clazz).readFrom(in.getCodedInputStream());
+			T ret = getCodec(clazz).readFrom(in.getCodedInputStream());
+			in.recycle();
+			return  ret;
 		} catch (IOException e) {
 			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
-		}finally {
-			in.recycle();
 		}
 	}
 

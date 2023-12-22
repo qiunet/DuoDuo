@@ -16,6 +16,12 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 * 销毁不用了必须调用
 	 */
 	void destroy();
+
+	/**
+	 * 是否已经销毁
+	 * @return
+	 */
+	boolean isDestroyed();
 	/**
 	 * 获得executor 的 index
 	 * 第一次获取后. 不会变动了
