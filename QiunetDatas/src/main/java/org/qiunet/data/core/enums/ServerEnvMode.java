@@ -11,6 +11,10 @@ public enum ServerEnvMode {
 	 */
 	UNIT_TEST,
 	/**
+	 * debug模式 所有协议都打印
+	 */
+	DEBUG,
+	/**
 	 * 本地开发
 	 */
 	LOCAL,

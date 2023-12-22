@@ -1,6 +1,7 @@
 package org.qiunet.cross.rpc;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.protocol.IgnoreCommonProtocolCDCheck;
@@ -72,7 +73,7 @@ public class RouteRpcReq extends IChannelData {
 
 	@Override
 	public boolean debugOut() {
-		return ! data.getData().getClass().isAnnotationPresent(SkipDebugOut.class);
+		return ! data.getData().getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
 	}
 
 	@Override

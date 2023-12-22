@@ -93,6 +93,12 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	public static ServerEnvMode getServerEnvMode() {
 		return serverEnvMode;
 	}
+	/**
+	 * 是否是debug 环境.
+	 */
+	public static boolean isDebugEnv() {
+		return serverEnvMode == ServerEnvMode.DEBUG;
+	}
 
 	public static int getServerId() {
 		return serverId;

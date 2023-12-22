@@ -7,6 +7,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -79,8 +80,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		}
 
 		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
-		&& ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)
-		&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
+		&& (ServerConfig.isDebugEnv() || (! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class) && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)))
 		) {
 			LoggerType.DUODUO_PROTOCOL.info("HTTP <<< {}", ToString.toString(getRequestData()));
 		}
@@ -136,8 +136,7 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			throw new NullPointerException("ResponseData can not be null");
 		}
 		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
-			&& ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)
-			&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
+		&& (ServerConfig.isDebugEnv() || (! responseData.getClass().isAnnotationPresent(SkipDebugOut.class) && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)))
 		) {
 			LoggerType.DUODUO_PROTOCOL.info("HTTP >>> {}", ToString.toString(responseData));
 		}

@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.event.ClientPingEvent;
@@ -139,7 +140,7 @@ public final class ChannelUtil {
 					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
 					if (logger.isInfoEnabled()) {
 						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-						if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+						if (! aClass.isAnnotationPresent(SkipDebugOut.class) || ServerConfig.isDebugEnv()) {
 							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 						}

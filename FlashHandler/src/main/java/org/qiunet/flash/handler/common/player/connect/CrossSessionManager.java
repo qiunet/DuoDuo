@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.pool.ChannelPool;
 import org.qiunet.cross.pool.NodeChannelPoolMap;
 import org.qiunet.cross.pool.NodeChannelTrigger;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
@@ -145,7 +146,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		ISession session = iMessageActor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-			if (! aClass.isAnnotationPresent(SkipDebugOut.class)) {
+			if (! aClass.isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv()) {
 				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 				ServerConnType serverConnType = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
 				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, channelData._toString());

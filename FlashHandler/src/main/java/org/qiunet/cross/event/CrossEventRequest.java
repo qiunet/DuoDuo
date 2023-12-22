@@ -3,6 +3,7 @@ package org.qiunet.cross.event;
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.google.common.base.Preconditions;
 import org.qiunet.cross.rpc.TransferJsonData;
+import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.protocol.IgnoreCommonProtocolCDCheck;
@@ -68,7 +69,7 @@ public class CrossEventRequest extends IChannelData {
 
 	@Override
 	public boolean debugOut() {
-		return ! getData().getClass().isAnnotationPresent(SkipDebugOut.class);
+		return ! getData().getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
 	}
 
 	@Override
