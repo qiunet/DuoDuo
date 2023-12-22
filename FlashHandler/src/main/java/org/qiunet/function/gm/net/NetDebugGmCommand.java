@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
 import org.qiunet.flash.handler.common.player.server.UserServerState;
 import org.qiunet.flash.handler.common.player.server.UserServerStateManager;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.status.IGameStatus;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -35,9 +36,12 @@ enum NetDebugGmCommand {
 
 	@GmCommand(commandName = "断开玩家KCP链接")
 	public IGameStatus brokenKcp(PlayerActor actor) {
-		ISession kcpSession = actor.getSession().getKcpSession();
-		if (kcpSession != null) {
-			kcpSession.close(CloseCause.GM_COMMAND);
+		boolean dSession = actor.getSession() instanceof DSession;
+		if (dSession) {
+			ISession kcpSession = ((DSession) actor.getSession()).getKcpSession();
+			if (kcpSession != null) {
+				kcpSession.close(CloseCause.GM_COMMAND);
+			}
 		}
 		return IGameStatus.SUCCESS;
 	}

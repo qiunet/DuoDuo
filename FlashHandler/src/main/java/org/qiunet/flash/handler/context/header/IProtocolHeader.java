@@ -2,8 +2,10 @@ package org.qiunet.flash.handler.context.header;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
+import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.pool.IRecycle;
 
@@ -23,7 +25,14 @@ public interface IProtocolHeader {
 	 * @return
 	 */
 	int getServerInHeadLength();
-
+	/**
+	 * 完善tcp的 handler
+	 * @param byteBuf 第一个byteBuf包
+	 * @param pipeline channel pipeline
+	 */
+	default void completeServerHandler(ByteBuf byteBuf, ChannelPipeline pipeline) {
+		pipeline.addLast("TcpServerHandler", new TcpServerHandler());
+	}
 	/**
 	 * 根据是否是connectReq 返回对应的值
 	 * @param connectReq 是否是connect request

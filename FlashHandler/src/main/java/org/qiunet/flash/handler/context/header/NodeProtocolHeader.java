@@ -3,9 +3,12 @@ package org.qiunet.flash.handler.context.header;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
 import org.qiunet.cross.node.ServerNodeManager;
+import org.qiunet.cross.node.ServerNodeServerHandler;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.response.push.IExtraInfo;
+import org.qiunet.flash.handler.netty.server.node.handler.CrossPlayerNodeServerHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ObjectPool;
 import org.slf4j.Logger;
@@ -34,6 +37,16 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 			return new NodeServerHeader(handler);
 		}
 	};
+
+	@Override
+	public void completeServerHandler(ByteBuf byteBuf, ChannelPipeline pipeline) {
+		byte extraInfo = byteBuf.getByte(getConnectInMagic().length);
+		if (IExtraInfo.ExtraInfoType.SERVER_NODE_MSG.gotTruth(extraInfo)) {
+			pipeline.addLast("ServerNodeServerHandler", new ServerNodeServerHandler());
+		}else if (IExtraInfo.ExtraInfoType.CROSS_PLAYER_MSG.gotTruth(extraInfo)){
+			pipeline.addLast("PlayerNodeServerHandler", new CrossPlayerNodeServerHandler());
+		}
+	}
 
 	@Override
 	public int getServerInHeadLength() {
@@ -102,8 +115,8 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 		public static NodeServerHeader valueOf(ByteBuf in, Channel channel) {
 			NodeServerHeader header = SERVER_NODE_RECYCLER.get();
 			in.readBytes(header.magic);
-			header.id = in.readLong();
 			header.extraInfo = in.readByte();
+			header.id = in.readLong();
 			header.serverId = in.readInt();
 			header.protocolId = in.readInt();
 			header.length = in.readUnsignedShort();
@@ -147,8 +160,8 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 		public ByteBuf headerByteBuf() {
 			ByteBuf out = PooledByteBufAllocator.DEFAULT.buffer(HEADER_LENGTH);
 			out.writeBytes(MAGIC);
-			out.writeLong(id);
 			out.writeByte(extraInfo);
+			out.writeLong(id);
 			out.writeInt(serverId);
 			out.writeInt(protocolId);
 			out.writeShort(length);

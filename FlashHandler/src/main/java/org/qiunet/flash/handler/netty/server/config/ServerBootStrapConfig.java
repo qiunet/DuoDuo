@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.server.config;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.context.header.DefaultProtocolHeader;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.netty.server.config.adapter.DefaultStartupContext;
@@ -70,7 +69,6 @@ public class ServerBootStrapConfig {
 	private final int port;
 
 	private ServerBootStrapConfig(String serverName, int port) {
-		Preconditions.checkState(port != ServerNodeManager.getCurrServerInfo().getNodePort());
 		Preconditions.checkState(port > 1000);
 		Preconditions.checkNotNull(serverName);
 		this.serverName = serverName;

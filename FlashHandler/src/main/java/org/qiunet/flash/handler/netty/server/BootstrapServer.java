@@ -10,6 +10,7 @@ import org.qiunet.data.util.ServerType;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.player.proto.CrossPlayerLogoutPush;
 import org.qiunet.flash.handler.common.player.proto.PlayerReLoginPush;
+import org.qiunet.flash.handler.context.header.NodeProtocolHeader;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.event.GlobalRedisPrepareEvent;
@@ -17,7 +18,6 @@ import org.qiunet.flash.handler.netty.server.event.HookCustomCmdEvent;
 import org.qiunet.flash.handler.netty.server.event.ServerStartupCompleteEvent;
 import org.qiunet.flash.handler.netty.server.hook.Hook;
 import org.qiunet.flash.handler.netty.server.kcp.NettyKcpServer;
-import org.qiunet.flash.handler.netty.server.node.NettyNodeServer;
 import org.qiunet.flash.handler.netty.server.tcp.NettyTcpServer;
 import org.qiunet.utils.classLoader.ClassHotSwap;
 import org.qiunet.utils.collection.enums.ForEachResult;
@@ -165,8 +165,10 @@ public class BootstrapServer {
 		if (ServerNodeManager.getCurrServerInfo().getNodePort() <= 0) {
 			return;
 		}
-
-		this.nettyServers.add(new NettyNodeServer());
+		ServerBootStrapConfig config = ServerBootStrapConfig.newBuild("节点通讯", ServerNodeManager.getCurrServerInfo().getNodePort())
+			.setProtocolHeader(NodeProtocolHeader.instance)
+			.build();
+		this.nettyServers.add(new NettyTcpServer(config));
 	}
 
 	private Thread awaitThread;

@@ -97,7 +97,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		}
 
 		PlayerActor playerActor = UserOnlineManager.instance.getPlayerActor(kcpParamInfo.getPlayerId());
-		playerActor.getSession().bindKcpSession(((KcpSession) kcpSession));
+		((DSession) playerActor.getSession()).bindKcpSession(((KcpSession) kcpSession));
 		kcpSession.sendMessage(KcpBindAuthRsp.valueOf(true), true);
 		kcpSession.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
 		return false;

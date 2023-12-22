@@ -14,7 +14,6 @@ import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.server.http.handler.HttpServerHandler;
-import org.qiunet.flash.handler.netty.server.tcp.handler.TcpServerHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
@@ -55,17 +54,22 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 			pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
-			pipeline.addLast("TcpServerHandler", new TcpServerHandler());
+			protocolHeader.completeServerHandler(in, pipeline);
 			pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
+			// 需要先移除. 增加到pipeline最后
+			pipeline.remove(NettyCauseHandler.class);
+			pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());
 			ctx.fireChannelActive();
 		}else if (! config.isBanHttpServer()
 				&& (equals(POST_BYTES, in) || equals(GET_BYTES, in) || equals(HEAD_BYTES, in))){
 			pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
 			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
 			pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
+			ctx.fireChannelActive();
 		}else {
-			ChannelUtil.closeChannel(ctx.channel() , CloseCause.INVALID_CHANNEL, "Invalidate connection!");
+			// 包头不够. 等待后面粘包
+			return;
 		}
 		pipeline.remove(ChannelChoiceDecoder.class);
 		closeFuture.cancel(true);
