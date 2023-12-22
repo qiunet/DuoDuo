@@ -21,16 +21,16 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 	public RewardConfig() {
 	}
 
-	public RewardConfig(int cfgId, long value) {
+	public RewardConfig(int cfgId, long count) {
 		this.put("id", String.valueOf(cfgId));
-		this.put("value", String.valueOf(value));
+		this.put("count", String.valueOf(count));
 	}
 
 	/**
 	 * 转 rewardItem
 	 * @return rewardItem 实例
 	 */
-	public BaseReward convertToRewardItem() {
+	public BaseCfgReward convertToRewardItem() {
 		IResourceCfg0 res = LoadSandbox.instance.getResById(getCfgId());
 		if (res == null) {
 			throw new CustomException("res {} null point exception", getCfgId());
@@ -42,8 +42,8 @@ public final class RewardConfig extends HashMap<Object, String> implements IKeyV
 		return getInt("id");
 	}
 
-	public long getValue() {
-		return getLong("value");
+	public long getCount() {
+		return getLong("count");
 	}
 
 	@Override

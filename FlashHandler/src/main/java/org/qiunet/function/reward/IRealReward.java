@@ -1,8 +1,5 @@
 package org.qiunet.function.reward;
 
-import org.qiunet.cfg.manager.base.LoadSandbox;
-import org.qiunet.function.base.IResourceCfg;
-
 /***
  * 真实奖励. 方便客户端展示
  * 普通奖励就是BaseReward本身.
@@ -28,14 +25,5 @@ public interface IRealReward {
 	 * 获得数量信息
 	 * @return
 	 */
-	long getValue();
-
-	/**
-	 * 获得资源配置
-	 * @param <T>
-	 * @return
-	 */
-	default <T extends IResourceCfg> T getResourceCfg() {
-		return LoadSandbox.instance.getResById(getCfgId());
-	}
+	long getCount();
 }

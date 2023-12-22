@@ -30,9 +30,9 @@ public class UnmodifiableRewards<Obj extends IThreadSafe & IPlayer> extends Rewa
 			return;
 		}
 
-		List<BaseReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(rewardConfigs.size());
+		List<BaseCfgReward<Obj>> baseRewardList = Lists.newArrayListWithCapacity(rewardConfigs.size());
 		for (RewardConfig rewardConfig : rewardConfigs) {
-			BaseReward baseReward = rewardConfig.convertToRewardItem();
+			BaseCfgReward baseReward = rewardConfig.convertToRewardItem();
 			if (baseReward == null) {
 				throw new CustomException("rewardConfig {} convert result is null", JsonUtil.toJsonString(rewardConfig));
 			}

@@ -1,14 +1,13 @@
 package org.qiunet.function.reward;
 
 import com.google.common.base.Preconditions;
-import org.qiunet.cfg.manager.base.LoadSandbox;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.context.status.StatusResult;
-import org.qiunet.function.base.IResourceCfg;
-import org.qiunet.function.base.IResourceType;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.thread.IThreadSafe;
+
+import java.util.Objects;
 
 /***
  * 奖励的基础类
@@ -25,22 +24,19 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	/**
 	 * 奖励id
 	 */
-	protected final int cfgId;
+	protected final Object id;
 	/**
 	 * 奖励数
 	 */
-	protected long value;
+	protected long count;
 
-	public BaseReward(int cfgId, long value) {
-		this.cfgId = cfgId;
-		this.value = value;
+	public BaseReward(Object id, long count) {
+		Preconditions.checkState(count > 0, "count can not less than 1");
+		this.count = count;
+		this.id = id;
 
-		Preconditions.checkState(value > 0, "value can not less than 1");
 	}
 
-	public BaseReward(RewardConfig rewardConfig) {
-		this(rewardConfig.getCfgId(), rewardConfig.getValue());
-	}
 
 	/**
 	 * 校验
@@ -55,8 +51,8 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 */
 	final StatusResult verify(RewardContext<Obj> context) {
 
-		if (value < 0) {
-			throw new CustomException("Value 小于 0!", value);
+		if (count < 0) {
+			throw new CustomException("Count 小于 0!", count);
 		}
 
 		return doVerify(context);
@@ -81,8 +77,8 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * @return
 	 */
 	public final BaseReward<Obj> copy(int multi) {
-		if (multi * value < 0) {
-			throw new CustomException("value {} 和 multi {} 相乘数值溢出!", value, multi);
+		if (multi * count < 0) {
+			throw new CustomException("Count {} 和 multi {} 相乘数值溢出!", count, multi);
 		}
 		return doCopy(multi);
 	}
@@ -93,16 +89,14 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 * 转RewardConfig
 	 * @return
 	 */
-	public RewardConfig toRewardConfig() {
-		return new RewardConfig(cfgId, value);
+	public abstract RewardConfig toRewardConfig();
+
+	public Object getId() {
+		return id;
 	}
 
-	public int getCfgId() {
-		return cfgId;
-	}
-
-	public long getValue() {
-		return value;
+	public long getCount() {
+		return count;
 	}
 	/**
 	 * 是否可以合并
@@ -111,22 +105,13 @@ public abstract class BaseReward<Obj extends IThreadSafe & IPlayer> {
 	 */
 	public boolean canMerge(BaseReward<Obj> reward) {
 		return this.getClass() == reward.getClass()
-				&& this.getCfgId() == reward.getCfgId();
+				&& Objects.equals(getId(), reward.getId());
 	}
 	/**
 	 * 合并一个reward
 	 * @param reward
 	 */
 	public void doMerge(BaseReward<Obj> reward) {
-		this.value += reward.value;
-	}
-	/**
-	 * 获得type
-	 * @return
-	 */
-	public <Type extends Enum<Type> & IResourceType> Type resType() {
-		IResourceCfg res = LoadSandbox.instance.getResById(cfgId);
-		assert res != null;
-		return res.type();
+		this.count += reward.count;
 	}
 }

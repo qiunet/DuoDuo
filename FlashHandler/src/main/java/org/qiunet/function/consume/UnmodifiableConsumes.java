@@ -31,9 +31,9 @@ public final class UnmodifiableConsumes<Obj extends IThreadSafe> extends Consume
 		if (consumeConfigs == null) {
 			return;
 		}
-		List<BaseConsume<Obj>> baseConsumeList = Lists.newArrayListWithCapacity(consumeConfigs.size());
+		List<BaseCfgConsume<Obj>> baseConsumeList = Lists.newArrayListWithCapacity(consumeConfigs.size());
 		for (ConsumeConfig config : consumeConfigs) {
-			BaseConsume baseConsume = config.convertToConsume();
+			BaseCfgConsume baseConsume = config.convertToConsume();
 			if (baseConsume == null) {
 				throw new CustomException("ConsumeConfig {} convert result is null", JsonUtil.toJsonString(config));
 			}

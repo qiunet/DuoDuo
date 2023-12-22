@@ -1,6 +1,5 @@
 package org.qiunet.function.reward;
 
-import com.alibaba.fastjson2.TypeReference;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.qiunet.cfg.base.ICfgDelayLoadData;
@@ -142,23 +141,6 @@ public class Rewards<Obj extends IThreadSafe & IPlayer> implements ICfgDelayLoad
 	public String toDbJsonString(){
 		List<RewardConfig> collect = getRewardList().stream().map(BaseReward::toRewardConfig).toList();
 		return JsonUtil.toJsonString(collect);
-	}
-
-	private static final TypeReference<List<RewardConfig>> REWARD_CONFIG_TYPE = new TypeReference<List<RewardConfig>>() {};
-
-	/**
-	 * 从json 读取一个Rewards
-	 * json 可以是数据库读取出来的. 也可能是远程服务器发的字符串
-	 * @param json
-	 * @param <Obj>
-	 * @return
-	 */
-	public static <Obj extends IThreadSafe & IPlayer> Rewards<Obj> jsonToRewards(String json){
-		List<RewardConfig> rewardConfigs = JsonUtil.getGeneralObj(json, REWARD_CONFIG_TYPE);
-		List<BaseReward> collect = rewardConfigs.stream()
-				.map(RewardConfig::convertToRewardItem)
-				.toList();
-		return new Rewards(collect);
 	}
 
 	@Override

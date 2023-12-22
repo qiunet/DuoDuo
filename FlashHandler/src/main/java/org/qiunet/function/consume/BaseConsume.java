@@ -5,39 +5,27 @@ import org.qiunet.flash.handler.context.status.StatusResult;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.thread.IThreadSafe;
 
+import java.util.Objects;
+
 /**
  * 消耗父类
  * @param <Obj>
  */
 public abstract class BaseConsume<Obj extends IThreadSafe> {
 	/**
-	 * 消耗资源的id
+	 * 消耗的id 可以资源id, 可以指定背包物品id.
+	 * 具体的消耗逻辑由子类实现
 	 */
-	protected int cfgId;
+	protected Object id;
 	/**
 	 * 消耗资源的数量
 	 */
-	protected long value;
-	/**
-	 * 不允许替代
-	 * 某些货币可以使用其他货币替代. 这里如果是true, 则不允许.
-	 */
-	protected boolean banReplace;
+	protected long count;
 
-	public BaseConsume(ConsumeConfig consumeConfig) {
-		this(consumeConfig.getCfgId(), consumeConfig.getValue(), consumeConfig.isBanReplace());
-	}
-
-	public BaseConsume(int cfgId, long value) {
-		this(cfgId, value, false);
-	}
-
-	public BaseConsume(int cfgId, long value, boolean banReplace) {
-		this.cfgId = cfgId;
-		this.value = value;
-		this.banReplace = banReplace;
-
-		Preconditions.checkState(value > 0, "value can not less than 1");
+	public BaseConsume(Object id, long count) {
+		Preconditions.checkState(count > 0, "count can not less than 1");
+		this.count = count;
+		this.id = id;
 	}
 
 	/**
@@ -46,8 +34,8 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @return 结果
 	 */
 	final StatusResult verify(ConsumeContext<Obj> context) {
-		if (value < 0) {
-			throw new CustomException("Value 小于 0!", value);
+		if (count < 0) {
+			throw new CustomException("Count 小于 0!", count);
 		}
 
 		return doVerify(context);
@@ -84,8 +72,8 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @return
 	 */
 	public final BaseConsume<Obj> copy(int multi) {
-		if (multi * value < 0) {
-			throw new CustomException("value {} 和 multi {} 相乘数值溢出!", value, multi);
+		if (multi * count < 0) {
+			throw new CustomException("value {} 和 multi {} 相乘数值溢出!", count, multi);
 		}
 		return this.doCopy(multi);
 	}
@@ -104,8 +92,7 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 */
 	public boolean canMerge(BaseConsume<Obj> consume) {
 	 	return this.getClass() == consume.getClass()
-				&& this.getCfgId() == consume.getCfgId()
-				&& banReplace == consume.banReplace;
+			&& Objects.equals(getId(), consume.getId());
 	 }
 
 	/**
@@ -124,14 +111,14 @@ public abstract class BaseConsume<Obj extends IThreadSafe> {
 	 * @param consume 消耗的具体对象
 	 */
 	protected void doMerge(BaseConsume<Obj> consume) {
-		this.value += consume.value;
+		this.count += consume.count;
 	}
 
-	public int getCfgId() {
-		return cfgId;
+	public Object getId() {
+		return id;
 	}
 
-	public long getValue() {
-		return value;
+	public long getCount() {
+		return count;
 	}
 }

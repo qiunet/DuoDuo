@@ -19,20 +19,15 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 	public ConsumeConfig() {}
 
 	public ConsumeConfig(int cfgId, long value) {
-		this(cfgId, value, false);
-	}
-
-	public ConsumeConfig(int cfgId, long value, boolean banReplace) {
 		this.put("id", String.valueOf(cfgId));
-		this.put("value", String.valueOf(value));
-		this.put("banReplace", String.valueOf(banReplace));
+		this.put("count", String.valueOf(value));
 	}
 
 	/**
 	 * 转 Consume
 	 * @return Consume
 	 */
-	public BaseConsume convertToConsume() {
+	public BaseCfgConsume convertToConsume() {
 		IResourceCfg res = LoadSandbox.instance.getResById(getCfgId());
 		if (res == null) {
 			throw new CustomException("Res id {} null point exception:", getCfgId());
@@ -52,16 +47,8 @@ public class ConsumeConfig  extends HashMap<Object, String> implements IKeyValue
 	 * 数量
 	 * @return
 	 */
-	public long getValue() {
-		return getLong("value");
-	}
-
-	/**
-	 * 是否禁止替换
-	 * @return
-	 */
-	public boolean isBanReplace() {
-		return getBoolean("banReplace");
+	public long getCount() {
+		return getLong("count");
 	}
 
 	@Override
