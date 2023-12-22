@@ -69,8 +69,8 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 		}
 
 		KcpBindAuthReq req = ProtobufDataManager.decode(KcpBindAuthReq.class, content.byteBuffer());
-		if (logger.isInfoEnabled()) {
-			logger.info("[{}({})] <<< {}", "KCP", ctx.channel().id().asShortText(), req._toString());
+		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()) {
+			LoggerType.DUODUO_PROTOCOL.info("[{}({})] <<< {}", "KCP", ctx.channel().id().asShortText(), req._toString());
 		}
 
 		ISession kcpSession = ChannelUtil.getSession(ctx.channel());
@@ -87,9 +87,9 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 				|| ((UkcpChannel) ctx.channel()).conv() != kcpParamInfo.getConvId()
 		) {
 			if (kcpParamInfo == null) {
-				logger.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.instance.getPlayerActor(req.getPlayerId()) != null);
+				LoggerType.DUODUO_PROTOCOL.error("ID: {} kcpParamInfo null, is online: {}", req.getPlayerId(), UserOnlineManager.instance.getPlayerActor(req.getPlayerId()) != null);
 			}else if (! Objects.equals(req.getToken(), kcpParamInfo.getToken())) {
-				logger.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
+				LoggerType.DUODUO_PROTOCOL.error("ID: {} token error, {} and {}", req.getPlayerId(), req.getToken(), kcpParamInfo.getToken());
 			}
 			kcpSession.sendMessage(KcpBindAuthRsp.valueOf(false), true);
 			ChannelUtil.closeChannel(ctx.channel(), CloseCause.AUTH_LOST, "auth fail!");

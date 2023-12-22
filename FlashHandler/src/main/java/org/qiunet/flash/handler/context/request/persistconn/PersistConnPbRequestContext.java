@@ -15,6 +15,7 @@ import org.qiunet.flash.handler.context.status.StatusResultException;
 import org.qiunet.flash.handler.handler.persistconn.IPersistConnHandler;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.pool.ObjectPool;
 
 /**
@@ -118,8 +119,8 @@ public class PersistConnPbRequestContext<RequestData extends IChannelData, P ext
 			return false;
 		}
 
-		if (logger.isInfoEnabled() && requestData.debugOut()) {
-			logger.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), session.aliasId(), getRequestData()._toString());
+		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled() && requestData.debugOut()) {
+			LoggerType.DUODUO_PROTOCOL.info("[{}] [{}({})] <<< {}", messageActor.getIdentity(), session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), session.aliasId(), getRequestData()._toString());
 		}
 
 		RequestCheckList requestCheckList = ChannelDataMapping.getParamChecks(channelData.getClass());

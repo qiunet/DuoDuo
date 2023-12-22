@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 public enum  LoggerType implements ILoggerType {
 	/**普通的日志打印*/
 	DUODUO("DuoDuo"),
+	/**duoduo协议*/
+	DUODUO_PROTOCOL("DuoDuoProtocol"),
 	/**在线打印*/
 	DUODUO_ONLINE("DuoDuoOnline"),
 	/**跨服日志**/

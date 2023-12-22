@@ -127,9 +127,9 @@ abstract class BaseSession implements ISession {
 			return;
 		}
 
-		if ( logger.isInfoEnabled() &&  message.debugOut()) {
+		if ( LoggerType.DUODUO_PROTOCOL.isInfoEnabled() &&  message.debugOut()) {
 			String identityDesc = messageActor == null ? this.aliasId() : messageActor.getIdentity();
-			logger.info("[{}] [{}({})] >>> {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), this.aliasId(), message._toString());
+			LoggerType.DUODUO_PROTOCOL.info("[{}] [{}({})] >>> {}", identityDesc, getAttachObj(ServerConstants.HANDLER_TYPE_KEY), this.aliasId(), message._toString());
 		}
 
 		if (flush) {

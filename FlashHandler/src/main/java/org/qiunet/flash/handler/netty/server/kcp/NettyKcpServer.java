@@ -67,12 +67,15 @@ public class NettyKcpServer implements INettyServer {
 	@Override
 	public void run() {
 		try {
+			ServerBootStrapConfig.KcpBootstrapConfig.KcpParam kcpParameter = this.config.getKcpBootstrapConfig().getKcpParam();
 			UkcpServerBootstrap b = new UkcpServerBootstrap();
-
+			int buffSize = kcpParameter.mtu() * kcpParameter.rcv_wnd();
 			b.group(GROUP)
 					.channel(UkcpServerChannel.class)
-					.option(ChannelOption.SO_RCVBUF, 1024 * 128)
-					.option(ChannelOption.SO_SNDBUF, 1024 * 128)
+					// 发送窗口 * Mtu
+					.option(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(buffSize))
+					.option(ChannelOption.SO_RCVBUF, buffSize)
+					.option(ChannelOption.SO_SNDBUF, buffSize)
 					.option(ChannelOption.SO_REUSEADDR, true)
 					.childAttr(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader())
 					.childAttr(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.KCP)
@@ -91,7 +94,6 @@ public class NettyKcpServer implements INettyServer {
 							.addLast("NettyCauseHandler", new NettyCauseHandler());
 						}
 					});
-			ServerBootStrapConfig.KcpBootstrapConfig.KcpParam kcpParameter = this.config.getKcpBootstrapConfig().getKcpParam();
 			ChannelOptionHelper.nodelay(b, kcpParameter.noDelay(), kcpParameter.interval(), kcpParameter.fastResend(), kcpParameter.noCwnd())
 					.childOption(UkcpChannelOption.UKCP_MTU, kcpParameter.mtu())
 					.childOption(UkcpChannelOption.UKCP_SND_WND, kcpParameter.snd_wnd())

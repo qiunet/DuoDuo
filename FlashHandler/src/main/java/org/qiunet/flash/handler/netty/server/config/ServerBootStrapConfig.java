@@ -333,7 +333,7 @@ public class ServerBootStrapConfig {
 		 * @param noCwnd     取消拥塞控制
 		 */
 		public record KcpParam(int snd_wnd, int rcv_wnd, int interval, boolean noDelay, int mtu, int fastResend, boolean noCwnd) {
-			public static final KcpParam DEFAULT_KCP_PARAM = new KcpParam(256, 256, 20, true, 512, 2, true);
+			public static final KcpParam DEFAULT_KCP_PARAM = new KcpParam(128, 128, 20, true, 512, 2, true);
 		}
 	}
 

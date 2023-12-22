@@ -21,6 +21,7 @@ import org.qiunet.flash.handler.handler.http.async.IAsyncHttpHandler;
 import org.qiunet.flash.handler.netty.server.config.ServerBootStrapConfig;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.flash.handler.util.ChannelUtil;
+import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.string.ToString;
 
@@ -77,11 +78,11 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			return;
 		}
 
-		if (logger.isInfoEnabled()
+		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
 		&& ! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class)
 		&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
 		) {
-			logger.info("HTTP <<< {}", ToString.toString(getRequestData()));
+			LoggerType.DUODUO_PROTOCOL.info("HTTP <<< {}", ToString.toString(getRequestData()));
 		}
 
 		IHttpHandler<RequestData> handler = getHandler();
@@ -134,11 +135,11 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		if (responseData == null){
 			throw new NullPointerException("ResponseData can not be null");
 		}
-		if (logger.isInfoEnabled()
+		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
 			&& ! responseData.getClass().isAnnotationPresent(SkipDebugOut.class)
 			&& ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)
 		) {
-			logger.info("HTTP >>> {}", ToString.toString(responseData));
+			LoggerType.DUODUO_PROTOCOL.info("HTTP >>> {}", ToString.toString(responseData));
 		}
 		boolean keepAlive = HttpUtil.isKeepAlive(request);
 		IChannelMessage<?> responseDataMessage = getResponseDataMessage(responseData);
