@@ -5,7 +5,6 @@ import okhttp3.*;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.prometheus.PrometheusRegistry;
-import org.qiunet.utils.thread.ThreadPoolManager;
 import org.slf4j.Logger;
 
 import java.nio.charset.Charset;
@@ -27,8 +26,7 @@ public abstract class HttpRequest<B extends HttpRequest> {
 			OkHttpMetricsEventListener.builder(PrometheusRegistry.registry(), "okhttp.requests")
 					.uriMapper(request -> request.url().encodedPath())
 					.build()
-		).dispatcher(new Dispatcher(ThreadPoolManager.NORMAL))
-		.build();
+		).build();
 
 	protected String url;
 
