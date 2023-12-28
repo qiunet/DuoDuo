@@ -36,7 +36,7 @@ class DbStartHandler {
 			return;
 		}
 
-		DbLoader.getInstance();
+		DbLoader.instance.init();
 		DbLoaderOverEvent.fireEvent();
 	}
 }

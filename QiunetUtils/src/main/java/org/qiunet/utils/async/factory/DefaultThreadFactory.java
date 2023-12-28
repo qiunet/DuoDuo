@@ -24,7 +24,7 @@ public class DefaultThreadFactory implements ThreadFactory {
 			try {
 				fastClzConstructor1 = fastClz.getDeclaredConstructor(Runnable.class, String.class);
 				fastClzConstructor1.setAccessible(true);
-			} catch (NoSuchMethodException e) {
+			} catch (NoSuchMethodException ignored) {
 			}
 		}
 		this.fastClzConstructor = fastClzConstructor1;

@@ -1,4 +1,7 @@
 package org.qiunet.utils.exceptions;
+
+import java.io.Serial;
+
 /**
  * enum parse exception
  * @author xiangyang
@@ -7,6 +10,7 @@ package org.qiunet.utils.exceptions;
  *
  */
 public class EnumParseException extends RuntimeException {
+	@Serial
 	private static final long serialVersionUID = -6264105421183868936L;
 
 	public EnumParseException(String val){

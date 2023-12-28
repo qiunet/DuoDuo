@@ -107,12 +107,13 @@ public class ConditionManager {
 
 			 List<ICondition> collect = configList.stream()
 					 .map(cfg -> {
-						 ICondition iCondition = null;
+						 ICondition iCondition;
 						 try {
 						 	Preconditions.checkNotNull(conditionMap.get(cfg.getType()), "ConditionType %s is not define!", cfg.getType());
 							 iCondition = conditionMap.get(cfg.getType().toUpperCase()).newInstance();
 						 } catch (InstantiationException | IllegalAccessException e) {
 							 LoggerType.DUODUO_FLASH_HANDLER.error("", e);
+							 return null;
 						 }
 						 Field[] declaredFields = iCondition.getClass().getDeclaredFields();
 						 for (Field field : declaredFields) {

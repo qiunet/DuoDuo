@@ -132,7 +132,7 @@ public class AttrNode {
 			if (nodeParent.id == this.id) {
 				return true;
 			}
-			nodeParent = node.parent;
+			nodeParent = nodeParent.parent;
 		}
 		return false;
 	}

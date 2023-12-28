@@ -35,6 +35,7 @@
 
 package org.qiunet.utils.timer.executor;
 
+import java.io.Serial;
 import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -385,7 +386,7 @@ public class DThreadPoolExecutor extends AbstractExecutorService {
 
     // runState is stored in the high-order bits
     private static final int RUNNING    = -1 << COUNT_BITS;
-    private static final int SHUTDOWN   =  0 << COUNT_BITS;
+    private static final int SHUTDOWN   = 0;
     private static final int STOP       =  1 << COUNT_BITS;
     private static final int TIDYING    =  2 << COUNT_BITS;
     private static final int TERMINATED =  3 << COUNT_BITS;
@@ -601,7 +602,8 @@ public class DThreadPoolExecutor extends AbstractExecutorService {
          * This class will never be serialized, but we provide a
          * serialVersionUID to suppress a javac warning.
          */
-        private static final long serialVersionUID = 6138294804551838833L;
+        @Serial
+		private static final long serialVersionUID = 6138294804551838833L;
 
         /** Thread this worker is running in.  Null if factory fails. */
         final Thread thread;

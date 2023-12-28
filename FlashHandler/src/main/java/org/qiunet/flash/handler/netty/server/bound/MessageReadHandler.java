@@ -73,7 +73,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 
 		AbstractMessageActor messageActor = (AbstractMessageActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
 		if (messageActor == null) {
-			logger.info("{} msgExecuteIndex is null! Need call ConnectionReq first", messageActor.getIdentity());
+			logger.info("{} messageActor is null! Need call ConnectionReq first", channel.id().asShortText());
 			session.close(CloseCause.CONNECTION_ID_KEY_ERROR);
 			return;
 		}

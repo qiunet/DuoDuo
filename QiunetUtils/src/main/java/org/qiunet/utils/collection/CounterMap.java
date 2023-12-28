@@ -54,7 +54,7 @@ public class CounterMap<Key> {
 	public int decrease(Key key, int alter) {
 		Preconditions.checkArgument(alter > 0, "alter ["+alter+"] must grant than zero!");
 		Preconditions.checkArgument(getCount(key) >= alter, "alter number is greater than current");
-		Integer integer = counters.merge(key, -alter, Integer::sum);
+		int integer = counters.merge(key, -alter, Integer::sum);
 		if (integer <= 0) {
 			counters.remove(key);
 		}

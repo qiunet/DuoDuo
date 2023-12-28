@@ -69,7 +69,7 @@ class DbEntityAsyncQueue {
 		private final Table table;
 
 		public SyncDoInfo(Class<Entity> clazz) {
-			Class<?> doClass = null;
+			Class<?> doClass;
 			try {
 				Method method = clazz.getMethod("getDo");
 				doClass = method.getReturnType();

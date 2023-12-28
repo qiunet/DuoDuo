@@ -134,7 +134,7 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 		bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
 		bytearr[count++] = (byte) ((utflen) & 0xFF);
 
-		int i=0;
+		int i;
 		for (i=0; i<strlen; i++) {
 			c = str.charAt(i);
 			if (!((c >= 0x0001) && (c <= 0x007F))) break;

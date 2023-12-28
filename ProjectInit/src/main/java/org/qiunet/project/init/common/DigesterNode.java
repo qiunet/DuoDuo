@@ -91,8 +91,10 @@ class DigesterNode {
 					.filter(mtd -> mtd.getName().equals(setMtdName))
 					.filter(mtd -> mtd.getParameterTypes()[0].isAssignableFrom(getClz()))
 					.filter(mtd -> mtd.getParameterCount() == 1)
-					.findFirst().get();
-			method.invoke(parent, instance);
+					.findFirst().orElse(null);
+			if (method != null) {
+				method.invoke(parent, instance);
+			}
 			return instance;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

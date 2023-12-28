@@ -21,7 +21,7 @@ public class ProtocolUtil {
 
 		int len = data.length;
 		byte[] ret = new byte[len];
-		if (chunkSize <= 0 || chunkSize >= len) {
+		if (chunkSize >= len) {
 			System.arraycopy(data, 0, ret, 0, len);
 			return ret;
 		}
@@ -58,7 +58,7 @@ public class ProtocolUtil {
 
 		int len = data.length;
 		byte[] ret = new byte[len];
-		if (chunkSize <= 0 || chunkSize >= len) {
+		if (chunkSize >= len) {
 			System.arraycopy(data, 0, ret, 0, len);
 			return ret;
 		}

@@ -106,8 +106,10 @@ enum CrossSessionManager implements NodeChannelTrigger {
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void crossDestroy(CrossPlayerDestroyEvent event) {
 		ISession nodeSession = getNodeSession(event.getServerId(), event.getPlayer().getPlayerId());
-		((NodeClientSession) nodeSession).setNoticedRemote();
-		nodeSession.close(CloseCause.DESTROY);
+		if (nodeSession != null) {
+			((NodeClientSession) nodeSession).setNoticedRemote();
+			nodeSession.close(CloseCause.DESTROY);
+		}
 	}
 
 	@Override

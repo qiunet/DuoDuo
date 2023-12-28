@@ -6,7 +6,6 @@ import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
@@ -57,16 +56,12 @@ public final class ClassScanner implements IApplicationContext {
 	private boolean recycled;
 
 	private ClassScanner(ScannerType... scannerTypes) {
-		if (instance != null) {
-			throw new CustomException("Instance Duplication!");
-		}
 		this.reflections = new Reflections("org.qiunet", scanners);
 		int scannerType = 0;
 		for (ScannerType type : scannerTypes) {
 			scannerType |= type.getStatus();
 		}
 		this.scannerTypes = scannerType;
-		instance = this;
 	}
 
 	public static ClassScanner getInstance(ScannerType... scannerType) {
@@ -74,7 +69,7 @@ public final class ClassScanner implements IApplicationContext {
 			synchronized (ClassScanner.class) {
 				if (instance == null)
 				{
-					new ClassScanner(scannerType);
+					instance = new ClassScanner(scannerType);
 				}
 			}
 		}

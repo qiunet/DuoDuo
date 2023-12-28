@@ -70,7 +70,7 @@ public class SafeList<E> implements List<E>, ISafeCollection {
 
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		return list.containsAll(c);
+		return new HashSet<>(list).containsAll(c);
 	}
 
 	@Override

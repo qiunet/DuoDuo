@@ -13,7 +13,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.qiunet.data.util.ServerConfig;
-import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -29,7 +28,8 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 
-class DbLoader {
+enum DbLoader {
+	instance;
 	private final ServerConfig serverConfig = ServerConfig.instance;
 	private static final Logger logger = LoggerType.DUODUO.getLogger();
 
@@ -84,44 +84,8 @@ class DbLoader {
 	private String getConfigKey(String datasourceName, String key) {
 		return "db."+datasourceName+"."+key;
 	}
-	private static DbLoader instance;
-
-	private DbLoader() {
-		if (instance != null) {
-			throw new CustomException("Instance Duplication!");
-		}
-
-		try {
-			if (serverConfig.containKey(MYBATIS_CONFIG_FILENAME)) {
-				mybatisConfigFileName = serverConfig.getString(MYBATIS_CONFIG_FILENAME);
-			}
-			this.loaderDataSource();
-
-			ShutdownHookUtil.getInstance().addShutdownHook( () -> {
-				while (DriverManager.getDrivers().hasMoreElements()){
-					Driver driver = DriverManager.getDrivers().nextElement();
-					try {
-						DriverManager.deregisterDriver(driver);
-					} catch (SQLException e) {
-						LoggerType.DUODUO_SQL.error("", e);
-					}
-				}
-			});
-		} catch (Exception e) {
-			LoggerType.DUODUO_SQL.error("", e);
-		}
-		instance = this;
-	}
 
 	static DbLoader getInstance() {
-		if (instance == null) {
-			synchronized (DbLoader.class) {
-				if (instance == null)
-				{
-					new DbLoader();
-				}
-			}
-		}
 		return instance;
 	}
 
@@ -158,7 +122,7 @@ class DbLoader {
 		for (DatasourceAttr setting : datasourceSettings) {
 			Object val = setting.defaultVal;
 			String dbKey = getConfigKey(dbSourceName, setting.name);
-			if(val.getClass() == int.class || val.getClass() == Integer.class) {
+			if(val.getClass() == Integer.class) {
 				val = serverConfig.getInt(dbKey, (Integer) val);
 			}else if (val == boolean.class || val.getClass() == Boolean.class) {
 				if (serverConfig.containKey(dbKey)) {
@@ -213,6 +177,28 @@ class DbLoader {
 	String dbName(String dbSource) {
 		Preconditions.checkState(dbNameMapping.containsKey(dbSource), "No dbName for dbSource [%s]", dbSource);
 		return dbNameMapping.get(dbSource);
+	}
+
+	void init() {
+		try {
+			if (serverConfig.containKey(MYBATIS_CONFIG_FILENAME)) {
+				mybatisConfigFileName = serverConfig.getString(MYBATIS_CONFIG_FILENAME);
+			}
+			this.loaderDataSource();
+
+			ShutdownHookUtil.getInstance().addShutdownHook( () -> {
+				while (DriverManager.getDrivers().hasMoreElements()){
+					Driver driver = DriverManager.getDrivers().nextElement();
+					try {
+						DriverManager.deregisterDriver(driver);
+					} catch (SQLException e) {
+						LoggerType.DUODUO_SQL.error("", e);
+					}
+				}
+			});
+		} catch (Exception e) {
+			LoggerType.DUODUO_SQL.error("", e);
+		}
 	}
 
 	private static class DatasourceAttr {
@@ -288,7 +274,8 @@ class DbLoader {
 			database = connUri;
 		}
 
-		if (database.contains("?")) {
+        assert database != null;
+        if (database.contains("?")) {
 			database = database.substring(0, database.indexOf("?"));
 		}
 

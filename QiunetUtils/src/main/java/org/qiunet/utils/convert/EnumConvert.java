@@ -31,7 +31,7 @@ public class EnumConvert extends BaseObjConvert<Enum> {
 		Class<Enum> enumClass = (Class<Enum>) (field.getType());
 		if (StringUtil.isNum(value)) {
 			// 有实现 EnumReadable 或者 IEnumReadable. 优先使用value. 否则使用 ordinal
-			Integer val = Integer.valueOf(value);
+			int val = Integer.parseInt(value);
 			Enum[] enumConstants = enumClass.getEnumConstants();
 			boolean enumReadable = IEnumReadable.class.isAssignableFrom(enumClass);
 			if (! enumReadable) {

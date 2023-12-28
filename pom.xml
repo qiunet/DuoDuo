@@ -322,12 +322,12 @@
 			<dependency>
 				<groupId>com.google.guava</groupId>
 				<artifactId>guava</artifactId>
-				<version>31.1-jre</version>
+				<version>33.0.0-jre</version>
 			</dependency>
 			<dependency>
 				<groupId>com.mysql</groupId>
 				<artifactId>mysql-connector-j</artifactId>
-				<version>8.0.31</version>
+				<version>8.2.0</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.protobuf</groupId>
@@ -353,7 +353,7 @@
 			<dependency>
 				<groupId>ch.qos.logback</groupId>
 				<artifactId>logback-classic</artifactId>
-				<version>1.4.4</version>
+				<version>1.4.14</version>
 				<scope>test</scope>
 				<exclusions>
 					<exclusion>

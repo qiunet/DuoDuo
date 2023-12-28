@@ -29,7 +29,7 @@ final class LongVector {
     }
 
     public LongVector(int initialSize) {
-        int vsize = ((initialSize >> ABITS) & ~(VSIZE - 1)) + VSIZE;
+        int vsize = ((initialSize >> ABITS) & -VSIZE) + VSIZE;
         objects = new ConstInfo[vsize][];
         elements = 0;
     }

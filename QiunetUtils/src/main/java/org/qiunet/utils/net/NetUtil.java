@@ -78,7 +78,7 @@ public class NetUtil {
 	 * @return
 	 */
 	public static String getInnerIp() {
-		return localIpv4s().stream().filter(str -> ! isLocalIp(str)).findFirst().get();
+		return localIpv4s().stream().filter(str -> ! isLocalIp(str)).findFirst().orElse(null);
 	}
 	/**
 	 * 是否为有效的端口<br>
@@ -133,7 +133,7 @@ public class NetUtil {
 		// ident.me
 		// ip.sb
 		String[] IPV4_SERVICES = {
-				"http://checkip.amazonaws.com",
+				"https://checkip.amazonaws.com",
 				"https://ipv4.icanhazip.com",
 				"https://icanhazip.com",
 				"https://ipinfo.io/ip"
@@ -230,7 +230,7 @@ public class NetUtil {
 			} else if (inet6Address.startsWith("::") && !octetList.isEmpty()) {
 				octetList.remove(0);
 			}
-			octets = octetList.toArray(new String[octetList.size()]);
+			octets = octetList.toArray(new String[0]);
 		}
 		if (octets.length > IPV6_MAX_HEX_GROUPS) {
 			return false;
@@ -370,11 +370,7 @@ public class NetUtil {
 			throw new RuntimeException(e);
 		}
 
-		if (networkInterfaces == null) {
-			throw new CustomException("Get network interface error!");
-		}
-
-		final LinkedHashSet<InetAddress> ipSet = new LinkedHashSet<>();
+        final LinkedHashSet<InetAddress> ipSet = new LinkedHashSet<>();
 
 		while (networkInterfaces.hasMoreElements()) {
 			final NetworkInterface networkInterface = networkInterfaces.nextElement();
