@@ -30,11 +30,10 @@ import java.util.Map;
  ***/
 public class LogBackRecordLogger implements IBasicRecordLogger {
 	private static final StringLogContentGetter getter = new StringLogContentGetter("=", " | ");
-
+	protected static final 	LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 	protected final Map<String, Logger> loggers = Maps.newConcurrentMap();
 
 	protected synchronized Logger createLogger(String loggerName) {
-		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 		Logger logger = lc.getLogger(loggerName);
 		if (logger.iteratorForAppenders().hasNext()) {
 			return logger;
