@@ -1,21 +1,25 @@
 package org.qiunet.utils.http;
 
-
-import okhttp3.Call;
-import okhttp3.Callback;
+import io.netty.handler.codec.http.HttpRequest;
 import org.qiunet.utils.logger.LoggerType;
 
-import java.io.IOException;
-
 /***
- * Http 回调
+ *
  * @author qiunet
- * 2020-04-22 19:48
+ * 2024/1/15 09:49
  ***/
-public interface IHttpCallBack extends Callback {
-
-	@Override
-	default void onFailure(Call call, IOException e){
-		LoggerType.DUODUO_HTTP.error(call.request() + "Exception: ", e);
+public interface IHttpCallBack {
+	/**
+	 * 成功的回调
+	 * @param response 响应数据
+	 */
+	void success(HttpResponse response);
+	/**
+	 * 失败
+	 * @param request 请求数据
+	 * @param throwable 异常
+	 */
+	default void fail(HttpRequest request, Throwable throwable){
+		LoggerType.DUODUO_HTTP.error(request.toString() + "Exception: ", throwable);
 	}
 }

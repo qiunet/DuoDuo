@@ -64,10 +64,6 @@
 			<artifactId>jmh-core</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.squareup.okhttp3</groupId>
-			<artifactId>okhttp</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.openjdk.jmh</groupId>
 			<artifactId>jmh-generator-annprocess</artifactId>
 		</dependency>
@@ -98,7 +94,10 @@
 		<dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-transport-classes-epoll</artifactId>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.netty</groupId>
+			<artifactId>netty-codec-http</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.baidu</groupId>

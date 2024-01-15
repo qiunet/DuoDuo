@@ -1,7 +1,10 @@
 package org.qiunet.utils.http;
 
 import com.google.common.collect.Maps;
-import okhttp3.Request;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpVersion;
 
 import java.util.Map;
 
@@ -14,8 +17,8 @@ import java.util.Map;
 public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 
 	private Map<String, String> params = Maps.newHashMap();
-	GetHttpRequest(String url){
-		super(url);
+	GetHttpRequest(String urlstring){
+		super(urlstring);
 	}
 
 	/**
@@ -29,7 +32,7 @@ public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 	}
 
 	private String buildUrl() {
-		StringBuilder sb = new StringBuilder(url);
+		StringBuilder sb = new StringBuilder(this.path());
 		if(params != null && !params.isEmpty()){
 			if(sb.indexOf("?") != -1) sb.append("&");
 			else sb.append("?");
@@ -37,16 +40,14 @@ public class GetHttpRequest extends HttpRequest<GetHttpRequest> {
 			for(Map.Entry<String, String> en : params.entrySet()) {
 				sb.append(en.getKey()).append('=').append(en.getValue()).append("&");
 			}
-			if(sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
+			if(!sb.isEmpty()) sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString();
 	}
 
 
 	@Override
-	protected Request buildRequest() {
-		return new Request.Builder().url(buildUrl())
-			.headers(headerBuilder.build())
-			.build();
+	protected FullHttpRequest buildRequest() {
+		return new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, buildUrl());
 	}
 }

@@ -15,6 +15,7 @@ import org.qiunet.flash.handler.context.header.IProtocolHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.session.HttpSession;
+import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.mapping.UrlRequestHandlerMapping;
 import org.qiunet.flash.handler.netty.coder.WebSocketServerDecoder;
@@ -64,18 +65,15 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
-		try {
-			HttpSession httpSession = new HttpSession(ctx.channel());
-			httpSession.attachObj(ServerConstants.HTTP_REQUEST_KEY, msg);
-			ChannelUtil.bindSession(httpSession, ctx.channel());
-			this.channelRead1(ctx, msg);
-		}finally {
-			ctx.fireChannelRead(msg.retain());
-		}
+	public void channelActive(ChannelHandlerContext ctx) throws Exception {
+		ChannelUtil.bindSession(new HttpSession(ctx.channel()), ctx.channel());
+		ctx.fireChannelActive();
 	}
 
-	protected void channelRead1(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+		ISession httpSession = ChannelUtil.getSession(ctx.channel());
+		httpSession.attachObj(ServerConstants.HTTP_REQUEST_KEY, msg);
 		if (! msg.decoderResult().isSuccess()) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);
 			return;

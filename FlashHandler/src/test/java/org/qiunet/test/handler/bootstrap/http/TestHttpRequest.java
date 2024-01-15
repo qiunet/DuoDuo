@@ -35,8 +35,8 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI())
 			.withBytes(this.getAllBytes(request.buildChannelMessage()))
-			.asyncExecutor((call, resp) -> {
-				ByteBuffer buffer = ByteBuffer.wrap(resp.body().bytes());
+			.asyncExecutor(resp -> {
+				ByteBuffer buffer = ByteBuffer.wrap(resp.getBytes());
 				// 跳过头
 				buffer.position(PROTOCOL_HEADER.getClientInHeadLength());
 
@@ -57,9 +57,9 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		HttpRequest.post(params.getURI("/back.do?a=b"))
 			.withBytes(test.getBytes(CharsetUtil.UTF_8))
-			.asyncExecutor((call, response) -> {
-				Assertions.assertEquals(response.code(), HttpResponseStatus.OK.code());
-				Assertions.assertEquals(response.body().string(), test);
+			.asyncExecutor(response -> {
+				Assertions.assertEquals(response.getStatus(), HttpResponseStatus.OK);
+				Assertions.assertEquals(response.body(), test);
 				LockSupport.unpark(currThread);
 
 		});
@@ -75,9 +75,9 @@ public class TestHttpRequest extends HttpBootStrap {
 		final Thread currThread = Thread.currentThread();
 		byte[] bytes = jsonObject.toJSONString().getBytes(CharsetUtil.UTF_8);
 
-		HttpRequest.post(params.getURI("/jsonUrl.do")).withBytes(bytes).asyncExecutor((call, httpResponse) -> {
-				Assertions.assertEquals(httpResponse.code(), HttpResponseStatus.OK.code());
-				String responseString = httpResponse.body().string();
+		HttpRequest.post(params.getURI("/jsonUrl.do")).withBytes(bytes).asyncExecutor(response -> {
+				Assertions.assertEquals(response.getStatus(), HttpResponseStatus.OK);
+				String responseString = response.body();
 
 				JTestResponseData data = JsonUtil.getGeneralObj(responseString, JTestResponseData.class);
 				Assertions.assertEquals(data.getStatus().getCode(), IGameStatus.SUCCESS.getStatus());

@@ -33,13 +33,11 @@ public class TestHttpRequest extends BaseTest{
 	@Disabled("Do it manual!")
 	public void testAsyncHttpsRequest() throws Exception {
 		String url = "https://www.qq.com";
-		Map<String,String> params = new HashMap<>();
-		params.put("wd", "qiunet");
-		CountDownLatch latch = new CountDownLatch(2);
+		CountDownLatch latch = new CountDownLatch(1);
 		for (int i = 0 ; i < latch.getCount(); i++){
-			HttpRequest.get(url).params(params).asyncExecutor(
-				(call, response) -> {
-					String result = response.body().string();
+			HttpRequest.get(url).asyncExecutor(
+				(response) -> {
+					String result = response.body();
 					System.out.println(result);
 					Assertions.assertNotNull(result);
 					latch.countDown();

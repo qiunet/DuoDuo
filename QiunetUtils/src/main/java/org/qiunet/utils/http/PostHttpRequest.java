@@ -1,10 +1,13 @@
 package org.qiunet.utils.http;
 
-import okhttp3.*;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.handler.codec.http.*;
 import org.qiunet.utils.json.JsonUtil;
 
-import java.util.Collections;
+import java.nio.ByteBuffer;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /***
  *
@@ -13,8 +16,10 @@ import java.util.Map;
  * 2020-04-20 17:42
  ***/
 public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
-
-	protected RequestBody requestBody;
+	/**
+	 * post 数据
+	 */
+	private ByteBuffer data;
 
 	protected PostHttpRequest(String url) {
 		super(url);
@@ -27,9 +32,12 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return 对象本身
 	 */
 	public PostHttpRequest withFormData(Map<String, String> params) {
-		FormBody.Builder builder = new FormBody.Builder();
-		params.forEach(builder::add);
-		this.requestBody = builder.build();
+		this.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED);
+		StringJoiner joiner = new StringJoiner("&");
+		params.forEach((key, val) -> {
+			joiner.add(key + "=" + val);
+		});
+		this.data = this.charset.encode(joiner.toString());
 		return this;
 	}
 
@@ -60,7 +68,8 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return 对象本身
 	 */
 	public PostHttpRequest withStringData(String data) {
-		this.requestBody = RequestBody.create(MediaType.parse("text/plain;charset=" + charset), data);
+		this.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.TEXT_PLAIN);
+		this.data = this.charset.encode(data);
 		return this;
 	}
 	/**
@@ -70,7 +79,8 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return
 	 */
 	public PostHttpRequest withJsonData(String json) {
-		this.requestBody = RequestBody.create(MediaType.parse("application/json;charset=" + charset), json);
+		this.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.APPLICATION_JSON);
+		this.data = this.charset.encode(json);
 		return this;
 	}
 	/**
@@ -80,30 +90,31 @@ public class PostHttpRequest extends HttpRequest<PostHttpRequest> {
 	 * @return
 	 */
 	public PostHttpRequest withBytes(byte [] bytes) {
-		this.requestBody = MultipartBody.create(MultipartBody.FORM, bytes);
+		this.header(HttpHeaderNames.CONTENT_TYPE, HttpHeaderValues.MULTIPART_FORM_DATA);
+		this.data = ByteBuffer.wrap(bytes);
 		return this;
 	}
 	/**
 	 * 自定义body格式类型
 	 *
-	 * @param requestBody
+	 * @param bodyData
 	 * @return
 	 */
-	public PostHttpRequest customBody(RequestBody requestBody) {
-		this.requestBody = requestBody;
+	public PostHttpRequest customBody(ByteBuffer bodyData) {
+		this.data = bodyData;
 		return this;
 	}
 
 
 	@Override
-	protected Request buildRequest() {
-		if (requestBody == null) {
-			this.withFormData(Collections.emptyMap());
+	protected FullHttpRequest buildRequest() {
+		ByteBuf byteBuf;
+		if (this.data == null) {
+			byteBuf = Unpooled.EMPTY_BUFFER;
+		}else {
+			byteBuf = Unpooled.wrappedBuffer(this.data);
 		}
-		return new Request.Builder()
-				.headers(headerBuilder.build())
-				.post(requestBody)
-				.url(url)
-				.build();
+		this.header(HttpHeaderNames.CONTENT_LENGTH, byteBuf.readableBytes());
+		return new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, this.path(), byteBuf);
 	}
 }

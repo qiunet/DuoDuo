@@ -4,13 +4,11 @@ import io.micrometer.core.instrument.*;
 import io.micrometer.core.instrument.binder.MeterBinder;
 import io.micrometer.core.instrument.binder.jvm.*;
 import io.micrometer.core.instrument.binder.logging.LogbackMetrics;
-import io.micrometer.core.instrument.binder.okhttp3.OkHttpConnectionPoolMetrics;
 import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics;
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
 import io.micrometer.core.instrument.binder.system.UptimeMetrics;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.utils.http.HttpRequest;
 import org.qiunet.utils.prometheus.PrometheusRegistry;
 
 import java.util.Arrays;
@@ -33,7 +31,6 @@ public enum RootRegistry {
 		if (ServerNodeManager.getCurrServerInfo() != null) {
 			registry.config().commonTags("serverId", String.valueOf(ServerNodeManager.getCurrServerId()));
 		}
-		new OkHttpConnectionPoolMetrics(HttpRequest._client().connectionPool()).bindTo(registry);
 		new FileDescriptorMetrics().bindTo(registry);
 		new JvmCompilationMetrics().bindTo(registry);
 		new JvmHeapPressureMetrics().bindTo(registry);
