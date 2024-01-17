@@ -8,29 +8,11 @@ import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.Attribute;
-import org.qiunet.data.util.ServerConfig;
-import org.qiunet.flash.handler.common.IMessage;
-import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
-import org.qiunet.flash.handler.common.event.ClientPingEvent;
-import org.qiunet.flash.handler.common.id.IProtocolId;
-import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.ICrossStatusActor;
-import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.player.PlayerActor;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
-import org.qiunet.flash.handler.context.request.IRequestContext;
-import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
-import org.qiunet.flash.handler.context.request.data.IChannelData;
-import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 import org.qiunet.flash.handler.context.session.HttpSession;
 import org.qiunet.flash.handler.context.session.ISession;
-import org.qiunet.flash.handler.handler.IHandler;
-import org.qiunet.flash.handler.netty.server.config.adapter.message.ClientPingRequest;
-import org.qiunet.flash.handler.netty.server.config.adapter.message.ServerPongResponse;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
-import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -101,64 +83,6 @@ public final class ChannelUtil {
 		return channel.attr(ServerConstants.SESSION_KEY).get();
 	}
 
-
-	/**
-	 * 处理ping信息
-	 * @param channel
-	 * @param content
-	 * @return
-	 */
-	public static boolean handlerPing(Channel channel, MessageContent content) {
-		if (content.getProtocolId() != IProtocolId.System.CLIENT_PING) {
-			return false;
-		}
-		ISession session = ChannelUtil.getSession(channel);
-		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
-		session.sendMessage(ServerPongResponse.valueOf(pingRequest.getBytes()));
-		IMessageActor actor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-		if (actor != null && actor instanceof PlayerActor playerActor && actor.isAuth()){
-			playerActor.fireEvent(ClientPingEvent.valueOf(channel.attr(ServerConstants.HANDLER_TYPE_KEY).get()));
-		}
-		return true;
-	}
-
-	/**
-	 * 正式处理handler
-	 * @param session
-	 * @param handler
-	 * @param content
-	 */
-	public static void processHandler(ISession session, IHandler handler, MessageContent content) {
-		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
-
-		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
-			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
-			// 回收content. 并防止里面的byteBuf被回收.
-			content.recycle();
-			messageActor.addMessage(m -> {
-				try {
-					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
-					if (logger.isInfoEnabled()) {
-						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-						if (! aClass.isAnnotationPresent(SkipDebugOut.class) || ServerConfig.isDebugEnv()) {
-							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
-						}
-					}
-					((ICrossStatusActor) messageActor).sendCrossMessage(message);
-				}catch (Exception e) {
-					if (message.getContent() != null && message.getContent().refCnt() > 0) {
-						message.getContent().release();
-					}
-				}
-			});
-			return;
-		}
-		if (session.isActive()) {
-			IRequestContext context = handler.getDataType().createRequestContext(session, content);
-			messageActor.addMessage((IMessage) context);
-		}
-	}
 
 	public static void sendHttpResponseStatusAndClose(HttpSession session, HttpResponseStatus status) {
 		FullHttpResponse response = new DefaultFullHttpResponse(HTTP_1_1, status);

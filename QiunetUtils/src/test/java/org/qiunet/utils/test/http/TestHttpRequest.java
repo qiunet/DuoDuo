@@ -22,6 +22,7 @@ public class TestHttpRequest extends BaseTest{
 		String url = "https://www.hao123.com/?src=from_pc_logon";
 		Map<String,String> params = new HashMap<>();
 		params.put("wd", "qiunet");
+		HttpRequest.setMaxReceivedContentLength(1024 * 1024);
 		for (int i = 0 ; i < 2; i++){
 			String ret = HttpRequest.post(url).withFormData(params).executor();
 			System.out.println(ret);

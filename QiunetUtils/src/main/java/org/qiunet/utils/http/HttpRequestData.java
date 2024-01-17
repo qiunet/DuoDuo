@@ -6,8 +6,11 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.utils.thread.ThreadPoolManager;
+import org.qiunet.utils.timer.timeout.TimeOutFuture;
+import org.qiunet.utils.timer.timeout.Timeout;
 
 import java.net.URL;
+import java.util.concurrent.TimeoutException;
 
 /***
  * 请求的一些数据
@@ -22,6 +25,8 @@ class HttpRequestData {
 	private IHttpCallBack callback;
 
 	private FullHttpRequest request;
+
+	private TimeOutFuture timeout;
 
 	private HttpAddress address;
 
@@ -44,6 +49,19 @@ class HttpRequestData {
 		data.request = request;
 		data.url = url;
 		return data;
+	}
+
+	void beginTimeout() {
+		this.timeout = Timeout.newTimeOut(f -> {
+			if (f.isCanceled()) {
+				return;
+			}
+			this.fail(new TimeoutException(request.toString()));
+		}, HttpRequest.readTimeout);
+	}
+
+	public TimeOutFuture getTimeout() {
+		return timeout;
 	}
 
 	/**

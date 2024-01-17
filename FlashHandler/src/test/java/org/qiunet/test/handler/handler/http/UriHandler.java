@@ -16,6 +16,7 @@ public class UriHandler extends HttpStringHandler implements ISyncHttpHandler<St
 	public String handler(IHttpRequest<String> request) throws Exception {
 		Preconditions.checkState(request.getParameter("p1").equals("val1"));
 		Preconditions.checkState(request.getParameter("p2").equals("val2"));
+		Preconditions.checkState(request.getParameter("a").equals("b"));
 		return request.getRequestData();
 	}
 }

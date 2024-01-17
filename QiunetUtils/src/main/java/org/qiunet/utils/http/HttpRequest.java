@@ -15,17 +15,18 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /***
- *
+ * Http client
  *
  * @author qiunet
  * 2020-04-20 17:39
  ***/
 public abstract class HttpRequest<B extends HttpRequest<?>> {
 	protected static final Logger logger = LoggerType.DUODUO_HTTP.getLogger();
-	protected static final HttpClient client = HttpClient.instance;
+	private static final HttpClient client = HttpClient.instance;
 	protected Charset charset = StandardCharsets.UTF_8;
 	protected HttpHeaders headers = new DefaultHttpHeaders(true)
-		.add(HttpHeaderNames.ACCEPT_CHARSET, charset);
+		.add(HttpHeaderNames.ACCEPT_CHARSET, charset)
+		.add(HttpHeaderNames.ACCEPT, "*/*");
 	private static final int DEFAULT_MAX_RECEIVED_CONTENT_LENGTH = 1024 * 128;
 	private static final int DEFAULT_CONNECT_TIMEOUT = 10;
 	private static final int DEFAULT_READ_TIMEOUT = 10;

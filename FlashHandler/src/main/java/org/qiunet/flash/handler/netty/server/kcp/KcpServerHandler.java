@@ -105,7 +105,12 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, MessageContent content) throws Exception {
-		if (ChannelUtil.handlerPing(ctx.channel(), content) || this.handlerBind(ctx, content)) {
+		if (IProtocolId.System.CLIENT_PING == content.getProtocolId()) {
+			ctx.fireChannelRead(content.retain());
+			return;
+		}
+
+		if (this.handlerBind(ctx, content)) {
 			return;
 		}
 

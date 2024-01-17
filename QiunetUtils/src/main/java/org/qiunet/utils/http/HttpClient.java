@@ -37,7 +37,9 @@ enum HttpClient {
 			channelFuture.addListener(f0 -> {
 				if (! f0.isSuccess()) {
 					requestData.fail(f0.cause());
+					return;
 				}
+				requestData.beginTimeout();
 			});
 		});
 		return requestData.getRspPromise();

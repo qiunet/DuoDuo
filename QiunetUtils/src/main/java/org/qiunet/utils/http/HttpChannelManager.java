@@ -17,7 +17,6 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.Promise;
@@ -244,8 +243,9 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 					size.decrementAndGet();
 					httpChannel.remove();
 				}
+			}else {
+				this.releaseChannel();
 			}
-			this.releaseChannel();
 		}
 		/**
 		 * 对外提供channel;
@@ -363,30 +363,25 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		/**
 		 * 清理不活跃的channel
 		 */
-		void cleanupInactiveChannel() {
+		synchronized void cleanupInactiveChannel() {
 			long now = System.currentTimeMillis();
-			synchronized (this) {
-				HttpChannel hc = HEAD.next;
-				while (hc != TAIL) {
-					HttpChannel hcNow = hc;
-					hc = hc.next;
-					if (now - hcNow.useTime > TimeUnit.MINUTES.toMillis(1)) {
-						hcNow.remove();
-						size.decrementAndGet();
-						hcNow.channel.close();
-					}
+			HttpChannel hc = HEAD.next;
+			while (hc != TAIL) {
+				HttpChannel hcNow = hc;
+				hc = hc.next;
+				if (now - hcNow.useTime > TimeUnit.MINUTES.toMillis(1)) {
+					hcNow.channel.close();
 				}
 			}
 		}
 
 		@Override
-		public void close() {
-			synchronized (this) {
-				HttpChannel hc = HEAD.next;
-				while (hc != TAIL) {
-					hc.channel.close();
-					hc = hc.next;
-				}
+		public synchronized void close() {
+			HttpChannel hc = HEAD.next;
+			while (hc != TAIL) {
+				HttpChannel hcNow = hc;
+				hc = hc.next;
+				hcNow.channel.close();
 			}
 		}
 	}
@@ -413,7 +408,6 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 			}
 			pipeline.addLast("codec", new HttpClientCodec());
 			pipeline.addLast("aggregator", new HttpObjectAggregator(HttpRequest.maxReceivedContentLength));
-			pipeline.addLast("readTimeout", new ReadTimeoutHandler(HttpRequest.readTimeout));
 			pipeline.addLast("handler", new NettyHttpClientHandler());
 		}
 	}
@@ -426,6 +420,11 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		@Override
 		protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse response) throws Exception {
 			HttpRequestData requestData = ctx.channel().attr(REQ_DATA_KEY).get();
+			if (! requestData.getTimeout().cancel()) {
+				// 已经超时处理了!
+				return;
+			}
+
 			try {
 				DecoderResult decoderResult = response.decoderResult();
 				if (decoderResult.isFailure()) {

@@ -99,7 +99,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 				handlerGameUriPathRequest(ctx, msg);
 			} else if (config.getHttpBootstrapConfig().getWebsocketPath() != null && config.getHttpBootstrapConfig().getWebsocketPath().equals(uri.getRawPath())) {
 				// 升级握手信息
-				handlerWebSocketHandShark(ctx);
+				handlerWebSocketHandShark(ctx, msg);
 			}else {
 				// 普通的uriPath类型的请求. 可以是游戏外部调用的. 可以随便传入 json什么的.
 				handlerOtherUriPathRequest(ctx, msg, uri.getRawPath());
@@ -113,7 +113,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	/***
 	 * 处理升级握手信息
 	 */
-	private void handlerWebSocketHandShark(ChannelHandlerContext ctx){
+	private void handlerWebSocketHandShark(ChannelHandlerContext ctx, FullHttpRequest msg){
 		ChannelPipeline pipeline = ctx.pipeline();
 
 		pipeline.addLast("InvalidChannelCleanHandler", new InvalidChannelCleanHandler());
@@ -136,6 +136,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		ctx.channel().config().setOption(ChannelOption.SO_RCVBUF, 1024 * 128);
 		ctx.channel().config().setOption(ChannelOption.TCP_NODELAY, true);
 		pipeline.remove(this);
+		ctx.fireChannelRead(msg.retain());
 	}
 
 	/***
