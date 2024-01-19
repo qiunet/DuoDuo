@@ -6,10 +6,10 @@ import org.qiunet.data.util.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
+import org.qiunet.flash.handler.common.player.event.PlayerEvent;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.utils.listener.event.EventManager;
-import org.qiunet.utils.listener.event.IListenerEvent;
+import org.qiunet.utils.listener.event.ICrossListenerEvent;
 
 /***
  * 跨服事件处理
@@ -24,7 +24,7 @@ public final class CrossEventManager {
 	 * @param eventData 事件
 	 * @param <T>
 	 */
-	public static <T extends IListenerEvent> void fireCrossEvent(int serverId, T eventData) {
+	public static <T extends ICrossListenerEvent> void fireCrossEvent(int serverId, T eventData) {
 		if (serverId == ServerConfig.getServerId()) {
 			EventManager.fireEventHandler(eventData);
 			return;
@@ -39,13 +39,13 @@ public final class CrossEventManager {
 	 * @param event 事件
 	 * @param <T>
 	 */
-	public static <T extends UserEvent> void fireCrossUserEvent(int serverId, T event, long playerId) {
+	public static <T extends UserEvent & ICrossListenerEvent> void fireCrossUserEvent(int serverId, T event, long playerId) {
 		if (serverId == ServerConfig.getServerId()) {
 			AbstractUserActor actor0 = UserOnlineManager.instance.returnActor(playerId);
 			if (actor0.isPlayerActor()) {
-				((PlayerActor) actor0).fireAsyncEvent(((BasePlayerEvent) event));
+				((PlayerActor) actor0).fireAsyncEvent(((PlayerEvent) event));
 			}else {
-				((CrossPlayerActor) actor0).fireAsyncEvent((BaseCrossPlayerEvent) event);
+				((CrossPlayerActor) actor0).fireAsyncEvent((CrossPlayerEvent) event);
 			}
 			return;
 		}

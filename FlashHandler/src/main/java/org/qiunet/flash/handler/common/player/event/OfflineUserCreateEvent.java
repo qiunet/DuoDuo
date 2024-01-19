@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.player.offline.OfflinePlayerActor;
  * @author qiunet
  * 2021/12/7 15:19
  */
-public class OfflineUserCreateEvent extends BasePlayerEvent {
+public class OfflineUserCreateEvent extends PlayerEvent {
 
 	public static OfflineUserCreateEvent valueOf(OfflinePlayerActor actor){
 		OfflineUserCreateEvent data = new OfflineUserCreateEvent();

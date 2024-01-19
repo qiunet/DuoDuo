@@ -1,6 +1,6 @@
 package org.qiunet.test.function.test.targets.event;
 
-import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
+import org.qiunet.flash.handler.common.player.event.PlayerEvent;
 
 /***
  *
@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
  * @author qiunet
  * 2020-11-23 17:50
  */
-public class LevelUpEvent extends BasePlayerEvent {
+public class LevelUpEvent extends PlayerEvent {
 
 	private int level;
 

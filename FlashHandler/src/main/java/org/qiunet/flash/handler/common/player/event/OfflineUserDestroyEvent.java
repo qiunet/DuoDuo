@@ -8,7 +8,7 @@ import org.qiunet.flash.handler.common.player.offline.enums.OfflinePlayerDestroy
  * @author qiunet
  * 2021/12/7 15:19
  */
-public class OfflineUserDestroyEvent extends BasePlayerEvent {
+public class OfflineUserDestroyEvent extends PlayerEvent {
 	/**
 	 * 原因
 	 */

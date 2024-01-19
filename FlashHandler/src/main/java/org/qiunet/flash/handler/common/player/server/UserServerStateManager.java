@@ -19,6 +19,7 @@ import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.netty.server.event.GlobalRedisPrepareEvent;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.ICrossListenerEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
@@ -147,7 +148,7 @@ public enum UserServerStateManager {
 	 * @param playerId 玩家id
 	 * @param <E> 事件类型
 	 */
-	public <E extends BasePlayerEvent> void fireOnlineEvent(E event, long playerId) {
+	public <E extends PlayerEvent & ICrossListenerEvent> void fireOnlineEvent(E event, long playerId) {
 		this.fireUserEvent0(event, playerId, true);
 	}
 
@@ -157,11 +158,11 @@ public enum UserServerStateManager {
 	 * @param playerId 玩家id
 	 * @param <E> 事件类型
 	 */
-	public  <E extends UserEvent> void fireUserEvent(E event, long playerId) {
+	public  <E extends UserEvent & ICrossListenerEvent> void fireUserEvent(E event, long playerId) {
 		this.fireUserEvent0(event, playerId, false);
 	}
 
-	private <E extends UserEvent> void fireUserEvent0(E event, long playerId, boolean onlineOnly) {
+	private <E extends UserEvent & ICrossListenerEvent> void fireUserEvent0(E event, long playerId, boolean onlineOnly) {
 		AbstractUserActor<?> actor = UserOnlineManager.instance.getActor(playerId);
 		// 判断在本服
 		if (actor != null) {

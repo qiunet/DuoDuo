@@ -1,13 +1,13 @@
 package org.qiunet.cross.actor;
 
 import com.google.common.base.Preconditions;
-import org.qiunet.cross.event.BaseCrossPlayerEvent;
 import org.qiunet.cross.event.CrossEventRequest;
+import org.qiunet.cross.event.CrossPlayerEvent;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayerFireEvent;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.CrossActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
+import org.qiunet.flash.handler.common.player.event.ToPlayerEvent;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.listener.event.EventManager;
 
@@ -18,7 +18,7 @@ import org.qiunet.utils.listener.event.EventManager;
  * 2020-10-14 17:20
  */
 public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
-		implements IPlayerFireEvent<BaseCrossPlayerEvent, BasePlayerEvent, CrossPlayerActor> {
+		implements IPlayerFireEvent<CrossPlayerEvent, ToPlayerEvent, CrossPlayerActor> {
 	/**
 	 * 玩家id
 	 */
@@ -56,7 +56,7 @@ public final class CrossPlayerActor extends AbstractUserActor<CrossPlayerActor>
 	}
 
 	@Override
-	public void fireCrossEvent(BasePlayerEvent event) {
+	public void fireCrossEvent(ToPlayerEvent event) {
 		Preconditions.checkState(isAuth(), "Need auth!");
 
 		CrossEventRequest request = CrossEventRequest.valueOf(event);

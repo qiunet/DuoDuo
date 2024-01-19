@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.player.event;
 
-import org.qiunet.cross.event.BaseCrossPlayerEvent;
+import org.qiunet.cross.event.ToCrossPlayerEvent;
 
 /***
  * 玩家重连处理
@@ -9,7 +9,7 @@ import org.qiunet.cross.event.BaseCrossPlayerEvent;
  * @author qiunet
  * 2021/11/26 17:42
  */
-public class PlayerReconnectEvent extends BaseCrossPlayerEvent {
+public class PlayerReconnectEvent extends ToCrossPlayerEvent {
 
 	public static PlayerReconnectEvent valueOf(){
 		return new PlayerReconnectEvent();

@@ -2,7 +2,8 @@ package org.qiunet.flash.handler.common.player;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.qiunet.cross.event.BaseCrossPlayerEvent;
+import org.qiunet.cross.event.CrossPlayerEvent;
+import org.qiunet.cross.event.ToCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
@@ -10,9 +11,9 @@ import org.qiunet.data.db.loader.DbEntityBo;
 import org.qiunet.data.db.loader.IPlayerDataLoader;
 import org.qiunet.data.db.loader.PlayerDataLoader;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
-import org.qiunet.flash.handler.common.player.event.BasePlayerEvent;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
+import org.qiunet.flash.handler.common.player.event.PlayerEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
@@ -35,7 +36,7 @@ import java.util.function.Consumer;
  * 2020-10-21 10:08
  */
 public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICrossStatusActor,
-		IPlayerFireEvent<BasePlayerEvent, BaseCrossPlayerEvent, PlayerActor>, IPlayerDataLoader {
+		IPlayerFireEvent<PlayerEvent, ToCrossPlayerEvent, PlayerActor>, IPlayerDataLoader {
 	/**
 	 * 跨服的连接管理
 	 */
@@ -75,7 +76,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	}
 
 	@Override
-	public <E extends BaseCrossPlayerEvent> void allCrossEvent(E event) {
+	public <E extends CrossPlayerEvent> void allCrossEvent(E event) {
 		crossConnectors.values().forEach(crossConnector -> {
 			crossConnector.fireCrossEvent(event);
 		});
@@ -286,7 +287,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	 * @param event
 	 */
 	@Override
-	public void fireCrossEvent(BaseCrossPlayerEvent event) {
+	public void fireCrossEvent(ToCrossPlayerEvent event) {
 		crossConnectors.get(currentCrossServerId).fireCrossEvent(event);
 	}
 

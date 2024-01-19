@@ -45,7 +45,16 @@ enum EventManager0 implements IApplicationContextAware {
 		Set<Method> typesAnnotated = context.getMethodsAnnotatedWith(EventListener.class);
 		for (Method method : typesAnnotated) {
 			Class<? extends IListenerEvent> eventDataClass = eventDataClass(method);
-			List<EventSubscriber> subscriberList = this.listeners.computeIfAbsent(eventDataClass, key -> Lists.newArrayList());
+			List<EventSubscriber> subscriberList = this.listeners.computeIfAbsent(eventDataClass, key -> {
+				if (ICrossListenerEvent.class.isAssignableFrom(key)) {
+					try {
+						key.getDeclaredConstructor();
+					} catch (NoSuchMethodException e) {
+						throw new CustomException("Class {} not have default constructor!", key.getName());
+					}
+				}
+				return Lists.newArrayList();
+			});
 			subscriberList.add(wrapper(method));
 		}
 

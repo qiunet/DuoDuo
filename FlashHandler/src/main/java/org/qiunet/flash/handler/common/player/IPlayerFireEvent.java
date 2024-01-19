@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.IMessageHandler;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.utils.listener.event.EventManager;
+import org.qiunet.utils.listener.event.ICrossListenerEvent;
 
 /***
  * 玩家事件触发
@@ -10,7 +11,7 @@ import org.qiunet.utils.listener.event.EventManager;
  * @author qiunet
  * 2023/2/7 15:03
  */
-public interface IPlayerFireEvent<E extends UserEvent, C extends UserEvent, P extends AbstractUserActor<P>> extends IMessageHandler<P> {
+public interface IPlayerFireEvent<E extends UserEvent, C extends UserEvent & ICrossListenerEvent, P extends AbstractUserActor<P>> extends IMessageHandler<P> {
 	/**
 	 * 触发事件 必须是自己的线程
 	 * @param event 事件数据
