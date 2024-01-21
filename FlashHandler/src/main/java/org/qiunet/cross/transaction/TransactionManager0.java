@@ -1,12 +1,14 @@
 package org.qiunet.cross.transaction;
 
 import com.google.common.collect.Maps;
+import org.qiunet.cross.rpc.IRpcRequest;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
@@ -32,6 +34,11 @@ class TransactionManager0 implements IApplicationContextAware {
 			if (handles.containsKey(requestClass)) {
 				throw new CustomException("Request Class [{}] in transaction handles is repeated!", requestClass.getName());
 			}
+			Class responseClass = (Class) type.getActualTypeArguments()[1];
+			// 检查默认构造函数
+			Constructor<? extends IRpcRequest> constructorReq = requestClass.getDeclaredConstructor();
+			Constructor<? extends IRpcRequest> constructorRsp = responseClass.getDeclaredConstructor();
+
 			handles.put(requestClass, (ITransactionHandler)context.getInstanceOfClass(clazz));
 		}
 	}

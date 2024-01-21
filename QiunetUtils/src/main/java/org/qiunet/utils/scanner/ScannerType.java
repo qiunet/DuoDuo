@@ -60,6 +60,8 @@ public enum  ScannerType {
 	FAKE_ENUM(1 << 25),
 	/**埋点日志*/
 	LOG_RECORD(1 << 26, FILE_CONFIG),
+	/**RPC*/
+	RPC(1 << 27),
 	/**配置读取*/
 	CFG (
 			EVENT,
@@ -70,6 +72,7 @@ public enum  ScannerType {
 	),
 	/** 仅服务端 */
 	SERVER( CFG,
+			RPC,
 			ATTR,
 			CRON,
 			FORMULA,
@@ -101,13 +104,13 @@ public enum  ScannerType {
 			ROBOT_BEHAVIOR_BUILDER),
 
 	/** 所有 */
-	ALL(Integer.MAX_VALUE),
+	ALL(Long.MAX_VALUE),
 	;
 
-	private final int originStatus;
-	private final int complexStatus;
-	ScannerType(int status, ScannerType ... types) {
-		int complexStatus = status;
+	private final long originStatus;
+	private final long complexStatus;
+	ScannerType(long status, ScannerType ... types) {
+		long complexStatus = status;
 		for (ScannerType type : types) {
 			complexStatus |= type.complexStatus;
 		}
@@ -119,7 +122,7 @@ public enum  ScannerType {
 		this(0, types);
 	}
 
-	ScannerType(int status) {
+	ScannerType(long status) {
 		this.originStatus = status;
 		this.complexStatus = status;
 	}
@@ -128,7 +131,7 @@ public enum  ScannerType {
 	 * 复合status
 	 * @return
 	 */
-	public int getStatus() {
+	public long getStatus() {
 		return complexStatus;
 	}
 
@@ -136,7 +139,7 @@ public enum  ScannerType {
 	 * 是否可以扫描
 	 * @return
 	 */
-	public boolean test(int val) {
+	public boolean test(long val) {
 		return (originStatus | val) == val;
 	}
 }

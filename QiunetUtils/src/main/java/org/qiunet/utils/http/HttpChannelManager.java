@@ -128,12 +128,14 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		private final Deque<Promise<Channel>> queue = new LinkedBlockingDeque<>();
 		/**
 		 * 使用的数量
+		 * 即活跃数量
 		 */
-		private final AtomicInteger counter = new AtomicInteger();
+		private final AtomicInteger activateCount = new AtomicInteger();
 		/**
 		 * 当前链表数量
+		 * 即空闲数量
 		 */
-		private final AtomicInteger size = new AtomicInteger();
+		private final AtomicInteger idleCount = new AtomicInteger();
 		/**
 		 * 链表头 尾
 		 */
@@ -190,13 +192,13 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		}
 
 		public Future<Channel> acquire0(Promise<Channel> promise, boolean reacquire) {
-			int count = counter.get();
+			int count = activateCount.get();
 			if (count >= maxConnections) {
 				this.addToQueue(promise, reacquire);
 				return promise;
 			}
 
-			if (counter.compareAndSet(count, count + 1)) {
+			if (activateCount.compareAndSet(count, count + 1)) {
 				Channel channel = this.poll();
 				if (channel != null) {
 					this.offerChannel(channel, promise);
@@ -240,7 +242,7 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 			HttpChannel httpChannel = ((ChannelFuture) future).channel().attr(HTTP_CHANNEL_KEY).get();
 			if (httpChannel != null && httpChannel.linked) {
 				synchronized (this) {
-					size.decrementAndGet();
+					idleCount.decrementAndGet();
 					httpChannel.remove();
 				}
 			}else {
@@ -258,7 +260,7 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		}
 
 		private void releaseChannel() {
-			counter.decrementAndGet();
+			activateCount.decrementAndGet();
 			this.reacquire();
 		}
 
@@ -320,14 +322,14 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 		 * @return httpChannel
 		 */
 		private synchronized Channel poll(){
-			if (size.get() <= 0) {
+			if (idleCount.get() <= 0) {
 				return null;
 			}
 			HttpChannel rh = HEAD.next;
 			try {
 				while (rh != TAIL) {
 					rh.remove();
-					size.decrementAndGet();
+					idleCount.decrementAndGet();
 					if (rh.channel.isActive()) {
 						return rh.channel;
 					}
@@ -357,7 +359,7 @@ enum HttpChannelManager implements ChannelPoolMap<HttpAddress, ChannelPool> {
 			httpChannel.linked = true;
 			TAIL.pre = httpChannel;
 			httpChannel.next = TAIL;
-			size.incrementAndGet();
+			idleCount.incrementAndGet();
 		}
 
 		/**

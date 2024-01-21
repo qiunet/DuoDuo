@@ -49,7 +49,7 @@ public final class ClassScanner implements IApplicationContext {
 	/**
 	 * 可以扫描的类型
 	 */
-	private final int scannerTypes;
+	private final long scannerTypes;
 	/**
 	 * 已经回收. 不能再取数据.
 	 */
@@ -57,7 +57,7 @@ public final class ClassScanner implements IApplicationContext {
 
 	private ClassScanner(ScannerType... scannerTypes) {
 		this.reflections = new Reflections("org.qiunet", scanners);
-		int scannerType = 0;
+		long scannerType = 0;
 		for (ScannerType type : scannerTypes) {
 			scannerType |= type.getStatus();
 		}

@@ -5,14 +5,20 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.reflect.ReflectUtil;
+import org.qiunet.utils.scanner.IApplicationContext;
+import org.qiunet.utils.scanner.IApplicationContextAware;
+import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 
@@ -107,5 +113,23 @@ public class RpcManager {
 	 */
 	static void removeMapping(int id) {
 		cached.remove(id);
+	}
+
+	private enum RpcManager0 implements IApplicationContextAware {
+		instance;
+
+		@Override
+		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
+			Set<Class<? extends IRpcRequest>> classes = context.getSubTypesOf(IRpcRequest.class);
+			for (Class<? extends IRpcRequest> aClass : classes) {
+				// 检查默认构造函数
+				Constructor<? extends IRpcRequest> constructor = aClass.getDeclaredConstructor();
+			}
+		}
+
+		@Override
+		public ScannerType scannerType() {
+			return ScannerType.RPC;
+		}
 	}
 }
