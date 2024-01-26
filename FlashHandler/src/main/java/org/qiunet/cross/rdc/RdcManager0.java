@@ -1,7 +1,6 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rdc;
 
 import com.google.common.collect.Maps;
-import org.qiunet.cross.rpc.IRpcRequest;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
@@ -20,41 +19,41 @@ import java.util.Set;
  * @author qiunet
  * 2020-10-22 18:05
  */
-class TransactionManager0 implements IApplicationContextAware {
+class RdcManager0 implements IApplicationContextAware {
 
-	private static final Map<Class, ITransactionHandler> handles = Maps.newHashMap();
+	private static final Map<Class, IRdcHandler> handles = Maps.newHashMap();
 
 	@Override
 	public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
-		Set<Class<? extends ITransactionHandler>> classes = context.getSubTypesOf(ITransactionHandler.class);
-		for (Class<? extends ITransactionHandler> clazz : classes) {
-			Method method = clazz.getMethod("handler", DTransaction.class);
+		Set<Class<? extends IRdcHandler>> classes = context.getSubTypesOf(IRdcHandler.class);
+		for (Class<? extends IRdcHandler> clazz : classes) {
+			Method method = clazz.getMethod("handler", DRdc.class);
 			ParameterizedType type = (ParameterizedType) method.getGenericParameterTypes()[0];
 			Class requestClass = (Class) type.getActualTypeArguments()[0];
 			if (handles.containsKey(requestClass)) {
-				throw new CustomException("Request Class [{}] in transaction handles is repeated!", requestClass.getName());
+				throw new CustomException("Request Class [{}] in rdc handles is repeated!", requestClass.getName());
 			}
 			Class responseClass = (Class) type.getActualTypeArguments()[1];
 			// 检查默认构造函数
-			Constructor<? extends IRpcRequest> constructorReq = requestClass.getDeclaredConstructor();
-			Constructor<? extends IRpcRequest> constructorRsp = responseClass.getDeclaredConstructor();
+			Constructor<? extends IRdcRequest> constructorReq = requestClass.getDeclaredConstructor();
+			Constructor<? extends IRdcResponse> constructorRsp = responseClass.getDeclaredConstructor();
 
-			handles.put(requestClass, (ITransactionHandler)context.getInstanceOfClass(clazz));
+			handles.put(requestClass, (IRdcHandler)context.getInstanceOfClass(clazz));
 		}
 	}
 
 	/**
-	 * 处理事务
+	 * 处理远程数据调用
 	 * @param reqClass
-	 * @param transaction
+	 * @param rdc
 	 */
-	static void handler(Class reqClass, DTransaction transaction) {
-		handles.get(reqClass).handler(transaction);
+	static void handler(Class reqClass, DRdc rdc) {
+		handles.get(reqClass).handler(rdc);
 	}
 
 	@Override
 	public ScannerType scannerType() {
-		return ScannerType.TRANSACTION;
+		return ScannerType.RDC;
 	}
 
 	@Override

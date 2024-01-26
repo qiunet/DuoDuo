@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rdc;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -23,12 +23,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 /***
- *
+ * 远程数据调用 管理
  *
  * @author qiunet
  * 2020-10-22 12:53
  */
-public enum TransactionManager {
+public enum RdcManager {
 	instance;
 	private static final CommMessageHandler messageHandler = new CommMessageHandler();
 
@@ -41,7 +41,7 @@ public enum TransactionManager {
 	private final Map<Long, DPromise> cacheRequests = Maps.newConcurrentMap();
 
 	/**
-	 * 异步transaction
+	 * 异步远程数据调用
 	 * 注意. consumer 线程不在一个线程了.
 	 * 需要注意线程安全
 	 * @param serverId
@@ -50,12 +50,12 @@ public enum TransactionManager {
 	 * @param <Req>
 	 * @param <Resp>
 	 */
-	public <Req extends ITransactionReq, Resp extends ITransactionRsp> void beginTransaction(int serverId, Req req, BiConsumer<Resp, ? super Throwable> consumer) {
-		TransactionFuture<Resp> future = this.beginTransaction(serverId, req);
+	public <Req extends IRdcRequest, Resp extends IRdcResponse> void beginRdc(int serverId, Req req, BiConsumer<Resp, ? super Throwable> consumer) {
+		RdcFuture<Resp> future = this.beginRdc(serverId, req);
 		future.whenComplete(consumer);
 	}
 	/**
-	 * 发起事务请求
+	 * 发起远程数据调用请求
 	 * @param serverId 目标的serverId
 	 * @param req 请求数据
 	 * @param <Req>
@@ -63,12 +63,12 @@ public enum TransactionManager {
 	 * @return
 	 */
 
-	public <Req extends ITransactionReq, Resp extends ITransactionRsp> TransactionFuture<Resp> beginTransaction(int serverId, Req req) {
-		return beginTransaction(serverId, req, 3, TimeUnit.SECONDS);
+	public <Req extends IRdcRequest, Resp extends IRdcResponse> RdcFuture<Resp> beginRdc(int serverId, Req req) {
+		return beginRdc(serverId, req, 3, TimeUnit.SECONDS);
 	}
 
 	/**
-	 * 发起事务请求
+	 * 发起远程数据调用请求
 	 * @param serverId 目标的serverId
 	 * @param req 请求数据
 	 * @param timeout 超时时间
@@ -77,63 +77,63 @@ public enum TransactionManager {
 	 * @param <Resp>
 	 * @return
 	 */
-	public <Req extends ITransactionReq, Resp extends ITransactionRsp> TransactionFuture<Resp> beginTransaction(int serverId, Req req, int timeout, TimeUnit unit) {
+	public <Req extends IRdcRequest, Resp extends IRdcResponse> RdcFuture<Resp> beginRdc(int serverId, Req req, int timeout, TimeUnit unit) {
 		Preconditions.checkNotNull(req);
 		DPromise<Resp> promise = new DCompletePromise<>();
 
 		long reqId = idGenerator.makeId();
 		this.cacheRequests.put(reqId, promise);
-		RouteTransactionReq routeTransactionReq = RouteTransactionReq.valueOf(reqId, req);
-		TransactionFuture<Resp> respTransactionFuture = new TransactionFuture<>(reqId, promise);
+		RouteRdcReq routeRdcReq = RouteRdcReq.valueOf(reqId, req);
+		RdcFuture<Resp> respRdcFuture = new RdcFuture<>(reqId, promise);
 		if (serverId == ServerNodeManager.getCurrServerId()) {
-			DTransaction<Req, Resp> dTransaction = new DTransaction<>(reqId, req);
-			this.handler(req, dTransaction);
-			return respTransactionFuture;
+			DRdc<Req, Resp> dRdc = new DRdc<>(reqId, req);
+			this.handler(req, dRdc);
+			return respRdcFuture;
 		}
 
 		ServerNodeManager.getNode(serverId, node -> {
-			ChannelFuture channelFuture = node.sendMessage(routeTransactionReq);
+			ChannelFuture channelFuture = node.sendMessage(routeRdcReq);
 			channelFuture.addListener(f -> {
 				if (f.isSuccess()) {
-					respTransactionFuture.beginCalTimeOut(timeout, unit);
+					respRdcFuture.beginCalTimeOut(timeout, unit);
 				}else {
-					promise.tryFailure(new CustomException(f.cause(), "Transaction [{}] send fail!", JsonUtil.toJsonString(req)));
+					promise.tryFailure(new CustomException(f.cause(), "Rdc [{}] send fail!", JsonUtil.toJsonString(req)));
 				}
 			});
 		});
-		return respTransactionFuture;
+		return respRdcFuture;
 	}
 	/**
 	 * 根据是否是玩家请求. 分发到各自的线程.
 	 * @param req
-	 * @param dTransaction
+	 * @param dRdc
 	 */
-	void handler(ITransactionReq req, DTransaction dTransaction) {
+	void handler(IRdcRequest req, DRdc dRdc) {
 		if (req instanceof IPlayer) {
 			messageHandler.runMessageWithMsgExecuteIndex((node) -> {
 				AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) req).getId());
-				actor.addMessage(a -> this.handler0(req, dTransaction));
+				actor.addMessage(a -> this.handler0(req, dRdc));
 			}, String.valueOf(((IPlayer) req).getId()));
 		}else {
-			ThreadPoolManager.NORMAL.submit(() -> this.handler0(req, dTransaction));
+			ThreadPoolManager.NORMAL.submit(() -> this.handler0(req, dRdc));
 		}
 	}
 
 	/**
-	 * 处理事务.如果异常. 正常情况抛出给外面.
+	 * 处理远程数据调用.如果异常. 正常情况抛出给外面.
 	 * 否则打印
 	 * @param req 请求数据
-	 * @param dTransaction transaction 对象
+	 * @param dRdc rdc 对象
 	 */
-	private void handler0(ITransactionReq req, DTransaction dTransaction) {
+	private void handler0(IRdcRequest req, DRdc dRdc) {
 		try {
-			TransactionManager0.handler(req.getClass(), dTransaction);
+			RdcManager0.handler(req.getClass(), dRdc);
 		}catch (Throwable e) {
-			DPromise dPromise = cacheRequests.get(dTransaction.getReqId());
+			DPromise dPromise = cacheRequests.get(dRdc.getReqId());
 			if (dPromise != null) {
 				dPromise.tryFailure(e);
 			}else {
-				logger.error("transaction error!", e);
+				logger.error("rdc error!", e);
 			}
 		}
 	}
@@ -142,21 +142,21 @@ public enum TransactionManager {
 	 * 可能网络延迟了点. 实际处理完成了, 这个业务自己根据需求判断.
 	 * @param id
 	 */
-	void removeTransaction(long id){
+	void removeRdc(long id){
 		this.cacheRequests.remove(id);
 	}
 
 	/**
-	 * 处理事务回来的数据
+	 * 处理回来的数据
 	 * @param response
 	 */
-	void completeTransaction(RouteTransactionRsp response) {
+	void completeRdc(RouteRdcRsp response) {
 		Object obj = response.getData();
 		Preconditions.checkNotNull(obj);
 
 		DPromise dPromise = cacheRequests.get(response.getId());
 		if (dPromise == null) {
-			logger.error("Cross ITransactionHandler id[{}] Class [{}] Data [{}] is invalid!", response.getId(), response.getClassName(), JsonUtil.toJsonString(obj));
+			logger.error("Cross IRdcHandler id[{}] Class [{}] Data [{}] is invalid!", response.getId(), response.getClassName(), JsonUtil.toJsonString(obj));
 			return;
 		}
 

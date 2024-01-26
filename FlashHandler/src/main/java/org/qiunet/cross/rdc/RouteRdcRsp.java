@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rdc;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.cross.rpc.TransferJsonData;
@@ -19,8 +19,8 @@ import org.qiunet.utils.string.ToString;
  */
 @SkipProtoGenerator
 @ServerCommunicationData
-@ChannelData(ID = IProtocolId.System.TRANSACTION_RSP, desc = "处理事务请求")
-public class RouteTransactionRsp extends IChannelData {
+@ChannelData(ID = IProtocolId.System.RDC_RSP, desc = "处理处理远程数据调用响应")
+public class RouteRdcRsp extends IChannelData {
 	/**
 	 * 响应端维护自增的id, 需要带着返回给请求服务器.
 	 */
@@ -29,8 +29,8 @@ public class RouteTransactionRsp extends IChannelData {
 	@Protobuf
 	private TransferJsonData jsonData;
 
-	public static RouteTransactionRsp valueOf(long id, ITransactionRsp data) {
-		RouteTransactionRsp response = new RouteTransactionRsp();
+	public static RouteRdcRsp valueOf(long id, IRdcResponse data) {
+		RouteRdcRsp response = new RouteRdcRsp();
 		response.jsonData = new TransferJsonData(data);
 		response.id = id;
 		return response;
@@ -48,8 +48,8 @@ public class RouteTransactionRsp extends IChannelData {
 		return jsonData.getClazz();
 	}
 
-	public ITransactionRsp getData() {
-		return (ITransactionRsp) jsonData.getData();
+	public IRdcResponse getData() {
+		return (IRdcResponse) jsonData.getData();
 	}
 
 	@Override
@@ -59,6 +59,6 @@ public class RouteTransactionRsp extends IChannelData {
 
 	@Override
 	public String _toString() {
-		return "=TransactionRsp= " + ToString.toString(getData())+"]";
+		return "=RdcRsp= " + ToString.toString(getData())+"]";
 	}
 }

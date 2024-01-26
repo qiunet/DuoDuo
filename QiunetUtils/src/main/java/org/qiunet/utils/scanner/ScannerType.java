@@ -50,8 +50,8 @@ public enum  ScannerType {
 	SERVER_NODE(1 << 20, EVENT),
 	/**任务处理*/
 	TARGET_HANDLER(1 << 21, EVENT),
-	/***请求转发*/
-	TRANSACTION(1 << 22),
+	/***远程数据调用*/
+	RDC(1 << 22),
 	/***url类型请求*/
 	URL_REQUEST(1 << 23),
 	/** 属性*/
@@ -83,7 +83,7 @@ public enum  ScannerType {
 			CHANNEL_DATA,
 			SERVER_NODE,
 			LOG_RECORD,
-			TRANSACTION,
+		RDC,
 			URL_REQUEST,
 			CREATE_TABLE,
 			TARGET_HANDLER,

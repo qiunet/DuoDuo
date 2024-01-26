@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rdc;
 
 import com.google.common.base.Preconditions;
 import org.qiunet.utils.async.future.DPromise;
@@ -12,21 +12,19 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 /***
- * transaction 能少用就少用. 因为同步, 可能导致线程池线程消耗光.
- *
- * 发起事务后, 返回的事务句柄.
+ * 发起rdc后, 返回的rdc句柄.
  * 因为不能cancel. 所以封装一层
  *
  * @author qiunet
  * 2020-10-22 14:52
  */
-public class TransactionFuture<T extends ITransactionRsp> {
+public class RdcFuture<T extends IRdcResponse> {
 
 	private final long id;
 
 	private final DPromise<T> future;
 
-	TransactionFuture(long id, DPromise<T> future) {
+	RdcFuture(long id, DPromise<T> future) {
 		Preconditions.checkNotNull(future);
 		this.future = future;
 		this.id = id;
@@ -35,14 +33,14 @@ public class TransactionFuture<T extends ITransactionRsp> {
 
 	void beginCalTimeOut(int timeout, TimeUnit unit) {
 		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> {
-			future.tryFailure(new CustomException("Transaction Timeout"));
+			future.tryFailure(new CustomException("Rdc Timeout"));
 			this.clear();
 		}, timeout, unit);
 		this.future.whenComplete((res, ex) -> timeOutFuture.cancel());
 	}
 
 	void clear() {
-		TransactionManager.instance.removeTransaction(id);
+		RdcManager.instance.removeRdc(id);
 	}
 
 	public long getId() {

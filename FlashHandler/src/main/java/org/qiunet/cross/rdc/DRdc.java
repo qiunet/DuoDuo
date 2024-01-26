@@ -1,4 +1,4 @@
-package org.qiunet.cross.transaction;
+package org.qiunet.cross.rdc;
 
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.utils.exceptions.CustomException;
@@ -9,12 +9,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /***
- * 事务处理的类.
+ * 远程数据调用处理的类.
  *
  * @author qiunet
  * 2020-09-24 09:29
  */
-public final class DTransaction<REQ extends ITransactionReq, RESP extends ITransactionRsp> {
+public final class DRdc<REQ extends IRdcRequest, RSP extends IRdcResponse> {
 	public enum Status {
 		/**初始化状态*/
 		INIT,
@@ -29,10 +29,10 @@ public final class DTransaction<REQ extends ITransactionReq, RESP extends ITrans
 	private final TimeOutFuture timeOutFuture;
 	private final AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
-	DTransaction(long reqId, REQ reqData) {
+	DRdc(long reqId, REQ reqData) {
 		this(reqId, reqData, null);
 	}
-	DTransaction(long reqId, REQ reqData, ServerNode serverNode) {
+	DRdc(long reqId, REQ reqData, ServerNode serverNode) {
 		this.reqId = reqId;
 		this.reqData = reqData;
 		this.serverNode = serverNode;
@@ -40,18 +40,18 @@ public final class DTransaction<REQ extends ITransactionReq, RESP extends ITrans
 		this.timeOutFuture = Timeout.newTimeOut(f -> this.compareAndSet(Status.INIT, Status.TIMEOUT), 2);
 	}
 
-	public void handler(Function<REQ, RESP> dataHandler) {
+	public void handler(Function<REQ, RSP> dataHandler) {
 		if (! compareAndSet(Status.INIT, Status.OVER)) {
-			throw new CustomException("ITransactionHandler is over! current status is [{}]", getStatus());
+			throw new CustomException("IRdcHandler is over! current status is [{}]", getStatus());
 		}
 		this.timeOutFuture.cancel();
 
-		RESP response = dataHandler.apply(reqData);
-		RouteTransactionRsp transactionResponse = RouteTransactionRsp.valueOf(reqId, response);
+		RSP response = dataHandler.apply(reqData);
+		RouteRdcRsp rdcResponse = RouteRdcRsp.valueOf(reqId, response);
 		if (serverNode != null) {
-			serverNode.sendMessage(transactionResponse);
+			serverNode.sendMessage(rdcResponse);
 		}else {
-			TransactionManager.instance.completeTransaction(transactionResponse);
+			RdcManager.instance.completeRdc(rdcResponse);
 		}
 	}
 

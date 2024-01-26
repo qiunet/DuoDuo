@@ -62,10 +62,10 @@ public interface IProtocolId {
 		/**跨服事件**/
 		int CROSS_EVENT_REQ = 600;
 
-		/** 事务请求 **/
-		int TRANSACTION_REQ = 601;
-		/** 事务响应 **/
-		int TRANSACTION_RSP = 602;
+		/** 远程数据调用请求 **/
+		int RDC_REQ = 601;
+		/** 远程数据调用响应 **/
+		int RDC_RSP = 602;
 
 		/** rpc请求 **/
 		int ROUTE_RPC_REQ = 603;
