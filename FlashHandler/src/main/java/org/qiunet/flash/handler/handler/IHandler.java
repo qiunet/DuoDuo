@@ -2,8 +2,7 @@ package org.qiunet.flash.handler.handler;
 
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
-
-import java.nio.ByteBuffer;
+import org.qiunet.flash.handler.common.message.MessageContent;
 
 /**
  * Handler 的接口, 下面会分两个分支出来
@@ -52,8 +51,8 @@ public interface IHandler<RequestData> {
 	void recordUseTime(long useTime);
 	/***
 	 * 得到自己的RequestData
-	 * @param buffer
+	 * @param content
 	 * @return
 	 */
-	RequestData parseRequestData(ByteBuffer buffer);
+	RequestData parseRequestData(MessageContent content);
 }

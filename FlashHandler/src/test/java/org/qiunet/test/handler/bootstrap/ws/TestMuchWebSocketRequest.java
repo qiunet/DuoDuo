@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import io.netty.channel.Channel;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.param.WebSocketClientConfig;
@@ -57,7 +56,7 @@ public class TestMuchWebSocketRequest extends HttpBootStrap {
 		@Override
 		public void response(ISession session, Channel channel, MessageContent data) {
 			// test 的地方.直接使用bytes 解析. 免得release
-			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
+			LoginResponse response = data.decodeProtobuf(LoginResponse.class);
 			LoggerType.DUODUO_FLASH_HANDLER.info("count: {} , content: {}", counter.incrementAndGet(), response.getTestString());
 			latch.countDown();
 		}

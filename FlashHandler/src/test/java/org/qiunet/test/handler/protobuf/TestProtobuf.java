@@ -33,7 +33,7 @@ public class TestProtobuf {
 	}
 
 	@Test
-	public void testDecode() {
+	public void testDecode() throws Exception {
 		List<Long> longs = Lists.newArrayList(1L, 2L, 3L);
 		String name = "qiunet";
 		int level = 10;

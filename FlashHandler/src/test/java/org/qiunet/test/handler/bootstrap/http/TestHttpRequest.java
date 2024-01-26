@@ -40,8 +40,13 @@ public class TestHttpRequest extends HttpBootStrap {
 				// 跳过头
 				buffer.position(PROTOCOL_HEADER.getClientInHeadLength());
 
-				LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class, buffer);
-				Assertions.assertEquals(test, loginResponse.getTestString());
+                LoginResponse loginResponse;
+                try {
+                    loginResponse = ProtobufDataManager.decode(LoginResponse.class, buffer);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                Assertions.assertEquals(test, loginResponse.getTestString());
 				LockSupport.unpark(currThread);
 		});
 		LockSupport.park();

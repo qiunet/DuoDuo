@@ -28,7 +28,7 @@ public class TestProtobufData {
 		LoadBadWordEvent.valueOf(new DefaultBadWord(new String[] {"毛泽东"})).fireEventHandler();
 	}
 	@Test
-	public void testByteBuf (){
+	public void testByteBuf () throws Exception {
 		WsPbLoginRequest request = WsPbLoginRequest.valueOf("qiunet", "qiuyang", 11);
 
 		for (int i = 0; i < 5; i++) {

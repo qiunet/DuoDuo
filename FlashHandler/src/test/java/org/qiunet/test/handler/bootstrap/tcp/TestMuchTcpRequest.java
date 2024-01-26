@@ -4,7 +4,6 @@ import io.netty.channel.Channel;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.SequenceIdProtocolHeader;
 import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
@@ -60,7 +59,7 @@ public class TestMuchTcpRequest extends BasicTcpBootStrap {
 			if (data.getProtocolId() == IProtocolId.System.CONNECTION_RSP) {
 				return;
 			}
-			LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
+			LoginResponse response = data.decodeProtobuf(LoginResponse.class);
 			LoggerType.DUODUO_FLASH_HANDLER.info("count: {}, content: {}", counter.incrementAndGet(), response.getTestString());
 			latch.countDown();
 		}

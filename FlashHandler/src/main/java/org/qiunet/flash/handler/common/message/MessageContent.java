@@ -3,7 +3,11 @@ package org.qiunet.flash.handler.common.message;
 import io.netty.buffer.ByteBuf;
 import io.netty.util.ReferenceCountUtil;
 import io.netty.util.ReferenceCounted;
+import org.qiunet.flash.handler.common.protobuf.ProtoDecodeException;
+import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.IProtocolHeader;
+import org.qiunet.flash.handler.context.request.data.IChannelData;
+import org.qiunet.utils.data.ByteUtil;
 import org.qiunet.utils.pool.ObjectPool;
 
 import java.nio.ByteBuffer;
@@ -93,6 +97,20 @@ public class MessageContent implements ReferenceCounted {
 	public ByteBuf byteBuf() {
 		return this.buffer;
 	}
+
+	/**
+	 * 解析protobuf
+	 * @param clz class
+	 * @return channel Data
+	 * @param <T> IChannelData 类型
+	 */
+	public <T extends IChannelData> T decodeProtobuf(Class<T> clz) {
+        try {
+            return ProtobufDataManager.decode(clz, this.byteBuffer());
+        } catch (Exception e) {
+            throw new ProtoDecodeException(e, clz, this.header, ByteUtil.readBytebuffer(this.byteBuffer()));
+        }
+    }
 
 	@Override
 	public String toString() {

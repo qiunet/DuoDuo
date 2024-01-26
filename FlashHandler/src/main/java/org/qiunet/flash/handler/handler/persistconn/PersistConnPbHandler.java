@@ -3,14 +3,13 @@ package org.qiunet.flash.handler.handler.persistconn;
 import io.micrometer.core.instrument.Timer;
 import org.qiunet.flash.handler.common.enums.DataType;
 import org.qiunet.flash.handler.common.enums.HandlerType;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.handler.BaseHandler;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.async.LazyLoader;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -42,8 +41,8 @@ public abstract class PersistConnPbHandler<P extends IMessageActor, RequestData 
 	}
 
 	@Override
-	public RequestData parseRequestData(ByteBuffer buffer) {
-		return ProtobufDataManager.decode(getRequestClass(), buffer);
+	public RequestData parseRequestData(MessageContent content) {
+		return content.decodeProtobuf(getRequestClass());
 	}
 
 	@Override

@@ -39,8 +39,13 @@ public class TestMuchHttpRequest extends HttpBootStrap {
 							ByteBuffer buffer = ByteBuffer.wrap(response.getBytes());
 							buffer.position(PROTOCOL_HEADER.getClientInHeadLength());
 
-							LoginResponse loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);
-							Assertions.assertEquals(test, loginResponse.getTestString());
+                            LoginResponse loginResponse;
+                            try {
+                                loginResponse = ProtobufDataManager.decode(LoginResponse.class,buffer);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            Assertions.assertEquals(test, loginResponse.getTestString());
 							latch.countDown();
 						});
 				}

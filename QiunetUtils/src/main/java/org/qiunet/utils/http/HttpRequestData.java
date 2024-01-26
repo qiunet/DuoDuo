@@ -97,7 +97,11 @@ class HttpRequestData {
 		HttpResponse httpResponse = new HttpResponse(request, response, url);
 		if (this.callback != null) {
 			ThreadPoolManager.NORMAL.execute(() -> {
-				this.callback.success(httpResponse);
+				try {
+					this.callback.success(httpResponse);
+				}catch (Throwable e) {
+					this.callback.fail(request, e);
+				}
 			});
 		}
 		rspPromise.trySuccess(httpResponse);

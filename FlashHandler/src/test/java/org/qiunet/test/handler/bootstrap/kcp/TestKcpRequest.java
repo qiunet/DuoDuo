@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.ClientSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.client.kcp.NettyKcpClient;
@@ -56,7 +55,7 @@ public class TestKcpRequest extends BasicKcpBootStrap implements IPersistConnRes
 			return;
 		}
 		// test 的地方.直接使用bytes 解析. 免得release
-		LoginResponse response = ProtobufDataManager.decode(LoginResponse.class, data.byteBuffer());
+		LoginResponse response = data.decodeProtobuf(LoginResponse.class);
 		LoggerType.DUODUO_FLASH_HANDLER.info("=TCP Response Text:[{}]" , response.getTestString());
 		Assertions.assertEquals(text, response.getTestString());
 		LockSupport.unpark(currThread);

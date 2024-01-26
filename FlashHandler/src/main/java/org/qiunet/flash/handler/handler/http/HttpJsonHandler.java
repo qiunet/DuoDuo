@@ -1,10 +1,10 @@
 package org.qiunet.flash.handler.handler.http;
 
 import org.qiunet.flash.handler.common.enums.DataType;
+import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -30,8 +30,8 @@ public abstract class HttpJsonHandler<RequestData> extends BaseHttpHandler<Reque
 	}
 
 	@Override
-	public RequestData parseRequestData(ByteBuffer buffer) {
-		String json = StandardCharsets.UTF_8.decode(buffer).toString();
+	public RequestData parseRequestData(MessageContent content) {
+		String json = content.byteBuf().toString(StandardCharsets.UTF_8);
 		return JsonUtil.getGeneralObj(json, getRequestClass());
 	}
 }

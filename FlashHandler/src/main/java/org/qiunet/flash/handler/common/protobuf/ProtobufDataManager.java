@@ -81,15 +81,11 @@ public class ProtobufDataManager {
 	 * @param <T> 泛型
 	 * @return 对象实例
 	 */
-	public static <T> T decode(Class<T> clazz, ByteBuffer buffer) {
+	public static <T> T decode(Class<T> clazz, ByteBuffer buffer) throws Exception {
 		CodedInputStreamThreadCache in = CodedInputStreamThreadCache.get(buffer);
-		try {
-			T ret = getCodec(clazz).readFrom(in.getCodedInputStream());
-			in.recycle();
-			return  ret;
-		} catch (IOException e) {
-			throw new CustomException(e, "Class ["+clazz.getName()+"] decode data error!");
-		}
+		T ret = getCodec(clazz).readFrom(in.getCodedInputStream());
+		in.recycle();
+		return  ret;
 	}
 
 	/**

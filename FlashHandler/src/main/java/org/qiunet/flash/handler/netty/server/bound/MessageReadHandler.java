@@ -65,7 +65,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			return false;
 		}
 
-		ClientPingRequest pingRequest = ProtobufDataManager.decode(ClientPingRequest.class, content.byteBuffer());
+		ClientPingRequest pingRequest = content.decodeProtobuf(ClientPingRequest.class);
 		ServerPongResponse serverPongResponse = ServerPongResponse.valueOf(pingRequest.getBytes());
 		channel.writeAndFlush(serverPongResponse.buildChannelMessage());
 		return true;
@@ -136,7 +136,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			return;
 		}
 
-		GmDebugProtocolReq protocolReq = ProtobufDataManager.decode(GmDebugProtocolReq.class, content.byteBuffer());
+		GmDebugProtocolReq protocolReq = content.decodeProtobuf(GmDebugProtocolReq.class);
 		int protocolID = protocolReq.getProtocolId();
 		String data = protocolReq.getData();
 		Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(protocolID);

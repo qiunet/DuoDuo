@@ -149,8 +149,13 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (! aClass.isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv()) {
-				IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-				ServerConnType serverConnType = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
+                IChannelData channelData;
+                try {
+                    channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                ServerConnType serverConnType = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
 				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, channelData._toString());
 			}
 		}

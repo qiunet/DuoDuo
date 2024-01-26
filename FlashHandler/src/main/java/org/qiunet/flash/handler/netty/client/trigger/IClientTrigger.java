@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.netty.client.trigger;
 
 import io.netty.channel.Channel;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.header.ISequenceProtocolHeader;
 import org.qiunet.flash.handler.context.request.data.ChannelDataMapping;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
@@ -20,7 +19,7 @@ public interface IClientTrigger extends IPersistConnResponseTrigger {
 	default void response(ISession session, Channel channel, MessageContent data) {
 		ClientSession session0 = ((ClientSession) session);
 		Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(data.getProtocolId());
-		IChannelData channelData = ProtobufDataManager.decode(aClass, data.byteBuffer());
+		IChannelData channelData = data.decodeProtobuf(aClass);
 
 		if (session0.isSequenceHeader() && ((ISequenceProtocolHeader) data.getHeader()).sequence() > 0) {
 			session0.rsp(((ISequenceProtocolHeader) data.getHeader()).sequence(), channelData);

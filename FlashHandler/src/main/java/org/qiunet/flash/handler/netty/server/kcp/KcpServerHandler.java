@@ -9,7 +9,6 @@ import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.KcpSession;
@@ -68,7 +67,7 @@ public class KcpServerHandler extends SimpleChannelInboundHandler<MessageContent
 			return false;
 		}
 
-		KcpBindAuthReq req = ProtobufDataManager.decode(KcpBindAuthReq.class, content.byteBuffer());
+		KcpBindAuthReq req = content.decodeProtobuf(KcpBindAuthReq.class);
 		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()) {
 			LoggerType.DUODUO_PROTOCOL.info("[{}({})] <<< {}", "KCP", ctx.channel().id().asShortText(), req._toString());
 		}
