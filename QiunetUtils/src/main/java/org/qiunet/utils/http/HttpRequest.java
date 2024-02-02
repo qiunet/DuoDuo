@@ -33,7 +33,7 @@ public abstract class HttpRequest<B extends HttpRequest<?>> {
 
 	protected static int maxReceivedContentLength = DEFAULT_MAX_RECEIVED_CONTENT_LENGTH;
 	protected static int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
-	protected static int readTimeout = DEFAULT_READ_TIMEOUT;
+	protected int readTimeout = DEFAULT_READ_TIMEOUT;
 	protected String urlstring;
 	protected URL url;
 
@@ -70,6 +70,11 @@ public abstract class HttpRequest<B extends HttpRequest<?>> {
 	 */
 	public B closeConnectAlive() {
 		this.header(HttpHeaderNames.CONNECTION, HttpHeaderValues.CLOSE);
+		return (B) this;
+	}
+
+	public B setReadTimeout(int readTimeout) {
+		this.readTimeout = readTimeout;
 		return (B) this;
 	}
 
@@ -125,10 +130,6 @@ public abstract class HttpRequest<B extends HttpRequest<?>> {
 
 	public static void setConnectTimeout(int connectTimeout) {
 		HttpRequest.connectTimeout = connectTimeout;
-	}
-
-	public static void setReadTimeout(int readTimeout) {
-		HttpRequest.readTimeout = readTimeout;
 	}
 
 	protected abstract FullHttpRequest buildRequest();

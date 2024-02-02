@@ -5,9 +5,12 @@ import io.netty.channel.ChannelFuture;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import io.netty.util.DefaultAttributeMap;
+import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.flash.handler.common.player.event.CrossChannelErrorEvent;
 import org.qiunet.flash.handler.context.header.NodeProtocolHeader;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
 /***
  * 使用的共享Channel 连接的Session
@@ -44,6 +47,17 @@ public class NodeServerSession extends BaseChannelSession {
 		return super.sendMessage(message, flush);
 	}
 
+	@Override
+	public void close(CloseCause cause) {
+		if (cause == CloseCause.DECODE_ERROR && type == NodeSessionType.CROSS_PLAYER) {
+			// 这种情况,只通知Gate Channel下线重连, 不要直接退房.
+			CrossPlayerActor actor = (CrossPlayerActor) getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+			actor.fireCrossEvent(CrossChannelErrorEvent.valueOf(cause));
+			return;
+		}
+
+		super.close(cause);
+	}
 
 	@Override
 	public <T> Attribute<T> attr(AttributeKey<T> key) {

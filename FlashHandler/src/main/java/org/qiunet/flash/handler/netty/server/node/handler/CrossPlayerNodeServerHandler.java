@@ -8,6 +8,7 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
+import org.qiunet.flash.handler.common.protobuf.ProtoDecodeException;
 import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
@@ -55,12 +56,20 @@ public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
 			}
 			crossPlayerActor = this.newCrossPlayerActor(ctx, header.id());
 		}
-		IRequestContext context = handler.getDataType().createRequestContext(crossPlayerActor.getSession(), content);
-		if (content.getProtocolId() == IProtocolId.System.CROSS_PLAYER_AUTH) {
-			((PersistConnPbRequestContext) context).execute(crossPlayerActor);
-			return;
+		try {
+			IRequestContext context = handler.getDataType().createRequestContext(crossPlayerActor.getSession(), content);
+			if (content.getProtocolId() == IProtocolId.System.CROSS_PLAYER_AUTH) {
+				((PersistConnPbRequestContext) context).execute(crossPlayerActor);
+				return;
+			}
+			crossPlayerActor.addMessage((IMessage) context);
+		}catch (Throwable e) {
+			if (e instanceof ProtoDecodeException) {
+				crossPlayerActor.getSession().close(CloseCause.DECODE_ERROR);
+				return;
+			}
+			this.exceptionCaught(ctx, e);
 		}
-		crossPlayerActor.addMessage((IMessage) context);
 	}
 
 	/**

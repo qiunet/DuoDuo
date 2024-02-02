@@ -82,10 +82,6 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 		ISession session = ChannelUtil.getSession(channel);
 		Preconditions.checkNotNull(session);
 
-		if (! config.getStartupContext().userServerValidate(session)) {
-			return;
-		}
-
 		if (content.getProtocolId() == IProtocolId.System.CONNECTION_REQ) {
 			ConnectionReq connectionReq = ProtobufDataManager.decode(ConnectionReq.class, content.byteBuffer());
 			if (logger.isInfoEnabled()) {
@@ -112,6 +108,10 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 		if (messageActor == null) {
 			logger.info("{} messageActor is null! Need call ConnectionReq first", channel.id().asShortText());
 			session.close(CloseCause.CONNECTION_ID_KEY_ERROR);
+			return;
+		}
+
+		if (! config.getStartupContext().userServerValidate(session)) {
 			return;
 		}
 

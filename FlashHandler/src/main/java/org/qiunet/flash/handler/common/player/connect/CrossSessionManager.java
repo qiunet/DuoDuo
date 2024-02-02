@@ -11,6 +11,7 @@ import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
+import org.qiunet.flash.handler.common.player.event.CrossChannelErrorEvent;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerQuitCrossEvent;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
@@ -101,6 +102,11 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		sessionMap.forEach((serverId, map) -> {
 			map.values().forEach(s -> s.close(CloseCause.SERVER_SHUTDOWN));
 		});
+	}
+
+	@EventListener
+	private void crossChannelErrorEvent(CrossChannelErrorEvent event) {
+		event.getPlayer().getSession().close(event.getCause());
 	}
 
 	@EventListener(EventHandlerWeightType.LOWEST)

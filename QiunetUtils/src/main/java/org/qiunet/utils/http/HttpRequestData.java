@@ -30,10 +30,13 @@ class HttpRequestData {
 
 	private HttpAddress address;
 
+	private HttpRequest<?> r;
+
 	private URL url;
 
 	public static HttpRequestData valueOf(HttpRequest<?> req, FullHttpRequest request, IHttpCallBack callback1){
 		HttpRequestData data = new HttpRequestData();
+		data.r = req;
 		request.headers().set(req.headers);
 		request.headers().add(HttpHeaderNames.HOST, req.url.getHost());
 		URL url = req.url;
@@ -57,7 +60,7 @@ class HttpRequestData {
 				return;
 			}
 			this.fail(new TimeoutException(request.toString()));
-		}, HttpRequest.readTimeout);
+		}, r.readTimeout);
 	}
 
 	public TimeOutFuture getTimeout() {

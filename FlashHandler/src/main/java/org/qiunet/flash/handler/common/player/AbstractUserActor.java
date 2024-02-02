@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player;
 import org.qiunet.flash.handler.common.observer.IObserverSupportOwner;
 import org.qiunet.flash.handler.common.observer.ObserverSupport;
 import org.qiunet.flash.handler.common.player.protocol.CommonProtocolCD;
+import org.qiunet.flash.handler.common.protobuf.ProtoDecodeException;
 import org.qiunet.flash.handler.context.session.IPlayerSender;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.kcp.IKcpSessionHolder;
@@ -78,6 +79,11 @@ public abstract class AbstractUserActor<T extends AbstractUserActor<T>>
 
 	@Override
 	protected void exceptionHandle(Throwable e) {
+		if (e instanceof ProtoDecodeException) {
+			session.close(CloseCause.DECODE_ERROR);
+			return;
+		}
+
 		if (! (e instanceof StatusResultException)) {
 			super.exceptionHandle(e);
 		}else {

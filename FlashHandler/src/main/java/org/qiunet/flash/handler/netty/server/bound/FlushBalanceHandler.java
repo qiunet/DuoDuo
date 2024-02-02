@@ -65,6 +65,10 @@ public class FlushBalanceHandler extends ChannelDuplexHandler {
 	}
 
 	public void flush0(ChannelHandlerContext ctx, boolean cleanSchedule) throws Exception {
+		if (! ctx.channel().isActive()) {
+			return;
+		}
+
 		super.flush(ctx);
 
 		if (cleanSchedule && this.schedule != null) {
