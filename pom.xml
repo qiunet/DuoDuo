@@ -6,7 +6,7 @@
 
 	<groupId>io.github.qiunet</groupId>
 	<artifactId>DuoDuo</artifactId>
-	<version>7.2.2</version>
+	<version>7.2.3</version>
 	<name>DuoDuo</name>
 
 	<modules>
