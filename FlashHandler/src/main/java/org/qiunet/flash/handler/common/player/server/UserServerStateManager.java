@@ -115,7 +115,12 @@ public enum UserServerStateManager {
 
 		int serverId = state.getServerId();
 		if (serverId != 0) {
-			return serverId;
+			if (redisUtil.returnJedis().exists(ServerInfo.serverInfoRedisKey(serverId))) {
+				return serverId;
+			}
+			// 某种异常情况没有移除, 给移除掉.
+			LoggerType.DUODUO_FLASH_HANDLER.error("PlayerId {} UserServerState.serverID not remove!", playerId);
+			redisUtil.returnJedis().hdel(UserServerState.redisKey(playerId), SERVER_ID);
 		}
 
 		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());

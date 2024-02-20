@@ -5,12 +5,12 @@
     <parent>
         <artifactId>DuoDuo</artifactId>
         <groupId>io.github.qiunet</groupId>
-		<version>7.2.2</version>
+		<version>7.2.3</version>
     </parent>
 
 	<artifactId>QiunetUtils</artifactId>
 	<modelVersion>4.0.0</modelVersion>
-	<version>7.2.2</version>
+	<version>7.2.3</version>
 
 	<description>自己的工具集合</description>
 	<inceptionYear>2016</inceptionYear>
