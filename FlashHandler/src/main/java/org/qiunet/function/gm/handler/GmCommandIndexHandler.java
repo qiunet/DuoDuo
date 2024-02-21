@@ -1,6 +1,6 @@
 package org.qiunet.function.gm.handler;
 
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractMessageActor;
 import org.qiunet.flash.handler.context.request.persistconn.IPersistConnRequest;
 import org.qiunet.flash.handler.handler.persistconn.PersistConnPbHandler;

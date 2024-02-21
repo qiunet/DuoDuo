@@ -27,13 +27,14 @@ public enum  ScannerType {
 	BEHAVIOR_ACTION(1 << 8, CONDITION),
 	/**AI 策划用配置文件生成*/
 	CREATE_AI_CONFIG(1 << 9),
-	/**生成数据库表*/
-	CREATE_TABLE(1 << 10, FILE_CONFIG),
+	/**数据库数据检查*/
+	DATABASE(1 << 10, FILE_CONFIG),
 	/**定时调度*/
 	CRON(1 << 11),
-	/**玩家的数据加载*/
-	PLAYER_DATA_LOADER(1 << 12, FILE_CONFIG),
-	/**protobuf 数据compile*/
+	/**RPC*/
+	RPC(1 << 12),
+	/**埋点日志*/
+	LOG_RECORD(1 << 13, FILE_CONFIG),
 	/**公式**/
 	FORMULA(1 << 14, AUTO_WIRE, EVENT),
 	/**通道数据. 请求*/
@@ -58,50 +59,47 @@ public enum  ScannerType {
 	ATTR(1 << 24),
 	/**假枚举*/
 	FAKE_ENUM(1 << 25),
-	/**埋点日志*/
-	LOG_RECORD(1 << 26, FILE_CONFIG),
-	/**RPC*/
-	RPC(1 << 27),
+
 	/**配置读取*/
 	CFG (
-			EVENT,
-			CFG_SCANNER,
-			KEY_VAL_CFG,
-			AUTO_WIRE,
-			OBJ_CONVERT
+		EVENT,
+		AUTO_WIRE,
+		OBJ_CONVERT,
+		CFG_SCANNER,
+		KEY_VAL_CFG
 	),
 	/** 仅服务端 */
-	SERVER( CFG,
-			RPC,
-			ATTR,
-			CRON,
-			FORMULA,
-			FAKE_ENUM,
-			CONDITION,
-			GM_COMMAND,
-			FILE_CONFIG,
-			CHANNEL_DATA,
-			SERVER_NODE,
-			LOG_RECORD,
+	SERVER(
+		CFG,
+		RPC,
 		RDC,
-			URL_REQUEST,
-			CREATE_TABLE,
-			TARGET_HANDLER,
-			BEHAVIOR_ACTION,
-			PLAYER_DATA_LOADER
+		ATTR,
+		CRON,
+		FORMULA,
+		DATABASE,
+		FAKE_ENUM,
+		CONDITION,
+		GM_COMMAND,
+		LOG_RECORD,
+		FILE_CONFIG,
+		SERVER_NODE,
+		URL_REQUEST,
+		CHANNEL_DATA,
+		TARGET_HANDLER,
+		BEHAVIOR_ACTION
 	),
 	/** 客户端使用 */
 	CLIENT (
-			CFG,
-			FORMULA,
-			CONDITION,
-			CHANNEL_DATA
-			),
+		CFG,
+		FORMULA,
+		CONDITION,
+		CHANNEL_DATA
+		),
 
 	/**压测*/
 	GAME_TEST(SERVER,
-			GAME_TEST_RESPONSE,
-			ROBOT_BEHAVIOR_BUILDER),
+		GAME_TEST_RESPONSE,
+		ROBOT_BEHAVIOR_BUILDER),
 
 	/** 所有 */
 	ALL(Long.MAX_VALUE),

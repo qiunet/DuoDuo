@@ -6,7 +6,7 @@
 
 	<groupId>io.github.qiunet</groupId>
 	<artifactId>DuoDuo</artifactId>
-	<version>7.2.3</version>
+	<version>8.0.1</version>
 	<name>DuoDuo</name>
 
 	<modules>
@@ -14,11 +14,9 @@
 		<module>QiunetDatas</module>
 		<module>CfgReader</module>
 		<module>GameTest</module>
-		<module>ProjectInit</module>
 		<module>FlashHandler</module>
 		<module>JavaAgent</module>
 		<module>Quartz</module>
-		<module>Entity2Table</module>
 		<module>all</module>
 		<module>LogRecord</module>
 		<module>Profile</module>
@@ -53,7 +51,7 @@
 	</developers>
 
 	<properties>
-		<netty.version>4.1.86.Final</netty.version>
+		<netty.version>4.1.107.Final</netty.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -233,11 +231,6 @@
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>ProjectInit</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>2.0.3</version>
@@ -251,6 +244,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.12.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongodb-driver-sync</artifactId>
+				<version>4.11.1</version>
 			</dependency>
 			<dependency>
 				<groupId>org.javassist</groupId>
@@ -320,17 +318,6 @@
 				<version>33.0.0-jre</version>
 			</dependency>
 			<dependency>
-				<groupId>com.mysql</groupId>
-				<artifactId>mysql-connector-j</artifactId>
-				<version>8.2.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>com.google.protobuf</groupId>
-						<artifactId>protobuf-java</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
 				<groupId>redis.clients</groupId>
 				<artifactId>jedis</artifactId>
 				<version>3.7.0</version>
@@ -356,11 +343,6 @@
 						<artifactId>slf4j-api</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.mybatis</groupId>
-				<artifactId>mybatis</artifactId>
-				<version>3.5.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.junit.jupiter</groupId>
@@ -393,35 +375,9 @@
 				<version>2.0.17</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.velocity</groupId>
-				<artifactId>velocity-engine-core</artifactId>
-				<version>2.3</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.slf4j</groupId>
-						<artifactId>slf4j-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.commons</groupId>
-						<artifactId>commons-lang3</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
 				<groupId>io.micrometer</groupId>
 				<artifactId>micrometer-registry-prometheus</artifactId>
 				<version>1.9.5</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-dbcp2</artifactId>
-				<version>2.9.0</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.commons</groupId>
-						<artifactId>commons-pool2</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

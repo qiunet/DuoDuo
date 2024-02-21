@@ -1,7 +1,7 @@
 package org.qiunet.function.gm.handler;
 
 import org.qiunet.cross.node.ServerNode;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;

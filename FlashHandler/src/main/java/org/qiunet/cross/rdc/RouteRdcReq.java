@@ -2,7 +2,7 @@ package org.qiunet.cross.rdc;
 
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import org.qiunet.cross.rpc.TransferJsonData;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.context.request.data.ChannelData;

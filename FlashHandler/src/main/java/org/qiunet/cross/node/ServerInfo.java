@@ -1,7 +1,7 @@
 package org.qiunet.cross.node;
 
-import org.qiunet.data.util.ServerConfig;
-import org.qiunet.data.util.ServerType;
+import org.qiunet.data.conf.ServerConfig;
+import org.qiunet.data.enums.ServerType;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 public final class ServerInfo extends HashMap<String, Object> implements IWeightObj {
 
 	private transient final LazyLoader<ServerType> serverType = new LazyLoader<>(() -> ServerType.getServerType(getServerId()));
-
-	private transient final LazyLoader<Integer> serverGroupId = new LazyLoader<>(() -> ServerType.getGroupId(getServerId()));
 
 	private static final String REDIS_KEY_PREFIX = "SERVER_NODE_INFO_REDIS_KEY#";
 	/**
@@ -111,10 +109,6 @@ public final class ServerInfo extends HashMap<String, Object> implements IWeight
 
 	public ServerType getServerType() {
 		return serverType.get();
-	}
-
-	public int getServerGroupId(){
-		return serverGroupId.get();
 	}
 
 	public String getHost() {

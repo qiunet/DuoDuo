@@ -1,7 +1,7 @@
 package org.qiunet.cross.common.contants;
 
 import org.qiunet.cross.node.ServerInfo;
-import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.redis.IRedisUtil;
 import org.qiunet.utils.args.ArgumentKey;
 
 import java.util.function.Supplier;

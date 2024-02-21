@@ -1,7 +1,7 @@
 package org.qiunet.test.function.test.rank;
 
 
-import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.redis.IRedisUtil;
 import org.qiunet.function.rank.BaseRedisRankHandler;
 import org.qiunet.function.rank.IRankHandler;
 import org.qiunet.function.rank.IRankHandlerWrapper;

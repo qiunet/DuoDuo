@@ -2,7 +2,7 @@ package org.qiunet.cross.event;
 
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;

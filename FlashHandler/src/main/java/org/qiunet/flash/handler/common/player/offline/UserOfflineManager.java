@@ -3,7 +3,7 @@ package org.qiunet.flash.handler.common.player.offline;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
+import org.qiunet.data.event.PlayerKickOutEvent;
 import org.qiunet.flash.handler.common.player.offline.enums.OfflinePlayerDestroyCause;
 import org.qiunet.flash.handler.common.player.server.UserServerState;
 import org.qiunet.flash.handler.common.player.server.UserServerStateManager;

@@ -1,7 +1,7 @@
 package org.qiunet.function.rank;
 
 import com.google.common.base.Preconditions;
-import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.redis.IRedisUtil;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.json.JsonUtil;
 

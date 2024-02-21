@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.server.hook;
 
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.utils.logger.LoggerType;
 
 /**
