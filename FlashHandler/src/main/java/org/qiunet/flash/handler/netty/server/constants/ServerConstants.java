@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public final class ServerConstants {
 	private ServerConstants(){}
+	public static final int MAX_SOCKET_MESSAGE_LENGTH = 1024 * 1024;
 
 	public static final EventLoopGroup WORKER = NettyUtil.newEventLoopGroup(0, "netty-tcp-server-worker-event-loop-");
 	/**

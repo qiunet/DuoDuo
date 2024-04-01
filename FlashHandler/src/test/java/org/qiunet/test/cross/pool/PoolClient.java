@@ -52,7 +52,7 @@ public class PoolClient {
 		bootstrap.group(ServerConstants.WORKER);
 		bootstrap.channel(socketChannelClz);
 
-		try (NodeChannelPool pool = new NodeChannelPool(bootstrap, new Trigger(), true, 8192, 5)){
+		try (NodeChannelPool pool = new NodeChannelPool(bootstrap, new Trigger(), true, ServerConstants.MAX_SOCKET_MESSAGE_LENGTH, 5)){
 			for (int i = 1; i <= thread; i++) {
 				int finalI = i;
 				new Thread(

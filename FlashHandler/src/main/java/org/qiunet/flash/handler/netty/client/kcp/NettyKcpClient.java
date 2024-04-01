@@ -45,7 +45,7 @@ public class NettyKcpClient {
 
 						ChannelPipeline p = ch.pipeline();
 						ch.attr(ServerConstants.PROTOCOL_HEADER).set(config.getProtocolHeader());
-						p.addLast("KcpSocketEncoder", new KcpSocketClientEncoder())
+						p.addLast("KcpSocketEncoder", new KcpSocketClientEncoder(config.getMaxReceivedLength()))
 						.addLast("KcpSocketDecoder", new KcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()))
 						.addLast("KcpServerHandler", new NettyClientHandler())
 						.addLast("FlushBalanceHandler", new FlushBalanceHandler());

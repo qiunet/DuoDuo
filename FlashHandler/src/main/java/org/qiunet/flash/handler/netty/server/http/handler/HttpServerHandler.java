@@ -120,13 +120,13 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 		pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 		pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 		pipeline.addLast("WebSocketServerProtocolHandler", new WebSocketServerProtocolHandler(WebSocketServerProtocolConfig.newBuilder()
-			.maxFramePayloadLength(config.getMaxReceivedLength())
+			.maxFramePayloadLength(config.getMaxMsgLength())
 			.websocketPath(config.getHttpBootstrapConfig().getWebsocketPath())
 			.handleCloseFrames(true)
 			.build()));
 		pipeline.addLast("WriteTimeoutHandler", new WriteTimeoutHandler(30));
 		pipeline.addLast("WebSocketFrameToByteBufHandler", new WebSocketFrameToByteBufHandler());
-		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+		pipeline.addLast("WebSocketDecoder", new WebSocketServerDecoder(config.getMaxMsgLength(), config.isEncryption()));
 		pipeline.addLast("WebSocketServerHandler", new WebsocketServerHandler());
 		pipeline.addLast("MessageReadHandler", new MessageReadHandler());
 		pipeline.addLast("WebSocketEncoder", new WebSocketServerEncoder());

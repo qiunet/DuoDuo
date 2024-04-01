@@ -33,8 +33,8 @@ public class NodeChannelPool implements ChannelPool {
 	private final int maxConnections;
 	private final Bootstrap bootstrap;
 
-	public NodeChannelPool(Bootstrap bootstrap, NodeChannelTrigger channelTrigger, boolean releaseHealthCheck, int maxReceivedLength, int maxConnections) {
-		this.handler = new NodeChannelPoolHandler(channelTrigger, maxReceivedLength);
+	public NodeChannelPool(Bootstrap bootstrap, NodeChannelTrigger channelTrigger, boolean releaseHealthCheck, int maxMsgLength, int maxConnections) {
+		this.handler = new NodeChannelPoolHandler(channelTrigger, maxMsgLength);
 		this.healthCheck = ChannelHealthChecker.ACTIVE;
 		this.releaseHealthCheck = releaseHealthCheck;
 		this.maxConnections = maxConnections;
