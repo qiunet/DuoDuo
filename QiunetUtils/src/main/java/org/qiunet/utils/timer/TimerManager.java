@@ -5,6 +5,7 @@ import org.qiunet.utils.async.factory.DefaultThreadFactory;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
@@ -122,8 +123,9 @@ public enum TimerManager {
 
 	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
-		if (timeMillis < now) {
-			LoggerType.DUODUO.error("timeMillis is less than currentTimeMillis");
+		if (now - timeMillis > 500) {
+			// 有500误差 避免填写的是delay时间.  如果是当前时间误差内. 直接执行.
+			throw new CustomException("timeMillis is less than currentTimeMillis");
 		}
 		return scheduleWithDelay(delayTask, Math.max(1, timeMillis - now), TimeUnit.MILLISECONDS);
 	}

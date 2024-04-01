@@ -276,6 +276,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		});
 
 		handler.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+		this.dataLoader().setOffline(false);
 		this.setSession(handler.session);
 		this.loginSuccess = false;
 		handler.setSession(null);

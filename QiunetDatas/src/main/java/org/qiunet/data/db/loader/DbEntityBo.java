@@ -18,8 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<Do> , IDbEntityBo {
 	private final transient AtomicReference<EntityStatus> atomicStatus = new AtomicReference<>(EntityStatus.INIT);
+	private final boolean syncImmediately = getClass().isAnnotationPresent(SyncImmediately.class);
 	PlayerDataLoader playerDataLoader;
-	private boolean delete;
 
 	@Override
 	public void updateEntityStatus(EntityStatus status) {
@@ -36,7 +36,7 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 
 	@Override
 	public void update() {
-		if (playerDataLoader == null) {
+		if (playerDataLoader == null || playerDataLoader.offline || syncImmediately) {
 			IEntityBo.super.update();
 			return;
 		}
@@ -49,7 +49,7 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 			throw new CustomException("Need insert first!");
 		}
 
-		if (delete) {
+		if (entityStatus() == EntityStatus.DELETE) {
 			throw new CustomException("Entity already deleted!!");
 		}
 
@@ -61,26 +61,38 @@ public abstract class DbEntityBo<Do extends IDbEntity<?>> implements IEntityBo<D
 
 	@Override
 	public void delete() {
+		EntityStatus status = entityStatus();
+		if (status == EntityStatus.DELETE) {
+			return;
+		}
+
+		if (! atomicStatus.compareAndSet(status, EntityStatus.DELETE)) {
+			// 可能INSERT 执行完毕, 变成NORMAL了. 确保修改是原子性的.
+			this.delete();
+			return;
+		}
+
+		// 尚未入库
+		if (status == EntityStatus.INIT) {
+			return;
+		}
+
 		if (playerDataLoader == null) {
 			IEntityBo.super.delete();
 			return;
 		}
 
-		if (delete) {
-			return;
-		}
-
-		this.delete = true;
-		EntityStatus entityStatus = entityStatus();
 		Object obj = playerDataLoader.dataCache.get(getClass());
 		if (obj instanceof Map) {
-			((Map<?, ?>) obj).remove(((DbEntityList) getDo()).subKey());
+			((Map<?, ?>) obj).remove(((DbEntityList<?, ?>) getDo()).subKey());
 		}else {
 			playerDataLoader.dataCache.put(getClass(), PlayerDataLoader.NULL);
 		}
 
 		// 尚未入库
-		if (entityStatus == EntityStatus.INIT) {
+		if (playerDataLoader.offline || syncImmediately) {
+			// 离线用户直接删除
+			IEntityBo.super.delete();
 			return;
 		}
 

@@ -32,7 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -144,6 +145,7 @@ public enum UserOnlineManager {
 			// 给2分钟重连时间
 			DFuture<Void> future = currActor.scheduleMessage(this::destroyPlayer, 2 * 60, TimeUnit.SECONDS);
 			waitReconnects.put(currActor.getId(), new WaitActor(currActor, future));
+			currActor.dataLoader().setOffline(true);
 
 
 			if (currActor.isCrossStatus()) {

@@ -6,6 +6,7 @@ import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.IgnoreToString;
 
 /***
  * 传输一个对象
@@ -16,6 +17,7 @@ import org.qiunet.utils.logger.LoggerType;
 @ProtobufClass
 public class TransferJsonData {
 	@Ignore
+	@IgnoreToString
 	@JSONField(deserialize = false, serialize = false)
 	private Object data;
 	@Protobuf

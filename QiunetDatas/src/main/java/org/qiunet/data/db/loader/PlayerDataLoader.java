@@ -7,6 +7,8 @@ import org.qiunet.data.core.entity.IEntityList;
 import org.qiunet.data.db.entity.DbEntityList;
 import org.qiunet.data.db.entity.IDbEntity;
 import org.qiunet.data.support.DataSupportMapping;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
@@ -37,6 +39,11 @@ public class PlayerDataLoader implements IPlayerDataLoader {
      * 玩家ID
 	 */
 	private final long playerId;
+	/**
+	 * 是否离线用户.
+	 * 离线用户直接落地数据库
+	 */
+	boolean offline;
 
 	private PlayerDataLoader(ISyncDbExecutor sync, long playerId) {
 		this.playerId = playerId;
@@ -50,6 +57,10 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	public static PlayerDataLoader get(ISyncDbExecutor sync, long playerId) {
 		return DataLoaderManager.instance.getPlayerLoader(playerId, () -> new PlayerDataLoader(sync, playerId));
+	}
+
+	public void setOffline(boolean offline) {
+		this.offline = offline;
 	}
 
 	@Override
@@ -78,7 +89,14 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * 同步数据到db
 	 */
 	public Future<?> syncToDb(){
-		return this.sync.submit(cacheAsyncToDb::syncToDb);
+		if (this.sync.inSelfThread()) {
+			cacheAsyncToDb.syncToDb();
+			DPromise<Void> future = new DCompletePromise<>();
+			future.trySuccess(null);
+			return future;
+		}else {
+			return this.sync.submit(cacheAsyncToDb::syncToDb);
+		}
 	}
 	/**
 	 * 获得玩家ID
@@ -102,6 +120,9 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	@Override
 	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity, boolean persistenceImmediately) {
+		if (offline || entity.getClass().isAnnotationPresent(SyncImmediately.class)) {
+			persistenceImmediately = true;
+		}
 		Bo bo = (Bo) DataSupportMapping.getMapping(entity.getClass()).convertBo(entity);
 		bo.playerDataLoader = this;
 		if (bo.getDo() instanceof DbEntityList aDo) {
@@ -137,7 +158,9 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	public <Data extends DbEntityBo<?>> Data getData(Class<Data> clazz) {
 		Object data = dataCache.computeIfAbsent(clazz, key -> {
 			Object obj = DataLoaderManager.instance.getData(key, playerId);
-			if (obj == null) {
+			if (obj != null) {
+				((DbEntityBo<?>) obj).playerDataLoader = this;
+			}else {
 				obj = NULL;
 			}
 			return obj;
