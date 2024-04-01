@@ -84,8 +84,8 @@ public class NettyKcpServer implements INettyServer {
 						@Override
 						public void initChannel(UkcpChannel ch) throws Exception {
 							ChannelPipeline p = ch.pipeline();
-							p.addLast("KcpSocketEncoder", new KcpSocketServerEncoder())
-							.addLast("KcpSocketDecoder", new KcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()))
+							p.addLast("KcpSocketEncoder", new KcpSocketServerEncoder(config.getMaxMsgLength()))
+							.addLast("KcpSocketDecoder", new KcpSocketServerDecoder(config.getMaxMsgLength(), config.isEncryption()))
 							.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0))
 							.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler())
 							.addLast("KcpServerHandler", new KcpServerHandler())

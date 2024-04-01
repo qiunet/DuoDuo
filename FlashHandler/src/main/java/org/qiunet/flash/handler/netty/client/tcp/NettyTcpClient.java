@@ -94,7 +94,7 @@ public class NettyTcpClient {
 
 			clientSession.attachObj(ServerConstants.PROTOCOL_HEADER, config.getProtocolHeader());
 			clientSession.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
-			pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
+			pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder(config.getMaxReceivedLength()));
 			pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(config.getMaxReceivedLength(), config.isEncryption()));
 			pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler());
 			pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());

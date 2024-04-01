@@ -100,7 +100,7 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 			IConnectInHeader, IConnectOutHeader, INodeServerHeader {
 		private final ObjectPool.Handle<NodeServerHeader> recyclerHandle;
 		private static final byte [] MAGIC = {'F', 'a', 's', 't'};
-		private static final int HEADER_LENGTH = MAGIC.length + 19;
+		private static final int HEADER_LENGTH = MAGIC.length + 21;
 		private final byte [] magic = new byte[MAGIC.length];
 
 		private int extraInfo;
@@ -119,7 +119,7 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 			header.id = in.readLong();
 			header.serverId = in.readInt();
 			header.protocolId = in.readInt();
-			header.length = in.readUnsignedShort();
+			header.length = in.readInt();
 			return header;
 		}
 
@@ -164,7 +164,7 @@ public enum NodeProtocolHeader implements IProtocolHeader {
 			out.writeLong(id);
 			out.writeInt(serverId);
 			out.writeInt(protocolId);
-			out.writeShort(length);
+			out.writeInt(length);
 			return out;
 		}
 

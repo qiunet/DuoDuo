@@ -36,7 +36,7 @@ public class ServerBootStrapConfig {
 	/**
 	 * 最大接受的数据长度
 	 */
-	private int maxReceivedLength = 1024 * 1024;
+	private int maxMsgLength = 1024 * 1024;
 	/**
 	 * http 启动参数
 	 */
@@ -120,8 +120,8 @@ public class ServerBootStrapConfig {
 		return encryption;
 	}
 
-	public int getMaxReceivedLength() {
-		return maxReceivedLength;
+	public int getMaxMsgLength() {
+		return maxMsgLength;
 	}
 
 	public class Builder {
@@ -176,8 +176,8 @@ public class ServerBootStrapConfig {
 			return this;
 		}
 
-		public Builder setMaxReceivedLength(int maxReceivedLength) {
-			ServerBootStrapConfig.this.maxReceivedLength = maxReceivedLength;
+		public Builder setMaxMsgLength(int maxMsgLength) {
+			ServerBootStrapConfig.this.maxMsgLength = maxMsgLength;
 			return this;
 		}
 

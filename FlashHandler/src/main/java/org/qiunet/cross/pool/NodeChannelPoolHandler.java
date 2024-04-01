@@ -27,11 +27,11 @@ import java.util.concurrent.TimeUnit;
 public class NodeChannelPoolHandler implements ChannelPoolHandler {
 	private final ClientChannelPoolHandler clientChannelPoolHandler;
 
-	private final int maxReceivedLength;
+	private final int maxMsgLength;
 
-	public NodeChannelPoolHandler(NodeChannelTrigger channelTrigger, int maxReceivedLength) {
+	public NodeChannelPoolHandler(NodeChannelTrigger channelTrigger, int maxMsgLength) {
 		this.clientChannelPoolHandler = new ClientChannelPoolHandler(channelTrigger);
-		this.maxReceivedLength = maxReceivedLength;
+		this.maxMsgLength = maxMsgLength;
 	}
 
 	@Override
@@ -49,8 +49,8 @@ public class NodeChannelPoolHandler implements ChannelPoolHandler {
 		ChannelPipeline pipeline = ch.pipeline();
 		ch.attr(ServerConstants.PROTOCOL_HEADER).set(NodeProtocolHeader.instance);
 		ch.attr(ServerConstants.HANDLER_TYPE_KEY).set(ServerConnType.TCP);
-		pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(this.maxReceivedLength, false));
-		pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder());
+		pipeline.addLast("TcpSocketDecoder", new TcpSocketClientDecoder(this.maxMsgLength, false));
+		pipeline.addLast("TcpSocketEncoder", new TcpSocketClientEncoder(this.maxMsgLength));
 		pipeline.addLast("ClientChannelPoolHandler", clientChannelPoolHandler);
 		pipeline.addLast("FlushBalanceHandler", new FlushBalanceHandler(50, 10));
 		pipeline.addLast("NettyCauseHandler", new NettyCauseHandler());

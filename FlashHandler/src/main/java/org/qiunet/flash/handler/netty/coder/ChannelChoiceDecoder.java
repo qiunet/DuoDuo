@@ -50,8 +50,8 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 		ChannelPipeline pipeline = ctx.channel().pipeline();
 		if (equals(protocolHeader.getConnectInMagic(), in)) {
 			pipeline.addLast("InvalidChannelCleanHandler", new InvalidChannelCleanHandler());
-			pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder());
-			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxReceivedLength(), config.isEncryption()));
+			pipeline.addLast("TcpSocketEncoder", new TcpSocketServerEncoder(config.getMaxMsgLength()));
+			pipeline.addLast("TcpSocketDecoder", new TcpSocketServerDecoder(config.getMaxMsgLength(), config.isEncryption()));
 			pipeline.addLast("IdleStateHandler", new IdleStateHandler(config.getReadIdleCheckSeconds(), 0, 0));
 			pipeline.addLast("NettyIdleCheckHandler", new NettyIdleCheckHandler());
 			protocolHeader.completeServerHandler(in, pipeline);
@@ -64,7 +64,7 @@ public class ChannelChoiceDecoder extends ByteToMessageDecoder {
 		}else if (! config.isBanHttpServer()
 				&& (equals(POST_BYTES, in) || equals(GET_BYTES, in) || equals(HEAD_BYTES, in))){
 			pipeline.addLast("HttpServerCodec" ,new HttpServerCodec());
-			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxReceivedLength()));
+			pipeline.addLast("HttpObjectAggregator", new HttpObjectAggregator(config.getMaxMsgLength()));
 			pipeline.addLast("HttpServerHandler", new HttpServerHandler(config));
 			ctx.fireChannelActive();
 		}else {
