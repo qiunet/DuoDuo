@@ -25,6 +25,7 @@ public class OfflinePlayerActor extends PlayerActor {
 	OfflinePlayerActor(long playerId) {
 		super(null, String.valueOf(playerId));
 		this.playerId = playerId;
+		dataLoader().setOffline(true);
 		this.fireEvent(OfflineUserCreateEvent.valueOf(this));
 	}
 

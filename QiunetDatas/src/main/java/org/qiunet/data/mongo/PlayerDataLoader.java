@@ -6,7 +6,10 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import org.qiunet.data.async.ISyncDbExecutor;
+import org.qiunet.data.db.loader.SyncImmediately;
 import org.qiunet.data.enums.EntityStatus;
+import org.qiunet.utils.async.future.DCompletePromise;
+import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
@@ -46,11 +49,21 @@ public class PlayerDataLoader implements IPlayerDataLoader {
      * 玩家ID
 	 */
 	private final long playerId;
+	/**
+	 * 是否离线用户.
+	 * 离线用户直接落地数据库
+	 */
+	boolean offline;
 
 	private PlayerDataLoader(ISyncDbExecutor sync, long playerId) {
 		this.playerId = playerId;
 		this.sync = sync;
 	}
+
+	public void setOffline(boolean offline) {
+		this.offline = offline;
+	}
+
 	/**
 	 *
 	 * @param sync 同步的线程对象. 是从messageHandler取到. player id不变. 则不会变
@@ -87,7 +100,14 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 * 同步数据到db
 	 */
 	public Future<?> syncToDb(){
-		return this.sync.submit(cacheAsyncToDb::syncToDb);
+		if (this.sync.inSelfThread()) {
+			cacheAsyncToDb.syncToDb();
+			DPromise<Void> future = new DCompletePromise<>();
+			future.trySuccess(null);
+			return future;
+		}else {
+			return this.sync.submit(cacheAsyncToDb::syncToDb);
+		}
 	}
 	/**
 	 * 获得玩家ID
@@ -104,6 +124,10 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 
 	@Override
 	public <Do extends BasicPlayerMongoEntity> void save(Do entity, boolean persistenceImmediately) {
+		if (offline || entity.getClass().isAnnotationPresent(SyncImmediately.class)) {
+			persistenceImmediately = true;
+		}
+
 		if (entity.status() == EntityStatus.DELETE) {
 			throw new CustomException("Entity already deleted!!");
 		}
@@ -122,14 +146,18 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 
 	@Override
 	public <Entity extends BasicPlayerMongoEntity> Entity getEntity(Class<Entity> clazz) {
+		if (! this.sync.inSelfThread()) {
+			throw new RuntimeException("Not in self thread!");
+		}
+
 		Object data = dataCache.computeIfAbsent(clazz, key -> {
 			MongoCollection<Entity> collection = MongoDbSupport.getCollection(clazz);
 			BasicPlayerMongoEntity obj = collection.find(Filters.eq("_id", playerId)).first();
-			if (obj == null) {
+			if (obj != null) {
+				obj.playerDataLoader = this;
+			}else {
 				obj = NULL;
 			}
-
-			obj.playerDataLoader = this;
 			return obj;
 		});
 

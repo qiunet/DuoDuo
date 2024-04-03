@@ -25,7 +25,7 @@ public abstract class BasicPlayerMongoEntity implements IMongoEntity<Long> {
 	 */
 	@BsonIgnore
 	@JSONField(serialize = false)
-	private final AtomicReference<EntityStatus> status = new AtomicReference<>(EntityStatus.NORMAL);
+	private final AtomicReference<EntityStatus> statusRef = new AtomicReference<>(EntityStatus.NORMAL);
 
 	@BsonIgnore
 	@JSONField(serialize = false)
@@ -46,18 +46,34 @@ public abstract class BasicPlayerMongoEntity implements IMongoEntity<Long> {
 		if (playerDataLoader == null) {
 			throw new CustomException("BasicPlayerMongoEntity Need call IPlayerDataLoader.save()");
 		}
+
 		playerDataLoader.save(this, false);
 		return null;
 	}
 
+
+	EntityStatus entityStatus() {
+		return statusRef.get();
+	}
+
 	@Override
 	public DeleteResult delete() {
-		status.set(EntityStatus.DELETE);
+		EntityStatus status = entityStatus();
+		if (status == EntityStatus.DELETE) {
+			return DeleteResult.unacknowledged();
+		}
+
+		if (! statusRef.compareAndSet(status, EntityStatus.DELETE)) {
+			// 可能INSERT 执行完毕, 变成NORMAL了. 确保修改是原子性的.
+			return this.delete();
+		}
+
 		// 没有插入过的,这里是null
 		if (playerDataLoader != null) {
 			playerDataLoader.dataCache.put(getClass(), PlayerDataLoader.NULL);
 			return IMongoEntity.super.delete();
 		}
+
 		return DeleteResult.unacknowledged();
 	}
 
@@ -75,10 +91,10 @@ public abstract class BasicPlayerMongoEntity implements IMongoEntity<Long> {
 	}
 
 	boolean atomicSetEntityStatus(EntityStatus expect, EntityStatus update) {
-		return status.compareAndSet(expect, update);
+		return statusRef.compareAndSet(expect, update);
 	}
 
 	EntityStatus status() {
-		return status.get();
+		return statusRef.get();
 	}
 }
