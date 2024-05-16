@@ -91,7 +91,7 @@ public final class ServerInfo extends HashMap<String, Object> implements IWeight
 			node.put(ServerInfo.PUBLIC_IP_4, publicHost);
 		}
 
-		if (ServerConfig.getConfig() != null && ServerConfig.getConfig().containKey(USE_IPV_6_KEY)) {
+		if (ServerConfig.getConfig() != null && ServerConfig.getConfig().getBoolean(USE_IPV_6_KEY)) {
 			node.put(ServerInfo.PUBLIC_IP_6, NetUtil.getPublicIp6());
 		}
 

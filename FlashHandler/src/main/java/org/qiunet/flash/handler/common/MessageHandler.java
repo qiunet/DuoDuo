@@ -100,7 +100,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 	@Override
 	public void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex) {
-		executorService.getEventLoop(msgExecuteIndex).execute(new Message0(this, message));
+		executorService.getEventLoop(msgExecuteIndex).execute(new Message0(this, message, true));
 	}
 
 	@Override
@@ -265,11 +265,17 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 	private static class Message0 implements Runnable {
 		private static final long WARN_NANO_TIME = TimeUnit.MILLISECONDS.toNanos(500);
+		private final boolean skipDestroyCheck;
 		private final MessageHandler handler;
 		private final IMessage message;
 		private final long addDt;
 
 		public Message0(MessageHandler handler, IMessage message) {
+			this(handler, message, false);
+		}
+
+		public Message0(MessageHandler handler, IMessage message, boolean skipDestroyCheck) {
+			this.skipDestroyCheck = skipDestroyCheck;
 			this.addDt = System.nanoTime();
 			this.handler = handler;
 			this.message = message;
@@ -277,7 +283,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 		@Override
 		public void run() {
-			if (handler.isDestroyed()) {
+			if (! skipDestroyCheck && this.handler.isDestroyed()) {
 				handler.logger.info("MessageHandler already destroy! message {} discard!", this.messageInfo());
 				return;
 			}

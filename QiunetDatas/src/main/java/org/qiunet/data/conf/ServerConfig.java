@@ -120,7 +120,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	@EventListener(EventHandlerWeightType.HIGHEST)
 	private void loadOverEvent(ScannerOverEvent event) {
-		if (config.containKey(SERVER_ZONE_ID)) {
+		if (config != null && config.containKey(SERVER_ZONE_ID)) {
 			DateUtil.setDefaultZoneId(ZoneId.of(config.getString(SERVER_ZONE_ID)));
 		}
 	}

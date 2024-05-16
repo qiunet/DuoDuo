@@ -231,13 +231,15 @@ public enum UserServerStateManager {
 
 		// 登出就移除在线标志
 		((DSession) event.getPlayer().getSession()).channel().closeFuture().addListener(f -> {
-			redisUtil.execCommands(jedis -> {
-				String string = jedis.hget(redisKey, ONLINE);
-				if (Objects.equals(randomString, string)) {
-					jedis.hdel(redisKey, ONLINE);
-				}
-				return null;
-			});
+			event.getPlayer().runMessageWithMsgExecuteIndex(d -> {
+				redisUtil.execCommands(jedis -> {
+					String string = jedis.hget(redisKey, ONLINE);
+					if (Objects.equals(randomString, string)) {
+						jedis.hdel(redisKey, ONLINE);
+					}
+					return null;
+				});
+			}, String.valueOf(event.getPlayer().getId()));
 		});
 	}
 

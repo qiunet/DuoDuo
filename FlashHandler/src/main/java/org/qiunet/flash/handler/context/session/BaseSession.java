@@ -4,8 +4,8 @@ import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPromise;
+import io.netty.channel.DefaultChannelPromise;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.MessageHandler;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.BaseByteBufMessage;
@@ -16,7 +16,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
-import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 2022/4/26 15:13
  */
 abstract class BaseSession implements ISession {
+	protected final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
 
 	protected static final Logger logger = LoggerType.DUODUO_FLASH_HANDLER.getLogger();
 
@@ -98,13 +98,6 @@ abstract class BaseSession implements ISession {
 		return this.realSendMessage(channel, message, flush);
 	}
 
-	private static final GenericFutureListener<? extends Future<? super Void>> listener = f -> {
-		// ClosedChannelException 不打印了
-		if (! f.isSuccess() && ! (f.cause() instanceof ClosedChannelException)) {
-			logger.error("channel send message error:", f.cause());
-		}
-	};
-
 	/**
 	 * 发送消息在这里
 	 *
@@ -113,7 +106,7 @@ abstract class BaseSession implements ISession {
 	 * @return
 	 */
 	private ChannelPromise realSendMessage(Channel channel, IChannelMessage<?> message, boolean flush) {
-		ChannelPromise promise = channel.newPromise();
+		ChannelPromise promise = new DChannelPromise(this, channel, message);
 		channel.eventLoop().execute(() -> this.realSendMessage0(promise, channel, message, flush));
 		return promise;
 	}
@@ -142,7 +135,6 @@ abstract class BaseSession implements ISession {
 		}else {
 			channel.write(message, promise);
 		}
-		promise.addListener(listener);
 	}
 
 	@Override
@@ -157,6 +149,33 @@ abstract class BaseSession implements ISession {
 	public void clearCloseListener(){
 		this.closeListeners.clear();
 	}
+	private static class DChannelPromise extends DefaultChannelPromise {
 
-	protected final Map<String, SessionCloseListener> closeListeners = Maps.newConcurrentMap();
+		private final BaseSession session;
+
+		private final int protocolId;
+
+		public DChannelPromise(BaseSession session, Channel channel, IChannelMessage<?> message) {
+			super(channel);
+			this.protocolId = message.getProtocolID();
+			this.addListener(this::listener);
+			this.session = session;
+		}
+
+		private void listener(Future<? super Void> f) {
+			// 成功发送消息时，直接返回不做处理
+			if (f.isSuccess()) {
+				return;
+			}
+
+			// 当失败原因为ClosedChannelException时，也不进行处理
+			// 可以等等再放开注释
+			//if (f.cause() instanceof ClosedChannelException) {
+			//	return;
+			//}
+
+			// 记录除ClosedChannelException外的其他发送错误
+			logger.error("channel send message protocolID [{}] error:", this.protocolId, f.cause());
+		}
+	}
 }
