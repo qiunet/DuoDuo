@@ -12,13 +12,13 @@ import org.qiunet.flash.handler.common.protobuf.ProtoDecodeException;
 import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.flash.handler.context.request.persistconn.PersistConnPbRequestContext;
-import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.context.session.NodeServerSession;
 import org.qiunet.flash.handler.context.session.NodeSessionType;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
 
-	private final Map<Long, ISession> sessions = Maps.newHashMap();
+	private final Map<Long, NodeServerSession> sessions = Maps.newConcurrentMap();
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -91,8 +91,10 @@ public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		for (ISession s : sessions.values()) {
-			s.close(CloseCause.INACTIVE);
+		for (Iterator<NodeServerSession> it = sessions.values().iterator(); it.hasNext(); ) {
+			NodeServerSession session = it.next();
+			session.close(CloseCause.INACTIVE);
+			it.remove();
 		}
 		super.channelInactive(ctx);
 	}

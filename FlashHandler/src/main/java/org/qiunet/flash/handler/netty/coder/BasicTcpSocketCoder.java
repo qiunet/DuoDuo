@@ -39,21 +39,22 @@ abstract class BasicTcpSocketCoder extends MessageToMessageEncoder<IChannelMessa
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, IChannelMessage<?> msg, List<Object> out) throws Exception {
+		int protocolID = msg.getProtocolID();
 		ByteBuf byteBuf = this.buildByteBuf(ctx.channel(), msg);
 		// 头的长度占比不大  就粗略估算了
 		int length = byteBuf.readableBytes() - 16;
 		if (length > this.maxDecodeReceivedLength) {
-			logger.error("Encode protocolID: "+msg.getProtocolID()+" length great than max exception:", new RuntimeException("length:"+length));
+			logger.error("Encode protocolID: {} length great than max exception:", protocolID, new RuntimeException("length:" + length));
 			byteBuf.release();
 			return;
 		}
 
 		if (length > this.max_1_2_DecodeReceivedLength) {
 			// 抛出异常  但是不影响
-			logger.error("Encode protocolID: "+msg.getProtocolID()+" length warning exception:", new RuntimeException("warning length:"+length));
+			logger.error("Encode protocolID: {} length warning exception:", protocolID, new RuntimeException("warning length:" + length));
 		}else if (length > this.max_1_3_DecodeReceivedLength){
 			// 抛出警告 需要查证了.
-			logger.error("Encode protocolID: {}  length: {} warning!", msg.getProtocolID(), length);
+			logger.error("Encode protocolID: {}  length: {} warning!", protocolID, length);
 		}
 
 		out.add(byteBuf);
