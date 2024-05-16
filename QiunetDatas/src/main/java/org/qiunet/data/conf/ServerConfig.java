@@ -9,8 +9,9 @@ import org.qiunet.utils.config.anno.DConfigValue;
 import org.qiunet.utils.config.conf.DHocon;
 import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
-import org.qiunet.utils.listener.event.data.ServerStartupEvent;
+import org.qiunet.utils.scanner.event.ScannerOverEvent;
 
 import java.time.ZoneId;
 import java.util.Map;
@@ -117,8 +118,8 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 		return config.returnMap();
 	}
 
-	@EventListener
-	private void loadOverEvent(ServerStartupEvent event) {
+	@EventListener(EventHandlerWeightType.HIGHEST)
+	private void loadOverEvent(ScannerOverEvent event) {
 		if (config.containKey(SERVER_ZONE_ID)) {
 			DateUtil.setDefaultZoneId(ZoneId.of(config.getString(SERVER_ZONE_ID)));
 		}

@@ -2,10 +2,12 @@ package org.qiunet.quartz;
 
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
+import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
+import org.qiunet.utils.scanner.event.ScannerOverEvent;
 import org.qiunet.utils.timer.IDelayTask;
 import org.qiunet.utils.timer.TimerManager;
 
@@ -33,6 +35,10 @@ public enum QuartzSchedule {
 		this.jobs.add(jobFacade);
 		return jobFacade.getFuture();
 	}
+	@EventListener(EventHandlerWeightType.LOWEST)
+	private void scannerOver(ScannerOverEvent eventData) {
+		this.jobs.forEach(JobFacade::runJob);
+	}
 
 	@EventListener
 	private void shutdown(ServerShutdownEvent eventData) {
@@ -57,6 +63,9 @@ public enum QuartzSchedule {
 
 		 JobFacade(IJob job) {
 			this.job = job;
+		 }
+
+		void runJob() {
 			this.fireTime = new Date();
 			try {
 				this.expression = new CronExpression(job.cronExpression());

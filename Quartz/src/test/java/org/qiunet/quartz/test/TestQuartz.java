@@ -9,7 +9,7 @@ import org.qiunet.utils.scanner.ScannerType;
 public class TestQuartz {
 	@Test
 	public void testCron() throws Exception {
-		ClassScanner.getInstance(ScannerType.CRON).scanner();
+		ClassScanner.getInstance(ScannerType.EVENT, ScannerType.CRON).scanner();
 		Thread.sleep(10000);
 	}
 

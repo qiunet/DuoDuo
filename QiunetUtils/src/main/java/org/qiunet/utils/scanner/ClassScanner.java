@@ -7,6 +7,7 @@ import org.qiunet.utils.args.ArgumentKey;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.scanner.event.ScannerOverEvent;
 import org.qiunet.utils.timer.TimerManager;
 import org.reflections.Reflections;
 import org.reflections.scanners.Scanner;
@@ -88,6 +89,8 @@ public final class ClassScanner implements IApplicationContext {
 			reflections = null;
 			recycled = true;
 		}
+
+		ScannerOverEvent.instance.fireEventHandler();
 	}
 	private Set<String> scannerClassNames;
 	private void scanner0(String ... packetPrefix) throws Exception {
