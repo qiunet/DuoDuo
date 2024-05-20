@@ -164,11 +164,11 @@ public enum UserServerStateManager {
 	 * @param playerId 玩家id
 	 * @param <E> 事件类型
 	 */
-	public  <E extends UserEvent & ICrossListenerEvent> void fireUserEvent(E event, long playerId) {
+	public  <E extends PlayerEvent & ICrossListenerEvent> void fireUserEvent(E event, long playerId) {
 		this.fireUserEvent0(event, playerId, false);
 	}
 
-	private <E extends UserEvent & ICrossListenerEvent> void fireUserEvent0(E event, long playerId, boolean onlineOnly) {
+	private <E extends PlayerEvent & ICrossListenerEvent> void fireUserEvent0(E event, long playerId, boolean onlineOnly) {
 		AbstractUserActor<?> actor = UserOnlineManager.instance.getActor(playerId);
 		// 判断在本服
 		if (actor != null) {
