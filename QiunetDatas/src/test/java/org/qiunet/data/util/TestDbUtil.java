@@ -2,7 +2,7 @@ package org.qiunet.data.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.qiunet.data.redis.util.DbUtil;
+import org.qiunet.data.enums.ServerType;
 
 /***
  *
@@ -18,59 +18,29 @@ public class TestDbUtil {
 	}
 
 	@Test
-	public void testGroupIdLengthZero(){
-		int serverGroupId = 0;
-		Assertions.assertEquals(0, ServerType.getGroupIdLength(serverGroupId));
-
-		long id = DbUtil.buildId(1, serverGroupId);
-		Assertions.assertEquals(10, id);
-
-		int serverGroupId1 = DbUtil.getServerGroupId(id);
-		Assertions.assertEquals(serverGroupId1, serverGroupId);
-	}
-
-	@Test
-	public void buildPlayerId(){
-		int serverGroupId = 2;
-		int incrId = 11;
-		long id = DbUtil.buildId(incrId, serverGroupId);
-		Assertions.assertEquals(id, 1121);
-
-		Assertions.assertEquals(1, DbUtil.getTbIndex(id));
-
-		Assertions.assertEquals(serverGroupId, DbUtil.getServerGroupId(id));
-	}
-
-	@Test
-	public void testTbIndex(){
-		long openId = 10111;
-
-		Assertions.assertEquals(1, DbUtil.getTbIndex(openId));
-	}
-
-	@Test
-	public void testGroupId1(){
-		int groupId = 2;
+	public void testServerId1(){
 		ServerType serverType = ServerType.LOGIC;
 
-		int serverId = serverType.buildServerId(groupId, 4);
+		int serverId = serverType.buildServerId( 4);
 
-		Assertions.assertEquals(2041, serverId);
-		Assertions.assertEquals(groupId, ServerType.getGroupId(serverId));
+		Assertions.assertEquals(41, serverId);
+		Assertions.assertEquals(serverType, ServerType.getServerType(serverId));
+	}
+
+	@Test
+	public void testServerId2(){
+		ServerType serverType = ServerType.CROSS;
+
+		int serverId = serverType.buildServerId( 4);
+
+		Assertions.assertEquals(42, serverId);
 
 		Assertions.assertEquals(serverType, ServerType.getServerType(serverId));
 	}
 
 	@Test
-	public void testGroupId2(){
-		int groupId = 0;
-		ServerType serverType = ServerType.CROSS;
-
-		int serverId = serverType.buildServerId(groupId, 4);
-
-		Assertions.assertEquals(42, serverId);
-		Assertions.assertEquals(groupId, ServerType.getGroupId(serverId));
-
-		Assertions.assertEquals(serverType, ServerType.getServerType(serverId));
+	public void testDefaultTableName(){
+		String className = "PlayerLevelDo";
+		Assertions.assertEquals("player_level", DbUtil.getDefaultTableName(className));
 	}
 }

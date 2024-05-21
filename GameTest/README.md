@@ -13,7 +13,7 @@
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
 		<artifactId>GameTest</artifactId>
-		<version>7.2.3</version>
+		<version>8.0.1</version>
 	</dependency>
 
 引用的scope如果有需要, 可以设置为`test`

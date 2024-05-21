@@ -8,8 +8,9 @@ import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.cross.rpc.IRpcFunction;
 import org.qiunet.cross.rpc.IRpcRequest;
 import org.qiunet.cross.rpc.RpcManager;
-import org.qiunet.data.core.support.redis.IRedisUtil;
-import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
+import org.qiunet.data.enums.ServerType;
+import org.qiunet.data.event.PlayerKickOutEvent;
+import org.qiunet.data.redis.IRedisUtil;
 import org.qiunet.data.util.RedisMapUtil;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.IPlayer;
@@ -123,7 +124,7 @@ public enum UserServerStateManager {
 			redisUtil.returnJedis().hdel(UserServerState.redisKey(playerId), SERVER_ID);
 		}
 
-		ServerInfo serverInfo = ServerNodeManager.assignLogicServerByGroupId(state.getGroupId());
+		ServerInfo serverInfo = ServerNodeManager.assignServer(ServerType.LOGIC);
 		if (serverInfo == null) {
 			return 0;
 		}

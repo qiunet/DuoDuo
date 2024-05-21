@@ -52,7 +52,7 @@
 	<dependency>
 		<groupId>io.github.qiunet</groupId>
 		<artifactId>duoduo-all</artifactId>
-		<version>7.2.3</version>
+		<version>8.0.1</version>
 	</dependency>
 
  

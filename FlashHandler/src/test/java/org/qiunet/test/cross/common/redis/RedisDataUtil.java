@@ -1,8 +1,8 @@
 package org.qiunet.test.cross.common.redis;
 
-import org.qiunet.data.core.support.redis.BasePoolRedisUtil;
-import org.qiunet.data.core.support.redis.IJedis;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
+import org.qiunet.data.redis.BasePoolRedisUtil;
+import org.qiunet.data.redis.IJedis;
 
 /***
  *

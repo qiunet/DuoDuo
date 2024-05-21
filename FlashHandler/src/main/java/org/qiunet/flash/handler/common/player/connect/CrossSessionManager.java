@@ -5,7 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.pool.ChannelPool;
 import org.qiunet.cross.pool.NodeChannelPoolMap;
 import org.qiunet.cross.pool.NodeChannelTrigger;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;

@@ -30,7 +30,7 @@ import java.util.Set;
 	/***
 	 * 异步更新到db
 	 */
-	@CronSchedule(value = "0 * * * * ?", randRangeMillis = 200)
+	@CronSchedule(value = "0 0/5 * * * ?", randRangeMillis = 200)
 	public void asyncToDb(){
 		nodes.forEach(node -> {
 			try {

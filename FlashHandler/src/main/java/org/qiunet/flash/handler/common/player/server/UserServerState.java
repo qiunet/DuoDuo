@@ -14,11 +14,6 @@ public class UserServerState {
 	transient String redisKey;
 	transient long playerId;
 	/**
-	 * 服务组id
-	 * 注册后不再变动
-	 */
-	private int groupId;
-	/**
 	 * 不在线 也没有离线actor 为0
 	 */
 	private int serverId;
@@ -29,7 +24,6 @@ public class UserServerState {
 
 	static UserServerState onlineData(long playerId, String channelIdString){
 		UserServerState data = new UserServerState();
-		data.groupId = ServerNodeManager.getCurrServerInfo().getServerGroupId();
 		data.serverId = ServerNodeManager.getCurrServerId();
 		data.redisKey = redisKey(playerId);
 		data.online = channelIdString;
@@ -52,10 +46,6 @@ public class UserServerState {
 	 */
 	public static String redisKey(long playerId) {
 		return REDIS_PREFIX_KEY + playerId;
-	}
-
-	public int getGroupId() {
-		return groupId;
 	}
 
 	public int getServerId() {

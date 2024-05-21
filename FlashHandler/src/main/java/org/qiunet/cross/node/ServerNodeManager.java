@@ -2,7 +2,7 @@ package org.qiunet.cross.node;
 
 import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
-import org.qiunet.data.util.ServerType;
+import org.qiunet.data.enums.ServerType;
 import org.qiunet.flash.handler.context.request.data.IChannelData;
 import org.qiunet.flash.handler.context.response.push.DefaultByteBufMessage;
 
@@ -112,23 +112,6 @@ public class ServerNodeManager {
 	 */
 	public static ServerInfo assignServer(List<ServerInfo> serverList, Predicate<ServerInfo> filter) {
 		return ServerNodeManager0.instance.assignServer(serverList, filter);
-	}
-	/**
-	 * 在Logic 按照group 分配一个权重高机器
-	 * @param groupId server group id
-	 * @return 权重高的info
-	 */
-	public static ServerInfo assignLogicServerByGroupId(int groupId) {
-		return assignLogicServerByGroupId(groupId, t -> true);
-	}
-	/**
-	 * 在Logic 按照group 分配一个权重高机器
-	 * @param groupId server group id
-	 * @param filter 过滤器
-	 * @return 权重高的info
-	 */
-	public static ServerInfo assignLogicServerByGroupId(int groupId, Predicate<ServerInfo> filter) {
-		return assignServer(serverList(ServerType.LOGIC, id -> ServerType.getGroupId(id) == groupId), filter);
 	}
 	/**
 	 * 在指定server type里面找一个weight最高的服务.

@@ -1,7 +1,7 @@
 package org.qiunet.game.test.server;
 
 import io.netty.util.CharsetUtil;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.game.test.robot.creator.IRobotAccountFactory;
 import org.qiunet.game.test.robot.creator.StressTestingConfig;
 import org.qiunet.utils.config.ConfigFileUtil;

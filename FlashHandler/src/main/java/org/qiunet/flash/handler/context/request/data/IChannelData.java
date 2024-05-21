@@ -2,7 +2,7 @@ package org.qiunet.flash.handler.context.request.data;
 
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import io.netty.buffer.ByteBuf;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
 import org.qiunet.flash.handler.common.protobuf.ProtobufDataManager;
 import org.qiunet.flash.handler.context.response.push.DefaultProtobufMessage;

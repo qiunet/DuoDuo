@@ -5,11 +5,8 @@ import com.google.common.collect.Sets;
 import org.qiunet.cross.event.CrossPlayerEvent;
 import org.qiunet.cross.event.ToCrossPlayerEvent;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.db.entity.DbEntityList;
-import org.qiunet.data.db.entity.IDbEntity;
-import org.qiunet.data.db.loader.DbEntityBo;
-import org.qiunet.data.db.loader.IPlayerDataLoader;
-import org.qiunet.data.db.loader.PlayerDataLoader;
+import org.qiunet.data.mongo.IPlayerDataLoader;
+import org.qiunet.data.mongo.PlayerDataLoader;
 import org.qiunet.flash.handler.common.player.connect.PlayerCrossConnector;
 import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
@@ -313,31 +310,6 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	public long getId() {
 		return playerId;
 	}
-
-	@Override
-	public <Do extends IDbEntity<?>, Bo extends DbEntityBo<Do>> Bo insertDo(Do entity) {
-		if (! inSelfThread()) {
-			throw new RuntimeException("Not in self thread!");
-		}
-		return IPlayerDataLoader.super.insertDo(entity);
-	}
-
-	@Override
-	public <Data extends DbEntityBo<?>> Data getData(Class<Data> clazz) {
-		if (! inSelfThread()) {
-			throw new RuntimeException("Not in self thread!");
-		}
-		return IPlayerDataLoader.super.getData(clazz);
-	}
-
-	@Override
-	public <SubKey, Bo extends DbEntityBo<Do>, Do extends DbEntityList<Long, SubKey>> Map<SubKey, Bo> getMapData(Class<Bo> clazz) {
-		if (! inSelfThread()) {
-			throw new RuntimeException("Not in self thread!");
-		}
-		return IPlayerDataLoader.super.getMapData(clazz);
-	}
-
 	/**
 	 * 是否在线
 	 * @return true 在线的actor false 相反

@@ -1,7 +1,7 @@
 package org.qiunet.flash.handler.handler.mapping;
 
 import com.google.common.collect.Maps;
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.UriPathHandler;
 import org.qiunet.flash.handler.handler.IHandler;
 import org.qiunet.flash.handler.handler.http.IHttpHandler;

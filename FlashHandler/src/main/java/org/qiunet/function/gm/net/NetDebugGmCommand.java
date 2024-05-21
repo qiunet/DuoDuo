@@ -1,7 +1,7 @@
 package org.qiunet.function.gm.net;
 
 import org.qiunet.cross.event.CrossEventManager;
-import org.qiunet.data.db.loader.event.PlayerKickOutEvent;
+import org.qiunet.data.event.PlayerKickOutEvent;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;

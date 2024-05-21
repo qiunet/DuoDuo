@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.netty.server.event;
 
-import org.qiunet.data.core.support.redis.IRedisUtil;
+import org.qiunet.data.redis.IRedisUtil;
 import org.qiunet.utils.listener.event.IListenerEvent;
 
 /***

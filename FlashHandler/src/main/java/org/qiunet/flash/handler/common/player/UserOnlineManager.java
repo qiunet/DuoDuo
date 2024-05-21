@@ -7,7 +7,7 @@ import io.micrometer.core.instrument.Gauge;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.data.util.ServerType;
+import org.qiunet.data.enums.ServerType;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
