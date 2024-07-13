@@ -38,8 +38,10 @@
 
 
 ## 服务器结构
-
-​	![服务器项目结构](all/img/ServerConstructor.png)
+#### 系统架构
+![服务器项目结构](all/img/ServerConstructor.png)
+#### 项目架构
+![服务器项目结构](all/img/ProjectConstructor.png)
 
 ## 安装环境
 
