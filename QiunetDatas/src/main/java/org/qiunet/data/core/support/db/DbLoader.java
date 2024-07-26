@@ -60,7 +60,7 @@ enum DbLoader {
 
 		datasourceSettings.add(new DatasourceAttr("maxIdle", 10, int.class));
 		datasourceSettings.add(new DatasourceAttr("minIdle", 2, int.class));
-		datasourceSettings.add(new DatasourceAttr("maxTotal", 200, int.class));
+		datasourceSettings.add(new DatasourceAttr("maxTotal", 40, int.class));
 		datasourceSettings.add(new DatasourceAttr("initialSize", 20, int.class));
 		datasourceSettings.add(new DatasourceAttr("maxWaitMillis", 1500, long.class));
 		datasourceSettings.add(new DatasourceAttr("logAbandoned", true, boolean.class));

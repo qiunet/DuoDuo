@@ -180,7 +180,7 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 				currServerInfo.refreshUpdateDt();
 				ServerNodeTickEvent.instance.fireEventHandler();
 			}
-			redisUtil.returnJedis(false).set(CURRENT_SERVER_NODE_INFO_REDIS_KEY, currServerInfo.toString(), SetParams.setParams().ex(ServerInfo.SERVER_OFFLINE_SECONDS));
+			this.addCurrentServerInfoToRedis();
 		}, MathUtil.random(0, 200), TimeUnit.SECONDS.toMillis(60), TimeUnit.MILLISECONDS);
 	}
 	/**
@@ -261,7 +261,12 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 		return SERVER_REGISTER_CENTER_PREFIX +serverType;
 	}
 
-
+	/**
+	 * 将serverInfo添加到redis
+	 */
+	private void addCurrentServerInfoToRedis() {
+		redisUtil.returnJedis(false).set(CURRENT_SERVER_NODE_INFO_REDIS_KEY, currServerInfo.toString(), SetParams.setParams().ex(ServerInfo.SERVER_OFFLINE_SECONDS));
+	}
 	@EventListener
 	private void deprecatedEvent(ServerDeprecatedEvent event) {
 		if (redisUtil == null) {
@@ -270,6 +275,8 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 
 		if (this.deprecated.compareAndSet(false, true)) {
 			redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
+			this.currServerInfo.setDeprecate();
+			this.addCurrentServerInfoToRedis();
 		}
 	}
 

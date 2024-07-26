@@ -49,6 +49,8 @@ public final class ServerInfo extends HashMap<String, Object> implements IWeight
 	private static final String SERVER_ID = "serverId";
 	/**节点通讯端口**/
 	private static final String NODE_PORT = "nodePort";
+	/**服务是否失效 过去*/
+	private static final String DEPRECATE = "deprecate";
 	/**内网IP**/
 	private static final String WEIGHT = "weight";
 	/**内网IP**/
@@ -99,6 +101,17 @@ public final class ServerInfo extends HashMap<String, Object> implements IWeight
 
 		return node;
 	}
+	public void setDeprecate() {
+		this.put(DEPRECATE, true);
+	}
+	/**
+	 * 是否失效过期
+	 * @return
+	 */
+	public boolean isDeprecate() {
+		return (Boolean) getOrDefault(DEPRECATE, false);
+	}
+
 
 
 	public void setWeight(int weightVal) {

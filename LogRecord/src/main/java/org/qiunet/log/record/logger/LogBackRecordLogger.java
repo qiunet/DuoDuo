@@ -45,8 +45,9 @@ public class LogBackRecordLogger implements IBasicRecordLogger {
 		appender.setAppend(true);
 
 		TimeBasedRollingPolicy rollingPolicy = new TimeBasedRollingPolicy<>();
-		rollingPolicy.setFileNamePattern(SystemPropertyUtil.get("log.dir", "logs") +"/"+ loggerName + "/%d{yyyy-MM-dd}.log");
+		rollingPolicy.setFileNamePattern(SystemPropertyUtil.get("log.dir", "logs") +"/"+ loggerName + "/%d{yyyy-MM-dd}.log.gz");
 		rollingPolicy.setParent(appender);
+		rollingPolicy.setMaxHistory(60);
 		rollingPolicy.setContext(lc);
 		rollingPolicy.start();
 
