@@ -4,12 +4,16 @@ import org.qiunet.utils.data.IKeyValueData;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Transaction;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisUtil {
 	/** 数据源 */
@@ -80,6 +84,35 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 			return caller.call(jc);
 		}
 	}
+	/**
+	 * 获得一个 Pipeline
+	 * @return Pipeline
+	 */
+	@Override
+	public List<Object> execWithPipeline(Consumer<Pipeline> consumer) {
+		try (Jedis jedis = jedisPool.getResource()){
+			try (Pipeline pipeline = jedis.pipelined()){
+				consumer.accept(pipeline);
+				return pipeline.syncAndReturnAll();
+			}
+		}
+	}
+	@Override
+	public void execWithTransaction(Consumer<Transaction> consumer) {
+		try (Jedis jedis = jedisPool.getResource();
+			 Transaction transaction = jedis.multi()
+		) {
+			try {
+				consumer.accept(transaction);
+				transaction.exec(); // 确保事务被执行
+			} catch (Exception e) {
+				// 捕获并处理异常
+				transaction.discard(); // 放弃事务
+				throw e;
+			}
+		}
+	}
+
 
 	private record ClosableJedisProxy(JedisPool jedisPool, boolean log) implements InvocationHandler {
 		@Override
@@ -97,6 +130,10 @@ public abstract class BasePoolRedisUtil extends BaseRedisUtil implements IRedisU
 			}
 
 			public static Object exec(Method method, Object[] args, Jedis jedis, boolean log) throws InvocationTargetException, IllegalAccessException {
+				if (Objects.equals("pipelined", method.getName())) {
+					return jedis.pipelined();
+				}
+
 				if (Objects.equals(method.getName(), "toString")) {
 					return jedis.toString();
 				}
