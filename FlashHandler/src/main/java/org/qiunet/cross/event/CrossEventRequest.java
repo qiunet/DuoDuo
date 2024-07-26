@@ -69,7 +69,7 @@ public class CrossEventRequest extends IChannelData {
 
 	@Override
 	public boolean debugOut() {
-		return ! getData().getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
+		return SkipDebugOut.DebugOut.test(getData().getClass());
 	}
 
 	@Override

@@ -73,7 +73,7 @@ public class RouteRpcReq extends IChannelData {
 
 	@Override
 	public boolean debugOut() {
-		return ! data.getData().getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
+		return SkipDebugOut.DebugOut.test(data.getData().getClass());
 	}
 
 	@Override

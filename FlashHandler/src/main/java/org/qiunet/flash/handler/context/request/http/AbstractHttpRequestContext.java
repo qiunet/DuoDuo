@@ -80,7 +80,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 		}
 
 		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
-		&& (ServerConfig.isDebugEnv() || (! getRequestData().getClass().isAnnotationPresent(SkipDebugOut.class) && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)))
+			&& (ServerConfig.isDebugEnv() ||
+			(SkipDebugOut.DebugOut.test(getRequestData().getClass())) && SkipDebugOut.DebugOut.test(getHandler().getClass()))
 		) {
 			LoggerType.DUODUO_PROTOCOL.info("HTTP <<< {}", ToString.toString(getRequestData()));
 		}
@@ -136,7 +137,8 @@ abstract class AbstractHttpRequestContext<RequestData, ResponseData> extends Bas
 			throw new NullPointerException("ResponseData can not be null");
 		}
 		if (LoggerType.DUODUO_PROTOCOL.isInfoEnabled()
-		&& (ServerConfig.isDebugEnv() || (! responseData.getClass().isAnnotationPresent(SkipDebugOut.class) && ! getHandler().getClass().isAnnotationPresent(SkipDebugOut.class)))
+		&& (ServerConfig.isDebugEnv()
+			|| (SkipDebugOut.DebugOut.test(responseData.getClass()) && SkipDebugOut.DebugOut.test(getHandler().getClass())))
 		) {
 			LoggerType.DUODUO_PROTOCOL.info("HTTP >>> {}", ToString.toString(responseData));
 		}

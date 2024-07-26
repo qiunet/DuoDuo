@@ -42,7 +42,7 @@ public abstract class IChannelData {
 	 * @return true 打印 false 跳过
 	 */
 	public boolean debugOut() {
-		return ! getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
+		return SkipDebugOut.DebugOut.test(getClass());
 	}
 
 	/**

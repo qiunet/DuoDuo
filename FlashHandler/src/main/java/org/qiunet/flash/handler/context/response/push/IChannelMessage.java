@@ -38,7 +38,7 @@ public interface IChannelMessage<T> extends IExtraInfo {
 	 * @return
 	 */
 	default boolean debugOut(){
-		return ! this.getContent().getClass().isAnnotationPresent(SkipDebugOut.class);
+		return SkipDebugOut.DebugOut.test(this.getContent().getClass());
 	}
 
 	/**
