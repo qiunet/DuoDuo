@@ -209,7 +209,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
 					if (logger.isInfoEnabled()) {
 						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-						if (! aClass.isAnnotationPresent(SkipDebugOut.class) || ServerConfig.isDebugEnv()) {
+						if (SkipDebugOut.DebugOut.test(aClass)) {
 							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
 							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 						}

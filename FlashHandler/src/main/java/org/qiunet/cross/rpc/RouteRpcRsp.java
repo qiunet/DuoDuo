@@ -51,7 +51,7 @@ public class RouteRpcRsp extends IChannelData {
 
 	@Override
 	public boolean debugOut() {
-		return ! jsonData.getData().getClass().isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv();
+		return SkipDebugOut.DebugOut.test(jsonData.getData().getClass());
 	}
 
 	@Override

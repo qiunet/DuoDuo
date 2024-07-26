@@ -154,7 +154,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		ISession session = iMessageActor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-			if (! aClass.isAnnotationPresent(SkipDebugOut.class)|| ServerConfig.isDebugEnv()) {
+			if (SkipDebugOut.DebugOut.test(aClass)) {
                 IChannelData channelData;
                 try {
                     channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
