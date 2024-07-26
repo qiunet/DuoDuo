@@ -4,17 +4,17 @@ import com.mongodb.MongoClientSettings;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.qiunet.data.mongo.EntityDbInfo;
 import org.qiunet.data.mongo.IMongoEntity;
 import org.qiunet.utils.args.ArgsContainer;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.scanner.IApplicationContext;
 import org.qiunet.utils.scanner.IApplicationContextAware;
 import org.qiunet.utils.scanner.ScannerType;
 
 import java.lang.reflect.Modifier;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /***
  * 自己的解析pojo的codec provider
@@ -44,6 +44,7 @@ public enum DPojoCodecProvider implements CodecProvider {
 		@Override
 		public void setApplicationContext(IApplicationContext context, ArgsContainer argsContainer) throws Exception {
 			Set<Class<? extends IMongoEntity>> classes = context.getSubTypesOf(IMongoEntity.class);
+			Set<String> collectionNames = new HashSet<>();
 			for (Class<? extends IMongoEntity> aClass : classes) {
 				if (Modifier.isInterface(aClass.getModifiers())
 				 || Modifier.isAbstract(aClass.getModifiers())
@@ -52,7 +53,18 @@ public enum DPojoCodecProvider implements CodecProvider {
 					continue;
 				}
 
+				EntityDbInfo<IMongoEntity<?>> info = EntityDbInfo.get((Class<? extends IMongoEntity<?>>) aClass);
+				if (collectionNames.contains(info.getCollectionName())) {
+					throw new CustomException("collection name ["+info.getCollectionName()+"] is duplicate.");
+				}
+
 				this.createClassModel(aClass);
+				
+				DClassModel<?> model = DPojoCodecProvider.instance.classModels.get(aClass);
+				boolean haveIdField = model.getPropertyModels().stream().anyMatch(DPropertyModel::isIdField);
+				if (! haveIdField) {
+					throw new CustomException("IMongoEntity ["+aClass.getName()+"] not have field with @BsonId.");
+				}
 			}
 		}
 
@@ -67,21 +79,41 @@ public enum DPojoCodecProvider implements CodecProvider {
 			for (DPropertyModel<?> propertyModel : models) {
 				if (Collection.class.isAssignableFrom(propertyModel.getType())
 				 || Map.class.isAssignableFrom(propertyModel.getType())) {
+					for (Type parameter : propertyModel.getParameters()) {
+						this.fieldTypeDefineCheck(propertyModel, propertyModel.getType());
+						this.touchPropertyModel((Class<?>) parameter);
+					}
 					continue;
 				}
 
-				try {
-					// Mongodb 基础类型  无须处理
-					MongoClientSettings.getDefaultCodecRegistry().get(propertyModel.getType());
-				}catch (Throwable e) {
-					this.createClassModel(propertyModel.getType());
-				}
+				this.fieldTypeDefineCheck(propertyModel, propertyModel.getType());
+				this.touchPropertyModel(propertyModel.getType());
 			}
 		}
 
+		private void fieldTypeDefineCheck(DPropertyModel<?> propertyModel, Class<?> type) {
+			if (type == Object.class) {
+				// 可能有未知类型并且不可解析,造成无法热更问题.
+				throw new CustomException("Field [{}#{}] define with Object type, maybe take UnknownTypeException!", propertyModel.getField().getDeclaringClass().getName(), propertyModel.getField().getName());
+			}
+		}
+
+		private void touchPropertyModel(Class<?> type) {
+			try {
+				// Mongodb 基础类型  无须处理
+				MongoClientSettings.getDefaultCodecRegistry().get(type);
+			}catch (Throwable e) {
+				this.createClassModel(type);
+			}
+		}
 		@Override
 		public ScannerType scannerType() {
 			return ScannerType.DATABASE;
+		}
+
+		@Override
+		public int order() {
+			return Integer.MAX_VALUE - 1;
 		}
 	}
 }

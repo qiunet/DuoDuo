@@ -6,6 +6,7 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.qiunet.data.mongo.BasicMongoEntity;
+import org.qiunet.data.mongo.IMongoEntity;
 import org.qiunet.data.mongo.annotation.DbRef;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -61,7 +62,7 @@ class DPropertyModel<T> {
 		boolean isAbstractOrInterface = Modifier.isAbstract(type.getModifiers()) || Modifier.isInterface(type.getModifiers());
 		boolean isCollectionField = Collection.class.isAssignableFrom(type);
 		boolean isMapField = Map.class.isAssignableFrom(type);
-		if (! isMapField && !isCollectionField && isAbstractOrInterface) {
+		if (! isMapField && !isCollectionField && ! type.isEnum() && isAbstractOrInterface) {
 			throw new CustomException("Field {}#{} can not be abstract or interface!", field.getDeclaringClass().getName(), field.getName());
 		}
 
@@ -73,7 +74,7 @@ class DPropertyModel<T> {
 		}
 
 		if (this.idField) {
-			this.dbFieldName = "_id";
+			this.dbFieldName = IMongoEntity.ID_FIELD_NAME;
 		}
 
 		this.dbRef = field.isAnnotationPresent(DbRef.class);

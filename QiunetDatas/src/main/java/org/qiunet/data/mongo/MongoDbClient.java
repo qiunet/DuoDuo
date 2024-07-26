@@ -5,6 +5,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 
 /***
  * mongo client 封装
@@ -30,6 +31,10 @@ class MongoDbClient {
 
 	<E extends IMongoEntity<?>> MongoCollection<E> getCollection(EntityDbInfo dbInfo) {
 		return (MongoCollection<E>) client.getDatabase(dbInfo.getDb()).getCollection(dbInfo.getCollectionName(), dbInfo.getClz());
+	}
+
+	<E extends IMongoEntity<?>> MongoCollection<Document> getDocCollection(EntityDbInfo dbInfo) {
+		return client.getDatabase(dbInfo.getDb()).getCollection(dbInfo.getCollectionName());
 	}
 
 	MongoClient client() {

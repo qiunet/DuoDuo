@@ -3,6 +3,7 @@ package org.qiunet.data.mongo;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.qiunet.data.conf.ServerConfig;
@@ -21,7 +22,7 @@ import java.util.Map;
  * @author qiunet
  * 2023/8/22 17:54
  */
-final class MongoDbSupport {
+public final class MongoDbSupport {
 
 	/**
 	 * 保存dbSource 对应的 Client
@@ -42,7 +43,16 @@ final class MongoDbSupport {
 		EntityDbInfo<Entity> entityDbInfo = EntityDbInfo.get(clz);
 		return entityDbInfo.getCollection();
 	}
-
+	/**
+	 * 获得指定dbSource的client
+	 *
+	 * @param clz 获取指定Clz的 Document Collection
+	 * @return MongoCollection
+	 */
+	public static <Key, Entity extends IMongoEntity<Key>> MongoCollection<Document> getDocCollection(Class<Entity> clz) {
+		EntityDbInfo<Entity> entityDbInfo = EntityDbInfo.get(clz);
+		return entityDbInfo.getDocCollection();
+	}
 
 	static MongoDbClient getClient(String dbSource) {
 		return clientMap.computeIfAbsent(dbSource, MongoDbSupport::createMongodbClient);

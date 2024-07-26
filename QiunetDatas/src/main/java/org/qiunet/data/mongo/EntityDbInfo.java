@@ -4,10 +4,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mongodb.client.MongoCollection;
+import org.bson.Document;
 import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.data.enums.ServerType;
 import org.qiunet.data.mongo.annotation.MongoDbEntity;
 import org.qiunet.data.util.DbUtil;
+import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.string.StringUtil;
 
@@ -42,6 +44,14 @@ public class EntityDbInfo<E extends IMongoEntity<?>> {
 	 * db
 	 */
 	private final String db;
+	/**
+	 * doc collection getter
+	 */
+	private final LazyLoader<MongoCollection<Document>> docCollectionGetter;
+	/**
+	 * collection getter
+	 */
+	private final LazyLoader<MongoCollection<E>> collectionGetter;
 
 	public static <E extends IMongoEntity<?>> EntityDbInfo<E> get(Class<? extends IMongoEntity<?>> clz) {
 		return entityDbInfos.computeIfAbsent(clz, EntityDbInfo::new);
@@ -64,6 +74,11 @@ public class EntityDbInfo<E extends IMongoEntity<?>> {
 		this.serverTypes = Sets.newEnumSet(list, ServerType.class);
 		this.collectionName = collectionName;
 		this.clz = clz;
+
+
+		this.docCollectionGetter = new LazyLoader<>(() -> client.getDocCollection(this));
+		this.collectionGetter = new LazyLoader<>(() -> this.client.getCollection(this));
+
 	}
 
 	/**
@@ -71,12 +86,17 @@ public class EntityDbInfo<E extends IMongoEntity<?>> {
 	 * @return Mongodb collection
 	 * @param <E>  IMongoEntity
 	 */
-	public <E> MongoCollection<E> getCollection() {
+	public MongoCollection<E> getCollection() {
 		if (! isValidServer()) {
 			throw new CustomException("Can get mongodb execute in server!");
 		}
-		return (MongoCollection<E>) client.getCollection(this);
+		return collectionGetter.get();
 	}
+
+	public MongoCollection<Document> getDocCollection() {
+		return docCollectionGetter.get();
+	}
+
 	/**
 	 * 是否支持该服务器类型
 	 * @return true 支持

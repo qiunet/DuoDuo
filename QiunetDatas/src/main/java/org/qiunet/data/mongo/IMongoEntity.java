@@ -15,6 +15,7 @@ import org.qiunet.utils.exceptions.CustomException;
  * 2023/8/22 17:46
  */
 public interface IMongoEntity<Key> {
+	String ID_FIELD_NAME = "_id";
 	/**
 	 * 获得id
 	 *
@@ -28,7 +29,7 @@ public interface IMongoEntity<Key> {
 		}
 
 		MongoCollection<T> collection = MongoDbSupport.getCollection(clz);
-		return collection.find(Filters.eq("_id", id)).first();
+		return collection.find(Filters.eq(ID_FIELD_NAME, id)).first();
 	}
 
 	/**
@@ -36,13 +37,13 @@ public interface IMongoEntity<Key> {
 	 */
 	default UpdateResult save() {
 		MongoCollection collection = MongoDbSupport.getCollection(this.getClass());
-		return collection.replaceOne(Filters.eq("_id", getId()), this, new ReplaceOptions().upsert(true));
+		return collection.replaceOne(Filters.eq(ID_FIELD_NAME, getId()), this, new ReplaceOptions().upsert(true));
 	}
 	/**
 	 * 删除记录
 	 */
 	default DeleteResult delete() {
 		MongoCollection collection = MongoDbSupport.getCollection(this.getClass());
-		return collection.deleteOne(Filters.eq("_id", getId()));
+		return collection.deleteOne(Filters.eq(ID_FIELD_NAME, getId()));
 	}
 }

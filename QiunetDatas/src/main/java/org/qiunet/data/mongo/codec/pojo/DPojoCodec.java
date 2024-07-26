@@ -46,13 +46,16 @@ class DPojoCodec<T> implements Codec<T> {
 			String name = reader.readName();
 			DPropertyModel<?> property = model.getProperty(name);
 			if (property == null) {
-				LoggerType.DUODUO_SQL.warn("No such field {} in Class {}", name, model.getClz().getName());
+				if (LoggerType.DUODUO_SQL.isDebugEnabled()) {
+					LoggerType.DUODUO_SQL.debug("No such field {} in Class {}", name, model.getClz().getName());
+				}
+				reader.skipValue();
 				continue;
 			}
 			Object fieldObj;
 			if (property.isDbRef()){
 				MongoCollection<IMongoEntity<?>> collection = EntityDbInfo.get((Class<? extends IMongoEntity<?>>) property.getType()).getCollection();
-				fieldObj = collection.find(Filters.eq("_id", this.readDbRefId(reader))).first();
+				fieldObj = collection.find(Filters.eq(IMongoEntity.ID_FIELD_NAME, this.readDbRefId(reader))).first();
 			}else {
 				fieldObj = readPropertyValue(property, reader, decoderContext);
 			}
