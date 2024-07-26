@@ -1,6 +1,12 @@
 package org.qiunet.data.redis;
 
 
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Transaction;
+
+import java.util.List;
+import java.util.function.Consumer;
+
 public interface IRedisUtil {
 	/***
 	 * 可以使用caller 在取得一次jedis情况下执行多条命令.
@@ -19,6 +25,15 @@ public interface IRedisUtil {
 	 * @return
 	 */
 	<T> T execCommands(IRedisCaller<T> caller, boolean log);
+
+	/**
+	 * 获得一个 Pipeline 执行事情
+	 */
+	List<Object> execWithPipeline(Consumer<Pipeline> consumer);
+	/**
+	 * 获得一个 Transaction 执行事情
+	 */
+	void execWithTransaction(Consumer<Transaction> consumer);
 	/***
 	 * 返回jedis代理
 	 * 使用完. 会自己close
