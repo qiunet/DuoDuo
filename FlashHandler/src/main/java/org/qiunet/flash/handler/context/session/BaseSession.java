@@ -16,6 +16,7 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
 
+import java.nio.channels.ClosedChannelException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -149,6 +150,9 @@ abstract class BaseSession implements ISession {
 	public void clearCloseListener(){
 		this.closeListeners.clear();
 	}
+
+	private final AtomicBoolean channelClosePrinted = new AtomicBoolean(false);
+
 	private static class DChannelPromise extends DefaultChannelPromise {
 
 		private final BaseSession session;
@@ -169,13 +173,14 @@ abstract class BaseSession implements ISession {
 			}
 
 			// 当失败原因为ClosedChannelException时，也不进行处理
-			// 可以等等再放开注释
-			//if (f.cause() instanceof ClosedChannelException) {
-			//	return;
-			//}
+			if (ClosedChannelException.class.isAssignableFrom(f.cause().getClass())) {
+				// 这个错误实在多,没有必要打印.
+				return;
+			}
 
-			// 记录除ClosedChannelException外的其他发送错误
-			logger.error("channel send message protocolID [{}] error:", this.protocolId, f.cause());
+			if (session.channelClosePrinted.compareAndSet(false, true)) {
+				logger.error("Session {} send message protocolID [{}] error and closed!", this.session, this.protocolId, f.cause());
+			}
 		}
 	}
 }

@@ -195,7 +195,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 
 		public DExecutorService getEventLoop(Object key) {
-			int i = Math.abs(Objects.requireNonNull(key).hashCode()) % eventLoops.size();
+			int i = Math.abs(Objects.requireNonNull(key).hashCode() / 100) % eventLoops.size();
 			return eventLoops.get(i);
 		}
 	}
@@ -283,14 +283,15 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 
 		@Override
 		public void run() {
+			String messageInfo = this.messageInfo();
 			if (! skipDestroyCheck && this.handler.isDestroyed()) {
-				handler.logger.info("MessageHandler already destroy! message {} discard!", this.messageInfo());
+				handler.logger.info("MessageHandler already destroy! message {} discard!", messageInfo);
 				return;
 			}
 
 			long handlerStart = System.nanoTime();
 			if (handlerStart - addDt > WARN_NANO_TIME){
-				handler.logger.error("Message {} wait [{}] ms to executor!", this.messageInfo(), TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
+				handler.logger.error("Message {} wait [{}] ms to executor!", messageInfo, TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
 			}
 			try {
 				message.execute(handler);
@@ -299,7 +300,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			}finally {
 				long handlerEnd = System.nanoTime();
 				if (handlerEnd - handlerStart > WARN_NANO_TIME && !IRequestContext.class.isAssignableFrom(message.getClass())){
-					handler.logger.error("Message {} use [{}] ms to executor!", this.messageInfo(), TimeUnit.NANOSECONDS.toMillis(handlerEnd - handlerStart));
+					handler.logger.error("Message {} use [{}] ms to executor!", messageInfo, TimeUnit.NANOSECONDS.toMillis(handlerEnd - handlerStart));
 				}
 			}
 		}
