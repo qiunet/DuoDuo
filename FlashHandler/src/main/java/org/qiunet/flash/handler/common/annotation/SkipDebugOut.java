@@ -1,6 +1,6 @@
 package org.qiunet.flash.handler.common.annotation;
 
-import org.qiunet.data.util.ServerConfig;
+import org.qiunet.data.conf.ServerConfig;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
