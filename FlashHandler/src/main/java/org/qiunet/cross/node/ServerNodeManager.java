@@ -63,6 +63,16 @@ public class ServerNodeManager {
 	public static ServerInfo getServerInfo(int serverId) {
 		return ServerNodeManager0.instance.getServerInfo(serverId);
 	}
+
+	/**
+	 * 是否过期失效的服务id
+	 * @param serverId server id
+	 * @return true 失效了
+	 */
+	public static boolean isDeprecateServerId(int serverId) {
+		return serverId <= 0;
+	}
+
 	/**
 	 * 获得 某个server 类型的所有的 server info
 	 * @param type 类型
@@ -172,6 +182,7 @@ public class ServerNodeManager {
 	}
 	/**
 	 * 对指定类型的服务器进行广播
+	 * 包含 失效服务
 	 * @param serverType 类型
 	 * @param channelData 广播内容
 	 */

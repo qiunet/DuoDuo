@@ -1,5 +1,7 @@
 package org.qiunet.cross.node;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import io.netty.channel.Channel;
 import org.qiunet.cross.common.contants.ScannerParamKey;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -56,6 +59,8 @@ import java.util.stream.Collectors;
  */
 enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger {
 	instance;
+	/**server Info 查询缓存*/
+	private final Cache<Integer, ServerInfo> serverInfoCache = CacheBuilder.newBuilder().expireAfterWrite(3, TimeUnit.SECONDS).build();
 	/**
 	 * poolMap
 	 */
@@ -86,12 +91,21 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 	 * @return
 	 */
 	ServerInfo getServerInfo(int serverId) {
-		String serverInfoStr = redisUtil.returnJedis().get(ServerInfo.serverInfoRedisKey(serverId));
-		if (StringUtil.isEmpty(serverInfoStr)) {
-			throw new CustomException("ServerId [{}] is not online!", serverId);
-		}
+		if (serverId < 0) serverId = Math.abs(serverId);
+		int finalServerId = serverId;
+		try {
+			return serverInfoCache.get(serverId, () -> {
+				String serverInfoStr = redisUtil.returnJedis().get(ServerInfo.serverInfoRedisKey(finalServerId));
+				if (StringUtil.isEmpty(serverInfoStr)) {
+					LoggerType.DUODUO_FLASH_HANDLER.error("Server id : {} Info is null!", finalServerId);
+					return null;
+				}
 
-		return JsonUtil.getGeneralObj(serverInfoStr, ServerInfo.class);
+				return JsonUtil.getGeneralObj(serverInfoStr, ServerInfo.class);
+			});
+		} catch (ExecutionException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -100,10 +114,11 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 	 * @return
 	 */
 	void getNode(int serverId, Consumer<ServerNode> consumer) {
-		if (serverId <= 0) {
+		if (serverId == 0) {
 			throw new CustomException("serverId not a valid value!");
 		}
 
+		if (serverId < 0) serverId = Math.abs(serverId);
 		if (serverId == currServerInfo.getServerId()) {
 			throw new CustomException("It is current server!!");
 		}
@@ -217,6 +232,7 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 			return null;
 		}
 		return serverIdList.stream()
+			.filter(o -> o.getServerId() > 0)
 			.filter(filter).reduce((o1, o2) -> {
 				if (o1.weight() > o2.weight()) return o1;
 				return o2;
@@ -273,11 +289,18 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 			return;
 		}
 
-		if (this.deprecated.compareAndSet(false, true)) {
-			redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
-			this.currServerInfo.setDeprecate();
-			this.addCurrentServerInfoToRedis();
+		if (! this.deprecated.compareAndSet(false, true)) {
+			return;
 		}
+
+		String redisKey = serverRegisterCenterRedisKey(this.currServerInfo.getServerType());
+		redisUtil.execWithTransaction((jedis) -> {
+			jedis.srem(redisKey, String.valueOf(this.currServerInfo.getServerId()));
+			jedis.sadd(redisKey, String.valueOf(-this.currServerInfo.getServerId()));
+		});
+
+		this.currServerInfo.setDeprecate();
+		this.addCurrentServerInfoToRedis();
 	}
 
 	@EventListener
@@ -286,7 +309,6 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 			return;
 		}
 
-		redisUtil.returnJedis().srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
 		this.serverClosed.set(true);
 	}
 
@@ -310,7 +332,7 @@ enum ServerNodeManager0 implements IApplicationContextAware, NodeChannelTrigger 
 		}
 
 		redisUtil.execCommands(jedis -> {
-			jedis.srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(this.currServerInfo.getServerId()));
+			jedis.srem(serverRegisterCenterRedisKey(this.currServerInfo.getServerType()), String.valueOf(-this.currServerInfo.getServerId()), String.valueOf(this.currServerInfo.getServerId()));
 			jedis.del(CURRENT_SERVER_NODE_INFO_REDIS_KEY);
 			return null;
 		});

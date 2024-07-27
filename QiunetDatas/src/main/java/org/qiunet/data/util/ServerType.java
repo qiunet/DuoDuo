@@ -76,7 +76,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public static int getGroupId(int serverId) {
-		return serverId / 1000;
+		return Math.abs(serverId) / 1000;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public enum ServerType {
 	 * @return
 	 */
 	public static ServerType getServerType(int serverId) {
-		int type = serverId % 10;
+		int type = Math.abs(serverId) % 10;
 		return parse(type);
 	}
 
