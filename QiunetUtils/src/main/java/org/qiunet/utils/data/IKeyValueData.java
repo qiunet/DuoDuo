@@ -53,7 +53,7 @@ public interface IKeyValueData<K, V> {
 	 * @param key
 	 * @return
 	 */
-	default V getOrDefault(K key, V defaultVal) {
+	default V _getOrDefault(K key, V defaultVal) {
 		return returnMap().getOrDefault(key, defaultVal);
 	}
 
