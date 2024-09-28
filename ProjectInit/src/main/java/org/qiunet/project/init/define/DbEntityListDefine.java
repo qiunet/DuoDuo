@@ -25,9 +25,9 @@ public class DbEntityListDefine extends BaseEntityListDefine {
 	@Override
 	protected String buildWhereCondition() {
 		StringBuilder sb = new StringBuilder(" WHERE ");
-		sb.append(key).append(" = #{")
-			.append(key).append("} AND ")
-			.append(subKey).append(" = #{")
+		sb.append("`").append(key).append("` = #{")
+			.append(key).append("} AND `")
+			.append(subKey).append("` = #{")
 			.append(subKey).append("}");
 		return sb.toString();
 	}
