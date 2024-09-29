@@ -1,6 +1,7 @@
 package org.qiunet.utils.string;
 
 import org.qiunet.utils.math.MathUtil;
+import org.slf4j.helpers.MessageFormatter;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -89,6 +90,18 @@ public class StringUtil {
 		}
 		return tt;
 	}
+
+	/**
+	 * 格式化字符串
+	 * 格式: sformat("xx{}xxx{}xx", "参数1", "参数2")
+	 * @param string
+	 * @param params
+	 * @return
+	 */
+	public static String slf4jFormat(String string, Object ... params) {
+		return MessageFormatter.arrayFormat(string, params).getMessage();
+	}
+
 	/**
 	 * 分隔字符串并转类型
 	 * @param src

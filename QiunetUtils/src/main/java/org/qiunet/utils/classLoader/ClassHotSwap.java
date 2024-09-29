@@ -1,7 +1,5 @@
 package org.qiunet.utils.classLoader;
 
-import com.sun.tools.attach.VirtualMachine;
-import com.sun.tools.classfile.ClassFile;
 import org.qiunet.agent.ClassInfos;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
@@ -51,30 +49,30 @@ public final class ClassHotSwap {
 			return;
 		}
 
-		for (File clazzFile : classDirectory.listFiles()) {
-			if (clazzFile.isDirectory() || !clazzFile.getName().endsWith(".class")) continue;
-
-			try {
-				ClassFile classFile = ClassFile.read(clazzFile);
-				classInfos.addClass(classFile.getName());
-			} catch (Exception e) {
-				logger.error(clazzFile.getName()+"ERROR", e);
-			}
-		}
-		VirtualMachine vm = null;
-		try {
-			vm = VirtualMachine.attach(String.valueOf(OSUtil.pid()));
-			vm.loadAgent(JavaAgentJarPath, classInfos.toString());
-		} catch (Exception e) {
-			logger.error("VirtualMachine attach ERROR", e);
-		}finally {
-			if (vm != null) {
-				try {
-					vm.detach();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		//for (File clazzFile : classDirectory.listFiles()) {
+		//	if (clazzFile.isDirectory() || !clazzFile.getName().endsWith(".class")) continue;
+		//
+		//	try {
+		//		ClassFile classFile = ClassFile.read(clazzFile);
+		//		classInfos.addClass(classFile.getName());
+		//	} catch (Exception e) {
+		//		logger.error(clazzFile.getName()+"ERROR", e);
+		//	}
+		//}
+		//VirtualMachine vm = null;
+		//try {
+		//	vm = VirtualMachine.attach(String.valueOf(OSUtil.pid()));
+		//	vm.loadAgent(JavaAgentJarPath, classInfos.toString());
+		//} catch (Exception e) {
+		//	logger.error("VirtualMachine attach ERROR", e);
+		//}finally {
+		//	if (vm != null) {
+		//		try {
+		//			vm.detach();
+		//		} catch (IOException e) {
+		//			e.printStackTrace();
+		//		}
+		//	}
+		//}
 	}
 }

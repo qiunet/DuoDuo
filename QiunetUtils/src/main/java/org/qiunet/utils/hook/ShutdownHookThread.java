@@ -1,23 +1,18 @@
 package org.qiunet.utils.hook;
 
-import org.qiunet.utils.listener.EventHandler;
-import org.qiunet.utils.listener.IEventData;
-import org.qiunet.utils.listener.IEventListener;
+import org.qiunet.utils.listener.EventListener;
 import org.qiunet.utils.listener.event_data.ServerShutdownEventData;
 import org.qiunet.utils.logger.LoggerType;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /***
  *
  * @Author qiunet
  * @Date Create in 2018/5/31 12:04
  **/
-public class ShutdownHookThread implements IEventListener {
+public class ShutdownHookThread {
 	private Logger logger = LoggerType.DUODUO.getLogger();
 
 	private volatile static ShutdownHookThread instance;
@@ -77,9 +72,8 @@ public class ShutdownHookThread implements IEventListener {
 		this.hook.run();
 	}
 
-	@Override
-	@EventHandler(ServerShutdownEventData.class)
-	public void eventHandler(IEventData eventData) {
+	@EventListener
+	public void eventHandler(ServerShutdownEventData eventData) {
 		this.shutdownNow();
 	}
 
