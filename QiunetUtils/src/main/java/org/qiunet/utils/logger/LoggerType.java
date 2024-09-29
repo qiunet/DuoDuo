@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
  * Created by qiunet.
  * 17/8/18
  */
-public enum  LoggerType {
+public enum  LoggerType implements ILoggerType {
 	/**普通的日志打印*/
 	DUODUO("duoduo"),
 	/**sql日志打印*/
@@ -18,25 +18,14 @@ public enum  LoggerType {
 	/***热替换**/
 	DUODUO_HOTSWAP("duoduo_hotswap"),
 	;
+	private final String loggerName;
 
-	private String loggerName;
 	LoggerType(String loggerName) {
 		this.loggerName = loggerName;
 	}
 
+	@Override
 	public Logger getLogger() {
-		return LoggerFactory.getLogger(this.loggerName);
-	}
-
-	public void info(String msg) {
-		getLogger().info(msg);
-	}
-
-	public void error(String msg) {
-		getLogger().error(msg);
-	}
-
-	public void error(String msg, Throwable e) {
-		getLogger().error(msg, e);
+		return LoggerFactory.getLogger(loggerName);
 	}
 }
