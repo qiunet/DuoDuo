@@ -71,7 +71,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			List<String> hvals = jedis.hvals(redisKey);
 			if (hvals.size() <= 1 && hvals.remove(PLACE_HOLDER)) return null;
 
-			return hvals.parallelStream().map(json -> JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
+			return hvals.parallelStream().map(json -> (Do)JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
 		});
 	}
 
