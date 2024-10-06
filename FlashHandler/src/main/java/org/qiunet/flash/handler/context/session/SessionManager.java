@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * Created by qiunet.
@@ -68,6 +70,12 @@ public class SessionManager {
 	 */
 	public <T extends ISession> T getSession(long uid) {
 		return (T) sessions.get(uid);
+	}
+
+	public <T extends ISession> void foreachSession(BiConsumer<Long, T> consumer) {
+		this.sessions.forEach((key, val) -> {
+			consumer.accept(key, (T)val);
+		});
 	}
 
 	/***
