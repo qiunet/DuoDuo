@@ -18,7 +18,7 @@ public class DbEntityDefine extends BaseEntityDefine {
 
 	@Override
 	protected String buildWhereCondition() {
-		return "WHERE " + getKey() + " = #{" + getKey()+ "}";
+		return "WHERE `" + getKey() + "` = #{" + getKey()+ "}";
 	}
 
 	public DbEntityDefine() {

@@ -27,7 +27,7 @@ public class RedisEntityDefine extends BaseEntityDefine {
 
 	@Override
 	protected String buildWhereCondition() {
-		return "WHERE " + getKey() + " = #{" + getKey()+ "}";
+		return "WHERE `" + getKey() + "` = #{" + getKey()+ "}";
 	}
 
 	public String getRedis() {

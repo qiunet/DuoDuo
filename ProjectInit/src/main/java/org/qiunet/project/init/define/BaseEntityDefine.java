@@ -213,7 +213,7 @@ import java.util.stream.Collectors;
 
 	@Override
 	public String getSelectSql() {
-		return "SELECT * FROM " + realTableName() + " " + "WHERE " + getKey() + " = #{" + getKey()+ "};";
+		return "SELECT * FROM " + realTableName() + " " + "WHERE `" + getKey() + "` = #{" + getKey()+ "};";
 	}
 
 	@Override
