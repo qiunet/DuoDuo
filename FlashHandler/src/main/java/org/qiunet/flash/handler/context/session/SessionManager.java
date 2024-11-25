@@ -49,14 +49,21 @@ public class SessionManager {
 //		this.sessions.putIfAbsent(val.getUid(), val);
 		this.sessions.put(val.getUid(), val);
 		val.getChannel().closeFuture().addListener(future -> {
+			String remChannelKey = val.getChannel().id().asLongText();
 			val.fireSessionClose();
-			sessions.remove(val.getUid());
+			if (this.sessions.containsKey(val.getUid())) {
+				Channel channel = this.sessions.get(val.getUid()).getChannel();
+				if (remChannelKey.equals(channel.id().asLongText())) {
+					sessions.remove(val.getUid());
+				}
+			}
 		});
 		return (T) sessions.get(val.getUid());
 	}
 
 	/**
 	 * 移除session
+	 *
 	 * @param uid
 	 */
 	public void remSession(long uid) {
@@ -74,7 +81,7 @@ public class SessionManager {
 
 	public <T extends ISession> void foreachSession(BiConsumer<Long, T> consumer) {
 		this.sessions.forEach((key, val) -> {
-			consumer.accept(key, (T)val);
+			consumer.accept(key, (T) val);
 		});
 	}
 
