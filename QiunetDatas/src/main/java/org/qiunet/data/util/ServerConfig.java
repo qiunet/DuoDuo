@@ -89,6 +89,12 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	@DConfigValue("db.db_name_prefix")
 	private static String dbNamePrefix;
 
+	/**
+	 * 服务器是否开启
+	 */
+	@DConfigValue(value = "redis.logOpen", defaultVal = "TRUE")
+	private static boolean redisLogOpen;
+
 	public static int getServerId() {
 		return serverId;
 	}
@@ -150,6 +156,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static SyncType getSyncType() {
 		return syncType;
+	}
+
+	public static boolean isRedisLogOpen() {
+		return redisLogOpen;
 	}
 
 	public static DHocon getConfig() {

@@ -42,6 +42,8 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	private String redisUpdateSyncSetKey;
 
 	protected boolean async = ServerConfig.instance.getSyncType() == SyncType.ASYNC;
+	protected final boolean redisLogOpen = ServerConfig.isRedisLogOpen();
+
 	protected IRedisUtil redisUtil;
 
 	BaseRedisDataSupport(IRedisUtil redisUtil, Class<Do> doClass, BoSupplier<Do, Bo> supplier) {
@@ -187,7 +189,7 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @return
 	 */
 	protected JedisCommands returnJedis() {
-		return redisUtil.returnJedis();
+		return redisUtil.returnJedis(redisLogOpen);
 	}
 
 	@Override
