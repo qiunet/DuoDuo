@@ -3,6 +3,7 @@ package org.qiunet.data.support;
 
 import org.qiunet.data.async.SyncType;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
+import org.qiunet.data.core.support.redis.IRedisCaller;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.util.ServerConfig;
@@ -240,6 +241,19 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 			return null;
 		});
+		/*redisUtil.execCommands(new IRedisCaller<Void>() {
+			@Override
+			public Void call(JedisCommands jedis) {
+				jedis.set(redisKey, JsonUtil.toJsonString(aDo));
+				jedis.expire(redisKey, NORMAL_LIFECYCLE);
+				return null;
+			}
+
+			@Override
+			public boolean log() {
+				return redisLogOpen;
+			}
+		});*/
 	}
 
 	private Do returnDataObjByRedisKey(String redisKey) {
