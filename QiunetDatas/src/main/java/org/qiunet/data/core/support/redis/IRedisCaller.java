@@ -1,8 +1,10 @@
 package org.qiunet.data.core.support.redis;
 
+import org.qiunet.data.util.ServerConfig;
 import redis.clients.jedis.JedisCommands;
 
 public interface IRedisCaller<R> {
+	final boolean redisLogOpen = ServerConfig.isRedisLogOpen();
 
 	R call(JedisCommands jedis);
 	/***
@@ -10,6 +12,6 @@ public interface IRedisCaller<R> {
 	 * @return
 	 */
 	default boolean log(){
-		return true;
+		return redisLogOpen;
 	}
 }
