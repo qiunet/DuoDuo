@@ -65,6 +65,13 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 */
 	@DConfigValue(value = "server.close_msg", defaultVal = "-")
 	private static String serverCloseMsg;
+
+	/**
+	 * 服务没有开启提示
+	 */
+	@DConfigValue(value = "server.server_type", defaultVal = "0")
+	private static String server_type;
+
 	/**
 	 * 白名单ip. 如果serverOpen = false
 	 * 允许指定的ip进入.
