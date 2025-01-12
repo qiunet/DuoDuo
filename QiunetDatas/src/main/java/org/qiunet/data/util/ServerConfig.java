@@ -70,7 +70,7 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 	 * 服务没有开启提示
 	 */
 	@DConfigValue(value = "server.server_type", defaultVal = "0")
-	private static String server_type;
+	private static int server_type;
 
 	/**
 	 * 白名单ip. 如果serverOpen = false
@@ -171,6 +171,10 @@ public enum ServerConfig implements IKeyValueData<String, String> {
 
 	public static DHocon getConfig() {
 		return config;
+	}
+
+	public static int getServer_type() {
+		return server_type;
 	}
 
 	@Override
