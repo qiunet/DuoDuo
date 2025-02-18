@@ -9,7 +9,7 @@
 
 	<xs:simpleType name="xmlNameRegex">
 		<xs:restriction base="xs:string">
-			<xs:pattern value="[a-zA-Z_-]{2,20}\.xml" />
+			<xs:pattern value="[a-zA-Z_-]{2,30}\.xml" />
 		</xs:restriction>
 	</xs:simpleType>
 
