@@ -450,11 +450,13 @@ public enum UserOnlineManager {
 		List<Promise<Boolean>> futures = Lists.newArrayListWithExpectedSize(onlineSize());
 		Consumer<AbstractUserActor<?>> consumer = actor -> {
 			Promise<Boolean> promise = new DNettyPromise<>();
-			actor.addMessage(a -> {
+			boolean success = actor.addMessage(a -> {
 				a.getSession().close(CloseCause.SERVER_SHUTDOWN);
 				promise.trySuccess(true);
 			});
-			futures.add(promise);
+			if (success) {
+				futures.add(promise);
+			}
 		};
 
 		onlineCrossPlayers.values().forEach(consumer);

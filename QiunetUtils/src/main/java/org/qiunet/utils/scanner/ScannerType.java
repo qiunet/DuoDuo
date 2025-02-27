@@ -28,7 +28,7 @@ public enum  ScannerType {
 	/**AI 策划用配置文件生成*/
 	CREATE_AI_CONFIG(1 << 9),
 	/**数据库数据检查*/
-	DATABASE(1 << 10, FILE_CONFIG),
+	MONGODB(1 << 10, FILE_CONFIG),
 	/**定时调度*/
 	CRON(1 << 11),
 	/**RPC*/
@@ -76,7 +76,7 @@ public enum  ScannerType {
 		ATTR,
 		CRON,
 		FORMULA,
-		DATABASE,
+		MONGODB,
 		FAKE_ENUM,
 		CONDITION,
 		GM_COMMAND,

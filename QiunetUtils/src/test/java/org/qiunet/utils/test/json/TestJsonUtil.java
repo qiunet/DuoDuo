@@ -54,7 +54,7 @@ public class TestJsonUtil extends BaseTest{
 		map.put(3, subMap);
 
 		String json = JsonUtil.toJsonString(map);
-		Assertions.assertEquals("{1:{\"DEF\":\"bb\",\"ATK\":\"aa\"},2:{\"DEF\":\"bb\",\"ATK\":\"aa\"},3:{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
+		Assertions.assertEquals("{\"1\":{\"DEF\":\"bb\",\"ATK\":\"aa\"},\"2\":{\"DEF\":\"bb\",\"ATK\":\"aa\"},\"3\":{\"DEF\":\"bb\",\"ATK\":\"aa\"}}", json);
 		map = JsonUtil.getGeneralObj(json, new TypeReference<Map<Integer, Map<String, String>>>(){});
 		subMap = map.get(2);
 		Assertions.assertNotNull(subMap);

@@ -73,6 +73,7 @@ public class HttpServerHandler  extends SimpleChannelInboundHandler<FullHttpRequ
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		ISession httpSession = ChannelUtil.getSession(ctx.channel());
+		ctx.channel().attr(ServerConstants.HTTP_WS_HEADER_KEY).set(msg.headers());
 		httpSession.attachObj(ServerConstants.HTTP_REQUEST_KEY, msg);
 		if (! msg.decoderResult().isSuccess()) {
 			ChannelUtil.sendHttpResponseStatusAndClose(ctx, HttpResponseStatus.BAD_REQUEST);

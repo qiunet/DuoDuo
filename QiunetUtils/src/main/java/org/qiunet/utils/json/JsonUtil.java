@@ -12,6 +12,8 @@ import java.util.List;
  */
 public final class JsonUtil {
 	private JsonUtil(){}
+	private static final JSONWriter.Feature [] DEFAULT_FEATURES = new JSONWriter.Feature[]{JSONWriter.Feature.WriteNonStringKeyAsString};
+
 	/**
 	 * 转换json
 	 * @param o
@@ -26,7 +28,7 @@ public final class JsonUtil {
 	 * @return
 	 */
 	public static String toJsonString(Object o){
-		return toJsonString(o, JSONWriter.Feature.FieldBased);
+		return toJsonString(o, JSONWriter.Feature.WriteNonStringKeyAsString, JSONWriter.Feature.FieldBased);
 	}
 	/**
 	 * 使用默认字段和Class反序列化对象
@@ -56,6 +58,14 @@ public final class JsonUtil {
 		return getGeneralObj(jsonText, type.getType(), features);
 	}
 
+	/**
+	 * 反序列化jsonText为某个对象
+	 * @param jsonText json 内容
+	 * @param type 类型
+	 * @param features 使用的feature
+	 * @return 对象
+	 * @param <T>
+	 */
 	public static <T> T getGeneralObj(String jsonText, Type type, JSONReader.Feature... features) {
 		return JSON.parseObject(jsonText, type, features);
 	}

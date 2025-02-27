@@ -6,6 +6,10 @@ package org.qiunet.data.enums;
  */
 public enum  EntityStatus {
 	/***
+	 * 初始化状态
+	 */
+	INIT,
+	/***
 	 * 正常状态
 	 * 除删除外所有操作完成后,
 	 * 都恢复这个状态.
