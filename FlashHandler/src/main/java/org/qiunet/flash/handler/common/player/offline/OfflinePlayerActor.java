@@ -4,7 +4,6 @@ import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.OfflineUserCreateEvent;
 import org.qiunet.flash.handler.common.player.event.OfflineUserDestroyEvent;
-import org.qiunet.flash.handler.common.player.offline.enums.OfflinePlayerDestroyCause;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.exceptions.CustomException;
@@ -20,7 +19,6 @@ import java.util.function.Consumer;
  * 2021/11/19 11:55
  */
 public class OfflinePlayerActor extends PlayerActor {
-
 
 	OfflinePlayerActor(long playerId) {
 		super(null, String.valueOf(playerId));
@@ -68,8 +66,9 @@ public class OfflinePlayerActor extends PlayerActor {
 		// do nothing
 	}
 
-	void destroy(OfflinePlayerDestroyCause cause) {
-		this.fireEvent(OfflineUserDestroyEvent.valueOf(cause));
+	void remove() {
+		this.fireEvent(OfflineUserDestroyEvent.valueOf());
+		this.addMessage(a -> ((OfflinePlayerActor) a).destroy());
 		this.destroy();
 	}
 
