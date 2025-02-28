@@ -2,7 +2,6 @@ package org.qiunet.flash.handler.common;
 
 import com.google.common.collect.Sets;
 import io.netty.util.concurrent.FastThreadLocalThread;
-import org.qiunet.data.async.ISyncDbExecutor;
 import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
@@ -200,7 +199,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}
 	}
 
-	private static class DExecutorService extends ThreadPoolExecutor implements ISyncDbExecutor {
+	private static class DExecutorService extends ThreadPoolExecutor {
 		private final String threadName;
 		private Thread thread;
 
@@ -215,7 +214,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			this.thread.setDaemon(true);
 			return this.thread;
 		}
-		@Override
+
 		public boolean inSelfThread() {
 			return this.thread == Thread.currentThread();
 		}

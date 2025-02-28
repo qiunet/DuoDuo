@@ -5,15 +5,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-import org.qiunet.data.async.ISyncDbExecutor;
 import org.qiunet.data.db.loader.SyncImmediately;
 import org.qiunet.data.enums.EntityStatus;
-import org.qiunet.utils.async.future.DCompletePromise;
-import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Map;
-import java.util.concurrent.Future;
 
 /***
  * 跟玩家相关的数据加载管理
@@ -23,7 +19,7 @@ import java.util.concurrent.Future;
  */
 public class PlayerDataLoader implements IPlayerDataLoader {
 
-	static final BasicPlayerMongoEntity NULL = new BasicPlayerMongoEntity() {
+	private static final BasicPlayerMongoEntity NULL = new BasicPlayerMongoEntity() {
 		@Override
 		public UpdateResult save() {
 			throw new ClassCastException("Not Support in NULL Object");
@@ -42,10 +38,6 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	final DbEntityAsyncQueue cacheAsyncToDb = new DbEntityAsyncQueue();
 	/**
-	 * 同步到库
-	 */
-	final ISyncDbExecutor sync;
-	/**
      * 玩家ID
 	 */
 	private final long playerId;
@@ -55,9 +47,8 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	 */
 	boolean offline;
 
-	private PlayerDataLoader(ISyncDbExecutor sync, long playerId) {
+	PlayerDataLoader(long playerId) {
 		this.playerId = playerId;
-		this.sync = sync;
 	}
 
 	public void setOffline(boolean offline) {
@@ -66,12 +57,11 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 
 	/**
 	 *
-	 * @param sync 同步的线程对象. 是从messageHandler取到. player id不变. 则不会变
 	 * @param playerId 玩家id
 	 * @return 玩家的数据加载
 	 */
-	public static PlayerDataLoader get(ISyncDbExecutor sync, long playerId) {
-		return DataLoaderManager.instance.getPlayerLoader(playerId, () -> new PlayerDataLoader(sync, playerId));
+	public static PlayerDataLoader get(long playerId) {
+		return DataLoaderManager.instance.getPlayerLoader(playerId);
 	}
 
 	@Override
@@ -85,6 +75,7 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	public void unregister(){
 		// 同步 并 移除数据
 		this.remove();
+		DataLoaderManager.instance.unRegisterPlayerLoader(playerId);
 	}
 
 	/**
@@ -99,15 +90,8 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 	/**
 	 * 同步数据到db
 	 */
-	public Future<?> syncToDb(){
-		if (this.sync.inSelfThread()) {
-			cacheAsyncToDb.syncToDb();
-			DPromise<Void> future = new DCompletePromise<>();
-			future.trySuccess(null);
-			return future;
-		}else {
-			return this.sync.submit(cacheAsyncToDb::syncToDb);
-		}
+	public void syncToDb(){
+		cacheAsyncToDb.syncToDb();
 	}
 	/**
 	 * 获得玩家ID
@@ -132,24 +116,15 @@ public class PlayerDataLoader implements IPlayerDataLoader {
 			throw new CustomException("Entity already deleted!!");
 		}
 
-		if (!this.sync.inSelfThread()) {
-			throw new RuntimeException("Not in self thread!");
-		}
-
+		this.dataCache.put(entity.getClass(), entity);
 		entity.playerDataLoader = this;
 		if (entity.entityUpdate()) {
 			cacheAsyncToDb.add(entity, persistenceImmediately);
 		}
-
-		this.dataCache.put(entity.getClass(), entity);
 	}
 
 	@Override
 	public <Entity extends BasicPlayerMongoEntity> Entity getEntity(Class<Entity> clazz) {
-		if (! this.sync.inSelfThread()) {
-			throw new RuntimeException("Not in self thread!");
-		}
-
 		Object data = dataCache.computeIfAbsent(clazz, key -> {
 			MongoCollection<Entity> collection = MongoDbSupport.getCollection(clazz);
 			BasicPlayerMongoEntity obj = collection.find(Filters.eq("_id", playerId)).first();

@@ -41,13 +41,17 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 	public ByteBuf recycle() {
 		try {
 			this.codedOutputStream.flush();
-		} catch (IOException e) {
+		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
 		ByteBuf temp = this.buffer;
 		this.buffer = null;
 		pool.recycle(this);
 		return temp;
+	}
+
+	public void releaseBuffer() {
+		this.buffer.release();
 	}
 
 	@Override
@@ -132,9 +136,9 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 
 		byte[]  bytearr = new byte[utflen+2];
 		bytearr[count++] = (byte) ((utflen >>> 8) & 0xFF);
-		bytearr[count++] = (byte) ((utflen) & 0xFF);
+		bytearr[count++] = (byte) ((utflen >>> 0) & 0xFF);
 
-		int i;
+		int i=0;
 		for (i=0; i<strlen; i++) {
 			c = str.charAt(i);
 			if (!((c >= 0x0001) && (c <= 0x007F))) break;
@@ -149,13 +153,12 @@ class CodedOutputStreamThreadCache extends OutputStream implements DataOutput {
 			} else if (c > 0x07FF) {
 				bytearr[count++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
 				bytearr[count++] = (byte) (0x80 | ((c >>  6) & 0x3F));
-				bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
+				bytearr[count++] = (byte) (0x80 | ((c >>  0) & 0x3F));
 			} else {
 				bytearr[count++] = (byte) (0xC0 | ((c >>  6) & 0x1F));
-				bytearr[count++] = (byte) (0x80 | ((c) & 0x3F));
+				bytearr[count++] = (byte) (0x80 | ((c >>  0) & 0x3F));
 			}
 		}
 		this.write(bytearr, 0, utflen+2);
 	}
-
 }

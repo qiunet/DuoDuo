@@ -4,6 +4,7 @@ import org.qiunet.cfg.base.INestMapCfg;
 import org.qiunet.cfg.manager.base.ICfgWrapper;
 import org.qiunet.cfg.manager.base.INestMapCfgWrapper;
 import org.qiunet.utils.collection.safe.SafeMap;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,9 @@ public class NestMapJsonCfgManager<ID, SubId, Cfg extends INestMapCfg<ID, SubId>
 		SafeMap<ID, Map<SubId, Cfg>> cfgMap = new SafeMap<>();
 		for (Cfg cfg : cfgList) {
 			Map<SubId, Cfg> subMap = cfgMap.computeIfAbsent(cfg.getId(), key -> new SafeMap<>());
-			subMap.put(cfg.getSubId(), cfg);
+			if (subMap.put(cfg.getSubId(), cfg) != null) {
+				throw new CustomException("load cfg {} error! id:{} subId:{} duplicate", cfg.getClass().getSimpleName(), cfg.getId(), cfg.getSubId());
+			}
 		}
 		for (Map<SubId, Cfg> subKeyCfgMap : cfgMap.values()) {
 			((SafeMap) subKeyCfgMap).loggerIfAbsent();

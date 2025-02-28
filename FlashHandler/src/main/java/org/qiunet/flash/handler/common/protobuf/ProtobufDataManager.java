@@ -16,7 +16,6 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /***
@@ -45,7 +44,7 @@ public class ProtobufDataManager {
 		Class objClass = obj.getClass();
 		try {
 			return getCodec(objClass).encode(obj);
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new CustomException(e, "Class [{}] encode exception", objClass.getName());
 		}
 	}
@@ -61,13 +60,18 @@ public class ProtobufDataManager {
 		Codec codec = getCodec(objClass);
 		CodedOutputStreamThreadCache cache = null;
 		ByteBuf byteBuf = null;
+		boolean ex = false;
 		try {
 			cache = CodedOutputStreamThreadCache.get();
 			codec.writeTo(obj, cache.getCodedOutputStream());
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}finally {
+		} catch (Throwable e) {
 			if (cache != null) {
+				cache.releaseBuffer();
+			}
+			ex = true;
+			throw new RuntimeException(e);
+		} finally {
+			if (cache != null && ! ex) {
 				byteBuf = cache.recycle();
 			}
 		}
@@ -85,18 +89,14 @@ public class ProtobufDataManager {
 		CodedInputStreamThreadCache in = CodedInputStreamThreadCache.get(buffer);
 		T ret = getCodec(clazz).readFrom(in.getCodedInputStream());
 		in.recycle();
-		return  ret;
+		return ret;
 	}
 
-	/**
-	 * 预热部分协议
-	 * @param event
-	 */
 	@EventListener
 	private void startup(ServerStartupEvent event) {
 		ProtobufProxy.create(CrossPlayerAuthRequest.class);
-		ProtobufProxy.create(CrossEventRequest.class);
 		ProtobufProxy.create(ServerPongResponse.class);
+		ProtobufProxy.create(CrossEventRequest.class);
 		ProtobufProxy.create(ClientPingRequest.class);
 		ProtobufProxy.create(RouteRpcReq.class);
 		ProtobufProxy.create(RouteRpcRsp.class);

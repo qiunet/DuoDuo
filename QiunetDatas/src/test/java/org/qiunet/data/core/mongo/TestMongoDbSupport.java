@@ -5,15 +5,11 @@ import org.bson.BsonDocumentWriter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.qiunet.data.async.ISyncDbExecutor;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /***
  *
@@ -21,23 +17,7 @@ import java.util.concurrent.Future;
  * 2024/2/22 15:29
  ***/
 public class TestMongoDbSupport {
-	private static class SyncDbExecutor implements ISyncDbExecutor {
-		private static final ExecutorService service = Executors.newFixedThreadPool(1);
-
-		@Override
-		public boolean inSelfThread() {
-			return true;
-		}
-
-		@Override
-		public Future<?> submit(Runnable runnable) {
-			return service.submit(runnable);
-		}
-	}
-
-	private static final SyncDbExecutor executor = new SyncDbExecutor();
-
-	private static final PlayerDataLoader playerDataLoader = PlayerDataLoader.get(executor,  1000123);
+	private static final PlayerDataLoader playerDataLoader = PlayerDataLoader.get(1000123);
 
 	@BeforeAll
 	public static void init(){
@@ -82,8 +62,7 @@ public class TestMongoDbSupport {
 		playerDo.getGlobalInfoDo().save();
 		playerDataLoader.save(playerDo);
 
-		Future<?> future = playerDataLoader.syncToDb();
-		future.get();
+		playerDataLoader.syncToDb();
 
 		PlayerDo entity = playerDataLoader.getEntity(PlayerDo.class);
 		Assertions.assertEquals(entity, playerDo);
@@ -97,8 +76,7 @@ public class TestMongoDbSupport {
 		playerDo.getGlobalInfoDo().setLevel(100);
 		playerDo.getGlobalInfoDo().save();
 		playerDo.save();
-		future = playerDataLoader.syncToDb();
-		future.get();
+		playerDataLoader.syncToDb();
 
 		// 失效
 		playerDataLoader.dataCache.remove(PlayerDo.class);

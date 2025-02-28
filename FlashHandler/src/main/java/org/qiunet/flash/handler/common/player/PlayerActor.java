@@ -205,7 +205,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 
 		this.scheduleMessage(p -> {
 			// 触发获取DataLoader. 不让失效
-			this.dataLoader();
+			this.dataLoader().syncToDb();
 			this.clockTick();
 		}, 2, TimeUnit.MINUTES);
 	}
@@ -219,6 +219,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		if (active) {
 			new LoginSuccessEvent(this).fireEventHandler();
 			this.sessionCloseListener();
+			this.clockTick();
 			this.loginSuccess = true;
 		}
 		return active;
@@ -246,13 +247,14 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		if (this.isDestroyed()) {
 			return;
 		}
-
-		this.quitAllCross(CloseCause.DESTROY);
-		super.destroy();
-		// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
-		if (loginSuccess) {
-			dataLoader().unregister();
+		if (this.getClass() == PlayerActor.class) {
+			this.quitAllCross(CloseCause.DESTROY);
+			// 必须要登录成功后的actor销毁才执行这步. 否则有可能一个闲置的session关闭导致后面进来正常玩家的 dataLoader 被关闭
+			if (loginSuccess) {
+				dataLoader().unregister();
+			}
 		}
+		super.destroy();
 	}
 
 	/**
@@ -320,7 +322,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 
 	@Override
 	public PlayerDataLoader dataLoader() {
-		return PlayerDataLoader.get(executor.get(), getPlayerId());
+		return PlayerDataLoader.get(getPlayerId());
 	}
 
 	public boolean isLoginSuccess() {

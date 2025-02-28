@@ -79,5 +79,6 @@ public class OfflinePlayerActor extends PlayerActor {
 		}
 
 		dataLoader().unregister();
+		super.destroy();
 	}
 }

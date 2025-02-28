@@ -26,7 +26,7 @@ public abstract class BasicPlayerMongoEntity implements IMongoEntity<Long> {
 	@Override
 	public UpdateResult save() {
 		if (playerDataLoader == null) {
-			this.playerDataLoader = DataLoaderManager.instance.getPlayerLoader(playerId, () -> null);
+			this.playerDataLoader = PlayerDataLoader.get(playerId);
 		}
 		playerDataLoader.save(this);
 		return null;

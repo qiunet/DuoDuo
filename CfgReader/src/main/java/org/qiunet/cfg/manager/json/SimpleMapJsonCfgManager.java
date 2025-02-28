@@ -5,6 +5,7 @@ import org.qiunet.cfg.base.ISortable;
 import org.qiunet.cfg.manager.base.ICfgWrapper;
 import org.qiunet.cfg.manager.base.ISimpleMapCfgWrapper;
 import org.qiunet.utils.collection.safe.SafeMap;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,9 @@ public class SimpleMapJsonCfgManager <ID, Cfg extends ISimpleMapCfg<ID>>
 		}
 
 		for (Cfg cfg : cfgList) {
-			cfgMap.put(cfg.getId(), cfg);
+			if(cfgMap.put(cfg.getId(), cfg) != null) {
+				throw new CustomException("load cfg {} error! id:{} duplicate", cfg.getClass().getSimpleName(), cfg.getId());
+			}
 		}
 		cfgMap.loggerIfAbsent();
 		cfgMap.convertToUnmodifiable();
