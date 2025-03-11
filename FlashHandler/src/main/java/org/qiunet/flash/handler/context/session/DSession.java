@@ -57,4 +57,10 @@ public class DSession extends BaseChannelSession implements IKcpSessionManager {
 	public KcpSession getKcpSession() {
 		return kcpSession;
 	}
+
+	public ISession copyChannel() {
+		DSession dSession = new DSession(channel);
+		dSession.kcpSession = this.kcpSession;
+		return dSession;
+	}
 }

@@ -9,6 +9,7 @@ import org.qiunet.utils.string.StringUtil;
  * 2020-09-28 15:57
  */
 public class CommMessageHandler extends MessageHandler<CommMessageHandler> {
+	public static final CommMessageHandler DEFAULT = new CommMessageHandler();
 
 	public CommMessageHandler() {
 		super(StringUtil.randomString(10));

@@ -12,6 +12,7 @@ import org.qiunet.flash.handler.common.player.event.LoginSuccessEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerActorLogoutEvent;
 import org.qiunet.flash.handler.common.player.event.PlayerEvent;
 import org.qiunet.flash.handler.common.player.proto.PlayerLogoutPush;
+import org.qiunet.flash.handler.context.session.DSession;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.flash.handler.netty.server.config.adapter.message.ClockTickPush;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -228,7 +229,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	private void sessionCloseListener() {
 		session.addCloseListener("PlayerActorLogoutEvent", (s, cause) -> {
 			EventManager.post(new PlayerActorLogoutEvent(cause).setPlayer(this), (mtd, ex) -> {
-				logger.error("PlayerActor: "+session.toString()+" session close error in method ["+mtd.getName()+"]!", ex);
+				logger.error("PlayerActor: {} session close error in method [{}]!", session.toString(), mtd.getName(), ex);
 			});
 			if (s.isActive() && cause.needLogoutPush()) {
 				s.sendMessage(PlayerLogoutPush.valueOf(cause), true);
@@ -239,8 +240,6 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 			this.quitAllCross(cause);
 		});
 	}
-
-
 
 	@Override
 	public void destroy() {
@@ -268,15 +267,15 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 
 		this.clearObservers();
 
-		handler.session.addCloseListener("merge", (s, c) -> {
+		this.setSession(((DSession) handler.session).copyChannel());
+		this.session.addCloseListener("merge", (s, c) -> {
 			if (! loginSuccess && c.needWaitConnect()) {
 				UserOnlineManager.instance.addToWait(this);
 			}
 		});
-
-		handler.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+		this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, this);
+		this.cancelAllFuture(true);
 		this.dataLoader().setOffline(false);
-		this.setSession(handler.session);
 		this.loginSuccess = false;
 		handler.setSession(null);
 		handler.destroy();

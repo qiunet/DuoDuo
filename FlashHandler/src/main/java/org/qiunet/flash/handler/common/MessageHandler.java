@@ -33,7 +33,7 @@ import java.util.stream.IntStream;
  **/
 public abstract class MessageHandler<H extends IMessageHandler<H>>
 		implements IMessageHandler<H>, IThreadSafe {
-	protected static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(OSUtil.availableProcessors() * 2);
+	protected static final MessageHandlerEventLoop executorService = new MessageHandlerEventLoop(Math.max(OSUtil.availableProcessors() * 2, 16));
 
 	protected final LazyLoader<DExecutorService> executor = new LazyLoader<>(() -> executorService.getEventLoop(this.msgExecuteIndex()));
 
@@ -126,6 +126,14 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 		}else {
 			logger.warn("{} was destroy repeated!", getIdentity());
 		}
+	}
+	/**
+	 * 是否在某个指定
+	 * @param queueIndexParam
+	 * @return
+	 */
+	public boolean isInThread(Object queueIndexParam) {
+		return executorService.getEventLoop(queueIndexParam).inSelfThread();
 	}
 
 	/**

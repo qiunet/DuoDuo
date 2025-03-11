@@ -8,6 +8,8 @@ import io.netty.util.concurrent.Promise;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.enums.ServerType;
+import org.qiunet.data.event.PlayerKickOutEvent;
+import org.qiunet.flash.handler.common.CommMessageHandler;
 import org.qiunet.flash.handler.common.player.event.*;
 import org.qiunet.flash.handler.common.player.observer.IPlayerDestroy;
 import org.qiunet.flash.handler.common.player.offline.UserOfflineManager;
@@ -23,6 +25,7 @@ import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
+import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.listener.event.data.ServerShutdownEvent;
 import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
@@ -102,6 +105,7 @@ public enum UserOnlineManager {
 			onlineCrossPlayers.put(userActor.getId(), ((CrossPlayerActor) userActor));
 		}
 		if (userActor.isPlayerActor()) {
+			EventManager.fireEventHandler(PlayerKickOutEvent.valueOf(eventData.getPlayer().getId()));
 			onlinePlayers.put(userActor.getId(), (PlayerActor) userActor);
 		}
 	}
@@ -379,6 +383,7 @@ public enum UserOnlineManager {
 	 * @return actor 该方法不会返回null
 	 */
 	public AbstractUserActor returnActor(long playerId) {
+		Preconditions.checkState(CommMessageHandler.DEFAULT.isInThread(String.valueOf(playerId)), "Need call returnActor in self thread!");
 		AbstractUserActor actor = getActor(playerId);
 		if (actor != null) {
 			return actor;

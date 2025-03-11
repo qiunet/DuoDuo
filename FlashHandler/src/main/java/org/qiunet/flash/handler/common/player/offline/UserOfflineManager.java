@@ -3,6 +3,7 @@ package org.qiunet.flash.handler.common.player.offline;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.event.PlayerKickOutEvent;
 import org.qiunet.flash.handler.common.player.server.UserServerState;
 import org.qiunet.flash.handler.common.player.server.UserServerStateManager;
@@ -44,7 +45,7 @@ public enum UserOfflineManager {
 	 * @param playerId 玩家ID
 	 * @return Object of OfflinePlayerActor
 	 */
-	public OfflinePlayerActor get(long playerId) throws ExecutionException {
+	public OfflinePlayerActor get(long playerId) {
 		OfflinePlayerActor playerActor = cache.getIfPresent(playerId);
 		if (playerActor != null) {
 			return playerActor;
@@ -56,19 +57,24 @@ public enum UserOfflineManager {
 
 		UserServerState userServerState = UserServerStateManager.instance.getUserServerState(playerId);
 		Preconditions.checkState(userServerState != null && userServerState.getServerId() == 0, "PlayerId: %s serverId not empty!", playerId);
-		//int serverId = UserServerStateManager.instance.tryLock(playerId, ServerNodeManager.getCurrServerId(), false);
-		//if (serverId != ServerNodeManager.getCurrServerId()) {
-		//	return null;
-		//}
+		int serverId = UserServerStateManager.instance.tryLock(playerId, ServerNodeManager.getCurrServerId(), false);
+		if (serverId != ServerNodeManager.getCurrServerId()) {
+			return null;
+		}
 
-		return cache.get(playerId, () -> {
-			OfflinePlayerActor actor = new OfflinePlayerActor(playerId);
-			LoggerType.DUODUO_FLASH_HANDLER.info("Offline Player ID: {} created!", playerId);
-			actor.scheduleMessage(a -> {
-				cache.invalidate(a.getPlayerId());
-			}, 5, TimeUnit.MINUTES);
-			return actor;
-		});
+		try {
+			return cache.get(playerId, () -> {
+				OfflinePlayerActor actor = new OfflinePlayerActor(playerId);
+				LoggerType.DUODUO_FLASH_HANDLER.info("Offline Player ID: {} created!", playerId);
+				actor.scheduleMessage(a -> {
+					cache.invalidate(a.getPlayerId());
+				}, 5, TimeUnit.MINUTES);
+				return actor;
+			});
+		} catch (ExecutionException e) {
+			LoggerType.DUODUO_FLASH_HANDLER.error("Offline Player ID: {} failed!", playerId, e);
+			return null;
+		}
 	}
 
 	@EventListener(EventHandlerWeightType.HIGH)

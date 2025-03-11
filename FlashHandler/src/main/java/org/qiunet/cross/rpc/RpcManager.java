@@ -2,9 +2,8 @@ package org.qiunet.cross.rpc;
 
 import com.google.common.collect.Maps;
 import org.qiunet.cross.node.ServerNodeManager;
-import org.qiunet.flash.handler.common.player.AbstractUserActor;
+import org.qiunet.flash.handler.common.CommMessageHandler;
 import org.qiunet.flash.handler.common.player.IPlayer;
-import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.utils.args.ArgsContainer;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.json.JsonUtil;
@@ -53,16 +52,18 @@ public class RpcManager {
 	 * @return  RpcFuture 自己在外面异步 或者同步取数据
 	 */
 	public static <E extends IRpcRequest, R> RpcFuture<R> rpcCall(int serverId, IRpcFunction<E, R> req, E reqData) {
-		RpcFuture<R> rpcFuture = new RpcFuture<>(counter.incrementAndGet(), new DCompletePromise<>());
+		DCompletePromise<R> promise = new DCompletePromise<>();
+		RpcFuture<R> rpcFuture = new RpcFuture<>(counter.incrementAndGet(), promise);
 		if (serverId == ServerNodeManager.getCurrServerId()) {
 			if (IPlayer.class.isAssignableFrom(reqData.getClass()) && ((IPlayer) reqData).getId() > 0) {
-				AbstractUserActor actor = UserOnlineManager.instance.returnActor(((IPlayer) reqData).getId());
-				actor.addMessage(a -> {
-					rpcFuture.getFuture().trySuccess(req.apply(reqData));
-				});
+				CommMessageHandler.DEFAULT.runMessageWithMsgExecuteIndex(a -> {
+					R ret = req.apply(reqData);
+					promise.trySuccess(ret);
+				}, String.valueOf(((IPlayer) reqData).getId()));
 			}else {
 				try {
-						rpcFuture.getFuture().trySuccess(req.apply(reqData));
+					R ret = req.apply(reqData);
+					promise.trySuccess(ret);
 				}catch (Exception e) {
 					LoggerType.DUODUO_FLASH_HANDLER.error("Handler Rpc exception: " , e);
 					rpcFuture.getFuture().tryFailure(e);

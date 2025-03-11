@@ -1,5 +1,6 @@
 package org.qiunet.flash.handler.common.player.server;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.qiunet.cross.event.CrossEventManager;
 import org.qiunet.cross.event.CrossEventRequest;
@@ -116,12 +117,9 @@ public enum UserServerStateManager {
 
 		int serverId = state.getServerId();
 		if (serverId != 0) {
-			if (redisUtil.returnJedis().exists(ServerInfo.serverInfoRedisKey(serverId))) {
-				return serverId;
-			}
-			// 某种异常情况没有移除, 给移除掉.
-			LoggerType.DUODUO_FLASH_HANDLER.error("PlayerId {} UserServerState.serverID not remove!", playerId);
-			redisUtil.returnJedis().hdel(UserServerState.redisKey(playerId), SERVER_ID);
+			int serverId0 = tryLock(playerId, serverId, false);
+			Preconditions.checkState(serverId0 == serverId, "UserServerState player [%s] user serverId %s error!", playerId, serverId);
+			return serverId;
 		}
 
 		ServerInfo serverInfo = ServerNodeManager.assignServer(ServerType.LOGIC);
@@ -129,23 +127,47 @@ public enum UserServerStateManager {
 			return 0;
 		}
 
-		String redisKey = USER_TEMP_SERVER_ID_REDIS_KEY + playerId;
-
-		String succ = redisUtil.returnJedis().set(redisKey, String.valueOf(serverInfo.getServerId()), SetParams.setParams()
-			.nx().ex(TimeUnit.MINUTES.toSeconds(1)));
-
-		if (Objects.equals("OK", succ)) {
-			return serverInfo.getServerId();
-		}
-
-		serverId = Integer.parseInt(redisUtil.returnJedis().get(redisKey));
-		if (redisUtil.returnJedis().exists(ServerInfo.serverInfoRedisKey(serverId))) {
+		serverId = tryLock(playerId, serverInfo.getServerId(), true);
+		if (serverId != 0) {
 			return serverId;
 		}
-
-		// 可能服务器下线了.
-		redisUtil.returnJedis().del(redisKey);
 		return assignServerId(playerId, false);
+	}
+	/**
+	 * 获取用户临时redis的key
+	 * @param playerId	玩家id
+	 * @return	用户临时redis的key
+	 */
+	private String getUserTempRedisKey(long playerId) {
+		return USER_TEMP_SERVER_ID_REDIS_KEY + playerId;
+	}
+	/**
+	 * 尝试锁定
+	 * @param playerId 玩家id
+	 * @param serverId 分配的ServerID
+	 * @return
+	 */
+	public int tryLock(long playerId, int serverId, boolean checkDeprecate) {
+		Preconditions.checkState(ServerType.getServerType(serverId) == ServerType.LOGIC);
+		String redisKey = this.getUserTempRedisKey(playerId);
+
+		try {
+			String result = redisUtil.returnJedis().set(redisKey, String.valueOf(serverId), SetParams.setParams()
+				.nx().ex(TimeUnit.SECONDS.toSeconds(90)));
+
+			if (Objects.equals("OK", result)) {
+				return serverId;
+			}
+			String string = redisUtil.returnJedis().get(redisKey);
+			serverId = Integer.parseInt(string);
+		}finally {
+			ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
+			if (serverInfo == null || (checkDeprecate && serverInfo.isDeprecate())) {
+				redisUtil.returnJedis().del(redisKey);
+				serverId = 0;
+			}
+		}
+		return serverId;
 	}
 
 	/**

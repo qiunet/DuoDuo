@@ -1,12 +1,10 @@
 package org.qiunet.cross.event;
 
-import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.conf.ServerConfig;
+import org.qiunet.flash.handler.common.CommMessageHandler;
 import org.qiunet.flash.handler.common.player.AbstractUserActor;
-import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.UserOnlineManager;
-import org.qiunet.flash.handler.common.player.event.PlayerEvent;
 import org.qiunet.flash.handler.common.player.event.UserEvent;
 import org.qiunet.utils.listener.event.EventManager;
 import org.qiunet.utils.listener.event.ICrossListenerEvent;
@@ -41,12 +39,12 @@ public final class CrossEventManager {
 	 */
 	public static <T extends UserEvent & ICrossListenerEvent> void fireCrossUserEvent(int serverId, T event, long playerId) {
 		if (serverId == ServerConfig.getServerId()) {
-			AbstractUserActor actor0 = UserOnlineManager.instance.returnActor(playerId);
-			if (actor0.isPlayerActor()) {
-				((PlayerActor) actor0).fireAsyncEvent(((PlayerEvent) event));
-			}else {
-				((CrossPlayerActor) actor0).fireAsyncEvent((CrossPlayerEvent) event);
-			}
+			CommMessageHandler.DEFAULT.runMessageWithMsgExecuteIndex(h -> {
+				AbstractUserActor playerActor = UserOnlineManager.instance.returnActor(playerId);
+				playerActor.addMessage(p -> {
+					EventManager.post(event.setPlayer((AbstractUserActor) p));
+				});
+			}, String.valueOf(playerId));
 			return;
 		}
 		ServerNodeManager.getNode(serverId, node ->node.fireUserCrossEvent(event, playerId));
