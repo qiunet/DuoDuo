@@ -5,11 +5,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.pool.ChannelPool;
 import org.qiunet.cross.pool.NodeChannelPoolMap;
 import org.qiunet.cross.pool.NodeChannelTrigger;
-import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.annotation.SkipDebugOut;
-import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.PlayerActor;
 import org.qiunet.flash.handler.common.player.event.CrossChannelErrorEvent;
 import org.qiunet.flash.handler.common.player.event.CrossPlayerDestroyEvent;
@@ -134,11 +131,11 @@ enum CrossSessionManager implements NodeChannelTrigger {
 			return;
 		}
 
-		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf());
+		DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(data.getProtocolId(), data.byteBuf().retain());
 		INodeServerHeader header = (INodeServerHeader) data.getHeader();
 		boolean flush = header.isFlush();
 		boolean kcp = header.isKcp();
-		playerActor.addMessage(m -> {
+		playerActor.runMessageWithMsgExecuteIndex(m -> {
 			try {
 				c2pMessage(playerActor, message, kcp, flush);
 			}catch (Exception e) {
@@ -146,12 +143,12 @@ enum CrossSessionManager implements NodeChannelTrigger {
 					message.getContent().release();
 				}
 			}
-		});
+		}, playerActor.msgExecuteIndex());
 		data.recycle();
 	}
 
-	private void c2pMessage(IMessageActor iMessageActor, DefaultByteBufMessage message, boolean kcp, boolean flush) {
-		ISession session = iMessageActor.getSession();
+	private void c2pMessage(PlayerActor actor, DefaultByteBufMessage message, boolean kcp, boolean flush) {
+		ISession session = actor.getSession();
 		if (logger.isInfoEnabled()) {
 			Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
 			if (SkipDebugOut.DebugOut.test(aClass)) {
@@ -161,8 +158,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-                ServerConnType serverConnType = session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY);
-				logger.info("{} C2P {} message: {}", iMessageActor.getIdentity(), kcp  ? "KCP": serverConnType, channelData._toString());
+				logger.debug("{} C2P message: {}", actor.getIdentity(), channelData._toString());
 			}
 		}
 		if (kcp
@@ -170,7 +166,7 @@ enum CrossSessionManager implements NodeChannelTrigger {
 		&& ((IKcpSessionHolder)session).isKcpSessionPrepare()) {
 			((IKcpSessionHolder) session).sendKcpMessage(message, flush);
 		}else {
-			iMessageActor.getSession().sendMessage(message, flush);
+			actor.getSession().sendMessage(message, flush);
 		}
 	}
 }

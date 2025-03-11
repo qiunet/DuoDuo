@@ -6,6 +6,8 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.util.AttributeKey;
+import io.netty.util.ResourceLeakDetector;
+import org.qiunet.data.conf.ServerConfig;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.common.player.protocol.CommonProtocolCD;
@@ -119,6 +121,10 @@ public final class ServerConstants {
 
 	@EventListener(EventHandlerWeightType.LOWEST)
 	private void onStartupComplete(ServerStartupCompleteEvent event) {
+		if (! ServerConfig.isOfficial()) {
+			ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+		}
+
 		LoggerType.DUODUO_FLASH_HANDLER.error( StrCodecUtil.decrypt(ICON));
 		ICON = null;
 

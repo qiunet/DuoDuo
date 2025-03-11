@@ -6,7 +6,6 @@ import org.qiunet.flash.handler.context.request.IRequestContext;
 import org.qiunet.utils.async.LazyLoader;
 import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
-import org.qiunet.utils.logger.LogUtils;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.math.MathUtil;
 import org.qiunet.utils.reflect.ReflectUtil;
@@ -78,28 +77,24 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	 * @param msg
 	 */
 	@Override
-	public boolean addMessage(IMessage<H> msg) {
-		if (this.isDestroyed()) {
-			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
-			return false;
-		}
-		this.getExecutor().execute(new Message0(this, msg));
-		return true;
+	public CompletableFuture<Boolean> addMessage(IMessage<H> msg) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		this.getExecutor().execute(new Message0(this, msg, future));
+		return future;
 	}
 
 	@Override
-	public void runMessage(IMessage<H> message) {
-		if (this.isDestroyed()) {
-			logger.error(LogUtils.dumpStack("MessageHandler ["+getIdentity()+"] 已经关闭销毁"));
-			return;
-		}
-
-		executorService.randEventLoop().execute(new Message0(this, message));
+	public CompletableFuture<Boolean> runMessage(IMessage<H> message) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		executorService.randEventLoop().execute(new Message0(this, message, future));
+		return future;
 	}
 
 	@Override
-	public void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex) {
-		executorService.getEventLoop(msgExecuteIndex).execute(new Message0(this, message, true));
+	public CompletableFuture<Boolean> runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex) {
+		CompletableFuture<Boolean> future = new CompletableFuture<>();
+		executorService.getEventLoop(msgExecuteIndex).execute(new Message0(this, message, future, true));
+		return future;
 	}
 
 	@Override
@@ -272,16 +267,18 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 	}
 	private static class Message0 implements Runnable {
 		private static final long WARN_NANO_TIME = TimeUnit.MILLISECONDS.toNanos(500);
+		private final CompletableFuture<Boolean> completableFuture;
 		private final boolean skipDestroyCheck;
 		private final MessageHandler handler;
 		private final IMessage message;
 		private final long addDt;
 
-		public Message0(MessageHandler handler, IMessage message) {
-			this(handler, message, false);
+		public Message0(MessageHandler handler, IMessage message, CompletableFuture<Boolean> completableFuture) {
+			this(handler, message, completableFuture, false);
 		}
 
-		public Message0(MessageHandler handler, IMessage message, boolean skipDestroyCheck) {
+		public Message0(MessageHandler handler, IMessage message, CompletableFuture<Boolean> completableFuture, boolean skipDestroyCheck) {
+			this.completableFuture = completableFuture;
 			this.skipDestroyCheck = skipDestroyCheck;
 			this.addDt = System.nanoTime();
 			this.handler = handler;
@@ -293,6 +290,7 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			String messageInfo = this.messageInfo();
 			if (! skipDestroyCheck && this.handler.isDestroyed()) {
 				handler.logger.info("MessageHandler already destroy! message {} discard!", messageInfo);
+				completableFuture.complete(false);
 				return;
 			}
 
@@ -300,10 +298,13 @@ public abstract class MessageHandler<H extends IMessageHandler<H>>
 			if (handlerStart - addDt > WARN_NANO_TIME){
 				handler.logger.error("Message {} wait [{}] ms to executor!", messageInfo, TimeUnit.NANOSECONDS.toMillis(handlerStart - addDt));
 			}
+
 			try {
 				message.execute(handler);
+				completableFuture.complete(true);
 			} catch (Throwable e) {
 				handler.exceptionHandle(e);
+				completableFuture.completeExceptionally(e);
 			}finally {
 				long handlerEnd = System.nanoTime();
 				if (handlerEnd - handlerStart > WARN_NANO_TIME && !IRequestContext.class.isAssignableFrom(message.getClass())){

@@ -10,6 +10,8 @@ import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.ISession;
 import org.qiunet.utils.listener.event.IListenerEvent;
 
+import java.util.concurrent.CompletableFuture;
+
 /***
  * 单独启动tcp连接, 提供其它服务公用的一个actor
  * 一个服务与一个服务之间只会有一个 连接.不会存在多个.
@@ -30,12 +32,11 @@ public class ServerNode extends AbstractMessageActor<ServerNode> {
 
 
 	@Override
-	public boolean addMessage(IMessage<ServerNode> msg) {
+	public CompletableFuture<Boolean> addMessage(IMessage<ServerNode> msg) {
 		if (isAuth()) {
 			// 是一个服务和另一个服务公用一个channel.
 			// 由业务自己实现线程的安全. 一般CommMessageHandler  roomHandler等 重新addMessage 一遍.
-			this.runMessage(msg);
-			return true;
+			return this.runMessage(msg);
 		}else {
 			// 没有鉴权. 需要按照队列. 先执行鉴权操作.
 			return super.addMessage(msg);

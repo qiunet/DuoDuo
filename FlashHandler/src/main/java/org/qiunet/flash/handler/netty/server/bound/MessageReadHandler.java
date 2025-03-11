@@ -204,7 +204,7 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 			// 回收content. 并防止里面的byteBuf被回收.
 			content.recycle();
-			messageActor.addMessage(m -> {
+			messageActor.runMessageWithMsgExecuteIndex(m -> {
 				try {
 					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
 					if (logger.isInfoEnabled()) {
@@ -215,12 +215,12 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 						}
 					}
 					((ICrossStatusActor) messageActor).sendCrossMessage(message);
-				}catch (Exception e) {
+				} catch (Exception e) {
 					if (message.getContent() != null && message.getContent().refCnt() > 0) {
 						message.getContent().release();
 					}
 				}
-			});
+			}, String.valueOf(messageActor.msgExecuteIndex()));
 			return;
 		}
 		if (session.isActive()) {

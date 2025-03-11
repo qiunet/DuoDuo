@@ -4,6 +4,7 @@ import org.qiunet.utils.async.future.DFuture;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.logger.LoggerType;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 /***
@@ -33,7 +34,7 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 * 保证线程安全.
 	 * @param message
 	 */
-	boolean addMessage(IMessage<H> message);
+	CompletableFuture<Boolean> addMessage(IMessage<H> message);
 
 	/**
 	 * 在自己的线程
@@ -46,13 +47,13 @@ public interface IMessageHandler<H extends IMessageHandler<H>> {
 	 * 使用在不需要保证线程安全的地方.
 	 * @param message
 	 */
-	void runMessage(IMessage<H> message);
+	CompletableFuture<Boolean> runMessage(IMessage<H> message);
 	/**
 	 * 以某个MsgExecuteIndex 执行message
 	 * @param message 消息
 	 * @param msgExecuteIndex 消息的index
 	 */
-	void runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex);
+	CompletableFuture<Boolean> runMessageWithMsgExecuteIndex(IMessage<H> message, String msgExecuteIndex);
 	/**
 	 * 在某个毫秒时间戳执行
 	 * @param msg

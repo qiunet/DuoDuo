@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.qiunet.function.formula.IFormula;
+import org.qiunet.function.formula.param.DefaultFormulaParam;
 import org.qiunet.function.formula.parse.FormulaParseManager;
 import org.qiunet.utils.scanner.ClassScanner;
 import org.qiunet.utils.scanner.ScannerType;
@@ -81,4 +82,14 @@ public class TestFormula {
 		Assertions.assertTrue(cal > 9.9d && cal < 10.1);
 		Assertions.assertEquals(formula.toString(), str);
 	}
+
+	@Test
+	public void testPow() {
+		int var0 = 4;
+		String str = "pow[var0, 2]";
+		IFormula formula = FormulaParseManager.parse(str);
+		double cal = formula.cal(DefaultFormulaParam.valueOf(var0));
+		Assertions.assertTrue(cal > 15.99d && cal < 16.01d);
+	}
+
 }

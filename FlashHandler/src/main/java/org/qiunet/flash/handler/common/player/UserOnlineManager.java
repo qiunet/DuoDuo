@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.micrometer.core.instrument.Gauge;
-import io.netty.util.concurrent.Promise;
 import org.qiunet.cross.actor.CrossPlayerActor;
 import org.qiunet.cross.node.ServerNodeManager;
 import org.qiunet.data.enums.ServerType;
@@ -21,7 +20,6 @@ import org.qiunet.flash.handler.netty.server.constants.CloseCause;
 import org.qiunet.flash.handler.netty.server.constants.ServerConstants;
 import org.qiunet.function.prometheus.RootRegistry;
 import org.qiunet.utils.async.future.DFuture;
-import org.qiunet.utils.async.future.DNettyPromise;
 import org.qiunet.utils.collection.enums.ForEachResult;
 import org.qiunet.utils.listener.event.EventHandlerWeightType;
 import org.qiunet.utils.listener.event.EventListener;
@@ -35,8 +33,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -452,24 +449,20 @@ public enum UserOnlineManager {
 		waitReconnects.values().forEach(w -> destroyPlayer(w.actor));
 		this.scheduledFuture.cancel(false);
 
-		List<Promise<Boolean>> futures = Lists.newArrayListWithExpectedSize(onlineSize());
+		List<Future<Boolean>> futures = Lists.newArrayListWithExpectedSize(onlineSize());
 		Consumer<AbstractUserActor<?>> consumer = actor -> {
-			Promise<Boolean> promise = new DNettyPromise<>();
-			boolean success = actor.addMessage(a -> {
+			CompletableFuture<Boolean> future = actor.addMessage(a -> {
 				a.getSession().close(CloseCause.SERVER_SHUTDOWN);
-				promise.trySuccess(true);
 			});
-			if (success) {
-				futures.add(promise);
-			}
+			futures.add(future);
 		};
 
 		onlineCrossPlayers.values().forEach(consumer);
 		onlinePlayers.values().forEach(consumer);
-		for (Promise<Boolean> future : futures) {
+		for (Future<Boolean> future : futures) {
 			try {
-				future.sync();
-			} catch (InterruptedException e) {
+				future.get();
+			} catch (ExecutionException | InterruptedException e) {
 				LoggerType.DUODUO_FLASH_HANDLER.error("shutdown exception: ", e);
 			}
 		}
