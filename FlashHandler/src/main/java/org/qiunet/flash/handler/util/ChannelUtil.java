@@ -48,15 +48,18 @@ public final class ChannelUtil {
 	}
 	/***
 	 * 关联Session 和 channel
-	 * @param session
+	 * @param val session
 	 */
-	public static void bindSession(ISession session, Channel channel) {
-		Preconditions.checkNotNull(session);
+	public static void bindSession(ISession val, Channel channel) {
+		bindSession(null, val, channel);
+	}
+	public static void bindSession(ISession oldVal, ISession val, Channel channel) {
+		Preconditions.checkNotNull(val);
 		Attribute<ISession> attr = channel.attr(ServerConstants.SESSION_KEY);
-		boolean result = attr.compareAndSet(null, session);
+		boolean result = attr.compareAndSet(oldVal, val);
 		if (! result) {
-			logger.error("Session [{}] Duplicate", session);
-			session.close(CloseCause.LOGIN_REPEATED);
+			logger.error("Session [{}] Duplicate", val);
+			val.close(CloseCause.LOGIN_REPEATED);
 		}
 	}
 

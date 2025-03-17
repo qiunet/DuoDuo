@@ -265,9 +265,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 			throw new CustomException("PlayerId not the same!");
 		}
 
-		this.clearObservers();
-
-		this.setSession(((DSession) handler.session).copyChannel());
+		this.setSession(((DSession) handler.session).copyChannelAndCloseSession());
 		this.session.addCloseListener("merge", (s, c) -> {
 			if (! loginSuccess && c.needWaitConnect()) {
 				UserOnlineManager.instance.addToWait(this);
@@ -277,6 +275,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		this.cancelAllFuture(true);
 		this.dataLoader().setOffline(false);
 		this.loginSuccess = false;
+		handler.clearObservers();
 		handler.setSession(null);
 		handler.destroy();
 	}

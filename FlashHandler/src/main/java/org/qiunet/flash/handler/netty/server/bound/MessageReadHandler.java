@@ -37,12 +37,14 @@ import org.qiunet.flash.handler.netty.transmit.ITransmitHandler;
 import org.qiunet.flash.handler.util.ChannelUtil;
 import org.qiunet.function.gm.proto.req.GmDebugProtocolReq;
 import org.qiunet.function.gm.proto.rsp.GmDebugProtocolRsp;
+import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.string.StringUtil;
 import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
 
 /***
  * 读取消息的handler
@@ -199,28 +201,34 @@ public class MessageReadHandler extends SimpleChannelInboundHandler<MessageConte
 	 */
 	private void processHandler(ISession session, IHandler handler, MessageContent content) {
 		IMessageActor messageActor = session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		if (messageActor.isDestroyed()) {
+			return;
+		}
 
 		if (handler instanceof ITransmitHandler && messageActor instanceof ICrossStatusActor && ((ICrossStatusActor) messageActor).isCrossStatus()) {
 			DefaultByteBufMessage message = DefaultByteBufMessage.valueOf(content.getProtocolId(), content.byteBuf());
 			// 回收content. 并防止里面的byteBuf被回收.
 			content.recycle();
-			messageActor.runMessageWithMsgExecuteIndex(m -> {
-				try {
-					ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
-					if (logger.isInfoEnabled()) {
-						Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
-						if (SkipDebugOut.DebugOut.test(aClass)) {
-							IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
-							logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
-						}
-					}
-					((ICrossStatusActor) messageActor).sendCrossMessage(message);
-				} catch (Exception e) {
-					if (message.getContent() != null && message.getContent().refCnt() > 0) {
-						message.getContent().release();
+			CompletableFuture<Boolean> future = messageActor.runMessageWithMsgExecuteIndex(m -> {
+				ISession crossSession = ((ICrossStatusActor) m).currentCrossSession();
+				if (! ((ICrossStatusActor) m).isCrossStatus()) {
+					throw new CustomException("CrossStatusActor is not cross status, Actor: {}", m.msgExecuteIndex());
+				}
+
+				if (logger.isInfoEnabled()) {
+					Class<? extends IChannelData> aClass = ChannelDataMapping.protocolClass(message.getProtocolID());
+					if (SkipDebugOut.DebugOut.test(aClass)) {
+						IChannelData channelData = ProtobufDataManager.decode(aClass, message.byteBuffer());
+						logger.info("[{}] transmit {} data: {}", crossSession, session.getAttachObj(ServerConstants.HANDLER_TYPE_KEY), channelData._toString());
 					}
 				}
+				((ICrossStatusActor) messageActor).sendCrossMessage(message);
 			}, String.valueOf(messageActor.msgExecuteIndex()));
+			future.whenComplete((res, ex) -> {
+				if (ex != null) {
+					message.getContent().release();
+				}
+			});
 			return;
 		}
 		if (session.isActive()) {

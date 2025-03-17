@@ -152,14 +152,22 @@ public enum UserServerStateManager {
 		String redisKey = this.getUserTempRedisKey(playerId);
 
 		try {
-			String result = redisUtil.returnJedis().set(redisKey, String.valueOf(serverId), SetParams.setParams()
-				.nx().ex(TimeUnit.SECONDS.toSeconds(90)));
+			int idx = 2;
+			while (idx-- > 0) {
+				String result = redisUtil.returnJedis().set(redisKey, String.valueOf(serverId), SetParams.setParams()
+					.nx().ex(TimeUnit.SECONDS.toSeconds(90)));
 
-			if (Objects.equals("OK", result)) {
-				return serverId;
+				if (Objects.equals("OK", result)) {
+					return serverId;
+				}
+
+				String string = redisUtil.returnJedis().get(redisKey);
+				// 可能正好过期了. 再来一次即可. 只有这里set  只可能set数字.
+				if (! StringUtil.isEmpty(string)) {
+					serverId = Integer.parseInt(string);
+					break;
+				}
 			}
-			String string = redisUtil.returnJedis().get(redisKey);
-			serverId = Integer.parseInt(string);
 		}finally {
 			ServerInfo serverInfo = ServerNodeManager.getServerInfo(serverId);
 			if (serverInfo == null || (checkDeprecate && serverInfo.isDeprecate())) {

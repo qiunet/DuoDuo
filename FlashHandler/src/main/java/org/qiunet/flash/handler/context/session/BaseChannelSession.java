@@ -5,6 +5,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.qiunet.flash.handler.common.player.IMessageActor;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
@@ -23,6 +25,10 @@ import java.util.StringJoiner;
  */
 class BaseChannelSession extends BaseSession {
 	/**
+	 * 关闭监听
+	 */
+	protected final GenericFutureListener<? extends Future<? super Void>> closeListener = f -> this.close(CloseCause.CHANNEL_CLOSE);
+	/**
 	 * channel
 	 */
 	protected Channel channel;
@@ -30,7 +36,7 @@ class BaseChannelSession extends BaseSession {
 	protected void setChannel(Channel channel) {
 		if (channel != null) {
 			// channel 跟 session 生命周期不一致的情况.不能调用该set.  会导致内存泄露
-			channel.closeFuture().addListener(f -> this.close(CloseCause.CHANNEL_CLOSE));
+			channel.closeFuture().addListener(closeListener);
 		}
 		this.channel = channel;
 	}

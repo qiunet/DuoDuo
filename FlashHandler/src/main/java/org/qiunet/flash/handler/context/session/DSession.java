@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import org.qiunet.flash.handler.context.response.push.IChannelMessage;
 import org.qiunet.flash.handler.context.session.kcp.IKcpSessionManager;
 import org.qiunet.flash.handler.netty.server.constants.CloseCause;
+import org.qiunet.flash.handler.util.ChannelUtil;
 
 /**
  * Player 连 服务器使用的 Session
@@ -58,9 +59,12 @@ public class DSession extends BaseChannelSession implements IKcpSessionManager {
 		return kcpSession;
 	}
 
-	public ISession copyChannel() {
+	public ISession copyChannelAndCloseSession() {
+		channel.closeFuture().removeListener(closeListener);
 		DSession dSession = new DSession(channel);
+		ChannelUtil.bindSession(this, dSession, channel);
 		dSession.kcpSession = this.kcpSession;
+		this.closed.set(true);
 		return dSession;
 	}
 }
