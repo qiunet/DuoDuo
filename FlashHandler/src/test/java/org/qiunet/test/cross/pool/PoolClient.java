@@ -60,7 +60,7 @@ public class PoolClient {
 						NodeClientSession nodeClientSession = new NodeClientSession(NodeSessionType.CROSS_PLAYER, pool, finalI);
 						sessionMap.put((long)finalI, nodeClientSession);
 
-						nodeClientSession.sendMessage(CrossPlayerAuthRequest.valueOf(finalI, 100), true);
+						nodeClientSession.sendMessage(CrossPlayerAuthRequest.valueOf(finalI, 100, String.valueOf(finalI)), true);
 						for (int i1 = 0; i1 < reqCount / thread; i1++) {
 							nodeClientSession.sendMessage(PoolTestReq.valueOf(MathUtil.random(10000)), true);
 						}

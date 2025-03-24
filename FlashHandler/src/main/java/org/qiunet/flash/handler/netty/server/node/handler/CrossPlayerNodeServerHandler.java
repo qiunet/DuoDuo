@@ -3,11 +3,11 @@ package org.qiunet.flash.handler.netty.server.node.handler;
 import com.google.common.collect.Maps;
 import io.netty.channel.ChannelHandlerContext;
 import org.qiunet.cross.actor.CrossPlayerActor;
+import org.qiunet.cross.actor.auth.CrossPlayerAuthRequest;
 import org.qiunet.flash.handler.common.IMessage;
 import org.qiunet.flash.handler.common.enums.ServerConnType;
 import org.qiunet.flash.handler.common.id.IProtocolId;
 import org.qiunet.flash.handler.common.message.MessageContent;
-import org.qiunet.flash.handler.common.player.UserOnlineManager;
 import org.qiunet.flash.handler.common.protobuf.ProtoDecodeException;
 import org.qiunet.flash.handler.context.header.INodeServerHeader;
 import org.qiunet.flash.handler.context.request.IRequestContext;
@@ -48,14 +48,11 @@ public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
 		}
 
 		INodeServerHeader header = (INodeServerHeader) content.getHeader();
-		CrossPlayerActor crossPlayerActor = UserOnlineManager.instance.getCrossPlayerActor(header.id());
+		CrossPlayerActor crossPlayerActor = this.getCrossPlayerActor(ctx, header.id(), content);
 		if (crossPlayerActor == null) {
-			if (content.getProtocolId() != IProtocolId.System.CROSS_PLAYER_AUTH) {
-				logger.error("Cross Player id {} protocolId: {} not authorize access!", header.id(), content.getProtocolId());
-				return;
-			}
-			crossPlayerActor = this.newCrossPlayerActor(ctx, header.id());
+			return;
 		}
+
 		try {
 			IRequestContext context = handler.getDataType().createRequestContext(crossPlayerActor.getSession(), content);
 			if (content.getProtocolId() == IProtocolId.System.CROSS_PLAYER_AUTH) {
@@ -77,9 +74,20 @@ public class CrossPlayerNodeServerHandler extends BaseNodeServerHandler {
 	 * @param ctx
  	 * @param playerId
 	 */
-	private CrossPlayerActor newCrossPlayerActor(ChannelHandlerContext ctx, long playerId) {
-		NodeServerSession session = new NodeServerSession(NodeSessionType.CROSS_PLAYER, ctx.channel(), playerId);
-		CrossPlayerActor crossPlayerActor = new CrossPlayerActor(session, String.valueOf(playerId));
+	private CrossPlayerActor getCrossPlayerActor(ChannelHandlerContext ctx, long playerId, MessageContent content) {
+		NodeServerSession session = sessions.get(playerId);
+		if (session != null) {
+			return (CrossPlayerActor) session.getAttachObj(ServerConstants.MESSAGE_ACTOR_KEY);
+		}
+
+		if (content.getProtocolId() != IProtocolId.System.CROSS_PLAYER_AUTH) {
+			logger.error("Cross Player id {} protocolId: {} not authorize access!", playerId, content.getProtocolId());
+			return null;
+		}
+
+		CrossPlayerAuthRequest authRequest = content.decode(CrossPlayerAuthRequest.class);
+		session = new NodeServerSession(NodeSessionType.CROSS_PLAYER, ctx.channel(), playerId);
+		CrossPlayerActor crossPlayerActor = new CrossPlayerActor(session, authRequest.getCrossMsgQueueIndex());
 		session.attachObj(ServerConstants.HANDLER_TYPE_KEY, ServerConnType.TCP);
 		session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, crossPlayerActor);
 		session.addCloseListener("NodeServerHandlerRemoveSession", (s, c) -> {

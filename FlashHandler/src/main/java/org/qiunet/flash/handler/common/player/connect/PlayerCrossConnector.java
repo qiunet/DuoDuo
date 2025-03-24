@@ -68,11 +68,11 @@ public class PlayerCrossConnector implements ISessionHolder {
 	 * 连接
 	 * @param callback 失败或者成功的回调
 	 */
-	public void connect(Consumer<Boolean> callback) {
+	public void connect(String crossMsgQueueIndex, Consumer<Boolean> callback) {
 		// 因为大部分服务都是内网组网. 所以使用host.如果以后不在内网. 有两个解决方案
 		// 1. 直接修改下面为publicHost . 2. 云运营商跨区域组网
 		this.session = new NodeClientSession(NodeSessionType.CROSS_PLAYER, CrossSessionManager.instance.getChannelPool(this.serverId), this.playerId);
-		CrossPlayerAuthRequest request = CrossPlayerAuthRequest.valueOf(playerId, ServerNodeManager.getCurrServerId());
+		CrossPlayerAuthRequest request = CrossPlayerAuthRequest.valueOf(playerId, ServerNodeManager.getCurrServerId(), crossMsgQueueIndex);
 		CrossSessionManager.instance.addNewSession(playerId, this.serverId, this.session);
 		this.session.attachObj(ServerConstants.MESSAGE_ACTOR_KEY, playerActor);
 		ChannelFuture future = this.session.sendMessage(request, true);

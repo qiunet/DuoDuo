@@ -28,7 +28,7 @@ public class OfflinePlayerActor extends PlayerActor {
 	}
 
 	@Override
-	public void crossToServer(int serverId, Consumer<Boolean> resultCallback) {
+	public void crossToServer(int serverId, String msgQueueIndex, Consumer<Boolean> resultCallback) {
 		throw new CustomException("Offline player Actor can not cross to other server!");
 	}
 

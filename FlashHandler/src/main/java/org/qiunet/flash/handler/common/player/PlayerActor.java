@@ -93,11 +93,11 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	}
 
 	@Override
-	public void crossToServer(int serverId, Consumer<Boolean> resultCallback) {
+	public void crossToServer(int serverId, String crossMsgQueueIndex, Consumer<Boolean> resultCallback){
 		if (inSelfThread()) {
-			this.crossToServer0(serverId, resultCallback);
+			this.crossToServer0(serverId, crossMsgQueueIndex, resultCallback);
 		}else {
-			this.addMessage(p -> p.crossToServer0(serverId, resultCallback));
+			this.addMessage(p -> p.crossToServer0(serverId, crossMsgQueueIndex, resultCallback));
 		}
 	}
 
@@ -106,7 +106,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 	 * @param serverId
 	 * @param resultCallback 结果回调
 	 */
-	private void crossToServer0(int serverId, Consumer<Boolean> resultCallback) {
+	private void crossToServer0(int serverId,  String crossMsgQueueIndex, Consumer<Boolean> resultCallback) {
 		if (isCrossStatus(serverId)) {
 			throw new CustomException("Current is cross to a [{}] server!", serverId);
 		}
@@ -116,7 +116,7 @@ public class PlayerActor extends AbstractUserActor<PlayerActor> implements ICros
 		}
 
 		PlayerCrossConnector connector = new PlayerCrossConnector(this, serverId);
-		connector.connect(result -> {
+		connector.connect(crossMsgQueueIndex, result -> {
 			if (result) {
 				LoggerType.DUODUO_FLASH_HANDLER.info("player {} cross to serverId {} success!", this.getId(), serverId);
 				this.crosssServerStack.push(this.currentCrossServerId);

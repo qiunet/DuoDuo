@@ -166,4 +166,12 @@ public class MessageContent implements ReferenceCounted {
 		}
 		return false;
 	}
+
+	public <T extends IChannelData> T decode(Class<T> clz) {
+		try {
+			return ProtobufDataManager.decode(clz, this.byteBuffer());
+		}catch (Throwable e) {
+			throw new ProtoDecodeException(e, clz, header, ByteUtil.readBytebuffer(this.byteBuffer()));
+		}
+	}
 }

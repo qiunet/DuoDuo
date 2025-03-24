@@ -37,7 +37,7 @@ public interface ICrossStatusActor extends IPlayer {
 	 * @param serverId 服务ID
 	 * @param resultCallback 结果回调
 	 */
-	void crossToServer(int serverId, Consumer<Boolean> resultCallback);
+	void crossToServer(int serverId, String crossMsgQueueIndex, Consumer<Boolean> resultCallback);
 	/**
 	 * 退出当前的跨服
 	 */

@@ -12,7 +12,7 @@ public class TestHocon {
 
 	@BeforeAll
 	public static void init() {
-		ClassScanner.getInstance(ScannerType.FILE_CONFIG).scanner();
+		ClassScanner.getInstance(ScannerType.FILE_CONFIG, ScannerType.EVENT).scanner();
 	}
 
 	@Test
