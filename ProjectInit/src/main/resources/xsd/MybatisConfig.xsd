@@ -12,6 +12,11 @@
 			<xs:pattern value="[a-zA-Z_-]{2,30}\.xml" />
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="pkgNameRegex">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[a-zA-Z_.-]{2,30}" />
+		</xs:restriction>
+	</xs:simpleType>
 
 	<xs:element name="mybatis_config" >
 		<xs:complexType>
@@ -22,6 +27,17 @@
 							<xs:element name="extra" minOccurs="0" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:attribute name="file" use="required" type="xmlNameRegex" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="extraTypeAliases">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="extra" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:attribute name="pkg" use="required" type="pkgNameRegex" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>

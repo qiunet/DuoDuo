@@ -65,6 +65,10 @@ public class MybatisConfigDefine implements ITemplateObjectDefine {
 		this.aliasPackages.add(packageName);
 	}
 
+	public void addAliasPackage(MybatisExtraPkgDefine define) {
+		this.aliasPackages.add(define.getPkg());
+	}
+
 	public List<String> getAliasPackages() {
 		return aliasPackages;
 	}

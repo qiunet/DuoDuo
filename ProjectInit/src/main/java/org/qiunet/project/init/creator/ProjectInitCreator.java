@@ -3,6 +3,7 @@ package org.qiunet.project.init.creator;
 import org.apache.commons.digester.Digester;
 import org.qiunet.project.init.define.mybatis.MybatisConfigDefine;
 import org.qiunet.project.init.define.mybatis.MybatisExtraDefine;
+import org.qiunet.project.init.define.mybatis.MybatisExtraPkgDefine;
 import org.qiunet.project.init.enums.EntityType;
 import org.qiunet.project.init.template.VelocityFactory;
 import org.qiunet.project.init.util.DigesterUtil;
@@ -97,6 +98,7 @@ public final class ProjectInitCreator {
 		digester.push(this);
 		DigesterUtil.addObjectCreate(digester,"mybatis_config", MybatisConfigDefine.class, "setMybatisConfig");
 		DigesterUtil.addObjectCreate(digester,"mybatis_config/extraConfigs/extra", MybatisExtraDefine.class, "addExtraFile");
+		DigesterUtil.addObjectCreate(digester,"mybatis_config/extraTypeAliases/extra", MybatisExtraPkgDefine.class, "addAliasPackage");
 		try {
 			digester.parse(mybatisConfigFile);
 		} catch (IOException | SAXException e) {

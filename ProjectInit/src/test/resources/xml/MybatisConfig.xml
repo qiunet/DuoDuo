@@ -5,5 +5,10 @@
 			  xsi:schemaLocation="https://github.com/qiunet/DuoDuo/MybatisConfig"
 >
 	<extraConfigs>
+		<extra file="uid_builder.xml" />
 	</extraConfigs>
+
+	<extraTypeAliases>
+		<extra pkg="com.lfj.biz.gm" />
+	</extraTypeAliases>
 </mybatis_config>
