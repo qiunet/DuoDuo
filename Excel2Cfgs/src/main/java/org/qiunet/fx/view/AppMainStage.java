@@ -10,6 +10,8 @@ import org.qiunet.fx.common.ConfigManager;
 import org.qiunet.fx.controller.BaseController;
 import org.qiunet.utils.ExecutorServiceUtil;
 
+import java.net.URL;
+
 
 /**
  * created by wgw on 2019/7/28
@@ -18,7 +20,8 @@ public class AppMainStage extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			FXMLLoader loader = new FXMLLoader(AppMainStage.class.getResource("/AppMain.fxml"));
+			URL resource = AppMainStage.class.getResource("/AppMain.fxml");
+			FXMLLoader loader = new FXMLLoader(resource);
 			Parent root = loader.load();
 			Scene scene = new Scene(root, 600, 400);
 			primaryStage.setTitle("配置文件转换工具");

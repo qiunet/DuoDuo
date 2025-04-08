@@ -2,6 +2,7 @@ package org.qiunet.logger.sender.test;
 
 import org.junit.Test;
 import org.qiunet.logger.sender.LoggerSender;
+import org.qiunet.utils.date.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,10 @@ public class TestLoggerSender {
 //			sender.sendLog("ItemLog", "zj|sss|yyy"+i);
 			msgList.add(i + 1 + "-zhengjian|sss|yyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhfyyyakjsdghfhklsagdfkljaskjdfhaskfhdsafhhf\n");
 		}
+		long start = DateUtil.currentTimeMillis();
 		sender.sendImportantLog("RechargeLog", msgList);
-
+		long end = DateUtil.currentTimeMillis();
 		Thread.sleep(3000);
+		System.out.println("time:" + (end - start));
 	}
 }

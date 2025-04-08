@@ -34,7 +34,7 @@ public class MainFrame extends BaseJFrame {
 	private static final long serialVersionUID = -4680070900448216352L;
 
 	private void jframeInit(){
-		this.setSize(200, 600);
+		this.setSize(400, 600);
 		this.setTitle("设定转换工具");
 		this.setResizable(false);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

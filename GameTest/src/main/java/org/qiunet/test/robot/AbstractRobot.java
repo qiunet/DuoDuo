@@ -112,7 +112,10 @@ public abstract class AbstractRobot<Info extends IRobotInitInfo> extends BaseRob
 			testCase.sendRequest(this);
 			while (this.resTestCases != null && !this.resTestCases.isEmpty()) {
 				for (Class<? extends ITestCase> resTestCase : this.resTestCases) {
-					sendRequest(resTestCase);
+					if (sendRequest(resTestCase)) {
+						this.cleanTestCases();
+						break;
+					}
 				}
 			}
 		} else if (testCase.cancelIfConditionMiss()) {

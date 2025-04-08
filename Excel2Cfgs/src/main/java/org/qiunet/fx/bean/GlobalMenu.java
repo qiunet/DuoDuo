@@ -6,7 +6,11 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import org.qiunet.frame.base.JframeManager;
+import org.qiunet.frame.view.MainFrame;
+import org.qiunet.utils.ExcelToStream;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
@@ -78,6 +82,17 @@ public class GlobalMenu extends ContextMenu {
 							break;
 						case export_id:
 							System.out.println("导出："+file.getName());
+							if (file.getName().endsWith(".xlsx") || file.getName().endsWith(".xls")) {
+								ExcelToStream excelToStream = new ExcelToStream();
+								String msg = excelToStream.excelToStream(file);
+								if (msg != null){
+									System.out.println("错误:["+msg+"]");
+//									JOptionPane.showMessageDialog(scrollPane, "错误:["+msg+"]");
+								}
+								System.out.println("SUCCESS");
+//								JOptionPane.showMessageDialog(scrollPane, "SUCCESS");
+//								JframeManager.getInstance().getJframe(MainFrame.class).loadFileTree();
+							}
 							break;
 						default:
 							throw new RuntimeException("无法识别id:"+menuItem.getId());
