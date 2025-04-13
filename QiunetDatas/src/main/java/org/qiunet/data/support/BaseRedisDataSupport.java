@@ -6,6 +6,7 @@ import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.redis.IRedisCaller;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
+import org.qiunet.data.redis.entity.RedisEntityByVer;
 import org.qiunet.data.util.ServerConfig;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -76,18 +77,23 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 				try {
 					switch (syncSetKey) {
 						case UPDATE:
-							Do aDo = getDoBySyncParams(syncParams);
-							if (aDo == null) {
+//							Do aDo = getDoBySyncParams(syncParams);
+							//TODO 这里增加一个数据版本校验(如果json的字段多于当前po字段，校验失败->抛出异常)
+							RedisEntityByVer aDoByVer = getDoAndCheckVerBySyncParams(syncParams);
+							if (aDoByVer == null) {
 								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
 								continue;
 							}
-							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).update(updateStatement, aDo);
+							if(!aDoByVer.isRedisJsonAndDoVerCheck()){
+								throw new Exception("Do [" + syncParams + "] ver is check false!");
+							}
+							MoreDbSourceDatabaseSupport.getInstance(aDoByVer.getaDo().getDbSourceKey()).update(updateStatement, aDoByVer.getaDo());
 							break;
 						case DELETE:
 							this.deleteBySyncParams(syncParams);
 							break;
 						case INSERT:
-							aDo = getDoBySyncParams(syncParams);
+							Do aDo = getDoBySyncParams(syncParams);
 							if (aDo == null) {
 								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
 								continue;
@@ -123,6 +129,8 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 	 * @return
 	 */
 	protected abstract Do getDoBySyncParams(String syncParams);
+
+	protected abstract RedisEntityByVer getDoAndCheckVerBySyncParams(String syncParams);
 
 	@Override
 	public Bo insert(Do aDo) {

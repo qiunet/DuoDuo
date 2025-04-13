@@ -1,10 +1,12 @@
 package org.qiunet.data.support;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import org.qiunet.data.core.select.DbParamMap;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntityList;
+import org.qiunet.data.redis.entity.RedisEntityByVer;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -26,6 +28,12 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	protected Do getDoBySyncParams(String syncParams) {
 		String [] params = StringUtil.split(syncParams, "#");
 		return returnDoFromRedis(getRedisKey(doName, params[0]), params[1]);
+	}
+
+	@Override
+	protected RedisEntityByVer getDoAndCheckVerBySyncParams(String syncParams) {
+		String [] params = StringUtil.split(syncParams, "#");
+		return returnDoByVerCheckFromRedis(getRedisKey(doName, params[0]), params[1]);
 	}
 
 	@Override
@@ -66,6 +74,30 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			return JsonUtil.getGeneralObject(json, doClass);
 		});
 	}
+
+	private RedisEntityByVer returnDoByVerCheckFromRedis(String redisKey, String subKey) {
+		return redisUtil.execCommands(jedis -> {
+			String json = jedis.hget(redisKey, subKey);
+			jedis.expire(redisKey, NORMAL_LIFECYCLE);
+
+			JSONObject generalObject = JsonUtil.getGeneralObject(json, JSONObject.class);
+			Do aDo = JsonUtil.getGeneralObject(json, doClass);
+			JSONObject aDoObject = JsonUtil.getGeneralObject(JsonUtil.toJsonString(aDo), JSONObject.class);
+
+			// 比较 generalObject 和 aDoObject 的字段
+			boolean check = true;
+			for (String key : generalObject.keySet()) {
+				if (!aDoObject.containsKey(key)) {
+					check = false;
+					break;
+				}
+			}
+			RedisEntityByVer redisEntityByVer = new RedisEntityByVer(aDo);
+			redisEntityByVer.setRedisJsonAndDoVerCheck(check);
+			return redisEntityByVer;
+		});
+	}
+
 	private List<Do> returnDoListFromRedis(String redisKey) {
 		return redisUtil.execCommands(jedis -> {
 			List<String> hvals = jedis.hvals(redisKey);

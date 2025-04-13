@@ -1,9 +1,11 @@
 package org.qiunet.data.support;
 
+import com.alibaba.fastjson.JSONObject;
 import org.qiunet.data.core.support.db.MoreDbSourceDatabaseSupport;
 import org.qiunet.data.core.support.redis.IRedisUtil;
 import org.qiunet.data.redis.entity.IRedisEntity;
 import org.qiunet.data.core.select.DbParamMap;
+import org.qiunet.data.redis.entity.RedisEntityByVer;
 import org.qiunet.data.redis.util.DbUtil;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -34,10 +36,37 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 			if (PLACE_HOLDER.equals(ret)) return defHit ? NULL: null;
 
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
-			return JsonUtil.getGeneralObject(ret, doClass);
+			Do aDo = JsonUtil.getGeneralObject(ret, doClass);
+			return aDo;
 		});
 	}
 
+	private RedisEntityByVer getDataObjectJsonByVer(String redisKey, boolean defHit) {
+		return redisUtil.execCommands(jedis -> {
+			String ret = jedis.get(redisKey);
+			if (StringUtil.isEmpty(ret)) return null;
+
+			if (PLACE_HOLDER.equals(ret)) return null;
+
+			jedis.expire(redisKey, NORMAL_LIFECYCLE);
+			JSONObject generalObject = JsonUtil.getGeneralObject(ret, JSONObject.class);
+
+			Do aDo = JsonUtil.getGeneralObject(ret, doClass);
+			JSONObject aDoObject = JsonUtil.getGeneralObject(JsonUtil.toJsonString(aDo), JSONObject.class);
+
+			// 比较 generalObject 和 aDoObject 的字段
+			boolean check = true;
+			for (String key : generalObject.keySet()) {
+				if (!aDoObject.containsKey(key)) {
+					check = false;
+					break;
+				}
+			}
+			RedisEntityByVer redisEntityByVer = new RedisEntityByVer(aDo);
+			redisEntityByVer.setRedisJsonAndDoVerCheck(check);
+			return redisEntityByVer;
+		});
+	}
 	/***
 	 * set do的json 到redis
 	 * @return
@@ -53,6 +82,11 @@ public final class RedisDataSupport<Key, Do extends IRedisEntity<Key, Bo>, Bo ex
 	protected Do getDoBySyncParams(String syncParams) {
 		String redisKey = getRedisKey(doName, syncParams);
 		return getDataObjectJson(redisKey, false);
+	}
+
+	protected RedisEntityByVer getDoAndCheckVerBySyncParams(String syncParams) {
+		String redisKey = getRedisKey(doName, syncParams);
+		return getDataObjectJsonByVer(redisKey, false);
 	}
 
 	@Override
