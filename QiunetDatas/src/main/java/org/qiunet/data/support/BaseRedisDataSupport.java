@@ -93,12 +93,21 @@ public abstract class BaseRedisDataSupport<Do extends IRedisEntity, Bo extends I
 							this.deleteBySyncParams(syncParams);
 							break;
 						case INSERT:
-							Do aDo = getDoBySyncParams(syncParams);
+							/*Do aDo = getDoBySyncParams(syncParams);
 							if (aDo == null) {
 								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
 								continue;
+							}*/
+							aDoByVer = getDoAndCheckVerBySyncParams(syncParams);
+							if (aDoByVer == null) {
+								logger.error("Do [" + syncParams + "] is not exist, Maybe is expire by somebody!");
+								continue;
 							}
-							MoreDbSourceDatabaseSupport.getInstance(aDo.getDbSourceKey()).insert(insertStatement, aDo);
+							if(!aDoByVer.isRedisJsonAndDoVerCheck()){
+								throw new Exception("Do [" + syncParams + "] ver is check false!");
+							}
+
+							MoreDbSourceDatabaseSupport.getInstance(aDoByVer.getaDo().getDbSourceKey()).insert(insertStatement, aDoByVer.getaDo());
 							break;
 					}
 				} catch (Exception e) {
