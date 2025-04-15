@@ -26,13 +26,13 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 
 	@Override
 	protected Do getDoBySyncParams(String syncParams) {
-		String [] params = StringUtil.split(syncParams, "#");
+		String[] params = StringUtil.split(syncParams, "#");
 		return returnDoFromRedis(getRedisKey(doName, params[0]), params[1]);
 	}
 
 	@Override
 	protected RedisEntityByVer getDoAndCheckVerBySyncParams(String syncParams) {
-		String [] params = StringUtil.split(syncParams, "#");
+		String[] params = StringUtil.split(syncParams, "#");
 		return returnDoByVerCheckFromRedis(getRedisKey(doName, params[0]), params[1]);
 	}
 
@@ -78,6 +78,9 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 	private RedisEntityByVer returnDoByVerCheckFromRedis(String redisKey, String subKey) {
 		return redisUtil.execCommands(jedis -> {
 			String json = jedis.hget(redisKey, subKey);
+			if (StringUtil.isEmpty(json)) {
+				return null;
+			}
 			jedis.expire(redisKey, NORMAL_LIFECYCLE);
 
 			JSONObject generalObject = JsonUtil.getGeneralObject(json, JSONObject.class);
@@ -103,7 +106,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			List<String> hvals = jedis.hvals(redisKey);
 			if (hvals.size() <= 1 && hvals.remove(PLACE_HOLDER)) return null;
 
-			return hvals.parallelStream().map(json -> (Do)JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
+			return hvals.parallelStream().map(json -> (Do) JsonUtil.getGeneralObject(json, doClass)).collect(Collectors.toList());
 		});
 	}
 
@@ -115,6 +118,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			return null;
 		});
 	}
+
 	/***
 	 * 得到bo的map
 	 * @param key
@@ -131,12 +135,12 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 			DbParamMap paramMap = DbParamMap.create(defaultDo.keyFieldName(), key);
 			doList = MoreDbSourceDatabaseSupport.getInstance(DbUtil.getDbSourceKey(key)).selectList(selectStatement, paramMap);
 
-			if (! doList.isEmpty()) {
+			if (!doList.isEmpty()) {
 				this.setListToRedis(redisKey, doList);
-			}else {
+			} else {
 				// 防止缓存击穿
 				redisUtil.execCommands(jedis -> {
-					if (jedis.hsetnx(redisKey, PLACE_HOLDER, PLACE_HOLDER) == 1){
+					if (jedis.hsetnx(redisKey, PLACE_HOLDER, PLACE_HOLDER) == 1) {
 						jedis.expire(redisKey, NORMAL_LIFECYCLE);
 					}
 					return null;
@@ -146,7 +150,7 @@ public class RedisDataListSupport<Key, SubKey, Do extends IRedisEntityList<Key, 
 
 		if (doList == null || doList.isEmpty()) {
 			map = new ConcurrentHashMap<>();
-		}else {
+		} else {
 			map = doList.parallelStream().collect(Collectors.toConcurrentMap(Do::subKey, aDo -> supplier.get(aDo)));
 		}
 		ThreadContextData.put(redisKey, map);
