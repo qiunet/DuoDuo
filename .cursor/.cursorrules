@@ -1,0 +1,44 @@
+{
+    "rules": {
+        "formatting": {
+            "indentSize": 4,
+            "useTabs": false,
+            "maxLineLength": 120,
+            "trimTrailingWhitespace": true,
+            "insertFinalNewline": true
+        },
+        "naming": {
+            "class": "^[A-Z][a-zA-Z0-9]*$",
+            "interface": "^I[A-Z][a-zA-Z0-9]*$",
+            "method": "^[a-z][a-zA-Z0-9]*$",
+            "variable": "^[a-z][a-zA-Z0-9]*$",
+            "constant": "^[A-Z][A-Z0-9_]*$"
+        },
+        "imports": {
+            "order": [
+                "java",
+                "javax",
+                "org",
+                "com",
+                "net",
+                "io",
+                "util"
+            ],
+            "groupByPackage": true
+        },
+        "documentation": {
+            "requireJavadoc": {
+                "class": true,
+                "interface": true,
+                "method": true,
+                "publicField": true
+            }
+        },
+        "codeStyle": {
+            "braces": "same-line",
+            "spacesAroundOperators": true,
+            "spacesInParentheses": false,
+            "spacesInBrackets": false
+        }
+    }
+} 

@@ -1,5 +1,43 @@
-# Created by .ignore support plugin (hsz.mobi)
+
+### IntelliJ IDEA ###
 .idea
 *.iml
-target
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+### VS Code ###
+.vscode/
+.settings/
+*.code-workspace
+
+### Maven ###
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+### Java ###
+# 编译后的文件
+*.class
+*.jar
+*.war
+*.ear
+
+### macOS ###
 .DS_Store
+.AppleDouble
+.LSOverride
+
+### 日志文件 ###
+*.log
+logs/
+
+### 临时文件 ###
+*.swp
+*~
+.temp/
+tmp/

@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+1. 项目的基本信息
+name: DuoDuo
+description: 是一个游戏的项目基础框架， 涵盖网络层， 数据层，业务处理流程等。 支持TCP、WS、HTTP、KCP等。
+version:8.0.0
+type:Java
+language:中文
+
+2. 依赖配置:
+java:Java 21
+spring-boot: 3.4.5
+other:Netty, MongoDB
+
+3. 项目设置:
+encoding:UTF-8
+lineEnding:lf
+indentStyle:tab
+indentSize: 1
+
+4: 功能特性:
+codeCompletion:代码补全
+codeAnalysis:代码分析
+formatting:代码格式化
+refactoring:代码重构
+
+5. 自定义配置:
+    所有接口类以 I开头, 表示Interface
+    
