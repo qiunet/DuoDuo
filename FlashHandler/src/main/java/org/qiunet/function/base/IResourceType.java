@@ -1,9 +1,8 @@
 package org.qiunet.function.base;
 
-import org.qiunet.function.consume.BaseCfgConsume;
-import org.qiunet.function.consume.ConsumeConfig;
-import org.qiunet.function.reward.BaseCfgReward;
-import org.qiunet.function.reward.RewardConfig;
+import org.qiunet.function.item_change.ItemChangeConfig;
+import org.qiunet.function.item_change.consume.BaseCfgConsume;
+import org.qiunet.function.item_change.reward.BaseCfgReward;
 
 /***
  * 资源的类型枚举.
@@ -23,13 +22,13 @@ public interface IResourceType {
 	 * @param <T> 消耗实例泛型
 	 * @return 消耗实例
 	 */
-	<T extends BaseCfgConsume<?>> T createConsume(ConsumeConfig consumeConfig);
+	<T extends BaseCfgConsume<?>> T createConsumeItem(ItemChangeConfig consumeConfig);
 
 	/**
 	 * 根据类型. 创建对应的奖励实例
-	 * @param rewardConfig 奖励配置
+	 * @param itemChangeConfig 奖励配置
 	 * @param <T> 奖励的泛型类
 	 * @return 奖励的实例
 	 */
-	<T extends BaseCfgReward<?>> T createRewardItem(RewardConfig rewardConfig);
+	<T extends BaseCfgReward<?>> T createRewardItem(ItemChangeConfig itemChangeConfig);
 }

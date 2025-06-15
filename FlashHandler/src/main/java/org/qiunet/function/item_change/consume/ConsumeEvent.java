@@ -1,4 +1,4 @@
-package org.qiunet.function.consume;
+package org.qiunet.function.item_change.consume;
 
 import org.qiunet.utils.listener.event.IListenerEvent;
 

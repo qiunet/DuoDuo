@@ -7,36 +7,36 @@ package org.qiunet.flash.handler.context.status;
  */
 public interface IGameStatus {
 	/**服务器异常*/
-	IGameStatus EXCEPTION = BasicGameStatus.EXCEPTION;
+	IGameStatus EXCEPTION = SystemGameStatus.EXCEPTION;
 	/**成功*/
-	IGameStatus SUCCESS = BasicGameStatus.SUCCESS;
-	IGameStatus FAIL = BasicGameStatus.FAIL;
+	IGameStatus SUCCESS = SystemGameStatus.SUCCESS;
+	IGameStatus FAIL = SystemGameStatus.FAIL;
 	/**请求频繁*/
-	IGameStatus FAST_REQUEST = BasicGameStatus.FAST_REQUEST;
+	IGameStatus FAST_REQUEST = SystemGameStatus.FAST_REQUEST;
 	/**Token 错误*/
-	IGameStatus TOKEN_ERROR = BasicGameStatus.TOKEN_ERROR;
+	IGameStatus TOKEN_ERROR = SystemGameStatus.TOKEN_ERROR;
 	/**维护中 */
-	IGameStatus MAINTENANCE = BasicGameStatus.MAINTENANCE;
+	IGameStatus MAINTENANCE = SystemGameStatus.MAINTENANCE;
 	/**禁止登陆 封禁了*/
-	IGameStatus BAN = BasicGameStatus.BAN;
+	IGameStatus BAN = SystemGameStatus.BAN;
 	/**数值参数错误*/
-	IGameStatus NUMBER_PARAM_ERROR = BasicGameStatus.NUMBER_PARAM_ERROR;
+	IGameStatus NUMBER_PARAM_ERROR = SystemGameStatus.NUMBER_PARAM_ERROR;
 	/**字符串为空错误*/
-	IGameStatus STRING_PARAM_EMPTY_ERROR = BasicGameStatus.STRING_PARAM_EMPTY_ERROR;
+	IGameStatus STRING_PARAM_EMPTY_ERROR = SystemGameStatus.STRING_PARAM_EMPTY_ERROR;
 	/**字符串长度错误*/
-	IGameStatus STRING_PARAM_LENGTH_ERROR = BasicGameStatus.STRING_PARAM_LENGTH_ERROR;
+	IGameStatus STRING_PARAM_LENGTH_ERROR = SystemGameStatus.STRING_PARAM_LENGTH_ERROR;
 	/**字符串屏蔽词错误*/
-	IGameStatus STRING_PARAM_BAD_WORD_ERROR = BasicGameStatus.STRING_PARAM_BAD_WORD_ERROR;
+	IGameStatus STRING_PARAM_BAD_WORD_ERROR = SystemGameStatus.STRING_PARAM_BAD_WORD_ERROR;
 	/***通用cd中*/
-	IGameStatus COMMON_PROTOCOL_CD_ING = BasicGameStatus.COMMON_PROTOCOL_CD_ING;
+	IGameStatus COMMON_PROTOCOL_CD_ING = SystemGameStatus.COMMON_PROTOCOL_CD_ING;
 	/**请求cd中*/
-	IGameStatus REQUEST_CD_ING = BasicGameStatus.REQUEST_CD_ING;
+	IGameStatus REQUEST_CD_ING = SystemGameStatus.REQUEST_CD_ING;
 
 
 	/** 参数错误 */
-	IGameStatus PARAMS_ERROR = BasicGameStatus.PARAMS_ERROR;
+	IGameStatus PARAMS_ERROR = SystemGameStatus.PARAMS_ERROR;
 	/**404*/
-	IGameStatus HANDLER_NOT_FOUND = BasicGameStatus.HANdLER_NOT_FOUND;
+	IGameStatus HANDLER_NOT_FOUND = SystemGameStatus.HANdLER_NOT_FOUND;
 	/***
 	 * 得到状态
 	 * @return
@@ -48,12 +48,26 @@ public interface IGameStatus {
 	 * @return
 	 */
 	String getDesc();
+	/**
+	 * 是否成功
+	 * @return true 成功
+	 */
+	default boolean isSuccess() {
+		return this == SUCCESS;
+	}
+	/***
+	 * 是否失败
+	 * @return true 失败
+	 */
+	default boolean isFail() {
+		return !isSuccess();
+	}
 
 	/**
 	 * Created by qiunet.
 	 * 17/12/9
 	 */
-	enum BasicGameStatus implements IGameStatus {
+	enum SystemGameStatus implements IGameStatus {
 		SUCCESS(1, "成功"),
 		TOKEN_ERROR(2, "TOKEN错误"),
 		MAINTENANCE(3, "服务器维护中"),
@@ -76,7 +90,7 @@ public interface IGameStatus {
 		;
 		private final int status;
 		private final String desc;
-		BasicGameStatus(int status, String desc) {
+		SystemGameStatus(int status, String desc) {
 			this.status = status;
 			this.desc = desc;
 		}

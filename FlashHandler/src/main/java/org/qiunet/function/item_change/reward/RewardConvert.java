@@ -1,6 +1,7 @@
-package org.qiunet.function.reward;
+package org.qiunet.function.item_change.reward;
 
 import com.alibaba.fastjson2.TypeReference;
+import org.qiunet.function.item_change.ItemChangeConfig;
 import org.qiunet.utils.convert.BaseObjConvert;
 import org.qiunet.utils.json.JsonUtil;
 import org.qiunet.utils.string.StringUtil;
@@ -16,13 +17,13 @@ import java.util.List;
  * @Date 2020/12/29 08:04
  **/
 public class RewardConvert extends BaseObjConvert<Rewards> {
-	private static final TypeReference<List<RewardConfig>> CONFIG_JSON_TYPE = new TypeReference<List<RewardConfig>>(){};
+	private static final TypeReference<List<ItemChangeConfig>> CONFIG_JSON_TYPE = new TypeReference<List<ItemChangeConfig>>(){};
 	@Override
 	public Rewards fromString(Field field, String str) {
-		List<RewardConfig> rewardConfigs = Collections.emptyList();
+		List<ItemChangeConfig> itemChangeConfigs = Collections.emptyList();
 		if (!StringUtil.isEmpty(str)) {
-			rewardConfigs = JsonUtil.getGeneralObj(str, CONFIG_JSON_TYPE);
+			itemChangeConfigs = JsonUtil.getGeneralObj(str, CONFIG_JSON_TYPE);
 		}
-		return RewardManager.instance.createRewards(rewardConfigs);
+		return RewardManager.instance.createRewards(itemChangeConfigs);
 	}
 }

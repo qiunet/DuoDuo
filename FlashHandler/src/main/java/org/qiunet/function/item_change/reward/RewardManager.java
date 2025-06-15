@@ -1,4 +1,6 @@
-package org.qiunet.function.reward;
+package org.qiunet.function.item_change.reward;
+
+import org.qiunet.function.item_change.ItemChangeConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -20,7 +22,7 @@ public enum RewardManager {
 	 * @param configList 配置列表
 	 * @return Consumes
 	 */
-	public Rewards createRewards(List<RewardConfig> configList) {
+	public Rewards createRewards(List<ItemChangeConfig> configList) {
 		if (configList == null || configList.isEmpty()) {
 			return EMPTY_REWARDS;
 		}

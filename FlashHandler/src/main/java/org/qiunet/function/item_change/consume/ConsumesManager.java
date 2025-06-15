@@ -1,4 +1,6 @@
-package org.qiunet.function.consume;
+package org.qiunet.function.item_change.consume;
+
+import org.qiunet.function.item_change.ItemChangeConfig;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +23,7 @@ public enum ConsumesManager {
 	 * @param configList 配置列表
 	 * @return Consumes
 	 */
-	public Consumes createConsumes(List<ConsumeConfig> configList) {
+	public Consumes createConsumes(List<ItemChangeConfig> configList) {
 		if (configList == null || configList.isEmpty()) {
 			return EMPTY_CONSUMES;
 		}

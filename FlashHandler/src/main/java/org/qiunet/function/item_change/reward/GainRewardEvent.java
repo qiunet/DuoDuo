@@ -1,4 +1,4 @@
-package org.qiunet.function.reward;
+package org.qiunet.function.item_change.reward;
 
 import org.qiunet.utils.listener.event.IListenerEvent;
 
