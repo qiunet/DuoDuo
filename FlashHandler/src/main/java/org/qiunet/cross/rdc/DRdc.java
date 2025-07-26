@@ -1,9 +1,9 @@
 package org.qiunet.cross.rdc;
 
+import io.netty.util.Timeout;
 import org.qiunet.cross.node.ServerNode;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.Timeout;
+import org.qiunet.utils.timer.timeout.TimeoutUtil;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -26,7 +26,7 @@ public final class DRdc<REQ extends IRdcRequest, RSP extends IRdcResponse> {
 	private final long reqId;
 	private final REQ reqData;
 	private final ServerNode serverNode;
-	private final TimeOutFuture timeOutFuture;
+	private final Timeout timeOutFuture;
 	private final AtomicReference<Status> status = new AtomicReference<>(Status.INIT);
 
 	DRdc(long reqId, REQ reqData) {
@@ -37,7 +37,7 @@ public final class DRdc<REQ extends IRdcRequest, RSP extends IRdcResponse> {
 		this.reqData = reqData;
 		this.serverNode = serverNode;
 
-		this.timeOutFuture = Timeout.newTimeOut(f -> this.compareAndSet(Status.INIT, Status.TIMEOUT), 2);
+		this.timeOutFuture = TimeoutUtil.newTimeOut(f -> this.compareAndSet(Status.INIT, Status.TIMEOUT), 2);
 	}
 
 	public void handler(Function<REQ, RSP> dataHandler) {

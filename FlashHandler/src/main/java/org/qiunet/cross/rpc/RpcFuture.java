@@ -1,10 +1,10 @@
 package org.qiunet.cross.rpc;
 
 import com.google.common.base.Preconditions;
+import io.netty.util.Timeout;
 import org.qiunet.utils.async.future.DCompletePromise;
 import org.qiunet.utils.async.future.DPromise;
-import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.Timeout;
+import org.qiunet.utils.timer.timeout.TimeoutUtil;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.ExecutionException;
@@ -49,7 +49,7 @@ public class RpcFuture<T> {
 	 * @param timeout 超时时间
 	 */
 	void beginCalTimeOut(int timeout) {
-		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> {
+		Timeout timeOutFuture = TimeoutUtil.newTimeOut(f -> {
 			future.tryFailure(new TimeoutException("Rpc Timeout"));
 			this.clear();
 		}, timeout, TimeUnit.SECONDS);

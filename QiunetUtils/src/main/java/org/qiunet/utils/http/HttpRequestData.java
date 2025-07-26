@@ -4,10 +4,10 @@ import io.netty.channel.pool.ChannelPool;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.util.Timeout;
 import io.netty.util.concurrent.Promise;
 import org.qiunet.utils.thread.ThreadPoolManager;
-import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.Timeout;
+import org.qiunet.utils.timer.timeout.TimeoutUtil;
 
 import java.net.URL;
 import java.util.concurrent.TimeoutException;
@@ -26,7 +26,7 @@ class HttpRequestData {
 
 	private FullHttpRequest request;
 
-	private TimeOutFuture timeout;
+	private Timeout timeout;
 
 	private HttpAddress address;
 
@@ -55,15 +55,15 @@ class HttpRequestData {
 	}
 
 	void beginTimeout() {
-		this.timeout = Timeout.newTimeOut(f -> {
-			if (f.isCanceled()) {
+		this.timeout = TimeoutUtil.newTimeOut(f -> {
+			if (f.isCancelled()) {
 				return;
 			}
 			this.fail(new TimeoutException(request.toString()));
 		}, r.readTimeout);
 	}
 
-	public TimeOutFuture getTimeout() {
+	public Timeout getTimeout() {
 		return timeout;
 	}
 

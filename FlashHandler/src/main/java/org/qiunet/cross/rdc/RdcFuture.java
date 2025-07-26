@@ -1,10 +1,10 @@
 package org.qiunet.cross.rdc;
 
 import com.google.common.base.Preconditions;
+import io.netty.util.Timeout;
 import org.qiunet.utils.async.future.DPromise;
 import org.qiunet.utils.exceptions.CustomException;
-import org.qiunet.utils.timer.timeout.TimeOutFuture;
-import org.qiunet.utils.timer.timeout.Timeout;
+import org.qiunet.utils.timer.timeout.TimeoutUtil;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +32,7 @@ public class RdcFuture<T extends IRdcResponse> {
 	}
 
 	void beginCalTimeOut(int timeout, TimeUnit unit) {
-		TimeOutFuture timeOutFuture = Timeout.newTimeOut(f -> {
+		Timeout timeOutFuture = TimeoutUtil.newTimeOut(f -> {
 			future.tryFailure(new CustomException("Rdc Timeout"));
 			this.clear();
 		}, timeout, unit);
