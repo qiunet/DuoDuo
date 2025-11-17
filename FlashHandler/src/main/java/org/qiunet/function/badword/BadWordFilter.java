@@ -3,6 +3,7 @@ package org.qiunet.function.badword;
 import org.qiunet.utils.listener.event.EventListener;
 import org.qiunet.utils.listener.event.data.ServerStartupEvent;
 import org.qiunet.utils.logger.LoggerType;
+import org.qiunet.utils.string.StringUtil;
 import org.qiunet.utils.thread.ThreadPoolManager;
 
 import java.io.File;
@@ -82,16 +83,20 @@ public enum  BadWordFilter {
 	private void loadBadWord(IBadWord badWords) {
 		RootNode rootNode = new RootNode();
 		for (String badWord : badWords.getBadWordList()) {
-			if (badWord.length() == 0) continue;
+			if (StringUtil.isEmpty(badWord)) continue;
 
 			int index = 0;
 			INode node = rootNode;
 			do {
 				INode currNode = node.find(badWord.charAt(index));
+				boolean end = (index == (badWord.length() - 1));
 				if (currNode == null) {
-					node.addNode(node = new CharNode(badWord.charAt(index), index == (badWord.length() - 1)));
+					node.addNode(node = new CharNode(badWord.charAt(index), end));
 				}else {
 					node = currNode;
+					if (end) {
+						node.settingEndChar();
+					}
 				}
 				// 重复的比如 麻痹  麻痹的 两个关键字 录取前面就ok
 				if (node.endChar()) break;
@@ -234,6 +239,8 @@ public enum  BadWordFilter {
 		void addNode(INode node);
 
 		boolean endChar();
+
+		void settingEndChar();
 	}
 
 	private static  class RootNode implements INode {
@@ -258,12 +265,17 @@ public enum  BadWordFilter {
 		public void addNode(INode node) {
 			this.nextNodes.put(node.getChar(), node);
 		}
+
+		@Override
+		public void settingEndChar() {
+			// do nothing
+		}
 	}
 
 	private static class CharNode implements INode {
 		private final char c;
-		private final boolean endFlag;
-		private final List<INode> nextNodes = new LinkedList<>();
+		private boolean endFlag;
+		private List<INode> nextNodes;
 
 		public CharNode(char c, boolean endFlag) {
 			this.c = c;
@@ -277,10 +289,12 @@ public enum  BadWordFilter {
 
 		@Override
 		public INode find(char c) {
-			for (INode node : nextNodes) {
-				// 有cache
-				if (node.getChar().equals(c)) {
-					return node;
+			if (nextNodes != null) {
+				for (INode node : nextNodes) {
+					// 有cache
+					if (node.getChar().equals(c)) {
+						return node;
+					}
 				}
 			}
 			return null;
@@ -288,12 +302,21 @@ public enum  BadWordFilter {
 
 		@Override
 		public void addNode(INode node) {
+			if (nextNodes == null) {
+				nextNodes = new LinkedList<>();
+			}
 			this.nextNodes.add(node);
 		}
 
 		@Override
 		public boolean endChar() {
 			return endFlag;
+		}
+
+		@Override
+		public void settingEndChar() {
+			this.nextNodes = Collections.emptyList();
+			this.endFlag = true;
 		}
 	}
 }
