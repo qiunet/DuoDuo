@@ -379,6 +379,11 @@
 				<artifactId>micrometer-registry-prometheus</artifactId>
 				<version>1.9.5</version>
 			</dependency>
+			<dependency>
+				<groupId>io.projectreactor</groupId>
+				<artifactId>reactor-core</artifactId>
+				<version>3.6.14</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 </project>

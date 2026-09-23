@@ -79,6 +79,13 @@ public final class DateUtil {
 		CLOCK = Clock.offset(CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
 	}
 
+	/**
+	 * 清除时间偏移, 恢复为系统时钟
+	 */
+	public static void clearTimeOffset() {
+		CLOCK = Clock.system(defaultZoneId);
+	}
+
 	/***
 	 * 当前的秒
 	 * @return
