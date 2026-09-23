@@ -5,6 +5,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 调度任务执行
@@ -72,5 +73,13 @@ public interface IScheduler {
 	/**
 	 * 提交循环任务
 	 */
-	Disposable submitTask(Runnable task, long initDelay, long period, TimeUnit unit);
+	default Disposable submitTask(Runnable task, long initDelay, long period, TimeUnit unit) {
+		return submitTask(task, initDelay, period, unit, null);
+	}
+
+	/**
+	 * 提交循环任务.
+	 * @param nextFireMillis 可选, 与外部共享下次触发逻辑时间戳 (毫秒), 便于 ScheduledFuture#getDelay
+	 */
+	Disposable submitTask(Runnable task, long initDelay, long period, TimeUnit unit, AtomicLong nextFireMillis);
 }

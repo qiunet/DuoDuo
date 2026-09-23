@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.qiunet.utils.date.DateUtil;
 import org.qiunet.utils.timer.SchedulerManager;
-import org.qiunet.utils.timer.SystemTimeWatcher;
+import org.qiunet.utils.timer.TimerManager;
 import org.qiunet.utils.timer.executor.DCustomSchedule;
 import reactor.core.Disposable;
 import reactor.core.publisher.Mono;
@@ -81,9 +81,8 @@ public class TestSchedule {
 		}, 5, TimeUnit.SECONDS);
 
 		Thread.sleep(100);
-		// 墙钟快进 6 秒, 5 秒延迟任务应变为立刻到期
+		// 墙钟快进 6 秒; setTimeOffset 会立刻通知 SystemTimeWatcher
 		DateUtil.setTimeOffset(6, TimeUnit.SECONDS);
-		SystemTimeWatcher.instance.kick();
 
 		Assertions.assertTrue(latch.await(2, TimeUnit.SECONDS), "task should fire after time jump");
 		Assertions.assertTrue(cost.get() >= 6000, "wall cost=" + cost.get());
@@ -117,10 +116,28 @@ public class TestSchedule {
 
 		Thread.sleep(50);
 		DateUtil.setTimeOffset(4, TimeUnit.SECONDS);
-		SystemTimeWatcher.instance.kick();
 
 		Assertions.assertTrue(latch.await(2, TimeUnit.SECONDS));
 		Assertions.assertEquals(5, count.get());
+	}
+
+	@Test
+	public void testTimerManagerInstanceFollowsTimeOffset() throws InterruptedException {
+		CountDownLatch latch = new CountDownLatch(1);
+		long start = DateUtil.currentTimeMillis();
+		AtomicLong cost = new AtomicLong();
+
+		TimerManager.instance.scheduleWithDelay(() -> {
+			cost.set(DateUtil.currentTimeMillis() - start);
+			latch.countDown();
+			return null;
+		}, 5, TimeUnit.SECONDS);
+
+		Thread.sleep(50);
+		DateUtil.setTimeOffset(6, TimeUnit.SECONDS);
+
+		Assertions.assertTrue(latch.await(2, TimeUnit.SECONDS), "TimerManager.instance should fire after offset");
+		Assertions.assertTrue(cost.get() >= 6000, "wall cost=" + cost.get());
 	}
 
 	@Test

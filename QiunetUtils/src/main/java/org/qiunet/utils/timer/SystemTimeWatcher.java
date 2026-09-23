@@ -13,8 +13,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * 用 Reactor 随机间隔探测墙钟时间跳变.
- * 跳变后通知已注册的调度容器, 让延迟任务按新时间立刻重算/触发.
+ * 探测墙钟 / 逻辑时间跳变, 通知调度容器重算已有延迟任务.
+ * <ul>
+ *   <li>{@link DateUtil#setTimeOffset} / {@link DateUtil#clearTimeOffset} 会立刻通知</li>
+ *   <li>另用 Reactor 随机间隔对比 nanoTime, 覆盖 OS 改时间等场景</li>
+ * </ul>
  */
 public enum SystemTimeWatcher {
 	instance;
@@ -40,6 +43,7 @@ public enum SystemTimeWatcher {
 	private volatile long lastNano;
 
 	SystemTimeWatcher() {
+		DateUtil.addTimeChangeListener(this::onDateUtilTimeChanged);
 		ShutdownHookUtil.getInstance().addShutdownHook(this::stop);
 	}
 
@@ -62,10 +66,16 @@ public enum SystemTimeWatcher {
 	}
 
 	/**
-	 * 立刻做一次探测 (测试或主动通知时使用)
+	 * 立刻做一次探测 (测试用)
 	 */
 	public void kick() {
 		checkDrift();
+	}
+
+	private void onDateUtilTimeChanged() {
+		lastWallMillis = DateUtil.currentTimeMillis();
+		lastNano = System.nanoTime();
+		notifyListeners();
 	}
 
 	private void ensureStarted() {
@@ -94,6 +104,10 @@ public enum SystemTimeWatcher {
 		if (Math.abs(drift) < JUMP_THRESHOLD_MS) {
 			return;
 		}
+		notifyListeners();
+	}
+
+	private void notifyListeners() {
 		for (Runnable listener : listeners) {
 			try {
 				listener.run();

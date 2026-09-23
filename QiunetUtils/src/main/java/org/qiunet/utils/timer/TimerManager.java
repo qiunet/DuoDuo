@@ -9,47 +9,56 @@ import org.qiunet.utils.exceptions.CustomException;
 import org.qiunet.utils.listener.hook.ShutdownHookUtil;
 import org.qiunet.utils.logger.LoggerType;
 import org.qiunet.utils.thread.ThreadPoolManager;
-import org.qiunet.utils.timer.executor.DScheduledThreadPoolExecutor;
+import reactor.core.Disposable;
 
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * 定时任务入口.
+ * <ul>
+ *   <li>{@link #instance}: 跟随 {@link DateUtil} 逻辑时间 / 偏移, 该提前的会提前执行</li>
+ *   <li>{@link #executor}: JDK 单调时钟, 不跟随 setTimeOffset</li>
+ * </ul>
  *
  * Created by qiunet.
  * 18/1/26
  */
 public enum TimerManager {
 	/**
-	 * 自定义的 ScheduledThreadPool
-	 * 需要调时间有效的, 使用该实例
+	 * 墙钟 / 逻辑时间感知 (Quartz、玩法延迟等请用这个)
 	 */
-	instance(new DScheduledThreadPoolExecutor(8, 1000, new DefaultThreadFactory("qiunet_fix_schedule_timerManager"))),
+	instance(false),
 	/**
-	 * 系统自带的 ScheduledThreadPool
-
+	 * JDK 调度池 (基础设施心跳等不需要跟游戏时间偏移的用这个)
 	 */
-	executor(new ScheduledThreadPoolExecutor(8, new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"))),
-	;
+	executor(true);
 
-	private final ScheduledExecutorService schedule;
-	TimerManager(ScheduledExecutorService executorService) {
-		this.schedule = executorService;
-		ShutdownHookUtil.getInstance().addShutdownHook(this.schedule::shutdownNow);
+	private final boolean jdkClock;
+	private final ScheduledExecutorService jdkSchedule;
+
+	TimerManager(boolean jdkClock) {
+		this.jdkClock = jdkClock;
+		if (jdkClock) {
+			this.jdkSchedule = new ScheduledThreadPoolExecutor(8,
+				new DefaultThreadFactory("qiunet_jdk_schedule_timerManager"));
+			ShutdownHookUtil.getInstance().addShutdownHook(this.jdkSchedule::shutdownNow);
+		} else {
+			this.jdkSchedule = null;
+		}
 	}
+
 	/**
 	 * 立刻执行
-	 * @param callable
-	 * @param <V>
-	 * @return
 	 */
-	public static  <V> DFuture<V> executorNow(Runnable callable) {
+	public static <V> DFuture<V> executorNow(Runnable callable) {
 		return executorNow(() -> {
 			callable.run();
 			return null;
 		});
 	}
 
-	public static  <V> DFuture<V> executorNow(Callable<V> callable) {
+	public static <V> DFuture<V> executorNow(Callable<V> callable) {
 		DCompletePromise<V> future = new DCompletePromise<>();
 		Future<V> submit = ThreadPoolManager.NORMAL.submit(() -> {
 			V result = null;
@@ -64,22 +73,23 @@ public enum TimerManager {
 		future.setFuture(submit);
 		return future;
 	}
-	/***
-	 * 默认使用毫秒
-	 * @param timerTask 任务
-	 * @param delay 延时毫秒
-	 * @param period 调度周期
+
+	/**
+	 * 固定频率周期任务
 	 */
-	public ScheduledFuture<?> scheduleAtFixedRate(IScheduledTask timerTask, long delay, long period, TimeUnit unit){
-		return schedule.scheduleAtFixedRate(timerTask, delay, period, unit);
+	public ScheduledFuture<?> scheduleAtFixedRate(IScheduledTask timerTask, long delay, long period, TimeUnit unit) {
+		if (jdkClock) {
+			return jdkSchedule.scheduleAtFixedRate(timerTask, delay, period, unit);
+		}
+		AtomicLong nextFire = new AtomicLong();
+		DisposableScheduledFuture<Object> future = DisposableScheduledFuture.createPeriodic(nextFire);
+		Disposable disposable = SchedulerManager.instance.submitTask(timerTask, delay, period, unit, nextFire);
+		future.bind(disposable);
+		return future;
 	}
 
-	/***
-	 * 添加延迟处理任务.
-	 * @param delayTask 任务
-	 * @param delay 延迟参数
-	 * @param unit 时间格式
-	 * @param <T>
+	/**
+	 * 延迟任务
 	 */
 	public <T> DFuture<T> scheduleWithDelay(Runnable delayTask, long delay, TimeUnit unit) {
 		return scheduleWithDelay(() -> {
@@ -89,6 +99,13 @@ public enum TimerManager {
 	}
 
 	public <T> DFuture<T> scheduleWithDelay(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
+		if (jdkClock) {
+			return scheduleWithDelayByJdk(delayTask, delay, unit);
+		}
+		return scheduleWithDelayByWallClock(delayTask, delay, unit);
+	}
+
+	private <T> DFuture<T> scheduleWithDelayByJdk(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
 		DCompletePromise<T> promise = new DCompletePromise<>();
 		Callable<T> caller = () -> {
 			try {
@@ -101,9 +118,21 @@ public enum TimerManager {
 			}
 			return null;
 		};
-
-		ScheduledFuture<T> future = this.schedule.schedule(caller, delay, unit);
+		ScheduledFuture<T> future = this.jdkSchedule.schedule(caller, delay, unit);
 		promise.setFuture(future);
+		return promise;
+	}
+
+	private <T> DFuture<T> scheduleWithDelayByWallClock(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
+		DCompletePromise<T> promise = new DCompletePromise<>();
+		Disposable disposable = SchedulerManager.instance.createMonoTask(delayTask::call, delay, unit)
+			.subscribe(promise::trySuccess, ex -> {
+				LoggerType.DUODUO.error("DelayTask Exception: ", ex);
+				promise.tryFailure(ex);
+			});
+		@SuppressWarnings({"unchecked", "rawtypes"})
+		Future<T> cancelHandle = (Future) DisposableScheduledFuture.asCancelHandle(disposable);
+		promise.setFuture(cancelHandle);
 		return promise;
 	}
 
@@ -113,14 +142,10 @@ public enum TimerManager {
 			return null;
 		}, timeMillis);
 	}
-	/***
-	 * 在一个指定的时间点执行任务
-	 * @param delayTask
-	 * @param timeMillis
-	 * @param <T>
-	 * @return
-	 */
 
+	/**
+	 * 在指定逻辑时间点执行任务
+	 */
 	public <T> DFuture<T> scheduleWithTimeMillis(IDelayTask<T> delayTask, long timeMillis) {
 		long now = DateUtil.currentTimeMillis();
 		if (now - timeMillis > 500) {

@@ -9,8 +9,10 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,6 +28,10 @@ public final class DateUtil {
 	private static ZoneId defaultZoneId = ZoneId.systemDefault();
 
 	private static Clock CLOCK = Clock.system(defaultZoneId);
+	/**
+	 * 逻辑时间变化监听 (setTimeOffset / clearTimeOffset)
+	 */
+	private static final List<Runnable> TIME_CHANGE_LISTENERS = new CopyOnWriteArrayList<>();
 	/**
 	 * 默认的时间格式(日期 时间)
 	 */
@@ -77,6 +83,7 @@ public final class DateUtil {
 	 */
 	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
 		CLOCK = Clock.offset(CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
+		notifyTimeChanged();
 	}
 
 	/**
@@ -84,6 +91,31 @@ public final class DateUtil {
 	 */
 	public static void clearTimeOffset() {
 		CLOCK = Clock.system(defaultZoneId);
+		notifyTimeChanged();
+	}
+
+	/**
+	 * 注册逻辑时间变化监听
+	 */
+	public static void addTimeChangeListener(Runnable listener) {
+		TIME_CHANGE_LISTENERS.add(listener);
+	}
+
+	/**
+	 * 移除逻辑时间变化监听
+	 */
+	public static void removeTimeChangeListener(Runnable listener) {
+		TIME_CHANGE_LISTENERS.remove(listener);
+	}
+
+	private static void notifyTimeChanged() {
+		for (Runnable listener : TIME_CHANGE_LISTENERS) {
+			try {
+				listener.run();
+			} catch (Throwable ignored) {
+				// 单个监听失败不影响其它
+			}
+		}
 	}
 
 	/***

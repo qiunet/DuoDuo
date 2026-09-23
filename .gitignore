@@ -12,6 +12,10 @@ out/
 .settings/
 *.code-workspace
 
+### 本地工具链 (勿提交) ###
+.vfox.toml
+.vfox/
+
 ### Maven ###
 target/
 pom.xml.tag

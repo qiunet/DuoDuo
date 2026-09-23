@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 调度管理
@@ -38,5 +39,10 @@ public enum SchedulerManager implements IScheduler {
 	@Override
 	public Disposable submitTask(Runnable task, long initDelay, long period, TimeUnit unit) {
 		return scheduler.submitTask(task, initDelay, period, unit);
+	}
+
+	@Override
+	public Disposable submitTask(Runnable task, long initDelay, long period, TimeUnit unit, AtomicLong nextFireMillis) {
+		return scheduler.submitTask(task, initDelay, period, unit, nextFireMillis);
 	}
 }
