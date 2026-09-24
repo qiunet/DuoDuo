@@ -97,6 +97,16 @@ public class TestDateUtil extends BaseTest {
 		Assertions.assertTrue(millis2 - millis1 >= TimeUnit.MINUTES.toMillis(10));
 	}
 
+	@Test
+	public void testOffsetRejectBackward() {
+		Assertions.assertThrows(org.qiunet.utils.exceptions.CustomException.class,
+			() -> DateUtil.setTimeOffset(0, TimeUnit.SECONDS));
+		Assertions.assertThrows(org.qiunet.utils.exceptions.CustomException.class,
+			() -> DateUtil.setTimeOffset(-1, TimeUnit.SECONDS));
+		Assertions.assertThrows(org.qiunet.utils.exceptions.CustomException.class,
+			() -> DateUtil.setTimeOffset(1, null));
+	}
+
 
 	@Test
 	public void testDateTime() {

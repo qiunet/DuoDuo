@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 延迟任务优先队列容器. 按绝对时间戳调度, 并响应墙钟跳变.
+ * 延迟任务优先队列容器. 按 DateUtil 绝对时间戳调度, 并响应逻辑时间偏移变化.
  * <p>
  * 队列变更与下次唤醒重算在同一把锁内完成, 避免 offer/cancel 与 checkAndRun
  * 交错导致更早的任务丢失唤醒.
@@ -43,7 +43,7 @@ class DScheduleContainer {
 	}
 
 	/**
-	 * 墙钟跳变后: 立刻弹出所有已到期任务, 并按新时间重算下次唤醒.
+	 * DateUtil 偏移变化后: 立刻弹出所有已到期任务, 并按新时间重算下次唤醒.
 	 */
 	void onTimePossiblyChanged() {
 		checkAndRun();

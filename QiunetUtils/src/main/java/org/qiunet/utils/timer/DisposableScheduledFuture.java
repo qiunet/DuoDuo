@@ -25,22 +25,20 @@ final class DisposableScheduledFuture<V> implements ScheduledFuture<V> {
 	 */
 	private final CompletableFuture<V> completion = new CompletableFuture<>();
 
-	private DisposableScheduledFuture(AtomicLong nextFireMillis, boolean ignoredPeriodic) {
+	private DisposableScheduledFuture(AtomicLong nextFireMillis) {
 		this.nextFireMillis = nextFireMillis;
 	}
 
 	static DisposableScheduledFuture<Object> createPeriodic(AtomicLong nextFireMillis) {
-		return new DisposableScheduledFuture<>(nextFireMillis, true);
+		return new DisposableScheduledFuture<>(nextFireMillis);
 	}
 
 	/**
-	 * 仅作取消句柄 (延迟任务挂到 DCompletePromise 上)
+	 * 延迟任务取消句柄. nextFire = 当前逻辑时间 + delay, 保证 getDelay() 在触发前为正.
 	 */
-	static Future<?> asCancelHandle(Disposable disposable) {
-		AtomicLong nextFire = new AtomicLong(DateUtil.currentTimeMillis());
-		DisposableScheduledFuture<Object> future = new DisposableScheduledFuture<>(nextFire, false);
-		future.bind(disposable);
-		return future;
+	static DisposableScheduledFuture<Object> asCancelHandle(long delay, TimeUnit unit) {
+		long nextFire = DateUtil.currentTimeMillis() + Math.max(0L, unit.toMillis(delay));
+		return new DisposableScheduledFuture<>(new AtomicLong(nextFire));
 	}
 
 	void bind(Disposable d) {
@@ -48,6 +46,15 @@ final class DisposableScheduledFuture<V> implements ScheduledFuture<V> {
 		if (cancelled.get() && d != null) {
 			d.dispose();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	void completeOneShot(Object value) {
+		completion.complete((V) value);
+	}
+
+	void completeExceptionally(Throwable ex) {
+		completion.completeExceptionally(ex);
 	}
 
 	@Override

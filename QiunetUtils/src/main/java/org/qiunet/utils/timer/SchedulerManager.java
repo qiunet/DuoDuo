@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * 调度管理
  * <p>
- * instance: 墙钟感知调度 (DateUtil / 系统时间跳变后会重算已有延迟任务)<br>
+ * instance: 逻辑时间感知调度 (DateUtil 偏移变化后会重算已有延迟任务)<br>
  * executor: 基于 Reactor 单调时钟的调度
  */
 public enum SchedulerManager implements IScheduler {

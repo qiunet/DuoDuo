@@ -17,8 +17,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 /**
- * 墙钟感知调度: 延迟/周期任务按 {@link DateUtil} 绝对时间排队,
- * 逻辑时间偏移或系统时间跳变后由 {@link org.qiunet.utils.timer.SystemTimeWatcher} 触发重算.
+ * 逻辑时间感知调度: 延迟/周期任务按 {@link DateUtil} 绝对时间排队,
+ * 逻辑时间偏移变化后由 {@link org.qiunet.utils.timer.SystemTimeWatcher} 触发重算.
  */
 public class DCustomSchedule implements IScheduler {
 
@@ -74,7 +74,7 @@ public class DCustomSchedule implements IScheduler {
 	}
 
 	/**
-	 * 墙钟感知的周期任务: 下次触发点按 DateUtil 绝对时间推进; 时间快进后由容器提前唤醒.
+	 * 逻辑时间感知的周期任务: 下次触发点按 DateUtil 绝对时间推进; 偏移快进后由容器提前唤醒.
 	 * @param nextFireMillis 可空; 非空时与外部共享下次触发时间, 供 ScheduledFuture#getDelay 使用
 	 */
 	@Override

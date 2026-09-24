@@ -125,14 +125,20 @@ public enum TimerManager {
 
 	private <T> DFuture<T> scheduleWithDelayByWallClock(IDelayTask<T> delayTask, long delay, TimeUnit unit) {
 		DCompletePromise<T> promise = new DCompletePromise<>();
+		DisposableScheduledFuture<Object> cancelHandle = DisposableScheduledFuture.asCancelHandle(delay, unit);
 		Disposable disposable = SchedulerManager.instance.createMonoTask(delayTask::call, delay, unit)
-			.subscribe(promise::trySuccess, ex -> {
+			.subscribe(v -> {
+				cancelHandle.completeOneShot(v);
+				promise.trySuccess(v);
+			}, ex -> {
 				LoggerType.DUODUO.error("DelayTask Exception: ", ex);
+				cancelHandle.completeExceptionally(ex);
 				promise.tryFailure(ex);
 			});
+		cancelHandle.bind(disposable);
 		@SuppressWarnings({"unchecked", "rawtypes"})
-		Future<T> cancelHandle = (Future) DisposableScheduledFuture.asCancelHandle(disposable);
-		promise.setFuture(cancelHandle);
+		Future<T> future = (Future) cancelHandle;
+		promise.setFuture(future);
 		return promise;
 	}
 

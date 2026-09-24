@@ -3,6 +3,7 @@ package org.qiunet.utils.date;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.qiunet.utils.common.IRunnable;
+import org.qiunet.utils.exceptions.CustomException;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -78,16 +79,31 @@ public final class DateUtil {
 	}
 
 	/***
-	 * 对全局时间偏移做调整
-	 * @param offsetValue
+	 * 对全局逻辑时间向前偏移.
+	 * 只允许前调 (offset 必须大于 0), 禁止后调, 避免调度/业务出现倒流问题.
+	 * @param offsetValue 偏移量, 必须大于 0
+	 * @param unit 时间单位
 	 */
 	public static void setTimeOffset(long offsetValue, TimeUnit unit) {
-		CLOCK = Clock.offset(CLOCK, Duration.ofMillis(unit.toMillis(offsetValue)));
+		if (unit == null) {
+			throw new CustomException("TimeUnit不能为null");
+		}
+		long deltaMs = unit.toMillis(offsetValue);
+		if (deltaMs <= 0) {
+			throw new CustomException("逻辑时间只允许向前调整, offset必须大于0, 传入: {} {}", offsetValue, unit);
+		}
+		long before = currentTimeMillis();
+		CLOCK = Clock.offset(CLOCK, Duration.ofMillis(deltaMs));
+		long after = currentTimeMillis();
+		if (after <= before) {
+			throw new CustomException("逻辑时间调整后未前进, before: {}, after: {}", before, after);
+		}
 		notifyTimeChanged();
 	}
 
 	/**
-	 * 清除时间偏移, 恢复为系统时钟
+	 * 清除时间偏移, 恢复为系统时钟.
+	 * 仅用于测试收尾等重置场景; 业务侧请使用 {@link #setTimeOffset} 前调.
 	 */
 	public static void clearTimeOffset() {
 		CLOCK = Clock.system(defaultZoneId);

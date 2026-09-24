@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * 墙钟感知调度 + 系统时间跳变测试
+ * 逻辑时间感知调度 + DateUtil 偏移变化测试
  */
 public class TestSchedule {
 
@@ -81,7 +81,7 @@ public class TestSchedule {
 		}, 5, TimeUnit.SECONDS);
 
 		Thread.sleep(100);
-		// 墙钟快进 6 秒; setTimeOffset 会立刻通知 SystemTimeWatcher
+		// 逻辑时间快进 6 秒; setTimeOffset 立刻通知调度
 		DateUtil.setTimeOffset(6, TimeUnit.SECONDS);
 
 		Assertions.assertTrue(latch.await(2, TimeUnit.SECONDS), "task should fire after time jump");
@@ -89,17 +89,16 @@ public class TestSchedule {
 	}
 
 	@Test
-	public void testTimeJumpDetectedByReactorWatcher() throws InterruptedException {
+	public void testDateUtilOffsetNotifiesSchedule() throws InterruptedException {
 		CountDownLatch latch = new CountDownLatch(1);
 
 		schedule.submitTask(latch::countDown, 10, TimeUnit.SECONDS);
 
 		Thread.sleep(50);
 		DateUtil.setTimeOffset(11, TimeUnit.SECONDS);
-		// 不手动 kick, 依赖 SystemTimeWatcher 的随机 Flux 探测 (间隔约 200~800ms)
 
-		Assertions.assertTrue(latch.await(3, TimeUnit.SECONDS),
-			"watcher should detect jump and fire due task");
+		Assertions.assertTrue(latch.await(2, TimeUnit.SECONDS),
+			"setTimeOffset should notify schedule and fire due task");
 	}
 
 	@Test
